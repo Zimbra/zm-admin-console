@@ -1891,11 +1891,11 @@ html>body .balloonBR {
 
 
 
-.dialog_title				{	background-color:#3d3d3d; cursor:move}
-.dialog_title_text			{	color:white;	width:auto;	 font-weight:bold;	}
-.dialog_title_cell			{	color:white;	width:auto;	 font-weight:bold;	}
+.DialogTitle				{	background-color:#3d3d3d; cursor:move}
+.dialogTitleText			{	color:white;	width:auto;	 font-weight:bold;	}
+.dialogTitleCell			{	color:white;	width:auto;	 font-weight:bold;	}
 
-.dialog_table				{	border-collapse:collapse;	width:auto; height:100%;}
+.DialogTable				{	border-collapse:collapse;	width:auto; height:100%;}
 
 .dialog_outset				{	}
 .dialog_outset_contents		{	width:auto;height:100%;		}
@@ -1917,6 +1917,13 @@ html>body .balloonBR {
 .border_shadow_h			{ 	width:auto;		height:6;		}
 .border_shadow_v			{ 	width:6; 		height:100%;	}
 
+.DialogBody {
+	background-color:#F8F7F5;
+}
+
+.DialogToolbar {
+	background-image:url(/zimbra/skins/steel/images/bg_pebble_dark.gif);
+}
 
 
 /* should be dynamically generated */
