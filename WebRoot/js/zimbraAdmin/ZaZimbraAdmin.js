@@ -32,20 +32,11 @@
 * This class is responsible for bootstrapping the ZimbraAdmin application.
 */
 function ZaZimbraAdmin(appCtxt) {
-	ZaZimbraAdmin._instance = this;
+
 	ZaController.call(this, appCtxt, null, null, true);
 	this._shell = this._appCtxt.getShell();	
-	this._splashScreen = new ZaSplashScreen(this._shell, "Admin_SplashScreen");
+	this._splashScreen = new ZaSplashScreen(this._shell, ZaImg.M_SPLASH);
 	
-    this._headerPanel = new DwtComposite(this._shell, "HeaderPanel", DwtControl.ABSOLUTE_STYLE);
-    
-   	this._createBannerBar();
-	this._headerPanel.zShow(true);
-
-
-
-
-
 	appCtxt.setAppController(this);
 	appCtxt.setClientCmdHdlr(new ZaClientCmdHandler(appCtxt));
 		
@@ -56,15 +47,13 @@ function ZaZimbraAdmin(appCtxt) {
 	this._appFactory = new Object();
 	this._appFactory[ZaZimbraAdmin.ADMIN_APP] = ZaApp;
 	
-	
+
 //	this._createBanner();								// creates the banner
 	this._schedule(ZaZimbraAdmin.prototype.startup);	// creates everything else
-	this.aboutDialog = new ZaAboutDialog(this._shell,null,ZaMsg.about_title);
 }
 
 ZaZimbraAdmin.prototype = new ZaController;
 ZaZimbraAdmin.prototype.constructor = ZaZimbraAdmin;
-ZaZimbraAdmin._instance = null;
 
 ZaZimbraAdmin.ADMIN_APP = "admin";
 
@@ -72,7 +61,6 @@ ZaZimbraAdmin._MIGRATION_ID = 1;
 ZaZimbraAdmin._HELP_ID = 2;
 ZaZimbraAdmin._LOGOFF_ID = 3;
 ZaZimbraAdmin._PDF_HELP_ID = 4;
-ZaZimbraAdmin._ABOUT_ID = 5;
 
 // do not change the name of the cookie! SoapServlet looks for it
 ZaZimbraAdmin._COOKIE_NAME = "ZM_ADMIN_AUTH_TOKEN";
@@ -110,14 +98,6 @@ function(domain) {
     var lm = new ZaZimbraAdmin(appCtxt);
 }
 
-ZaZimbraAdmin.getInstance = function() {
-	if(ZaZimbraAdmin._instance) {
-		return ZaZimbraAdmin._instance;
-	} else {
-		ZaZimbraAdmin.run(document.domain);
-		return ZaZimbraAdmin._instance;
-	}
-}
 
 /**
 * Returns a handle to the given app.
@@ -151,8 +131,18 @@ function() {
 ZaZimbraAdmin.prototype.getOverviewPanelController =
 function() {
 	if (this._overviewPanelController == null)
-		this._overviewPanelController = new ZaOverviewPanelController(this._appCtxt, this._shell);
+		this._overviewPanelController = new ZaOverviewPanelController(this._appCtxt, this._shell, this);
 	return this._overviewPanelController;
+}
+
+/**
+* Returns a handle to the search bar's controller.
+*/
+ZaZimbraAdmin.prototype.getSearchController =
+function() {
+	if (this._searchController == null)
+		this._searchController = new ZaSearchController(this._appCtxt, this._shell, this);
+	return this._searchController;
 }
 
 /**
@@ -210,10 +200,7 @@ function(args){
 	window.location = locationStr;
 }
 
-ZaZimbraAdmin.prototype.getHeaderPanel = 
-function () {
-	return this._headerPanel;
-}
+// Private methods
 
 // Start up the ZimbraMail application
 ZaZimbraAdmin.prototype.startup =
@@ -224,8 +211,7 @@ function() {
 	try {
 		var domains = ZaDomain.getAll(); // catch an exception before building the UI
 		this._appViewMgr.setOverviewPanel(this.getOverviewPanelController().getOverviewPanel());
-		//this._appViewMgr.setSearchPanel(this.getSearchController().getSearchPanel());
-		this._appViewMgr.setHeaderPanel(this.getHeaderPanel());		
+		this._appViewMgr.setSearchPanel(this.getSearchController().getSearchPanel());
 		// Default to showing admin app
 		this.activateApp(ZaZimbraAdmin.ADMIN_APP);
 	} catch (ex) {
@@ -233,9 +219,6 @@ function() {
 	}
 	this._schedule(this._killSplash);	// kill splash screen	
 }
-
-
-// Private methods
 
 ZaZimbraAdmin.prototype._killSplash =
 function() {
@@ -311,7 +294,7 @@ function(id, tableId) {
 		case ZaZimbraAdmin._HELP_ID:
 			Dwt.getDomObj(doc, bannerBar._helpId).blur();
 			Dwt.getDomObj(doc, bannerBar._helpId2).blur();			
-			window.open("/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/administration_console_help.htm");
+			window.open("/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm");
 			break;
 
 		case ZaZimbraAdmin._PDF_HELP_ID:
@@ -324,154 +307,11 @@ function(id, tableId) {
 			Dwt.getDomObj(doc, bannerBar._logOffId).blur();
 			ZaZimbraAdmin.logOff();
 			break;
-		case ZaZimbraAdmin._ABOUT_ID:
-			Dwt.getDomObj(doc, bannerBar._logAboutId).blur();
-			Dwt.getDomObj(doc, bannerBar._logAboutId2).blur();			
-			//show about screen
-			ZaZimbraAdmin.getInstance().aboutDialog.popup();
-			break;
-		
 	}
 }
 
-// Creates buttons for general non app-related functions and puts them on the banner.
-ZaZimbraAdmin.prototype._createBannerBar =
-function() {
-
-	this.bannerBar = new DwtComposite(this._headerPanel, "BannerBar", DwtControl.RELATIVE_STYLE);
-	
-	this._bannerTableId = Dwt.getNextId();
-	
-	this.bannerBar._migrationId = Dwt.getNextId();
-	this.bannerBar._helpId = Dwt.getNextId();
-	this.bannerBar._pdfHelpId = Dwt.getNextId();	
-	this.bannerBar._logOffId = Dwt.getNextId();
-	this.bannerBar._logAboutId = Dwt.getNextId();
-	
-	this.bannerBar._migrationId2 = Dwt.getNextId();
-	this.bannerBar._helpId2 = Dwt.getNextId();
-	this.bannerBar._pdfHelpId2 = Dwt.getNextId();	
-	this.bannerBar._logOffId2 = Dwt.getNextId();
-	this.bannerBar._logAboutId2 = Dwt.getNextId();
-	
-	var html = new Array();
-	var i = 0;
-	
-	html[i++] = "<table align='right' id='" + this._bannerTableId + "'><tr><td>&nbsp;";
-	html[i++] = "</td></tr></table>";
-	this.bannerBar.getHtmlElement().innerHTML = html.join("");
-	var doc = this.bannerBar.getDocument();
-	var t = Dwt.getDomObj(doc, this._bannerTableId);
-	this.bannerBar.app = this._app;	
-	Dwt.associateElementWithObject(t, this.bannerBar);		
-
-	this._createBannerBarHtml();
-}
-ZaZimbraAdmin.prototype._createBannerBarHtml =
-function () {
-
-	if(!this.bannerBar || !this.bannerBar._helpId ||  !this.bannerBar._pdfHelpId || !this.bannerBar._logOffId || !this.bannerBar._helpId2 ||  !this.bannerBar._pdfHelpId2 || !this.bannerBar._logOffId2)
-		return;
-		
-	var html = new Array();
-	var i = 0;
-
-	html[i++] = "<table width=100% id='" + this._bannerTableId + "'><tr>";
-	html[i++] = "<td valign='middle' nowrap align='left'>";
-	html[i++] = AjxImg.getImageHtml("AppBanner");
-	html[i++] = "</td>";
-	html[i++] = "<td valign='middle' align='right'>";
-		html[i++] = "<table align='right'><tr>";
-		html[i++] = "<td align=right><a id='" + this.bannerBar._migrationId + "'  target=\"_blank\" href=\"http://zimbra.com/downloads/migrationwizard/accept\">";
-		html[i++] = AjxImg.getImageHtml("MigrationWiz", "cursor:hand");
-		html[i++] = "</a></td>";
-		html[i++] = "<td align=right><a id='" + this.bannerBar._migrationId2 + "' style='cursor: hand' target=\"_blank\" href=\"http://zimbra.com/downloads/migrationwizard/accept\">";
-		html[i++] = ZaMsg.migrationWiz + "</a></td>";	
-	
-		html[i++] = "<td align=right><a id='" + this.bannerBar._helpId + "'>";
-		html[i++] = AjxImg.getImageHtml("Help", "cursor:hand");
-		html[i++] = "</a></td>";
-		html[i++] = "<td align=right><a id='" + this.bannerBar._helpId2 + "'>";
-		html[i++] = ZaMsg.help + "</a></td>";		
-	
-		html[i++] = "<td align=right><a id='" + this.bannerBar._logAboutId + "'>";
-		html[i++] = AjxImg.getImageHtml("ZimbraIcon", "cursor:hand");
-		html[i++] = "</a></td>";
-		html[i++] = "<td align=right><a id='" + this.bannerBar._logAboutId2 + "'>";
-		html[i++] = ZaMsg.about + "</a></td>";		
-	
-		html[i++] = "<td align=right><a id='" + this.bannerBar._pdfHelpId + "' target=\"_blank\" href=\"/zimbraAdmin/adminhelp/pdf/admin.pdf\">";
-		html[i++] = AjxImg.getImageHtml("PDFDoc", "cursor:hand");
-		html[i++] = "</a></td>";	
-		html[i++] = "<td align=right><a id='" + this.bannerBar._pdfHelpId2 + "' target=\"_blank\" href=\"/zimbraAdmin/adminhelp/pdf/admin.pdf\">";
-		html[i++] = ZaMsg.adminGuide + "</a></td>";	
-	
-		html[i++] = "<td align=right><a id='" + this.bannerBar._logOffId + "'>";
-		html[i++] = AjxImg.getImageHtml("Logoff", "cursor:hand");		
-		html[i++] = "</a></td>";
-		html[i++] = "<td align=right><a id='" + this.bannerBar._logOffId2 + "'>";		
-		html[i++] = ZaMsg.logOff + "</a></td></tr></table>";
-	html[i++] = "</td></tr></table>";		
-		
-	this.bannerBar.getHtmlElement().innerHTML = html.join("");
-	var doc = this.bannerBar.getDocument();
-	var t = Dwt.getDomObj(doc, this._bannerTableId);
-	this.bannerBar.app = this._app;	
-	Dwt.associateElementWithObject(t, this.bannerBar);	
-
-	var a;
-	
-	var a = Dwt.getDomObj(doc, this.bannerBar._helpId);
-	if(a) {
-		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._HELP_ID + ",'" + this._bannerTableId + "');";
-		a.onmouseover = a.onmouseout = ZaZimbraAdmin._bannerBarMouseHdlr;
-	}
-	
-	a = Dwt.getDomObj(doc, this.bannerBar._helpId2);
-	if(a) {
-		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._HELP_ID + ",'" + this._bannerTableId + "');";
-	}	
-			
-	a = Dwt.getDomObj(doc, this.bannerBar._logOffId);
-	if(a) {
-		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._LOGOFF_ID + ",'" + this._bannerTableId + "');";
-		a.onmouseover = a.onmouseout = ZaZimbraAdmin._bannerBarMouseHdlr;
-	}
-
-	a = Dwt.getDomObj(doc, this.bannerBar._logOffId2);
-	if(a) {
-		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._LOGOFF_ID + ",'" + this._bannerTableId + "');";
-	}
-	
-	a = Dwt.getDomObj(doc, this.bannerBar._logAboutId);
-	if(a) {
-		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._ABOUT_ID + ",'" + this._bannerTableId + "');";
-	}	
-	
-	a = Dwt.getDomObj(doc, this.bannerBar._logAboutId2);
-	if(a) {
-		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._ABOUT_ID + ",'" + this._bannerTableId + "');";
-	}		
-}
 // This method is called by the window.onbeforeunload method.
 ZaZimbraAdmin._confirmExitMethod =
 function() {
 	return ZaMsg.appExitWarning;
-}
-
-
-function ZaAboutDialog(parent, className, title, w, h) {
-	if (arguments.length == 0) return;
-	var clsName = className || "DwtDialog";
-	
-	DwtDialog.call(this, parent, clsName, null, [DwtDialog.OK_BUTTON]);
-	this._createContentHtml();
-}
-
-ZaAboutDialog.prototype = new DwtDialog;
-ZaAboutDialog.prototype.constructor = ZaAboutDialog;
-
-ZaAboutDialog.prototype._createContentHtml = function () {
-	AjxImg.setImage(this._contentDiv,"Admin_SplashScreen");
-	//this._contentDiv.appendChild(AjxImg.getImageHtml("Admin_SplashScreen"));
 }

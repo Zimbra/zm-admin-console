@@ -510,6 +510,23 @@ function (aliasToRemove) {
 }
 
 
+ZaAccount.getSearchByNameQuery =
+function(n) {
+	if (n == null || n == "") {
+		return "";
+	} else {
+		return ("(|(cn=*"+n+"*)(sn=*"+n+"*)(gn=*"+n+"*)(displayName=*"+n+"*)(zimbraMailAlias=*"+n+"*)(zimbraId="+n+")(zimbraMailAddress=*"+n+"*)(zimbraMailDeliveryAddress=*"+n+"*))");
+	}
+}
+
+ZaAccount.searchByQueryHolder = 
+function (queryHolder, pagenum, orderby, isascending, app) {
+	if(queryHolder.isByDomain) {
+ 		return ZaAccount.searchByDomain(queryHolder.byValAttr, pagenum, orderby, isascending, app);
+	} else {
+		return ZaAccount.search(queryHolder.queryString, pagenum, orderby, isascending, app);	
+	}
+}
 
 ZaAccount.getViewMailLink = 
 function(accId) {
@@ -532,7 +549,32 @@ function(accId) {
 	return retVal;
 }
 
-
+ZaAccount.search =
+function(query, pagenum, orderby, isascending, app) {
+	if(!orderby) orderby = ZaAccount.A_uid;
+	var myisascending = "0";
+	
+	if(isascending) {
+		myisascending = "1";
+	} 
+	
+	var offset = (pagenum-1) * ZaAccount.RESULTSPERPAGE;
+	var attrs = ZaAccount.A_displayname + "," + ZaItem.A_zimbraId + "," + ZaAccount.A_mailHost + "," + ZaAccount.A_uid + "," + ZaAccount.A_accountStatus + "," + ZaAccount.A_description;
+	var soapDoc = AjxSoapDoc.create("SearchAccountsRequest", "urn:zimbraAdmin", null);
+	soapDoc.set("query", query);
+	soapDoc.getMethod().setAttribute("offset", offset);
+	soapDoc.getMethod().setAttribute("limit", ZaAccount.RESULTSPERPAGE);
+	soapDoc.getMethod().setAttribute("applyCos", "0");
+	soapDoc.getMethod().setAttribute("attrs", attrs);
+	soapDoc.getMethod().setAttribute("sortBy", orderby);
+	soapDoc.getMethod().setAttribute("sortAscending", myisascending);
+	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
+	var list = new ZaItemList("account", ZaAccount, app);
+	list.loadFromDom(resp);
+	var searchTotal = resp.getAttribute("searchTotal");
+	var numPages = Math.ceil(searchTotal/ZaAccount.RESULTSPERPAGE);
+	return {"list":list, "numPages":numPages};
+}
 
 
 ZaAccount.prototype.initFromDom =
@@ -563,7 +605,42 @@ function(node) {
 
 }
 
+ZaAccount.searchByDomain = 
+function (domainName, pagenum, orderby, isascending, app) {
+	if(!orderby) orderby = ZaAccount.A_uid;
+	var myisascending = "0";
+	
+	if(isascending) {
+		myisascending = "1";
+	} 
+	
+	var offset = (pagenum-1) * ZaAccount.RESULTSPERPAGE;
+	var attrs = ZaAccount.A_displayname + "," + ZaItem.A_zimbraId + "," + ZaAccount.A_mailHost + "," + ZaAccount.A_uid + "," + ZaAccount.A_accountStatus + "," + ZaAccount.A_description;
+	var soapDoc = AjxSoapDoc.create("SearchAccountsRequest", "urn:zimbraAdmin", null);
+	soapDoc.set("query", "");
+	soapDoc.getMethod().setAttribute("domain", domainName);
+	soapDoc.getMethod().setAttribute("limit", ZaAccount.RESULTSPERPAGE);
+	soapDoc.getMethod().setAttribute("offset", offset);
+	soapDoc.getMethod().setAttribute("applyCos", "0");
+	soapDoc.getMethod().setAttribute("attrs", attrs);
+	soapDoc.getMethod().setAttribute("sortBy", orderby);
+	soapDoc.getMethod().setAttribute("sortAscending", myisascending);
+	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
+	var list = new ZaItemList("account", ZaAccount, app);
+	list.loadFromDom(resp);
+	var searchTotal = resp.getAttribute("searchTotal");
+	var numPages = Math.ceil(searchTotal/ZaAccount.RESULTSPERPAGE);
+	return {"list":list, "numPages":numPages};
+	
+}
 
+/**
+* @param app reference to ZaApp
+**/
+ZaAccount.getAll =
+function(app) {
+	return ZaAccount.search("", 1, ZaAccount.A_uid, true, app);
+}
 
 /**
 * Returns HTML for a tool tip for this account.
@@ -581,7 +658,7 @@ function() {
 		html[idx++] = "<tr valign='center'>";
 		html[idx++] = "<td><b>" + AjxStringUtil.htmlEncode(this.name) + "</b></td>";
 		html[idx++] = "<td align='right'>";
-		html[idx++] = AjxImg.getImageHtml("Account");		
+		html[idx++] = AjxImg.getImageHtml(ZaImg.I_ACCOUNT);		
 		html[idx++] = "</td>";
 		html[idx++] = "</table></div></td></tr>";
 		html[idx++] = "<tr></tr>";
@@ -689,12 +766,11 @@ function (newPassword) {
 	ZmCsfeCommand.invoke(soapDoc, null, null, null, true);
 }
 
-/*
 function ZaAccountQuery (queryString, byDomain, byVal) {
 	this.query = queryString;
 	this.isByDomain = byDomain;
 	this.byValAttr = byVal;
-}*/
+}
 
 /**
 * ZaAccount.myXModel - XModel for XForms

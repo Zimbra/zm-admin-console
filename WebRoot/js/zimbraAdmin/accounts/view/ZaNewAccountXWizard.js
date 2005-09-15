@@ -162,11 +162,7 @@ function(entry) {
 	this._containedObject.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
 	var domainName = this._app._appCtxt.getAppController().getOverviewPanelController().getCurrentDomain();
 	if(!domainName) {
-		//find out what is the default domain
-		domainName = this._app.getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraDefaultDomainName];
-		if(!domainName) {
-			domainName = this._app.getDomainList().getArray()[0].name;
-		}
+		domainName = this._app.getDomainList().getArray()[0].name;
 	}
 	this._containedObject[ZaAccount.A_name] = "@" + domainName;
 	this._localXForm.setInstance(this._containedObject);

@@ -120,11 +120,12 @@ ZaDomain.AUTH_MECH_CHOICES = [ZaDomain.AuthMech_ad,ZaDomain.AuthMech_ldap,ZaDoma
 * returns a ZaItemList of ZaDomain objects
 **/
 ZaDomain.getAll =
-function(app) {
+function() {
 	var soapDoc = AjxSoapDoc.create("GetAllDomainsRequest", "urn:zimbraAdmin", null);	
 	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
-	var list = new ZaItemList(ZaDomain, app);
+	var list = new ZaItemList("domain", ZaDomain);
 	list.loadFromDom(resp);
+//	list.sortByName();		
 	return list;
 }
 
@@ -487,7 +488,7 @@ function() {
 		html[idx++] = "<tr valign='center'>";
 		html[idx++] = "<td><b>" + AjxStringUtil.htmlEncode(this.name) + "</b></td>";
 		html[idx++] = "<td align='right'>";
-		html[idx++] = AjxImg.getImageHtml("Domain");			
+		html[idx++] = AjxImg.getImageHtml(ZaImg.I_DOMAIN);			
 		html[idx++] = "</td>";
 		html[idx++] = "</table></div></td></tr>";
 		html[idx++] = "<tr></tr>";
@@ -549,7 +550,7 @@ ZaDomain.myXModel = {
 					{id:"email", type:_STRING_},
 					{id:"fullName", type:_STRING_},					
 					{id:"firstName", type:_STRING_},										
-					{id:"lastName", type:_STRING_}														
+					{id:"lastName", type:_STRING_}															
 				]
 			}
 		}

@@ -23,11 +23,12 @@
  * ***** END LICENSE BLOCK *****
  */
 
-function ZaItemList(constructor, app) {
+function ZaItemList(type, constructor, app) {
 
 	if (arguments.length == 0) return;
 	ZaModel.call(this, true);
 
+	this.type = type;
 	this._constructor = constructor;
 	this._app = app;
 	
@@ -40,7 +41,7 @@ ZaItemList.prototype.constructor = ZaItemList;
 
 ZaItemList.prototype.toString = 
 function() {
-	return "ZaItemList";
+	return "ZaItemList "+this.type;
 }
 
 /**
@@ -144,12 +145,7 @@ function(respNode) {
 	this.clear();
 	var nodes = respNode.childNodes;
 	for (var i = 0; i < nodes.length; i++) {
-		var item;
-		if(this._constructor) {
-			item = new this._constructor(this._app);
-		} else {
-			item = ZaItem.getFromType(nodes[i].nodeName, this._app);
-		}
+		var item = new this._constructor(this._app);
 		
 		item.initFromDom(nodes[i]);
 		//add the list as change listener to the item

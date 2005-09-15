@@ -46,12 +46,9 @@ ZaStatusViewController.prototype.show =
 function() {
     if (!this._appView) {
 //		this._toolbar = new ZaStatusToolBar(this._container);
-		//this._contentView = new ZaStatusView(this._container, this._app);
-		this._contentView = new ZaServicesListView(this._container, this._app);
+		this._contentView = new ZaStatusView(this._container, this._app);
 		this._appView = this._app.createView(ZaStatusViewController.STATUS_VIEW, [this._contentView]);
 	}
-	var mystatusVector = this._app.getStatusList(true).getVector();
-	this._contentView.set(mystatusVector);
 	this._app.pushView(ZaStatusViewController.STATUS_VIEW);
 	this._app.setCurrentController(this);
 }

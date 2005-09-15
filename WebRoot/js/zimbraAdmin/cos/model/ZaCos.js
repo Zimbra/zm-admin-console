@@ -254,7 +254,7 @@ function() {
 		html[idx++] = "<tr valign='center'>";
 		html[idx++] = "<td><b>" + AjxStringUtil.htmlEncode(this.name) + "</b></td>";
 		html[idx++] = "<td align='right'>";
-		html[idx++] = AjxImg.getImageHtml("COS");				
+		html[idx++] = AjxImg.getImageHtml(ZaImg.I_COS);				
 		html[idx++] = "</td>";
 		html[idx++] = "</table></div></td></tr>";
 		html[idx++] = "<tr></tr>";
@@ -271,7 +271,7 @@ ZaCos.getAll =
 function(app) {
 	var soapDoc = AjxSoapDoc.create("GetAllCosRequest", "urn:zimbraAdmin", null);	
 	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
-	var list = new ZaItemList(ZaCos, app);
+	var list = new ZaItemList("cos", ZaCos, app);
 	list.loadFromDom(resp);
 	//list.sortByName();		
 	return list;

@@ -178,7 +178,7 @@ ZaServer.getAll =
 function() {
 	var soapDoc = AjxSoapDoc.create("GetAllServersRequest", "urn:zimbraAdmin", null);	
 	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
-	var list = new ZaItemList(ZaServer);
+	var list = new ZaItemList("server", ZaServer);
 	list.loadFromDom(resp);
 //	list.sortByName();		
 	return list;
@@ -232,7 +232,7 @@ function() {
 		html[idx++] = "<tr valign='center'>";
 		html[idx++] = "<td><b>" + AjxStringUtil.htmlEncode(this.name) + "</b></td>";
 		html[idx++] = "<td align='right'>";
-		html[idx++] = AjxImg.getImageHtml("Server");		
+		html[idx++] = AjxImg.getImageHtml(ZaImg.I_SERVER);		
 		html[idx++] = "</td>";
 		html[idx++] = "</table></div></td></tr>";
 		html[idx++] = "<tr></tr>";

@@ -287,7 +287,7 @@ function () {
 			continue;
 		}	
 		//check if the value has been modified
-		if ((this._currentObject.attrs[a] != tmpObj.attrs[a]) && !(this._currentObject.attrs[a] == undefined && tmpObj.attrs[a] === "")) {
+		if ((this._currentObject.attrs[a] != tmpObj.attrs[a]) && !(this._currentObject.attrs[a] == undefined && tmpObj.attrs[a] == "")) {
 			if(a==ZaAccount.A_uid) {
 				continue; //skip uid, it is changed throw a separate request
 			}
@@ -420,10 +420,10 @@ function(entry) {
 
 		if(!this._UICreated) {
 	   		this._ops = new Array();
-	 		this._ops.push(new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "Account", "AccountDis", new AjxListener(this, ZaAccountViewController.prototype._newButtonListener)));   			    	
-   			this._ops.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, ZaAccountViewController.prototype._saveButtonListener)));
-   			this._ops.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, ZaAccountViewController.prototype._closeButtonListener)));    	
-   			this._ops.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ALTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, ZaAccountViewController.prototype._deleteButtonListener)));    	    	
+	 		this._ops.push(new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, ZaImg.I_ACCOUNT, ZaImg.I_ACCOUNT, new AjxListener(this, ZaAccountViewController.prototype._newButtonListener)));   			    	
+   			this._ops.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, ZaImg.I_SAVE, ZaImg.ID_SAVE, new AjxListener(this, ZaAccountViewController.prototype._saveButtonListener)));
+   			this._ops.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, ZaImg.I_UNDO, ZaImg.I_UNDO, new AjxListener(this, ZaAccountViewController.prototype._closeButtonListener)));    	
+   			this._ops.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ALTBB_Delete_tt, ZaImg.I_DELETE, ZaImg.I_DELETE, new AjxListener(this, ZaAccountViewController.prototype._deleteButtonListener)));    	    	
 			this._toolBar = new ZaToolBar(this._container, this._ops);
 	
 	  		//this._view = new ZaAccountView(this._container, this._app, entry.id);
