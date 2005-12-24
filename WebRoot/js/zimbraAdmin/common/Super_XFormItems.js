@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -197,6 +197,25 @@ Cos_MLifetime_XModelItem.prototype.validateType = function (value) {
 }
 
 /**
+* _COS_HOSTNAME_OR_IP_
+**/
+Cos_HostNameOrIp_XModelItem = function (){}
+XModelItemFactory.createItemType("_COS_HOSTNAME_OR_IP_", "cos_hostname_or_ip", Cos_HostNameOrIp_XModelItem, Cos_String_XModelItem);
+Cos_HostNameOrIp_XModelItem.prototype.validateType = XModelItem.prototype.validateString;
+Cos_HostNameOrIp_XModelItem.prototype.maxLength = 256;
+Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE ];
+
+/**
+* _COS_PORT_
+**/
+Cos_Port_XModelItem = function (){}
+XModelItemFactory.createItemType("_COS_PORT_", "cos_port", Cos_Port_XModelItem, Cos_Number_XModelItem);
+Cos_Port_XModelItem.prototype.validateType = XModelItem.prototype.validateNumber;
+Cos_Port_XModelItem.prototype.minInclusive = 0;
+Cos_Port_XModelItem.prototype.maxInclusive = 65535;
+
+
+/**
 *	XForm Items that have overwritable super values
 **/
 
@@ -258,7 +277,21 @@ Super_AnchorHelper_XFormItem.prototype.resetToSuperValue = function(event) {
 Super_Textfield_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPER_TEXTFIELD_", "super_textfield", Super_Textfield_XFormItem, Super_XFormItem);
 
-Super_Textfield_XFormItem.prototype.useParentTable = true;
+Super_Textfield_XFormItem.prototype.useParentTable = false;
+
+Super_Textfield_XFormItem.prototype.initializeItems = function() {
+	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
+	if(anchorCssStyle) {
+		this.getItems()[1].cssStyle = anchorCssStyle;
+	}	
+	Composite_XFormItem.prototype.initializeItems.call(this);
+	var textFieldCssClass = this.getInheritedProperty("textFieldCssClass");
+	if(textFieldCssClass) {
+		this.getItems()[0].cssStyle = textFieldCssClass;
+	}		
+
+}	
+
 Super_Textfield_XFormItem.prototype.items = [
 	{	type:_TEXTFIELD_, ref:".", width:100,
 		elementChanged: function(elementValue,instanceValue, event) {
@@ -285,7 +318,7 @@ Super_Textfield_XFormItem.prototype.items = [
 Super_Checkbox_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPER_CHECKBOX_", "super_checkbox", Super_Checkbox_XFormItem, Super_XFormItem);
 
-Super_Checkbox_XFormItem.prototype.useParentTable = true;
+Super_Checkbox_XFormItem.prototype.useParentTable = false;
 Super_Checkbox_XFormItem.prototype.numCols = 2;
 Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
@@ -302,16 +335,19 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	if(checkBoxLabelLocation) {
 		this.getItems()[0].labelLocation = checkBoxLabelLocation;
 	}
-
+	var trueValue = this.getInheritedProperty("trueValue");
+	var falseValue = this.getInheritedProperty("falseValue");	
+	this.getItems()[0].trueValue = trueValue;
+	this.getItems()[0].falseValue = falseValue;	
 }	
-
+/*
 Super_Checkbox_XFormItem.prototype.outputHTML = function (html, updateScript, indent, currentCol) {
 	this.getForm().outputItemList(this.getItems(), this, html, updateScript, indent, this.getNumCols(), currentCol);
-}
+}*/
 
 Super_Checkbox_XFormItem.prototype.items = [
 	{	type:_CHECKBOX_, ref:".", align:_LEFT_,
-		trueValue:"TRUE", falseValue:"FALSE", 
+		//trueValue:"TRUE", falseValue:"FALSE", 
 		onChange:Composite_XFormItem.onFieldChange,
 		updateElement:function(value) {
 			Super_XFormItem.updateCss.call(this,1);
@@ -340,7 +376,7 @@ Super_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPER_SELECT1_", "super_select1", Super_Select1_XFormItem, Super_XFormItem);
 
 
-Super_Select1_XFormItem.prototype.useParentTable = true;
+Super_Select1_XFormItem.prototype.useParentTable = false;
 Super_Select1_XFormItem.prototype.numCols = 3;
 
 Super_Select1_XFormItem.prototype.items = [

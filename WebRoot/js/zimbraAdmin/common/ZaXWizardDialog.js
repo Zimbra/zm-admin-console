@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -35,52 +35,22 @@
 * This class represents a reusable wizard dialog. 
 * After calling the constructor, define metadata for and call initForm to draw the contents of the dialog
 */
-function ZaXWizardDialog (parent, className, title, w, h) {
+function ZaXWizardDialog (parent, app, className, title, w, h,iKeyName) {
 	if (arguments.length == 0) return;
-	var clsName = className || "DwtDialog";
-	
-	this._pageIx = 1;
-	this._currentPage = 1;
-	this._localXForm = null;
-	this._localXModel = null;
-	this._drawn = false;
-	this._containedObject = null;
-	
+
+	this._standardButtons = [DwtDialog.CANCEL_BUTTON];
+
 	var helpButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.HELP_BUTTON, ZaMsg.TBB_Help, DwtDialog.ALIGN_LEFT, new AjxCallback(this, this._helpButtonListener));
 	var nextButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.NEXT_BUTTON, AjxMsg._next, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.goNext));
 	var prevButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.PREV_BUTTON, AjxMsg._prev, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.goPrev));
 	var finishButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.FINISH_BUTTON, AjxMsg._finish, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.finishWizard));
-	DwtDialog.call(this, parent, clsName, null, [DwtDialog.CANCEL_BUTTON], [helpButton,prevButton,nextButton,finishButton]);
-
-	if (!w) {
-		this._contentW = "80ex";
-	} else {
-		this._contentW = w;
-	}
-	
-	if(!h) {
-		this._contentH = "100ex";
-	} else {
-		this._contentH = h;
-	}
-	
-
-	this._progressDiv = this.getDocument().createElement("div");
-	this._progressDiv.style.position = DwtControl.STATIC_STYLE;
-	
-	this._pageDiv = this.getDocument().createElement("div");
-	this._pageDiv.className = "ZaXWizardDialogPageDiv";
-	this._pageDiv.style.width = this._contentW;
-	this._pageDiv.style.height = this._contentH;
-	this._pageDiv.style.overflow = "auto";
-	
-	this._createContentHtml();	
-
-	this.setTitle(title);
-	this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/administration_console_help.htm";	
+	this._extraButtons = [helpButton,prevButton,nextButton,finishButton];
+	ZaXDialog.call(this, parent,app, className,title, w, h,iKeyName);
+	this._pageIx = 1;
+	this._currentPage = 1;
 }
 
-ZaXWizardDialog.prototype = new DwtDialog;
+ZaXWizardDialog.prototype = new ZaXDialog;
 ZaXWizardDialog.prototype.constructor = ZaXWizardDialog;
 
 //Z-index contants for the tabbed view contents are based on Dwt z-index constants
@@ -89,10 +59,10 @@ ZaXWizardDialog.Z_HIDDEN_PAGE = Dwt.Z_HIDDEN;
 ZaXWizardDialog.Z_TAB_PANEL = Dwt.Z_VIEW+20;
 ZaXWizardDialog.Z_CURTAIN = Dwt.Z_CURTAIN;
 
-ZaXWizardDialog.NEXT_BUTTON = 12;
-ZaXWizardDialog.PREV_BUTTON = 11;
-ZaXWizardDialog.FINISH_BUTTON = 13;
-ZaXWizardDialog.HELP_BUTTON = 14;
+ZaXWizardDialog.NEXT_BUTTON = DwtWizardDialog.NEXT_BUTTON;
+ZaXWizardDialog.PREV_BUTTON = DwtWizardDialog.PREV_BUTTON
+ZaXWizardDialog.FINISH_BUTTON = DwtWizardDialog.FINISH_BUTTON;
+ZaXWizardDialog.HELP_BUTTON = ++ZA_BTN_INDEX;
 
 //public methods
 ZaXWizardDialog.prototype.toString = 
@@ -194,53 +164,6 @@ function(entry) {
 	this._localXForm.setInstance(this._containedObject.attrs);
 }
 
-//private and protected methods
-
-ZaXWizardDialog.prototype._helpButtonListener =
-function() {
-	window.open(this._helpURL);
-}
-
-/**
-* method _createHtml 
-**/
-
-ZaXWizardDialog.prototype._createContentHtml =
-function () {
-
-	this._table = this.getDocument().createElement("table");
-	this._table.border = 0;
-	this._table.width=this._contentW;
-	this._table.cellPadding = 0;
-	this._table.cellSpacing = 0;
-	Dwt.associateElementWithObject(this._table, this);
-	this._table.backgroundColor = DwtCssStyle.getProperty(this.parent.getHtmlElement(), "background-color");
-	
-	var row2; //page
-	var col2;
-	row2 = this._table.insertRow(0);
-	row2.align = "left";
-	row2.vAlign = "middle";
-	
-	col2 = row2.insertCell(row2.cells.length);
-	col2.align = "left";
-	col2.vAlign = "middle";
-	col2.noWrap = true;	
-	col2.width = this._contentW;
-	col2.appendChild(this._pageDiv);
-
-	this._contentDiv.appendChild(this._table);
-}
-
-/**
-* Override _addChild method. We need internal control over layout of the children in this class.
-* Child elements are added to this control in the _createHTML method.
-* @param child
-**/
-ZaXWizardDialog.prototype._addChild =
-function(child) {
-	this._children.add(child);
-}
 
 
 /**
@@ -251,7 +174,7 @@ function(child) {
 function ZaXWizProgressBar(parent) {
 	if (arguments.length == 0) return;
 	DwtComposite.call(this, parent, "ZaXWizProgressBar", DwtControl.STATIC_STYLE);
-	this._table = this.getDocument().createElement("table");
+	this._table = document.createElement("table");
 	this._table.border = 0;
 	this._table.cellPadding = 0;
 	this._table.cellSpacing = 0;
@@ -296,7 +219,7 @@ function (stepKey, stepTitle) {
 	return (++this._stepsNumber);
 }
 
-ZaXWizProgressBar.prototype._addChild =
+ZaXWizProgressBar.prototype.addChild =
 function(child) {
 	this._children.add(child);
 	var row;

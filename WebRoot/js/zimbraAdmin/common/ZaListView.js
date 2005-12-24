@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -82,19 +82,10 @@ function(mouseEv, div) {
 	return true;
 }
 
-ZaListView.prototype._mouseUpAction =
-function(ev, div) {
-	if (ev.button == DwtMouseEvent.LEFT) {
-		if (this._evtMgr.isListenerRegistered(DwtEvent.SELECTION)) {
-			this._selEv.field = ev.target.id.substring(0, 3);
-			this._evtMgr.notifyListeners(DwtEvent.SELECTION, this._selEv);
-		}
-	} else if (ev.button == DwtMouseEvent.RIGHT) {
-		if (this._evtMgr.isListenerRegistered(DwtEvent.ACTION)) {
-			this._actionEv.field = ev.target.id.substring(0, 3);
-			this._evtMgr.notifyListeners(DwtEvent.ACTION, this._actionEv);
-		}
-	}
+ZaListView.prototype._setListEvent =
+function (ev, listEv, clickedEl) {
+	DwtListView.prototype._setListEvent.call(this, ev, listEv, clickedEl);
+	listEv.field = ev.target.id.substring(0, 3);
 	return true;
 }
 
@@ -106,11 +97,6 @@ function(columnItem, bSortAsc) {
     	this._list.sort(ZaItem.compareNamesDesc);
 	}
 	this.setUI();
-}
-
-ZaListView.prototype._getFieldId =
-function(item, field, prfx) {
-	return item ? (this._getViewPrefix() + prfx + item.id) : "";
 }
 
 ZaListView.prototype._columnClicked =

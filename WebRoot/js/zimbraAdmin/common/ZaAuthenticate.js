@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -26,9 +26,11 @@
 function ZaAuthenticate(appCtxt) {
 	if (arguments.length == 0) return;
 	this._appCtxt = appCtxt;
+	this._uname = "";
 }
 
-ZaAuthenticate._isAdmin = true;
+
+ZaAuthenticate.processResponseMethods = new Array();
 
 ZaAuthenticate.prototype.toString = 
 function() {
@@ -43,18 +45,20 @@ function (uname, pword, isPublic) {
 //	var context = soapDoc.set("context", null, header);
 //	context.setAttribute("xmlns", "urn:zimbraAdmin");
 //	soapDoc.set("nosession", null, context);
-		
+	this._uname = uname;
 	soapDoc.set("name", uname);
 	soapDoc.set("password", pword);
 	var resp = ZmCsfeCommand.invoke(soapDoc, true, null, null, true).firstChild;
-	this._setAuthToken(resp);	
+	this._processResponse(resp);	
+	ZaSettings.init();	
 }
 
-ZaAuthenticate.prototype._setAuthToken =
+ZaAuthenticate.prototype._processResponse =
 function(resp) {
 	var els = resp.childNodes;
 	var len = els.length;
 	var el, authToken, sessionId;
+	AjxCookie.setCookie(document, ZaSettings.ADMIN_NAME_COOKIE, this._uname, null, "/");			    	
 	for (var i = 0; i < len; i++) {
 		el = els[i];
 		if (el.nodeName == "authToken")
@@ -65,4 +69,15 @@ function(resp) {
 			sessionId = el.firstChild.nodeValue;
 	}
 	ZmCsfeCommand.setAuthToken(authToken, -1, sessionId);
+
+	//Instrumentation code start
+	if(ZaAuthenticate.processResponseMethods) {
+		var cnt = ZaAuthenticate.processResponseMethods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(ZaAuthenticate.processResponseMethods[i]) == "function") {
+				ZaAuthenticate.processResponseMethods[i].call(this,resp);
+			}
+		}
+	}	
+	//Instrumentation code end		
 }

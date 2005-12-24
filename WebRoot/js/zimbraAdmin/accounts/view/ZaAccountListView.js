@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -63,7 +63,7 @@ function () {
 ZaAccountListView.prototype._createItemHtml =
 function(account, now, isDndIcon) {
 	var html = new Array(50);
-	var	div = this.getDocument().createElement("div");
+	var	div = document.createElement("div");
 	div._styleClass = "Row";
 	div._selectedStyleClass = div._styleClass + "-" + DwtCssStyle.SELECTED;
 	div.className = div._styleClass;
@@ -133,7 +133,7 @@ function() {
 
 	var headerList = new Array();
 	
-	headerList[0] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, 90, true, "objectClass", true, true);
+	headerList[0] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, 40, true, "objectClass", true, true);
 
 	headerList[1] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.ALV_Name_col, null, 195, true, ZaAccount.A_name, true, true);
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
@@ -150,9 +150,11 @@ function() {
 ZaAccountListView.prototype._sortColumn = 
 function(columnItem, bSortAsc) {
 	try {
-		var searchResult=ZaSearch.searchByQueryHolder(this._app.getAccountListController().getQuery(),this._app.getAccountListController().getPageNum(), columnItem.getSortField(), bSortAsc, this._app)
+		//var searchResult=ZaSearch.searchByQueryHolder(this._app.getAccountListController().getQuery(),this._app.getAccountListController().getPageNum(), columnItem.getSortField(), bSortAsc, this._app)
 		this._app.getAccountListController().setSortOrder(bSortAsc);
-		this._app.getAccountListController().show(searchResult);
+		this._app.getAccountListController().setSortField(columnItem.getSortField());
+		this._app.getAccountListController().search(this._app.getAccountListController().getQuery());
+		//this._app.getAccountListController().show(searchResult);
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex);
 	}

@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -24,9 +24,9 @@
  */
 
 function ZaCosListController(appCtxt, container, app) {
-	ZaController.call(this, appCtxt, container, app);
-	this._evtMgr = new AjxEventMgr();	
-	this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/cos/class_of_service.htm";				
+	ZaController.call(this, appCtxt, container, app, "ZaCosListController");
+	this.objType = ZaEvent.S_COS;	
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/cos/class_of_service.htm";				
 }
 
 ZaCosListController.prototype = new ZaController();
@@ -129,7 +129,7 @@ function (ev) {
 	//if any of the data that is currently visible has changed - update the view
 	if(ev) {
 		var details = ev.getDetails();
-		if(details["mods"][ZaCos.A_name] || details["mods"][ZaCos.A_description]) {
+		if(details && (details["mods"][ZaCos.A_name] || details["mods"][ZaCos.A_description])) {
 			this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
@@ -147,24 +147,6 @@ function(listener) {
 	this._evtMgr.addListener(ZaEvent.E_REMOVE, listener);
 }
 
-/**
-*	Private method that notifies listeners to that the controlled ZaCos is (are) removed
-* 	@param details
-*/
-ZaCosListController.prototype._fireCOSRemovalEvent =
-function(details) {
-	try {
-		if (this._evtMgr.isListenerRegistered(ZaEvent.E_REMOVE)) {
-			var evt = new ZaEvent(ZaEvent.S_COS);
-			evt.set(ZaEvent.E_REMOVE, this);
-			evt.setDetails(details);
-			this._evtMgr.notifyListeners(ZaEvent.E_REMOVE, evt);
-		}
-	} catch (ex) {
-		this._handleException(ex, ZaCosListController.prototype._fireCOSRemovalEvent, details, false);	
-	}
-}
-
 // refresh button was pressed
 ZaCosListController.prototype._refreshButtonListener =
 function(ev) {
@@ -176,8 +158,8 @@ function(ev) {
 ZaCosListController.prototype._duplicateButtonListener =
 function(ev) {
 	var newCos = new ZaCos(this._app); //new COS
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()) {
-		var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+	if(this._contentView.getSelectionCount() == 1) {
+		var item = this._contentView.getSelection()[0];
 		if(item && item.attrs) { //copy the attributes from the selected COS to the new COS
 			for(var aname in item.attrs) {
 				if( (aname == ZaItem.A_objectClass) || (aname == ZaItem.A_zimbraId) || (aname == ZaCos.A_name) || (aname == ZaCos.A_description) || (aname == ZaCos.A_notes) )
@@ -235,8 +217,8 @@ function (ev) {
 **/
 ZaCosListController.prototype._editButtonListener =
 function(ev) {
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()) {
-		var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+	if(this._contentView.getSelectionCount() == 1) {
+		var item = this._contentView.getSelection()[0];
 		this._app.getCosController().show(item);
 	}
 }
@@ -247,17 +229,19 @@ function(ev) {
 ZaCosListController.prototype._deleteButtonListener =
 function(ev) {
 	this._removeList = new Array();
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getArray()) {
-		var arrDivs = this._contentView.getSelectedItems().getArray();
-		for(var key in arrDivs) {
-			var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
-			if(item) {
-				this._removeList.push(item);
+	if(this._contentView.getSelectionCount() > 0) {
+		var arrItems = this._contentView.getSelection();
+		var cnt = arrItems.length;
+		for(var key =0; key < cnt; key++) {
+		
+		//	var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
+			if(arrItems[key]) {
+				this._removeList.push(arrItems[key]);
 			}
 		}
 	}
 	if(this._removeList.length) {
-		dlgMsg = ZaMsg.Q_DELETE_COS;
+		dlgMsg = ZaMsg.Q_DELETE_COSES;
 		dlgMsg +=  "<br><ul>";
 		var i=0;
 		for(var key in this._removeList) {
@@ -309,7 +293,7 @@ function () {
 		}
 		this._list.remove(this._removeList[key]); //remove from the list
 	}
-	this._fireCOSRemovalEvent(successRemList); 	
+	this.fireRemovalEvent(successRemList); 	
 	this._removeConfirmMessageDialog.popdown();
 	this._contentView.setUI();
 	this.show();

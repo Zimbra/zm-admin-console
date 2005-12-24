@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -32,7 +32,7 @@
 **/
 function ZaGALConfigXWizard (parent, app) {
 	this._app=app;
-	ZaXWizardDialog.call(this, parent, null, ZaMsg.NCD_GALConfigTitle, "550px", "300px");
+	ZaXWizardDialog.call(this, parent,app, null, ZaMsg.NCD_GALConfigTitle, "550px", "300px");
 	this.stepChoices = [
 		{label:ZaMsg.TABT_GALMode, value:1},
 		{label:ZaMsg.TABT_GALonfiguration, value:2}, 
@@ -55,6 +55,7 @@ function ZaGALConfigXWizard (parent, app) {
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaGALConfigXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaGALConfigXWizard.prototype.handleXFormChange));	
 	this.lastErrorStep=0;
+	this._helpURL="/zimbraAdmin/adminhelp/html/WebHelp/managing_domains/using_the_global_address_list_(gal).htm"
 	
 }
 
@@ -127,7 +128,7 @@ function(entry) {
 	for (var a in entry.attrs) {
 		this._containedObject.attrs[a] = entry.attrs[a];
 	}
-	
+	this.setTitle(ZaMsg.NCD_GALConfigTitle + " (" + entry.name + ")");
 	this._containedObject[ZaModel.currentStep] = 1;
 	this._localXForm.setInstance(this._containedObject);	
 }
@@ -308,6 +309,22 @@ function () {
 
 ZaGALConfigXWizard.prototype.goNext = 
 function() {
+/*	if(this._localXForm.hasErrors()) {
+		this._app.getCurrentController().popupErrorDialog("Please correct errors");		
+		return;
+	}
+*/
+	if(this._containedObject[ZaModel.currentStep] == 2 && this._containedObject.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal) {	
+		//check that Filter is provided and at least one server
+		if(!this._containedObject.attrs[ZaDomain.A_GalLdapFilter]) {
+			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);			
+			return;
+		}
+		if(!this._containedObject.attrs[ZaDomain.A_GalLdapURL] || this._containedObject.attrs[ZaDomain.A_GalLdapURL].length < 1) {
+			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);					
+			return;
+		}
+	} 
 	if(this._containedObject[ZaModel.currentStep] == 3) {
 		//clear the password if the checkbox is unchecked
 		if(this._containedObject.attrs[ZaDomain.A_UseBindPassword]=="FALSE") {
@@ -322,6 +339,10 @@ function() {
 		}
 		this.goPage(4);
 	} else if(this._containedObject[ZaModel.currentStep] == 4) {
+		if(!this._containedObject[ZaDomain.A_GALSampleQuery]) {
+			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_TERM_REQUIRED);			
+			return;
+		}
  		this.testSetings();
 		this.goPage(5);
 	} else {
@@ -355,7 +376,10 @@ function () {
 									{type:_OUTPUT_, label:null, labelLocation:_NONE_, value:ZaMsg.Domain_GALUseSSL, width:"40px"}									
 								]
 							},
-							{ref:ZaDomain.A_GalLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"ldap://server:389", showAddButton:true, showRemoveButton:true,  
+							{ref:ZaDomain.A_GalLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,  
+								addButtonLabel:ZaMsg.Domain_AddURL, 
+								removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
+								showAddOnNextRow:true,							
 								items: [
 									{ref:".", type:_LDAPURL_, label:null, labelLocation:_NONE_}
 								]

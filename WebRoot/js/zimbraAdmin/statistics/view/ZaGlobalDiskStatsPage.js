@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -51,7 +51,7 @@ function() {
 ZaGlobalDiskStatsPage.prototype.showMe = 
 function() {
 	if(!this._rendered) {
-		var elem = Dwt.getDomObj(this.getDocument(), this.cellId);
+		var elem = document.getElementById(this.cellId);
 		elem.appendChild(this.internalView.getHtmlElement());
 		this._rendered = true;
 	}	

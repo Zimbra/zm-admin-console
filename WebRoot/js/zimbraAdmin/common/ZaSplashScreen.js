@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -33,12 +33,13 @@ ZaSplashScreen.prototype.constructor = ZaSplashScreen;
 
 ZaSplashScreen.prototype.getDefaultSubstitutions = function (){
 	if (ZaSplashScreen._defaultSubstitutions == null) {
+		var dateFormatter = AjxDateFormat.getDateInstance();
 		ZaSplashScreen._defaultSubstitutions = {
 			url:ZaMsg.splashScreenZimbraUrl,
 			shortVersion: "BETA",
 			appName: ZaMsg.splashScreenAppName,
 			version: AjxBuffer.concat(ZaMsg.splashScreenVersion, " ", ZaServerVersionInfo.version , " " ,
-									  AjxDateUtil.getTimeStr(ZaServerVersionInfo.buildDate,"%t %d %Y")),
+									  dateFormatter.format(ZaServerVersionInfo.buildDate)),
 			contents: AjxBuffer.concat("<br>", ZaMsg.splashScreenLoading, "<br><br>", AjxImg.getImageHtml("BarberPole_216")),
 			license: ZaMsg.splashScreenCopyright	
 		}

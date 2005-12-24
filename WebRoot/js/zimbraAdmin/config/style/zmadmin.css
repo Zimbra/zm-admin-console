@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -71,7 +71,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 }
 .MainShell {
 	background-color: #B7B7B7;
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_steel.gif);
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Steel__BG.gif);
 }
 
 
@@ -87,7 +87,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 }
 .ZaSplashScreen, .ZaSplashScreen table {
 	background-color: #B7B7B7;
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_steel.gif);
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Steel__BG.gif);
 }
 
 
@@ -97,7 +97,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZmLoginDialog-Transparent {background-color: transparent;}
 .ZmLoginDialog-HeaderPanel, .ZmLoginDialog-MainPanel {width: 448px;}
 .ZmLoginDialog-HeaderPanel {
-	background-image: url("/zimbraAdmin/img/hiRes/logo/Admin_LoginBanner.gif");
+	background-image: url(/zimbraAdmin/img/loRes/logo/Admin_LoginBanner.gif);
 	border: 1px solid rgb(124, 124, 148);
 }
 .ZmLoginDialog-HeaderText, .ZmLoginDialog-SubHeaderText {
@@ -130,7 +130,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 /* Login Panel */
 .ZaLoginDialog {
 	background-color: #b7b7b7; 
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_steel.gif);
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Steel__BG.gif);
 	overflow:hidden;
 	align:center;
 }
@@ -138,13 +138,13 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 .ZaLoginDialog-MainPanel {
 	width: 447px;
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_pebble.gif);
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Pebble__BG.gif);
 }
 
 .ZaLoginDialog-TopPanel {
   border: 2px solid; 
   border-color: #C7C7C7 #3E3E3E #3E3E3E #C7C7C7;
-  background-image:url(/zimbra/skins/steel/images/bg_pebble.gif);
+  background-image:url(/zimbraAdmin/img/loRes/skins/steel/Pebble__BG.gif);
 }
 
 
@@ -167,13 +167,13 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaLoginButton {
 	font-size: 12px;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	background-image:url(/zimbra/img/hiRes/dwt/ButtonUp__H.gif);
+	background-image:url(/zimbraAdmin/img/hiRes/dwt/ButtonUp__H.gif);
 	border:1px outset #999999;	
 	width:50px;
 }
 
 .ZaLoginButton-activated {
-	background-image:url(/zimbra/img/hiRes/dwt/ButtonDown__H.gif);
+	background-image:url(/zimbraAdmin/img/hiRes/dwt/ButtonDown__H.gif);
 	border:1px outset #999999;	
 	font-size: 12px;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
@@ -181,7 +181,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 }
 
 .ZaLoginButton-triggered {
-	background-image:url(/zimbra/img/hiRes/dwt/ButtonDown__H.gif);
+	background-image:url(/zimbraAdmin/img/hiRes/dwt/ButtonDown__H.gif);
 	border:1px inset #999999;	
 	font-size: 12px;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
@@ -355,7 +355,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 .ZaToolBar {
 	width: 100%;
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_pebble.gif);
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Pebble__BG.gif);
 	border-style: solid;
 	border-width: 0px 0px 2px 0px;
 	border-bottom-color: #777777;
@@ -406,7 +406,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 .HeaderPanel {
 	width:100%;
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_steel.gif);	
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Steel__BG.gif);	
 	border-style: solid;
 	border-width: 0px 0px 2px 0px;
 	border-bottom-color: #777777;	
@@ -446,6 +446,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 /** distribution list stuff **/
 .ZaDLView {
   background-color:#EEEEEE;
+  overflow:auto;
 }
 
 .DLSource, .DLTarget { 
@@ -472,6 +473,12 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
   border-right: 2px solid #FAFAFA;
 }
 
+.ZaDLView .admin_xform_name_input{ 
+  border-top: 2px solid #848484;
+  border-left: 2px solid #848484;
+  border-bottom: 2px solid #FAFAFA;
+  border-right: 2px solid #FAFAFA;
+}
 
 .DLOptionalAddBox { 
   width:195px;
@@ -489,7 +496,6 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaServicesListView,
 .ZaClusterServicesListView { 
   width:100%;
-  height:100%;
   background-color:rgb(255,255,255)
 }
 
@@ -530,7 +536,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 }
 
 .ZaClusterServicesListView .DwtListView-Rows{ 
-  height:auto;
+  height:100%;
   border-bottom: 1px solid #999999;  
 }
 .ZaClusterServicesListView .Row, .ZaClusterServicesListView .Row-selected {
@@ -544,11 +550,26 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 /* Tab button grid */
 .ZaTabBar {
-	background-image:url(/zimbraAdmin/skins/steel/images/bg_pebble.gif);
+	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Pebble__BG.gif);
 }
 
 .AdminTitle {
 	font-size: 14pt;
 	font-style: bold;	
 	font-family: arial;
+}
+
+.progressbar {
+	width: 200px;
+	border: 1px solid white;
+	background-color: white;
+}
+
+.progressused {
+	height: 20px;
+	font-size: 20px; /* WEIRD IE QUIRK */
+}
+
+.ImgAppBanner {
+	cursor:hand;
 }

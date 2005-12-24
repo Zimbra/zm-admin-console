@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -28,12 +28,12 @@ function ZaClientCmdHandler(appCtxt) {
 	this._settings = new Object();
 }
 
-ZaClientCmdHandler.DBG = new Object();
+/*ZaClientCmdHandler.DBG = new Object();
 ZaClientCmdHandler.DBG[0] = AjxDebug.DBG_NONE;
 ZaClientCmdHandler.DBG[1] = AjxDebug.DBG1;
 ZaClientCmdHandler.DBG[2] = AjxDebug.DBG2;
 ZaClientCmdHandler.DBG[3] = AjxDebug.DBG3;
-
+*/
 ZaClientCmdHandler.prototype.execute =
 function(argv) {
 	if (argv[0] && argv[0].toLowerCase() == "debug") {
@@ -45,7 +45,7 @@ function(argv) {
 			DBG.showTiming(!on);
 		} else {
 			var arg = Number(argv[1]);
-			var level = ZaClientCmdHandler.DBG[arg];
+			var level = AjxDebug.DBG[arg];
 			if (level) {
 				alert("Setting Debug to level:" + level);
 				DBG.setDebugLevel(level);

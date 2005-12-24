@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -52,16 +52,16 @@ function (item) {
 	if(item) {
 		if(item.attrs && item.attrs[ZaServer.A_ServiceHostname]) {
 			var newSrc = "/service/statsimg/" + item.attrs[ZaServer.A_ServiceHostname] + "/rcvdmsgs/d/1";
-			var imgElement = Dwt.getDomObj(this.getDocument(), this._1DayImgID);
+			var imgElement = document.getElementById(this._1DayImgID);
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}
-			imgElement = Dwt.getDomObj(this.getDocument(), this._3MonthImgID);	
+			imgElement = document.getElementById(this._3MonthImgID);	
 			newSrc = "/service/statsimg/" + item.attrs[ZaServer.A_ServiceHostname] + "/rcvdmsgs/m/3";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}
-			imgElement = Dwt.getDomObj(this.getDocument(), this._12MonthImgID);		
+			imgElement = document.getElementById(this._12MonthImgID);		
 			newSrc = "/service/statsimg/" + item.attrs[ZaServer.A_ServiceHostname] + "/rcvdmsgs/m/12";			
 			if(imgElement) {
 				imgElement.src = newSrc;

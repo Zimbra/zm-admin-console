@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -29,9 +29,8 @@
 * This is a singleton object that controls all the user interaction with the list of ZaServer objects
 **/
 function ZaServerListController(appCtxt, container, app) {
-	ZaController.call(this, appCtxt, container, app);
-	this._evtMgr = new AjxEventMgr();
-	this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/managing_servers/managing_servers.htm";					
+	ZaController.call(this, appCtxt, container, app,"ZaServerListController");
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/managing_servers.htm";					
 }
 
 ZaServerListController.prototype = new ZaController();
@@ -173,15 +172,6 @@ function (nextViewCtrlr, func, params) {
 }
 
 /**
-* public getToolBar
-* @return reference to the toolbar
-**/
-ZaServerListController.prototype.getToolBar = 
-function () {
-	return this._toolBar;	
-}
-
-/**
 * Adds listener to removal of an ZaServer 
 * @param listener
 **/
@@ -220,7 +210,7 @@ function(details) {
 // new button was pressed
 ZaServerListController.prototype._newButtonListener =
 function(ev) {
-	var newServer = new ZaServer();
+	var newServer = new ZaServer(this._app);
 	this._app.getServerController().show(newServer);
 }
 
@@ -264,12 +254,12 @@ function(ev) {
 ZaServerListController.prototype._deleteButtonListener =
 function(ev) {
 	this._removeList = new Array();
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getArray()) {
-		var arrDivs = this._contentView.getSelectedItems().getArray();
-		for(var key in arrDivs) {
-			var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
-			if(item) {
-				this._removeList.push(item);		
+	if(this._contentView.getSelectionCount() > 0) {
+		var arrItems = this._contentView.getSelection();
+		var cnt = arrItems.length;
+		for(var key =0; key < cnt; key++) {
+			if(arrItems[key]) {
+				this._removeList.push(arrItems[key]);		
 			}
 		}
 	}

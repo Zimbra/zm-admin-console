@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -76,7 +76,28 @@ EmailAddr_XFormItem.prototype.items = [
 		}
 	},
 	{type:_OUTPUT_, value:"@"},
-	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, relevantBehavior:_PARENT_, choices:EmailAddr_XFormItem.domainChoices,
+	{type:_OUTPUT_,ref:".",relevant:"!ZaSettings.DOMAINS_ENABLED", relevantBehavior:_HIDE_,
+		choices:EmailAddr_XFormItem.domainChoices,
+		getDisplayValue:function (itemVal){
+			var val = null;
+			if(itemVal) {
+				var emailChunks = itemVal.split("@");
+			
+				if(emailChunks.length > 1 ) {
+					val = emailChunks[1];
+				} 
+			}
+			if(!val) {
+				val = this.getChoices()._choiceObject[0].name;
+			}	
+			this.getParentItem()._domainPart = val;
+			
+			return val;
+		}	
+	},
+	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, relevantBehavior:_HIDE_, 
+	 choices:EmailAddr_XFormItem.domainChoices,
+	 relevant:"ZaSettings.DOMAINS_ENABLED",
 	 errorLocation:_PARENT_,
 		getDisplayValue:function (itemVal){
 			var val = null;

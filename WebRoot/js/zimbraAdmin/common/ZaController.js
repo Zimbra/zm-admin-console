@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -29,10 +29,11 @@
 * @author Greg Solovyev
 * Base class for all Controller classes in ZimbraAdmin UI
 */
-function ZaController(appCtxt, container, app, isAdmin) {
+function ZaController(appCtxt, container, app, iKeyName) {
 
 	if (arguments.length == 0) return;
-
+	this._evtMgr = new AjxEventMgr();	
+	this._iKeyName = iKeyName;
 	this._appCtxt = appCtxt;
 	this._container = container;
 	this._app = app;
@@ -43,29 +44,31 @@ function ZaController(appCtxt, container, app, isAdmin) {
 	
 	this._authenticating = false;
 
-	this._loginDialog = appCtxt.getLoginDialog(isAdmin);
+	this._loginDialog = appCtxt.getLoginDialog();
 	this._loginDialog.registerCallback(this._loginCallback, this);
 
 	this._msgDialog = appCtxt.getMsgDialog();
 	this._errorDialog = appCtxt.getErrorDialog();
-	
+	this._confirmMessageDialog = new ZaMsgDialog(this._shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);					
     this._errorDialog.registerCallback(DwtDialog.OK_BUTTON, this._errorDialogCallback, this);
     this._msgDialog.registerCallback(DwtDialog.OK_BUTTON, this._msgDialogCallback, this);    
     if(app) {
-//    	this._errorDialog.setApp(app);
     	this._msgDialog.setApp(app);    	
     }	
-    
-    this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/administration_console_help.htm";
+    this.objType = ZaEvent.S_ACCOUNT;
+    this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm";
 }
 
-var i = 1;
+ZaController.initToolbarMethods = new Object();
+ZaController.initPopupMenuMethods = new Object();
+ZaController.setViewMethods = new Object();
 
 // Public methods
 ZaController.prototype.toString = 
 function() {
 	return "ZaController";
 }
+
 
 ZaController.prototype.setDirty = 
 function (isD) {
@@ -86,17 +89,17 @@ function(enable) {
 ZaController.prototype.popupErrorDialog = 
 function(msg, ex, noExecReset)  {
 	if (!noExecReset)
-		this._execFrame = {method: null, params: null, restartOnError: false};
+		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	var detailStr = "";
 	if(ex != null) {
 		if(ex.msg) {
-			detailStr += "Message:  ";
+			detailStr += ZaMsg.ERROR_MESSAGE + "  ";
 		    detailStr += ex.msg;
 		    detailStr += "\n";			    
 		}
 		if(ex.code) {
-			detailStr += "Code:  ";
+			detailStr += ZaMsg.ERROR_CODE + "  ";
 		    detailStr += ex.code;
 		    detailStr += "\n";			    
 		}
@@ -106,9 +109,18 @@ function(msg, ex, noExecReset)  {
 		    detailStr += "\n";			    
 		}
 		if(ex.detail) {
-			detailStr += "Details:  ";
+			detailStr += ZaMsg.ERROR_DETAILS;
 		    detailStr += ex.detail;
 		    detailStr += "\n";			    
+		}
+		
+		if(!detailStr || detailStr == "") {
+			for (var ix in ex) {
+				detailStr += ix;
+				detailStr += ": ";
+				detailStr += ex[ix].toString();
+				detailStr += "\n";
+			}
 		}
 	}
 	// popup alert
@@ -121,7 +133,7 @@ function(msg, ex, noExecReset)  {
 ZaController.prototype.popupMsgDialog = 
 function(msg, noExecReset)  {
 	if (!noExecReset)
-		this._execFrame = {method: null, params: null, restartOnError: false};
+		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	// popup alert
 	this._msgDialog.setMessage(msg, DwtMessageDialog.INFO_STYLE, ZaMsg.zimbraAdminTitle);
@@ -151,9 +163,20 @@ function (nextViewCtrlr, func, params) {
 //Private/protected methods
 
 ZaController.prototype._setView =
-function() {
-
+function(entry) {
+	//Instrumentation code start
+	if(ZaController.setViewMethods[this._iKeyName]) {
+		var methods = ZaController.setViewMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this,entry);
+			}
+		}
+	}	
+	//Instrumentation code end	
 }
+
 
 ZaController.prototype._helpButtonListener =
 function() {
@@ -174,13 +197,7 @@ function(method, params, delay) {
 		delay = 0;
 		this._shell.setBusy(true);
 	}
-	this._action = new AjxTimedAction();
-	this._action.obj = this;
-	this._action.method = ZaController._exec;
-	this._action.params.removeAll();
-	this._action.params.add(method);
-	this._action.params.add(params);
-	this._action.params.add(delay);
+	this._action = new AjxTimedAction(this, ZaController._exec, [method, params, delay]);
 	return AjxTimedAction.scheduleAction(this._action, delay);
 }
 
@@ -220,7 +237,7 @@ function(ex, method, params, restartOnError, obj) {
 		if (ex.code == ZmCsfeException.SVC_AUTH_EXPIRED) 
 		{
 			// remember the last search attempted ONLY for expired auto token exception
-			this._execFrame = {obj: obj, method: method, params: params, restartOnError: restartOnError};
+			this._execFrame = {obj: obj, func: method, args: params, restartOnError: restartOnError};
 			this._loginDialog.registerCallback(this._loginCallback, this);
 			this._loginDialog.setError(ZaMsg.ERROR_SESSION_EXPIRED);
 		} else {
@@ -232,7 +249,7 @@ function(ex, method, params, restartOnError, obj) {
 	} 
 	else 
 	{
-		this._execFrame = {obj: obj, method: method, params: params, restartOnError: restartOnError};
+		this._execFrame = {obj: obj, func: method, args: params, restartOnError: restartOnError};
 		this._errorDialog.registerCallback(DwtDialog.OK_BUTTON, this._errorDialogCallback, this);
 		if (ex.code == ZmCsfeException.SOAP_ERROR) {
 			this.popupMsgDialog(ZaMsg.SOAP_ERROR, ex, true);
@@ -303,8 +320,8 @@ function() {
 /*********** Login dialog Callbacks */
 
 ZaController.prototype._loginCallback =
-function(args) {
-	this._schedule(this._doAuth, {username: args[0], password: args[1]});
+function(name, password) {
+	this._schedule(this._doAuth, {username: name, password: password});
 }
 
 
@@ -315,7 +332,7 @@ function() {
 	this._errorDialog.popdown();
 	if (this._execFrame) {
 		if (this._execFrame.restartOnError && !this._authenticating)
-			this._execFrame.method.call(this, this._execFrame.params);
+			this._execFrame.method.apply(this, this._execFrame.args);
 		this._execFrame = null;
 	}
 }
@@ -325,7 +342,104 @@ function() {
 	this._msgDialog.popdown();
 	if (this._execFrame) {
 		if (this._execFrame.restartOnError && !this._authenticating)
-			this._execFrame.method.call(this, this._execFrame.params);
+			this._execFrame.method.apply(this, this._execFrame.args);
 		this._execFrame = null;
 	}	
+}
+
+ZaController.prototype._initToolbar = function () {
+	//Instrumentation code start
+	if(ZaController.initToolbarMethods[this._iKeyName]) {
+		var methods = ZaController.initToolbarMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this);
+			}
+		}
+	}	
+	//Instrumentation code end
+}
+
+ZaController.prototype._initPopupMenu = function () {
+	//Instrumentation code start
+	if(ZaController.initPopupMenuMethods[this._iKeyName]) {
+		var methods = ZaController.initPopupMenuMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this);
+			}
+		}
+	}	
+	//Instrumentation code end
+}
+
+ZaController.prototype.closeCnfrmDlg = 
+function () {
+	if(this._confirmMessageDialog)
+		this._confirmMessageDialog.popdown();	
+}
+
+/**
+* public getToolBar
+* @return reference to the toolbar
+**/
+ZaController.prototype.getToolBar = 
+function () {
+	return this._toolbar;	
+}
+
+/**
+* Adds listener to creation of an ZaAccount 
+* @param listener
+**/
+ZaController.prototype.addCreationListener = 
+function(listener) {
+	this._evtMgr.addListener(ZaEvent.E_CREATE, listener);
+}
+
+/**
+* Removes listener to creation of an ZaAccount 
+* @param listener
+**/
+ZaController.prototype.removeCreationListener = 
+function(listener) {
+	this._evtMgr.removeListener(ZaEvent.E_CREATE, listener);    	
+}
+
+/**
+* Adds listener to removal of an ZaAccount 
+* @param listener
+**/
+ZaController.prototype.addRemovalListener = 
+function(listener) {
+	this._evtMgr.addListener(ZaEvent.E_REMOVE, listener);
+}
+
+/**
+* Removes listener to removal of an ZaAccount 
+* @param listener
+**/
+ZaController.prototype.removeRemovalListener = 
+function(listener) {
+	this._evtMgr.removeListener(ZaEvent.E_REMOVE, listener);    	
+}
+
+/**
+*	Private method that notifies listeners to that the controlled ZaAccount is (are) removed
+* 	@param details
+*/
+ZaController.prototype.fireRemovalEvent =
+function(details) {
+	try {
+		if (this._evtMgr.isListenerRegistered(ZaEvent.E_REMOVE)) {
+			var evt = new ZaEvent(this.objType);
+			evt.set(ZaEvent.E_REMOVE, this);
+			evt.setDetails(details);
+			this._evtMgr.notifyListeners(ZaEvent.E_REMOVE, evt);
+		}
+	} catch (ex) {
+		this._handleException(ex, "ZaController.prototype.fireRemovalEvent", details, false);	
+	}
 }

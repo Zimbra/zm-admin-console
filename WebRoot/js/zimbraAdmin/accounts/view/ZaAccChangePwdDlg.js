@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -56,12 +56,12 @@ function() {
 ZaAccChangePwdDlg.prototype.popup =
 function(mustChange) {
 	DwtDialog.prototype.popup.call(this);
-	var ePassword = Dwt.getDomObj(this.getDocument(), this._fieldIds[ZaAccChangePwdDlg.F_password]);
+	var ePassword = document.getElementById(this._fieldIds[ZaAccChangePwdDlg.F_password]);
 	ePassword.focus();
 	if(this._app) {
 		this._app.getCurrentController().setEnabled(false);	
 	}
-	var eField = Dwt.getDomObj(this.getDocument(), this._fieldIds[ZaAccChangePwdDlg.F_zimbraPasswordMustChange]);
+	var eField = document.getElementById(this._fieldIds[ZaAccChangePwdDlg.F_zimbraPasswordMustChange]);
 	if(!eField)
 		return true;
 		
@@ -73,7 +73,7 @@ function(mustChange) {
 
 ZaAccChangePwdDlg.prototype.getPassword = 
 function () {
-	var ePassword = Dwt.getDomObj(this.getDocument(), this._fieldIds[ZaAccChangePwdDlg.F_password]);
+	var ePassword = document.getElementById(this._fieldIds[ZaAccChangePwdDlg.F_password]);
 	if(ePassword) {
 		return ePassword.value;
 	}
@@ -81,7 +81,7 @@ function () {
 
 ZaAccChangePwdDlg.prototype.getMustChangePassword = 
 function () {
-	var eField = Dwt.getDomObj(this.getDocument(), this._fieldIds[ZaAccChangePwdDlg.F_zimbraPasswordMustChange]);
+	var eField = document.getElementById(this._fieldIds[ZaAccChangePwdDlg.F_zimbraPasswordMustChange]);
 	if(eField) {
 		if(eField.checked) {
 			return true;
@@ -93,7 +93,7 @@ function () {
 
 ZaAccChangePwdDlg.prototype.getConfirmPassword = 
 function () {
-	var eConfPassword = Dwt.getDomObj(this.getDocument(), this._fieldIds[ZaAccChangePwdDlg.F_confirmPassword]);
+	var eConfPassword = document.getElementById(this._fieldIds[ZaAccChangePwdDlg.F_confirmPassword]);
 	if(eConfPassword) {
 		return eConfPassword.value;
 	}
@@ -109,7 +109,7 @@ function(field, title, html, idx, type) {
 	html[idx++] = "<td width='30%' align='left'>";
 	html[idx++] = title;
 	html[idx++] = "</td>";
-	html[idx++] = "<td width='70%' align='left'><input style='width:100%;' type='"+type+"' id='";	
+	html[idx++] = "<td width='70%' align='left'><input autocomplete='off' style='width:100%;' type='"+type+"' id='";	
 	html[idx++] = id;
 	html[idx++] = "'/>";
 	html[idx++] = "</td></tr>";
@@ -132,8 +132,8 @@ function(field, title, html, idx) {
 ZaAccChangePwdDlg.prototype._createPwdHtml =
 function(html, idx) {
 	html[idx++] = "<table cellpadding='3' cellspacing='2' border='0' width='100%'>";
-	idx = this._addEntryRow(ZaAccChangePwdDlg.F_password, ZaMsg.NAD_Password+":", html, idx, "password");
-	idx = this._addEntryRow(ZaAccChangePwdDlg.F_confirmPassword, ZaMsg.NAD_ConfirmPassword+":", html, idx, "password");
+	idx = this._addEntryRow(ZaAccChangePwdDlg.F_password, ZaMsg.NAD_Password, html, idx, "password");
+	idx = this._addEntryRow(ZaAccChangePwdDlg.F_confirmPassword, ZaMsg.NAD_ConfirmPassword, html, idx, "password");
 	idx = this._addEntryRow2(ZaAccChangePwdDlg.F_zimbraPasswordMustChange, ZaMsg.NAD_MustChangePwd, html, idx);	
 	html[idx++] = "</table>";
 	return idx;

@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -23,11 +23,11 @@
  * ***** END LICENSE BLOCK *****
  */
 
-function ZaSearchToolBar(parent, posStyle) {
+function ZaSearchToolBar(parent, posStyle, app) {
 
 	ZaToolBar.call(this, parent, null, posStyle, "SearchToolBar");
-
-	this._searchField = new ZaSearchField(this, "SearchTBSearchField", 48);
+	this._app = app;
+	this._searchField = new ZaSearchField(this, "SearchTBSearchField", 48, null, this._app);
 //	var h1 = this._searchField.getSize().y;
 		
 	//this.setSize(DwtControl.DEFAULT, Math.max(this._searchField.getSize().y, this.computeHeight()));

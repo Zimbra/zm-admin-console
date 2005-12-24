@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -84,7 +84,7 @@ ZaHelpView.prototype.getMyXForm = function() {
 					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_, value:AjxImg.getImageHtml("Help")},
-							{type:_ANCHOR_, cssStyle:"font-size:12px;", showInNewWindow:true, labelLocation:_NONE_, label:ZaMsg.HELP_PAGE_2, href:"/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/administration_console_help.htm"}
+							{type:_ANCHOR_, cssStyle:"font-size:12px;", showInNewWindow:true, labelLocation:_NONE_, label:ZaMsg.HELP_PAGE_2, href:"/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm"}
 						]
 					},
 					{type:_GROUP_,numCols:2,

@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -34,8 +34,11 @@
 * @author Greg Solovyev
 **/
 function ZaAccountListController(appCtxt, container, app) {
-	ZaController.call(this, appCtxt, container, app);
-	this._evtMgr = new AjxEventMgr();			
+	ZaController.call(this, appCtxt, container, app, "ZaAccountListController");
+    //Account operations
+   	this._toolbarOperations = new Array();
+   	this._popupOperations = new Array();			
+   	
 	this._currentPageNum = 1;
 	this._currentQuery = new ZaSearchQuery("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS], false, "");
 	this._currentSortField = ZaAccount.A_uid;
@@ -44,101 +47,35 @@ function ZaAccountListController(appCtxt, container, app) {
 	this._searchPanel = null;
 	this._searchField = null;
 	this._defaultType = ZaItem.ACCOUNT;
-	this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/managing_accounts/provisioning_accounts.htm";	
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_accounts/provisioning_accounts.htm";	
+	this._UICreated = false;
+	this.objType = ZaEvent.S_ACCOUNT;	
 }
 
 ZaAccountListController.prototype = new ZaController();
 ZaAccountListController.prototype.constructor = ZaAccountListController;
 
-//ZaAccountListController.ACCOUNT_VIEW = "ZaAccountListController.ACCOUNT_VIEW";
+ZaController.initToolbarMethods["ZaAccountListController"] = new Array();
+ZaController.initPopupMenuMethods["ZaAccountListController"] = new Array();
 
 ZaAccountListController.prototype.show = 
 function(searchResult) {
-    if (!this._contentView) {
-		//create accounts list view
-		this._contentView = new ZaAccountListView(this._container, this._app);
-    	//toolbar
-    	//Account operations
-    	this._ops = new Array();
-		// first button in the toolbar is a menu.
-		// create the menu operations/listeners first
-		this._newDLListener = new AjxListener(this, ZaAccountListController.prototype._newDistributionListListener);
-		this._newAcctListener = new AjxListener(this, ZaAccountListController.prototype._newAccountListener);
-		var newMenuOpList = [
-							 new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.ACTBB_New_menuItem, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", 
-											 this._newAcctListener),
-							 new ZaOperation(ZaOperation.NEW, ZaMsg.DLTBB_New_menuItem, ZaMsg.DLTBB_New_tt, "Group", "GroupDis", 
-											 this._newDLListener)
-							 ];
-		if(this._defaultType == ZaItem.ACCOUNT || this._defaultType == ZaItem.ALIAS) {
-			this._ops.push(new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", this._newAcctListener, 
-									   ZaOperation.TYPE_MENU, newMenuOpList));
-    	} else if(this._defaultType == ZaItem.DL) {
-			this._ops.push(new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Group", "GroupDis", this._newDLListener, 
-									   ZaOperation.TYPE_MENU, newMenuOpList));
-    	
-    	}
-    	this._ops.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaAccountListController.prototype._editButtonListener)));
-    	this._ops.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaAccountListController.prototype._deleteButtonListener)));
-		this._ops.push(new ZaOperation(ZaOperation.CHNG_PWD, ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener)));
-		this._ops.push(new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountListController.prototype._viewMailListener)));		
-		this._ops.push(new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener)));		    	
-    	
-    	this._acctionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._ops);
-    
-   		var haveBackup = false;
-		var globalConf = this._app.getGlobalConfig();
-
-    	if(globalConf && globalConf.attrs[ZaGlobalConfig.A_zimbraComponentAvailable_hotbackup])
-			this._ops.push(new ZaOperation(ZaOperation.MAIL_RESTORE, ZaMsg.TBB_RestoreMailbox, ZaMsg.ACTBB_Restore_tt, "Account", "AccountDis", new AjxListener(this, ZaAccountListController.prototype._restoreMailListener)));		
-		this._ops.push(new ZaOperation(ZaOperation.NONE));	
-		this._ops.push(new ZaOperation(ZaOperation.PAGE_BACK, ZaMsg.Back, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, ZaAccountListController.prototype._prevPageListener)));
-		this._ops.push(new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Forward, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, ZaAccountListController.prototype._nextPageListener)));
-		this._ops.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
-
-
-/**
-* Toolbar
-*/
-		this._toolbar = new ZaToolBar(this._container, this._ops);    
-		
-		var elements = new Object();
-		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-		this._app.createView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW, elements);
-
-    	//context menu
-
-		if (searchResult && searchResult.list != null) {
-			var tmpArr = new Array();
-			var cnt = searchResult.list.getArray().length;
-			for(var ix = 0; ix < cnt; ix++) {
-				tmpArr.push(searchResult.list.getArray()[ix]);
-			}
-			this._contentView.set(AjxVector.fromArray(tmpArr));	
+    if (!this._UICreated) {
+		this._createUI();
+	} 
+	if (searchResult && searchResult.list != null) {
+		var tmpArr = new Array();
+		var cnt = searchResult.list.getArray().length;
+		for(var ix = 0; ix < cnt; ix++) {
+			tmpArr.push(searchResult.list.getArray()[ix]);
 		}
-		this._app.pushView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW);			
-		
-		//set a selection listener on the account list view
-		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
-		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
-		this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
-		//this.refresh();
-	} else {
-		if (searchResult && searchResult.list != null) {
-			var tmpArr = new Array();
-			var cnt = searchResult.list.getArray().length;
-			for(var ix = 0; ix < cnt; ix++) {
-				tmpArr.push(searchResult.list.getArray()[ix]);
-			}
-			if(cnt < 1) {
-				//if the list is empty - go to the previous page
-				
-			}
-			this._contentView.set(AjxVector.fromArray(tmpArr));	
+		if(cnt < 1) {
+			//if the list is empty - go to the previous page
 		}
-		this._app.pushView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW);
+		this._contentView.set(AjxVector.fromArray(tmpArr));	
 	}
+	this._app.pushView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW);
+
 //	this._app.setCurrentController(this);		
 	this._removeList = new Array();
 	if (searchResult && searchResult.list != null) {
@@ -156,8 +93,6 @@ function(searchResult) {
 	} else {
 		this._toolbar.enable([ZaOperation.PAGE_BACK], true);
 	}
-	
-	//this._schedule(ZaAccountListController.prototype.preloadNextPage);
 }
 
 ZaAccountListController.prototype.setDefaultType = function (type) {
@@ -175,11 +110,15 @@ ZaAccountListController.prototype.setDefaultType = function (type) {
 			newButton.setImage("Account");
 			newButton.setDisabledImage("AccountDis");
 			newButton.addSelectionListener(this._newAcctListener);
+			this._toolbar.getButton(ZaOperation.EDIT).setToolTipContent(ZaMsg.ACTBB_Edit_tt);
+			this._toolbar.getButton(ZaOperation.DELETE).setToolTipContent(ZaMsg.ACTBB_Delete_tt);
 		} else if (type == ZaItem.DL) {
 			newButton.setToolTipContent(ZaMsg.DLTBB_New_tt);
 			newButton.setImage("Group");
 			newButton.setDisabledImage("GroupDis");
-			newButton.addSelectionListener(this._newDLListener);			
+			newButton.addSelectionListener(this._newDLListener);
+			this._toolbar.getButton(ZaOperation.EDIT).setToolTipContent(ZaMsg.DLTBB_Edit_tt);
+			this._toolbar.getButton(ZaOperation.DELETE).setToolTipContent(ZaMsg.DLTBB_Delete_tt);
 		}
 	}
 };
@@ -193,7 +132,7 @@ function () {
 	    this._searchPanel = new DwtComposite(this._app.getAppCtxt().getShell(), "SearchPanel", DwtControl.ABSOLUTE_STYLE);
 	    
 		// Create search toolbar and setup browse tool bar button handlers
-		this._searchToolBar = new ZaSearchToolBar(this._searchPanel);
+		this._searchToolBar = new ZaSearchToolBar(this._searchPanel, null, this._app);
 	    
 		// Setup search field handler
 		this._searchField = this._searchToolBar.getSearchField();
@@ -242,8 +181,6 @@ function () {
 ZaAccountListController.prototype._setQuery = 
 function (query) {
 	this._currentQuery = query;
-	searchObj = ZaSearch.getSearchFromQuery(query);
-//	this._searchField.setObject(searchObj);
 }
 
 ZaAccountListController.prototype.getQuery = 
@@ -281,7 +218,9 @@ function(searchQuery) {
 		}
 		
 		//this._searchField.setObject(searchString);
+		this.pages = new Object();
 		this._setQuery(searchQuery);
+		this._currentPageNum = 1;
 		this.show(ZaSearch.searchByQueryHolder(searchQuery, this._currentPageNum, this._currentSortField, this._currentSortOrder, this._app));	
 	} catch (ex) {
 		// Only restart on error if we are not initialized and it isn't a parse error
@@ -294,15 +233,6 @@ function(searchQuery) {
 	}	
 }
 
-/**
-* Adds listener to removal of an ZaAccount 
-* @param listener
-**/
-ZaAccountListController.prototype.addAccountRemovalListener = 
-function(listener) {
-	this._evtMgr.addListener(ZaEvent.E_REMOVE, listener);
-}
-
 /*********** Search Field Callback */
 
 ZaAccountListController.prototype._searchFieldCallback =
@@ -310,23 +240,7 @@ function(searchField, searchQuery) {
 	this.search(searchQuery);
 }
 
-/**
-*	Private method that notifies listeners to that the controlled ZaAccount is (are) removed
-* 	@param details
-*/
-ZaAccountListController.prototype._fireAccountRemovalEvent =
-function(details) {
-	try {
-		if (this._evtMgr.isListenerRegistered(ZaEvent.E_REMOVE)) {
-			var evt = new ZaEvent(ZaEvent.S_ACCOUNT);
-			evt.set(ZaEvent.E_REMOVE, this);
-			evt.setDetails(details);
-			this._evtMgr.notifyListeners(ZaEvent.E_REMOVE, evt);
-		}
-	} catch (ex) {
-		this._handleException(ex, ZaAccountListController.prototype._fireAccountRemovalEvent, details, false);	
-	}
-}
+
 
 /**
 * @param ev
@@ -416,8 +330,120 @@ function (nextViewCtrlr, func, params) {
 **/
 ZaAccountListController.prototype.getToolBar = 
 function () {
-	return this._toolBar;	
+	return this._toolbar;	
 }
+
+
+/**
+* Launches mail app to view user's email
+**/
+ZaAccountListController.launch = 
+function (delegateToken, tokenLifetime, mailServer) {
+	var form = this.document.createElement('form');
+	form.style.display = 'none';
+	this.document.body.appendChild(form);
+	var html = new Array();
+	var i = 0;
+	if(!delegateToken)
+		alert("Error! Failed to acquire authenticaiton token!");
+			
+	lifetime = tokenLifetime ? tokenLifetime : 300000;
+					
+	html[i++] = "<input type='hidden' name='authToken' value='" + delegateToken + "'>";
+			
+	if (tokenLifetime) {
+		html[i++] = "<input type='hidden' name='atl' value='" + tokenLifetime + "'>";
+	}
+			
+	form.innerHTML = html.join('');
+		
+				
+	form.action = mailServer;
+	form.method = 'post';
+	form.submit();		
+}
+
+
+
+ZaAccountListController.initPopupMenuMethod =
+function () {
+    this._popupOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaAccountListController.prototype._editButtonListener)));
+	this._popupOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaAccountListController.prototype._deleteButtonListener)));
+	if(ZaSettings.ACCOUNTS_CHPWD_ENABLED)
+		this._popupOperations.push(new ZaOperation(ZaOperation.CHNG_PWD, ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener)));
+
+	if(ZaSettings.ACCOUNTS_VIEW_MAIL_ENABLED)
+		this._popupOperations.push(new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountListController.prototype._viewMailListener)));		
+
+	if(ZaSettings.ACCOUNTS_MOVE_ALIAS_ENABLED)	
+		this._popupOperations.push(new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener)));		    	
+}
+ZaController.initPopupMenuMethods["ZaAccountListController"].push(ZaAccountListController.initPopupMenuMethod);
+
+ZaAccountListController.initToolbarMethod =
+function () {
+	// first button in the toolbar is a menu.
+	var newMenuOpList = new Array();
+	newMenuOpList.push(new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.ACTBB_New_menuItem, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", this._newAcctListener));
+
+	if(ZaSettings.DISTRIBUTION_LISTS_ENABLED) {
+		newMenuOpList.push(new ZaOperation(ZaOperation.NEW, ZaMsg.DLTBB_New_menuItem, ZaMsg.DLTBB_New_tt, "Group", "GroupDis", this._newDLListener));
+	}
+		
+	if(this._defaultType == ZaItem.ACCOUNT || this._defaultType == ZaItem.ALIAS) {
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", this._newAcctListener, 
+								   ZaOperation.TYPE_MENU, newMenuOpList));
+    } else if(this._defaultType == ZaItem.DL) {
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Group", "GroupDis", this._newDLListener, 
+									   ZaOperation.TYPE_MENU, newMenuOpList));
+    	
+    }
+    this._toolbarOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaAccountListController.prototype._editButtonListener)));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaAccountListController.prototype._deleteButtonListener)));
+	if(ZaSettings.ACCOUNTS_CHPWD_ENABLED)
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.CHNG_PWD, ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener)));
+
+	if(ZaSettings.ACCOUNTS_VIEW_MAIL_ENABLED)
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountListController.prototype._viewMailListener)));		
+
+	if(ZaSettings.ACCOUNTS_MOVE_ALIAS_ENABLED)	
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener)));		    	
+}
+ZaController.initToolbarMethods["ZaAccountListController"].push(ZaAccountListController.initToolbarMethod);
+
+//private and protected methods
+ZaAccountListController.prototype._createUI = 
+function () {
+	//create accounts list view
+	// create the menu operations/listeners first	
+	this._contentView = new ZaAccountListView(this._container, this._app);
+	this._newDLListener = new AjxListener(this, ZaAccountListController.prototype._newDistributionListListener);
+	this._newAcctListener = new AjxListener(this, ZaAccountListController.prototype._newAccountListener);
+
+    this._initToolbar();
+	//always add Help and navigation buttons at the end of the toolbar    
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.PAGE_BACK, ZaMsg.Back, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, ZaAccountListController.prototype._prevPageListener)));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Forward, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, ZaAccountListController.prototype._nextPageListener)));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
+
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);    
+		
+	var elements = new Object();
+	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+	this._app.createView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW, elements);
+
+	this._initPopupMenu();
+	this._acctionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
+	
+	//set a selection listener on the account list view
+	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
+	this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
+	this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
+	this._UICreated = true;
+}
+
 
 // new account button was pressed
 ZaAccountListController.prototype._newAccountListener =
@@ -425,10 +451,11 @@ function(ev) {
 
 	try {
 		var newAccount = new ZaAccount(this._app);
-		this._newAccountWizard = new ZaNewAccountXWizard(this._container, this._app);	
-//		this._newAccountWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaAccountListController.prototype._finishNewButtonListener, this, null);			
-		this._newAccountWizard.setObject(newAccount);
-		this._newAccountWizard.popup();
+		if(!this._app._newAccountWizard)
+			this._app._newAccountWizard = new ZaNewAccountXWizard(this._container, this._app);	
+
+		this._app._newAccountWizard.setObject(newAccount);
+		this._app._newAccountWizard.popup();
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountListController.prototype._newAccountListener", null, false);
 	}
@@ -438,7 +465,7 @@ ZaAccountListController.prototype._newDistributionListListener =
 function(ev) {
 	try {
 		var newDL = new ZaDistributionList(this._app);
-		this._app.getDistributionListController().show(newDL, ZaDLController.MODE_NEW);
+		this._app.getDistributionListController().show(newDL);
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountListController.prototype._newDistributionListListener", null, false);
 	}
@@ -473,25 +500,25 @@ function (ev) {
 **/
 ZaAccountListController.prototype._editButtonListener =
 function(ev) {
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()){
-		var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+	if(this._contentView.getSelectionCount() == 1) {
+		var item = this._contentView.getSelection()[0];
 		this._editItem(item);
 	}
 }
 
 ZaAccountListController.prototype._editItem = function (item) {
-	DBG.dumpObj(item, false, 1);
+//	DBG.dumpObj(item, false, 1);
 	var type = item.type;
 	DBG.println("TYPE == ", item.type);
 	if (type == ZaItem.ACCOUNT) {
 		//this._selectedItem = ev.item;
 		this._app.getAccountViewController().show(item);
 	} else if (type == ZaItem.DL) {
-		this._app.getDistributionListController().show(item, ZaDLController.MODE_EDIT);
+		this._app.getDistributionListController().show(item);
 	} else if(type == ZaItem.ALIAS) {
 		var account = new ZaAccount(this._app);
 		if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId]) {
-			account.load("id", item.attrs[ZaAlias.A_AliasTargetId], false);
+			account.load("id", item.attrs[ZaAlias.A_AliasTargetId], (!ZaSettings.COSES_ENABLED));
 			this._app.getAccountViewController().show(account);
 		}
 	}
@@ -501,41 +528,15 @@ ZaAccountListController.prototype._editItem = function (item) {
 **/
 ZaAccountListController.prototype._chngPwdListener =
 function(ev) {
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()) {
+	if(this._contentView.getSelectionCount()==1) {
 		this._chngPwdDlg = new ZaAccChangePwdDlg(this._app.getAppCtxt().getShell(), this._app);
-		var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+		var item = this._contentView.getSelection()[0];
 		this._chngPwdDlg.registerCallback(DwtDialog.OK_BUTTON, ZaAccountListController._changePwdOKCallback, this, item);				
+		this._chngPwdDlg.setTitle(ZaMsg.CHNP_Title + " (" + item.name + ")")
 		this._chngPwdDlg.popup(item.attrs[ZaAccount.A_zimbraPasswordMustChange]);
 	}
 }
-/**
-* Launches mail app to view user's email
-**/
-ZaAccountListController.launch = 
-function (delegateToken, tokenLifetime, mailServer) {
-	var form = this.document.createElement('form');
-	form.style.display = 'none';
-	this.document.body.appendChild(form);
-	var html = new Array();
-	var i = 0;
-	if(!delegateToken)
-		alert("Error! Failed to acquire authenticaiton token!");
-			
-	lifetime = tokenLifetime ? tokenLifetime : 300000;
-					
-	html[i++] = "<input type='hidden' name='authToken' value='" + delegateToken + "'>";
-			
-	if (tokenLifetime) {
-		html[i++] = "<input type='hidden' name='atl' value='" + tokenLifetime + "'>";
-	}
-			
-	form.innerHTML = html.join('');
-		
-				
-	form.action = mailServer;
-	form.method = 'post';
-	form.submit();		
-}
+
 
 ZaAccountListController._viewMailListenerLauncher = 
 function(account) {
@@ -549,7 +550,7 @@ function(account) {
 			return;
 		}
 		var win = window.open("about:blank", "_blank");
-		var ms = account.attrs[ZaAccount.A_mailHost] ? account.attrs[ZaAccount.A_mailHost] : location.hostname;
+		var ms = account.attrs[ZaAccount.A_mailHost] ? account.attrs[ZaAccount.A_mailHost].toLowerCase() : location.hostname.toLowerCase();
 		//find my server
 		var servers = this._app.getServerList().getArray();
 		var cnt = servers.length;
@@ -557,7 +558,7 @@ function(account) {
 		var mailProtocol = "http";
 		
 		for (var i = 0; i < cnt; i++) {
-			if(servers[i].attrs[ZaServer.A_ServiceHostname] == ms) {
+			if(servers[i].attrs[ZaServer.A_ServiceHostname].toLowerCase() == ms) {
 				if(servers[i].attrs[ZaServer.A_zimbraMailSSLPort] && parseInt(servers[i].attrs[ZaServer.A_zimbraMailSSLPort]) > 0) { //if there is SSL, use SSL
 					mailPort = servers[i].attrs[ZaServer.A_zimbraMailSSLPort];
 					mailProtocol = "https";
@@ -568,7 +569,7 @@ function(account) {
 				break;
 			}
 		}
-		//TODO: get the port and hostname from zimbraServer object
+
 		var mServer = mailProtocol + "://" + ms + ":" + mailPort + "/zimbra/auth/" + window.location.search;
 
 		if(!obj.authToken || !obj.lifetime || !mServer)
@@ -617,9 +618,7 @@ function (ev) {
 		} else {
 			this.show(ZaSearch.searchByQueryHolder(this._currentQuery,this._currentPageNum, this._currentSortField, this._currentSortOrder, this._app));
 		}
-
 	} 
-	
 }
 
 /**
@@ -631,19 +630,19 @@ function(ev) {
 	var haveAliases = false;
 	var haveAccounts = false;
 	var haveDls = false;
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getArray()) {
-		var arrDivs = this._contentView.getSelectedItems().getArray();
-		var item = null;
-		for(var key in arrDivs) {
-			item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
-			if(item) {
-				this._removeList.push(item);
+	if(this._contentView.getSelectionCount()>0) {
+		var arrItems = this._contentView.getSelection();
+		var cnt = arrItems.length;
+		for(var key =0; key < cnt; key++) {
+			//item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
+			if(arrItems[key]) {
+				this._removeList.push(arrItems[key]);
 			}
-			if(!haveAliases && item.type == ZaItem.ALIAS) {
+			if(!haveAliases && arrItems[key].type == ZaItem.ALIAS) {
 				haveAliases = true;
-			} else if(!haveAccounts && item.type == ZaItem.ACCOUNT) {
+			} else if(!haveAccounts && arrItems[key].type == ZaItem.ACCOUNT) {
 				haveAccounts = true;
-			} else if(!haveDls && item.type == ZaItem.DL) {
+			} else if(!haveDls && arrItems[key].type == ZaItem.DL) {
 				haveDls = true;
 			}
 		}
@@ -697,33 +696,45 @@ function(ev) {
 
 ZaAccountListController.prototype._deleteAccountsCallback = 
 function () {
-	var successRemList=new Array();
-	for(var key in this._removeList) {
-		if(this._removeList[key]) {
-			try {
-				this._removeList[key].remove();
-				successRemList.push(this._removeList[key]);
-			} catch (ex) {
-				this._removeConfirmMessageDialog.popdown();
-				if(ex.code == ZmCsfeException.SVC_WRONG_HOST) {
-					var szMsg = ZaMsg.ERROR_WRONG_HOST;
-					if(ex.detail) {
-						szMsg +="<br>Details:<br>";
-						szMsg += ex.detail;
+
+	if(!this._removeProgressDlg) {
+		this._removeProgressDlg = new DeleteAcctsPgrsDlg(this._container, this._app,"500px","300px");
+	}
+	this._removeProgressDlg.popup();
+	this._removeProgressDlg.setObject(this._removeList);
+	this._removeConfirmMessageDialog.popdown();		
+	this._removeProgressDlg.startDeletingAccounts();
+	
+	/*
+		for(var key in this._removeList) {
+			if(this._removeList[key]) {
+				try {
+					this._removeList[key].remove();
+					successRemList.push(this._removeList[key]);
+				} catch (ex) {
+					this._removeConfirmMessageDialog.popdown();
+					if(ex.code == ZmCsfeException.SVC_WRONG_HOST) {
+						var szMsg = ZaMsg.ERROR_WRONG_HOST;
+						if(ex.detail) {
+							szMsg +="<br>Details:<br>";
+							szMsg += ex.detail;
+						}
+						this._errorDialog.setMessage(szMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
+						this._errorDialog.popup();					
+					} else {
+						this._handleException(ex, "ZaAccountListController.prototype._deleteAccountsCallback", null, false);
 					}
-					this._errorDialog.setMessage(szMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
-					this._errorDialog.popup();					
-				} else {
-					this._handleException(ex, "ZaAccountListController.prototype._deleteAccountsCallback", null, false);
+					return;
 				}
-				return;
 			}
 		}
-	}
-	this._fireAccountRemovalEvent(successRemList); 
-	this._removeConfirmMessageDialog.popdown();
-	this.show(ZaSearch.searchByQueryHolder(this._currentQuery, this._currentPageNum, this._currentSortField, this._currentSortOrder, this._app));			
+		this.fireRemovalEvent(successRemList); 
+		this._removeConfirmMessageDialog.popdown();
+		this.show(ZaSearch.searchByQueryHolder(this._currentQuery, this._currentPageNum, this._currentSortField, this._currentSortOrder, this._app));			
+	}*/
 }
+
+
 
 ZaAccountListController.prototype._donotDeleteAccountsCallback = 
 function () {
@@ -731,35 +742,6 @@ function () {
 	this._removeConfirmMessageDialog.popdown();
 }
 
-ZaAccountListController._moveAliasCallback = 
-function() {
-	//remove alias
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()){
-		var alias = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
-		//make sure this is an alias
-		if(alias.type!=ZaItem.ALIAS) 
-			return;
-		
-		var name = alias.name;
-		try {
-			alias.remove();
-		} catch (ex) {
-			this._handleException(ex, "ZaAccountListController._moveAliasCallback", null, false);
-			return;
-		}
-		try {
-			//get destination account		
-			var srch = this._moveAliasDialog.getObject();
-			if(srch[ZaSearch.A_selected] && srch[ZaSearch.A_selected].addAlias!=null) {
-				//add alias
-				srch[ZaSearch.A_selected].addAlias(name);
-			}
-			this._moveAliasDialog.popdown();
-		} catch (ex) {
-			this._handleException(ex, "ZaAccountListController._moveAliasCallback", null, false);
-		}
-	}	
-}
 
 ZaAccountListController._changePwdOKCallback = 
 function (item) {
@@ -767,19 +749,16 @@ function (item) {
 	if(this._chngPwdDlg) {
 		try {
 			if(!this._chngPwdDlg.getPassword() || this._chngPwdDlg.getPassword().length < 1) {
-				//this._chngPwdDlg.popdown();	//close the dialog
 				this._errorMsgDlg = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], this._app);							
 				this._errorMsgDlg.setMessage(ZaMsg.ERROR_PASSWORD_REQUIRED, null, DwtMessageDialog.CRITICAL_STYLE);
 				this._errorMsgDlg.popup();				
 			} else if(this._chngPwdDlg.getPassword() != this._chngPwdDlg.getConfirmPassword()) {
-				//this._chngPwdDlg.popdown();	//close the dialog
 				this._errorMsgDlg = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], this._app);							
 				this._errorMsgDlg.setMessage(ZaMsg.ERROR_PASSWORD_MISMATCH, null, DwtMessageDialog.CRITICAL_STYLE);
 				this._errorMsgDlg.popup();				
 			} else {
 				//check password
 				var myCos = null;
-//				var maxPwdLen = Number.POSITIVE_INFINITY;
 				var maxPwdLen = null;
 				var minPwdLen = null;	
 				
@@ -791,13 +770,13 @@ function (item) {
 					maxPwdLen = item.attrs[ZaAccount.A_zimbraMaxPwdLength];
 				} 
 				
-				if(!item.attrs[ZaAccount.A_COSId]) {
+				if(!item.attrs[ZaAccount.A_COSId] && ZaSettings.COSES_ENABLED) {
 					var cosList = this._app.getCosList().getArray();
 					item.attrs[ZaAccount.A_COSId] = cosList[0].id;
 				}
 				
 				if (minPwdLen == null) {
-					if(item.attrs[ZaAccount.A_COSId]) {
+					if(item.attrs[ZaAccount.A_COSId] && ZaSettings.COSES_ENABLED) {
 						myCos = new ZaCos(this._app);
 						myCos.load("id", item.attrs[ZaAccount.A_COSId]);
 						if(myCos.attrs[ZaCos.A_zimbraMinPwdLength] > 0) {
@@ -807,7 +786,7 @@ function (item) {
 				}			
 				
 				if (maxPwdLen == null) {
-					if(item.attrs[ZaAccount.A_COSId]) {
+					if(item.attrs[ZaAccount.A_COSId] && ZaSettings.COSES_ENABLED) {
 						if(!myCos) { 
 							myCos = new ZaCos(this._app);
 							myCos.load("id", item.attrs[ZaAccount.A_COSId]);
@@ -831,13 +810,13 @@ function (item) {
 					//show error msg
 					//this._chngPwdDlg.popdown();
 					this._errorMsgDlg = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], this._app);												
-					this._errorMsgDlg.setMessage(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + ZaMsg.NAD_passMinLength + ": " + minPwdLen, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					this._errorMsgDlg.setMessage(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen), null, DwtMessageDialog.CRITICAL_STYLE, null);
 					this._errorMsgDlg.popup();
 				} else if(AjxStringUtil.trim(szPwd).length > maxPwdLen) { 
 					//show error msg
 					//this._chngPwdDlg.popdown();
 					this._errorMsgDlg = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], this._app);																	
-					this._errorMsgDlg.setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + ZaMsg.NAD_passMaxLength + ": " + maxPwdLen, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					this._errorMsgDlg.setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen), null, DwtMessageDialog.CRITICAL_STYLE, null);
 					this._errorMsgDlg.popup();
 				} else {		
 					item.changePassword(szPwd);
@@ -852,7 +831,6 @@ function (item) {
 			}
 
 		} catch (ex) {
-			//this._chngPwdDlg.popdown();
 			if(ex.code == ZmCsfeException.INVALID_PASSWORD ) {
 				var szMsg = ZaMsg.ERROR_PASSWORD_INVALID;
 				if(ex.detail) {
@@ -871,6 +849,7 @@ function (item) {
 
 ZaAccountListController.prototype._changeActionsState = 
 function () {
+//TODO: Instrumentation code here
 	var cnt = this._contentView.getSelectionCount();
 	if(cnt == 1) {
 		var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE];
@@ -911,34 +890,30 @@ function () {
 		this._toolbar.enable(opsArray, false);
 		this._acctionMenu.enable(opsArray, false);
 	}
+//TODO: Instrumentation code here	
 }
 
-
-ZaAccountListController.prototype._restoreMailListener = 
-function (ev) {
-	try {
-		this._newSingleAccountRestoreWizard = new SingleAccountRestoreXWizard(this._container, this._app);		
-		var restore = new ZaRestore(this._app);
-		this._newSingleAccountRestoreWizard.setObject(restore);		
-		this._newSingleAccountRestoreWizard.popup();
-//		var serverId = this._app.getServerList().getArray()[0].id;
-	//	ZaBackup.queryBackups(serverId, null, null, null, "1");
-	} catch (ex) {
-		this._handleException(ex, "ZaAccountListController.prototype._restoreMailListener", null, false);
-	}
-	return;
-}
 
 ZaAccountListController.prototype._moveAliasListener = 
 function (ev) {
 	try {
+		var alias;
+		if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()){
+			var alias = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+			//make sure this is an alias
+			if(!alias || alias.type!=ZaItem.ALIAS) {
+				return;			
+			}
+		}
 		if(!this._moveAliasDialog) {
 			this._moveAliasDialog = new MoveAliasXDialog(this._container, this._app);
-			this._moveAliasDialog.registerCallback(DwtDialog.OK_BUTTON, ZaAccountListController._moveAliasCallback, this, null);				
 		}
+		this._moveAliasDialog.setAlias(alias);
 		this._moveAliasDialog.popup();
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountListController.prototype._moveAliasListener", null, false);
 	}
 	return;
 }
+
+

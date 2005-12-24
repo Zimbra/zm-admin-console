@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -35,7 +35,7 @@ XFormItemFactory.createItemType("_LDAPURL_", "ldapurl", LDAPURL_XFormItem, Compo
 LDAPURL_XFormItem.prototype.numCols = 5;
 LDAPURL_XFormItem.prototype.nowrap = true;
 LDAPURL_XFormItem.prototype._protocolPart = "ldap://";
-LDAPURL_XFormItem.prototype._serverPart = "server";
+LDAPURL_XFormItem.prototype._serverPart = "";
 LDAPURL_XFormItem.prototype._portPart = "389";
 
 LDAPURL_XFormItem.prototype.items = [
@@ -53,13 +53,20 @@ LDAPURL_XFormItem.prototype.items = [
 		}
 	},
 	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
+		required:true,
 		getDisplayValue:function (itemVal) {
-			var val = "server";
+			var val = "";
 			if(itemVal) {
 				var URLChunks = itemVal.split(/[:\/]/);
-				if(URLChunks.length >= 4) {
-					val = URLChunks[3];
-				} 
+				if(AjxEnv.isIE) {
+					if(URLChunks.length >= 3) {
+						val = URLChunks[1];
+					} 
+				} else {
+					if(URLChunks.length >= 4) {
+						val = URLChunks[3];
+					} 
+				}
 				this.getParentItem()._serverPart = val;
 			} 
 			return val;	

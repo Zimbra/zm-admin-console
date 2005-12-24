@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -37,7 +37,7 @@ function ZaEvent(type) {
 	this.type = type; //source type
 	this.event = null; //event type
 	this.source = null;
-	this._details = new Object();
+	this._details = null;
 }
 
 // Listener types
@@ -59,13 +59,14 @@ ZaEvent.S_SEARCH		= i++;
 ZaEvent.S_SETTING		= i++;
 
 //Source types for admin
-ZaEvent.S_ACCOUNT		= i++;
-ZaEvent.S_COS			= i++;
-ZaEvent.S_DOMAIN		= i++;
-ZaEvent.S_SERVER		= i++;
-ZaEvent.S_GLOBALCONFIG	= i++;
-ZaEvent.S_STATUS		= i++;
-ZaEvent.S_CLUSTER_STATUS= i++;
+ZaEvent.S_ACCOUNT		 = i++;
+ZaEvent.S_COS			 = i++;
+ZaEvent.S_DOMAIN		 = i++;
+ZaEvent.S_SERVER		 = i++;
+ZaEvent.S_GLOBALCONFIG	 = i++;
+ZaEvent.S_STATUS		 = i++;
+ZaEvent.S_CLUSTER_STATUS = i++;
+ZaEvent.S_DL 			 = i++;
 
 
 // Event types
@@ -109,6 +110,8 @@ function(event, source) {
 */
 ZaEvent.prototype.setDetail =
 function(field, value) {
+	if(!this._details)
+		this._details = new Object();
 	this._details[field] = value;
 }
 
@@ -119,7 +122,10 @@ function(field, value) {
 */
 ZaEvent.prototype.getDetail =
 function(field) {
-	return this._details[field];
+	if(!this._details)
+		return null;
+	else
+		return this._details[field];
 }
 
 /**

@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -90,13 +90,7 @@ ZaDomainXFormView.prototype.getMyXForm = function() {
 					}
 				],
 				cssStyle:"padding-top:5px; padding-left:2px; padding-bottom:5px"
-			},		/*
-			{type:_GROUP_, cssClass:"AdminTitleBar", colSpan: "*", 
-				items: [
-					{type:_OUTPUT_, ref:ZaDomain.A_domainName, label:ZaMsg.NAD_Domain},
-					{type:_OUTPUT_, ref:ZaItem.A_zimbraId, label:ZaMsg.NAD_ZimbraID}
-				]
-			},*/
+			},	
 			{type:_TAB_BAR_,  ref:ZaModel.currentTab,
 				choices:[
 					{value:1, label:ZaMsg.Domain_Tab_General},
@@ -106,21 +100,27 @@ ZaDomainXFormView.prototype.getMyXForm = function() {
 			},
 			{type:_SWITCH_, items:[
 					{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 1", 
+					colSizes:["300px","*"],
 					items:[
 							{ ref: ZaDomain.A_domainName, type:_OUTPUT_, 
 							  label:ZaMsg.Domain_DomainName
 							},
 							{ ref: ZaDomain.A_description, type:_INPUT_, 
-							  label:ZaMsg.NAD_Description+":", width:250,
+							  label:ZaMsg.NAD_Description, width:250,
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},
+							{ref:ZaDomain.A_domainDefaultCOSId, type:_OSELECT1_, 
+								label:ZaMsg.Domain_DefaultCOS, labelLocation:_LEFT_, 
+								choices:this._app.getCosListChoices(), onChange:ZaTabView.onFormFieldChanged
+							},						  	
 							{ ref: ZaDomain.A_notes, type:_TEXTAREA_, 
-							  label:ZaMsg.NAD_Notes+":", labelCssStyle:"vertical-align:top", width:250,
+							  label:ZaMsg.NAD_Notes, labelCssStyle:"vertical-align:top", width:250,
 							  onChange:ZaTabView.onFormFieldChanged
 							}
 						]
 					},
 					{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 2", 
+					colSizes:["300px","*"],
 						items: [
 							{ref:ZaDomain.A_GalMode, type:_OUTPUT_, label:ZaMsg.Domain_GalMode, choices:this.GALModes},
 							{ref:ZaDomain.A_GalMaxResults, type:_OUTPUT_, label:ZaMsg.NAD_GalMaxResults, autoSaveValue:true},
@@ -141,6 +141,7 @@ ZaDomainXFormView.prototype.getMyXForm = function() {
 						]						
 					}, 
 					{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 3", 
+					colSizes:["300px","*"],
 						items: [
 							{ref:ZaDomain.A_AuthMech, type:_OUTPUT_, label:ZaMsg.Domain_AuthMech, choices:this.AuthMechs},
 							{type:_SWITCH_,useParentTable:true, colSpan:"*",

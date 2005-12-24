@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -27,15 +27,19 @@
 * @class ZaItem
 * @param app reference to the application instance
 **/
-function ZaItem(app) {
+function ZaItem(app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._app = app;
+	this._iKeyName = iKeyName;
 	ZaModel.call(this, true);
 
 }
 
 ZaItem.prototype = new ZaModel;
 ZaItem.prototype.constructor = ZaItem;
+
+ZaItem.loadMethods = new Object();
+ZaItem.initMethods = new Object();
 
 ZaItem.ACCOUNT = "account";
 ZaItem.DL = "dl";
@@ -46,6 +50,11 @@ ZaItem.SERVER = "server";
 
 ZaItem.A_objectClass = "objectClass";
 ZaItem.A_zimbraId = "zimbraId";
+
+/* Translation of  the attribute names to the screen names */
+ZaItem._ATTR = new Object();
+ZaItem._ATTR[ZaItem.A_zimbraId] = ZaMsg.attrDesc_zimbraId;
+
 ZaItem.compareNamesAsc = 
 function(a,b) {
 	var al = a.name.toLowerCase();
@@ -124,6 +133,32 @@ function () {
 	//abstract
 }
 
+ZaItem.prototype.refresh = 
+function () {
+	this.load();
+}
+
+ZaItem.prototype.copyTo = 
+function (target/*, fullRecursion*/) {
+	for(var a in this) {
+		target[a] = this[a];
+	}
+}
+
+ZaItem.prototype.load = function (by, val, withConfig) {
+	//Instrumentation code start
+	if(ZaItem.loadMethods[this._iKeyName]) {
+		var methods = ZaItem.loadMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this, by, val, withConfig);
+			}
+		}
+	}	
+	//Instrumentation code end
+}
+
 ZaItem.prototype.initFromDom =
 function(node) {
 	this.name = node.getAttribute("name");
@@ -132,7 +167,8 @@ function(node) {
 	this.type = node.nodeName;
 	
 	var children = node.childNodes;
-	for (var i=0; i< children.length;  i++) {
+	var cnt = children.length;
+	for (var i=0; i< cnt;  i++) {
 		var child = children[i];
 		if (child.nodeName != 'a') continue;
 		var name = child.getAttribute("n");
@@ -157,7 +193,7 @@ ZaItem.prototype._addRow =
 function(msg, value, html, idx) {
 	if (value != null) {
 		html[idx++] = "<tr valign='top'><td align='right' style='padding-right: 5px;'><b>";
-		html[idx++] = AjxStringUtil.htmlEncode(msg) + ":";
+		html[idx++] = AjxStringUtil.htmlEncode(msg);
 		html[idx++] = "</b></td><td align='left'><div style='white-space:nowrap; overflow:hidden;'>";
 		html[idx++] = AjxStringUtil.htmlEncode(value);
 		html[idx++] = "</div></td></tr>";
@@ -186,7 +222,18 @@ function(name) {
 	return (desc == null) ? name : desc;
 }
 
-/* Translation of  the attribute names to the screen names */
-ZaItem._ATTR = new Object();
-ZaItem._ATTR[ZaItem.A_zimbraId] = ZaMsg.attrDesc_zimbraId;
+ZaItem.prototype._init = function (app) {
+	//Instrumentation code start
+	if(ZaItem.initMethods[this._iKeyName]) {
+		var methods = ZaItem.initMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this,app);
+			}
+		}
+	}	
+	//Instrumentation code end
+}
+
 

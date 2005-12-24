@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -34,7 +34,7 @@
 * @param lsnr AjxListener
 **/
 
-function ZaOperation(id, caption, tooltip, imgId, disImgId, lsnr, type, menuOpList, className) {
+function ZaOperation(id, caption, tooltip, imgId, disImgId, lsnr, type, menuOpList, className, labelId) {
 	this.id = id;
 	this.caption = caption;
 	this.tt = tooltip;
@@ -44,6 +44,7 @@ function ZaOperation(id, caption, tooltip, imgId, disImgId, lsnr, type, menuOpLi
 	this.type = (type == null)? ZaOperation.TYPE_BUTTON: type;
 	this.menuOpList = menuOpList;
 	this.className = className;	
+	this.labelId = labelId;
 }
 
 ZaOperation.prototype.toString = 
@@ -54,25 +55,27 @@ function() {
 // types
 ZaOperation.TYPE_BUTTON = 1;
 ZaOperation.TYPE_MENU = 2;
+ZA_OP_INDEX = 0;
 
 // Operations
-ZaOperation.NONE = -2;		// no operations or menu items
-ZaOperation.SEP = -1;		// separator
-ZaOperation.NEW = 1;
-ZaOperation.DELETE = 2;
-ZaOperation.REFRESH = 3;
-ZaOperation.EDIT = 4;
-ZaOperation.CHNG_PWD = 5;
-ZaOperation.CLOSE = 6;
-ZaOperation.SAVE = 7;
-ZaOperation.NEW_WIZARD = 8;
-ZaOperation.PAGE_FORWARD = 9;
-ZaOperation.PAGE_BACK = 10;
-ZaOperation.DUPLICATE = 11;
-ZaOperation.GAL_WIZARD = 12;
-ZaOperation.AUTH_WIZARD =13;
-ZaOperation.VIEW_MAIL =14;
-ZaOperation.MAIL_RESTORE = 15;
-ZaOperation.MOVE_ALIAS = 16;
-ZaOperation.NEW_MENU = 17;
-ZaOperation.HELP = 18;
+ZaOperation.NONE = ++ZA_OP_INDEX;		// no operations or menu items
+ZaOperation.SEP = ++ZA_OP_INDEX;		// separator
+ZaOperation.NEW = ++ZA_OP_INDEX;
+ZaOperation.DELETE = ++ZA_OP_INDEX;
+ZaOperation.REFRESH = ++ZA_OP_INDEX;
+ZaOperation.EDIT = ++ZA_OP_INDEX;
+ZaOperation.CHNG_PWD = ++ZA_OP_INDEX;
+ZaOperation.CLOSE = ++ZA_OP_INDEX;
+ZaOperation.SAVE = ++ZA_OP_INDEX;
+ZaOperation.NEW_WIZARD = ++ZA_OP_INDEX;
+ZaOperation.PAGE_FORWARD = ++ZA_OP_INDEX;
+ZaOperation.PAGE_BACK = ++ZA_OP_INDEX;
+ZaOperation.DUPLICATE = ++ZA_OP_INDEX;
+ZaOperation.GAL_WIZARD = ++ZA_OP_INDEX;
+ZaOperation.AUTH_WIZARD =++ZA_OP_INDEX;
+ZaOperation.VIEW_MAIL =++ZA_OP_INDEX;
+ZaOperation.MOVE_ALIAS = ++ZA_OP_INDEX;
+ZaOperation.NEW_MENU = ++ZA_OP_INDEX;
+ZaOperation.HELP = ++ZA_OP_INDEX;
+ZaOperation.REINDEX_MAILBOX = ++ZA_OP_INDEX;
+ZaOperation.LABEL = ++ZA_OP_INDEX;

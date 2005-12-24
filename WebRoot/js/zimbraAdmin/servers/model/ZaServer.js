@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -31,18 +31,14 @@
 * @param app reference to the application instance
 **/
 function ZaServer(app) {
-	ZaItem.call(this, app);
-	this.attrs = new Object();
-	this.hsm = new Object();
-	this.id = "";
-	this.name="";
+	ZaItem.call(this, app,"ZaServer");
+	this._init(app);
 }
 
 ZaServer.prototype = new ZaItem;
 ZaServer.prototype.constructor = ZaServer;
-ZaServer.prototype.toString = function() {
-	return this.name;
-}
+ZaItem.loadMethods["ZaServer"] = new Array();
+ZaItem.initMethods["ZaServer"] = new Array();
 
 //attribute name constants, this values are taken from zimbra.schema
 ZaServer.A_name = "cn";
@@ -60,6 +56,8 @@ ZaServer.A_zimbraMtaServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_m
 ZaServer.A_zimbraSnmpServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_snmp";
 ZaServer.A_zimbraAntiVirusServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_antivirus";
 ZaServer.A_zimbraAntiSpamServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_antispam";
+ZaServer.A_zimbraSpellServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_spell";
+ZaServer.A_zimbraLoggerServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_logger";
 ZaServer.A_zimbraServiceEnabled = "zimbraServiceEnabled";
 ZaServer.A_zimbraLdapServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_ldap";
 ZaServer.A_zimbraMailboxServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mailbox";
@@ -67,6 +65,8 @@ ZaServer.A_zimbraMtaServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mta";
 ZaServer.A_zimbraSnmpServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_snmp";
 ZaServer.A_zimbraAntiVirusServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_antivirus";
 ZaServer.A_zimbraAntiSpamServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_antispam";
+ZaServer.A_zimbraSpellServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_spell";
+ZaServer.A_zimbraLoggerServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_logger";
 // MTA
 ZaServer.A_zimbraMtaAuthEnabled = "zimbraMtaAuthEnabled";
 ZaServer.A_zimbraMtaDnsLookupsEnabled = "zimbraMtaDnsLookupsEnabled";
@@ -91,6 +91,7 @@ ZaServer.A_Pop3SSLServerEnabled = "zimbraPop3SSLServerEnabled";
 ZaServer.A_Pop3ServerEnabled = "zimbraPop3ServerEnabled"
 ZaServer.A_Pop3CleartextLoginEnabled = "zimbraPop3CleartextLoginEnabled";
 //imap
+ZaServer.A_zimbraImapNumThreads="zimbraImapNumThreads";
 ZaServer.A_ImapBindPort="zimbraImapBindPort";
 ZaServer.A_ImapServerEnabled="zimbraImapServerEnabled";
 ZaServer.A_ImapSSLBindPort="zimbraImapSSLBindPort";
@@ -123,22 +124,10 @@ ZaServer.A_VolumeType = "type";
 ZaServer.A_CurrentPrimaryMsgVolumeId = "current_pri_msg_volume_id";
 ZaServer.A_CurrentSecondaryMsgVolumeId = "current_sec_msg_volume_id";
 ZaServer.A_CurrentIndexMsgVolumeId = "current_index_volume_id";
-//HSM
-ZaServer.A_zimbraHsmAge = "zimbraHsmAge";
-ZaServer.A_HSMstartDate = "startDate";
-ZaServer.A_HSMendDate = "endDate";
-ZaServer.A_HSMrunning = "running";
-ZaServer.A_HSMwasAborted = "wasAborted";
-ZaServer.A_HSMaborting = "aborting";
-ZaServer.A_HSMerror = "error";
-ZaServer.A_HSMnumBlobsMoved = "numBlobsMoved";
-ZaServer.A_HSMnumMailboxes = "numMailboxes";
-ZaServer.A_HSMtotalMailboxes = "totalMailboxes";
-ZaServer.A_HSMthreshold = "threshold";
-ZaServer.A_HSMremainingMailboxes = "remainingMailboxes"
+
 // other
 ZaServer.A_zimbraIsMonitorHost = "zimbraIsMonitorHost";
-ZaServer.A_showVolumeAndHSM = "show_volume_and_hsm"; //this attribute is immutable
+ZaServer.A_showVolumes = "show_volumes"; //this attribute is immutable
 
 ZaServer.STANDALONE = "standalone";
 ZaServer.MASTER = "master";
@@ -147,10 +136,8 @@ ZaServer.SLAVE = "slave";
 ZaServer.PRI_MSG = 1;
 ZaServer.SEC_MSG = 2;
 ZaServer.INDEX = 10;
-ZaServer.volumeTypeChoicesAll = new XFormChoices({1:ZaMsg.NAD_HSM_PrimaryMsg, 2:ZaMsg.NAD_HSM_SecMsg, 10:ZaMsg.NAD_HSM_Index}, XFormChoices.HASH);
-ZaServer.volumeTypeChoicesNoHSM = new XFormChoices({1:ZaMsg.NAD_HSM_Msg, 10:ZaMsg.NAD_HSM_Index}, XFormChoices.HASH);
-ZaServer.volumeTypeChoicesHSM = new XFormChoices({1:ZaMsg.NAD_HSM_PrimaryMsg, 2:ZaMsg.NAD_HSM_SecMsg}, XFormChoices.HASH);
-ZaServer.HSM_StatusChoices = {0:ZaMsg.NAD_HSM_Idle,1:ZaMsg.NAD_HSM_Running};
+ZaServer.volumeTypeChoices = new XFormChoices({1:ZaMsg.NAD_VOLUME_Msg, 10:ZaMsg.NAD_VOLUME_Index}, XFormChoices.HASH);
+
 		
 ZaServer.myXModel = {
 	items: [
@@ -167,23 +154,25 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraSnmpServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraSnmpServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiVirusServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraAntiVirusServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiSpamServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraAntiSpamServiceEnabled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraSpellServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraSpellServiceEnabled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraLoggerServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraLoggerServiceEnabled, type: _ENUM_, choices: [false,true] },
 		// MTA
 		{id:ZaServer.A_zimbraMtaAuthEnabled, ref:"attrs/" +  ZaServer.A_zimbraMtaAuthEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaTlsAuthOnly, ref:"attrs/" +  ZaServer.A_zimbraMtaTlsAuthOnly, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaRelayHost, ref:"attrs/" +  ZaServer.A_zimbraMtaRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
 		{id:ZaServer.A_zimbraMtaDnsLookupsEnabled, ref:"attrs/" +  ZaServer.A_zimbraMtaDnsLookupsEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		// ...other...
-		{id:ZaServer.A_SmtpHostname, ref:"attrs/" +  ZaServer.A_SmtpHostname, type:_HOSTNAME_OR_IP_, maxLength: 256 },
-		{id:ZaServer.A_SmtpPort, ref:"attrs/" +  ZaServer.A_SmtpPort, type:_PORT_},
+		{id:ZaServer.A_SmtpHostname, ref:"attrs/" +  ZaServer.A_SmtpHostname, type:_COS_HOSTNAME_OR_IP_, maxLength: 256 },
+		{id:ZaServer.A_SmtpPort, ref:"attrs/" +  ZaServer.A_SmtpPort, type:_COS_PORT_},
 		{id:ZaServer.A_SmtpTimeout, ref:"attrs/" + ZaServer.A_SmtpTimeout, type:_NUMBER_, minInclusive: 0 },
 		{id:ZaServer.A_LmtpAdvertisedName, ref:"attrs/" +  ZaServer.A_LmtpAdvertisedName, type:_STRING_, maxLength: 128 },
 		{id:ZaServer.A_LmtpBindAddress, ref:"attrs/" +  ZaServer.A_LmtpBindAddress, type:_HOSTNAME_OR_IP_, maxLength: 256 },
 		{id:ZaServer.A_LmtpBindPort, ref:"attrs/" +  ZaServer.A_LmtpBindPort, type:_PORT_},		
 		{id:ZaServer.A_LmtpNumThreads, ref:"attrs/" +  ZaServer.A_LmtpNumThreads, type:_NUMBER_, minInclusive: 0 },
 		{id:ZaServer.A_Pop3NumThreads, ref:"attrs/" +  ZaServer.A_Pop3NumThreads, type:_NUMBER_, minInclusive: 0 },		
+		{id:ZaServer.A_zimbraImapNumThreads, ref:"attrs/" +  ZaServer.A_zimbraImapNumThreads, type:_NUMBER_, minInclusive: 0 },		
 		{id:ZaServer.A_Pop3AdvertisedName, ref:"attrs/" +  ZaServer.A_Pop3AdvertisedName, type:_STRING_, maxLength: 128 },
 		{id:ZaServer.A_Pop3BindAddress, ref:"attrs/" +  ZaServer.A_Pop3BindAddress, type:_HOSTNAME_OR_IP_, maxLength: 128 },
-		{id:ZaServer.A_Pop3NumThreads, ref:"attrs/" +  ZaServer.A_Pop3NumThreads, type:_NUMBER_, minInclusive: 0 },		
 		{id:ZaServer.A_Pop3AdvertisedName, ref:"attrs/" +  ZaServer.A_Pop3AdvertisedName, type:_STRING_, maxLength: 128 },
 		{id:ZaServer.A_Pop3BindAddress, ref:"attrs/" +  ZaServer.A_Pop3BindAddress, type:_HOSTNAME_OR_IP_, maxLength: 128 },
 		{id:ZaServer.A_Pop3BindPort, ref:"attrs/" +  ZaServer.A_Pop3BindPort, type:_PORT_ },
@@ -218,22 +207,14 @@ ZaServer.myXModel = {
 				]
 			}
 		},
-		{id:ZaServer.A_zimbraHsmAge, ref:"attrs/" + ZaServer.A_zimbraHsmAge, type:_COS_MLIFETIME_},
-		{id:ZaServer.A_HSMstartDate, ref:"hsm/" + ZaServer.A_HSMstartDate, type:_NUMBER_},						
-		{id:ZaServer.A_HSMendDate, ref:"hsm/" + ZaServer.A_HSMendDate, type:_NUMBER_},								
-		{id:ZaServer.A_HSMrunning, ref:"hsm/" + ZaServer.A_HSMrunning, type:_ENUM_, choices:[false,true]},						
-		{id:ZaServer.A_HSMwasAborted, ref:"hsm/" + ZaServer.A_HSMwasAborted, type:_ENUM_, choices:[false,true]},				
-		{id:ZaServer.A_HSMaborting, ref:"hsm/" + ZaServer.A_HSMaborting, type:_ENUM_, choices:[false,true]},						
-		{id:ZaServer.A_HSMerror, ref:"hsm/" + ZaServer.A_HSMerror, type:_STRING_},
-		{id:ZaServer.A_HSMnumBlobsMoved, ref:"hsm/" + ZaServer.A_HSMnumBlobsMoved, type:_NUMBER_},
-		{id:ZaServer.A_HSMnumMailboxes, ref:"hsm/" + ZaServer.A_HSMnumMailboxes, type:_NUMBER_},
-		{id:ZaServer.A_HSMtotalMailboxes, ref:"hsm/" + ZaServer.A_HSMtotalMailboxes, type:_NUMBER_},				
-		{id:ZaServer.A_HSMthreshold, ref:"hsm/" + ZaServer.A_HSMthreshold, type:_NUMBER_},
-		{id:ZaServer.A_HSMremainingMailboxes, ref:"hsm/" + ZaServer.A_HSMremainingMailboxes, type:_NUMBER_},
-		{id:ZaServer.A_showVolumeAndHSM, ref:ZaServer.A_showVolumeAndHSM, type: _ENUM_, choices: [false,true]}
+		{id:ZaServer.A_showVolumes, ref:ZaServer.A_showVolumes, type: _ENUM_, choices: [false,true]}
 	]
 };
 		
+ZaServer.prototype.toString = function() {
+	return this.name;
+}
+
 ZaServer.getAll =
 function(app) {
 	var soapDoc = AjxSoapDoc.create("GetAllServersRequest", "urn:zimbraAdmin", null);	
@@ -320,12 +301,10 @@ function() {
 	this.load();	
 }
 
-ZaServer.prototype.load = 
+ZaServer.loadMethod = 
 function(by, val, withConfig) {
 	var _by = by ? by : "id";
 	var _val = val ? val : this.id
-
-		
 	var soapDoc = AjxSoapDoc.create("GetServerRequest", "urn:zimbraAdmin", null);
 	if(withConfig) {
 		soapDoc.getMethod().setAttribute("applyConfig", "1");	
@@ -336,16 +315,19 @@ function(by, val, withConfig) {
 	elBy.setAttribute("by", _by);
 	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
 	this.initFromDom(resp.firstChild);
+	this.cos = this._app.getGlobalConfig();
+
 	if(this.attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
 		this.getMyVolumes();
 		this.getCurrentVolumes();
-		this.getHSMStatus();
 	}
+	
+	
 }
+ZaItem.loadMethods["ZaServer"].push(ZaServer.loadMethod);
 
 ZaServer.prototype.initFromDom = function(node) {
 	ZaItem.prototype.initFromDom.call(this, node);
-	
 	// convert installed/enabled services to hidden fields for xform binding
 	var installed = this.attrs[ZaServer.A_zimbraServiceInstalled];
 	if (installed) {
@@ -370,8 +352,7 @@ ZaServer.prototype.initFromDom = function(node) {
 		}
 	}
 	this[ZaServer.A_ServiceHostname] = this.attrs[ZaServer.A_ServiceHostname]; // a hack for New Account Wizard	
-	this[ZaServer.A_showVolumeAndHSM] = this.attrs[ZaServer.A_zimbraMailboxServiceEnabled];
-
+	this[ZaServer.A_showVolumes] = this.attrs[ZaServer.A_zimbraMailboxServiceEnabled];
 }
 
 ZaServer.prototype.getCurrentVolumes =
@@ -468,46 +449,9 @@ ZaServer.prototype.setCurrentVolume = function (id, type) {
 	var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;			
 }
 
-ZaServer.prototype.getHSMStatus = function () {
-	if(!this.id)
-		return;
-		
-	var soapDoc = AjxSoapDoc.create("GetHsmStatusRequest", "urn:zimbraAdmin", null);
-	var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;	
-
-	this.hsm = new Object();		
-
-	this.hsm[ZaServer.A_HSMstartDate] = respNode.getAttribute(ZaServer.A_HSMstartDate);
-	this.hsm[ZaServer.A_HSMendDate] = respNode.getAttribute(ZaServer.A_HSMendDate);
-	this.hsm[ZaServer.A_HSMrunning] = respNode.getAttribute(ZaServer.A_HSMrunning);			
-	this.hsm[ZaServer.A_HSMwasAborted] = respNode.getAttribute(ZaServer.A_HSMwasAborted);
-	this.hsm[ZaServer.A_HSMaborting] = respNode.getAttribute(ZaServer.A_HSMaborting);			
-	this.hsm[ZaServer.A_HSMerror] = respNode.getAttribute(ZaServer.A_HSMerror);						
-	this.hsm[ZaServer.A_HSMnumBlobsMoved] = respNode.getAttribute(ZaServer.A_HSMnumBlobsMoved);
-	this.hsm[ZaServer.A_HSMnumMailboxes] = respNode.getAttribute(ZaServer.A_HSMnumMailboxes);
-	this.hsm[ZaServer.A_HSMtotalMailboxes] = respNode.getAttribute(ZaServer.A_HSMtotalMailboxes);
-	this.hsm[ZaServer.A_HSMthreshold] = respNode.getAttribute(ZaServer.A_HSMthreshold);	
-	this.hsm[ZaServer.A_HSMremainingMailboxes] = this.hsm[ZaServer.A_HSMtotalMailboxes] - this.hsm[ZaServer.A_HSMnumMailboxes];
+ZaServer.initMethod = function (app) {
+	this.attrs = new Object();
+	this.id = "";
+	this.name="";
 }
-
-ZaServer.prototype.runHSM = function() {
-	if(!this.id)
-		return;
-	try {
-		var soapDoc = AjxSoapDoc.create("HsmRequest", "urn:zimbraAdmin", null);	
-		var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;		
-	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex,"ZaServer.prototype.runHSM",null, false);
-	}
-}
-
-ZaServer.prototype.abortHSM = function() {
-	if(!this.id)
-		return;
-	try {
-		var soapDoc = AjxSoapDoc.create("AbortHsmRequest", "urn:zimbraAdmin", null);	
-		var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;		
-	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex,"ZaServer.prototype.runHSM",null, false);
-	}
-}
+ZaItem.initMethods["ZaServer"].push(ZaServer.initMethod);

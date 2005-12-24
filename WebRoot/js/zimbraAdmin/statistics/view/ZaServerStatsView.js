@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -37,9 +37,11 @@ function ZaServerStatsView(parent, app) {
 	this._msgCountPage = new ZaServerMessageCountPage(this, app);
 	this._msgsVolumePage = new ZaServerMessageVolumePage(this, app);
 	this._spamPage = new ZaServerSpamActivityPage(this, app);	
+	this._diskPage = new ZaServerDiskStatsPage(this, app);	
 	this.addTab(ZaMsg.TABT_InData, this._msgCountPage);		
 	this.addTab(ZaMsg.TABT_InMsgs, this._msgsVolumePage);			
-	this.addTab(ZaMsg.TABT_Spam_Activity, this._spamPage);					
+	this.addTab(ZaMsg.TABT_Spam_Activity, this._spamPage);
+	this.addTab(ZaMsg.TABT_Disk, this._diskPage)					
 //	this.setScrollStyle(DwtControl.SCROLL);
 }
 
@@ -60,6 +62,7 @@ function(entry) {
 	this._msgCountPage.setObject(entry);
 	this._msgsVolumePage.setObject(entry);
 	this._spamPage.setObject(entry);
+	this._diskPage.setObject(entry);
 	var szTitle = AjxStringUtil.htmlEncode(ZaMsg.NAD_ServerStatistics);
 	if(entry.name) {
 		szTitle = szTitle + entry.name;

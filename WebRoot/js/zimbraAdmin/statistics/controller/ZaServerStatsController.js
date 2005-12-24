@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -34,7 +34,7 @@
 function ZaServerStatsController(appCtxt, container, app) {
 
 	ZaController.call(this, appCtxt, container, app);
-	this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/managing_servers/checking_usage_statistics.htm";
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/checking_usage_statistics.htm";
 }
 
 ZaServerStatsController.prototype = new ZaController();

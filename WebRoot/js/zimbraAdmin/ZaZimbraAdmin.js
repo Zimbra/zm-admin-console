@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -33,7 +33,7 @@
 */
 function ZaZimbraAdmin(appCtxt) {
 	ZaZimbraAdmin._instance = this;
-	ZaController.call(this, appCtxt, null, null, true);
+	ZaController.call(this, appCtxt, null, null,"ZaZimbraAdmin");
 	this._shell = this._appCtxt.getShell();	
 	this._splashScreen = new ZaSplashScreen(this._shell, "Admin_SplashScreen");
 	
@@ -198,9 +198,7 @@ function() {
 	window.onbeforeunload = null;
 	var locationStr = location.protocol + "//" + location.hostname + ((location.port == '80')? "" : ":" +location.port) + "/zimbraAdmin";
 	if (AjxEnv.isIE){
-		var act = new AjxTimedAction ();
-		act.method = ZaZimbraAdmin.redir;
-		act.params.add(locationStr);
+		var act = new AjxTimedAction(null, ZaZimbraAdmin.redir, [locationStr]);
 		AjxTimedAction.scheduleAction(act, 1);
 	} else {
 		window.location = locationStr;
@@ -208,8 +206,7 @@ function() {
 }
 
 ZaZimbraAdmin.redir =
-function(args){
-	var locationStr = args[0];
+function(locationStr){
 	window.location = locationStr;
 }
 
@@ -221,9 +218,12 @@ function() {
 	this._appViewMgr = new ZaAppViewMgr(this._shell, this, true);
 								        
 	try {
-		var domains = ZaDomain.getAll(); // catch an exception before building the UI
+		//var myname = AjxCookie.getCookie(document, ZaSettings.ADMIN_NAME_COOKIE);			    
 		//if we're not logged in we will be thrown out here
+		var testSrch = ZaSearch.search("", [ZaSearch.ACCOUNTS], 1, ZaAccount.A_uid, true, this._app, null, 1); // catch an exception before building the UI
 		
+		//initialize my rights
+		ZaSettings.init();		
 		//draw stuff
 		var elements = new Object();
 		elements[ZaAppViewMgr.C_SASH] = new DwtSash(this._shell, DwtSash.HORIZONTAL_STYLE,"console_inset_app_l", 20);
@@ -260,8 +260,9 @@ ZaZimbraAdmin.prototype._setLicenseStatusMessage = function () {
 			licenseInfoText = ZaMsg.licenseWillExpire;
 			this._statusBox.getHtmlElement().className = "consoleLicenseWillExpire";
 		}
+		var formatter = AjxDateFormat.getDateInstance(AjxDateFormat.SHORT);
 		this.setStatusMsg(AjxBuffer.concat(licenseInfoText," ",
-										   AjxDateUtil.getTimeStr(ZaServerVersionInfo.licenseExpirationDate, ZaMsg.consoleLicenseExpiredDateFormat)));
+										   formatter.format(ZaServerVersionInfo.licenseExpirationDate)));
 	}
 };
 
@@ -269,17 +270,15 @@ ZaZimbraAdmin.prototype.setStatusMsg =
 function(msg, clear) {
 	this._statusBox.setText(msg);
 	if (msg && clear) {
-		var act = new AjxTimedAction ();
-		act.method = ZmZimbraMail._clearStatus;
-		act.params.add(this._statusBox);
+		var act = new AjxTimedAction(null, ZmZimbraMail._clearStatus, [this._statusBox]);
 		AjxTimedAction.scheduleAction(act, ZmZimbraMail.STATUS_LIFE);
 	}
 }
 
 ZaZimbraAdmin._clearStatus = 
-function(args) {
-	args[0].setText("");
-	args[0].getHtmlElement().className = "statusBox";
+function(statusBox) {
+	statusBox.setText("");
+	statusBox.getHtmlElement().className = "statusBox";
 }
 
 
@@ -377,6 +376,7 @@ ZaZimbraAdmin.prototype._showAccountsView = function (defaultType, ev){
 	queryHldr.isByDomain = false;
 	queryHldr.byValAttr = false;
 	queryHldr.queryString = "";
+	queryHldr.types = new Array();
 	if(typeof(defaultType) == 'object' && defaultType.length) {
 		for(var i = 0; i < defaultType.length; i++) {
 			queryHldr.types[i] = ZaSearch.TYPES[defaultType[i]];
@@ -474,37 +474,36 @@ function() {
 // Banner button click
 ZaZimbraAdmin._bannerBarHdlr =
 function(id, tableId) {
-	var bannerBar = Dwt.getObjectFromElement(Dwt.getDomObj(document,tableId));
+	var bannerBar = Dwt.getObjectFromElement(document.getElementById(tableId));
 	if(!bannerBar)
 		return;
 		
-	var doc = bannerBar.getDocument();
 	switch (id) {
 		case ZaZimbraAdmin._MIGRATION_ID:
-			Dwt.getDomObj(doc, bannerBar._migrationId).blur();
-			Dwt.getDomObj(doc, bannerBar._migrationId2).blur();			
+			document.getElementById(bannerBar._migrationId).blur();
+			document.getElementById(bannerBar._migrationId2).blur();			
 			window.open("http://zimbra.com/downloads/migrationwizard/accept");
 			break;
 			
 		case ZaZimbraAdmin._HELP_ID:
-			Dwt.getDomObj(doc, bannerBar._helpId).blur();
-			Dwt.getDomObj(doc, bannerBar._helpId2).blur();			
-			window.open("/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/administration_console_help.htm");
+			document.getElementById(bannerBar._helpId).blur();
+			document.getElementById(bannerBar._helpId2).blur();			
+			window.open("/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm");
 			break;
 
 		case ZaZimbraAdmin._PDF_HELP_ID:
-			Dwt.getDomObj(doc, bannerBar._helpId).blur();
-			Dwt.getDomObj(doc, bannerBar._helpId2).blur();			
+			document.getElementById(bannerBar._helpId).blur();
+			document.getElementById(bannerBar._helpId2).blur();			
 			window.open("/zimbraAdmin/adminhelp/pdf/admin.pdf");
 			break;
 						
 		case ZaZimbraAdmin._LOGOFF_ID:
-			Dwt.getDomObj(doc, bannerBar._logOffId).blur();
+			document.getElementById(bannerBar._logOffId).blur();
 			ZaZimbraAdmin.logOff();
 			break;
 		case ZaZimbraAdmin._ABOUT_ID:
-			Dwt.getDomObj(doc, bannerBar._logAboutId).blur();
-			Dwt.getDomObj(doc, bannerBar._logAboutId2).blur();			
+			document.getElementById(bannerBar._logAboutId).blur();
+			document.getElementById(bannerBar._logAboutId2).blur();			
 			//show about screen
 			ZaZimbraAdmin.getInstance().aboutDialog.popup();
 			break;
@@ -538,8 +537,7 @@ function() {
 	html[i++] = "<table align='right' id='" + this._bannerTableId + "'><tr><td>&nbsp;";
 	html[i++] = "</td></tr></table>";
 	this.bannerBar.getHtmlElement().innerHTML = html.join("");
-	var doc = this.bannerBar.getDocument();
-	var t = Dwt.getDomObj(doc, this._bannerTableId);
+	var t = document.getElementById(this._bannerTableId);
 	this.bannerBar.app = this._app;	
 	Dwt.associateElementWithObject(t, this.bannerBar);		
 
@@ -592,41 +590,40 @@ function () {
 	html[i++] = "</td></tr></table>";		
 		
 	this.bannerBar.getHtmlElement().innerHTML = html.join("");
-	var doc = this.bannerBar.getDocument();
-	var t = Dwt.getDomObj(doc, this._bannerTableId);
+	var t = document.getElementById(this._bannerTableId);
 	this.bannerBar.app = this._app;	
 	Dwt.associateElementWithObject(t, this.bannerBar);	
 
 	var a;
 	
-	var a = Dwt.getDomObj(doc, this.bannerBar._helpId);
+	var a = document.getElementById(this.bannerBar._helpId);
 	if(a) {
 		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._HELP_ID + ",'" + this._bannerTableId + "');";
 		a.onmouseover = a.onmouseout = ZaZimbraAdmin._bannerBarMouseHdlr;
 	}
 	
-	a = Dwt.getDomObj(doc, this.bannerBar._helpId2);
+	a = document.getElementById(this.bannerBar._helpId2);
 	if(a) {
 		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._HELP_ID + ",'" + this._bannerTableId + "');";
 	}	
 			
-	a = Dwt.getDomObj(doc, this.bannerBar._logOffId);
+	a = document.getElementById(this.bannerBar._logOffId);
 	if(a) {
 		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._LOGOFF_ID + ",'" + this._bannerTableId + "');";
 		a.onmouseover = a.onmouseout = ZaZimbraAdmin._bannerBarMouseHdlr;
 	}
 
-	a = Dwt.getDomObj(doc, this.bannerBar._logOffId2);
+	a = document.getElementById(this.bannerBar._logOffId2);
 	if(a) {
 		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._LOGOFF_ID + ",'" + this._bannerTableId + "');";
 	}
 	
-	a = Dwt.getDomObj(doc, this.bannerBar._logAboutId);
+	a = document.getElementById(this.bannerBar._logAboutId);
 	if(a) {
 		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._ABOUT_ID + ",'" + this._bannerTableId + "');";
 	}	
 	
-	a = Dwt.getDomObj(doc, this.bannerBar._logAboutId2);
+	a = document.getElementById(this.bannerBar._logAboutId2);
 	if(a) {
 		a.href = "javascript: void ZaZimbraAdmin._bannerBarHdlr(" + ZaZimbraAdmin._ABOUT_ID + ",'" + this._bannerTableId + "');";
 	}		

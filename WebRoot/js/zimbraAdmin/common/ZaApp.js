@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -55,13 +55,22 @@ function() {
 
 ZaApp.prototype.launch =
 function(appCtxt) {
-	this.getStatusViewController().show();
+	if(ZaSettings.STATUS_ENABLED) {
+		this.getStatusViewController().show();
+	} else if(ZaSettings.ADDRESSES_ENABLED) {
+		this._appCtxt.getAppController()._showAccountsView([ZaItem.ACCOUNT,ZaItem.DL,ZaItem.ALIAS],null);
+	}
+		
 }
 
 ZaApp.prototype.setActive =
 function(active) {
 	if (active) {
-		this.getStatusViewController().show();
+		if(ZaSettings.STATUS_ENABLED) {
+			this.getStatusViewController().show();	
+		} else if(ZaSettings.ADDRESSES_ENABLED) {
+			this._appCtxt.getAppController()._showAccountsView([ZaItem.ACCOUNT,ZaItem.DL,ZaItem.ALIAS],null);
+		}
 	}
 }
 
@@ -69,13 +78,6 @@ ZaApp.prototype.getAppCtxt =
 function() {
 	return this._appCtxt;
 }
-
-/*
-ZaApp.prototype.setCurrentController = 
-function(ctrlr) {
-	this._currentController = ctrlr;
-}
-*/
 
 ZaApp.prototype.getCurrentController = 
 function(ctrlr) {
@@ -118,8 +120,8 @@ ZaApp.prototype.getAccountListController =
 function() {
 	if (this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW] == null) {
 		this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW] = new ZaAccountListController(this._appCtxt, this._container, this);
-		this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW].addAccountRemovalListener(new AjxListener(this, ZaApp.prototype.handleAccountRemoval));					
-		this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW].addAccountRemovalListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountRemoval));							
+		this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW].addRemovalListener(new AjxListener(this, ZaApp.prototype.handleAccountRemoval));					
+		this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW].addRemovalListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountRemoval));							
 	}
 	return this._controllers[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW]
 }
@@ -129,11 +131,11 @@ function() {
 	if (this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW] == null) {
 		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW] = new ZaAccountViewController(this._appCtxt, this._container, this);
 		//since we are creating the account controller now - register all the interested listeners with it
-		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addAccountChangeListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountChange));
-		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addAccountCreationListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountCreation));	
-		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addAccountRemovalListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountRemoval));			
-		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addAccountCreationListener(new AjxListener(this, ZaApp.prototype.handleAccountCreation));			
-		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addAccountRemovalListener(new AjxListener(this, ZaApp.prototype.handleAccountRemoval));					
+		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addChangeListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountChange));
+		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addCreationListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountCreation));	
+		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addRemovalListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountRemoval));			
+		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addCreationListener(new AjxListener(this, ZaApp.prototype.handleAccountCreation));			
+		this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW].addRemovalListener(new AjxListener(this, ZaApp.prototype.handleAccountRemoval));					
 	}
 	return this._controllers[ZaZimbraAdmin._ACCOUNT_VIEW];
 }
@@ -141,7 +143,9 @@ function() {
 ZaApp.prototype.getDistributionListController = 
 function (domain) {
 	if (this._controllers[ZaZimbraAdmin._DL_VIEW] == null) {
-		this._controllers[ZaZimbraAdmin._DL_VIEW] = new ZaDLController(this._appCtxt, this._container, this, domain);
+		this._controllers[ZaZimbraAdmin._DL_VIEW] = new ZaDLController(this._appCtxt, this._container, this);
+		this._controllers[ZaZimbraAdmin._DL_VIEW].addCreationListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountCreation));			
+		this._controllers[ZaZimbraAdmin._DL_VIEW].addRemovalListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountRemoval));			
 	}
 	return this._controllers[ZaZimbraAdmin._DL_VIEW];
 };
@@ -286,7 +290,6 @@ function(serverName) {
 			return this._serverList.getArray()[i];
 	}
 	if(i == cnt) {
-		myServer = new ZaServer();
 		myServer.load("name", serverName);
 	}
 	return myServer;	
@@ -299,6 +302,24 @@ function(refresh) {
 	}
 	return this._serverList;	
 }
+
+ZaApp.prototype.getMailServers =
+function(refresh) {
+	if (refresh || this._serverList == null) {
+		this._serverList = ZaServer.getAll(this);
+	}
+	var resArray = new Array();
+	var tmpArray = this._serverList.getArray();
+	var cnt = tmpArray.length;
+	for(var i = 0; i < cnt; i++) {
+		if(tmpArray[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
+			resArray.push(tmpArray[i]);
+		}
+	}
+	return resArray;
+}
+
+
 
 ZaApp.prototype.getServerListChoices =
 function(refresh) {
@@ -394,6 +415,7 @@ function(refresh) {
 	return this._cosListChoices;	
 }
 
+/*
 ZaApp.prototype.getStatusList =
 function(refresh) {
 	if (refresh || this._statusList == null) {
@@ -401,6 +423,7 @@ function(refresh) {
 	}
 	return this._statusList;	
 }
+*/
 
 ZaApp.prototype.getAccountList =
 function(refresh) {

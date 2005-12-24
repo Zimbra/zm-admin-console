@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -29,9 +29,8 @@
 * This is a singleton object that controls all the user interaction with the list of ZaDomain objects
 **/
 function ZaDomainListController(appCtxt, container, app) {
-	ZaController.call(this, appCtxt, container, app);
-	this._evtMgr = new AjxEventMgr();
-	this._helpURL = "/zimbraAdmin/adminhelp/html/OpenSourceAdminHelp/managing_domains/managing_domains.htm";				
+	ZaController.call(this, appCtxt, container, app,"ZaDomainListController");
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_domains/managing_domains.htm";				
 }
 
 ZaDomainListController.prototype = new ZaController();
@@ -163,14 +162,6 @@ function (nextViewCtrlr, func, params) {
 	func.call(nextViewCtrlr, params);
 }
 
-/**
-* public getToolBar
-* @return reference to the toolbar
-**/
-ZaDomainListController.prototype.getToolBar = 
-function () {
-	return this._toolBar;	
-}
 
 /**
 * Adds listener to removal of an ZaDomain 
@@ -231,7 +222,7 @@ function(details) {
 *	Private method that notifies listeners to that the controlled ZaDomain (are) removed
 * 	@param details
 */
-ZaDomainListController.prototype._fireDomainRemovalEvent =
+ZaDomainListController.prototype._fireRemovalEvent =
 function(details) {
 	try {
 		if (this._evtMgr.isListenerRegistered(ZaEvent.E_REMOVE)) {
@@ -241,7 +232,7 @@ function(details) {
 			this._evtMgr.notifyListeners(ZaEvent.E_REMOVE, evt);
 		}
 	} catch (ex) {
-		this._handleException(ex, "ZaDomainListController.prototype._fireDomainRemovalEvent", details, false);	
+		this._handleException(ex, "ZaDomainListController.prototype._fireRemovalEvent", details, false);	
 	}
 }
 
@@ -274,8 +265,8 @@ function (ev) {
 **/
 ZaDomainListController.prototype._editButtonListener =
 function(ev) {
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()) {
-		var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+	if(this._contentView.getSelectionCount() == 1) {
+		var item = this._contentView.getSelection()[0];
 		this._app.getDomainController().show(item);
 	}
 }
@@ -298,8 +289,8 @@ function(ev) {
 ZaDomainListController.prototype._galWizButtonListener =
 function(ev) {
 	try {
-		if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()) {
-			var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+		if(this._contentView.getSelectionCount() == 1) {
+			var item = this._contentView.getSelection()[0];
 			this._currentObject = item;
 			this._galWizard = new ZaGALConfigXWizard(this._container, this._app);	
 			this._galWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishGalButtonListener, this, null);			
@@ -315,8 +306,8 @@ function(ev) {
 ZaDomainListController.prototype._authWizButtonListener =
 function(ev) {
 	try {
-		if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getLast()) {
-			var item = DwtListView.prototype.getItemFromElement.call(this, this._contentView.getSelectedItems().getLast());
+		if(this._contentView.getSelectionCount() == 1) {
+			var item = this._contentView.getSelection()[0];
 			this._currentObject = item;
 			this._authWizard = new ZaAuthConfigXWizard(this._container, this._app);	
 			this._authWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishAuthButtonListener, this, null);			
@@ -333,12 +324,13 @@ function(ev) {
 ZaDomainListController.prototype._deleteButtonListener =
 function(ev) {
 	this._removeList = new Array();
-	if(this._contentView.getSelectedItems() && this._contentView.getSelectedItems().getArray()) {
-		var arrDivs = this._contentView.getSelectedItems().getArray();
-		for(var key in arrDivs) {
-			var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
-			if(item) {
-				this._removeList.push(item);		
+	if(this._contentView.getSelectionCount()>0) {
+		var arrItems = this._contentView.getSelection();
+		var cnt = arrItems.length;
+		for(var key =0; key < cnt; key++) {
+			var item = DwtListView.prototype.getItemFromElement.call(this, arrItems[key]);
+			if(arrItems[key]) {
+				this._removeList.push(arrItems[key]);
 			}
 		}
 	}
@@ -399,7 +391,7 @@ function () {
 		}
 		this._list.remove(this._removeList[key]); //remove from the list
 	}
-	this._fireDomainRemovalEvent(successRemList); 		
+	this._fireRemovalEvent(successRemList); 		
 	this._removeConfirmMessageDialog.popdown();
 	this._contentView.setUI();
 	this.show();

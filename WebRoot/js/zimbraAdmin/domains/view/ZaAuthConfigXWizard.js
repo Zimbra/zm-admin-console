@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -25,7 +25,7 @@
 
 function ZaAuthConfigXWizard (parent, app) {
 	this._app=app;
-	ZaXWizardDialog.call(this, parent, null, ZaMsg.NCD_AuthConfigTitle, "550px", "300px");
+	ZaXWizardDialog.call(this, parent,app, null, ZaMsg.NCD_AuthConfigTitle, "550px", "300px");
 
 	this.stepChoices = [
 		{label:ZaMsg.TABT_AuthMode, value:1},				
@@ -58,6 +58,7 @@ function ZaAuthConfigXWizard (parent, app) {
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaAuthConfigXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaAuthConfigXWizard.prototype.handleXFormChange));	
 	this.lastErrorStep=0;	
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_domains/authentication_settings.htm";
 }
 
 ZaAuthConfigXWizard.prototype = new ZaXWizardDialog;
@@ -282,7 +283,7 @@ function(entry) {
 	for (var a in entry.attrs) {
 		this._containedObject.attrs[a] = entry.attrs[a];
 	}
-	
+	this.setTitle(ZaMsg.NCD_AuthConfigTitle + " (" + entry.name + ")");
 	this._containedObject[ZaModel.currentStep] = 1;
 	this._localXForm.setInstance(this._containedObject);	
 }
@@ -320,7 +321,10 @@ function () {
 													{type:_OUTPUT_, label:null, labelLocation:_NONE_, value:ZaMsg.Domain_AuthADUseSSL, width:"40px"}									
 												]
 											},											
-											{ref:ZaDomain.A_AuthLdapURL, type:_REPEAT_, label:ZaMsg.Domain_AuthADURL+":", repeatInstance:"ldap://server:389", showAddButton:true, showRemoveButton:true,  
+											{ref:ZaDomain.A_AuthLdapURL, type:_REPEAT_, label:ZaMsg.Domain_AuthADURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,  
+												addButtonLabel:ZaMsg.Domain_AddURL, 
+												removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,												
+												showAddOnNextRow:true,											
 												items: [
 													{ref:".", type:_LDAPURL_, label:null, labelLocation:_NONE_}
 												]
@@ -338,7 +342,10 @@ function () {
 													{type:_OUTPUT_, label:null, labelLocation:_NONE_, value:ZaMsg.Domain_AuthLDAPUseSSL, width:"40px"}									
 												]
 											},										
-											{ref:ZaDomain.A_AuthLdapURL, type:_REPEAT_, label:ZaMsg.Domain_AuthLdapURL+":", repeatInstance:"ldap://server:389", showAddButton:true, showRemoveButton:true,  
+											{ref:ZaDomain.A_AuthLdapURL, type:_REPEAT_, label:ZaMsg.Domain_AuthLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,  
+												addButtonLabel:ZaMsg.Domain_AddURL, 
+												removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,												
+												showAddOnNextRow:true,											
 												items: [
 													{ref:".", type:_LDAPURL_, label:null, labelLocation:_NONE_}
 												]

@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -71,7 +71,18 @@ ZaSearch.standardAttributes = AjxBuffer.concat(ZaAccount.A_displayname,",",
 											   ZaAccount.A_description, ",",
 											   ZaDistributionList.A_mailStatus);
 
-
+/**
+* Sends SearchAccountsRequest to the SOAP Servlet
+* @param query - query string
+* @param types - array of object types to search for([ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS])
+* @pagenum - results page number
+* @orderby - attribute to sort by
+* @isascending - sort order (boolean)
+* @app - reference to ZaApp instance (will be passed on to ZaItemList contructor)
+* @attrs - coma separated list of attributes to return (default: ZaSearch.standardAttributes)
+* @limit - maximum number of records to return
+* @domainName - domain name (optional, if searching within one domain)
+**/
 ZaSearch.search =
 function(query, types, pagenum, orderby, isascending, app, attrs, limit, domainName) {
 	if(!orderby) orderby = ZaAccount.A_uid;
@@ -109,7 +120,7 @@ function(query, types, pagenum, orderby, isascending, app, attrs, limit, domainN
 
 ZaSearch.searchByDomain = 
 function (domainName, types, pagenum, orderby, isascending, app, attrs, limit) {
-	return ZaSearch.search("", types, pagesnum, orderby, isascending, app, attrs, limit, domainName);
+	return ZaSearch.search("", types, pagenum, orderby, isascending, app, attrs, limit, domainName);
 }
 
 

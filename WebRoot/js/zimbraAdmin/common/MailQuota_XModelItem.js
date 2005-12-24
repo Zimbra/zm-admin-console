@@ -12,7 +12,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  * 
- * The Original Code is: Zimbra Collaboration Suite.
+ * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
  * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
@@ -83,7 +83,7 @@ MailQuota2_XModelItem.prototype.getter = "getValue";
 
 MailQuota2_XModelItem.prototype.getValue = function(instance, current, ref) {
 	var value = this.getLocalValue(instance, current, ref);
-	if (value == null) value = this.getSuperValue(instance, current, ref);
+	if (value == null && ZaSettings.COSES_ENABLED) value = this.getSuperValue(instance, current, ref);
 	if(value <=0) 
 		value = ZaMsg.Unlimited;
 	return value;
