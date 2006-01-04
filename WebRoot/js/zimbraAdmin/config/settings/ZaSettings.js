@@ -36,20 +36,6 @@ ZaSettings.init = function () {
 		return;
 		
 	DBG.println(AjxDebug.DBG1,"Initializing ZaSettings");		
-	
-	var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);	
-	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false);
-	var info = resp.Body.GetInfoResponse;
-	if (info.attrs && info.attrs.attr) {
-		var attr = info.attrs.attr;
-		for (var i = 0; i < attr.length; i++) {
-			if (attr[i].name == 'zimbraIsDomainAdminAccount') {
-				ZaSettings.isDomainAdmin = attr[i]._content == 'TRUE';
-				break;
-			}
-		}
-	}
-	
 	var adminName = AjxCookie.getCookie(document, ZaSettings.ADMIN_NAME_COOKIE);
 	if(adminName) {
 		var emailChunks = adminName .split("@");
@@ -162,16 +148,8 @@ Body: {
 			}
 		}
 	}
-	
-	// post-processing code
-	DBG.println("+++ document.location.pathname: "+document.location.pathname);
-	var files = [ document.location.pathname + "public/adminPost.js" ];
-	AjxInclude(files);
-	
-	ZaSettings.initialized = true;
-};
-ZaSettings.postInit = function() {
-	//Instrumentation code start	
+//	ZaHSM.init();
+	//Instrumentation code start
 	if(ZaSettings.initMethods) {
 		var cnt = ZaSettings.initMethods.length;
 		for(var i = 0; i < cnt; i++) {
@@ -181,7 +159,8 @@ ZaSettings.postInit = function() {
 		}
 	}	
 	//Instrumentation code end	
-};
+	ZaSettings.initialized = true;
+}
 /**
 * Static method so that static code can get the default value of a setting if it needs to.
 *
