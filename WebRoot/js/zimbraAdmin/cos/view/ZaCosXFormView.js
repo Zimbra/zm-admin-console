@@ -93,7 +93,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 			{type:_SWITCH_, 
 				items:[
 					{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 1", 
-					colSizes:["300px","*"],
+					colSizes:["150px","*"],
 						items:[
 							{ref:ZaCos.A_name, type:_INPUT_, msgName:ZaMsg.NAD_Name,label:ZaMsg.NAD_DisplayName, labelLocation:_LEFT_, cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged, required:true, width: "20em"},
 							{ref:ZaCos.A_description, type:_INPUT_, msgName:ZaMsg.NAD_Description,label:ZaMsg.NAD_Description, labelLocation:_LEFT_, cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged, width: "30em"},
@@ -154,8 +154,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 					{type:_CASE_, relevant:"instance[ZaModel.currentTab]==5",
 						colSizes:["300px","*"],
 						items: [
-							{type:_GROUP_, numCols:2,
-								items :[
+		
 									{ref:ZaCos.A_zimbraAttachmentsBlocked, type:_CHECKBOX_,  msgName:ZaMsg.NAD_RemoveAllAttachments,label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE", onChange:ZaTabView.onFormFieldChanged,labelCssClass:"xform_label", align:_LEFT_},
 									{ref:ZaCos.A_zimbraMailQuota, type:_TEXTFIELD_, msgName:ZaMsg.NAD_MailQuota,label:ZaMsg.NAD_MailQuota, labelLocation:_LEFT_, cssClass:"admin_xform_number_input", onChange:ZaTabView.onFormFieldChanged},
 									{ref:ZaCos.A_zimbraContactMaxNumEntries, type:_INPUT_, msgName:ZaMsg.NAD_ContactMaxNumEntries,label:ZaMsg.NAD_ContactMaxNumEntries, labelLocation:_LEFT_, cssClass:"admin_xform_number_input", onChange:ZaTabView.onFormFieldChanged},
@@ -171,8 +170,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 									{ref:ZaCos.A_zimbraMailTrashLifetime, type:_LIFETIME1_, msgName:ZaMsg.NAD_MailTrashLifetime,label:ZaMsg.NAD_MailTrashLifetime, labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged},
 									{ref:ZaCos.A_zimbraMailSpamLifetime, type:_LIFETIME1_, msgName:ZaMsg.NAD_MailSpamLifetime,label:ZaMsg.NAD_MailSpamLifetime, labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged}
 								]
-							}
-						]
+
 					}
 				]
 			}	
