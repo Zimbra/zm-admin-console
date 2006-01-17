@@ -342,7 +342,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject) {
 				{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 4", 
 					items:[
 						{ type: _DWT_ALERT_,
-						  cssClass: "DwtTabTable",
 						  containerCssStyle: "padding-bottom:0px",
 						  style: DwtAlert.WARNING,
 						  iconVisible: false, 
@@ -401,7 +400,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject) {
 				{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 5", 
 					items:[
 						{ type: _DWT_ALERT_,
-						  cssClass: "DwtTabTable",
 						  containerCssStyle: "padding-bottom:0px",
 						  style: DwtAlert.WARNING,
 						  iconVisible: false, 

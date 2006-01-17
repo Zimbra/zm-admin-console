@@ -237,6 +237,12 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 				{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 4", 
 					colSizes:["300px","150", "*"],
 					items: [
+						{ type: _DWT_ALERT_,
+						  containerCssStyle: "padding-bottom:0px",
+						  style: DwtAlert.WARNING,
+						  iconVisible: false, 
+						  content: ZaMsg.Alert_ServerRestart
+						},					
 						{ type: _GROUP_, numCols: 2,
 						  label: ZaMsg.NAD_POP_Service, labelCssStyle: "vertical-align:top",
 						  items: [
@@ -272,6 +278,12 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 				{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 5",
 					colSizes:["300px","150", "*"],
 					items: [
+						{ type: _DWT_ALERT_,
+						  containerCssStyle: "padding-bottom:0px",
+						  style: DwtAlert.WARNING,
+						  iconVisible: false, 
+						  content: ZaMsg.Alert_ServerRestart
+						},					
 						{ type: _GROUP_, numCols: 2,
 						  label: ZaMsg.NAD_IMAP_Service, labelCssStyle: "vertical-align:top",
 						  items: [
