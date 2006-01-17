@@ -285,17 +285,26 @@ Super_Textfield_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
 	if(anchorCssStyle) {
 		this.getItems()[1].cssStyle = anchorCssStyle;
+	} else {
+		this.getItems()[1].cssStyle = "width:200px";
 	}	
 	Composite_XFormItem.prototype.initializeItems.call(this);
 	var textFieldCssClass = this.getInheritedProperty("textFieldCssClass");
 	if(textFieldCssClass) {
-		this.getItems()[0].cssStyle = textFieldCssClass;
+		this.getItems()[0].cssClass = textFieldCssClass;
 	}		
-
+	var textFieldCssStyle = this.getInheritedProperty("textFieldCssStyle");
+	if(textFieldCssStyle) {
+		this.getItems()[0].cssStyle = textFieldCssStyle;
+	}
+	var textFieldWidth = this.getInheritedProperty("textFieldWidth");
+	if(textFieldWidth) {
+		this.getItems()[0].width = textFieldWidth;
+	}	
 }	
 
 Super_Textfield_XFormItem.prototype.items = [
-	{	type:_TEXTFIELD_, ref:".", width:100,
+	{	type:_TEXTFIELD_, ref:".",
 		elementChanged: function(elementValue,instanceValue, event) {
 			this.getForm().itemChanged(this, elementValue, event);
 		},		
@@ -326,6 +335,8 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
 	if(anchorCssStyle) {
 		this.getItems()[1].cssStyle = anchorCssStyle;
+	} else {
+		this.getItems()[1].cssStyle = "width:200px";
 	}	
 	Composite_XFormItem.prototype.initializeItems.call(this);
 	var checkBoxLabel = this.getInheritedProperty("checkBoxLabel");
