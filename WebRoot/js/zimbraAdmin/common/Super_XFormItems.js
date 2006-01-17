@@ -243,6 +243,8 @@ Super_XFormItem.updateCss = function(levels) {
 	} else {
 		if(this._originalClassName != null)
 			container.className=this._originalClassName;
+		else
+			container.className="xform_field_container";
 	}
 }
 
@@ -299,7 +301,7 @@ Super_Textfield_XFormItem.prototype.items = [
 		},		
 		onChange:Composite_XFormItem.onFieldChange,
 		updateElement:function(value) {
-			Super_XFormItem.updateCss.call(this,1);
+			Super_XFormItem.updateCss.call(this,5);
 			Textfield_XFormItem.prototype.updateElement.call(this, value);
 		},
 		forceUpdate:true
@@ -350,7 +352,7 @@ Super_Checkbox_XFormItem.prototype.items = [
 		//trueValue:"TRUE", falseValue:"FALSE", 
 		onChange:Composite_XFormItem.onFieldChange,
 		updateElement:function(value) {
-			Super_XFormItem.updateCss.call(this,1);
+			Super_XFormItem.updateCss.call(this,5);
 			Checkbox_XFormItem.prototype.updateElement.call(this, value);
 		},
 		relevantBehavior:_PARENT_,
@@ -384,7 +386,7 @@ Super_Select1_XFormItem.prototype.items = [
 		trueValue:"TRUE", falseValue:"FALSE", 
 		onChange:Composite_XFormItem.onFieldChange,
 		updateElement:function(value) {
-			Super_XFormItem.updateCss.call(this,1);
+			Super_XFormItem.updateCss.call(this,5);
 			OSelect1_XFormItem.prototype.updateElement.call(this, value);
 		}
 	},
