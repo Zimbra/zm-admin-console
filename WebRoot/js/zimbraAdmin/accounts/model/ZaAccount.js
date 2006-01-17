@@ -359,9 +359,8 @@ function(tmpObj, app) {
 }
 /**
 * Creates a new ZaAccount. This method makes SOAP request to create a new account record. 
-* @param attrs
-* @param name 
-* @param password
+* @param tmpObj
+* @param app 
 * @return ZaAccount
 **/
 ZaAccount.create =

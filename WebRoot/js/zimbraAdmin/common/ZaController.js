@@ -263,6 +263,8 @@ function(ex, method, params, restartOnError, obj) {
 			this.popupMsgDialog(ZaMsg.PERMISSION_DENIED, ex, true);
 		} else if (ex.code == ZmCsfeException.ACCT_NO_SUCH_ACCOUNT) {
 			this.popupMsgDialog(ZaMsg.ERROR_NO_SUCH_ACCOUNT, ex, true);
+		} else if (ex.code == ZmCsfeException.NO_SUCH_DISTRIBUTION_LIST) {
+			this.popupMsgDialog(ZaMsg.NO_SUCH_DISTRIBUTION_LIST, ex, true);
 		} else if (ex.code == ZmCsfeException.CSFE_SVC_ERROR || 
 					ex.code == ZmCsfeException.SVC_FAILURE || 
 						(typeof(ex.code) == 'string' && ex.code && ex.code.match(/^(service|account|mail)\./))
