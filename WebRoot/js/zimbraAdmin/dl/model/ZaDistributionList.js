@@ -658,7 +658,6 @@ ZaDistributionListMember.prototype.toString = function () {
 };
 
 
-ZaDistributionList._validEmailPattern = new RegExp(/^([a-zA-Z0-9_\-])+((\.)?([a-zA-Z0-9_\-])+)*@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
 ZaDistributionList.myXModel = {
 	getMemberPool: function (model, instance) {
 		return instance.memberPool;
@@ -700,8 +699,8 @@ ZaDistributionList.myXModel = {
 							   // set the name, so that on refresh, we don't display old data.
 							   throw ZaMsg.DLXV_ErrorNoListName;
 						   } else {
-							   var re = ZaDistributionList._validEmailPattern;
-							   if (re.test(value)) {
+							   //var re = ZaDistributionList._validEmailPattern;
+							   if (AjxUtil.EMAIL_RE.test(value)) {
 								   return value;
 							   } else {
 								   throw ZaMsg.DLXV_ErrorInvalidListName;
