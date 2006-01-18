@@ -203,8 +203,8 @@ Cos_HostNameOrIp_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_HOSTNAME_OR_IP_", "cos_hostname_or_ip", Cos_HostNameOrIp_XModelItem, Cos_String_XModelItem);
 Cos_HostNameOrIp_XModelItem.prototype.validateType = XModelItem.prototype.validateString;
 Cos_HostNameOrIp_XModelItem.prototype.maxLength = 256;
-Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE ];
-
+//Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE ];
+Cos_HostNameOrIp_XModelItem.prototype.pattern =  [AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE, AjxUtil.HOST_NAME_WITH_PORT_RE];
 /**
 * _COS_PORT_
 **/
@@ -353,10 +353,6 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	this.getItems()[0].trueValue = trueValue;
 	this.getItems()[0].falseValue = falseValue;	
 }	
-/*
-Super_Checkbox_XFormItem.prototype.outputHTML = function (html, updateScript, indent, currentCol) {
-	this.getForm().outputItemList(this.getItems(), this, html, updateScript, indent, this.getNumCols(), currentCol);
-}*/
 
 Super_Checkbox_XFormItem.prototype.items = [
 	{	type:_CHECKBOX_, ref:".", align:_LEFT_,
@@ -379,7 +375,31 @@ Super_Checkbox_XFormItem.prototype.items = [
 ];
 
 
+/**
+*	SUPER__HOSTPORT_ form item type
+**/
+Super_HostPort_XFormItem = function () {}
+XFormItemFactory.createItemType("_SUPER_HOSTPORT_", "super_hostport", Super_HostPort_XFormItem, Super_XFormItem);
 
+
+Super_HostPort_XFormItem.prototype.useParentTable = false;
+Super_HostPort_XFormItem.prototype.numCols = 3;
+
+Super_HostPort_XFormItem.prototype.items = [
+	{	type:_HOSTPORT_, ref:".",
+		onChange:Composite_XFormItem.onFieldChange,
+		updateElement:function(value) {
+			Super_XFormItem.updateCss.call(this,5);
+			//HostPort_XFormItem.prototype.updateElement.call(this, value);
+		}
+	},
+	{	
+		type:_SUPER_ANCHOR_HELPER_, ref:".",
+		relevant:"Super_XFormItem.checkIfOverWriten.call(item)",
+		relevantBehavior:_BLOCK_HIDE_,
+		onChange:Composite_XFormItem.onFieldChange
+	}
+];
 
 
 /**

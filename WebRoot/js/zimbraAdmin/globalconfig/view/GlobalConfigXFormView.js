@@ -169,27 +169,30 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 					   	  onChange: ZaTabView.onFormFieldChanged,
 					   	  labelCssClass:"xform_label", align:_LEFT_
 					   	},
-						{ type: _SEPARATOR_, numCols: 2 },
-						{ type: _COMPOSITE_, useParentTable: false,
-						  label: ZaMsg.NAD_MTA_WebMailHostname, labelCssStyle: "vertical-align:top",
-						  items: [
-							{ ref: ZaGlobalConfig.A_zimbraSmtpHostname, type: _INPUT_, 
-							  labelLocation: _NONE_, width: "18em",
-							  onChange:ZaTabView.onFormFieldChanged
-							}
-						]},
-						{ type: _COMPOSITE_, useParentTable: false,
-						  label: ZaMsg.NAD_MTA_WebMailPort, labelCssStyle: "vertical-align:top",
-						  items: [
-							{ ref: ZaGlobalConfig.A_zimbraSmtpPort, type: _OUTPUT_, 
-							  label: null, labelLocation: _NONE_,labelLocation: _LEFT_, width: "4em"
-						    }
-						]},						
-						{ ref: ZaGlobalConfig.A_zimbraMtaRelayHost, type: _INPUT_,
-						  label: ZaMsg.NAD_MTA_RelayHostname, width: "18em",
-						  onChange:ZaTabView.onFormFieldChanged
+						{ ref: ZaGlobalConfig.A_zimbraSmtpHostname, type: _TEXTFIELD_, 
+						  onChange:ZaTabView.onFormFieldChanged,
+						  label:ZaMsg.NAD_MTA_WebMailHostname
 						},
-						{ ref: ZaGlobalConfig.A_zimbraMtaMaxMessageSize, type: _INPUT_, 
+						{ ref: ZaGlobalConfig.A_zimbraSmtpPort, type: _OUTPUT_, 
+						  label: ZaMsg.NAD_MTA_WebMailPort
+					    },
+//					    { type: _SEPARATOR_, numCols: 2 },
+/*					    {type:_OUTPUT_, ref:ZaGlobalConfig.A_zimbraMtaRelayHost, label:ZaMsg.NAD_MTA_RelayMTA},
+						{ ref: ZaGlobalConfig.A_zimbraMtaRelayHostInternal, type: _TEXTFIELD_,
+						  label: ZaMsg.NAD_MTA_RelayHostname, width: "18em",
+						  onChange:ZaTabView.onFormFieldChanged,
+						  cssClass:"admin_xform_name_input"
+						},
+						{ ref: ZaGlobalConfig.A_zimbraMtaRelayPortInternal, type: _TEXTFIELD_,
+						  label: ZaMsg.NAD_MTA_RelayPort, width: "18em",
+						  onChange:ZaTabView.onFormFieldChanged,
+						  cssClass:"admin_xform_number_input"
+						},								
+						{ type: _SEPARATOR_, numCols: 2 },*/
+						{ref:ZaGlobalConfig.A_zimbraMtaRelayHost,label:ZaMsg.NAD_MTA_RelayMTA,
+							type:_HOSTPORT_,onChange:ZaTabView.onFormFieldChanged
+						},
+						{ ref: ZaGlobalConfig.A_zimbraMtaMaxMessageSize, type: _TEXTFIELD_, 
 						  label: ZaMsg.NAD_MTA_MaxMsgSize, width: "6em",
 						  onChange:ZaTabView.onFormFieldChanged
   						},

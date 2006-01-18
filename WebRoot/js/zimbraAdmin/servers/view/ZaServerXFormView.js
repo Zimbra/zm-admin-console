@@ -309,10 +309,10 @@ ZaServerXFormView.myXFormModifier = function(xFormObject) {
 					  label:ZaMsg.NAD_MTA_WebMailTimeout, width: "4em",
 					  onChange: ZaServerXFormView.onFormFieldChanged
 					},
-			      	{ ref:ZaServer.A_zimbraMtaRelayHost, type: _INPUT_,
-			      	  label: ZaMsg.NAD_MTA_RelayHostname, 
+			      	{ ref:ZaServer.A_zimbraMtaRelayHost, type:_SUPER_HOSTPORT_,
+			      	  label: ZaMsg.NAD_MTA_RelayMTA, 
 			      	  onChange: ZaServerXFormView.onFormFieldChanged,
-			      	  cssClass:"admin_xform_name_input"
+			      	  resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
 			      	},
 			        { ref: ZaServer.A_zimbraMtaDnsLookupsEnabled, type:_SUPER_CHECKBOX_,
 			      	  label:ZaMsg.NAD_MTA_DnsLookups,
