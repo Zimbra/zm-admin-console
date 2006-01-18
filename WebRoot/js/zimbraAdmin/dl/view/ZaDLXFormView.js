@@ -52,7 +52,6 @@ function () {
 ZaDLXFormView.removeAllMembers = function(event) {
 	var form = this.getForm();
 	form.getInstance().removeAllMembers();
-	form.parent.setDirty(true);
 	form.refresh();
 };
 
@@ -64,7 +63,6 @@ ZaDLXFormView.removeMembers = function(event) {
 	var membersSelection = ZaDLXFormView.getMemberSelection.call(form);
 	if(membersSelection.length) {
 		form.getInstance().removeMembers(membersSelection);
-		form.parent.setDirty(true);
 		form.refresh();	
 	}
 };
@@ -108,7 +106,7 @@ function(evt) {
 	var fieldObj = this.getForm().parent;
 	var currentPageNum = this.getInstanceValue("/memPagenum")+1;
 	this.setInstanceValue(currentPageNum,"/memPagenum");
-	this.getInstance().getMembers(ZaDistributionList.MEMBER_QUERY_LIMIT);
+	this.getInstance().getMembers(true, ZaDistributionList.MEMBER_QUERY_LIMIT);
 	this.getForm().refresh();
 }
 
@@ -120,7 +118,7 @@ function(evt) {
 	var fieldObj = this.getForm().parent;
 	var currentPageNum = this.getInstanceValue("/memPagenum")-1;
 	this.setInstanceValue(currentPageNum,"/memPagenum");
-	this.getInstance().getMembers(ZaDistributionList.MEMBER_QUERY_LIMIT);
+	this.getInstance().getMembers(true, ZaDistributionList.MEMBER_QUERY_LIMIT);
 	this.getForm().refresh();
 }
 /**
@@ -340,6 +338,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 	    };
 	    
 	xFormObject.items = [
+	   	{type:_SPACER_, height:10, colSpan:"*" },
 		{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", 
 			items: [
 				{type:_GROUP_,	numCols:4,colSizes:["32px","350px","100px","250px"],
@@ -362,7 +361,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 		},
 		{type:_SWITCH_, colSpan:"*", numCols:5,
 			items:[
-				{type:_CASE_,  relevant:"instance[ZaModel.currentTab] == 1",  numCols:3,colSizes:["50%","47%", "3%"],
+				{type:_CASE_,  relevant:"instance[ZaModel.currentTab] == 1",  numCols:2,colSizes:["50%","50%"],
 				  items:[
 					 {type:_GROUP_,  width:"100%", colSizes:[10,70,"auto",20],
 						items:[	
@@ -408,14 +407,8 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 							}
 					    ]
 				    },
-					{type:_GROUP_, numCols:1, width:"100%", colSizes:["auto"], cssClass:"RadioGrouperBorder",/*label:ZaMsg.DLXV_GroupLabelAddMembers,*/
+					{type:_RADIO_GROUPER_, numCols:1, colSizes:["auto"],label:ZaMsg.DLXV_GroupLabelAddMembers,
 						items:[			      
-						   {type:_GROUP_, numCols:2, colSizes:["auto", "auto"], 
-						   		items: [
-							   		{type:_OUTPUT_, value:ZaMsg.DLXV_GroupLabelAddMembers, cssClass:"RadioGrouperLabel"},
-								   	{type:_CELLSPACER_}
-								]
-							},
 					       {type:_GROUP_, numCols:3, colSizes:[50, "auto",80], 
 							   items:[
 							   		{type:_OUTPUT_, value:ZaMsg.DLXV_LabelFind, nowrap:true},
@@ -477,9 +470,8 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 								]
 					       }				       
 						]
-				    },
-				    {type:_CELLSPACER_},
-				  ]
+				    }
+				]
 				},
 				{type:_CASE_, relevant:"instance[ZaModel.currentTab] == 2", colSizes:[10, "auto"], colSpan:"*",
 					items:[
