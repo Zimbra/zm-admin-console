@@ -397,7 +397,7 @@ Super_HostPort_XFormItem.prototype.items = [
 		type:_SUPER_ANCHOR_HELPER_, ref:".",
 		relevant:"Super_XFormItem.checkIfOverWriten.call(item)",
 		relevantBehavior:_BLOCK_HIDE_,
-		onChange:Composite_XFormItem.onFieldChange
+		onChange:Composite_XFormItem.onFieldChange,cssStyle:"width:100px"
 	}
 ];
 
