@@ -113,8 +113,7 @@ ZaDistributionList.prototype.clone = function () {
 /**
  * Removes a list of members
  * This keeps the internal add, and remove lists up to date.
- * @param arr (Array) - array of ZaDistributionListMembers to remove
- * @return boolean (true if at least one member was removed)
+ * @param arr (Array) - array of ZaDistributionListMembers
  */
 ZaDistributionList.prototype.removeMembers = function (arr) {
 	var removed = this._removeFromList(arr, this._memberList);
@@ -122,11 +121,10 @@ ZaDistributionList.prototype.removeMembers = function (arr) {
 	if (removed) {
 		this._addToRemoveList(arr, this._removeList);
 	}
-	return removed;
 };
 
 ZaDistributionList.prototype.refresh = function () {
-	this.getMembers();
+	this.getMembers(true);
 }
 
 /**
@@ -176,8 +174,7 @@ function(callback) {
 /**
  * Saves all changes to a list
  */
- /*
-ZaDistributionList.prototype.saveEdits = function (obj) {
+ZaDistributionList.prototype.saveEdits = function () {
 	if (this.isDirty()) {
 		if (this._origName != null && this._origName != this.name) {
 			// move all members to the add list, to force a re add.
@@ -192,129 +189,16 @@ ZaDistributionList.prototype.saveEdits = function (obj) {
 	}
 		
 };
-*/
 
 /**
-* public rename; sends RenameDistributionListRequest soap request
-**/
-ZaDistributionList.prototype.rename = 
-function (newName) {
-	var soapDoc = AjxSoapDoc.create("RenameDistributionListRequest", "urn:zimbraAdmin", null);
-	soapDoc.set("id", this.id);
-	soapDoc.set("newName", newName);	
-	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
-	//update itself
-	this.initFromDom(resp.firstChild);	
-}
-
-/**
-* @method modify
-* Updates ZaDistributionList attributes (SOAP)
-* @param mods set of modified attributes and their new values
-*/
-ZaDistributionList.prototype.modify =
-function(tmpObj) {
-	//update the object
-	var soapDoc = AjxSoapDoc.create("ModifyDistributionListRequest", "urn:zimbraAdmin", null);
-	soapDoc.set("id", this.id);
-	for (var aname in tmpObj.attrs) {
-		if(aname == ZaItem.A_objectClass || aname==ZaAccount.A_mail || aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid) {
-			continue;
-		}		
-		//multi-value attribute
-		if(tmpObj.attrs[aname] instanceof Array) {
-			var cnt = tmpObj.attrs[aname].length;
-			if(cnt) {
-				for(var ix=0; ix <cnt; ix++) {
-					if(tmpObj.attrs[aname][ix]) { //if there is an empty element in the array - don't send it
-						var attr = soapDoc.set("a", tmpObj.attrs[aname][ix]);
-						attr.setAttribute("n", aname);
-					}
-				}
-			} else {
-				var attr = soapDoc.set("a", "");
-				attr.setAttribute("n", aname);
-			}
-		} else {
-			var attr = soapDoc.set("a", tmpObj.attrs[aname]);
-			attr.setAttribute("n", aname);
-		}
+ * Creates a new distribution list
+ */
+ZaDistributionList.prototype.saveNew = function () {
+	if (this.isDirty()) {
+		var sd = AjxSoapDoc.create("CreateDistributionListRequest", "urn:zimbraAdmin", null);
+		return this._save(sd, "CreateDistributionListResponse", true, false);
 	}
-
-	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
-	//update itself
-	this.initFromDom(resp.firstChild);
-
-	if(tmpObj._addList) 
-		this.addNewMembers(tmpObj._addList);
-	
-	if(tmpObj._removeList)		
-		this.removeDeletedMembers(tmpObj._removeList);
-		
-	this.refresh();
-	this.markClean();
-	return true;
-}
-
-/**
-* Creates a new ZaDistributionList. This method makes SOAP request to create a new account record. 
-* @param tmpObj
-* @param app 
-* @return ZaDistributionList
-**/
-ZaDistributionList.create =
-function(tmpObj, app) {
-	
-	//create SOAP request
-	var soapDoc = AjxSoapDoc.create("CreateDistributionListRequest", "urn:zimbraAdmin", null);
-	soapDoc.set(ZaAccount.A_name, tmpObj.name);
-
-	for (var aname in tmpObj.attrs) {
-		if(aname == ZaItem.A_objectClass || aname == ZaAccount.A_mail || aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid) {
-			continue;
-		}	
-		
-		if(tmpObj.attrs[aname] instanceof Array) {
-			var cnt = tmpObj.attrs[aname].length;
-			if(cnt) {
-				for(var ix=0; ix <cnt; ix++) {
-					var attr = soapDoc.set("a", tmpObj.attrs[aname][ix]);
-					attr.setAttribute("n", aname);
-				}
-			} 
-		} else {	
-			if(tmpObj.attrs[aname] != null) {
-				var attr = soapDoc.set("a", tmpObj.attrs[aname]);
-				attr.setAttribute("n", aname);
-			}
-		}
-	}
-	try {
-		var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
-	} catch (ex) {
-		switch(ex.code) {
-			case ZmCsfeException.DISTRIBUTION_LIST_EXISTS:
-				app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
-			break;
-			case ZmCsfeException.ACCT_EXISTS:
-				app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
-			break;
-			default:
-				app.getCurrentController()._handleException(ex, "ZaDistributionList.create", null, false);
-			break;
-		}
-		return null;
-	}
-	var dl = new ZaDistributionList(app);
-	dl.initFromDom(resp.firstChild);
-	if(tmpObj._addList) {
-		dl.addNewMembers(tmpObj._addList);
-		dl.refresh();
-	}
-	dl.markClean();	
-	return dl;
-}
-
+};
 
 // ==============================================================
 // public accessor methods
@@ -383,10 +267,9 @@ ZaDistributionList.prototype.getMailStatus = function () {
  * internal list of members is null
  */
 // TODO -- handle dynamic limit and offset
-ZaDistributionList.prototype.getMembers = function (limit) {
+ZaDistributionList.prototype.getMembers = function (force, limit) {
 	//DBG.println("Get members: memberList = " , this._memberList, "$");
-	if (this.id != null) {
-		this._memberList = null;
+	if ((this._memberList == null || (force == true)) && (this.id != null)) {
 		var soapDoc = AjxSoapDoc.create("GetDistributionListRequest", "urn:zimbraAdmin", null);
 		if(!limit)
 			limit = ZaDistributionList.MEMBER_QUERY_LIMIT;
@@ -400,6 +283,7 @@ ZaDistributionList.prototype.getMembers = function (limit) {
 		dl.setAttribute("by", "id");
 		soapDoc.set("name", this.getName());
 		try {
+			// We can't use javascript here, since the response is not returning the correct information
 			var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false).Body.GetDistributionListResponse;
 			//DBG.dumpObj(resp);
 			var members = resp.dl[0].dlm;
@@ -481,11 +365,6 @@ ZaDistributionList.prototype._addToList  = function (arrayOrVector, vector, preA
 	return added;
 };
 
-/**
-* Removes @param arrayOrVector from @vector, then
-* removes duplicates from @param vector
-* @return boolean (true if at least one member of arrayOrVector was removed from vector)
-**/
 ZaDistributionList.prototype._removeFromList  = function (arrayOrVector, vector) {
 	var removed = false;
 	if (AjxUtil.isArray(arrayOrVector)) {
@@ -503,7 +382,7 @@ ZaDistributionList.prototype._addArrayToList = function (newArray, vector, preAd
 		if(!newArray[i])
 			continue;
 			
-		if (newArray[i].toString() != this._selfMember.toString()) {
+		if (newArray[i].valueOf() != this._selfMember.valueOf()) {
 			add = true;
 			if (preAddCallback != null){
 				add = preAddCallback(newArray[i]);
@@ -530,18 +409,12 @@ ZaDistributionList.prototype._addVectorToList = function (newVector, vector) {
 	return (vector.size() > 0)? true: false;
 };
 
-/**
-* removes members of @param newArray from @param vector
-* @param newArray - contains members to remove 
-* @param vector  - List to remove from
-* @return boolean (true if at least one member was removed)
-**/
 ZaDistributionList.prototype._removeArrayFromList = function (newArray, vector) {
-	var vecArray = vector.getArray(); //get direct reference to underlying array
+	var vecArray = vector.getArray();
 	var ret = false;
 	for (var i = 0; i < newArray.length ; ++i) {
 		for (var j = 0; j < vecArray.length; ++j) {
-			if (vecArray[j].toString() == newArray[i].toString()) {
+			if (vecArray[j].valueOf() == newArray[i].valueOf()) {
 				vecArray.splice(j,1);
 				ret = true;
 			}
@@ -559,7 +432,7 @@ ZaDistributionList.prototype._dedupList = function (vector) {
 	var curr = null;
 	for (i = len; i >= 0; --i) {
 		curr = arr[i];
-		if((curr!=null) && (prev!=null) && curr.toString() == prev.toString()) {
+		if((curr!=null) && (prev!=null) && curr.valueOf() == prev.valueOf()) {
 			arr.splice(i,1);
 		} else {
 			prev = curr;
@@ -567,20 +440,64 @@ ZaDistributionList.prototype._dedupList = function (vector) {
 	}
 };
 
-ZaDistributionList.prototype.addNewMembers = function (list) {
-	var addArray = list.getArray();
+/**
+ * Save any changes made to the list. If no changes have been
+ * made, the function returns false;
+ */
+ZaDistributionList.prototype._save = function (soapDoc, respName, add, remove) {
+	var app = this._app;
+	if (this.isDirty()) {
+		soapDoc.set("name", this.getName());
+		var a, key;
+		for (key in this.attrs) {
+			if (this.attrs[key] != null) {
+				if (key == "objectClass" || key == "zimbraId" || key == "uid" ||
+					key == "mail") {
+						continue;
+				}
+				a = soapDoc.set("a", this.attrs[key]);
+				a.setAttribute("n", key);
+			}
+		}
+		
+		try {
+			var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false).Body[respName];
+			this.id = resp.dl[0].id;
+			if (add == true) this._addNewMembers();
+			if (remove == true) this._removeDeletedMembers();
+			this.markClean();
+			return true;
+		} catch (ex) {
+			//DBG.dumpObj(ex);
+			throw ex;
+			// TODO:
+			// hmm ... if we fail adding any one ofthe members, but the list creation succeeded ...
+			// how should we tell the user this ....
+			return false;
+		}
+
+	}
+	return false;
+};
+
+ZaDistributionList.prototype._addNewMembers = function () {
+	var addArray = this._addList.getArray();
 	var len = addArray.length;
 	var addMemberSoapDoc, r, addMemberSoapDoc;
 	for (var i = 0; i < len; ++i) {
 		addMemberSoapDoc = AjxSoapDoc.create("AddDistributionListMemberRequest", "urn:zimbraAdmin", null);
 		addMemberSoapDoc.set("id", this.id);
-		addMemberSoapDoc.set("dlm", addArray[i].toString());
+		if(typeof(addArray[i]) == "object" && addArray[i].name) {
+			addMemberSoapDoc.set("dlm", addArray[i].name.toString());
+		} else {
+			addMemberSoapDoc.set("dlm", addArray[i].toString());
+		}
 		r = ZmCsfeCommand.invoke(addMemberSoapDoc, null, null, null, false).Body.AddDistributionListMemberResponse;
 	}
 };
 
-ZaDistributionList.prototype.removeDeletedMembers = function (list) {
-	var removeArray = list.getArray();
+ZaDistributionList.prototype._removeDeletedMembers = function () {
+	var removeArray = this._removeList.getArray();
 	var len = removeArray.length;
 	var addMemberSoapDoc, r, removeMemberSoapDoc;
 	for (var i = 0; i < len; ++i) {
@@ -657,7 +574,14 @@ ZaDistributionListMember.prototype.toString = function () {
 	return this[ZaAccount.A_name];
 };
 
+/**
+ * Override valueOf to force comparisons to treat this much like a string.
+ */
+ZaDistributionListMember.prototype.valueOf = function () {
+	return this.id;
+};
 
+ZaDistributionList._validEmailPattern = new RegExp(/^([a-zA-Z0-9_\-])+((\.)?([a-zA-Z0-9_\-])+)*@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
 ZaDistributionList.myXModel = {
 	getMemberPool: function (model, instance) {
 		return instance.memberPool;
@@ -699,8 +623,8 @@ ZaDistributionList.myXModel = {
 							   // set the name, so that on refresh, we don't display old data.
 							   throw ZaMsg.DLXV_ErrorNoListName;
 						   } else {
-							   //var re = ZaDistributionList._validEmailPattern;
-							   if (AjxUtil.EMAIL_RE.test(value)) {
+							   var re = ZaDistributionList._validEmailPattern;
+							   if (re.test(value)) {
 								   return value;
 							   } else {
 								   throw ZaMsg.DLXV_ErrorInvalidListName;
