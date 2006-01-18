@@ -119,18 +119,11 @@ ZaTabView.prototype.setObject =
 function(entry) {
 	this._containedObject = new Object();
 	this._containedObject.attrs = new Object();
-//	this._containedObject.attrsInternal = new Object();
 	
 	for (var a in entry.attrs) {
 		this._containedObject.attrs[a] = entry.attrs[a];
 	}
 	
-/*	if(entry.attrsInternal) {
-		for (var a in entry.attrsInternal) {
-			this._containedObject.attrsInternal[a] = entry.attrsInternal[a];
-		}
-	}
-*/	
 	if(!entry[ZaModel.currentTab])
 		this._containedObject[ZaModel.currentTab] = "1";
 	else
