@@ -57,13 +57,13 @@ function ZaController(appCtxt, container, app, iKeyName) {
     	this._msgDialog.setApp(app);    	
     }	
     this.objType = ZaEvent.S_ACCOUNT;
-    this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm";
+    this._helpURL = ZaController.helpURL;
 }
 
 ZaController.initToolbarMethods = new Object();
 ZaController.initPopupMenuMethods = new Object();
 ZaController.setViewMethods = new Object();
-
+ZaController.helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm";
 // Public methods
 ZaController.prototype.toString = 
 function() {
