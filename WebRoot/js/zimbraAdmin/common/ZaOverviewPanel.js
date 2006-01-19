@@ -53,7 +53,7 @@ function() {
 	this._treePanel = new DwtComposite(this, "OverviewTreePanel", DwtControl.ABSOLUTE_STYLE);
 	this._treePanel.setScrollStyle(DwtControl.SCROLL);
 	this._tree = new DwtTree(this._treePanel, DwtTree.SINGLE_STYLE, "OverviewTree" , DwtControl.ABSOLUTE_STYLE);
-	this._tree.setScrollStyle(DwtControl.SCROLL);
+	//this._tree.setScrollStyle(DwtControl.SCROLL);
 }
 	
 ZaOverviewPanel.prototype._layout =
