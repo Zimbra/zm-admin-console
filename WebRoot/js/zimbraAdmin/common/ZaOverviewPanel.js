@@ -27,7 +27,7 @@ function ZaOverviewPanel(parent, className, posStyle) {
 
 	DwtComposite.call(this, parent, className, posStyle);
 
-	this.setScrollStyle(DwtControl.SCROLL);
+	this.setScrollStyle(DwtControl.CLIP);
 	this.addControlListener(new AjxListener(this, this._panelControlListener));
 	this._createFolderTree();
 	this._layout();
@@ -53,7 +53,6 @@ function() {
 	this._treePanel = new DwtComposite(this, "OverviewTreePanel", DwtControl.ABSOLUTE_STYLE);
 	this._treePanel.setScrollStyle(DwtControl.SCROLL);
 	this._tree = new DwtTree(this._treePanel, DwtTree.SINGLE_STYLE, "OverviewTree" , DwtControl.ABSOLUTE_STYLE);
-	this._tree.setScrollStyle(DwtControl.SCROLL);
 }
 	
 ZaOverviewPanel.prototype._layout =
@@ -61,7 +60,7 @@ function() {
 	var opSz = this.getSize();
 //	opSz.x+=100;
 	var h = opSz.y;
-//	h = (h > ZaOverviewPanel._MIN_FOLDERTREE_SIZE) ? h : ZaOverviewPanel._MIN_FOLDERTREE_SIZE;
+	h = (h > ZaOverviewPanel._MIN_FOLDERTREE_SIZE) ? h : ZaOverviewPanel._MIN_FOLDERTREE_SIZE;
 	
 	this._treePanel.setBounds(0, 0, opSz.x, h);
 //	var tfBds = this._treePanel.getBounds();
