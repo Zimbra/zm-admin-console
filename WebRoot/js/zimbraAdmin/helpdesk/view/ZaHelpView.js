@@ -32,13 +32,32 @@
 **/
 function ZaHelpView (parent, app) {
 	if (arguments.length == 0) return;
-	ZaTabView.call(this, parent, app, "ZaHelpView");	
+	ZaTabView.call(this, parent, app, "ZaHelpView");
 	this.initForm(new Object(), this.getMyXForm())
+//	this._createHTML();
 }
 
 ZaHelpView.prototype = new ZaTabView();
 ZaHelpView.prototype.constructor = ZaHelpView;
 ZaTabView.XFormModifiers["ZaHelpView"] = new Array();
+/**
+* @param xModelMetaData - XModel metadata that describes data model
+* @param xFormMetaData - XForm metadata that describes the form
+**/
+ZaHelpView.prototype.initForm = 
+function (xModelMetaData, xFormMetaData) {
+	if(xModelMetaData == null || xFormMetaData == null)
+		throw new AjxException("Metadata for XForm and/or XModel are not defined", AjxException.INVALID_PARAM, "DwtXWizardDialog.prototype._initForm");
+
+	this._localXModel = new XModel(xModelMetaData);
+	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
+	this._localXForm.setController(this);
+	this._localXForm.draw();
+	// This is specifically for the dwt button. If the instance is null, which here it is,
+	// dwt widgets don't get inserted into the xform, until you manually call refresh().
+	this._localXForm.refresh();
+	this._drawn = true;
+}
 
 ZaHelpView.prototype.showAboutDialog = function () {
 	this._appCtxt.getAppController().aboutDialog.popup();
@@ -111,13 +130,11 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 					{type:_SEPARATOR_, colSpan:1, cssClass:"helpSeparator"},
 					{type:_SEPARATOR_, colSpan:1, cssClass:"helpSeparator"},
 					{type:_SPACER_, height:"10px"},
-		{type:_DWT_BUTTON_, label:"About Zimbra Version",onActivate:"this.getFormController().showAboutDialog()",
-					 width:"125px"}
+					{type:_DWT_BUTTON_, label:ZaMsg.About_Button_Label, onActivate:"this.getFormController().showAboutDialog()", width:"125px"}
 				]
 			}
 		];
 }
-
 ZaTabView.XFormModifiers["ZaHelpView"].push(ZaHelpView.myXFormModifier);
 
 
