@@ -32,49 +32,22 @@
 **/
 function ZaHelpView (parent, app) {
 	if (arguments.length == 0) return;
-	DwtComposite.call(this, parent, null, Dwt.ABSOLUTE_STYLE);	
-	this._app = app;
-	this._drawn = false;	
-	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
-	this._containedObject = null;
-	this.setScrollStyle(DwtControl.SCROLL);
+	ZaTabView.call(this, parent, app, "ZaHelpView");	
 	this.initForm(new Object(), this.getMyXForm())
-//	this._createHTML();
 }
 
-ZaHelpView.prototype = new DwtComposite();
+ZaHelpView.prototype = new ZaTabView();
 ZaHelpView.prototype.constructor = ZaHelpView;
-
-/**
-* @param xModelMetaData - XModel metadata that describes data model
-* @param xFormMetaData - XForm metadata that describes the form
-**/
-ZaHelpView.prototype.initForm = 
-function (xModelMetaData, xFormMetaData) {
-	if(xModelMetaData == null || xFormMetaData == null)
-		throw new AjxException("Metadata for XForm and/or XModel are not defined", AjxException.INVALID_PARAM, "DwtXWizardDialog.prototype._initForm");
-
-	this._localXModel = new XModel(xModelMetaData);
-	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
-	this._localXForm.setController(this);
-	this._localXForm.draw();
-	// This is specifically for the dwt button. If the instance is null, which here it is,
-	// dwt widgets don't get inserted into the xform, until you manually call refresh().
-	this._localXForm.refresh();
-	this._drawn = true;
-}
+ZaTabView.XFormModifiers["ZaHelpView"] = new Array();
 
 ZaHelpView.prototype.showAboutDialog = function () {
 	this._appCtxt.getAppController().aboutDialog.popup();
 };
 
-ZaHelpView.prototype.getMyXForm = function() {	
-	var xFormObject = {
-		tableCssStyle:"width:100%;overflow:auto;",
-		itemDefaults: {
-			_SEPARATOR_: {containerCssStyle:"padding-right:3px;padding-left:3px;"}
-		},
-		items: [
+ZaHelpView.myXFormModifier = function(xFormObject) {	
+	xFormObject.tableCssStyle="width:100%;overflow:auto;";
+	xFormObject.itemDefaults = {_SEPARATOR_: {containerCssStyle:"padding-right:3px;padding-left:3px;"}};
+	xFormObject.items = [
 			{type:_OUTPUT_, label:null, value:ZaMsg.HELP_PAGE_0, colSpan:"*", cssStyle:"font-size:12pt;	font-weight: bold;"},
 			{type:_OUTPUT_, label:null, value:ZaMsg.HELP_PAGE_1, colSpan:"*", cssStyle:"font-size:12px;"},
 
@@ -142,8 +115,9 @@ ZaHelpView.prototype.getMyXForm = function() {
 					 width:"125px"}
 				]
 			}
-		]
-	}
-	return xFormObject;
+		];
 }
+
+ZaTabView.XFormModifiers["ZaHelpView"].push(ZaHelpView.myXFormModifier);
+
 
