@@ -328,15 +328,12 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 	membersHeaderList[0] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.ALV_Name_col, null, null, true, ZaAccount.A_name, true, true);
 
 	xFormObject.tableCssStyle = "width:100%;overflow:auto;";
-//	xFormObject.cssClass="ZaDLView";
 	xFormObject.numCols=5;
-//	xFormObject.X_showBorder = true;
 	xFormObject.colSizes = [10,"auto", 20, "auto", 10];
 	xFormObject.itemDefaults = {
 			_INPUT_: { cssClass:"inputBorder" },
 			_TEXTAREA_: {cssClass: "inputBorder"},
 			_TEXTFIELD_: {cssClass: "inputBorder", containerCssStyle:"width:100%"}
-//			_DWT_BUTTON: {forceUpdate: true}
 	    };
 	    
 	xFormObject.items = [
@@ -364,16 +361,19 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 			items:[
 				{type:_CASE_,  relevant:"instance[ZaModel.currentTab] == 1",  numCols:3,colSizes:["50%","47%", "3%"],
 				  items:[
-					 {type:_GROUP_,  width:"100%", colSizes:[10,70,"auto",20],
+					 {type:_GROUP_,  width:"100%", colSizes:[10,75,"auto",20],
 						items:[	
- 						    {type:_CELLSPACER_, width:10, rowSpan:8},
-							{ref:"name", type:_EMAILADDR_, xmsgName:ZaMsg.NAD_AccountName, label: ZaMsg.DLXV_LabelListName, 
+ 						    {type:_CELLSPACER_, width:10, rowSpan:9},
+							{ref:ZaAccount.A_name, type:_EMAILADDR_, xmsgName:ZaMsg.NAD_AccountName, label: ZaMsg.DLXV_LabelListName, 
 								onChange:ZaTabView.onFormFieldChanged, forceUpdate:true, tableCssStyle:"width:100%", inputWidth:"100%"
 							},
-						    {ref: "description", type:_TEXTFIELD_, label: ZaMsg.DLXV_LabelDescription, width:"100%",
-						    	onChange:ZaTabView.onFormFieldChanged
+						    {ref:ZaAccount.A_displayname, type:_TEXTFIELD_, label:ZaMsg.NAD_DisplayName, width:"100%",
+						    	cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged
+						    },							
+						    {ref:ZaAccount.A_description, type:_TEXTFIELD_, label: ZaMsg.DLXV_LabelDescription, width:"100%",
+						    	cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged
 						    },
-							{ref: "zimbraMailStatus", type:_CHECKBOX_, trueValue:"enabled", falseValue:"disabled", 
+							{ref: "zimbraMailStatus", type:_CHECKBOX_, trueValue:"enabled", falseValue:"disabled", align:_LEFT_,
 								label:ZaMsg.DLXV_LabelEnabled, labelLocation:_LEFT_,labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
 							},						    
 						    {type:_OUTPUT_, value:ZaMsg.DLXV_LabelListMembers, width:"100%", colSpan:2, cssClass:"xform_label_left", 
