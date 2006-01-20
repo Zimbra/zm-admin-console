@@ -39,7 +39,15 @@ function ZaDomain(app) {
 	this._app = app;
 	//default attributes
 	this.attrs[ZaDomain.A_GalMode] = ZaDomain.GAL_Mode_internal;
-	this.attrs[ZaDomain.A_GalMaxResults] = 100;
+	var globalConfig = null;
+	if(app) {
+		globalConfig = app.getGlobalConfig(false);
+	} 
+	if(globalConfig) {
+		this.attrs[ZaDomain.A_GalMaxResults] = globalConfig.attrs[ZaGlobalConfig.A_zimbraGalMaxResults];
+	} else {
+		this.attrs[ZaDomain.A_GalMaxResults] = 100;
+	}
 	this.attrs[ZaDomain.A_AuthMech] = ZaDomain.AuthMech_zimbra;
 }
 
