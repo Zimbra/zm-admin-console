@@ -271,9 +271,6 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
  	var form = this.getForm();
 	// get the current value of the textfied
  	var val = form.get("optionalAdd");
- 	if(!val)
- 		return;
- 		
  	var values = val.split(/[\r\n,;]+/);
 	var cnt = values.length;
  	var members = new Array();
