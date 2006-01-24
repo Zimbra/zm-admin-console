@@ -215,6 +215,7 @@ function(errorStr) {
 		html = "&nbsp;";
 	}
 	this._errorCell.innerHTML = html;
+	//have to do this, because IE does not reposition the divs:
 	this._bannerCell.innerHTML = this.getBannerHtml();
 }
 
