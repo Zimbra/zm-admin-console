@@ -27,7 +27,6 @@
 * @constructor
 * @class ZaServerListController
 * This is a singleton object that controls all the user interaction with the list of ZaServer objects
-* @author Greg Solovyev
 **/
 function ZaServerListController(appCtxt, container, app) {
 	ZaController.call(this, appCtxt, container, app,"ZaServerListController");
