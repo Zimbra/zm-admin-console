@@ -49,8 +49,7 @@ ZaItem.ALIAS = "alias";
 ZaItem.DOMAIN = "domain";
 ZaItem.COS = "cos";
 ZaItem.SERVER = "server";
-ZaItem.MAILQ_ITEM = "message";
-ZaItem.MAILQ = "mailque";
+
 ZaItem.A_objectClass = "objectClass";
 ZaItem.A_zimbraId = "zimbraId";
 
@@ -117,28 +116,22 @@ function (type, app) {
 	switch (type) {
 		case ZaItem.ACCOUNT:
 			return new ZaAccount(app);
-
+		break;
 		case ZaItem.ALIAS:
 			return new ZaAlias(app);
-
+		break;
 		case ZaItem.DL:
 			return new ZaDistributionList(app);
-
+		break;
 		case ZaItem.DOMAIN:
 			return new ZaDomain(app);
-
+		break;
 		case ZaItem.COS:
 			return new ZaCos(app);
-
+		break;
 		case ZaItem.SERVER:
 			return new ZaServer(app);
-
-		case ZaItem.MAILQ_ITEM:
-			return new ZaPostQItem(app);
-
-		case ZaItem.MAILQ:
-			return new ZaPostQ(app);
-
+		break;
 	}
 }
 
