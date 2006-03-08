@@ -25,12 +25,12 @@
 
 /**
 * @constructor
-* @class ZaPostQListView
+* @class ZaMTAListView
 * @param parent
 * @author Greg Solovyev
 **/
 
-function ZaPostQListView(parent) {
+function ZaMTAListView(parent) {
 
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
@@ -42,25 +42,25 @@ function ZaPostQListView(parent) {
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	
 	this.setScrollStyle(DwtControl.SCROLL);
-	//this.addControlListener(new AjxListener(this, ZaPostQListView.prototype._controlListener));
+	//this.addControlListener(new AjxListener(this, ZaMTAListView.prototype._controlListener));
 }
 
-ZaPostQListView.prototype = new ZaListView;
-ZaPostQListView.prototype.constructor = ZaPostQListView;
+ZaMTAListView.prototype = new ZaListView;
+ZaMTAListView.prototype.constructor = ZaMTAListView;
 
-ZaPostQListView.prototype.toString = 
+ZaMTAListView.prototype.toString = 
 function() {
-	return "ZaPostQListView";
+	return "ZaMTAListView";
 }
 
-ZaPostQListView.prototype.getTitle = 
+ZaMTAListView.prototype.getTitle = 
 function () {
 	return ZaMsg.PostQ_title;
 }
 /**
 * Renders a single item as a DIV element.
 */
-ZaPostQListView.prototype._createItemHtml =
+ZaMTAListView.prototype._createItemHtml =
 function(mta, now, isDndIcon) {
 	var html = new Array(50);
 	var	div = document.createElement("div");
@@ -75,35 +75,35 @@ function(mta, now, isDndIcon) {
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
 		var id = this._headerList[i]._id;
-		if(id.indexOf(ZaPostQ.A_Servername)==0) {	
+		if(id.indexOf(ZaMTA.A_Servername)==0) {	
 			// name
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-			html[idx++] = AjxStringUtil.htmlEncode(mta[ZaPostQ.A_Servername]);
+			html[idx++] = AjxStringUtil.htmlEncode(mta[ZaMTA.A_Servername]);
 			html[idx++] = "</td>";
-		} else if(id.indexOf(ZaPostQ.A_DeferredQ)==0) {	
+		} else if(id.indexOf(ZaMTA.A_DeferredQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-			html[idx++] = mta[ZaPostQ.A_DeferredQ][ZaPostQ.A_count];
+			html[idx++] = mta[ZaMTA.A_DeferredQ][ZaMTA.A_count];
 			html[idx++] = "</td>";
-		} else if(id.indexOf(ZaPostQ.A_IncomingQ)==0) {	
+		} else if(id.indexOf(ZaMTA.A_IncomingQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-			html[idx++] = mta[ZaPostQ.A_IncomingQ][ZaPostQ.A_count];
+			html[idx++] = mta[ZaMTA.A_IncomingQ][ZaMTA.A_count];
 			html[idx++] = "</td>";
-		}  else if(id.indexOf(ZaPostQ.A_ActiveQ)==0) {	
+		}  else if(id.indexOf(ZaMTA.A_ActiveQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-			html[idx++] = mta[ZaPostQ.A_ActiveQ][ZaPostQ.A_count];
+			html[idx++] = mta[ZaMTA.A_ActiveQ][ZaMTA.A_count];
 			html[idx++] = "</td>";
-		} else if(id.indexOf(ZaPostQ.A_CorruptQ)==0) {	
+		} else if(id.indexOf(ZaMTA.A_CorruptQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-			html[idx++] = mta[ZaPostQ.A_CorruptQ][ZaPostQ.A_count];
+			html[idx++] = mta[ZaMTA.A_CorruptQ][ZaMTA.A_count];
 			html[idx++] = "</td>";
-		} else if(id.indexOf(ZaPostQ.A_HoldQ)==0) {	
+		} else if(id.indexOf(ZaMTA.A_HoldQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-			html[idx++] = mta[ZaPostQ.A_HoldQ][ZaPostQ.A_count];
+			html[idx++] = mta[ZaMTA.A_HoldQ][ZaMTA.A_count];
 			html[idx++] = "</td>";
 		}
 	}
@@ -112,23 +112,23 @@ function(mta, now, isDndIcon) {
 	return div;
 }
 
-ZaPostQListView.prototype._getHeaderList =
+ZaMTAListView.prototype._getHeaderList =
 function() {
 
 	var headerList = new Array();
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
 
-	headerList[0] = new ZaListHeaderItem(ZaPostQ.A_Servername, ZaMsg.SLV_ServiceHName_col, null, 195, false, null, true, true);
+	headerList[0] = new ZaListHeaderItem(ZaMTA.A_Servername, ZaMsg.SLV_ServiceHName_col, null, 195, false, null, true, true);
 
-	headerList[1] = new ZaListHeaderItem(ZaPostQ.A_DeferredQ, ZaMsg.PQV_DeferredQ_col, null, 60, false, null, true, true);
+	headerList[1] = new ZaListHeaderItem(ZaMTA.A_DeferredQ, ZaMsg.PQV_DeferredQ_col, null, 60, false, null, true, true);
 
-	headerList[2] = new ZaListHeaderItem(ZaPostQ.A_IncomingQ, ZaMsg.PQV_IncomingQ_col, null, 60, false, null, true, true);		
+	headerList[2] = new ZaListHeaderItem(ZaMTA.A_IncomingQ, ZaMsg.PQV_IncomingQ_col, null, 60, false, null, true, true);		
 	
-	headerList[3] = new ZaListHeaderItem(ZaPostQ.A_ActiveQ, ZaMsg.PQV_ActiveQ_col, null, 60, false, null, true, true);		
+	headerList[3] = new ZaListHeaderItem(ZaMTA.A_ActiveQ, ZaMsg.PQV_ActiveQ_col, null, 60, false, null, true, true);		
 	
-	headerList[4] = new ZaListHeaderItem(ZaPostQ.A_CorruptQ, ZaMsg.PQV_CorruptQ_col, null, 60, false, null, true, true);			
+	headerList[4] = new ZaListHeaderItem(ZaMTA.A_CorruptQ, ZaMsg.PQV_CorruptQ_col, null, 60, false, null, true, true);			
 	
-	headerList[5] = new ZaListHeaderItem(ZaPostQ.A_HoldQ, ZaMsg.PQV_HoldQ_col, null, 60, false, null, true, true);		
+	headerList[5] = new ZaListHeaderItem(ZaMTA.A_HoldQ, ZaMsg.PQV_HoldQ_col, null, 60, false, null, true, true);		
 		
 	return headerList;
 }

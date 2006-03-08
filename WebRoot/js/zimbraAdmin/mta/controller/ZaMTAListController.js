@@ -25,23 +25,23 @@
 
 /**
 * @constructor
-* @class ZaPostQListController
+* @class ZaMTAListController
 **/
-function ZaPostQListController(appCtxt, container, app) {
-	ZaController.call(this, appCtxt, container, app,"ZaPostQListController");
+function ZaMTAListController(appCtxt, container, app) {
+	ZaController.call(this, appCtxt, container, app,"ZaMTAListController");
    	this._toolbarOperations = new Array();
    	this._popupOperations = new Array();			
 	
 	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/managing_servers.htm";					
 }
 
-ZaPostQListController.prototype = new ZaController();
-ZaPostQListController.prototype.constructor = ZaPostQListController;
+ZaMTAListController.prototype = new ZaController();
+ZaMTAListController.prototype.constructor = ZaMTAListController;
 
-ZaController.initToolbarMethods["ZaPostQListController"] = new Array();
-ZaController.initPopupMenuMethods["ZaPostQListController"] = new Array();
+ZaController.initToolbarMethods["ZaMTAListController"] = new Array();
+ZaController.initPopupMenuMethods["ZaMTAListController"] = new Array();
 
-ZaPostQListController.prototype.show = 
+ZaMTAListController.prototype.show = 
 function(list) {
 
     if (!this._UICreated) {
@@ -60,28 +60,28 @@ function(list) {
 	this._changeActionsState();		
 }
 
-ZaPostQListController.initToolbarMethod =
+ZaMTAListController.initToolbarMethod =
 function () {
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.LABEL, ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, null, null, new AjxListener(this, this.refreshListener)));	
-   	this._toolbarOperations.push(new ZaOperation(ZaOperation.VIEW, ZaMsg.TBB_View, ZaMsg.PQTBB_View_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaPostQListController.prototype._viewButtonListener)));    		
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.VIEW, ZaMsg.TBB_View, ZaMsg.PQTBB_View_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaMTAListController.prototype._viewButtonListener)));    		
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
    	
 }
-ZaController.initToolbarMethods["ZaPostQListController"].push(ZaPostQListController.initToolbarMethod);
+ZaController.initToolbarMethods["ZaMTAListController"].push(ZaMTAListController.initToolbarMethod);
 
-ZaPostQListController.initPopupMenuMethod =
+ZaMTAListController.initPopupMenuMethod =
 function () {
-    this._popupOperations.push(new ZaOperation(ZaOperation.VIEW, ZaMsg.TBB_View, ZaMsg.PQTBB_View_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaPostQListController.prototype._viewButtonListener)));
+    this._popupOperations.push(new ZaOperation(ZaOperation.VIEW, ZaMsg.TBB_View, ZaMsg.PQTBB_View_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaMTAListController.prototype._viewButtonListener)));
 }
-ZaController.initPopupMenuMethods["ZaPostQListController"].push(ZaPostQListController.initPopupMenuMethod);
+ZaController.initPopupMenuMethods["ZaMTAListController"].push(ZaMTAListController.initPopupMenuMethod);
 
-ZaPostQListController.prototype._createUI = function () {
+ZaMTAListController.prototype._createUI = function () {
 	try {
 		var elements = new Object();
-		this._contentView = new ZaPostQListView(this._container);
+		this._contentView = new ZaMTAListView(this._container);
 		this._initToolbar();
 		if(this._toolbarOperations && this._toolbarOperations.length) {
 			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations); 
@@ -102,7 +102,7 @@ ZaPostQListController.prototype._createUI = function () {
 		
 		this._UICreated = true;
 	} catch (ex) {
-		this._handleException(ex, "ZaPostQListController.prototype._createUI", null, false);
+		this._handleException(ex, "ZaMTAListController.prototype._createUI", null, false);
 		return;
 	}	
 }
@@ -110,23 +110,23 @@ ZaPostQListController.prototype._createUI = function () {
 /**
 * @return ZaItemList - the list currently displaid in the list view
 **/
-ZaPostQListController.prototype.getList = 
+ZaMTAListController.prototype.getList = 
 function() {
 	return this._list;
 }
 
 /*
-ZaPostQListController.prototype.refresh = 
+ZaMTAListController.prototype.refresh = 
 function() {
 	try {
 		this._contentView.set(this._app.getServerList(true).getVector());
 	} catch (ex) {
-		this._handleException(ex, ZaPostQListController.prototype.refresh, null, false);
+		this._handleException(ex, ZaMTAListController.prototype.refresh, null, false);
 	}
 }
 */
 
-ZaPostQListController.prototype.set = 
+ZaMTAListController.prototype.set = 
 function(serverList) {
 	this.show(serverList);
 }
@@ -136,17 +136,17 @@ function(serverList) {
 * @param nextViewCtrlr - the controller of the next view
 * Checks if it is safe to leave this view. Displays warning and Information messages if neccesary.
 **/
-ZaPostQListController.prototype.switchToNextView = 
+ZaMTAListController.prototype.switchToNextView = 
 function (nextViewCtrlr, func, params) {
 	func.call(nextViewCtrlr, params);
 }
 
 
 /**
-* This listener is called when the item in the list is double clicked. It call ZaPostQController.show method
+* This listener is called when the item in the list is double clicked. It call ZaMTAController.show method
 * in order to display the MailQ View
 **/
-ZaPostQListController.prototype._listSelectionListener =
+ZaMTAListController.prototype._listSelectionListener =
 function(ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		if(ev.item) {
@@ -158,17 +158,17 @@ function(ev) {
 	}
 }
 
-ZaPostQListController.prototype._listActionListener =
+ZaMTAListController.prototype._listActionListener =
 function (ev) {
 	this._changeActionsState();
 	this._actionMenu.popup(0, ev.docX, ev.docY);
 }
 /**
 * This listener is called when the Edit button is clicked. 
-* It call ZaPostQController.show method
+* It call ZaMTAController.show method
 * in order to display the MailQ View
 **/
-ZaPostQListController.prototype._viewButtonListener =
+ZaMTAListController.prototype._viewButtonListener =
 function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
@@ -177,7 +177,7 @@ function(ev) {
 }
 
 
-ZaPostQListController.prototype._changeActionsState = 
+ZaMTAListController.prototype._changeActionsState = 
 function () {
 	var cnt = this._contentView.getSelectionCount();
 	if(cnt == 1) {

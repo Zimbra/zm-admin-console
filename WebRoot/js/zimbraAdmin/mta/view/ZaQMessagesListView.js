@@ -26,19 +26,19 @@
  /**
  * @author Greg Solovyev
  **/
-function ZaQSummaryListView(parent, className, posStyle, headerList) {
+function ZaQMessagesListView(parent, className, posStyle, headerList) {
 	//var headerList = this._getHeaderList();
 	ZaListView.call(this, parent, className, posStyle, headerList);
 }
 
-ZaQSummaryListView.prototype = new ZaListView;
-ZaQSummaryListView.prototype.constructor = ZaQSummaryListView;
+ZaQMessagesListView.prototype = new ZaListView;
+ZaQMessagesListView.prototype.constructor = ZaQMessagesListView;
 
-ZaQSummaryListView.prototype.toString = function() {
-	return "ZaQSummaryListView";
+ZaQMessagesListView.prototype.toString = function() {
+	return "ZaQMessagesListView";
 };
 
-ZaQSummaryListView.prototype._createItemHtml =
+ZaQMessagesListView.prototype._createItemHtml =
 function(item) {
 	var html = new Array(50);
 	var	div = document.createElement("div");
@@ -55,17 +55,37 @@ function(item) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			var id = this._headerList[i]._id;
-			if(id.indexOf(ZaPostQ.A_name)==0) {
+			if(id.indexOf(ZaMTA.A_name)==0) {
 				// type
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-				html[idx++] = AjxStringUtil.htmlEncode(item[ZaPostQ.A_name]);
+				html[idx++] = AjxStringUtil.htmlEncode(item[ZaMTA.A_name]);
 				html[idx++] = "</td>";
-			} else if(id.indexOf(ZaPostQ.A_count)==0) {
+			} else if(id.indexOf(ZaMTA.A_count)==0) {
 				// name
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
-				html[idx++] = item[ZaPostQ.A_count];
+				html[idx++] = item[ZaMTA.A_count];
 				html[idx++] = "</td>";
-			}
+			} else if(id.indexOf(ZaMTA.A_Qid)==0) {
+				// name
+				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
+				html[idx++] = item[ZaMTA.A_Qid];
+				html[idx++] = "</td>";
+			} else if(id.indexOf(ZaMTA.A_destination)==0) {
+				// name
+				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
+				html[idx++] = AjxStringUtil.htmlEncode(item[ZaMTA.A_destination]);
+				html[idx++] = "</td>";
+			} else if(id.indexOf(ZaMTA.A_origin)==0) {
+				// name
+				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
+				html[idx++] = AjxStringUtil.htmlEncode(item[ZaMTA.A_origin]);
+				html[idx++] = "</td>";
+			}else if(id.indexOf(ZaMTA.A_error)==0) {
+				// name
+				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
+				html[idx++] =item[ZaMTA.A_error];
+				html[idx++] = "</td>";
+			}				
 		}
 	} else {
 		html[idx++] = "<td width=100%>";
@@ -79,7 +99,7 @@ function(item) {
 }
 
 
-ZaQSummaryListView.prototype._setNoResultsHtml = function() {
+ZaQMessagesListView.prototype._setNoResultsHtml = function() {
 	var buffer = new AjxBuffer();
 	var	div = document.createElement("div");
 	
@@ -91,7 +111,7 @@ ZaQSummaryListView.prototype._setNoResultsHtml = function() {
 	this._addRow(div);
 };
 
-ZaQSummaryListView.prototype._sortColumn = function (columnItem, bSortAsc){
+ZaQMessagesListView.prototype._sortColumn = function (columnItem, bSortAsc){
 	if (bSortAsc) {
 		var comparator = function (a, b) {
 			return (a < b)? 1 :((a > b)? -1 : 0);

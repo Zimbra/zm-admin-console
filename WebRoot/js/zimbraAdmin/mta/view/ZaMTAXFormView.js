@@ -24,37 +24,37 @@
  */
 
 /**
-* @class ZaPostQXFormView
+* @class ZaMTAXFormView
 * @contructor
 * @param parent
 * @param app
 * @author Greg Solovyev
 **/
-function ZaPostQXFormView (parent, app) {
-	ZaTabView.call(this, parent, app,"ZaPostQXFormView");	
+function ZaMTAXFormView (parent, app) {
+	ZaTabView.call(this, parent, app,"ZaMTAXFormView");	
 		
-	this.initForm(ZaPostQ.myXModel,this.getMyXForm());
+	this.initForm(ZaMTA.myXModel,this.getMyXForm());
 	this._localXForm.setController(this._app);
 }
 
-ZaPostQXFormView.prototype = new ZaTabView();
-ZaPostQXFormView.prototype.constructor = ZaPostQXFormView;
-ZaTabView.XFormModifiers["ZaPostQXFormView"] = new Array();
-ZaPostQXFormView.TAB_INDEX=1;
-	ZaPostQXFormView._tab1 = ZaPostQXFormView.TAB_INDEX++;
-	ZaPostQXFormView._tab2 = ZaPostQXFormView.TAB_INDEX++;	
-	ZaPostQXFormView._tab3 = ZaPostQXFormView.TAB_INDEX++;	
-	ZaPostQXFormView._tab4 = ZaPostQXFormView.TAB_INDEX++;	
-	ZaPostQXFormView._tab5 = ZaPostQXFormView.TAB_INDEX++;	
+ZaMTAXFormView.prototype = new ZaTabView();
+ZaMTAXFormView.prototype.constructor = ZaMTAXFormView;
+ZaTabView.XFormModifiers["ZaMTAXFormView"] = new Array();
+ZaMTAXFormView.TAB_INDEX=1;
+	ZaMTAXFormView._tab1 = ZaMTAXFormView.TAB_INDEX++;
+	ZaMTAXFormView._tab2 = ZaMTAXFormView.TAB_INDEX++;	
+	ZaMTAXFormView._tab3 = ZaMTAXFormView.TAB_INDEX++;	
+	ZaMTAXFormView._tab4 = ZaMTAXFormView.TAB_INDEX++;	
+	ZaMTAXFormView._tab5 = ZaMTAXFormView.TAB_INDEX++;	
 
-ZaPostQXFormView.tabChoices = new XFormChoices([{value:ZaPostQXFormView._tab1, label:ZaMsg.PQV_Tab_Deferred},
-				{value:ZaPostQXFormView._tab2, label:ZaMsg.PQV_Tab_IncomingQ},
-				{value:ZaPostQXFormView._tab3, label:ZaMsg.PQV_Tab_ActiveQ},
-				{value:ZaPostQXFormView._tab4, label:ZaMsg.PQV_Tab_HoldQ},					
-				{value:ZaPostQXFormView._tab5, label:ZaMsg.PQV_Tab_CorruptQ}],
+ZaMTAXFormView.tabChoices = new XFormChoices([{value:ZaMTAXFormView._tab1, label:ZaMsg.PQV_Tab_Deferred},
+				{value:ZaMTAXFormView._tab2, label:ZaMsg.PQV_Tab_IncomingQ},
+				{value:ZaMTAXFormView._tab3, label:ZaMsg.PQV_Tab_ActiveQ},
+				{value:ZaMTAXFormView._tab4, label:ZaMsg.PQV_Tab_HoldQ},					
+				{value:ZaMTAXFormView._tab5, label:ZaMsg.PQV_Tab_CorruptQ}],
 				XFormChoices.OBJECT_LIST, "value", "label");
 
-ZaPostQXFormView.prototype.setObject = 
+ZaMTAXFormView.prototype.setObject = 
 function (entry) {
 	this._containedObject = entry;
 	
@@ -63,23 +63,23 @@ function (entry) {
 	else
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
 		
-	ZaPostQXFormView.tabChoices.setChoices([
-		{value:ZaPostQXFormView._tab1, label:ZaMsg.PQV_Tab_Deferred + " (" + this._containedObject[ZaPostQ.A_DeferredQ][ZaPostQ.A_count] + ")"},
-		{value:ZaPostQXFormView._tab2, label:ZaMsg.PQV_Tab_IncomingQ + " (" + this._containedObject[ZaPostQ.A_IncomingQ][ZaPostQ.A_count] + ")"},
-				{value:ZaPostQXFormView._tab3, label:ZaMsg.PQV_Tab_ActiveQ + " (" + this._containedObject[ZaPostQ.A_ActiveQ][ZaPostQ.A_count] + ")"},
-				{value:ZaPostQXFormView._tab4, label:ZaMsg.PQV_Tab_HoldQ + " (" + this._containedObject[ZaPostQ.A_HoldQ][ZaPostQ.A_count] + ")"},					
-				{value:ZaPostQXFormView._tab5, label:ZaMsg.PQV_Tab_CorruptQ + " (" + this._containedObject[ZaPostQ.A_CorruptQ][ZaPostQ.A_count] + ")"}]),
+	ZaMTAXFormView.tabChoices.setChoices([
+		{value:ZaMTAXFormView._tab1, label:ZaMsg.PQV_Tab_Deferred + " (" + this._containedObject[ZaMTA.A_DeferredQ][ZaMTA.A_count] + ")"},
+		{value:ZaMTAXFormView._tab2, label:ZaMsg.PQV_Tab_IncomingQ + " (" + this._containedObject[ZaMTA.A_IncomingQ][ZaMTA.A_count] + ")"},
+				{value:ZaMTAXFormView._tab3, label:ZaMsg.PQV_Tab_ActiveQ + " (" + this._containedObject[ZaMTA.A_ActiveQ][ZaMTA.A_count] + ")"},
+				{value:ZaMTAXFormView._tab4, label:ZaMsg.PQV_Tab_HoldQ + " (" + this._containedObject[ZaMTA.A_HoldQ][ZaMTA.A_count] + ")"},					
+				{value:ZaMTAXFormView._tab5, label:ZaMsg.PQV_Tab_CorruptQ + " (" + this._containedObject[ZaMTA.A_CorruptQ][ZaMTA.A_count] + ")"}]),
 
-	ZaPostQXFormView.tabChoices.dirtyChoices();
+	ZaMTAXFormView.tabChoices.dirtyChoices();
 	this._localXForm.setInstance(this._containedObject);	
 }
 
-ZaPostQXFormView._listObjects = {};
+ZaMTAXFormView._listObjects = {};
 
-ZaPostQXFormView.listSelectionListener = function (ev) {
+ZaMTAXFormView.listSelectionListener = function (ev) {
 	//register this list in the map, so that we can deselect it later
 	if(ev.dwtObj && this.refPath) {
-		ZaPostQXFormView._listObjects[this.refPath] = ev.dwtObj;
+		ZaMTAXFormView._listObjects[this.refPath] = ev.dwtObj;
 	}
 	var instance = this.getInstance();
 	var refParts = this.getRef().split("/");
@@ -106,42 +106,42 @@ ZaPostQXFormView.listSelectionListener = function (ev) {
 			var cnt = arr.length;			
 			var subQuery = [];
 			for(var i=0;i<cnt;i++) {
-				subQuery.push(arr[i][ZaPostQ.A_name]);
+				subQuery.push(arr[i][ZaMTA.A_name]);
 			}
 			query.push(subQuery.join(","));
 		}
 		query.push(") ");		
 	}
 
-	var myPath = [qName,ZaPostQ.A_query].join("/");
+	var myPath = [qName,ZaMTA.A_query].join("/");
 	if(query.length) 
 		this.setInstanceValue(query.join(""),myPath);
 	this.getForm().refresh();
 }
 				
-ZaPostQXFormView.clearFilter = 
+ZaMTAXFormView.clearFilter = 
 function (ev) {
 	this.setInstanceValue("",this.getRef());
 	this.getForm().refresh();
-	for(var x in ZaPostQXFormView._listObjects) {
-		if(ZaPostQXFormView._listObjects[x]) {
-			ZaPostQXFormView._listObjects[x].deselectAll();
+	for(var x in ZaMTAXFormView._listObjects) {
+		if(ZaMTAXFormView._listObjects[x]) {
+			ZaMTAXFormView._listObjects[x].deselectAll();
 		}
 	}
 }
 
-ZaPostQXFormView.myXFormModifier = function(xFormObject) {	
+ZaMTAXFormView.myXFormModifier = function(xFormObject) {	
 	xFormObject.tableCssStyle="width:100%;position:static;overflow:auto;";
 	
 	
 	var headerList = new Array();
-	headerList[0] = new ZaListHeaderItem(ZaPostQ.A_name, ZaMsg.PQV_name_col, null, null, true, null, true, true);
-	headerList[1] = new ZaListHeaderItem(ZaPostQ.A_count, ZaMsg.PQV_count_col, null, "80px", true, null, true, true);
+	headerList[0] = new ZaListHeaderItem(ZaMTA.A_name, ZaMsg.PQV_name_col, null, null, true, null, true, true);
+	headerList[1] = new ZaListHeaderItem(ZaMTA.A_count, ZaMsg.PQV_count_col, null, "80px", true, null, true, true);
 		
 	var msgHeaderList = new Array();
-	msgHeaderList[0] = new ZaListHeaderItem(ZaPostQ.A_Qid, ZaMsg.PQV_qid_col, null, null, true, null, true, true);
-	msgHeaderList[1] = new ZaListHeaderItem(ZaPostQ.A_destination, ZaMsg.PQV_destination_col, null, null, true, null, true, true);
-	msgHeaderList[2] = new ZaListHeaderItem(ZaPostQ.A_origin, ZaMsg.PQV_origin_col, null, null, true, null, true, true);	
+	msgHeaderList[0] = new ZaListHeaderItem(ZaMTA.A_Qid, ZaMsg.PQV_qid_col, null, null, true, null, true, true);
+	msgHeaderList[1] = new ZaListHeaderItem(ZaMTA.A_destination, ZaMsg.PQV_destination_col, null, null, true, null, true, true);
+	msgHeaderList[2] = new ZaListHeaderItem(ZaMTA.A_origin, ZaMsg.PQV_origin_col, null, null, true, null, true, true);	
 
 	xFormObject.items = [
 		{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", 
@@ -149,7 +149,7 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 				{type:_GROUP_,	numCols:4,colSizes:["32px","350px","100px","250px"],
 					items: [
 						{type:_AJX_IMAGE_, src:"Server_32", label:null, rowSpan:2},
-						{type:_OUTPUT_, ref:ZaPostQ.A_Servername, label:null,cssClass:"AdminTitle", rowSpan:2}
+						{type:_OUTPUT_, ref:ZaMTA.A_Servername, label:null,cssClass:"AdminTitle", rowSpan:2}
 					]
 				}
 			],
@@ -158,11 +158,11 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 		{type:_TAB_BAR_, ref:ZaModel.currentTab,
 			relevantBehavior:_HIDE_,
 			containerCssStyle: "padding-top:0px",
-			choices:ZaPostQXFormView.tabChoices,
+			choices:ZaMTAXFormView.tabChoices,
 			cssClass:"ZaTabBar"
 		},
 		{type:_SWITCH_, items:[
-				{type:_CASE_, numCols:1, width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaPostQXFormView._tab1, 
+				{type:_CASE_, numCols:1, width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab1, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_, numCols:5, width:"95%", colSizes:["30%", "3%", "30%", "3%", "30%"],cssClass:"RadioGrouperBorder container", items: [						
@@ -177,8 +177,8 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 											{type:_OUTPUT_, value:ZaMsg.PQV_GroupDestinationDomain, cssClass:"RadioGrouperLabel", cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 										]
 									},
-								    {ref:ZaPostQ.A_DeferredQ+"/"+ZaPostQ.A_destination, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaPostQXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_destination, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
@@ -188,8 +188,8 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:"RadioGrouperLabel", cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 										]
 									},
-								    {ref:ZaPostQ.A_DeferredQ+"/"+ZaPostQ.A_origin, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaPostQXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_origin, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
@@ -199,18 +199,18 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 											{type:_OUTPUT_, value:ZaMsg.PQV_GroupError, cssClass:"RadioGrouperLabel", cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 										]
 									},
-								    {ref:ZaPostQ.A_DeferredQ+"/"+ZaPostQ.A_error, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaPostQXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_error, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							}											
 						]},
 						{type:_SPACER_, height:"10"},
 						{type:_GROUP_, numCols:6, tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
-							{type:_TEXTFIELD_, label:ZaMsg.PQ_searchQuery, ref:ZaPostQ.A_DeferredQ+"/"+ZaPostQ.A_query, width:"100%", containerCssClass:"search_field_container"},
+							{type:_TEXTFIELD_, label:ZaMsg.PQ_searchQuery, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_query, width:"100%", containerCssClass:"search_field_container"},
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_SearchQ},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaPostQ.A_DeferredQ+"/"+ZaPostQ.A_query, onActivate:ZaPostQXFormView.clearFilter}							
+							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_query, onActivate:ZaMTAXFormView.clearFilter}							
 						]},																		
 						{type:_GROUP_, numCols:1, width:"95%", cssClass:"RadioGrouperBorder container", tableCssClass:"que_table",  items: [
 							   {type:_GROUP_, numCols:1, 
@@ -218,13 +218,13 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:"RadioGrouperLabel", cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 									]
 								},
-							    {ref:ZaPostQ.A_DeferredQ+"/"+ZaPostQ.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-						   		forceUpdate: true, widgetClass:ZaQSummaryListView, headerList:msgHeaderList},								
+							    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+						   		forceUpdate: true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
 							]
 						}		
 					]
 				},							
-				{type:_CASE_, numCols:1, width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaPostQXFormView._tab2, 
+				{type:_CASE_, numCols:1, width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_, numCols:3, width:"95%", colSizes:["45%", "10%", "45%"],cssClass:"RadioGrouperBorder container", items: [						
@@ -239,8 +239,8 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 											{type:_OUTPUT_, value:ZaMsg.PQV_GroupDestinationDomain, cssClass:"RadioGrouperLabel"}
 										]
 									},
-								    {ref:ZaPostQ.A_IncomingQ+"/"+ZaPostQ.A_destination, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaPostQXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_destination, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
@@ -250,19 +250,19 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:"RadioGrouperLabel"}
 										]
 									},
-								    {ref:ZaPostQ.A_IncomingQ+"/"+ZaPostQ.A_origin, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaPostQXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_origin, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							}
 											
 						]},
 						{type:_SPACER_, height:"10"},
 						{type:_GROUP_, numCols:6, tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
-							{type:_TEXTFIELD_, label:ZaMsg.PQ_searchQuery, ref:ZaPostQ.A_IncomingQ+"/"+ZaPostQ.A_query, width:"100%", containerCssClass:"search_field_container"},
+							{type:_TEXTFIELD_, label:ZaMsg.PQ_searchQuery, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_query, width:"100%", containerCssClass:"search_field_container"},
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_SearchQ},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter,ref:ZaPostQ.A_IncomingQ+"/"+ZaPostQ.A_query, onActivate:ZaPostQXFormView.clearFilter}							
+							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter,ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_query, onActivate:ZaMTAXFormView.clearFilter}							
 						]},																	
 						{type:_GROUP_, numCols:1, width:"95%", cssClass:"RadioGrouperBorder container", tableCssClass:"que_table",  items: [
 							   {type:_GROUP_, numCols:1, 
@@ -270,8 +270,8 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:"RadioGrouperLabel"}
 									]
 								},
-							    {ref:ZaPostQ.A_IncomingQ+"/"+ZaPostQ.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-						   		forceUpdate: true, widgetClass:ZaQSummaryListView, headerList:msgHeaderList},								
+							    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+						   		forceUpdate: true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
 							]
 						}		
 					]
@@ -280,4 +280,4 @@ ZaPostQXFormView.myXFormModifier = function(xFormObject) {
 		}
 	]
 };
-ZaTabView.XFormModifiers["ZaPostQXFormView"].push(ZaPostQXFormView.myXFormModifier);
+ZaTabView.XFormModifiers["ZaMTAXFormView"].push(ZaMTAXFormView.myXFormModifier);

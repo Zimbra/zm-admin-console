@@ -24,32 +24,32 @@
  */
 
 /**
-* @class ZaPostQController controls display of a single Server's Postfix Queue
-* @contructor ZaPostQController
+* @class ZaMTAController controls display of a single Server's Postfix Queue
+* @contructor ZaMTAController
 * @param appCtxt
 * @param container
 * @param abApp
 * @author Greg Solovyev
 **/
 
-function ZaPostQController(appCtxt, container,app) {
-	ZaXFormViewController.call(this, appCtxt, container,app,"ZaPostQController");
+function ZaMTAController(appCtxt, container,app) {
+	ZaXFormViewController.call(this, appCtxt, container,app,"ZaMTAController");
 	this._UICreated = false;
 	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/managing_servers.htm";				
 	this._toolbarOperations = new Array();
 	this.objType = ZaEvent.S_SERVER;	
 }
 
-ZaPostQController.prototype = new ZaXFormViewController();
-ZaPostQController.prototype.constructor = ZaPostQController;
+ZaMTAController.prototype = new ZaXFormViewController();
+ZaMTAController.prototype.constructor = ZaMTAController;
 
-ZaController.initToolbarMethods["ZaPostQController"] = new Array();
-ZaController.setViewMethods["ZaPostQController"] = new Array();
+ZaController.initToolbarMethods["ZaMTAController"] = new Array();
+ZaController.setViewMethods["ZaMTAController"] = new Array();
 /**
 *	@method show
 *	@param entry - isntance of ZaServer class
 */
-ZaPostQController.prototype.show = 
+ZaMTAController.prototype.show = 
 function(entry) {
 	this._setView(entry);
 	this.setDirty(false);
@@ -59,7 +59,7 @@ function(entry) {
 *	@method setViewMethod 
 *	@param entry - isntance of ZaDomain class
 */
-ZaPostQController.setViewMethod =
+ZaMTAController.setViewMethod =
 function(entry) {
 	entry.load();
 	if(!this._UICreated) {
@@ -70,14 +70,28 @@ function(entry) {
 	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
 	this._currentObject = entry;
 }
-ZaController.setViewMethods["ZaPostQController"].push(ZaPostQController.setViewMethod);
+ZaController.setViewMethods["ZaMTAController"].push(ZaMTAController.setViewMethod);
+
+/**
+* @method initToolbarMethod
+* This method creates ZaOperation objects 
+* All the ZaOperation objects are added to this._toolbarOperations array which is then used to 
+* create the toolbar for this view.
+* Each ZaOperation object defines one toolbar button.
+* Help button is always the last button in the toolbar
+**/
+ZaMTAController.initToolbarMethod = 
+function () {
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.SERTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
+}
+ZaController.initToolbarMethods["ZaMTAController"].push(ZaMTAController.initToolbarMethod);
 
 /**
 * @method _createUI
 **/
-ZaPostQController.prototype._createUI =
+ZaMTAController.prototype._createUI =
 function () {
-	this._view = new ZaPostQXFormView(this._container, this._app);
+	this._view = new ZaMTAXFormView(this._container, this._app);
 
 	this._initToolbar();
 	//always add Help button at the end of the toolbar
