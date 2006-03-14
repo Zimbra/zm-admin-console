@@ -46,8 +46,6 @@ ZaItem.createMethods = new Object();
 ZaItem.ACCOUNT = "account";
 ZaItem.DL = "dl";
 ZaItem.ALIAS = "alias";
-//HC: Resource
-ZaItem.RESOURCE = "calresource";
 ZaItem.DOMAIN = "domain";
 ZaItem.COS = "cos";
 ZaItem.SERVER = "server";
@@ -126,10 +124,6 @@ function (type, app) {
 		case ZaItem.DL:
 			return new ZaDistributionList(app);
 
-		//HC:Resource
-		case ZaItem.RESOURCE:
-			return new ZaResource(app);
-		
 		case ZaItem.DOMAIN:
 			return new ZaDomain(app);
 
