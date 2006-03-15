@@ -29,7 +29,6 @@
 * @param appCtxt
 * @param container
 * @param abApp
-* @author Greg Solovyev
 **/
 
 function ZaServerController(appCtxt, container,app) {
