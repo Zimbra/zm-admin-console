@@ -252,6 +252,7 @@ ZaSettings.MAILQ_ENABLED = true;
 ZaSettings.MONITORING_ENABLED = true;
 ZaSettings.SYSTEM_CONFIG_ENABLED = true;
 ZaSettings.ADDRESSES_ENABLED = true;
+ZaSettings.RESOURCES_ENABLED = true;
 
 // initialization for settings: [name, type, data type, default value]
 ZaSettings.INIT = new Object();

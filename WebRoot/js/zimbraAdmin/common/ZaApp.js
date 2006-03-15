@@ -151,6 +151,17 @@ function (domain) {
 	return this._controllers[ZaZimbraAdmin._DL_VIEW];
 };
 
+ZaApp.prototype.getResourceController = 
+function () {
+	if (this._controllers[ZaZimbraAdmin._RESOURCE_VIEW] == null) {
+		this._controllers[ZaZimbraAdmin._RESOURCE_VIEW] = new ZaResourceController(this._appCtxt, this._container, this);
+		this._controllers[ZaZimbraAdmin._RESOURCE_VIEW].addCreationListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountCreation));			
+		this._controllers[ZaZimbraAdmin._RESOURCE_VIEW].addRemovalListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountRemoval));			
+		this._controllers[ZaZimbraAdmin._RESOURCE_VIEW].addChangeListener(new AjxListener(this.getAccountListController(), ZaAccountListController.prototype.handleAccountChange));
+	}
+	return this._controllers[ZaZimbraAdmin._RESOURCE_VIEW];
+};
+
 ZaApp.prototype.getDomainListController =
 function() {
 	if (this._controllers[ZaZimbraAdmin._DOMAINS_LIST_VIEW] == null) {
@@ -185,7 +196,7 @@ function() {
 	return this._controllers[ZaZimbraAdmin._DOMAIN_VIEW];
 }
 
-ZaApp.prototype.getPostQListController =
+ZaApp.prototype.getMTAListController =
 function () {
 	if (this._controllers[ZaZimbraAdmin._POSTQ_VIEW] == null) {
 		this._controllers[ZaZimbraAdmin._POSTQ_VIEW] = new ZaMTAListController(this._appCtxt, this._container, this);
@@ -195,10 +206,12 @@ function () {
 	return this._controllers[ZaZimbraAdmin._POSTQ_VIEW];
 }
 
-ZaApp.prototype.getPostQController =
+ZaApp.prototype.getMTAController =
 function () {
 	if (this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW] == null) {
 		this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW] = new ZaMTAController(this._appCtxt, this._container, this);
+		this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW].addChangeListener(new AjxListener(this.getMTAListController(), ZaMTAListController.prototype.handleMTAChange));		
+		this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW].addChangeListener(new AjxListener(this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW], ZaMTAController.prototype.handleMTAChange));				
 /*		this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW].addServerRemovalListener(new AjxListener(this, ZaApp.prototype.handleServerRemoval));	
 		this._controllers[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW].addServerRemovalListener(new AjxListener(this._appCtxt.getAppController().getOverviewPanelController(), ZaOverviewPanelController.prototype.handleServerRemoval));							*/
 	}

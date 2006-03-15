@@ -334,12 +334,18 @@ function() {
 		ti.setText(ZaMsg.OVP_distributionLists);
 		ti.setImage("Group");
 		ti.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._DISTRIBUTION_LISTS_LIST_VIEW);
-	
+		
+		ti = new DwtTreeItem(this._addressesTi);
+		ti.setText(ZaMsg.OVP_resources);
+		ti.setImage("Resource");
+		ti.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._RESOURCE_VIEW);
+		
 		this._addressesTi.addSeparator();
 		
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW] = ZaOverviewPanelController.accountListTreeListener;
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._ALIASES_LIST_VIEW] = ZaOverviewPanelController.aliasListTreeListener;
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._DISTRIBUTION_LISTS_LIST_VIEW] = ZaOverviewPanelController.dlListTreeListener;		
+		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._RESOURCE_VIEW] = ZaOverviewPanelController.resourceListTreeListener;		
 	}
 		
 	if(ZaSettings.SYSTEM_CONFIG_ENABLED) {	
@@ -517,7 +523,7 @@ function() {
 ZaOverviewPanelController.prototype._getCurrentQueryHolder = 
 function () {
 	var srchField = this._app.getAccountListController()._searchField;
-	var curQuery = new ZaSearchQuery("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS], false, "");							
+	var curQuery = new ZaSearchQuery("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS,ZaSearch.RESOURCES], false, "");							
 	if(srchField) {
 		var obj = srchField.getObject();
 		if(obj) {
@@ -530,7 +536,10 @@ function () {
 			}			
 			if(obj[ZaSearch.A_fAccounts]=="TRUE") {
 				curQuery.types.push(ZaSearch.ACCOUNTS);
-			}			
+			}	
+			if(obj[ZaSearch.A_fResources]=="TRUE") {
+				curQuery.types.push(ZaSearch.RESOURCES);
+			}		
 		}
 	}
 	return curQuery;
@@ -650,6 +659,10 @@ ZaOverviewPanelController.accountListTreeListener = function (ev) {
 	this._showAccountsView(ZaItem.ACCOUNT,ev);
 }
 
+ZaOverviewPanelController.resourceListTreeListener = function (ev) {
+	this._showAccountsView(ZaItem.RESOURCE,ev);
+}
+
 ZaOverviewPanelController.cosListTreeListener = function (ev) {
 	if(this._app.getCurrentController()) {
 		this._app.getCurrentController().switchToNextView(this._app.getCosListController(), ZaCosListController.prototype.show, ZaCos.getAll(this._app));
@@ -660,18 +673,18 @@ ZaOverviewPanelController.cosListTreeListener = function (ev) {
 
 ZaOverviewPanelController.postqTreeListener = function (ev) {
 	if(this._app.getCurrentController()) {
-		this._app.getCurrentController().switchToNextView(this._app.getPostQListController(), ZaMTAListController.prototype.show, ZaMTA.getAll(this._app));
+		this._app.getCurrentController().switchToNextView(this._app.getMTAListController(), ZaMTAListController.prototype.show, ZaMTA.getAll(this._app));
 	} else {
-		this._app.getPostQListController().show(ZaServer.getAll(this._app));
+		this._app.getMTAListController().show(ZaServer.getAll(this._app));
 	}
 }
 
 ZaOverviewPanelController.postqByServerTreeListener = function (ev) {
 	var currentServer = this._app.getPostQList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID));
 	if(this._app.getCurrentController()) {
-		this._app.getCurrentController().switchToNextView(this._app.getPostQController(), ZaMTAController.prototype.show,currentServer);
+		this._app.getCurrentController().switchToNextView(this._app.getMTAController(), ZaMTAController.prototype.show,currentServer);
 	} else {					
-		this._app.getPostQController().show(currentServer);
+		this._app.getMTAController().show(currentServer);
 	}
 }
 
@@ -682,7 +695,9 @@ ZaOverviewPanelController.prototype._showAccountsView = function (defaultType, e
 	queryHldr.queryString = "";
 	queryHldr.types = [ZaSearch.TYPES[defaultType]];
 	if(defaultType == ZaItem.DL) {
-		queryHldr.fetchAttrs = ZaDistributionList.searchAttributes
+		queryHldr.fetchAttrs = ZaDistributionList.searchAttributes;
+	} else if (defaultType == ZaItem.RESOURCE){
+		queryHldr.fetchAttrs = ZaResource.searchAttributes;
 	} else {
 		queryHldr.fetchAttrs = ZaSearch.standardAttributes;
 	}
