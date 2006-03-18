@@ -97,12 +97,11 @@ ZaCos.A_zimbraFeatureChangePasswordEnabled="zimbraFeatureChangePasswordEnabled";
 ZaCos.A_zimbraFeatureInitialSearchPreferenceEnabled="zimbraFeatureInitialSearchPreferenceEnabled";
 ZaCos.A_zimbraFeatureFiltersEnabled="zimbraFeatureFiltersEnabled";
 ZaCos.A_zimbraFeatureGalEnabled="zimbraFeatureGalEnabled";
-ZaCos.A_zimbraFeatureSharingEnabled="zimbraFeatureSharingEnabled";
 
 ZaCos.A_zimbraImapEnabled = "zimbraImapEnabled";
 ZaCos.A_zimbraPop3Enabled = "zimbraPop3Enabled";
 ZaCos.A_zimbraFeatureHtmlComposeEnabled = "zimbraFeatureHtmlComposeEnabled";
-
+ZaCos.A_zimbraFeatureSharingEnabled="zimbraFeatureSharingEnabled";
 
 //internal attributes - do not send these to the server
 ZaCos.A_zimbraMailAllServersInternal = "allserversarray";
