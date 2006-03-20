@@ -44,13 +44,8 @@ LDAPURL_XFormItem.prototype.items = [
 			var val = "ldap://";
 			if(itemVal!=null && itemVal.length>0) {
 				var URLChunks = itemVal.split(/(:\/\/)/);
-				if(AjxEnv.isIE) {
-					if(URLChunks[0] == "ldap" || URLChunks[0] == "ldaps")
-						val = URLChunks[0] + "://";	
-				} else {
-					if(URLChunks.length==3) {
-						val = URLChunks[0] + URLChunks[1];
-					}
+				if(URLChunks.length==3) {
+					val = URLChunks[0] + URLChunks[1];
 				}
 			}
 			this.getParentItem()._protocolPart = val;
@@ -88,21 +83,9 @@ LDAPURL_XFormItem.prototype.items = [
 			var val = "389";
 			if(itemVal) {
 				var URLChunks = itemVal.split(/[:\/]/);
-					
-					/*DBG.println(AjxDebug.DBG1, "_TEXTFIELD_");
-					for(var ix in URLChunks) {
-						DBG.println(AjxDebug.DBG1, "URLChunks[" + ix + "] = " + URLChunks[ix]);
-					}*/
-					
-				if(AjxEnv.isIE) {
-					var tmp = parseInt(URLChunks[URLChunks.length-1]);
-					if(tmp != NaN)
-						val = tmp;
-				} else {
-					if(URLChunks.length >= 5) {
-						val = URLChunks[4];
-					}  
-				}
+				if(URLChunks.length == 5) {
+					val = URLChunks[4];
+				} 
 				this.getParentItem()._portPart = val;
 			} 
 			return val;	
@@ -118,12 +101,10 @@ LDAPURL_XFormItem.prototype.items = [
 			var val = false;
 			var protocol = "ldap://";
 			if(itemVal!=null && itemVal.length>0) {
-				var URLChunks = itemVal.split(/[:\/]/);
-					/*DBG.println(AjxDebug.DBG1, "_CHECKBOX_");
-					for(var ix in URLChunks) {
-						DBG.println(AjxDebug.DBG1, "URLChunks[" + ix + "] = " + URLChunks[ix]);
-					}*/
-				protocol = URLChunks[0] + "://";				
+				var URLChunks = itemVal.split(/(:\/\/)/);
+				if(URLChunks.length==3) {
+					protocol = URLChunks[0] + URLChunks[1];
+				}
 			}
 			this.getParentItem()._protocolPart = protocol;
 			if(protocol.length==8) {
