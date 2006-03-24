@@ -50,7 +50,7 @@ function (uname, pword, isPublic) {
 	soapDoc.set("password", pword);
 	var resp = ZmCsfeCommand.invoke(soapDoc, true, null, null, true).firstChild;
 	this._processResponse(resp);	
-	ZaSettings.init();	
+	//bug6687: ZaSettings.init();	
 }
 
 ZaAuthenticate.prototype._processResponse =
