@@ -76,7 +76,8 @@ ZaMTA.A_query = "query";
 ZaMTA.A_queue_filter_name = "_queue_filter_name";
 ZaMTA.A_queue_filter_value = "_queue_filter_value";
 ZaMTA.A_progress = "progress";
-
+ZaMTA._quecountsArr = new Array();
+ZaMTA.threashHold;
 ZaMTA.prototype.QCountsCallback = function (resp) {
 	if(!resp) {
 		var ex = new ZmCsfeException(ZMsg.errorEmptyResponse,CSFE_SVC_ERROR,"ZaMTA.prototype.QCountsCallback");
@@ -98,6 +99,8 @@ ZaMTA.prototype.QCountsCallback = function (resp) {
 		this._app.getCurrentController()._handleException(ex, "ZaMTA.prototype.QCountsCallback");
 		return;	
 	}
+	ZaMTA._quecountsArr.sort();
+	ZaMTA.threashHold = ZaMTA._quecountsArr[Math.round(ZaMTA._quecountsArr.length/2)];
 	//notify listeners 
 	this._app.getMTAController().fireChangeEvent(this);
 }
@@ -125,6 +128,17 @@ function() {
 	this.load();	
 }
 
+ZaMTA.prototype.initFromJS = function (obj) {
+	this.name = obj.name;
+	this.id = obj.name;
+	if(obj.queue) {
+		var cnt = obj.queue.length;
+		for (var ix=0; ix < cnt; ix++) {
+			this[obj.queue[ix].name] = obj.queue[ix];
+			ZaMTA._quecountsArr.push(obj.queue[ix][ZaMTA.A_count]);
+		}
+	}
+}
 /**
 * Make a SOAP call to get file counts in queue folders
 **/
