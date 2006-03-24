@@ -134,8 +134,33 @@ ZaMTA.prototype.initFromJS = function (obj) {
 	if(obj.queue) {
 		var cnt = obj.queue.length;
 		for (var ix=0; ix < cnt; ix++) {
-			this[obj.queue[ix].name] = obj.queue[ix];
-			ZaMTA._quecountsArr.push(obj.queue[ix][ZaMTA.A_count]);
+			
+			var queue = obj.queue[ix];
+			var qName = queue.name;
+			
+			if(!this[qName])
+				this[qName] = new Object();
+				
+			if(queue[ZaMTA.A_count] != undefined) {
+				this[qName][ZaMTA.A_count] = queue[ZaMTA.A_count];
+				ZaMTA._quecountsArr.push(queue[ZaMTA.A_count]);
+			}
+			if(queue.qs) {
+				var qs = obj.queue[ix].qs;
+				var cnt2 = qs.length;
+				for (var j = 0; j < cnt2; j++) {
+					if(!this[qName][qs[j].type])
+						this[qName][qs[j].type] = [];
+
+					if(qs[j].item) {
+						var cnt3 = qs[j].item.length;
+						for (var k = 0; k < cnt3; k++) {
+							var item = qs[j].item[k];
+							this[qName][qs[j].type].push(new ZaMTAQSummaryItem(app, item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
+						}
+					}
+				}	
+			}	
 		}
 	}
 }

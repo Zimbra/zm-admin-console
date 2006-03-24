@@ -65,6 +65,7 @@ function(list) {
 		for(i = 0; i < cnt; i++) {
 			tmp[i] = this.MTAPool.shift();
 		}
+		ZaMTA._quecountsArr = new Array();
 		for(i = cnt-1; i >= 0; i--) {
 			tmp[i].load();
 		}
@@ -248,6 +249,7 @@ ZaMTAListController.prototype.getQCounts = function () {
 	for(i = 0; i < cnt; i++) {
 		tmp[i] = this.MTAPool.shift();
 	}
+	ZaMTA._quecountsArr = new Array();
 	for(i = cnt-1; i >= 0; i--) {
 		tmp[i].load();
 	}
