@@ -86,3 +86,4 @@ ZaOperation.SEARCH_DLS = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_DOMAINS = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_RESOURCES = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_ALL = ++ZA_OP_INDEX;
+ZaOperation.FLUSH = ++ZA_OP_INDEX;

@@ -194,9 +194,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 	headerList[1] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_count, ZaMsg.PQV_count_col, null, "30px", true, null, true, true);
 		
 	var msgHeaderList = new Array();
-	msgHeaderList[0] = new ZaListHeaderItem(ZaMTA.A_Qid, ZaMsg.PQV_qid_col, null, null, true, null, true, true);
-	msgHeaderList[1] = new ZaListHeaderItem(ZaMTA.A_rdomain, ZaMsg.PQV_destination_col, null, null, true, null, true, true);
-	msgHeaderList[2] = new ZaListHeaderItem(ZaMTA.A_origip, ZaMsg.PQV_origin_col, null, null, true, null, true, true);	
+	msgHeaderList[0] = new ZaListHeaderItem(ZaMTAQMsgItem.A_id, ZaMsg.PQV_qid_col, null, null, true, null, true, true);
+	msgHeaderList[1] = new ZaListHeaderItem(ZaMTAQMsgItem.A_recipients, ZaMsg.PQV_recipients_col, null, null, true, null, true, true);
+	msgHeaderList[2] = new ZaListHeaderItem(ZaMTAQMsgItem.A_origin_ip, ZaMsg.PQV_origin_ip_col, null, null, true, null, true, true);	
+	msgHeaderList[3] = new ZaListHeaderItem(ZaMTAQMsgItem.A_sender, ZaMsg.PQV_sender_col, null, null, true, null, true, true);		
+	msgHeaderList[4] = new ZaListHeaderItem(ZaMTAQMsgItem.A_origin_host, ZaMsg.PQV_origin_host_col, null, null, true, null, true, true);			
+	msgHeaderList[5] = new ZaListHeaderItem(ZaMTAQMsgItem.A_content_filter, ZaMsg.PQV_content_filter_col, null, null, true, null, true, true);				
+	msgHeaderList[6] = new ZaListHeaderItem(ZaMTAQMsgItem.A_time, ZaMsg.PQV_time_col, null, null, true, null, true, true);					
 
 	xFormObject.items = [
 		{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", 

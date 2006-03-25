@@ -103,7 +103,7 @@ ZaMTAController.initToolbarMethod =
 function () {
 	//this._toolbarOperations.push(new ZaOperation(ZaOperation.LABEL, ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
 //	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
-//	this._toolbarOperations.push(new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, null, null, new AjxListener(this, this.refreshListener)));	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.FLUSH, ZaMsg.TBB_FlushQs, ZaMsg.TBB_TBB_FlushQs_tt, "Delete", "DeleteDis", new AjxListener(this, this.flushListener)));	
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.SERTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
 }
 ZaController.initToolbarMethods["ZaMTAController"].push(ZaMTAController.initToolbarMethod);
@@ -129,10 +129,22 @@ function () {
 }
 
 
-ZaMTAController.prototype.refreshListener = function () {
-	this._currentObject.getMailQStatus();
+ZaMTAController.prototype.flushListener = function () {
+	this._confirmMessageDialog = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);					
+	this._confirmMessageDialog.setMessage(ZaMsg.Q_FLUSH_QUEUES,  DwtMessageDialog.WARNING_STYLE);
+	this._confirmMessageDialog.registerCallback(DwtDialog.YES_BUTTON, this.flushQueues, this);		
+	this._confirmMessageDialog.registerCallback(DwtDialog.NO_BUTTON, this.closeCnfrmDlg, this, null);				
+	this._confirmMessageDialog.popup();
 }
 
+ZaMTAController.prototype.flushQueues = function () {
+	try {
+		this._currentObject.flushQueues();
+	} catch (ex) {
+		this._handleException(ex, "ZaMTAController.prototype.flushQueues");
+	}
+	this.closeCnfrmDlg();
+}
 
 /**
 * @param ev

@@ -181,8 +181,8 @@ ZaMTA.prototype.initFromJS = function (obj) {
 				var cnt4 = qi.length;
 				for (var j = 0; j < cnt4; j++) {
 					qi[j].prototype = new ZaMTAQMsgItem;
-					item[k].getToolTip = ZaMTAQMsgItem.prototype.getToolTip;
-					item[k].toString = ZaMTAQMsgItem.prototype.toString;					
+					qi[j].getToolTip = ZaMTAQMsgItem.prototype.getToolTip;
+					qi[j].toString = ZaMTAQMsgItem.prototype.toString;					
 				}	
 				this[qName][ZaMTA.A_messages] = qi;
 			}			
@@ -571,14 +571,16 @@ ZaMTA.prototype.mailQStatusCallback = function (qName,resp) {
 	}	
 }
 
-ZaMTAItem = function (app) {
-	ZaItem.call(this, app,"ZaMTAItem");
-	this._init(app);
-}
+ZaMTA.prototype.flushQueues = function () {
+	var soapDoc = AjxSoapDoc.create("MailQueueFlushRequest", "urn:zimbraAdmin", null);
+	var serverEl = soapDoc.set("server", "");
+	serverEl.setAttribute("name", this.name);		
 
-ZaMTAProgress = function (app) {
-	ZaItem.call(this,app,"ZaMTAProgress");
-	this._init(app);
+	var command = new ZmCsfeCommand();
+	var params = new Object();
+	params.soapDoc = soapDoc;	
+	params.asyncMode = false;
+	command.invoke(params);		
 }
 
 ZaMTA.initMethod = function (app) {
