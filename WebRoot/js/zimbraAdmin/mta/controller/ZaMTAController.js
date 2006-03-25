@@ -86,7 +86,7 @@ function(entry) {
 		this._currentObject.getMailQStatus(ZaMTA.A_CorruptQ);	
 	
 	if(this._currentObject[ZaMTA.A_Status] == ZaMsg.scanning) {
-		this.popupMsgDialog(ZaMsg.WARNING_WAIT_Q_SCAN)
+		this.popupMsgDialog(ZaMsg.WARNING_WAIT_Q_SCAN);
 	}
 }
 ZaController.setViewMethods["ZaMTAController"].push(ZaMTAController.setViewMethod);
