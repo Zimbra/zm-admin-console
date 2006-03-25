@@ -161,25 +161,30 @@ ZaMTA.prototype.initFromJS = function (obj) {
 						this[qName][qs[j].type] = [];
 
 					if(qs[j].item) {
-						var cnt3 = qs[j].item.length;
+						
+						var item = qs[j].item;
+						var cnt3 = item.length;
 						for (var k = 0; k < cnt3; k++) {
 						//	var item = qs[j].item[k];
-							qs[j].item[k].prototype = new ZaMTAQSummaryItem;
-							qs[j].item[k].getToolTip = ZaMTAQSummaryItem.prototype.getToolTip;
-							qs[j].item[k].toString = ZaMTAQSummaryItem.prototype.toString;
+							item[k].prototype = new ZaMTAQSummaryItem;
+							item[k].getToolTip = ZaMTAQSummaryItem.prototype.getToolTip;
+							item[k].toString = ZaMTAQSummaryItem.prototype.toString;
 							//this[qName][qs[j].type].push(item);
 							//this[qName][qs[j].type].push(new ZaMTAQSummaryItem(this._app, item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
 						}
-						this[qName][qs[j].type] = qs[j].item;
+						this[qName][qs[j].type] = item;
 					}
 				}	
 			}	
 			if(queue.qi) {
 				var qi = obj.queue[ix].qi;
-				var cnt2 = qi.length;
-				for (var j = 0; j < cnt2; j++) {
-					
+				var cnt4 = qi.length;
+				for (var j = 0; j < cnt4; j++) {
+					qi[j].prototype = new ZaMTAQMsgItem;
+					item[k].getToolTip = ZaMTAQMsgItem.prototype.getToolTip;
+					item[k].toString = ZaMTAQMsgItem.prototype.toString;					
 				}	
+				this[qName][ZaMTA.A_messages] = qi;
 			}			
 		}
 	}
@@ -643,6 +648,7 @@ function() {
 
 
 ZaMTAQMsgItem = function (app) {
+	if (arguments.length == 0) return;
 	ZaItem.call(this, app,"ZaMTAQMsgItem");
 	this._init(app);
 }
@@ -673,4 +679,19 @@ ZaMTAQMsgItem.prototype.initFromJS = function (obj) {
 	this[ZaMTAQMsgItem.A_id] = obj[ZaMTAQMsgItem.A_id];
 	this[ZaMTAQMsgItem.A_recipients] = obj[ZaMTAQMsgItem.A_recipients];
 	this[ZaMTAQMsgItem.A_origin_ip] = obj[ZaMTAQMsgItem.A_origin_ip];
+}
+
+/**
+* Returns HTML for a tool tip for this account.
+*/
+ZaMTAQMsgItem.prototype.getToolTip =
+function() {
+	// update/null if modified
+	if (!this._toolTip) {
+		var html = new Array(20);
+		var idx = 0;
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Recipients + this[ZaMTAQMsgItem.A_recipients]);
+		this._toolTip = html.join("");
+	}
+	return this._toolTip;
 }
