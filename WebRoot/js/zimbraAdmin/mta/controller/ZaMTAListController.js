@@ -222,7 +222,7 @@ ZaMTAListController.prototype.handleMTAChange =
 function (ev) {
 	//if any of the data that is currently visible has changed - update the view
 	if(ev && this._contentView) {
-		if(ev.getDetails()) {
+		if(ev.getDetail("obj")) {
 			this._contentView.setUI();
 			//check if we have any MTAs in the queue waiting to be loaded
 			if(this.MTAPool.length) {

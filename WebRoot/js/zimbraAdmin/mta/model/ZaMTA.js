@@ -73,6 +73,7 @@ ZaMTA.A_name = "name";
 ZaMTA.A_count = "n";
 ZaMTA.A_Qid = "qid";
 ZaMTA.A_query = "query";
+ZaMTA.A_more = "more";
 ZaMTA.A_queue_filter_name = "_queue_filter_name";
 ZaMTA.A_queue_filter_value = "_queue_filter_value";
 ZaMTA.A_progress = "progress";
@@ -94,15 +95,15 @@ ZaMTA.prototype.QCountsCallback = function (resp) {
 	//update my fields
 	if(body && body.GetMailQueueInfoResponse.server && body.GetMailQueueInfoResponse.server[0]) {
 		this.initFromJS(body.GetMailQueueInfoResponse.server[0]);
+		ZaMTA._quecountsArr.sort();
+		ZaMTA.threashHold = ZaMTA._quecountsArr[Math.round(ZaMTA._quecountsArr.length/2)];
+		var details = {obj:this,qName:null};
+		this._app.getMTAController().fireChangeEvent(details);
 	} else {
 		var ex = new ZmCsfeException(ZMsg.errorUnknownDoc,ZmCsfeException.SVC_UNKNOWN_DOCUMENT,"ZaMTA.prototype.QCountsCallback");
 		this._app.getCurrentController()._handleException(ex, "ZaMTA.prototype.QCountsCallback");
 		return;	
 	}
-	ZaMTA._quecountsArr.sort();
-	ZaMTA.threashHold = ZaMTA._quecountsArr[Math.round(ZaMTA._quecountsArr.length/2)];
-	//notify listeners 
-	this._app.getMTAController().fireChangeEvent(this);
 }
 
 /**
@@ -137,6 +138,13 @@ ZaMTA.prototype.initFromJS = function (obj) {
 			
 			var queue = obj.queue[ix];
 			var qName = queue.name;
+
+			if(queue[ZaMTA.A_more] != undefined) {
+				if(parseInt(queue[ZaMTA.A_more])==1)
+					this[qName].parsingComplete = false;
+				else
+					this[qName].parsingComplete = true;
+			}	
 			
 			if(!this[qName])
 				this[qName] = new Object();
@@ -156,13 +164,22 @@ ZaMTA.prototype.initFromJS = function (obj) {
 						var cnt3 = qs[j].item.length;
 						for (var k = 0; k < cnt3; k++) {
 							var item = qs[j].item[k];
-							this[qName][qs[j].type].push(new ZaMTAQSummaryItem(app, item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
+							this[qName][qs[j].type].push(new ZaMTAQSummaryItem(this._app, item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
 						}
 					}
 				}	
 			}	
 		}
 	}
+	if(this[ZaMTA.A_DeferredQ].parsingComplete && 
+		this[ZaMTA.A_IncomingQ].parsingComplete &&
+		this[ZaMTA.A_ActiveQ].parsingComplete &&
+		this[ZaMTA.A_HoldQ].parsingComplete &&
+		this[ZaMTA.A_CorruptQ].parsingComplete) {
+		this[ZaMTA.A_Status] = ZaMsg.Idle;
+	} else {
+		this[ZaMTA.A_Status] = ZaMsg.scanning;
+	}	
 }
 /**
 * Make a SOAP call to get file counts in queue folders
@@ -460,7 +477,9 @@ ZaMTA.myXModel = {
 * send a MailQStatusRequest 
 **/
 ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
-	
+	if(force) {
+		this[qName] = {n:"N/A"};
+	}
 	limit = (limit != null) ? limit: ZaMTA.RESULTSPERPAGE;
 	
 	var soapDoc = AjxSoapDoc.create("GetMailQueueRequest", "urn:zimbraAdmin", null);
@@ -497,19 +516,41 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	params.asyncMode = true;
-	var callback = new AjxCallback(this, this.mailQStatusCallback);	
+	var callback = new AjxCallback(this, this.mailQStatusCallback, qName);	
 	params.callback = callback;
+	this[ZaMTA.A_Status] = ZaMsg.scanning;
 	command.invoke(params);		
 }
 
 /**
 * this method is called when the server returns MailQStatusResponse 
 **/
-ZaMTA.prototype.mailQStatusCallback = function () {
+ZaMTA.prototype.mailQStatusCallback = function (qName,resp) {
 	//update my fields
-	ZaMTA.makeTestData1(this);
-	this._app.getMTAController().fireChangeEvent(this);
-	//if status is "running" call getMailQStatus again
+	//ZaMTA.makeTestData1(this);
+	if(!resp) {
+		var ex = new ZmCsfeException(ZMsg.errorEmptyResponse,CSFE_SVC_ERROR,"ZaMTA.prototype.mailQStatusCallback");
+		this._app.getCurrentController()._handleException(ex, "ZaMTA.prototype.mailQStatusCallback");
+		this.goPrev();
+		return;		
+	}
+	if(resp.isException && resp.isException()) {
+		this._app.getCurrentController()._handleException(resp.getException(), "ZaMTA.prototype.mailQStatusCallback");
+		return;
+	} 	
+	var response = resp.getResponse();
+	var body = response.Body;
+	//update my fields
+	if(body && body.GetMailQueueResponse.server && body.GetMailQueueResponse.server[0]) {
+		this.initFromJS(body.GetMailQueueResponse.server[0]);
+		var details = {obj:this,qName:qName};
+
+		this._app.getMTAController().fireChangeEvent(details);
+	} else {
+		var ex = new ZmCsfeException(ZMsg.errorUnknownDoc,ZmCsfeException.SVC_UNKNOWN_DOCUMENT,"ZaMTA.prototype.mailQStatusCallback");
+		this._app.getCurrentController()._handleException(ex, "ZaMTA.prototype.mailQStatusCallback");
+		return;	
+	}	
 }
 
 ZaMTAItem = function (app) {

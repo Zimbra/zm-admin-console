@@ -252,7 +252,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										]
 									},
 								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_rdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu, preserveSelection:true, multiselect:false,onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu, preserveSelection:true, multiselect:false,onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
@@ -263,7 +263,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										]
 									},
 								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_origip, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu,preserveSelection:true, multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,preserveSelection:true, multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
@@ -274,7 +274,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										]
 									},
 								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_sdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},	
 							{type:_CELLSPACER_},
@@ -285,7 +285,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										]
 									},
 								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_raddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
@@ -296,7 +296,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										]
 									},
 								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_saddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},							
@@ -307,7 +307,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										]
 									},
 								    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_error, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							}						
 						]},
@@ -330,7 +330,6 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 									]
 								},
-,																		
 								{type:_GROUP_, numCols:5, colSizes:["15%","25%","20%","20%","20%"],
 									tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"98%", 
 									//relevantBehavior:_HIDE_, relevant:"instance[ZaMTA.A_DeferredQ][ZaMTA.A_queue_filter_name] && instance[ZaMTA.A_DeferredQ][ZaMTA.A_queue_filter_value]",
@@ -341,72 +340,381 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 									]
 								},									
 							    {ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-						   		forceUpdate: true,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
+						   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
 							]
 						}		
 					]
 				},							
-				{type:_CASE_, numCols:1, width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
+				{type:_CASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
 					items:[	
 						{type:_SPACER_, height:"15"},
-						{type:_GROUP_, numCols:3, width:"95%", colSizes:["45%", "10%", "45%"],cssClass:"RadioGrouperBorder container", items: [						
-						    {type:_GROUP_, colSpan:3, numCols:1, 
+						{type:_GROUP_,numCols:5, colSizes:["15%", "25%","15%", "25%", "20%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
+							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_refreshTime},
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_Status},							
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener}
+						]},								
+						{type:_SPACER_, height:"1"},							
+						{type:_GROUP_, numCols:9, /*cssStyle:(AjxEnv.isIE ? "width:98%" : ""),*/ colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
+						    {type:_GROUP_, colSpan:9, numCols:1, 
 						   		items: [
-									{type:_OUTPUT_, value:ZaMsg.PQV_Summary, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel")}
+									{type:_OUTPUT_, value:ZaMsg.PQV_Summary, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 								]
 							},
+													
 							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table",  items: [
 								   {type:_GROUP_, numCols:1, 
 								   		items: [
-											{type:_OUTPUT_, value:ZaMsg.PQV_GroupDestinationDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel")}
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupRDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 										]
 									},
 								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_rdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu, preserveSelection:true, multiselect:false,onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
 							},		
 							{type:_CELLSPACER_},
 							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
 								   {type:_GROUP_, numCols:1, 
 								   		items: [
-											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel")}
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 										]
 									},
 								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_origip, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-							   		forceUpdate: true, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,preserveSelection:true, multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
 								]
-							}
-											
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_sdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},	
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupReceiverAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_raddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_saddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							}						
 						]},
-						{type:_SPACER_, height:"10"},
-						/*
-						* This is too elaborate for now
-						*/		
-						/*				
-						{type:_GROUP_, numCols:6, tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
-							{type:_TEXTFIELD_, label:ZaMsg.PQ_searchQuery, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_query, width:"100%", containerCssClass:"search_field_container"},
-							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.PQ_SearchQ},
-							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter,ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_query, onActivate:ZaMTAXFormView.clearFilter}							
-						]},*/	
-						{type:_GROUP_, numCols:5, colSizes:["20%","20%","20%","20%","20%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
-							{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilter, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_queue_filter_name},
-							{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilterVal, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_queue_filter_value},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.PQ_ShowAll,onActivate:ZaMTAXFormView.showAllMsgs}
-						]},																							
-						{type:_GROUP_, numCols:1, width:"95%", cssClass:"RadioGrouperBorder container", tableCssClass:"que_table",  items: [
+						{type:_SPACER_, height:"15"},	
+						{type:_GROUP_, numCols:1, cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%",  items: [
 							   {type:_GROUP_, numCols:1, 
 							   		items: [
-										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel")}
+										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
 									]
 								},
+								{type:_GROUP_, numCols:5, colSizes:["15%","25%","20%","20%","20%"],
+									tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"98%", 
+									//relevantBehavior:_HIDE_, relevant:"instance[ZaMTA.A_IncomingQ][ZaMTA.A_queue_filter_name] && instance[ZaMTA.A_IncomingQ][ZaMTA.A_queue_filter_value]",
+									items: [
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilter, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_queue_filter_name},
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilterVal, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_queue_filter_value},
+										{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.PQ_ShowAll,onActivate:ZaMTAXFormView.showAllMsgs}
+									]
+								},									
 							    {ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
-						   		forceUpdate: true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
+						   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
 							]
 						}		
 					]
-				}			
+				},
+				{type:_CASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab3, 
+					items:[	
+						{type:_SPACER_, height:"15"},
+						{type:_GROUP_,numCols:5, colSizes:["15%", "25%","15%", "25%", "20%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
+							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_refreshTime},
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_Status},							
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener}
+						]},								
+						{type:_SPACER_, height:"1"},							
+						{type:_GROUP_, numCols:9, colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
+						    {type:_GROUP_, colSpan:9, numCols:1, 
+						   		items: [
+									{type:_OUTPUT_, value:ZaMsg.PQV_Summary, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+								]
+							},
+													
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table",  items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupRDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_rdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu, preserveSelection:true, multiselect:false,onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_origip, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,preserveSelection:true, multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_sdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},	
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupReceiverAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_raddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_saddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							}						
+						]},
+						{type:_SPACER_, height:"15"},	
+						{type:_GROUP_, numCols:1, cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%",  items: [
+							   {type:_GROUP_, numCols:1, 
+							   		items: [
+										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+									]
+								},
+								{type:_GROUP_, numCols:5, colSizes:["15%","25%","20%","20%","20%"],
+									tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"98%", 
+									items: [
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilter, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_queue_filter_name},
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilterVal, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_queue_filter_value},
+										{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.PQ_ShowAll,onActivate:ZaMTAXFormView.showAllMsgs}
+									]
+								},									
+							    {ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+						   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
+							]
+						}		
+					]
+				},
+				{type:_CASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab4, 
+					items:[	
+						{type:_SPACER_, height:"15"},
+						{type:_GROUP_,numCols:5, colSizes:["15%", "25%","15%", "25%", "20%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
+							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_refreshTime},
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_Status},							
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener}
+						]},								
+						{type:_SPACER_, height:"1"},							
+						{type:_GROUP_, numCols:9, colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
+						    {type:_GROUP_, colSpan:9, numCols:1, 
+						   		items: [
+									{type:_OUTPUT_, value:ZaMsg.PQV_Summary, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+								]
+							},
+													
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table",  items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupRDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_rdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu, preserveSelection:true, multiselect:false,onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_origip, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,preserveSelection:true, multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_sdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},	
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupReceiverAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_raddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_saddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							}						
+						]},
+						{type:_SPACER_, height:"15"},	
+						{type:_GROUP_, numCols:1, cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%",  items: [
+							   {type:_GROUP_, numCols:1, 
+							   		items: [
+										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+									]
+								},
+								{type:_GROUP_, numCols:5, colSizes:["15%","25%","20%","20%","20%"],
+									tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"98%", 
+									items: [
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilter, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_queue_filter_name},
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilterVal, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_queue_filter_value},
+										{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.PQ_ShowAll,onActivate:ZaMTAXFormView.showAllMsgs}
+									]
+								},									
+							    {ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+						   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
+							]
+						}		
+					]
+				},											
+					
+				{type:_CASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab5, 
+					items:[	
+						{type:_SPACER_, height:"15"},
+						{type:_GROUP_,numCols:5, colSizes:["15%", "25%","15%", "25%", "20%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
+							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_refreshTime},
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_Status},							
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener}
+						]},								
+						{type:_SPACER_, height:"1"},							
+						{type:_GROUP_, numCols:9, colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
+						    {type:_GROUP_, colSpan:9, numCols:1, 
+						   		items: [
+									{type:_OUTPUT_, value:ZaMsg.PQV_Summary, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+								]
+							},
+													
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table",  items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupRDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_rdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu, preserveSelection:true, multiselect:false,onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupOriginIP, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_origip, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,preserveSelection:true, multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderDomain, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_sdomain, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},	
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupReceiverAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_raddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							},		
+							{type:_CELLSPACER_},
+							{type:_GROUP_, numCols:1,cssClass:"RadioGrouperBorder", tableCssClass:"que_table", items: [
+								   {type:_GROUP_, numCols:1, 
+								   		items: [
+											{type:_OUTPUT_, value:ZaMsg.PQV_GroupSenderAddress, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+										]
+									},
+								    {ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_saddress, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+							   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:false, onSelection:ZaMTAXFormView.listSelectionListener, widgetClass:ZaQSummaryListView, headerList:headerList},								
+								]
+							}						
+						]},
+						{type:_SPACER_, height:"15"},	
+						{type:_GROUP_, numCols:1, cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%",  items: [
+							   {type:_GROUP_, numCols:1, 
+							   		items: [
+										{type:_OUTPUT_, value:ZaMsg.PQV_Messages, cssClass:(AjxEnv.isIE ? "" : "RadioGrouperLabel"), cssStyle:"z-index:"+(Dwt.Z_VIEW+1)}
+									]
+								},
+								{type:_GROUP_, numCols:5, colSizes:["15%","25%","20%","20%","20%"],
+									tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"98%", 
+									items: [
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilter, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_queue_filter_name},
+										{type:_OUTPUT_, label:ZaMsg.PQ_QueueFilterVal, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_queue_filter_value},
+										{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.PQ_ShowAll,onActivate:ZaMTAXFormView.showAllMsgs}
+									]
+								},									
+							    {ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_messages, type:_DWT_LIST_, height:"200", width:"100%", cssClass: "DLSource", 
+						   		forceUpdate: false,createPopupMenu:ZaMTAXFormView.createPopupMenu,multiselect:true, widgetClass:ZaQMessagesListView, headerList:msgHeaderList},								
+							]
+						}		
+					]
+				}											
 			]
 		}
 	]
