@@ -71,7 +71,7 @@ function(entry) {
 	this._currentObject = entry;
 	
 	if(!entry[ZaMTA.A_DeferredQ].parsingComplete)
-		this._currentObject.getMailQStatus(ZaMTA.A_DeferredQ);	
+		this._currentObject.getMailQStatus(ZaMTA.A_DeferredQ, "from:anandp@phillip.liquidsys.com");	
 	
 	if(!entry[ZaMTA.A_IncomingQ].parsingComplete)
 		this._currentObject.getMailQStatus(ZaMTA.A_IncomingQ);	

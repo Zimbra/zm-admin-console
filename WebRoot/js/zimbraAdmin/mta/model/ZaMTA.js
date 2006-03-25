@@ -59,12 +59,13 @@ ZaMTA.A_HoldQ = "hold";
 /**
 * names of summary fields
 **/
-ZaMTA.A_rdomain = "rdomain";
-ZaMTA.A_sdomain = "sdomain";
-ZaMTA.A_origip = "origip";
-ZaMTA.A_raddress = "raddress";
-ZaMTA.A_saddress = "saddress";
-ZaMTA.A_error = "error";
+ZaMTA.A_rdomain = "todomain";
+ZaMTA.A_sdomain = "fromdomain";
+ZaMTA.A_origip = "addr";
+ZaMTA.A_raddress = "to";
+ZaMTA.A_saddress = "from";
+ZaMTA.A_error = "reason";
+ZaMTA.A_host = "host";
 ZaMTA.A_messages = "messages";
 /**
 * names of attributes in summary fields fields
@@ -160,9 +161,9 @@ ZaMTA.prototype.initFromJS = function (obj) {
 					if(!this[qName][qs[j].type])
 						this[qName][qs[j].type] = [];
 
-					if(qs[j].item) {
+					if(qs[j].qsi) {
 						
-						var item = qs[j].item;
+						var item = qs[j].qsi;
 						var cnt3 = item.length;
 						for (var k = 0; k < cnt3; k++) {
 						//	var item = qs[j].item[k];
@@ -656,13 +657,13 @@ ZaMTAQMsgItem = function (app) {
 }
 
 
-ZaMTAQMsgItem.A_time = "t";
-ZaMTAQMsgItem.A_content_filter = "f";
-ZaMTAQMsgItem.A_origin_host = "oh";
-ZaMTAQMsgItem.A_sender = "s";
+ZaMTAQMsgItem.A_time = "time";
+ZaMTAQMsgItem.A_content_filter = "filter";
+ZaMTAQMsgItem.A_origin_host = "host";
+ZaMTAQMsgItem.A_sender = "from";
 ZaMTAQMsgItem.A_id = "id";
-ZaMTAQMsgItem.A_recipients = "r";
-ZaMTAQMsgItem.A_origin_ip = "oi";
+ZaMTAQMsgItem.A_recipients = "to";
+ZaMTAQMsgItem.A_origin_ip = "addr";
 
 ZaMTAQMsgItem.prototype = new ZaItem;
 ZaMTAQMsgItem.prototype.constructor = ZaMTAQMsgItem;

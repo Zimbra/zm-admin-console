@@ -161,9 +161,34 @@ ZaMTAXFormView.showAllMsgs = function (ev) {
 }
 
 ZaMTAXFormView.deleteButtonListener = function (ev) {
-	if(this.getSelectionCount() ==1) {
-		var item = this.getSelection()[0];
+	this._removeList = new Array();
+	if(this.getSelectionCount()>0) {
+		this._removeList = this.getSelection();
+		//var cnt = arrItems.length;
 
+	}
+	if(this._removeList.length) {
+		var dlgMsg;
+		dlgMsg = ZaMsg.Q_DELETE_OBJECTS;
+		dlgMsg +=  "<br><ul>";
+		var i=0;
+		for(var key in this._removeList) {
+			if(i > 19) {
+				dlgMsg += "<li>...</li>";
+				break;
+			}
+			dlgMsg += "<li>";
+			dlgMsg += this._removeList[i].toString();
+			dlgMsg += "</li>";
+			i++;
+		}
+		dlgMsg += "</ul>";
+		var app = this.xFormItem.getForm().getController();
+		this.removeConfirmMessageDialog = new ZaMsgDialog(app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], app);			
+		this.removeConfirmMessageDialog.setMessage(dlgMsg,  DwtMessageDialog.INFO_STYLE);
+		this.removeConfirmMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaMTAXFormView.deleteMsgsCallback, this);
+		this.removeConfirmMessageDialog.registerCallback(DwtDialog.NO_BUTTON, ZaMTAXFormView.donotDeleteMsgsCallback, this);		
+		this.removeConfirmMessageDialog.popup();
 	}
 }
 
@@ -179,7 +204,10 @@ ZaMTAXFormView.refreshListener = function () {
 }
 
 ZaMTAXFormView.createPopupMenu = function (listWidget) {
-	popupOperations = [new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.PQVTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(listWidget, ZaMTAXFormView.deleteButtonListener))];
+	popupOperations = [new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.PQVTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(listWidget, ZaMTAXFormView.deleteButtonListener)),
+	new ZaOperation(ZaOperation.HOLD, ZaMsg.TBB_Hold, ZaMsg.PQVTBB_Hold_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.holdButtonListener)),
+	new ZaOperation(ZaOperation.RELEASE, ZaMsg.TBB_Release, ZaMsg.PQVTBB_Release_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.releaseButtonListener)),
+	new ZaOperation(ZaOperation.REQUEUE, ZaMsg.TBB_Requeue, ZaMsg.PQVTBB_Requeue_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.requeueButtonListener))];
 	listWidget.actionMenu = new ZaPopupMenu(listWidget, "ActionMenu", null, popupOperations);
 	listWidget.addActionListener(new AjxListener(listWidget, ZaMTAXFormView.listActionListener));		
 	listWidget.xFormItem = this;
