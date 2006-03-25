@@ -32,7 +32,7 @@ function ZaMTAListController(appCtxt, container, app) {
    	this._toolbarOperations = new Array();
    	this._popupOperations = new Array();			
 	this.MTAPool = [];
-	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/managing_servers.htm";					
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/Monitoring_Zimbra_MTA_Mail_Queues";					
 }
 
 ZaMTAListController.prototype = new ZaController();

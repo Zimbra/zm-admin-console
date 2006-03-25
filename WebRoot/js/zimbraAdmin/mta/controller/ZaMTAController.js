@@ -35,7 +35,7 @@
 function ZaMTAController(appCtxt, container,app) {
 	ZaXFormViewController.call(this, appCtxt, container,app,"ZaMTAController");
 	this._UICreated = false;
-	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/managing_servers.htm";				
+	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/Monitoring_Zimbra_MTA_Mail_Queues.htm";				
 	this._toolbarOperations = new Array();
 	this.objType = ZaEvent.S_MTA;	
 }
@@ -87,7 +87,7 @@ function(entry) {
 	
 	if(this._currentObject[ZaMTA.A_Status] == ZaMsg.scanning) {
 		this.popupMsgDialog(ZaMsg.WARNING_WAIT_Q_SCAN);
-	}
+	} 
 }
 ZaController.setViewMethods["ZaMTAController"].push(ZaMTAController.setViewMethod);
 
@@ -154,6 +154,10 @@ function (ev) {
 							//this._currentObject.getMailQStatus(ev.getDetail("qName"));	
 						}
 					}
+					
+					if(this._currentObject[ZaMTA.A_Status] != ZaMsg.scanning) {
+						this._msgDialog.popdown();
+					} 
 				}	
 			}
 		}

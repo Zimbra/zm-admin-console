@@ -163,12 +163,24 @@ ZaMTA.prototype.initFromJS = function (obj) {
 					if(qs[j].item) {
 						var cnt3 = qs[j].item.length;
 						for (var k = 0; k < cnt3; k++) {
-							var item = qs[j].item[k];
-							this[qName][qs[j].type].push(new ZaMTAQSummaryItem(this._app, item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
+						//	var item = qs[j].item[k];
+							qs[j].item[k].prototype = new ZaMTAQSummaryItem;
+							qs[j].item[k].getToolTip = ZaMTAQSummaryItem.prototype.getToolTip;
+							qs[j].item[k].toString = ZaMTAQSummaryItem.prototype.toString;
+							//this[qName][qs[j].type].push(item);
+							//this[qName][qs[j].type].push(new ZaMTAQSummaryItem(this._app, item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
 						}
+						this[qName][qs[j].type] = qs[j].item;
 					}
 				}	
 			}	
+			if(queue.qi) {
+				var qi = obj.queue[ix].qi;
+				var cnt2 = qi.length;
+				for (var j = 0; j < cnt2; j++) {
+					
+				}	
+			}			
 		}
 	}
 	if(this[ZaMTA.A_DeferredQ].parsingComplete && 
@@ -491,7 +503,8 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	qEl.setAttribute("name", qName);		
 	
 	if(force) {
-		qEl.setAttribute("scan", 1);		
+		qEl.setAttribute("scan", 1);	
+		this[ZaMTA.A_Status] = ZaMsg.scanning;	
 	}
 		
 	serverEl.appendChild(qEl);
@@ -518,7 +531,7 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	params.asyncMode = true;
 	var callback = new AjxCallback(this, this.mailQStatusCallback, qName);	
 	params.callback = callback;
-	this[ZaMTA.A_Status] = ZaMsg.scanning;
+
 	command.invoke(params);		
 }
 
@@ -584,6 +597,7 @@ ZaMTA.initMethod = function (app) {
 ZaItem.initMethods["ZaMTA"].push(ZaMTA.initMethod);
 
 ZaMTAQSummaryItem = function (app, d, t, n) {
+	if (arguments.length == 0) return;
 	ZaItem.call(this, app,"ZaMTAQSummaryItem");
 	this._init(app);
 	if(d) 
@@ -625,4 +639,38 @@ function() {
 		this._toolTip = html.join("");
 	}
 	return this._toolTip;
+}
+
+
+ZaMTAQMsgItem = function (app) {
+	ZaItem.call(this, app,"ZaMTAQMsgItem");
+	this._init(app);
+}
+
+
+ZaMTAQMsgItem.A_time = "t";
+ZaMTAQMsgItem.A_content_filter = "f";
+ZaMTAQMsgItem.A_origin_host = "oh";
+ZaMTAQMsgItem.A_sender = "s";
+ZaMTAQMsgItem.A_id = "id";
+ZaMTAQMsgItem.A_recipients = "r";
+ZaMTAQMsgItem.A_origin_ip = "oi";
+
+ZaMTAQMsgItem.prototype = new ZaItem;
+ZaMTAQMsgItem.prototype.constructor = ZaMTAQMsgItem;
+ZaItem.loadMethods["ZaMTAQMsgItem"] = new Array();
+ZaItem.initMethods["ZaMTAQMsgItem"] = new Array();
+
+ZaMTAQMsgItem.prototype.toString = function () {
+	return this[ZaMTAQMsgItem.A_id];
+}
+
+ZaMTAQMsgItem.prototype.initFromJS = function (obj) {
+	this[ZaMTAQMsgItem.A_time] = obj[ZaMTAQMsgItem.A_time];
+	this[ZaMTAQMsgItem.A_content_filter] = obj[ZaMTAQMsgItem.A_content_filter];
+	this[ZaMTAQMsgItem.A_origin_host] = obj[ZaMTAQMsgItem.A_origin_host];
+	this[ZaMTAQMsgItem.A_sender] = obj[ZaMTAQMsgItem.A_sender];
+	this[ZaMTAQMsgItem.A_id] = obj[ZaMTAQMsgItem.A_id];
+	this[ZaMTAQMsgItem.A_recipients] = obj[ZaMTAQMsgItem.A_recipients];
+	this[ZaMTAQMsgItem.A_origin_ip] = obj[ZaMTAQMsgItem.A_origin_ip];
 }
