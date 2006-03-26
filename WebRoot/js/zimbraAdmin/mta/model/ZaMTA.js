@@ -141,7 +141,7 @@ ZaMTA.prototype.initFromJS = function (obj) {
 			var qName = queue.name;
 
 			if(queue[ZaMTA.A_more] != undefined) {
-				if(parseInt(queue[ZaMTA.A_more])==1)
+				if(queue[ZaMTA.A_more])
 					this[qName].parsingComplete = false;
 				else
 					this[qName].parsingComplete = true;
