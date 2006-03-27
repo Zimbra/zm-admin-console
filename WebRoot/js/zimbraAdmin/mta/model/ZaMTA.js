@@ -70,11 +70,13 @@ ZaMTA.A_messages = "messages";
 /**
 * names of attributes in summary fields fields
 **/
+ZaMTA.A_pageNum = "pagenum";
 ZaMTA.A_name = "name";
 ZaMTA.A_count = "n";
 ZaMTA.A_Qid = "qid";
 ZaMTA.A_query = "query";
 ZaMTA.A_more = "more";
+ZaMTA.A_selection_cache = "_selection_cache";
 ZaMTA.A_queue_filter_name = "_queue_filter_name";
 ZaMTA.A_queue_filter_value = "_queue_filter_value";
 ZaMTA.A_progress = "progress";
@@ -95,7 +97,7 @@ ZaMTA.prototype.QCountsCallback = function (resp) {
 	var body = response.Body;
 	//update my fields
 	if(body && body.GetMailQueueInfoResponse.server && body.GetMailQueueInfoResponse.server[0]) {
-		this.initFromJS(body.GetMailQueueInfoResponse.server[0]);
+		this.initFromJS(body.GetMailQueueInfoResponse.server[0], true);
 		ZaMTA._quecountsArr.sort();
 		ZaMTA.threashHold = ZaMTA._quecountsArr[Math.round(ZaMTA._quecountsArr.length/2)];
 		var details = {obj:this,qName:null};
@@ -130,7 +132,7 @@ function() {
 	this.load();	
 }
 
-ZaMTA.prototype.initFromJS = function (obj) {
+ZaMTA.prototype.initFromJS = function (obj, summary) {
 	this.name = obj.name;
 	this.id = obj.name;
 	if(obj.queue) {
@@ -141,10 +143,13 @@ ZaMTA.prototype.initFromJS = function (obj) {
 			var qName = queue.name;
 
 			if(queue[ZaMTA.A_more] != undefined) {
-				if(queue[ZaMTA.A_more])
+				if(queue[ZaMTA.A_more]) {
+					this[qName][ZaMTA.A_Status] = ZaMsg.scanning;
 					this[qName].parsingComplete = false;
-				else
+				} else {
+					this[qName][ZaMTA.A_Status] = ZaMsg.Idle;				
 					this[qName].parsingComplete = true;
+				}
 			}	
 			
 			if(!this[qName])
@@ -154,6 +159,8 @@ ZaMTA.prototype.initFromJS = function (obj) {
 				this[qName][ZaMTA.A_count] = queue[ZaMTA.A_count];
 				ZaMTA._quecountsArr.push(queue[ZaMTA.A_count]);
 			}
+			if(summary)
+				continue;
 			if(queue.qs) {
 				var qs = obj.queue[ix].qs;
 				var cnt2 = qs.length;
@@ -177,6 +184,7 @@ ZaMTA.prototype.initFromJS = function (obj) {
 					}
 				}	
 			}	
+			this[qName][ZaMTA.A_messages] = [];
 			if(queue.qi) {
 				var qi = obj.queue[ix].qi;
 				var cnt4 = qi.length;
@@ -189,15 +197,6 @@ ZaMTA.prototype.initFromJS = function (obj) {
 			}			
 		}
 	}
-	if(this[ZaMTA.A_DeferredQ].parsingComplete && 
-		this[ZaMTA.A_IncomingQ].parsingComplete &&
-		this[ZaMTA.A_ActiveQ].parsingComplete &&
-		this[ZaMTA.A_HoldQ].parsingComplete &&
-		this[ZaMTA.A_CorruptQ].parsingComplete) {
-		this[ZaMTA.A_Status] = ZaMsg.Idle;
-	} else {
-		this[ZaMTA.A_Status] = ZaMsg.scanning;
-	}	
 }
 /**
 * Make a SOAP call to get file counts in queue folders
@@ -476,7 +475,8 @@ PostQSummary_XModelItem.prototype.items = [
 						]
 					}
 				},
-				{id:ZaMTA.A_count, type:_NUMBER_}	
+				{id:ZaMTA.A_count, type:_NUMBER_},
+				{id:ZaMTA.A_pageNum, type:_NUMBER_}
 			];
 ZaMTA.myXModel = {
 	items: [
@@ -491,6 +491,9 @@ ZaMTA.myXModel = {
 	]
 };
 
+ZaMTA.luceneEscape = function (str) {
+	return String(str).replace(/([\+\-\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/g, "\\$1");
+}
 /**
 * send a MailQStatusRequest 
 **/
@@ -510,7 +513,7 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	
 	if(force) {
 		qEl.setAttribute("scan", 1);	
-		this[ZaMTA.A_Status] = ZaMsg.scanning;	
+		this[qName][ZaMTA.A_Status] = ZaMsg.scanning;	
 	}
 		
 	serverEl.appendChild(qEl);
@@ -561,7 +564,7 @@ ZaMTA.prototype.mailQStatusCallback = function (qName,resp) {
 	var body = response.Body;
 	//update my fields
 	if(body && body.GetMailQueueResponse.server && body.GetMailQueueResponse.server[0]) {
-		this.initFromJS(body.GetMailQueueResponse.server[0]);
+		this.initFromJS(body.GetMailQueueResponse.server[0], false);
 		var details = {obj:this,qName:qName};
 
 		this._app.getMTAController().fireChangeEvent(details);
@@ -601,6 +604,12 @@ ZaMTA.initMethod = function (app) {
 	this[ZaMTA.A_ActiveQ][ZaMTA.A_refreshTime] = "N/A";
 	this[ZaMTA.A_HoldQ][ZaMTA.A_refreshTime] = "N/A";
 	this[ZaMTA.A_CorruptQ][ZaMTA.A_refreshTime] = "N/A";	
+	
+	this[ZaMTA.A_DeferredQ][ZaMTA.A_pageNum] = 0;
+	this[ZaMTA.A_IncomingQ][ZaMTA.A_pageNum] = 0;	
+	this[ZaMTA.A_ActiveQ][ZaMTA.A_pageNum] = 0;
+	this[ZaMTA.A_HoldQ][ZaMTA.A_pageNum] = 0;
+	this[ZaMTA.A_CorruptQ][ZaMTA.A_pageNum] = 0;		
 }
 ZaItem.initMethods["ZaMTA"].push(ZaMTA.initMethod);
 
