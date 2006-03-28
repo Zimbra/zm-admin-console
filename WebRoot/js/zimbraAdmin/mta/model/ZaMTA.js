@@ -575,6 +575,34 @@ ZaMTA.prototype.mailQStatusCallback = function (qName,resp) {
 	}	
 }
 
+ZaMTA.prototype.mailQueueAction = function (qName, action, by, val) {
+	var soapDoc = AjxSoapDoc.create("MailQueueActionRequest", "urn:zimbraAdmin", null);
+	var serverEl = soapDoc.set("server", "");
+	serverEl.setAttribute("name", this.name);		
+	var qEl = soapDoc.getDoc().createElement("queue");
+	qEl.setAttribute("name", qName);		
+	serverEl.appendChild(qEl);
+	
+	//var actionEl = 	soapDoc.getDoc().createElement("action");
+	var actionEl = soapDoc.set("action", val,qEl);
+	actionEl.setAttribute("op", action);
+	actionEl.setAttribute("by", by);	
+	//qEl.appendChild(actionEl);
+	
+	var command = new ZmCsfeCommand();
+	var params = new Object();
+	params.soapDoc = soapDoc;	
+	params.asyncMode = true;
+	var callback = new AjxCallback(this, this.mailQueueActionClbck, qName);	
+	params.callback = callback;
+
+	command.invoke(params);		
+}
+
+ZaMTA.prototype.mailQueueActionClbck = function (qName, resp) {
+
+}
+
 ZaMTA.prototype.flushQueues = function () {
 	var soapDoc = AjxSoapDoc.create("MailQueueFlushRequest", "urn:zimbraAdmin", null);
 	var serverEl = soapDoc.set("server", "");
