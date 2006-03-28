@@ -34,17 +34,31 @@ function ZaMTA(app) {
 	ZaItem.call(this, app,"ZaMTA");
 	this._init(app);
 }
-ZaMTA.RESULTSPERPAGE = 50;
+
 
 ZaMTA.prototype = new ZaItem;
 ZaMTA.prototype.constructor = ZaMTA;
 ZaItem.loadMethods["ZaMTA"] = new Array();
 ZaItem.initMethods["ZaMTA"] = new Array();
+
+ZaMTA.RESULTSPERPAGE = 50;
+ZaMTA.POLL_INTERVAL = 1000;
+ZaMTA.STATUS_IDLE = 0;
+ZaMTA.STATUS_SCANNING = 1;
+ZaMTA.STATUS_SCAN_COMPLETE = 2;
+ZaMTA.STATUS_STALE = 3;
+
+ZaMTA.SCANNER_STATUS_CHOICES = [{value:ZaMTA.STATUS_IDLE, label:ZaMsg.PQ_ScannerIdle}, 
+	{value:ZaMTA.STATUS_SCANNING, label:ZaMsg.PQ_ScannerScanning},
+	{value:ZaMTA.STATUS_SCAN_COMPLETE, label:ZaMsg.PQ_ScannerScanComplete},
+	{value:ZaMTA.STATUS_STALE, label:ZaMsg.PQ_ScannerStaleData}];
+
 /**
 * attribute names
 **/
 ZaMTA.A_Servername = "servername";
 ZaMTA.A_Status = "status";
+ZaMTA.A_Stale = "stale";
 ZaMTA.A_LastError = "lasterror";
 ZaMTA.A_MTAName = "mtaname";
 ZaMTA.A_refreshTime = "refreshTime";
@@ -144,14 +158,15 @@ ZaMTA.prototype.initFromJS = function (obj, summary) {
 
 			if(queue[ZaMTA.A_more] != undefined) {
 				if(queue[ZaMTA.A_more]) {
-					this[qName][ZaMTA.A_Status] = ZaMsg.scanning;
-					this[qName].parsingComplete = false;
+					this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCANNING;
 				} else {
-					this[qName][ZaMTA.A_Status] = ZaMsg.Idle;				
-					this[qName].parsingComplete = true;
+					this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCAN_COMPLETE;						 
 				}
 			}	
-			
+			if(queue[ZaMTA.A_Stale]) {
+				this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_STALE;
+			} 
+
 			if(!this[qName])
 				this[qName] = new Object();
 				
@@ -270,7 +285,7 @@ ZaMTA.myXModel = {
 };
 
 ZaMTA.luceneEscape = function (str) {
-	return String(str).replace(/([\+\-\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/g, "\\$1");
+	return String(str).replace(/([\+\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/g, "\\$1");
 }
 /**
 * send a MailQStatusRequest 
@@ -293,7 +308,7 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	
 	if(force) {
 		qEl.setAttribute("scan", 1);	
-		this[qName][ZaMTA.A_Status] = ZaMsg.scanning;	
+		this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCANNING;	
 	}
 		
 	serverEl.appendChild(qEl);
@@ -338,7 +353,7 @@ ZaMTA.prototype.mailQStatusCallback = function (arg,resp) {
 		return;		
 	}
 	if(resp.isException && resp.isException()) {
-		if(resp.getException().code == "service.ALREADY_IN_PROGRESS") {
+		if(resp.getException().code == ZmCsfeException.SVC_ALREADY_IN_PROGRESS) {
 			var details = {obj:this,qName:qName};
 			this._app.getMTAController().fireChangeEvent(details);				
 		} else {
@@ -351,7 +366,10 @@ ZaMTA.prototype.mailQStatusCallback = function (arg,resp) {
 	//update my fields
 	if(body && body.GetMailQueueResponse.server && body.GetMailQueueResponse.server[0]) {
 		this.initFromJS(body.GetMailQueueResponse.server[0], false);
-		var details = {obj:this,qName:qName};
+		var details = {obj:this};
+		for(var ix in arg) {
+			details[ix] = arg[ix];
+		}
 
 		this._app.getMTAController().fireChangeEvent(details);
 	} else {
@@ -406,7 +424,6 @@ ZaMTA.initMethod = function (app) {
 	this.id = "";
 	this.name="";
 	this[ZaItem.A_zimbraId] = "000"
-	this[ZaMTA.A_Status] = ZaMsg.Idle;
 	this[ZaMTA.A_DeferredQ] = {n:"N/A"};
 	this[ZaMTA.A_IncomingQ] = {n:"N/A"};
 	this[ZaMTA.A_ActiveQ] = {n:"N/A"};	
@@ -424,6 +441,12 @@ ZaMTA.initMethod = function (app) {
 	this[ZaMTA.A_ActiveQ][ZaMTA.A_pageNum] = 0;
 	this[ZaMTA.A_HoldQ][ZaMTA.A_pageNum] = 0;
 	this[ZaMTA.A_CorruptQ][ZaMTA.A_pageNum] = 0;		
+	
+	this[ZaMTA.A_DeferredQ][ZaMTA.A_Status] = ZaMTA.STATUS_IDLE;	
+	this[ZaMTA.A_IncomingQ][ZaMTA.A_Status] = ZaMTA.STATUS_IDLE;	
+	this[ZaMTA.A_ActiveQ][ZaMTA.A_Status] = ZaMTA.STATUS_IDLE;	
+	this[ZaMTA.A_HoldQ][ZaMTA.A_Status] = ZaMTA.STATUS_IDLE;	
+	this[ZaMTA.A_CorruptQ][ZaMTA.A_Status] = ZaMTA.STATUS_IDLE;					
 }
 ZaItem.initMethods["ZaMTA"].push(ZaMTA.initMethod);
 

@@ -61,7 +61,7 @@ function(entry) {
 */
 ZaMTAController.setViewMethod =
 function(entry) {
-	entry.load();
+//	entry.load();
 	if(!this._UICreated) {
 		this._createUI();
 	} 
@@ -69,26 +69,6 @@ function(entry) {
 	this._view.setDirty(false);
 	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
 	this._currentObject = entry;
-/*	
-	if(!entry[ZaMTA.A_DeferredQ].parsingComplete)
-		this._currentObject.getMailQStatus(ZaMTA.A_DeferredQ);	
-	
-	if(!entry[ZaMTA.A_IncomingQ].parsingComplete)
-		this._currentObject.getMailQStatus(ZaMTA.A_IncomingQ);	
-
-	if(!entry[ZaMTA.A_ActiveQ].parsingComplete)
-		this._currentObject.getMailQStatus(ZaMTA.A_ActiveQ);	
-
-	if(!entry[ZaMTA.A_HoldQ].parsingComplete)
-		this._currentObject.getMailQStatus(ZaMTA.A_HoldQ);	
-
-	if(!entry[ZaMTA.A_CorruptQ].parsingComplete)
-		this._currentObject.getMailQStatus(ZaMTA.A_CorruptQ);	
-*/	
-/*	if(this._currentObject[ZaMTA.A_Status] == ZaMsg.scanning) {
-		this.popupMsgDialog(ZaMsg.WARNING_WAIT_Q_SCAN);
-	} 
-*/	
 }
 ZaController.setViewMethods["ZaMTAController"].push(ZaMTAController.setViewMethod);
 
@@ -161,15 +141,10 @@ function (ev) {
 					this._view.setObject(this._currentObject); 
 					var qName = ev.getDetail("qName");
 					if(qName) {
-						if(!this._currentObject[qName].parsingComplete) {
-							var ta = new AjxTimedAction(this._currentObject, ZaMTA.prototype.getMailQStatus, qName);
-							AjxTimedAction.scheduleAction(ta, 250);
-							//this._currentObject.getMailQStatus(ev.getDetail("qName"));	
+						if(this._currentObject[qName][ZaMTA.A_Status]==ZaMTA.STATUS_SCANNING) {
+							var ta = new AjxTimedAction(this._currentObject, ZaMTA.prototype.getMailQStatus, qName, ev.getDetail("query"),ev.getDetail("offset"),ev.getDetail("limit"),ev.getDetail("force"));
+							AjxTimedAction.scheduleAction(ta, ZaMTA.POLL_INTERVAL);
 						}
-						if(this._currentObject[qName][ZaMTA.A_Status] != ZaMsg.scanning) {
-							this._msgDialog.popdown();
-						} 
-
 					}
 				}	
 			}
