@@ -414,7 +414,7 @@ ZaResource.prototype.getAutoLocationName =
 function (){
 	var autoLocName = "";
 	if(this.attrs[ZaResource.A_zimbraCalResSite])
-		autoLocName += this.attrs[ZaResource.A_zimbraCalResSite] ;
+		autoLocName += ZaMsg.NAD_Site + " " + this.attrs[ZaResource.A_zimbraCalResSite] ;
 	
 	if(this.attrs[ZaResource.A_zimbraCalResBuilding])
 		autoLocName += ", " + ZaMsg.NAD_Building + " " + this.attrs[ZaResource.A_zimbraCalResBuilding];
