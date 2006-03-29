@@ -27,61 +27,68 @@ function ZaSettings() {
 }
 
 ZaSettings.initialized = false;
+ZaSettings.initializing = false
 ZaSettings.initMethods = new Array();
 /**
 * Look for admin name cookies and admin type cookies
 **/
 ZaSettings.init = function () {
-	if(ZaSettings.initialized)
+	if(ZaSettings.initialized || ZaSettings.initializing)
 		return;
 		
+	ZaSettings.initializing = true ;
 	DBG.println(AjxDebug.DBG1,"Initializing ZaSettings");		
 	
 
-	
-	var adminName = AjxCookie.getCookie(document, ZaSettings.ADMIN_NAME_COOKIE);
-	if(adminName) {
-		var emailChunks = adminName .split("@");
-		var tmpDomain = new ZaDomain();
-		if(emailChunks.length > 1 ) {
-			tmpDomain.name = emailChunks[1];
-			ZaSettings.myDomainName = emailChunks[1];
-			EmailAddr_XFormItem.domainChoices.setChoices([tmpDomain]);
-			EmailAddr_XFormItem.domainChoices.dirtyChoices();							    
-		} else {
-			//throw new AjxException("Failed to parse login name", AjxException.UNKNOWN, "ZaAuthenticate.prototype._processResponse");
-		}				
-	}
-
-	var soapDoc = AjxSoapDoc.create("GetZimletsRequest", "urn:zimbraAdmin", null);	
-	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false);
-	var zimlets = null;
-	if(resp && resp.Body && resp.Body.GetZimletsResponse && resp.Body.GetZimletsResponse.zimlets && resp.Body.GetZimletsResponse.zimlets.zimlet) {
-		zimlets = resp.Body.GetZimletsResponse.zimlets.zimlet;
-	}
-	if(zimlets && zimlets.length > 0) {
-		var includes = new Array();	
-		var cnt = zimlets.length;
-		for(var ix = 0; ix < cnt; ix++) {
-			if(zimlets[ix] && zimlets[ix].zimlet && zimlets[ix].zimlet[0] && zimlets[ix].zimletContext && zimlets[ix].zimletContext[0]) {
-				var zimlet = zimlets[ix].zimlet[0];
-				var zimletContext = zimlets[ix].zimletContext[0];
-				if(zimlet.include && zimlet.include.length>0) {
-
-					var cnt2 = zimlet.include.length;
-					for (var j=0;j<cnt2;j++) {
-						includes.push(zimletContext.baseUrl + zimlet.include[j]._content);
-					}
-				}
+	try {
+		var adminName = AjxCookie.getCookie(document, ZaSettings.ADMIN_NAME_COOKIE);
+		if(adminName) {
+			var emailChunks = adminName .split("@");
+			var tmpDomain = new ZaDomain();
+			if(emailChunks.length > 1 ) {
+				tmpDomain.name = emailChunks[1];
+				ZaSettings.myDomainName = emailChunks[1];
+				EmailAddr_XFormItem.domainChoices.setChoices([tmpDomain]);
+				EmailAddr_XFormItem.domainChoices.dirtyChoices();							    
 			} else {
-				continue;
-			}
+				//throw new AjxException("Failed to parse login name", AjxException.UNKNOWN, "ZaAuthenticate.prototype._processResponse");
+			}				
 		}
-		if(includes.length > 0)
-			AjxInclude(includes, null,new AjxCallback(this, ZaSettings.postInit));	
-				
-	} else {
-		ZaSettings.postInit();
+	
+		var soapDoc = AjxSoapDoc.create("GetZimletsRequest", "urn:zimbraAdmin", null);	
+		var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false);
+		var zimlets = null;
+		if(resp && resp.Body && resp.Body.GetZimletsResponse && resp.Body.GetZimletsResponse.zimlets && resp.Body.GetZimletsResponse.zimlets.zimlet) {
+			zimlets = resp.Body.GetZimletsResponse.zimlets.zimlet;
+		}
+		if(zimlets && zimlets.length > 0) {
+			var includes = new Array();	
+			var cnt = zimlets.length;
+			for(var ix = 0; ix < cnt; ix++) {
+				if(zimlets[ix] && zimlets[ix].zimlet && zimlets[ix].zimlet[0] && zimlets[ix].zimletContext && zimlets[ix].zimletContext[0]) {
+					var zimlet = zimlets[ix].zimlet[0];
+					var zimletContext = zimlets[ix].zimletContext[0];
+					if(zimlet.include && zimlet.include.length>0) {
+	
+						var cnt2 = zimlet.include.length;
+						for (var j=0;j<cnt2;j++) {
+							includes.push(zimletContext.baseUrl + zimlet.include[j]._content);
+						}
+					}
+				} else {
+					continue;
+				}
+			}
+			if(includes.length > 0)
+				AjxInclude(includes, null,new AjxCallback(this, ZaSettings.postInit));	
+					
+		} else {
+			ZaSettings.postInit();
+		}
+	}catch (ex) {
+		ZaSettings.initializing = false ;
+		DBG.dumpObj(ex);
+		throw new AjxException("Failed to initialize the application", AjxException.UNKNOWN, "ZaSettings.init");	
 	}
 	
 	// post-processing code
@@ -109,6 +116,7 @@ ZaSettings.postInit = function() {
 	
 	appController._launchApp();	
 	ZaSettings.initialized = true;
+	ZaSettings.initializing = false;
 };
 /**
 * Static method so that static code can get the default value of a setting if it needs to.
