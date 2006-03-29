@@ -140,7 +140,7 @@ function(entry) {
 	
 		this._app.pushView(ZaZimbraAdmin._COS_VIEW);
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
-		if(!entry.id || (entry.name == "default")) {
+		if(!entry.id) {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
 		} else {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);  				
