@@ -91,6 +91,7 @@ ZaMTA.A_count = "n";
 ZaMTA.A_Qid = "qid";
 ZaMTA.A_query = "query";
 ZaMTA.A_more = "more";
+ZaMTA.A_scan = "scan";
 ZaMTA.A_selection_cache = "_selection_cache";
 ZaMTA.A_queue_filter_name = "_queue_filter_name";
 ZaMTA.A_queue_filter_value = "_queue_filter_value";
@@ -157,17 +158,6 @@ ZaMTA.prototype.initFromJS = function (obj, summary) {
 			var queue = obj.queue[ix];
 			var qName = queue.name;
 
-			if(queue[ZaMTA.A_more] != undefined) {
-				if(queue[ZaMTA.A_more]) {
-					this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCANNING;
-				} else {
-					this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCAN_COMPLETE;						 
-				}
-			}	
-			if(queue[ZaMTA.A_Stale]) {
-				this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_STALE;
-			} 
-
 			if(!this[qName])
 				this[qName] = new Object();
 				
@@ -178,6 +168,20 @@ ZaMTA.prototype.initFromJS = function (obj, summary) {
 			if(summary)
 				continue;
 				
+			if(queue[ZaMTA.A_scan] != undefined) {
+				if(queue[ZaMTA.A_scan]) {
+					this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCANNING;
+				} else {
+					this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_SCAN_COMPLETE;						 
+				}
+			}	
+			
+			if(queue[ZaMTA.A_Stale]) {
+				this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_STALE;
+			} 
+			
+			this[qName][ZaMTA.A_more] = queue[ZaMTA.A_more];
+
 			this[qName][ZaMTA.A_rdomain] = [];
 			this[qName][ZaMTA.A_sdomain]  = [];
 			this[qName][ZaMTA.A_origip] = [];
