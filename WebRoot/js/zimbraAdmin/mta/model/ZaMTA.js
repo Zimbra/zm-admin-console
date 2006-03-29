@@ -47,6 +47,7 @@ ZaMTA.STATUS_IDLE = 0;
 ZaMTA.STATUS_SCANNING = 1;
 ZaMTA.STATUS_SCAN_COMPLETE = 2;
 ZaMTA.STATUS_STALE = 3;
+ZaMTA.ID_ALL = "ALL";
 
 ZaMTA.SCANNER_STATUS_CHOICES = [{value:ZaMTA.STATUS_IDLE, label:ZaMsg.PQ_ScannerIdle}, 
 	{value:ZaMTA.STATUS_SCANNING, label:ZaMsg.PQ_ScannerScanning},
@@ -114,7 +115,7 @@ ZaMTA.prototype.QCountsCallback = function (resp) {
 		this.initFromJS(body.GetMailQueueInfoResponse.server[0], true);
 		ZaMTA._quecountsArr.sort();
 		ZaMTA.threashHold = ZaMTA._quecountsArr[Math.round(ZaMTA._quecountsArr.length/2)];
-		var details = {obj:this,qName:null};
+		var details = {obj:this,qName:null,poll:false};
 		this._app.getMTAController().fireChangeEvent(details);
 	} else {
 		var ex = new ZmCsfeException(ZMsg.errorUnknownDoc,ZmCsfeException.SVC_UNKNOWN_DOCUMENT,"ZaMTA.prototype.QCountsCallback");
@@ -366,7 +367,7 @@ ZaMTA.prototype.mailQStatusCallback = function (arg,resp) {
 	//update my fields
 	if(body && body.GetMailQueueResponse.server && body.GetMailQueueResponse.server[0]) {
 		this.initFromJS(body.GetMailQueueResponse.server[0], false);
-		var details = {obj:this};
+		var details = {obj:this,poll:true};
 		for(var ix in arg) {
 			details[ix] = arg[ix];
 		}
@@ -507,8 +508,11 @@ ZaMTAQMsgItem.A_time = "time";
 ZaMTAQMsgItem.A_content_filter = "filter";
 ZaMTAQMsgItem.A_origin_host = "host";
 ZaMTAQMsgItem.A_sender = "from";
+ZaMTAQMsgItem.A_fromdomain = "fromdomain";
+ZaMTAQMsgItem.A_todomain = "todomain";
 ZaMTAQMsgItem.A_id = "id";
 ZaMTAQMsgItem.A_recipients = "to";
+ZaMTAQMsgItem.A_size = "size";
 ZaMTAQMsgItem.A_origin_ip = "addr";
 
 ZaMTAQMsgItem.prototype = new ZaItem;
@@ -539,7 +543,22 @@ function() {
 	if (!this._toolTip) {
 		var html = new Array(20);
 		var idx = 0;
-		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Recipients + this[ZaMTAQMsgItem.A_recipients]);
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Sender + " " + this[ZaMTAQMsgItem.A_sender]);		
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_OriginHost + " " + this[ZaMTAQMsgItem.A_origin_host]);		
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_OriginDomain + " " + this[ZaMTAQMsgItem.A_fromdomain]);		
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_OriginIP + " " + this[ZaMTAQMsgItem.A_origin_ip]);		
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Recipients + " " + this[ZaMTAQMsgItem.A_recipients]);
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_DestinationDomain + " " + this[ZaMTAQMsgItem.A_todomain]);		
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_ContentFilter + " " + this[ZaMTAQMsgItem.A_content_filter]);		
+		html[idx++] = "<br>";
+		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Size + " " + this[ZaMTAQMsgItem.A_size]);		
+
 		this._toolTip = html.join("");
 	}
 	return this._toolTip;

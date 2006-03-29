@@ -61,7 +61,7 @@ function(entry) {
 */
 ZaMTAController.setViewMethod =
 function(entry) {
-//	entry.load();
+	entry.load();
 	if(!this._UICreated) {
 		this._createUI();
 	} 
@@ -140,7 +140,7 @@ function (ev) {
 					this._currentObject = ev.getDetail("obj");
 					this._view.setObject(this._currentObject); 
 					var qName = ev.getDetail("qName");
-					if(qName) {
+					if(qName && ev.getDetail("poll")) {
 						if(this._currentObject[qName][ZaMTA.A_Status]==ZaMTA.STATUS_SCANNING) {
 							var ta = new AjxTimedAction(this._currentObject, ZaMTA.prototype.getMailQStatus, qName, ev.getDetail("query"),ev.getDetail("offset"),ev.getDetail("limit"),ev.getDetail("force"));
 							AjxTimedAction.scheduleAction(ta, ZaMTA.POLL_INTERVAL);
