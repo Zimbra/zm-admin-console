@@ -297,7 +297,8 @@ ZaMTA.luceneEscape = function (str) {
 **/
 ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	if(force) {
-		this[qName] = {n:"N/A"};
+		var cnt = this[qName].n;
+		this[qName] = {n:cnt};
 	}
 	limit = (limit != null) ? limit: ZaMTA.RESULTSPERPAGE;
 	offset = (offset != null) ? offset: "0";

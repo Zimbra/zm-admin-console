@@ -138,14 +138,22 @@ function (ev) {
 			if(ev.getDetail("obj") && (ev.getDetail("obj") instanceof ZaMTA) ) {
 				if(this._currentObject && this._currentObject[ZaItem.A_zimbraId] == ev.getDetail("obj")[ZaItem.A_zimbraId]) {
 					this._currentObject = ev.getDetail("obj");
-					this._view.setObject(this._currentObject); 
 					var qName = ev.getDetail("qName");
+					
 					if(qName && ev.getDetail("poll")) {
+						var pageNum = 0;
+						if(ev.getDetail("offset") != undefined) {
+							if(ev.getDetail("offset") > 0)
+								pageNum = ev.getDetail("offset")/ZaMTA.RESULTSPERPAGE;
+								
+						}
+						this._currentObject[qName][ZaMTA.A_pageNum] = pageNum;
 						if(this._currentObject[qName][ZaMTA.A_Status]==ZaMTA.STATUS_SCANNING) {
 							var ta = new AjxTimedAction(this._currentObject, ZaMTA.prototype.getMailQStatus, qName, ev.getDetail("query"),ev.getDetail("offset"),ev.getDetail("limit"),ev.getDetail("force"));
 							AjxTimedAction.scheduleAction(ta, ZaMTA.POLL_INTERVAL);
 						}
 					}
+					this._view.setObject(this._currentObject); 					
 				}	
 			}
 		}

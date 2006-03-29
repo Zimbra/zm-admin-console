@@ -62,7 +62,7 @@ function(item) {
 				html[idx++] = "</td>";
 			} else if(id.indexOf(ZaMTAQMsgItem.A_recipients)==0) {
 				// name
-				html[idx++] = "<td align=center width=" + this._headerList[i]._width + ">";
+				html[idx++] = "<td align=left width=" + this._headerList[i]._width + ">";
 				html[idx++] = item[ZaMTAQMsgItem.A_recipients];
 				html[idx++] = "</td>";
 			} else if(id.indexOf(ZaMTAQMsgItem.A_content_filter)==0) {
