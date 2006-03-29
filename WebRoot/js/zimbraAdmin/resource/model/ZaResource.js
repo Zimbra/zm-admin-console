@@ -363,7 +363,12 @@ function() {
 		html[idx++] = "<tr valign='center'>";
 		html[idx++] = "<td><b>" + AjxStringUtil.htmlEncode(this.name) + "</b></td>";
 		html[idx++] = "<td align='right'>";
-		html[idx++] = AjxImg.getImageHtml("Resource");		
+		//display the image
+		if (this.attrs[ZaResource.A_zimbraCalResType] == ZaResource.RESOURCE_TYPE_LOCATION){
+			html[idx++] = AjxImg.getImageHtml("Location");	
+		}else {//equipment or other resource types
+			html[idx++] = AjxImg.getImageHtml("Resource");	
+		}	
 		html[idx++] = "</td>";
 		html[idx++] = "</table></div></td></tr>";
 		html[idx++] = "<tr></tr>";

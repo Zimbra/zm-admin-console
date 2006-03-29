@@ -91,7 +91,12 @@ function(account, now, isDndIcon) {
 					html[idx++] = AjxImg.getImageHtml("AccountAlias");				
 				break;	
 				case ZaItem.RESOURCE:
-					html[idx++] = AjxImg.getImageHtml("Resource");				
+					if (account.attrs[ZaResource.A_zimbraCalResType] == ZaResource.RESOURCE_TYPE_LOCATION){
+						html[idx++] = AjxImg.getImageHtml("Location");	
+					}else {//equipment or other resource types
+						html[idx++] = AjxImg.getImageHtml("Resource");	
+					}	
+					//html[idx++] = AjxImg.getImageHtml("Resource");				
 				break;											
 				default:
 					html[idx++] = AjxStringUtil.htmlEncode(account.type);
