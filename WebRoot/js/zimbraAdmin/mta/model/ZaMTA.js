@@ -41,7 +41,7 @@ ZaMTA.prototype.constructor = ZaMTA;
 ZaItem.loadMethods["ZaMTA"] = new Array();
 ZaItem.initMethods["ZaMTA"] = new Array();
 
-ZaMTA.RESULTSPERPAGE = 50;
+ZaMTA.RESULTSPERPAGE = 25;
 ZaMTA.POLL_INTERVAL = 1000;
 ZaMTA.STATUS_IDLE = 0;
 ZaMTA.STATUS_SCANNING = 1;
@@ -488,14 +488,16 @@ ZaMTAQSummaryItem.prototype.toString = function () {
 */
 ZaMTAQSummaryItem.prototype.getToolTip =
 function() {
-	if(!this[ZaMTAQSummaryItem.A_description])
-		return null;
-		
+
 	// update/null if modified
 	if (!this._toolTip) {
 		var html = new Array(20);
 		var idx = 0;
-		html[idx++] = AjxStringUtil.htmlEncode(this[ZaMTAQSummaryItem.A_description]);
+		html[idx++] = AjxStringUtil.htmlEncode(this[ZaMTAQSummaryItem.A_text]);
+		html[idx++] = "<br>";
+		html[idx++] = this[ZaMTAQSummaryItem.A_count];
+		html[idx++] = " ";
+		html[idx++] = ZaMsg.PQV_Messages;
 		this._toolTip = html.join("");
 	}
 	return this._toolTip;
