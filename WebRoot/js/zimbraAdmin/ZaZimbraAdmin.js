@@ -142,7 +142,8 @@ function(domain) {
 
 	// Create the shell
 	var userShell = window.document.getElementById(ZaSettings.get(ZaSettings.SKIN_SHELL_ID));
-	var shell = new DwtShell(null, false, ZaZimbraAdmin._confirmExitMethod, userShell);
+	//don't set the exit confirm before the login time
+	var shell = new DwtShell(null, false, null, userShell);
     appCtxt.setShell(shell);    
 
     // Go!
@@ -480,14 +481,14 @@ function(bReloginMode) {
 		ZaZimbraAdmin.logOff();
 	}
 }
-
+/* this function is the same as the ZaController
 ZaZimbraAdmin.prototype._hideLoginDialog =
 function() {
 	this._loginDialog.setVisible(false);
 	this._loginDialog.setError(null);
 	this._loginDialog.clearPassword();
 	this._loginDialog.clearKeyHandlers();	
-}
+} */
 
 // Banner button click
 ZaZimbraAdmin._bannerBarHdlr =
@@ -649,8 +650,18 @@ function () {
 // This method is called by the window.onbeforeunload method.
 ZaZimbraAdmin._confirmExitMethod =
 function() {
-	return ZaMsg.appExitWarning;
+		return ZaMsg.appExitWarning;
 }
+
+ZaZimbraAdmin.setOnbeforeunload = 
+function(msg) {
+	if (msg){
+		window.onbeforeunload = msg;
+	}else{
+		window.onbeforeunload = null;
+	}
+};
+
 function ZaAboutDialog(parent, className, title, w, h) {
 	if (arguments.length == 0) return;
  	var clsName = className || "DwtDialog";

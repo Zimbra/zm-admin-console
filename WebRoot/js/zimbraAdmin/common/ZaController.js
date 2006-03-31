@@ -329,7 +329,10 @@ function(params) {
     	this._authenticating = false;
 		this._appCtxt.getAppController().startup({bIsRelogin: (this._execFrame != null)}); // restart application after login
 		// Schedule this since we want to make sure the app is built up before we actually hide the login dialog
-		this._schedule(this._hideLoginDialog);
+		//if ( (! ZaSettings.initializing) && (ZaSetting.initialized)) {
+			//this._schedule(this._hideLoginDialog);
+		//}
+		this._hideLoginDialog();
 	} catch (ex) {
 		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || 
 			ex.code == ZmCsfeException.INVALID_REQUEST) 
@@ -351,7 +354,7 @@ function(params) {
 
 ZaController.prototype._hideLoginDialog =
 function() {
-	this._loginDialog.setVisible(false);
+	this._loginDialog.setVisible(false, true);
 	this._loginDialog.setError(null);
 	this._loginDialog.clearPassword();
 	this._loginDialog.clearKeyHandlers();
@@ -361,7 +364,8 @@ function() {
 
 ZaController.prototype.loginCallback =
 function(uname, password) {
-	this._schedule(this._doAuth, {username: uname, password: password});
+	//this._schedule(this._doAuth, {username: uname, password: password});
+	this._doAuth({username: uname, password: password});
 }
 
 ZaController.prototype.changePwdCallback =
@@ -415,7 +419,8 @@ function(uname, oldPass, newPass, conPass) {
 	}
 	
 	if (resp) {
-		this._schedule(this._doAuth, {username: uname, password: newPass});
+		this._doAuth({username: uname, password: newPass});
+		//this._schedule(this._doAuth, {username: uname, password: newPass});
 	}
 }
 
