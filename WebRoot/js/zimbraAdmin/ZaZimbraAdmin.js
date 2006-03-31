@@ -35,12 +35,8 @@ function ZaZimbraAdmin(appCtxt) {
 	ZaZimbraAdmin._instance = this;
 	ZaController.call(this, appCtxt, null, null,"ZaZimbraAdmin");
 
-	this._loginDialog.registerCallback(this.loginCallback, this);
-	this._loginDialog.registerChangePassCallback(this.changePwdCallback, this);
-
-	
-	this._shell = this._appCtxt.getShell();	
-	this._splashScreen = new ZaSplashScreen(this._shell, "Admin_SplashScreen");
+	ZaZimbraAdmin.showSplash(this._shell);
+	//ZaZimbraAdmin._splashScreen = new ZaSplashScreen(this._shell, "Admin_SplashScreen");
 	
 	appCtxt.setAppController(this);
 	appCtxt.setClientCmdHdlr(new ZaClientCmdHandler(appCtxt));
@@ -142,8 +138,7 @@ function(domain) {
 
 	// Create the shell
 	var userShell = window.document.getElementById(ZaSettings.get(ZaSettings.SKIN_SHELL_ID));
-	//don't set the exit confirm before the login time
-	var shell = new DwtShell(null, false, null, userShell);
+	var shell = new DwtShell(null, false, ZaZimbraAdmin._confirmExitMethod, userShell);
     appCtxt.setShell(shell);    
 
     // Go!
@@ -318,11 +313,20 @@ function() {
 }
 // Private methods
 
-ZaZimbraAdmin.prototype._killSplash =
+ZaZimbraAdmin._killSplash =
 function() {
-	this._splashScreen.setVisible(false);
+	if(ZaZimbraAdmin._splashScreen)
+		ZaZimbraAdmin._splashScreen.setVisible(false);
 }
 
+ZaZimbraAdmin.showSplash =
+function(shell) {
+	if(ZaZimbraAdmin._splashScreen)
+		ZaZimbraAdmin._splashScreen.setVisible(true);
+	else {
+		ZaZimbraAdmin._splashScreen = new ZaSplashScreen(shell, "Admin_SplashScreen");
+	}
+}
 ZaZimbraAdmin.prototype._appButtonListener =
 function(ev) {
 	//var searchController = this._appCtxt.getSearchController();
@@ -456,7 +460,7 @@ function() {
 	elements[ZaAppViewMgr.C_CURRENT_APP] = new ZaCurrentAppToolBar(this._shell);
 	this._appViewMgr.addComponents(elements, true);
 
-	this._killSplash();
+	ZaZimbraAdmin._killSplash();
 };
 
 // Listeners
@@ -468,27 +472,6 @@ function(ev) {
 	return true;
 }
 
-ZaZimbraAdmin.prototype._showLoginDialog =
-function(bReloginMode) {
-	this._killSplash();
-	this._authenticating = true;
-	this._loginDialog.setVisible(true, false);
-	this._loginDialog.setUpKeyHandlers();	
-	try {
-		this._loginDialog.setFocus(bReloginMode);
-	} catch (ex) {
-		// something is out of whack... just make the user relogin
-		ZaZimbraAdmin.logOff();
-	}
-}
-/* this function is the same as the ZaController
-ZaZimbraAdmin.prototype._hideLoginDialog =
-function() {
-	this._loginDialog.setVisible(false);
-	this._loginDialog.setError(null);
-	this._loginDialog.clearPassword();
-	this._loginDialog.clearKeyHandlers();	
-} */
 
 // Banner button click
 ZaZimbraAdmin._bannerBarHdlr =
@@ -650,18 +633,8 @@ function () {
 // This method is called by the window.onbeforeunload method.
 ZaZimbraAdmin._confirmExitMethod =
 function() {
-		return ZaMsg.appExitWarning;
+	return ZaMsg.appExitWarning;
 }
-
-ZaZimbraAdmin.setOnbeforeunload = 
-function(msg) {
-	if (msg){
-		window.onbeforeunload = msg;
-	}else{
-		window.onbeforeunload = null;
-	}
-};
-
 function ZaAboutDialog(parent, className, title, w, h) {
 	if (arguments.length == 0) return;
  	var clsName = className || "DwtDialog";
