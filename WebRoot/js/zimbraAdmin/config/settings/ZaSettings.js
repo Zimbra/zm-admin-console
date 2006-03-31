@@ -115,6 +115,7 @@ ZaSettings.postInit = function() {
 	var appController = appCtxt.getAppController();
 	
 	appController._launchApp();	
+	ZaZimbraAdmin.setOnbeforeunload(ZaZimbraAdmin._confirmExitMethod);
 	ZaSettings.initialized = true;
 	ZaSettings.initializing = false;
 };
