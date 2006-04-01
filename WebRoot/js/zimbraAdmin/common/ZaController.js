@@ -409,7 +409,7 @@ Body: {
 			var authToken, sessionId;
 	 		var response = resp.getResponse();
 	 		var body = response.Body;		
-	 		AjxCookie.setCookie(document, ZaSettings.ADMIN_NAME_COOKIE, this._uname, null, "/");
+	 		//AjxCookie.setCookie(document, ZaSettings.ADMIN_NAME_COOKIE, this._uname, null, "/");
 	 		
 	 		ZmCsfeCommand.setAuthToken(body.AuthResponse.authToken, -1, body.AuthResponse.sessionId.id);
 	 		

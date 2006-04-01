@@ -41,7 +41,7 @@ ZaSettings.init = function () {
 	
 
 	try {
-		var adminName = AjxCookie.getCookie(document, ZaSettings.ADMIN_NAME_COOKIE);
+		/*var adminName = AjxCookie.getCookie(document, ZaSettings.ADMIN_NAME_COOKIE);
 		if(adminName) {
 			var emailChunks = adminName .split("@");
 			var tmpDomain = new ZaDomain();
@@ -53,7 +53,7 @@ ZaSettings.init = function () {
 			} else {
 				//throw new AjxException("Failed to parse login name", AjxException.UNKNOWN, "ZaAuthenticate.prototype._processResponse");
 			}				
-		}
+		}*/
 	
 		var soapDoc = AjxSoapDoc.create("GetZimletsRequest", "urn:zimbraAdmin", null);	
 		var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false);
@@ -143,7 +143,7 @@ ZaSettings.LOGO_URI = "http://www.zimbra.com";
 ZaSettings.CSFE_SERVER_URI = (location.port == "80") ? "/service/admin/soap/" : ":" + location.port + "/service/admin/soap/";
 ZaSettings.CSFE_MSG_FETCHER_URI = (location.port == "80") ? "/service/content/get?" : ":" + location.port + "/service/content/get?";
 ZaSettings.CONFIG_PATH = "/zimbraAdmin/js/zimbraAdmin/config";
-ZaSettings.ADMIN_NAME_COOKIE = "ZA_ADMIN_NAME_COOKIE";
+//ZaSettings.ADMIN_NAME_COOKIE = "ZA_ADMIN_NAME_COOKIE";
 ZaSettings.myDomainName = "zimbra.com";
 
 var i = 1;
