@@ -113,7 +113,7 @@ LDAPURL_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_CHECKBOX_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_,
+	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_,
 		getDisplayValue:function (itemVal) {
 			var val = false;
 			var protocol = "ldap://";
