@@ -607,8 +607,6 @@ function(mods) {
 	resp = modifyAccCommand.invoke(params).Body.ModifyAccountResponse;
 	this.initFromJS(resp.account[0]);
 	this[ZaAccount.A2_confirmPassword] = null;
-	//invalidate the original tooltip
-	this._toolTip = null ;
 	return;
 }
 ZaItem.modifyMethods["ZaAccount"].push(ZaAccount.modifyMethod);

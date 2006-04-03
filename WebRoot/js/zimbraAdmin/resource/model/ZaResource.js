@@ -251,8 +251,6 @@ function(mods) {
 	params.soapDoc = soapDoc;	
 	resp = modifyAccCommand.invoke(params).Body.ModifyCalendarResourceResponse;
 	this.initFromJS(resp.calresource[0]);
-	//invalidate the original tooltip
-	this._toolTip = null ;
 	return;
 }
 ZaItem.modifyMethods["ZaResource"].push(ZaResource.modifyMethod);
@@ -302,9 +300,6 @@ ZaResource.prototype.initFromJS =
 function (resource) {
 	if(!resource)
 		return;
-	
-	//ensure current attrs are empty. Otherwise, the old attributes will be included also	
-	this.attrs = new Object();			
 	this.name = resource.name;
 	this.id = resource.id;
 	var len = resource.a.length;
@@ -318,8 +313,10 @@ function (resource) {
 			this.attrs[[resource.a[ix].n]].push(resource.a[ix]._content);
 		}
 	}
-		
-	this.setSchedulePolicyFromLdapAttrs();	
+	
+	//TODO: define the A_schedulePolicy according
+	this.setSchedulePolicyFromLdapAttrs();
+	
 }
 
 //set the ldap attributes according to the schedule policy values

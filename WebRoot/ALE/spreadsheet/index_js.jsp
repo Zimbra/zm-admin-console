@@ -22,10 +22,10 @@ Contributor(s):
 
 ***** END LICENSE BLOCK *****
 -->
-<% 
+<%
    String vers = (String)request.getAttribute("version");
    String ext = (String)request.getAttribute("fileExtension");
-   String contextPath = (String)request.getContextPath(); 
+   String contextPath = request.getContextPath();
    if (vers == null){
       vers = "";
    }
@@ -34,10 +34,11 @@ Contributor(s):
    }
 %>
 <!-- BEGIN SCRIPT BLOCK -->
-<script type="text/javascript" src="<%= contextPath %>/js/zimbra/csfe/ZmCsfeCommand.js<%= ext %>?v=<%= vers %>"></script>
-<script type="text/javascript" src="<%= contextPath %>/js/zimbra/csfe/ZmCsfeException.js<%= ext %>?v=<%= vers %>"></script>
-<script type="text/javascript" src="<%= contextPath %>/js/zimbra/csfe/ZmCsfeResult.js<%= ext %>?v=<%= vers %>"></script>
-<script type="text/javascript" src="<%= contextPath %>/js/zimbra/common/ZmBaseSplashScreen.js<%= ext %>?v=<%= vers %>"></script>
-<script type="text/javascript" src="<%= contextPath %>/js/zimbra/common/ZmErrorDialog.js<%= ext %>?v=<%= vers %>"></script>
-<script type="text/javascript" src="<%= contextPath %>/js/zimbraMail/share/view/ZmLogin.js<%= ext %>?v=<%= vers %>"></script>
+<!-- WARNING: Order matters.  Don't re-order these unless you know what you're doing! -->
+<script type="text/javascript" src="<%= contextPath %>/js/zimbraMail/share/view/spreadsheet/msgs.js<%= ext %>?v=<%= vers %>"></script>
+<script type="text/javascript" src="<%= contextPath %>/js/zimbraMail/share/view/spreadsheet/ZmSpreadSheet.js<%= ext %>?v=<%= vers %>"></script>
+<script type="text/javascript" src="<%= contextPath %>/js/zimbraMail/share/view/spreadsheet/ZmSpreadSheetModel.js<%= ext %>?v=<%= vers %>"></script>
+<script type="text/javascript" src="<%= contextPath %>/js/zimbraMail/share/view/spreadsheet/ZmSpreadSheetFormulae.js<%= ext %>?v=<%= vers %>"></script>
+<script type="text/javascript" src="<%= contextPath %>/js/zimbraMail/share/view/spreadsheet/ZmSpreadSheetToolbars.js<%= ext %>?v=<%= vers %>"></script>
+<script type="text/javascript" src="<%= contextPath %>/ALE/spreadsheet/test.js<%= ext %>?v=<%= vers %>"></script>
 <!-- END SCRIPT BLOCK -->

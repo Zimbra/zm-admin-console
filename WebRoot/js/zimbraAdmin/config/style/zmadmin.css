@@ -167,13 +167,13 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaLoginButton {
 	font-size: 12px;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	background-image:url(/zimbraAdmin/img/hiRes/dwt/ButtonUp__H.gif);
+	background-image:url(/zimbraAdmin/img/loRes/dwt/ButtonUp__H.gif);
 	border:1px outset #999999;	
 	width:50px;
 }
 
 .ZaLoginButton-activated {
-	background-image:url(/zimbraAdmin/img/hiRes/dwt/ButtonDown__H.gif);
+	background-image:url(/zimbraAdmin/img/loRes/dwt/ButtonDown__H.gif);
 	border:1px outset #999999;	
 	font-size: 12px;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
@@ -181,7 +181,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 }
 
 .ZaLoginButton-triggered {
-	background-image:url(/zimbraAdmin/img/hiRes/dwt/ButtonDown__H.gif);
+	background-image:url(/zimbraAdmin/img/loRes/dwt/ButtonDown__H.gif);
 	border:1px inset #999999;	
 	font-size: 12px;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
@@ -355,7 +355,6 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 .ZaToolBar {
 	width: 100%;
-	height: 100%;
 	background-image:url(/zimbraAdmin/img/loRes/skins/steel/Pebble__BG.gif);
 	border-style: solid;
 	border-width: 0px 0px 2px 0px;
