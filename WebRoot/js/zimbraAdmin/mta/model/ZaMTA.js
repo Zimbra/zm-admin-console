@@ -321,6 +321,8 @@ ZaMTA.prototype.mailQStatusCallback = function (arg,resp) {
 		if(resp.getException().code == ZmCsfeException.SVC_ALREADY_IN_PROGRESS) {
 			var details = {obj:this,qName:qName};
 			this._app.getMTAController().fireChangeEvent(details);				
+		} else if (resp.getException().code == ZmCsfeException.SVC_TEMPORARILY_UNAVAILABLE) {
+			this._app.getCurrentController().popupMsgDialog(ZaMsg.ERROR_PQ_SERVICE_UNAVAILABLE);
 		} else {
 			this._app.getCurrentController()._handleException(resp.getException(), "ZaMTA.prototype.mailQStatusCallback");
 		}
@@ -369,10 +371,24 @@ ZaMTA.prototype.mailQueueAction = function (qName, action, by, val) {
 }
 
 ZaMTA.prototype.mailQueueActionClbck = function (qName, resp) {
-	this[qName][ZaMTA.A_Status] = ZaMTA.STATUS_STALE;
+	this[qName][ZaMTA.A_DeferredQ] = ZaMTA.STATUS_STALE;
+	this[qName][ZaMTA.A_IncomingQ] = ZaMTA.STATUS_STALE;
+	this[qName][ZaMTA.A_ActiveQ] = ZaMTA.STATUS_STALE;
+	this[qName][ZaMTA.A_CorruptQ] = ZaMTA.STATUS_STALE;
+	this[qName][ZaMTA.A_HoldQ] = ZaMTA.STATUS_STALE;				
+
 	if(resp.isException && resp.isException()) {
-		this._app.getCurrentController()._handleException(resp.getException(), "ZaMTA.prototype.mailQStatusCallback");
-	} 	
+		if(resp.getException().code == ZmCsfeException.SVC_ALREADY_IN_PROGRESS) {
+			var details = {obj:this,qName:qName};
+			this._app.getMTAController().fireChangeEvent(details);				
+		} else if (resp.getException().code == ZmCsfeException.SVC_TEMPORARILY_UNAVAILABLE) {
+			this._app.getCurrentController().popupMsgDialog(ZaMsg.ERROR_PQ_SERVICE_UNAVAILABLE);
+		} else {
+			this._app.getCurrentController()._handleException(resp.getException(), "ZaMTA.prototype.mailQueueActionClbck");
+		}
+	} else {
+		this.getMailQStatus(qName);
+	}	
 }
 
 ZaMTA.prototype.flushQueues = function () {
