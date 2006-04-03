@@ -201,17 +201,20 @@ ZaMTAXFormView.showAllMsgs = function (ev) {
 }
 
 ZaMTAXFormView.deleteButtonListener = function (ev) {
-	var qName, field, dlgMsg;
+	var qName, field, dlgMsg, app;
 	if(this.xFormItem) {
 		var refParts = this.xFormItem.getRef().split("/");
 		qName = refParts[0];
 		if(refParts.length > 1)
 			field = refParts[1];
+			
+		app = this.xFormItem.getForm().getController();			
 	} else {
 		qName = this.getRef();
+		app = this.getForm().getController();			
 	}	
 
-	var app = this.xFormItem.getForm().getController();
+
 	this.removeConfirmMessageDialog = new ZaMsgDialog(app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], app);			
 		
 	if(!field) {
@@ -447,6 +450,7 @@ ZaMTAXFormView.refreshListener = function (ev) {
 	var qName = refParts[0];
 	ZaMTAXFormView.clearFilter.call(this,ev);	
 	this.getInstance().getMailQStatus(qName,null,null,null,true);
+	this.getInstance().load();
 }
 
 ZaMTAXFormView.createPopupMenu = function (listWidget) {
