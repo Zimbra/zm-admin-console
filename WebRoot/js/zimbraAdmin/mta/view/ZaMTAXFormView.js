@@ -541,9 +541,9 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_refreshTime},
 							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
 							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.TBB_Requeue,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.TBB_Hold,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},							
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.TBB_Delete,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}							
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.TBB_RequeueAll,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.TBB_HoldAll,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},							
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_DeferredQ, label:ZaMsg.PQ_DeleteAll,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}							
 						]},								
 						{type:_SPACER_, height:"1"},							
 						{type:_GROUP_, numCols:11, /*cssStyle:(AjxEnv.isIE ? "width:98%" : ""),*/ colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
@@ -637,13 +637,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaMTA.A_DeferredQ, onActivate:ZaMTAXFormView.clearFilter},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Back, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+							{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 								ref:ZaMTA.A_DeferredQ,
 								onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_DeferredQ +"\")")
 						    },								       
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Forward, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+							{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 								ref:ZaMTA.A_DeferredQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 								onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_DeferredQ+"\")")
@@ -675,9 +675,9 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_refreshTime},
 							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
 							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.TBB_Requeue,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.TBB_Hold,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},	
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.TBB_Delete,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.TBB_RequeueAll,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.TBB_HoldAll,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},	
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_IncomingQ, label:ZaMsg.PQ_DeleteAll,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
 						]},								
 						{type:_SPACER_, height:"1"},							
 						{type:_GROUP_, numCols:9, /*cssStyle:(AjxEnv.isIE ? "width:98%" : ""),*/ colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
@@ -759,13 +759,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaMTA.A_IncomingQ, onActivate:ZaMTAXFormView.clearFilter},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Back, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+							{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 								ref:ZaMTA.A_IncomingQ,
 								onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_IncomingQ +"\")")
 						    },								       
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Forward, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+							{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 								ref:ZaMTA.A_IncomingQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 								onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_IncomingQ+"\")")
@@ -795,9 +795,9 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_refreshTime},
 							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
 							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.TBB_Requeue,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.TBB_Hold,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},	
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.TBB_Delete,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.TBB_RequeueAll,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.TBB_HoldAll,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},	
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_ActiveQ, label:ZaMsg.PQ_DeleteAll,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
 						]},								
 						{type:_SPACER_, height:"1"},							
 						{type:_GROUP_, numCols:9, colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
@@ -879,13 +879,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaMTA.A_ActiveQ, onActivate:ZaMTAXFormView.clearFilter},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Back, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+							{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 								ref:ZaMTA.A_ActiveQ,
 								onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_ActiveQ +"\")")
 						    },								       
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Forward, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+							{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 								ref:ZaMTA.A_ActiveQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 								onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_ActiveQ+"\")")
@@ -914,9 +914,9 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_refreshTime},
 							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_Status, choices:ZaMTA.SCANNER_STATUS_CHOICES},							
 							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.TBB_Requeue,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.TBB_Release,onActivate:ZaMTAXFormView.releaseButtonListener,toolTipContent:ZaMsg.PQ_Release_tt},{type:_CELLSPACER_},	
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.TBB_Delete,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.TBB_RequeueAll,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.TBB_ReleaseAll,onActivate:ZaMTAXFormView.releaseButtonListener,toolTipContent:ZaMsg.PQ_Release_tt},{type:_CELLSPACER_},	
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_HoldQ, label:ZaMsg.PQ_DeleteAll,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
 						]},								
 						{type:_SPACER_, height:"1"},							
 						{type:_GROUP_, numCols:9, colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
@@ -998,13 +998,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaMTA.A_HoldQ, onActivate:ZaMTAXFormView.clearFilter},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Back, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+							{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 								ref:ZaMTA.A_HoldQ,
 								onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_HoldQ +"\")")
 						    },								       
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Forward, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+							{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 								ref:ZaMTA.A_HoldQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 								onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_HoldQ+"\")")
@@ -1034,9 +1034,9 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_refreshTime},
 							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
 							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.PQ_AnalyzeQueue,onActivate:ZaMTAXFormView.refreshListener},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.TBB_Requeue,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.TBB_Hold,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},	
-							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.TBB_Delete,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.TBB_RequeueAll,onActivate:ZaMTAXFormView.requeueButtonListener,toolTipContent:ZaMsg.PQ_Requeue_tt},{type:_CELLSPACER_},
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.TBB_HoldAll,onActivate:ZaMTAXFormView.holdButtonListener,toolTipContent:ZaMsg.PQ_Hold_tt},{type:_CELLSPACER_},	
+							{type:_DWT_BUTTON_,ref:ZaMTA.A_CorruptQ, label:ZaMsg.PQ_DeleteAll,onActivate:ZaMTAXFormView.deleteButtonListener,toolTipContent:ZaMsg.PQ_Delete_tt}
 						]},								
 						{type:_SPACER_, height:"1"},							
 						{type:_GROUP_, numCols:9, colSizes:["auto","2px", "auto","2px", "auto", "2px", "auto", "2px", "auto"],cssClass:(AjxEnv.isIE ? "RadioGrouperBorder IEcontainer" : "RadioGrouperBorder FFcontainer"), tableCssStyle:"width:100%", items: [						
@@ -1118,13 +1118,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_},
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_ClearFilter, ref:ZaMTA.A_CorruptQ, onActivate:ZaMTAXFormView.clearFilter},
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Back, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+							{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 								ref:ZaMTA.A_CorruptQ,
 								onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_CorruptQ +"\")")
 						    },								       
 							{type:_CELLSPACER_},
-							{type:_DWT_BUTTON_, label:ZaMsg.Forward, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+							{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 								ref:ZaMTA.A_CorruptQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 								onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 								relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_CorruptQ+"\")")
