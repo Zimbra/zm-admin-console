@@ -254,7 +254,7 @@ function(by, val, withConfig) {
 ZaItem.loadMethods["ZaMTA"].push(ZaMTA.loadMethod);
 
 ZaMTA.luceneEscape = function (str) {
-	return String(str).replace(/([\-\+\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\\.])/g, "\\$1");
+	return String(str).replace(/([\-\+\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/g, "\\$1");
 }
 /**
 * send a MailQStatusRequest 
