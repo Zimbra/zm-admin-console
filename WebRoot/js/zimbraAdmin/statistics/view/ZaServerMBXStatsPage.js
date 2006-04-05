@@ -268,7 +268,7 @@ function (curPage, totalPage, hide ){
 					} 
 					
 					//update the help link for the Mbx Stats
-					controller._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/Viewing_Mailbox_Quota.htm";
+					controller._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/viewing_mailbox_quotas.htm";
 				}else {
 					toolBar.enable([ZaOperation.PAGE_FORWARD, ZaOperation.PAGE_BACK, ZaOperation.LABEL], false);
 					toolBar.getButton("mbxPageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]));
