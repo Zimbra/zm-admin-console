@@ -389,9 +389,9 @@ ZaMTAXFormView.createPopupMenu = function (listWidget) {
 	var refParts = this.getRef().split("/");
 	var qName = refParts[0];
 	if(qName == ZaMTA.A_HoldQ) {
-		popupOperations.push(new ZaOperation(ZaOperation.RELEASE, ZaMsg.TBB_Release, ZaMsg.PQ_Release_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.releaseButtonListener,ZaMTA.ActionRelease)));
+		popupOperations.push(new ZaOperation(ZaOperation.RELEASE, ZaMsg.TBB_Release, ZaMsg.PQ_Release_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.actionButtonListener,ZaMTA.ActionRelease)));
 	} else {
-		popupOperations.push(new ZaOperation(ZaOperation.HOLD, ZaMsg.TBB_Hold, ZaMsg.PQ_Hold_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.holdButtonListener,ZaMTA.ActionHold )));
+		popupOperations.push(new ZaOperation(ZaOperation.HOLD, ZaMsg.TBB_Hold, ZaMsg.PQ_Hold_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.actionButtonListener,ZaMTA.ActionHold )));
 	}
 	listWidget.actionMenu = new ZaPopupMenu(listWidget, "ActionMenu", null, popupOperations);
 	listWidget.addActionListener(new AjxListener(listWidget, ZaMTAXFormView.listActionListener));		
