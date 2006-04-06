@@ -437,7 +437,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 			items: [
 				{type:_GROUP_,	numCols:6,colSizes:["32px","250px","auto", "130px","250px", "auto"],
 					items: [
-						{type:_AJX_IMAGE_, src:"Server_32", label:null},
+						{type:_AJX_IMAGE_, src:"Queue_32", label:null},
 						{type:_OUTPUT_, ref:ZaMTA.A_name, label:null,cssClass:"AdminTitle"},
 						{type:_CELLSPACER_},
 						{type:_DWT_PROGRESS_BAR_, label:ZaMsg.PQ_ParsingProgress,
