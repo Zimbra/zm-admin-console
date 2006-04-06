@@ -423,6 +423,12 @@ function() {
 					ti1.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._SERVER_VIEW);
 					ti1.setData(ZaOverviewPanelController._OBJ_ID, serverList[ix].id);
 					this._serversMap[serverList[ix].id] = ti1;
+					//add the monitorHost
+					var serverInfo = { name: serverList[ix].name , id: serverList[ix].id };
+					if (serverList[ix].attrs[ZaServer.A_zimbraIsMonitorHost] == "TRUE") {
+						ZaServer.monitorHost = serverInfo ;
+					}
+					ZaServer.servers.push (serverInfo) ;
 				}
 			}
 		} catch (ex) {
@@ -477,7 +483,7 @@ function() {
 		
 		this._postqTi = new DwtTreeItem(this._monitoringTi);
 		this._postqTi.setText(ZaMsg.OVP_postq);
-		this._postqTi.setImage("Server");
+		this._postqTi.setImage("Queue");
 		this._postqTi.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._POSTQ_VIEW);
 		
 		try {
@@ -488,7 +494,7 @@ function() {
 				for(var ix=0; ix< cnt; ix++) {
 					var ti1 = new DwtTreeItem(this._postqTi);			
 					ti1.setText(mtaList[ix].name);	
-					ti1.setImage("StatisticsByServer");
+					ti1.setImage("Queue");
 					ti1.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW);
 					ti1.setData(ZaOverviewPanelController._OBJ_ID, mtaList[ix].id);
 					this._mailqMap[mtaList[ix].id] = ti1;

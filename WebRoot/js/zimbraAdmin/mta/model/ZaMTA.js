@@ -254,7 +254,7 @@ function(by, val, withConfig) {
 ZaItem.loadMethods["ZaMTA"].push(ZaMTA.loadMethod);
 
 ZaMTA.luceneEscape = function (str) {
-	return String(str).replace(/([\+\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/g, "\\$1");
+	return String(str).replace(/([\-\+\&\\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/g, "\\$1");
 }
 /**
 * send a MailQStatusRequest 
@@ -413,17 +413,17 @@ ZaMTA.initMethod = function (app) {
 	this.id = "";
 	this.name="";
 	this[ZaItem.A_zimbraId] = "000"
-	this[ZaMTA.A_DeferredQ] = {n:"N/A"};
-	this[ZaMTA.A_IncomingQ] = {n:"N/A"};
-	this[ZaMTA.A_ActiveQ] = {n:"N/A"};	
-	this[ZaMTA.A_HoldQ] = {n:"N/A"};	
-	this[ZaMTA.A_CorruptQ] = {n:"N/A"};		
+	this[ZaMTA.A_DeferredQ] = {n:ZaMsg.PQ_Loading};
+	this[ZaMTA.A_IncomingQ] = {n:ZaMsg.PQ_Loading};
+	this[ZaMTA.A_ActiveQ] = {n:ZaMsg.PQ_Loading};	
+	this[ZaMTA.A_HoldQ] = {n:ZaMsg.PQ_Loading};	
+	this[ZaMTA.A_CorruptQ] = {n:ZaMsg.PQ_Loading};		
 		
-	this[ZaMTA.A_DeferredQ][ZaMTA.A_refreshTime] = "N/A";
-	this[ZaMTA.A_IncomingQ][ZaMTA.A_refreshTime] = "N/A";	
-	this[ZaMTA.A_ActiveQ][ZaMTA.A_refreshTime] = "N/A";
-	this[ZaMTA.A_HoldQ][ZaMTA.A_refreshTime] = "N/A";
-	this[ZaMTA.A_CorruptQ][ZaMTA.A_refreshTime] = "N/A";	
+	this[ZaMTA.A_DeferredQ][ZaMTA.A_refreshTime] = ZaMsg.PQ_Loading;
+	this[ZaMTA.A_IncomingQ][ZaMTA.A_refreshTime] = ZaMsg.PQ_Loading;	
+	this[ZaMTA.A_ActiveQ][ZaMTA.A_refreshTime] = ZaMsg.PQ_Loading;
+	this[ZaMTA.A_HoldQ][ZaMTA.A_refreshTime] = ZaMsg.PQ_Loading;
+	this[ZaMTA.A_CorruptQ][ZaMTA.A_refreshTime] = ZaMsg.PQ_Loading;	
 	
 	this[ZaMTA.A_DeferredQ][ZaMTA.A_pageNum] = 0;
 	this[ZaMTA.A_IncomingQ][ZaMTA.A_pageNum] = 0;	

@@ -251,6 +251,8 @@ function(mods) {
 	params.soapDoc = soapDoc;	
 	resp = modifyAccCommand.invoke(params).Body.ModifyCalendarResourceResponse;
 	this.initFromJS(resp.calresource[0]);
+	//invalidate the original tooltip
+	this._toolTip = null ;
 	return;
 }
 ZaItem.modifyMethods["ZaResource"].push(ZaResource.modifyMethod);
@@ -300,6 +302,9 @@ ZaResource.prototype.initFromJS =
 function (resource) {
 	if(!resource)
 		return;
+	
+	//ensure current attrs are empty. Otherwise, the old attributes will be included also	
+	this.attrs = new Object();			
 	this.name = resource.name;
 	this.id = resource.id;
 	var len = resource.a.length;
@@ -313,10 +318,8 @@ function (resource) {
 			this.attrs[[resource.a[ix].n]].push(resource.a[ix]._content);
 		}
 	}
-	
-	//TODO: define the A_schedulePolicy according
-	this.setSchedulePolicyFromLdapAttrs();
-	
+		
+	this.setSchedulePolicyFromLdapAttrs();	
 }
 
 //set the ldap attributes according to the schedule policy values
@@ -494,7 +497,20 @@ ZaResource.myXModel = {
 		
 		//Resource 	Contact					
 		{id:ZaResource.A_zimbraCalResContactName, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResContactName},
-		{id:ZaResource.A_zimbraCalResContactEmail, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResContactEmail},
+		{id:ZaResource.A_zimbraCalResContactEmail, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResContactEmail,
+			constraints: {type:"method", value:
+			   function (value, form, formItem, instance) {				   
+				   if (value){
+					   //var re = ZaDistributionList._validEmailPattern;
+					   if (AjxUtil.EMAIL_RE.test(value)) {
+						   return value;
+					   } else {
+						   throw ZaMsg.RES_ErrorInvalidContactEmail;
+					   }
+				   }
+			   }
+			}		
+		},
 		{id:ZaResource.A_zimbraCalResContactPhone, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResContactPhone}, 
 		
 		{id:ZaResource.A2_autodisplayname, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
