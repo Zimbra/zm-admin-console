@@ -106,3 +106,12 @@ function (nextViewCtrlr, func, params) {
 ZaStatusViewController.prototype.refreshListener = function () {
 	this.show();
 }
+
+ZaStatusViewController.prototype._handleException =
+function(ex, method, params, restartOnError, obj) {
+	if (ex.code && ex.code == ZmCsfeException.SVC_AUTH_REQUIRED) {
+		this.popupErrorDialog(ZaMsg.SERVER_ERROR, ex, true);
+	} else {
+		ZaController.prototype._handleException.call(this, ex, method, params, restartOnError, obj);
+	}
+}	

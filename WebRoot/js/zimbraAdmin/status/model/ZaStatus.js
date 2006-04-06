@@ -48,7 +48,7 @@ ZaStatus.PRFX_Time = "status_time";
 ZaStatus.PRFX_Status = "status_status";
 
 ZaStatus.loadMethod = 
-function(app) {
+function() {
 	/*
 	var soapDoc = AjxSoapDoc.create("GetServiceStatusRequest", "urn:zimbraAdmin", null);
 	var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, true).firstChild;
@@ -61,14 +61,22 @@ function(app) {
 	var serverNo = ZaServer.servers.length ;
 	//send request to the targetServer as ZaServer.monitorHost
 	if (ZaServer.monitorHost != null && ZaServer.monitorHost.id ){
-		targetServer = ZaServer.monitorHost.id ;		
-		resp = ZmCsfeCommand.invoke(soapDoc, null, null, targetServer, true).firstChild;
-		this.initFromDom(resp);
-	}else if (serverNo > 0 ){//send request to the targetServer one by one
-		for (var i =0; i < serverNo; i++){
-			targetServer = ZaServer.servers[i].id ;			
+		try {
+			targetServer = ZaServer.monitorHost.id ;		
 			resp = ZmCsfeCommand.invoke(soapDoc, null, null, targetServer, true).firstChild;
 			this.initFromDom(resp);
+		} catch (ex) {
+			this._app.getStatusViewController()._handleException(ex, "ZaStatus.loadMethod:"+targetServer, null, false);		
+		}
+	} else if (serverNo > 0 ){//send request to the targetServer one by one
+		for (var i =0; i < serverNo; i++){
+			try {
+				targetServer = ZaServer.servers[i].id ;			
+				resp = ZmCsfeCommand.invoke(soapDoc, null, null, targetServer, true).firstChild;
+				this.initFromDom(resp);
+			} catch (ex) {
+				this._app.getStatusViewController()._handleException(ex, "ZaStatus.loadMethod:"+ZaServer.servers[i].id, null, false);		
+			}
 		}	
 	}
 	
