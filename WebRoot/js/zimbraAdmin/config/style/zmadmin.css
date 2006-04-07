@@ -568,6 +568,13 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 	font-size: 20px; /* WEIRD IE QUIRK */
 }
 
+.mtaprogressbar {
+	width: 200px;
+	border: 1px solid #CCCCCC;
+	background-color: #CCCCCC;
+}
+
+
 .ImgAppBanner {
 	cursor:hand;
 }
