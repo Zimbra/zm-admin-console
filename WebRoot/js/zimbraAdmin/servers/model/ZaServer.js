@@ -42,8 +42,8 @@ ZaItem.initMethods["ZaServer"] = new Array();
 
 //Object contains array which holds all the servers name and id
 // [ {id:"id", name:"name"}, {...}, ... ]
-ZaServer.servers = new Array () ;
-ZaServer.monitorHost = null;
+ZaServer.LoggerServers = new Array () ;
+ZaServer.MonitorHost = null;
 
 //attribute name constants, this values are taken from zimbra.schema
 ZaServer.A_name = "cn";

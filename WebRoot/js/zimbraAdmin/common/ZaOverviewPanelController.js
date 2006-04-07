@@ -423,12 +423,21 @@ function() {
 					ti1.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._SERVER_VIEW);
 					ti1.setData(ZaOverviewPanelController._OBJ_ID, serverList[ix].id);
 					this._serversMap[serverList[ix].id] = ti1;
-					//add the monitorHost
-					var serverInfo = { name: serverList[ix].name , id: serverList[ix].id };
-					if (serverList[ix].attrs[ZaServer.A_zimbraIsMonitorHost] == "TRUE") {
-						ZaServer.monitorHost = serverInfo ;
+					//add the MonitorHost
+					var serverInfo = { 	name: serverList[ix].name , id: serverList[ix].id };
+					if ((serverList[ix].attrs[ZaServer.A_zimbraIsMonitorHost] == "TRUE") && 
+						(serverList[ix].attrs[ZaServer.A_zimbraMailboxServiceInstalled]) &&
+						(serverList[ix].attrs[ZaServer.A_zimbraMailboxServiceEnabled]) &&
+						(serverList[ix].attrs[ZaServer.A_zimbraLoggerServiceInstalled]) &&
+						(serverList[ix].attrs[ZaServer.A_zimbraLoggerServiceEnabled])) {
+						ZaServer.MonitorHost = serverInfo ;
 					}
-					ZaServer.servers.push (serverInfo) ;
+					if ((serverList[ix].attrs[ZaServer.A_zimbraMailboxServiceInstalled]) &&
+						(serverList[ix].attrs[ZaServer.A_zimbraMailboxServiceEnabled])&&
+						(serverList[ix].attrs[ZaServer.A_zimbraLoggerServiceInstalled]) &&
+						(serverList[ix].attrs[ZaServer.A_zimbraLoggerServiceEnabled])) {
+						ZaServer.LoggerServers.push (serverInfo) ;
+					}
 				}
 			}
 		} catch (ex) {
