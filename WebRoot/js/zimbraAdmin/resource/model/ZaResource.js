@@ -81,6 +81,7 @@ ZaResource.A_zimbraCalResRoom = "zimbraCalResRoom";
 ZaResource.A_zimbraCalResSite = "zimbraCalResSite";
 ZaResource.A_zimbraCalResType = "zimbraCalResType";
 //ZaResource.A_zimbraMailStatus = "zimbraMailStatus";
+ZaResource.A_contactInfoAutoComplete = "contactInfoAutoComplete";
 
 ZaResource.ACCOUNT_STATUS_ACTIVE = "active";
 ZaResource.ACCOUNT_STATUS_MAINTENANCE = "maintenance";
@@ -512,6 +513,7 @@ ZaResource.myXModel = {
 			}		
 		},
 		{id:ZaResource.A_zimbraCalResContactPhone, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResContactPhone}, 
+		{id:ZaResource.A_contactInfoAutoComplete, type:_LIST_, ref:"attrs/"+ZaResource.A_contactInfoAutoComplete},
 		
 		{id:ZaResource.A2_autodisplayname, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaResource.A2_autoMailServer, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
