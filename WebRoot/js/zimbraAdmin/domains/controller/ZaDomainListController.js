@@ -107,10 +107,11 @@ ZaDomainListController.prototype.handleDomainChange =
 function (ev) {
 	//if any of the data that is currently visible has changed - update the view
 	if(ev) {
-		//var details = ev.getDetails();
+		var details = ev.getDetails();
 		//details["modFields"] is outdated.
 		//if(details["modFields"] && (details["modFields"][ZaDomain.A_description] || details["modFields"][ZaDomain.A_domainName])) {
-		if (ev.getDetails()){
+		if (details){
+			if (this._list) this._list.replace(details);
 			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			

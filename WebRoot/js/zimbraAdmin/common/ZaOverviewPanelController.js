@@ -584,9 +584,9 @@ ZaOverviewPanelController.cosTreeListener = function (ev) {
 	if(this._app.getCurrentController()) {
 		this._app.getCurrentController().switchToNextView(this._app.getCosController(),
 		 ZaCosController.prototype.show,
-		 this._app.getCosList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
+		 this._app.getCosList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	} else {					
-		this._app.getCosController().show(this._app.getCosList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
+		this._app.getCosController().show(this._app.getCosList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	}	
 }
 
@@ -594,9 +594,9 @@ ZaOverviewPanelController.domainTreeListener = function (ev) {
 	if(this._app.getCurrentController()) {
 		this._app.getCurrentController().switchToNextView(this._app.getDomainController(),
 		 ZaDomainController.prototype.show,
-		 this._app.getDomainList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
+		 this._app.getDomainList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	} else {					
-		this._app.getDomainController().show(this._app.getDomainList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
+		this._app.getDomainController().show(this._app.getDomainList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	}
 }
 
@@ -604,9 +604,9 @@ ZaOverviewPanelController.serverTreeListener = function (ev) {
 	if(this._app.getCurrentController()) {
 		this._app.getCurrentController().switchToNextView(this._app.getServerController(),
 		 ZaServerController.prototype.show,
-		 this._app.getServerList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
+		 this._app.getServerList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	} else {					
-		this._app.getServerController().show(this._app.getServerList().getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
+		this._app.getServerController().show(this._app.getServerList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	}
 }
 

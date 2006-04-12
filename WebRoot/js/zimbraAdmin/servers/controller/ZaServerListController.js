@@ -142,6 +142,7 @@ function (ev) {
 		var details = ev.getDetails();
 		//if(details["modFields"] && (details["modFields"][ZaServer.A_description] )) {
 		if (details) {
+			if (this._list) this._list.replace (details);
 			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			

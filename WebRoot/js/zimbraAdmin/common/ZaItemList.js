@@ -43,6 +43,14 @@ function() {
 	return "ZaItemList";
 }
 
+ZaItemList.prototype.replace =
+function (item, index) {
+	this._vector.replace(item, index);
+	if (item.id) {
+		this._idHash[item.id] = item;
+	}	
+}
+
 /**
 * Adds an item to the list.
 *
@@ -54,8 +62,6 @@ function(item, index) {
 	this._vector.add(item, index);
 	if (item.id) {
 		this._idHash[item.id] = item;
-		var items = new Object();
-		items[0] = item;
 	}
 }
 
