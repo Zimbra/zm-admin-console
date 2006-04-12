@@ -107,9 +107,11 @@ ZaDomainListController.prototype.handleDomainChange =
 function (ev) {
 	//if any of the data that is currently visible has changed - update the view
 	if(ev) {
-		var details = ev.getDetails();
-		if(details["modFields"] && (details["modFields"][ZaDomain.A_description] || details["modFields"][ZaDomain.A_domainName])) {
-			this._contentView.setUI();
+		//var details = ev.getDetails();
+		//details["modFields"] is outdated.
+		//if(details["modFields"] && (details["modFields"][ZaDomain.A_description] || details["modFields"][ZaDomain.A_domainName])) {
+		if (ev.getDetails()){
+			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
@@ -126,8 +128,8 @@ function (ev) {
 	if(ev) {
 		//add the new ZaDomain to the controlled list
 		if(ev.getDetails()) {
-			this._list.add(ev.getDetails());
-			this._contentView.setUI();
+			if (this._list) this._list.add(ev.getDetails());
+			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
@@ -144,8 +146,8 @@ function (ev) {
 	if(ev) {
 		//add the new ZaAccount to the controlled list
 		if(ev.getDetails()) {
-			this._list.remove(ev.getDetails());
-			this._contentView.setUI();
+			if (this._list) this._list.remove(ev.getDetails());
+			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
@@ -454,10 +456,10 @@ ZaDomainListController.prototype._finishAuthButtonListener =
 function(ev) {
 	try {
 		ZaDomain.modifyAuthSettings(this._authWizard.getObject(), this._currentObject);
-		var changeDetails = new Object();
+		//var changeDetails = new Object();
 		//if a modification took place - fire an DomainChangeEvent
-		changeDetails["obj"] = this._currentObject;
-		this._fireDomainChangeEvent(changeDetails);
+		//changeDetails["obj"] = this._currentObject;
+		this._fireDomainChangeEvent(this._currentObject);
 		this._authWizard.popdown();
 	} catch (ex) {
 		this._handleException(ex, "ZaDomainListController.prototype._finishAuthButtonListener", null, false);
@@ -468,11 +470,11 @@ function(ev) {
 ZaDomainListController.prototype._finishGalButtonListener =
 function(ev) {
 	try {
-		var changeDetails = new Object();
+		//var changeDetails = new Object();
 		ZaDomain.modifyGalSettings(this._galWizard.getObject(),this._currentObject); 
 		//if a modification took place - fire an DomainChangeEvent
-		changeDetails["obj"] = this._currentObject;
-		this._fireDomainChangeEvent(changeDetails);
+		//changeDetails["obj"] = this._currentObject;
+		this._fireDomainChangeEvent(this._currentObject);
 		this._galWizard.popdown();
 	} catch (ex) {
 		this._handleException(ex, "ZaDomainListController.prototype._finishGalButtonListener", null, false);

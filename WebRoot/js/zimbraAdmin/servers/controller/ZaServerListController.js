@@ -140,8 +140,9 @@ function (ev) {
 	//if any of the data that is currently visible has changed - update the view
 	if(ev) {
 		var details = ev.getDetails();
-		if(details["modFields"] && (details["modFields"][ZaServer.A_description] )) {
-			this._contentView.setUI();
+		//if(details["modFields"] && (details["modFields"][ZaServer.A_description] )) {
+		if (details) {
+			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
@@ -158,8 +159,8 @@ function (ev) {
 	if(ev) {
 		//add the new ZaServer to the controlled list
 		if(ev.getDetails()) {
-			this._list.add(ev.getDetails());
-			this._contentView.setUI();
+			if (this._list) this._list.add(ev.getDetails());
+			if (this._contentView) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
@@ -176,8 +177,8 @@ function (ev) {
 	if(ev) {
 		//add the new ZaAccount to the controlled list
 		if(ev.getDetails()) {
-			this._list.remove(ev.getDetails());
-			this._contentView.setUI();
+			if (this._list) this._list.remove(ev.getDetails());
+			if (this._contentView ) this._contentView.setUI();
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
@@ -335,11 +336,11 @@ function () {
 				return;
 			}
 		}
-		this._list.remove(this._removeList[key]); //remove from the list
+		if (this._list) this._list.remove(this._removeList[key]); //remove from the list
 	}
 	this._fireServerRemovalEvent(successRemList); 		
 	this._removeConfirmMessageDialog.popdown();
-	this._contentView.setUI();
+	if (this._contentView) this._contentView.setUI();
 	this.show();
 }
 
