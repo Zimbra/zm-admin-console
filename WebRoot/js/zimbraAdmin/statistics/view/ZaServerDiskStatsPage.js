@@ -1,9 +1,9 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * Version: ZPL 1.2
+ * Version: ZPL 1.1
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.2 ("License"); you may not use this file except in
+ * Version 1.1 ("License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://www.zimbra.com/license
  * 
@@ -75,7 +75,7 @@ ZaServerDiskStatsPage.prototype.writeImageHtml = function (periodInt) {
 	return AjxBuffer.concat("<img src='/service/statsimg/disk." , serverName ,
 							".", periodString,".Disk_Usage_0.gif?nodef=1' onload='javascript:ZaServerDiskStatsPage.callMethod(",
 							this.__internalId , ",ZaServerDiskStatsPage.prototype.loadNextImage,[this.parentNode," ,
-							periodInt , ", 1])' onerror='javascript:AjxCore.objectWithId(", this.__internalId ,
+							periodInt , ", 0])' onerror='javascript:AjxCore.objectWithId(", this.__internalId ,
 							").stopLoadingImages(this,0)'><br>");
 };
 
@@ -88,7 +88,7 @@ ZaServerDiskStatsPage.prototype.loadNextImage = function (parent, periodInt, cou
 	++count;
 	var server = this._server.name;
 	var periodString = this._getPeriodString(periodInt);
-	var img = Dwt.parseHtmlFragment(AjxBuffer.concat("<img src='/service/statsimg/disk.", server, ".", periodString, "_", 
+	var img = Dwt.parseHtmlFragment(AjxBuffer.concat("<img src='/service/statsimg/disk.", server, ".", periodString, ".Disk_Usage_", 
 													 count, ".gif?nodef=1' onload='javascript:ZaServerDiskStatsPage.callMethod(",
 													 this.__internalId,",ZaServerDiskStatsPage.prototype.loadNextImage,",
 													 "[this.parentNode,",periodInt ,",", count, "])'",
