@@ -15,7 +15,7 @@
  * The Original Code is: Zimbra Collaboration Suite Web Client
  * 
  * The Initial Developer of the Original Code is Zimbra, Inc.
- * Portions created by Zimbra are Copyright (C) 2005 Zimbra, Inc.
+ * Portions created by Zimbra are Copyright (C) 2005, 2006 Zimbra, Inc.
  * All Rights Reserved.
  * 
  * Contributor(s):
@@ -49,25 +49,29 @@ function() {
 
 ZaServerMessageCountPage.prototype.setObject =
 function (item) {
+	this._logHost = this._app.getGlobalConfig().attrs[ZaServer.A_zimbraLogHostname];
+	if(this._logHost)
+		this._logHost=["https://",this._logHost,":7071"].join("");	
+			
 	if(item) {
 		if(item.attrs && item.attrs[ZaServer.A_ServiceHostname]) {
 			var imgElement = document.getElementById(this._hourImgID);
-			var newSrc = "/service/statsimg/mta." + item.name + ".hour.Message_Count.gif";
+			var newSrc = this._logHost + "/service/statsimg/mta." + item.name + ".hour.Message_Count.gif";
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}
 			imgElement = document.getElementById(this._dayImgID);	
-			newSrc = "/service/statsimg/mta." + item.name + ".day.Message_Count.gif";			
+			newSrc = this._logHost + "/service/statsimg/mta." + item.name + ".day.Message_Count.gif";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}
 			imgElement = document.getElementById(this._monthImgID);		
-			newSrc = "/service/statsimg/mta." + item.name + ".month.Message_Count.gif";			
+			newSrc = this._logHost + "/service/statsimg/mta." + item.name + ".month.Message_Count.gif";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}			
 			imgElement = document.getElementById(this._yearImgID);		
-			newSrc = "/service/statsimg/mta." + item.name + ".year.Message_Count.gif";			
+			newSrc = this._logHost + "/service/statsimg/mta." + item.name + ".year.Message_Count.gif";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}			
