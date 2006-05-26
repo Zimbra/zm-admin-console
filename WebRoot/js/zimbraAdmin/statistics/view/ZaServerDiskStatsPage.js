@@ -36,6 +36,7 @@ function ZaServerDiskStatsPage (parent, app) {
 	this._app = app;
 	this.initialized=false;
 	this._rendered = false;
+	this.setScrollStyle(DwtControl.SCROLL);	
 }
 
 ZaServerDiskStatsPage.prototype = new DwtTabViewPage;
