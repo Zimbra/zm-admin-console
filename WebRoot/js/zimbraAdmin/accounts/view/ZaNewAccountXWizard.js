@@ -116,17 +116,7 @@ function() {
 			this.popdown();		
 		}
 	} catch (ex) {
-		switch(ex.code) {		
-			case ZmCsfeException.ACCT_EXISTS:
-				this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
-			break;
-			case ZmCsfeException.ACCT_INVALID_PASSWORD:
-				this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_INVALID);
-			break;
-			default:
-				this._app.getCurrentController()._handleException(ex, "ZaNewAccountXWizard.prototype.finishWizard", null, false);
-			break;		
-		}
+		this._app.getCurrentController()._handleException(ex, "ZaNewAccountXWizard.prototype.finishWizard", null, false);
 	}
 }
 
@@ -559,55 +549,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 									{ref:ZaAccount.A_zimbraPasswordLocked,labelCssStyle:"width:160px;", type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_PwdLocked,label:ZaMsg.NAD_PwdLocked, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE"}
 								]
 							},
-							{type:_SEPARATOR_, colSpan:"*"},							
-							{type:_GROUP_, id:"password_lockout_settings",
-								items :[
-									{ref:ZaAccount.A_zimbraPasswordLockoutEnabled, type:_SUPER_CHECKBOX_, 
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-										msgName:ZaMsg.NAD_zimbraPasswordLockoutEnabled,
-										label:ZaMsg.NAD_zimbraPasswordLockoutEnabled, 
-										labelLocation:_LEFT_, 
-										labelCssStyle:"width:190px;", trueValue:"TRUE", falseValue:"FALSE"
-									},
-									{ref:ZaAccount.A_zimbraPasswordLockoutMaxFailures, type:_SUPER_TEXTFIELD_, 
-										relevant: "instance.attrs[ZaAccount.A_zimbraPasswordLockoutEnabled] == 'TRUE'",
-									 	relevantBehavior: _DISABLE_,
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-										label:ZaMsg.NAD_zimbraPasswordLockoutMaxFailures+":",
-										subLabel:ZaMsg.NAD_zimbraPasswordLockoutMaxFailuresSub,
-										msgName:ZaMsg.NAD_zimbraPasswordLockoutMaxFailures,
-										labelLocation:_LEFT_, 
-										textFieldCssClass:"admin_xform_number_input", 
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-										labelCssStyle:"width:160px;"
-									},
-									{ref:ZaAccount.A_zimbraPasswordLockoutDuration, type:_SUPER_LIFETIME_, 
-										relevant: "instance.attrs[ZaAccount.A_zimbraPasswordLockoutEnabled] == 'TRUE'",
-										relevantBehavior: _DISABLE_,
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-										label:ZaMsg.NAD_zimbraPasswordLockoutDuration+":",
-										subLabel:ZaMsg.NAD_zimbraPasswordLockoutDurationSub,
-										msgName:ZaMsg.NAD_zimbraPasswordLockoutDuration,
-										labelLocation:_LEFT_, 
-										textFieldCssClass:"admin_xform_number_input", 
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-										labelCssStyle:"width:190px;"
-									},
-									{ref:ZaAccount.A_zimbraPasswordLockoutFailureLifetime, type:_SUPER_LIFETIME_, 
-										relevant: "instance.attrs[ZaAccount.A_zimbraPasswordLockoutEnabled] == 'TRUE'",
-										relevantBehavior: _DISABLE_,								
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-										label:ZaMsg.NAD_zimbraPasswordLockoutFailureLifetime+":",
-										subLabel:ZaMsg.NAD_zimbraPasswordLockoutFailureLifetimeSub,
-										msgName:ZaMsg.NAD_zimbraPasswordLockoutFailureLifetime,
-										labelLocation:_LEFT_, 
-										textFieldCssClass:"admin_xform_number_input", 
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-										labelCssStyle:"width:190px;white-space:normal",
-										nowrap:false,labelWrap:true
-									}																		
-								]
-							},														
 							{type:_SEPARATOR_, colSpan:"*"},							
 							{type:_GROUP_, width:"100%", 
 								items: [
