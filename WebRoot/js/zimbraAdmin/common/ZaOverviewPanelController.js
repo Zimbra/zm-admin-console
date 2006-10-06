@@ -136,9 +136,9 @@ function (ev) {
 
 
 ZaOverviewPanelController.prototype.searchDomains = function() {
-	if(this._app) {
+	/*if(this._app) {
 		this._app.searchDomains();
-	} else {	
+	} else {	*/
 		var callback = new AjxCallback(this, this.domainSearchCallback);
 		var searchParams = {
 				query:"", 
@@ -150,7 +150,7 @@ ZaOverviewPanelController.prototype.searchDomains = function() {
 				callback:callback
 		}
 		ZaSearch.searchDirectory(searchParams);
-	}
+//	}
 }
 
 ZaOverviewPanelController.prototype.domainSearchCallback = 
