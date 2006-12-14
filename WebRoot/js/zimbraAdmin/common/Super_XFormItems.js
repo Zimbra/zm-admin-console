@@ -619,16 +619,14 @@ Super_DwtChooser_XFormItem.prototype.items = [];
 Super_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPER_SELECT1_", "super_select1", Super_Select1_XFormItem, Super_XFormItem);
 Super_Select1_XFormItem.prototype.labelCssClass = "xform_label_left";
-Super_Select1_XFormItem.prototype.labelCssStyle = "width:275px" ;
-Super_Select1_XFormItem.prototype.colSizes=["150px","150px"];
+Super_Select1_XFormItem.prototype.colSizes=["275px","150px"];
 Super_Select1_XFormItem.prototype.nowrap = false;
 Super_Select1_XFormItem.prototype.labelWrap = true;
 
 SuperWiz_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPERWIZ_SELECT1_", "superwiz_select1", SuperWiz_Select1_XFormItem, Super_Select1_XFormItem);
 SuperWiz_Select1_XFormItem.prototype.labelCssClass = "xform_label_left ZaWizLabel";
-SuperWiz_Select1_XFormItem.prototype.labelCssStyle = "width:250px" ;
-SuperWiz_Select1_XFormItem.prototype.colSizes=["150px","150px"];
+SuperWiz_Select1_XFormItem.prototype.colSizes=["250px","150px"];
 SuperWiz_Select1_XFormItem.prototype.nowrap = false;
 SuperWiz_Select1_XFormItem.prototype.labelWrap = true;
 
@@ -659,7 +657,7 @@ Super_Select1_XFormItem.prototype.initializeItems = function() {
 
 
 Super_Select1_XFormItem.prototype.useParentTable = false;
-Super_Select1_XFormItem.prototype.numCols = 2;
+Super_Select1_XFormItem.prototype.numCols = 3;
 
 Super_Select1_XFormItem.prototype.items = [
 	{	type:_OSELECT1_, ref:".",
@@ -897,12 +895,12 @@ ZACheckbox_XFormItem.prototype.align = _RIGHT_;
 function ZATopGrouper_XFormItem() {}
 XFormItemFactory.createItemType("_ZA_TOP_GROUPER_", "za_top_grouper", ZATopGrouper_XFormItem, TopGrouper_XFormItem);
 ZATopGrouper_XFormItem.prototype.numCols = 2;
-ZATopGrouper_XFormItem.prototype.colSizes = ["275px","auto"];
+ZATopGrouper_XFormItem.prototype.colSizes = ["275px","275px"];
 
 function ZAWizTopGrouper_XFormItem() {}
 XFormItemFactory.createItemType("_ZAWIZ_TOP_GROUPER_", "zawiz_top_grouper", ZAWizTopGrouper_XFormItem, TopGrouper_XFormItem);
 ZAWizTopGrouper_XFormItem.prototype.numCols = 2;
-ZAWizTopGrouper_XFormItem.prototype.colSizes = ["200px","auto"];
+ZAWizTopGrouper_XFormItem.prototype.colSizes = ["200px","370px"];
 
 function ZAGroup_XFormItem() {}
 XFormItemFactory.createItemType("_ZAGROUP_", "zagroup", ZAGroup_XFormItem, Group_XFormItem);
