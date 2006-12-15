@@ -627,7 +627,7 @@ Super_Select1_XFormItem.prototype.labelWrap = true;
 SuperWiz_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPERWIZ_SELECT1_", "superwiz_select1", SuperWiz_Select1_XFormItem, Super_Select1_XFormItem);
 SuperWiz_Select1_XFormItem.prototype.labelCssClass = "xform_label_left ZaWizLabel";
-SuperWiz_Select1_XFormItem.prototype.labelCssStyle = "width:250px" ;
+SuperWiz_Select1_XFormItem.prototype.labelCssStyle = "width:200px" ;
 SuperWiz_Select1_XFormItem.prototype.colSizes=["150px","150px"];
 SuperWiz_Select1_XFormItem.prototype.nowrap = false;
 SuperWiz_Select1_XFormItem.prototype.labelWrap = true;
