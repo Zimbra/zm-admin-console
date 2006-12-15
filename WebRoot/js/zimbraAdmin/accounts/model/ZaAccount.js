@@ -100,7 +100,7 @@ ZaAccount.A_zimbraInstalledSkinPool = "zimbraInstalledSkinPool";
 ZaAccount.A_zimbraInstalledZimletPool = "zimbraInstalledZimletPool";
 ZaAccount.A_zimbraZimletAvailableZimlets = "zimbraZimletAvailableZimlets";
 //prefs
-ZaAccount.A_zimbraAllowFromAnyAddress = "zimbraAllowFromAnyAddress";
+ZaAccount.A_zimbraAllowAnyFromAddress = "zimbraAllowAnyFromAddress";
 ZaAccount.A_zimbraAllowFromAddress = "zimbraAllowFromAddress";
 ZaAccount.A_zimbraPrefCalendarAlwaysShowMiniCal = "zimbraPrefCalendarAlwaysShowMiniCal";
 ZaAccount.A_zimbraPrefCalendarUseQuickAdd = "zimbraPrefCalendarUseQuickAdd";
@@ -1224,7 +1224,7 @@ ZaAccount.myXModel = {
 		{id:ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled},
 		{id:ZaAccount.A_zimbraPrefReplyToAddress, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefReplyToAddress},
 		{id:ZaAccount.A_zimbraPrefUseKeyboardShortcuts, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefUseKeyboardShortcuts, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaAccount.A_zimbraAllowFromAnyAddress, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraAllowFromAnyAddress, choices:ZaModel.BOOLEAN_CHOICES},		
+		{id:ZaAccount.A_zimbraAllowAnyFromAddress, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraAllowAnyFromAddress, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaAccount.A_zimbraAllowFromAddress,type: _STRING_, ref:"attrs/"+ZaAccount.A_zimbraAllowFromAddress},
 		{id:ZaAccount.A_zimbraPrefContactsPerPage, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPrefContactsPerPage, choices:[10,25,50,100]},
 		{id:ZaAccount.A_zimbraPrefComposeInNewWindow, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefComposeInNewWindow, choices:ZaModel.BOOLEAN_CHOICES},				

@@ -292,14 +292,17 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 								}
 							]},
 							{type:_ZA_TOP_GROUPER_, id:"cos_prefs_mail_sending",borderCssClass:"LowPadedTopGrouperBorder",label:ZaMsg.NAD_MailOptionsReceiving,items :[							
+								{ref:ZaCos.A_zimbraPrefSaveToSent, type:_CHECKBOX_, msgName:ZaMsg.NAD_prefSaveToSent,label:ZaMsg.NAD_prefSaveToSent, 
+									trueValue:"TRUE", falseValue:"FALSE", onChange:ZaTabView.onFormFieldChanged
+								},							
+								{ref:ZaCos.A_zimbraAllowAnyFromAddress, type:_CHECKBOX_, msgName:ZaMsg.NAD_zimbraAllowAnyFromAddress,label:ZaMsg.NAD_zimbraAllowAnyFromAddress, 
+									trueValue:"TRUE", falseValue:"FALSE", onChange:ZaTabView.onFormFieldChanged
+								},							
 								{ref:ZaCos.A_zimbraPrefComposeInNewWindow, type:_CHECKBOX_, msgName:ZaMsg.NAD_zimbraPrefComposeInNewWindow,
 									label:ZaMsg.NAD_zimbraPrefComposeInNewWindow, trueValue:"TRUE", falseValue:"FALSE", 
 									onChange:ZaTabView.onFormFieldChanged
 								},							
 								{ref:ZaCos.A_zimbraPrefComposeFormat, type:_OSELECT1_, msgName:ZaMsg.NAD_zimbraPrefComposeFormat,label:ZaMsg.NAD_zimbraPrefComposeFormat, labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged},
-								{ref:ZaCos.A_zimbraPrefSaveToSent, type:_CHECKBOX_, msgName:ZaMsg.NAD_prefSaveToSent,label:ZaMsg.NAD_prefSaveToSent, 
-									trueValue:"TRUE", falseValue:"FALSE", onChange:ZaTabView.onFormFieldChanged
-								},							
 								{ref:ZaCos.A_zimbraPrefForwardReplyInOriginalFormat, type:_CHECKBOX_, 
 									msgName:ZaMsg.NAD_zimbraPrefForwardReplyInOriginalFormat,
 									label:ZaMsg.NAD_zimbraPrefForwardReplyInOriginalFormat, trueValue:"TRUE", falseValue:"FALSE",
