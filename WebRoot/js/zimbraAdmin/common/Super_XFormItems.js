@@ -899,6 +899,26 @@ XFormItemFactory.createItemType("_ZA_TOP_GROUPER_", "za_top_grouper", ZATopGroup
 ZATopGrouper_XFormItem.prototype.numCols = 2;
 ZATopGrouper_XFormItem.prototype.colSizes = ["275px","auto"];
 
+function ZAPlainGrouper_XFormItem() {}
+XFormItemFactory.createItemType("_ZA_PLAIN_GROUPER_", "za_plain_grouper", ZAPlainGrouper_XFormItem, Group_XFormItem);
+ZAPlainGrouper_XFormItem.prototype.numCols = 2;
+ZAPlainGrouper_XFormItem.prototype.colSizes = ["275px","auto"];
+ZAPlainGrouper_XFormItem.prototype.cssClass = "PlainGrouperBorder";
+/*ZAPlainGrouper_XFormItem.prototype.label = null;
+// output the label
+ZAPlainGrouper_XFormItem.prototype.outputHTMLStart = function (html, updateScript, indent, currentCol) {
+	html.append(
+			"<div class=", this.getBorderCssClass(), ">",
+				"<div class=", this.getInsetCssClass(),">"
+		);
+}
+
+ZAPlainGrouper_XFormItem.prototype.outputHTMLEnd = function (html, updateScript, indent, currentCol) {
+	html.append(
+			"</div></div>"
+		);
+}*/
+
 function ZAWizTopGrouper_XFormItem() {}
 XFormItemFactory.createItemType("_ZAWIZ_TOP_GROUPER_", "zawiz_top_grouper", ZAWizTopGrouper_XFormItem, TopGrouper_XFormItem);
 ZAWizTopGrouper_XFormItem.prototype.numCols = 2;
