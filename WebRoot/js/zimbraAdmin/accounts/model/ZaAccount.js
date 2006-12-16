@@ -963,6 +963,7 @@ function(node) {
 	this.id = node.getAttribute("id");
 	this.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
 	this.attrs[ZaAccount.A_zimbraMailForwardingAddress] = new Array();
+	this.attrs[ZaAccount.A_zimbraAllowFromAddress] = new Array();	
 	var children = node.childNodes;
 	for (var i=0; i< children.length;  i++) {
 		child = children[i];
@@ -996,6 +997,7 @@ function (account) {
 	var len = account.a.length;
 	this.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
 	this.attrs[ZaAccount.A_zimbraMailForwardingAddress] = new Array();	
+	this.attrs[ZaAccount.A_zimbraAllowFromAddress] = new Array();	
 	for(var ix = 0; ix < len; ix++) {
 		if(!this.attrs[[account.a[ix].n]]) {
 			this.attrs[[account.a[ix].n]] = account.a[ix]._content;
@@ -1225,7 +1227,7 @@ ZaAccount.myXModel = {
 		{id:ZaAccount.A_zimbraPrefReplyToAddress, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefReplyToAddress},
 		{id:ZaAccount.A_zimbraPrefUseKeyboardShortcuts, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefUseKeyboardShortcuts, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A_zimbraAllowAnyFromAddress, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraAllowAnyFromAddress, choices:ZaModel.BOOLEAN_CHOICES},		
-		{id:ZaAccount.A_zimbraAllowFromAddress,type: _STRING_, ref:"attrs/"+ZaAccount.A_zimbraAllowFromAddress},
+		{id:ZaAccount.A_zimbraAllowFromAddress,type: _LIST_, ref:"attrs/"+ZaAccount.A_zimbraAllowFromAddress, listItem:{type:_STRING_, pattern:AjxUtil.EMAIL_FULL_RE}},
 		{id:ZaAccount.A_zimbraPrefContactsPerPage, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPrefContactsPerPage, choices:[10,25,50,100]},
 		{id:ZaAccount.A_zimbraPrefComposeInNewWindow, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefComposeInNewWindow, choices:ZaModel.BOOLEAN_CHOICES},				
 		{id:ZaAccount.A_zimbraPrefForwardReplyInOriginalFormat, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefForwardReplyInOriginalFormat, choices:ZaModel.BOOLEAN_CHOICES},						

@@ -333,6 +333,22 @@ ZaAccountXFormView.isPasswordLockoutEnabled = function () {
 			this.instance.cos.attrs[ZaAccount.A_zimbraPasswordLockoutEnabled] == 'TRUE')
 		);
 }
+
+ZaAccountXFormView.isSendingFromAnyAddressAllowed = function () {
+	return (this.instance.attrs[ZaAccount.A_zimbraAllowAnyFromAddress] == 'TRUE' ||
+		(!this.instance.attrs[ZaAccount.A_zimbraAllowAnyFromAddress] && 
+			this.instance.cos && 
+			this.instance.cos.attrs[ZaAccount.A_zimbraAllowAnyFromAddress] == 'TRUE')
+		);
+}
+
+ZaAccountXFormView.isMailSignatureEnabled = function () {
+	return (this.instance.attrs[ZaAccount.A_prefMailSignatureEnabled] == 'TRUE');
+}
+
+ZaAccountXFormView.isOutOfOfficeReplyEnabled = function () {
+	return (this.instance.attrs[ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled] == 'TRUE');
+}
 /**
 * This method is added to the map {@link ZaTabView#XFormModifiers}
 * @param xFormObject {Object} a definition of the form. This method adds/removes/modifies xFormObject to construct
@@ -831,8 +847,16 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 						},
 						{type:_ZA_PLAIN_GROUPER_, id:"account_prefs_general",colSizes:["auto"],numCols:1,
 							items :[
-								{ref:ZaAccount.A_zimbraPrefImapSearchFoldersEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_zimbraPrefImapSearchFoldersEnabled,checkBoxLabel:ZaMsg.NAD_zimbraPrefImapSearchFoldersEnabled,  trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},
-								{ref:ZaAccount.A_zimbraPrefShowSearchString, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_zimbraPrefShowSearchString,checkBoxLabel:ZaMsg.NAD_zimbraPrefShowSearchString,trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},
+								{ref:ZaAccount.A_zimbraPrefImapSearchFoldersEnabled, 
+									type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
+									msgName:ZaMsg.NAD_zimbraPrefImapSearchFoldersEnabled,
+									checkBoxLabel:ZaMsg.NAD_zimbraPrefImapSearchFoldersEnabled,  
+									trueValue:"TRUE", falseValue:"FALSE",
+									onChange:ZaTabView.onFormFieldChanged
+								},
+								{ref:ZaAccount.A_zimbraPrefShowSearchString, 
+									type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
+									msgName:ZaMsg.NAD_zimbraPrefShowSearchString,checkBoxLabel:ZaMsg.NAD_zimbraPrefShowSearchString,trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},
 								{ref:ZaAccount.A_zimbraPrefUseKeyboardShortcuts, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS,checkBoxLabel:ZaMsg.NAD_prefKeyboardShort, trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},
 								{ref:ZaAccount.A_zimbraPrefMailInitialSearch, type:_SUPER_TEXTFIELD_, 
 									msgName:ZaMsg.NAD_zimbraPrefMailInitialSearch,
@@ -862,8 +886,13 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									type:_SUPER_SELECT1_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_zimbraPrefGroupMailBy,
-									label:ZaMsg.NAD_zimbraPrefGroupMailBy, labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged},
-								{ref:ZaAccount.A_zimbraPrefMailItemsPerPage, type:_SUPER_SELECT1_, msgName:ZaMsg.NAD_zimbraPrefMailItemsPerPage,label:ZaMsg.NAD_zimbraPrefMailItemsPerPage, labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, valueLabel:null,onChange:ZaTabView.onFormFieldChanged}
+									label:ZaMsg.NAD_zimbraPrefGroupMailBy, 
+									labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged},
+								{ref:ZaAccount.A_zimbraPrefMailItemsPerPage, 
+									type:_SUPER_SELECT1_, msgName:ZaMsg.NAD_zimbraPrefMailItemsPerPage,
+									label:ZaMsg.NAD_zimbraPrefMailItemsPerPage, labelLocation:_LEFT_, 
+									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, valueLabel:null,
+									onChange:ZaTabView.onFormFieldChanged}
 							]
 						},
 						{type:_ZA_TOP_GROUPER_, id:"account_prefs_mail_receiving",
@@ -898,11 +927,26 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									trueValue:"TRUE", falseValue:"FALSE",
 									onChange:ZaTabView.onFormFieldChanged
 								},
-								{ref:ZaAccount.A_zimbraPrefNewMailNotificationAddress, type:_TEXTFIELD_, 
+								{ref:ZaAccount.A_zimbraPrefNewMailNotificationAddress, 
+									type:_TEXTFIELD_, 
 									msgName:ZaMsg.NAD_zimbraPrefNewMailNotificationAddress,
 									label:ZaMsg.NAD_zimbraPrefNewMailNotificationAddress, 
 									labelLocation:_LEFT_,  
 									onChange:ZaTabView.onFormFieldChanged
+								},
+								{ref:ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled, 
+									type:_ZA_CHECKBOX_, msgName:ZaMsg.NAD_zimbraPrefOutOfOfficeReplyEnabled,
+									label:ZaMsg.NAD_zimbraPrefOutOfOfficeReplyEnabled, trueValue:"TRUE", 
+									falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged
+								},
+								{ref:ZaAccount.A_zimbraPrefOutOfOfficeReply, 
+									type:_TEXTAREA_, msgName:ZaMsg.NAD_zimbraPrefOutOfOfficeReply,
+									label:ZaMsg.NAD_zimbraPrefOutOfOfficeReply, labelLocation:_LEFT_, 
+									labelCssStyle:"vertical-align:top", onChange:ZaTabView.onFormFieldChanged, 
+									width:"30em",
+									relevant:"ZaAccountXFormView.isOutOfOfficeReplyEnabled.call(this)",
+								 	relevantBehavior: _DISABLE_										
+									
 								}
 							]
 						},						
@@ -910,7 +954,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 							label:ZaMsg.NAD_MailOptionsSending,
 							items :[
 								{ref:ZaAccount.A_prefSaveToSent,  
-									colSpan:3,								
+									colSpan:2,								
 									type:_SUPER_CHECKBOX_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_prefSaveToSent,
@@ -918,15 +962,40 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									trueValue:"TRUE", falseValue:"FALSE",
 									onChange:ZaTabView.onFormFieldChanged},
 								{ref:ZaAccount.A_zimbraAllowAnyFromAddress,  
-									colSpan:3,								
+									colSpan:2,								
 									type:_SUPER_CHECKBOX_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_zimbraAllowAnyFromAddress,
 									checkBoxLabel:ZaMsg.NAD_zimbraAllowAnyFromAddress,
 									trueValue:"TRUE", falseValue:"FALSE",
-									onChange:ZaTabView.onFormFieldChanged},																
+									onChange:ZaTabView.onFormFieldChanged},	
+									
+								{ref:ZaAccount.A_zimbraAllowFromAddress,
+									type:_REPEAT_,
+									label:ZaMsg.NAD_zimbraAllowFromAddress,
+									labelLocation:_LEFT_, 
+									addButtonLabel:ZaMsg.NAD_AddAddress, 
+									align:_LEFT_,
+									repeatInstance:emptyAlias, 
+									showAddButton:true, 
+									showRemoveButton:true, 
+									showAddOnNextRow:true, 
+//									alwaysShowAddButton:true,
+									removeButtonLabel:ZaMsg.NAD_RemoveAddress,								
+									items: [
+										{ref:".", type:_TEXTFIELD_, label:null, onChange:ZaTabView.onFormFieldChanged,width:"200px"}
+									],
+									onRemove:ZaAccountXFormView.onRepeatRemove,
+									relevant: "!(ZaAccountXFormView.isSendingFromAnyAddressAllowed.call(this))",
+								 	relevantBehavior: _HIDE_									
+								}																								
+							]
+						},
+						{type:_ZA_TOP_GROUPER_, id:"account_prefs_mail_sending",borderCssClass:"LowPadedTopGrouperBorder",
+							label:ZaMsg.NAD_MailOptionsComposing,
+							items :[
 								{ref:ZaAccount.A_zimbraPrefComposeInNewWindow, 
-									colSpan:3,
+									colSpan:2,
 									type:_SUPER_CHECKBOX_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_zimbraPrefComposeInNewWindow,
@@ -934,15 +1003,14 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									trueValue:"TRUE", falseValue:"FALSE",
 									onChange:ZaTabView.onFormFieldChanged},
 								{ref:ZaAccount.A_zimbraPrefComposeFormat, 
-									colSpan:3,
+									//colSpan:2,
 									type:_SUPER_SELECT1_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_zimbraPrefComposeFormat,
 									label:ZaMsg.NAD_zimbraPrefComposeFormat, 
 									onChange:ZaTabView.onFormFieldChanged},
-
 								{ref:ZaAccount.A_zimbraPrefForwardReplyInOriginalFormat, 
-									colSpan:3,								
+									colSpan:2,								
 									type:_SUPER_CHECKBOX_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_zimbraPrefForwardReplyInOriginalFormat,
@@ -953,18 +1021,25 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									type:_ZA_CHECKBOX_, msgName:ZaMsg.NAD_prefMailSignatureEnabled,
 									label:ZaMsg.NAD_prefMailSignatureEnabled,  
 									trueValue:"TRUE", falseValue:"FALSE",
-									onChange:ZaTabView.onFormFieldChanged},
+									onChange:ZaTabView.onFormFieldChanged},								
 								{ref:ZaAccount.A_zimbraPrefMailSignatureStyle, 
-									colSpan:3,								
-									type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_zimbraPrefMailSignatureStyle,checkBoxLabel:ZaMsg.NAD_zimbraPrefMailSignatureStyle, onChange:ZaTabView.onFormFieldChanged,trueValue:"internet", falseValue:"outlook"},
+									colSpan:2,								
+									type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
+									msgName:ZaMsg.NAD_zimbraPrefMailSignatureStyle,
+									checkBoxLabel:ZaMsg.NAD_zimbraPrefMailSignatureStyle, 
+									onChange:ZaTabView.onFormFieldChanged,
+									trueValue:"internet", falseValue:"outlook"},
 								{ref:ZaAccount.A_prefMailSignature, type:_TEXTAREA_, 
-									msgName:ZaMsg.NAD_prefMailSignature,label:ZaMsg.NAD_prefMailSignature, labelLocation:_LEFT_, labelCssStyle:"vertical-align:top", onChange:ZaTabView.onFormFieldChanged, colSpan:3, width:"30em"},
-								{ref:ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled, 
-									type:_ZA_CHECKBOX_, msgName:ZaMsg.NAD_zimbraPrefOutOfOfficeReplyEnabled,label:ZaMsg.NAD_zimbraPrefOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},
-								{ref:ZaAccount.A_zimbraPrefOutOfOfficeReply, 
-									type:_TEXTAREA_, msgName:ZaMsg.NAD_zimbraPrefOutOfOfficeReply,label:ZaMsg.NAD_zimbraPrefOutOfOfficeReply, labelLocation:_LEFT_, labelCssStyle:"vertical-align:top", onChange:ZaTabView.onFormFieldChanged, colSpan:3, width:"30em"}
+									msgName:ZaMsg.NAD_prefMailSignature,
+									label:ZaMsg.NAD_prefMailSignature, labelLocation:_LEFT_, 
+									labelCssStyle:"vertical-align:top", 
+									onChange:ZaTabView.onFormFieldChanged, width:"30em",
+									relevant:"ZaAccountXFormView.isMailSignatureEnabled.call(this)",
+								 	relevantBehavior: _DISABLE_										
+								}
+						
 							]
-						},
+						},						
 						{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", id:"account_form_prefs_contacts_header",
 							items: [
 								{type:_OUTPUT_,value:ZaMsg.NAD_ContactsOptions}
