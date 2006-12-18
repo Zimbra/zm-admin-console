@@ -349,6 +349,10 @@ ZaAccountXFormView.isMailSignatureEnabled = function () {
 ZaAccountXFormView.isOutOfOfficeReplyEnabled = function () {
 	return (this.instance.attrs[ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled] == 'TRUE');
 }
+
+ZaAccountXFormView.isMailNotificationAddressEnabled = function () {
+	return (this.instance.attrs[ZaAccount.A_zimbraPrefNewMailNotificationEnabled] == 'TRUE');
+}
 /**
 * This method is added to the map {@link ZaTabView#XFormModifiers}
 * @param xFormObject {Object} a definition of the form. This method adds/removes/modifies xFormObject to construct
@@ -932,7 +936,9 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									msgName:ZaMsg.NAD_zimbraPrefNewMailNotificationAddress,
 									label:ZaMsg.NAD_zimbraPrefNewMailNotificationAddress, 
 									labelLocation:_LEFT_,  
-									onChange:ZaTabView.onFormFieldChanged
+									onChange:ZaTabView.onFormFieldChanged,
+									relevant:"ZaAccountXFormView.isMailNotificationAddressEnabled.call(this)",
+									relevantBehavior:_DISABLE_
 								},
 								{ref:ZaAccount.A_zimbraPrefOutOfOfficeReplyEnabled, 
 									type:_ZA_CHECKBOX_, msgName:ZaMsg.NAD_zimbraPrefOutOfOfficeReplyEnabled,
@@ -991,7 +997,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 								}																								
 							]
 						},
-						{type:_ZA_TOP_GROUPER_, id:"account_prefs_mail_sending",borderCssClass:"LowPadedTopGrouperBorder",
+						{type:_ZA_TOP_GROUPER_, id:"account_prefs_mail_composing",borderCssClass:"LowPadedTopGrouperBorder",
 							label:ZaMsg.NAD_MailOptionsComposing,
 							items :[
 								{ref:ZaAccount.A_zimbraPrefComposeInNewWindow, 
