@@ -120,7 +120,7 @@ Cos_Enum_XModelItem.prototype.validateType = function (value) {
 
 Cos_List_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_LIST_", "list_enum", Cos_List_XModelItem, Cos_String_XModelItem);
-Cos_List_XModelItem.prototype.outputType = List_XModelItem.prototype.outputType;
+Cos_List_XModelItem.prototype.outputType = _LIST_;
 Cos_List_XModelItem.prototype.itemDelimiter = List_XModelItem.prototype.itemDelimiter;
 Cos_List_XModelItem.prototype.listItem = List_XModelItem.prototype.listItem;
 Cos_List_XModelItem.prototype.getOutputType  = List_XModelItem.prototype.getOutputType;
@@ -130,7 +130,20 @@ Cos_List_XModelItem.prototype.initializeItems = List_XModelItem.prototype.initia
 Cos_List_XModelItem.prototype.validateType = List_XModelItem.prototype.validateType;
 
 
-
+Cos_List_XModelItem.prototype.getSuperValue = function(ins) {
+	if(!ins || !ins.cos)
+		return null;
+	var _ref = this.ref.replace("/", ".");
+	var lst = eval("ins.cos." + _ref);
+	var retval = [];
+	if(lst) {
+		var cnt = lst.length
+		for(var i=0;i<cnt;i++) {
+			retval.push(lst[i]);
+		}
+	}
+	return retval;
+}
 //	methods
 
 List_XModelItem.prototype.initializeItems = function () {
@@ -257,9 +270,9 @@ XFormItemFactory.createItemType("_SUPER_FIELD_", "cos_field", Super_XFormItem, C
 Super_XFormItem.checkIfOverWriten = function() {
 	if(this.getModelItem().getLocalValue(this.getInstance())==null)
 		return false;
-	else if ( (this.getModelItem().getLocalValue(this.getInstance()) instanceof Array) && 
+	/*else if ( (this.getModelItem().getLocalValue(this.getInstance()) instanceof Array) && 
 	(this.getModelItem().getLocalValue(this.getInstance()).length==0) )	
-		return false;
+		return false;*/
 	else if ( (this.getModelItem().getLocalValue(this.getInstance()) instanceof AjxVector) && 
 	(this.getModelItem().getLocalValue(this.getInstance()).size==0) )	
 		return false;
@@ -612,6 +625,96 @@ Super_DwtChooser_XFormItem.prototype.items = [];
 
 
 
+
+/**
+*	ZIMLET_SELECT_CHECK form item type
+**/
+Zimlet_Select_XFormItem = function () {}
+XFormItemFactory.createItemType("_ZIMLET_SELECT_CHECK_", "zimlet_select_check", Zimlet_Select_XFormItem, Super_XFormItem);
+//Zimlet_Select_XFormItem.prototype.labelCssClass = "xform_label_left";
+//Zimlet_Select_XFormItem.prototype.labelCssStyle = "width:275px" ;
+Zimlet_Select_XFormItem.prototype.numCols=3;
+Zimlet_Select_XFormItem.prototype.colSizes=["275px","15px","150px"];
+Zimlet_Select_XFormItem.prototype.nowrap = false;
+Zimlet_Select_XFormItem.prototype.labelWrap = true;
+Zimlet_Select_XFormItem.prototype.items = [];
+Zimlet_Select_XFormItem.prototype.initializeItems = function() {
+	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
+	var selectRef = this.getInheritedProperty("selectRef");
+	var resetToSuperLabel = this.getInheritedProperty("resetToSuperLabel");
+	var choices = this.getInheritedProperty("choices");	
+
+	var selectChck = {
+		type:_OSELECT_CHECK_,
+		choices:choices,
+		colSpan:3,
+		ref:selectRef,
+		width:"275px",
+		//onChange:Composite_XFormItem.onFieldChange,
+		onChange:function (value, event, form) {
+			if (this.getParentItem() && this.getParentItem().getParentItem() && this.getParentItem().getParentItem().getOnChangeMethod()) {
+				return this.getParentItem().getParentItem().getOnChangeMethod().call(this, value, event, form);
+			} else {
+				return this.setInstanceValue(value);
+			}
+		},
+		forceUpdate:true,
+		updateElement:function(value) {
+			Super_XFormItem.updateCss.call(this,5);
+			OSelect_XFormItem.prototype.updateElement.call(this, value);
+		},
+		cssStyle:"margin-bottom:10px;border:2px inset gray;"				
+	};
+	
+	var selectChckGrp = {
+		type:_GROUP_,
+		numCols:3,
+		colSizes:["130px","15px","130px"],
+		items:[
+			selectChck,
+			{type:_DWT_BUTTON_,label:ZaMsg.SelectAll,width:"120px",
+				onActivate:function (ev) {
+					var lstElement = this.getParentItem().items[0];
+					if(lstElement) {
+						lstElement.selectAll(ev);
+					}
+				}
+			},
+			{type:_CELLSPACER_,width:"15px"},
+			{type:_DWT_BUTTON_,label:ZaMsg.DeselectAll,width:"120px",
+				onActivate:function (ev) {
+					var lstElement = this.getParentItem().items[0];
+					if(lstElement) {
+						lstElement.deselectAll(ev);
+					}
+				}
+			}
+		]
+		
+	}
+	
+	var anchorHlpr = {	
+		type:_SUPER_ANCHOR_HELPER_, ref:".",label:resetToSuperLabel,
+		relevant:"Super_XFormItem.checkIfOverWriten.call(item)",
+		relevantBehavior:_BLOCK_HIDE_,
+		/*onChange:function(value, event, form) {
+			if (this.getParentItem() && this.getParentItem().getParentItem() && this.getParentItem().getParentItem().getOnChangeMethod()) {
+				return this.getParentItem().getParentItem().getOnChangeMethod().call(this, value, event, form);
+			} else {
+				return this.setInstanceValue(value);
+			}			
+		}*/
+		onChange:Composite_XFormItem.onFieldChange,
+		cssStyle: (anchorCssStyle ? anchorCssStyle : "width:150px"),
+		valign:_TOP_
+		
+	};
+		
+	this.items = [selectChckGrp,{type:_CELLSPACER_,width:"15px"},anchorHlpr];
+	
+	
+	Composite_XFormItem.prototype.initializeItems.call(this);
+}
 
 /**
 *	SUPER_SELECT1 form item type

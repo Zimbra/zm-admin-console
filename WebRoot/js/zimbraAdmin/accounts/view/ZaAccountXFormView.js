@@ -48,6 +48,8 @@ ZaAccountXFormView.prototype = new ZaTabView();
 ZaAccountXFormView.prototype.constructor = ZaAccountXFormView;
 ZaTabView.XFormModifiers["ZaAccountXFormView"] = new Array();
 ZaAccountXFormView.TAB_INDEX=0;
+ZaAccountXFormView.zimletChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
+
 /**
 * Sets the object contained in the view
 * @param entry - {ZaAccount} object to display
@@ -207,62 +209,30 @@ function(entry) {
 			if (AjxUtil.isString(zimlets))	 {
 				zimlets = [zimlets];
 			}
-			
-			var cnt = zimlets.length;
-			for(var i=0; i<cnt; i++) {
-				var zimlet = zimlets[i];
-				_tmpZimlets[i] = new String(zimlet);
-				_tmpZimlets[i].id = "id_"+zimlet;
-			}
-			
-			this._containedObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
+
+			this._containedObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] = zimlets;
 		} else
 			this._containedObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] = null;		
 		
 		
-		//convert strings to objects
-		var zimlets;
-		if(ZaSettings.COSES_ENABLED) {	
-			 zimlets = this._containedObject.cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
-		} else {
-			 zimlets = this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
-		}
-		var _tmpZimlets = [];
-		if(zimlets == null) {
-			zimlets = [];
-		} else if (AjxUtil.isString(zimlets))	 {
-			zimlets = [zimlets];
-		}
-		
-		for(var i=0; i<zimlets.length; i++) {
-			var zimlet = zimlets[i];
-			_tmpZimlets[i] = new String(zimlet);
-			_tmpZimlets[i].id = "id_"+zimlet;
-		}
-		if(ZaSettings.COSES_ENABLED) {			
-			this._containedObject.cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
-		} else {
-			this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
-		}
-					
-		//convert strings to objects
-		var zimlets = ZaZimlet.getAll(this._app, "extension");
+
+		var allZimlets = ZaZimlet.getAll(this._app, "extension");
 		_tmpZimlets = [];
-		if(zimlets == null) {
-			zimlets = [];
+		if(allZimlets == null) {
+			allZimlets = [];
 		} 
 		
-		if(zimlets instanceof ZaItemList || zimlets instanceof AjxVector)
-			zimlets = zimlets.getArray();
-			
-		var cnt = zimlets.length;
-		//convert strings to objects	
+		if(allZimlets instanceof ZaItemList || allZimlets instanceof AjxVector)
+			allZimlets = allZimlets.getArray();
+		
+		var cnt = allZimlets.length;
+		//convert objects to strings	
 		for(var i=0; i<cnt; i++) {
-			var zimlet = zimlets[i];
-			_tmpZimlets[i] = new String(zimlet.name);
-			_tmpZimlets[i].id = "id_"+zimlet.name;
+			var zimlet = allZimlets[i];
+			_tmpZimlets[i] = zimlet.name;
 		}
-		this._containedObject[ZaAccount.A_zimbraInstalledZimletPool] = _tmpZimlets;		
+		ZaAccountXFormView.zimletChoices.setChoices(_tmpZimlets);
+		ZaAccountXFormView.zimletChoices.dirtyChoices();		
 	}
 	this._localXForm.setInstance(this._containedObject);
 }
@@ -1169,7 +1139,19 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 	if(ZaSettings.ZIMLETS_ENABLED) {
 		cases.push({type:_ZATABCASE_, id:"account_form_zimlets_tab", numCols:1,relevant:("instance[ZaModel.currentTab] == " + _tab9),
 			items:[
-				{type:_SPACER_},
+				{type:_ZAGROUP_, colSizes:["75px","475px"],items: [
+					{type:_CELLSPACER_,width:"75px"},
+					{type:_ZIMLET_SELECT_CHECK_,
+						selectRef:ZaAccount.A_zimbraZimletAvailableZimlets, 
+						ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
+						choices:ZaAccountXFormView.zimletChoices,
+						resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+						onChange: ZaTabView.onFormFieldChanged,
+						relevant:("instance[ZaModel.currentTab] == " + _tab9)
+					}
+					]
+				}
+				/*{type:_SPACER_},
 				{sourceRef: ZaAccount.A_zimbraInstalledZimletPool, 
 					ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
 					type:_SUPER_DWT_CHOOSER_, sorted:true, 
@@ -1178,7 +1160,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 					forceUpdate:true,widgetClass:ZaZimletPoolChooser,
 					listHeight: "500px",
 					width:"100%"
-				}
+				}*/
 			] 
 		});
 	}

@@ -235,7 +235,7 @@ function () {
 	
 	//transfer the fields from the tmpObj to the _currentObject
 	for (var a in tmpObj.attrs) {
-		if(a == ZaAccount.A_password || a==ZaAccount.A_zimbraMailAlias || a == ZaItem.A_objectClass || a==ZaAccount.A2_mbxsize || a==ZaAccount.A_mail || a == ZaItem.A_zimbraId || a == ZaAccount.A_zimbraAvailableSkin) {
+		if(a == ZaAccount.A_password || a==ZaAccount.A_zimbraMailAlias || a == ZaItem.A_objectClass || a==ZaAccount.A2_mbxsize || a==ZaAccount.A_mail || a == ZaItem.A_zimbraId || a == ZaAccount.A_zimbraAvailableSkin || a == ZaAccount.A_zimbraZimletAvailableZimlets) {
 			continue;
 		}	
 		//check if the value has been modified
@@ -277,6 +277,20 @@ function () {
 			}
 		}
 	}	
+	
+	if(ZaSettings.ZIMLETS_ENABLED) {
+		if(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] != null) {
+			if(!(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] instanceof Array)) {
+				mods[ZaAccount.A_zimbraZimletAvailableZimlets] = [tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets]];
+			} else {
+				var cnt = tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets].length;
+				mods[ZaAccount.A_zimbraZimletAvailableZimlets] = [];
+				for(var i = 0; i < cnt; i++) {
+					mods[ZaAccount.A_zimbraZimletAvailableZimlets].push(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets][i]);
+				}
+			}
+		}
+	}
 	//save changed fields
 	try {	
 		this._currentObject.modify(mods);
