@@ -136,6 +136,7 @@ ZaCos.A_zimbraMailAllServersInternal = "allserversarray";
 ZaCos.A_zimbraMailHostPoolInternal = "hostpoolarray";
 ZaCos.A_zimbraInstalledSkinPool = "zimbraInstalledSkinPool";
 ZaCos.A_zimbraInstalledZimletPool = "zimbraInstalledZimletPool";
+ZaCos.A2_restrictThemes = "restrictThemes";
 ZaCos.loadMethod =
 function (by, val) {
 	var soapDoc = AjxSoapDoc.create("GetCosRequest", "urn:zimbraAdmin", null);
@@ -190,7 +191,7 @@ function (obj) {
 			this[ZaCos.A2_zimbraDomainAdminMailQuotaAllowed] = 'FALSE' ;
 		}
 	}
-	
+	this[ZaCos.A2_restrictThemes] = this.attrs[ZaCos.A_zimbraAvailableSkin] ? "TRUE" : "FALSE";	
 }
 
 /**
@@ -331,7 +332,7 @@ function() {
 
 ZaCos.setAvailableZimlets =
 function (app, cos){
-	var zimlets = cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
+	/*var zimlets = cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
 	
 	_tmpZimlets = [];
 	if(zimlets == null) {
@@ -346,12 +347,12 @@ function (app, cos){
 		_tmpZimlets[i].id = "id_"+zimlet;
 	}
 	
-	cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
+	cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;*/
 }
 
 ZaCos.setAvailableSkins =
 function (app, cos){
-	var installedSkins = app.getInstalledSkins();
+/*	var installedSkins = app.getInstalledSkins();
 	var _tmpSkins = [];
 	if(installedSkins == null) {
 		installedSkins = [];
@@ -383,7 +384,7 @@ function (app, cos){
 		_tmpSkins[i] = new String(skin);
 		_tmpSkins[i].id = "id_"+skin;
 	}
-	cos.attrs[ZaCos.A_zimbraAvailableSkin] = _tmpSkins;
+	cos.attrs[ZaCos.A_zimbraAvailableSkin] = _tmpSkins;*/
 }
 
 ZaCos.getAll =
@@ -532,7 +533,7 @@ ZaCos.myXModel = {
 		{id:ZaCos.A_zimbraZimletAvailableZimlets, ref:"attrs/" + ZaCos.A_zimbraZimletAvailableZimlets, type:_LIST_, dataType: _STRING_},		
 		{id:ZaCos.A_zimbraInstalledSkinPool, ref:ZaCos.A_zimbraInstalledSkinPool, type:_LIST_, dataType: _STRING_},		
 		{id:ZaCos.A_zimbraInstalledZimletPool, ref:ZaCos.A_zimbraInstalledZimletPool, type:_LIST_, dataType: _STRING_},				
-		
+		{id:ZaCos.A2_restrictThemes, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaCos.A2_restrictThemes, type:_ENUM_},
 //features
 		{id:ZaCos.A_zimbraFeaturePop3DataSourceEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeaturePop3DataSourceEnabled, type:_ENUM_},
 		{id:ZaCos.A_zimbraFeatureIdentitiesEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_ENUM_},

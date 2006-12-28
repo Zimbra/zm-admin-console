@@ -885,16 +885,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 	if(ZaSettings.SKIN_PREFS_ENABLED) {
 		cases.push({type:_CASE_,id:"account_form_themes_step", numCols:1, width:"100%", relevant:"instance[ZaModel.currentStep]==ZaNewAccountXWizard.SKINS_STEP", 
 						items: [	
-							{type:_SPACER_},
-							{sourceRef: ZaAccount.A_zimbraInstalledSkinPool, 
-								ref:ZaAccount.A_zimbraAvailableSkin, 
-								type:_SUPER_DWT_CHOOSER_, sorted:true, 
-								resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-								forceUpdate:true,widgetClass:ZaSkinPoolChooser,
-								relevant:"ZaAccountXFormView.gotSkins.call(this)",
-								width:"100%"
-							},
-							{type:_SPACER_},
 							{type:_GROUP_, 
 								items:[
 								{ref:ZaAccount.A_zimbraPrefSkin, type:_SUPERWIZ_SELECT1_, 
@@ -902,7 +892,16 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 									choices:this._app.getInstalledSkins(),
 									relevant:"ZaAccountXFormView.gotSkins.call(this)"}
 								] 
-							}							
+							},
+							{type:_SPACER_},
+							{type:_ZIMLETWIZ_SELECT_CHECK_,
+								selectRef:ZaAccount.A_zimbraAvailableSkin, 
+								ref:ZaAccount.A_zimbraAvailableSkin, 
+								choices:ZaAccountXFormView.themeChoices,
+								relevant:("instance[ZaModel.currentStep]==ZaNewAccountXWizard.SKINS_STEP"),
+								relevantBehavior:_HIDE_,
+								limitLabel:ZaMsg.NAD_LimitThemesTo
+							}
 						]
 		});			
 	}
@@ -910,22 +909,14 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 	if(ZaSettings.ZIMLETS_ENABLED) {
 		cases.push({type:_CASE_,id:"account_form_zimlets_step", numCols:1, width:"100%", relevant:"instance[ZaModel.currentStep]==ZaNewAccountXWizard.ZIMLETS_STEP", 
 						items: [	
-		/*					{type:_SPACER_},
-							{sourceRef: ZaAccount.A_zimbraInstalledZimletPool, 
-								ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
-								type:_SUPER_DWT_CHOOSER_, sorted:true, 
-								resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-								forceUpdate:true,widgetClass:ZaZimletPoolChooser,
-								width:"100%"
-							}*/
-							{type:_ZAWIZGROUP_, colSizes:["20px","475px"],
+							{type:_ZAWIZGROUP_, numCols:1,colSizes:["auto"], 
 								items: [
-									{type:_CELLSPACER_,width:"20px"},
-									{type:_ZIMLET_SELECT_CHECK_,
+									{type:_ZIMLETWIZ_SELECT_CHECK_,
 										selectRef:ZaAccount.A_zimbraZimletAvailableZimlets, 
 										ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
 										choices:ZaNewAccountXWizard.zimletChoices,
-										resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+										limitLabel:ZaMsg.NAD_LimitZimletsTo,
+										//resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
 										relevant:("instance[ZaModel.currentStep]==ZaNewAccountXWizard.ZIMLETS_STEP")
 									}
 								]

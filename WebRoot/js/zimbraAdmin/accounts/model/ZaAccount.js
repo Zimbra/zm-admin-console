@@ -188,6 +188,8 @@ ZaAccount.A2_autoMailServer = "automailserver";
 ZaAccount.A2_autoCos = "autoCos" ;
 ZaAccount.A2_myCOS = "mycos";
 ZaAccount.A2_newAlias = "newalias";
+ZaAccount.A2_restrictThemes = "restrictThemes";
+ZaAccount.A2_restrictZimlets = "restrictZimlets";
 //ZaAccount.A2_newForward = "newforward";
 ZaAccount.A2_aliases = "aliases";
 ZaAccount.A2_forwarding = "forwardings";
@@ -459,12 +461,12 @@ function(tmpObj, app) {
 		
 	}
 	
-	if(ZaSettings.SKIN_PREFS_ENABLED) {
+	/*if(ZaSettings.SKIN_PREFS_ENABLED) {
 		if((tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] instanceof AjxVector) && tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin].size()==0) {
 			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_MUST_HAVE_SKINS);					
 			return false;			
 		}
-	}
+	}*/
 	return true;
 }
 
@@ -494,7 +496,7 @@ function (tmpObj, account, app) {
 	}
 	
 	//check if zimbraAvailableSkin has been changed
-	if(ZaSettings.SKIN_PREFS_ENABLED) {
+/*	if(ZaSettings.SKIN_PREFS_ENABLED) {
 		var skinIds = new Array();
 		if((tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] instanceof AjxVector) && tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] && tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin].size()) {
 			var cnt = tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin].size();
@@ -508,7 +510,7 @@ function (tmpObj, account, app) {
 				
 		} else
 			tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] = "";
-	}	
+	}	*/
 	for (var aname in tmpObj.attrs) {
 		if(aname == ZaAccount.A_password || aname == ZaAccount.A_zimbraMailAlias || aname == ZaItem.A_objectClass || aname == ZaAccount.A2_mbxsize || aname == ZaAccount.A_mail) {
 			continue;
@@ -1017,6 +1019,8 @@ function (account) {
 			this.attrs[[account.a[ix].n]].push(account.a[ix]._content);
 		}
 	}
+	this[ZaAccount.A2_restrictThemes] = this.attrs[ZaAccount.A_zimbraAvailableSkin] ? "TRUE" : "FALSE";
+	this[ZaAccount.A2_restrictZimlets] = this.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] ? "TRUE" : "FALSE";	
 }
 
 /**
@@ -1264,6 +1268,8 @@ ZaAccount.myXModel = {
 		{id:ZaAccount.A_zimbraZimletAvailableZimlets, type:_COS_LIST_, ref:"attrs/" + ZaAccount.A_zimbraZimletAvailableZimlets, dataType: _STRING_},		
 		{id:ZaAccount.A_zimbraInstalledSkinPool, ref:ZaAccount.A_zimbraInstalledSkinPool, type:_LIST_, dataType: _STRING_},				
 		{id:ZaAccount.A_zimbraInstalledZimletPool, ref:ZaAccount.A_zimbraInstalledZimletPool, type:_LIST_, dataType: _STRING_},						
+		{id:ZaAccount.A2_restrictThemes, ref:ZaAccount.A2_restrictThemes, _type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
+		{id:ZaAccount.A2_restrictZimlets, ref:ZaAccount.A2_restrictZimlets, _type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A_zimbraPrefGalAutoCompleteEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPrefGalAutoCompleteEnabled},
 		//features
 		{id:ZaAccount.A_zimbraFeaturePop3DataSourceEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeaturePop3DataSourceEnabled, choices:ZaModel.BOOLEAN_CHOICES},
