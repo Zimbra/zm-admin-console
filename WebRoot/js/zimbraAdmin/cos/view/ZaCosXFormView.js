@@ -38,7 +38,8 @@ function ZaCosXFormView (parent, app) {
 ZaCosXFormView.prototype = new ZaTabView();
 ZaCosXFormView.prototype.constructor = ZaCosXFormView;
 ZaTabView.XFormModifiers["ZaCosXFormView"] = new Array();
-
+ZaCosXFormView.zimletChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
+ZaCosXFormView.themeChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
 /**
 * @method setObject sets the object contained in the view
 * @param entry - ZaDomain object to display
@@ -59,75 +60,61 @@ function(entry) {
 		this._containedObject[ZaCos.A2_zimbraDomainAdminMailQuotaAllowed] = entry [ZaCos.A2_zimbraDomainAdminMailQuotaAllowed];
 	}
 	
-	var installedSkins = this._app.getInstalledSkins();
-	var _tmpSkins = [];
-	if(installedSkins == null) {
-		installedSkins = [];
-	} else if (AjxUtil.isString(installedSkins))	 {
-		installedSkins = [installedSkins];
-	}
+	if(ZaSettings.SKIN_PREFS_ENABLED) {
+		var skins = entry.attrs[ZaCos.A_zimbraAvailableSkin];
+		if(skins != null && skins != "") {
+			if (AjxUtil.isString(skins))	 {
+				skins = [skins];
+			}
+			this._containedObject.attrs[ZaCos.A_zimbraAvailableSkin] = skins;
+		} else {
+			this._containedObject.attrs[ZaCos.A_zimbraAvailableSkin] = null;		
+		}
 
-	//convert strings to objects
-	var cnt = installedSkins.length;
-	for(var i=0; i<cnt; i++) {
-		var skin = installedSkins[i];
-		_tmpSkins[i] = new String(skin);
-		_tmpSkins[i].id = "id_"+skin;
-	}
-	this._containedObject[ZaCos.A_zimbraInstalledSkinPool] = _tmpSkins;
-	
-	var availableSkin = entry.attrs[ZaCos.A_zimbraAvailableSkin];
-	_tmpSkins = [];
-	if(availableSkin == null) {
-		availableSkin = installedSkins; //bug 11805: by default no skin availabe is all skin available (yeap, confusing)
+		var skins = this._app.getInstalledSkins();
+		if(skins == null) {
+			skins = [];
+		} else if (AjxUtil.isString(skins))	 {
+			skins = [skins];
+		}
 		
-	} else if (AjxUtil.isString(availableSkin))	 {
-		availableSkin = [availableSkin];
+		ZaCosXFormView.themeChoices.setChoices(skins);
+		ZaCosXFormView.themeChoices.dirtyChoices();		
+		
 	}
 	
-	//convert strings to objects
-	for(var i=0; i<availableSkin.length; i++) {
-		var skin = availableSkin[i];
-		_tmpSkins[i] = new String(skin);
-		_tmpSkins[i].id = "id_"+skin;
-	}
-	this._containedObject.attrs[ZaCos.A_zimbraAvailableSkin] = _tmpSkins;
 	
-	
-	var zimlets = entry.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
-	var _tmpZimlets = [];
-	if(zimlets == null) {
-		zimlets = [];
-	} else if (AjxUtil.isString(zimlets))	 {
-		zimlets = [zimlets];
-	}
-	
-	//convert strings to objects
-	var cnt = zimlets.length;
-	for(var i=0; i<cnt; i++) {
-		var zimlet = zimlets[i];
-		_tmpZimlets[i] = new String(zimlet);
-		_tmpZimlets[i].id = "id_"+zimlet;
-	}
-	this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
+	if(ZaSettings.ZIMLETS_ENABLED) {
+		var zimlets = entry.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
+		if(zimlets != null && zimlets != "") {
+			if (AjxUtil.isString(zimlets))	 {
+				zimlets = [zimlets];
+			}
+			this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = zimlets;
+		} else
+			this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = null;		
+		
+		
+		//get sll Zimlets
+		var allZimlets = ZaZimlet.getAll(this._app, "extension");
+		if(allZimlets == null) {
+			allZimlets = [];
+		} 
+		
+		if(allZimlets instanceof ZaItemList || allZimlets instanceof AjxVector)
+			allZimlets = allZimlets.getArray();
+		
+		//convert objects to strings	
+		var cnt = allZimlets.length;
+		var _tmpZimlets = [];
+		for(var i=0; i<cnt; i++) {
+			var zimlet = allZimlets[i];
+			_tmpZimlets.push(zimlet.name);
+		}
+		ZaCosXFormView.zimletChoices.setChoices(_tmpZimlets);
+		ZaCosXFormView.zimletChoices.dirtyChoices();		
+	}	
 
-	var zimlets = ZaZimlet.getAll(this._app, "extension");
-	_tmpZimlets = [];
-	if(zimlets == null) {
-		zimlets = [];
-	} 
-	
-	if(zimlets instanceof ZaItemList || zimlets instanceof AjxVector)
-		zimlets = zimlets.getArray();
-	
-	var cnt = zimlets.length;
-	//convert strings to objects	
-	for(var i=0; i<cnt; i++) {
-		var zimlet = zimlets[i];
-		_tmpZimlets[i] = new String(zimlet.name);
-		_tmpZimlets[i].id = "id_"+zimlet.name;
-	}
-	this._containedObject[ZaCos.A_zimbraInstalledZimletPool] = _tmpZimlets;
 	
 	this._containedObject[ZaCos.A_zimbraMailAllServersInternal] = AjxVector.fromArray(this._app.getMailServers());
   	
@@ -380,7 +367,20 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 								}					  	  							
 							]},
 							{type:_SPACER_},
-							{type:_CELLSPACER_},	
+							{type:_ZAGROUP_, numCols:1,colSizes:["auto"], 
+								items: [
+									{type:_ZIMLET_SELECT_CHECK_,
+										selectRef:ZaCos.A_zimbraAvailableSkin, 
+										ref:ZaCos.A_zimbraAvailableSkin, 
+										choices:ZaCosXFormView.themeChoices,
+										onChange: ZaTabView.onFormFieldChanged,
+										relevant:("instance[ZaModel.currentTab]==4"),
+										relevantBehavior:_HIDE_,
+										checkBoxLabel:ZaMsg.NAD_LimitThemesTo
+									}
+								]
+							}							
+							/*{type:_CELLSPACER_},	
 							{	sourceRef: ZaCos.A_zimbraInstalledSkinPool, ref:ZaCos.A_zimbraAvailableSkin, 
 								type:_DWT_CHOOSER_, sorted: true, 
 					  	  		onChange: ZaTabView.onFormFieldChanged,
@@ -391,12 +391,25 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 					  	  	  	updateElement:function(value) {
 					  	  	  		this.updateWidget(value, true, function() {return this.id; });	
 					  	  	  	}
-					  	  	}
+					  	  	}*/
 						]
 					},
 					{type:_ZATABCASE_, relevant:"instance[ZaModel.currentTab]==5", numCols:2, colSizes:["10px", "400px"],
 						items: [
-							{type:_SPACER_},
+							{type:_ZAGROUP_, numCols:1,colSizes:["auto"], 
+								items: [
+									{type:_ZIMLET_SELECT_CHECK_,
+										selectRef:ZaCos.A_zimbraZimletAvailableZimlets, 
+										ref:ZaCos.A_zimbraZimletAvailableZimlets, 
+										choices:ZaCosXFormView.zimletChoices,
+										onChange: ZaTabView.onFormFieldChanged,
+										relevant:("instance[ZaModel.currentTab]==5"),
+										relevantBehavior:_HIDE_,
+										checkBoxLabel:ZaMsg.NAD_LimitZimletsTo
+									}
+								]
+							}							
+							/*{type:_SPACER_},
 							{type:_CELLSPACER_},	
 							{	sourceRef: ZaCos.A_zimbraInstalledZimletPool, ref:ZaCos.A_zimbraZimletAvailableZimlets, 
 								type:_DWT_CHOOSER_, sorted: true, 
@@ -407,7 +420,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 					  	  	  	updateElement:function(value) {
 					  	  	  		this.updateWidget(value, true, function() {return this.id; });	
 					  	  	  	}
-					  	  	}
+					  	  	}*/
+										  	  	
 						]
 					},					
 					{type:_ZATABCASE_, relevant:"instance[ZaModel.currentTab]==6", numCols:2, colSizes:["10px", "400px"],

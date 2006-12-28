@@ -894,7 +894,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 								] 
 							},
 							{type:_SPACER_},
-							{type:_ZIMLETWIZ_SELECT_CHECK_,
+							{type:_SUPER_ZIMLETWIZ_SELECT_CHECK_,
 								selectRef:ZaAccount.A_zimbraAvailableSkin, 
 								ref:ZaAccount.A_zimbraAvailableSkin, 
 								choices:ZaAccountXFormView.themeChoices,
@@ -911,7 +911,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 						items: [	
 							{type:_ZAWIZGROUP_, numCols:1,colSizes:["auto"], 
 								items: [
-									{type:_ZIMLETWIZ_SELECT_CHECK_,
+									{type:_SUPER_ZIMLETWIZ_SELECT_CHECK_,
 										selectRef:ZaAccount.A_zimbraZimletAvailableZimlets, 
 										ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
 										choices:ZaNewAccountXWizard.zimletChoices,

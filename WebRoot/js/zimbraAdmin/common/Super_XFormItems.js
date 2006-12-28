@@ -623,10 +623,8 @@ Super_DwtChooser_XFormItem.getElemValue = function () {
 }
 Super_DwtChooser_XFormItem.prototype.items = [];
 
-
-
 /**
-*	ZIMLET_SELECT_CHECK form item type
+*	_ZIMLET_SELECT_CHECK_ form item type
 **/
 Zimlet_Select_XFormItem = function () {}
 XFormItemFactory.createItemType("_ZIMLET_SELECT_CHECK_", "zimlet_select_check", Zimlet_Select_XFormItem, Super_XFormItem);
@@ -637,16 +635,90 @@ Zimlet_Select_XFormItem.prototype.labelWrap = true;
 Zimlet_Select_XFormItem.prototype.items = [];
 Zimlet_Select_XFormItem.prototype.labelWidth = "275px";
 
-
-
-
-
-
 Zimlet_Select_XFormItem.prototype.initializeItems = function() {
-	//var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
+	var selectRef = this.getInheritedProperty("selectRef");
+	var checkBoxLabel = this.getInheritedProperty("checkBoxLabel");
+	var choices = this.getInheritedProperty("choices");	
+	var checkBox = {type:_CHECKBOX_, ref:".",
+		label:checkBoxLabel, labelLocation:_RIGHT_,
+		elementChanged:function(elementValue,instanceValue, event) {
+			if(!elementValue) {
+				this.getForm().itemChanged(this.getParentItem(), null, event);	
+			}
+		},
+		updateElement:function(value) {
+			this.getElement().checked = value;
+		}
+	};
+	
+	var selectChck = {
+		type:_OSELECT_CHECK_,
+		choices:choices,
+		colSpan:3,
+		ref:selectRef,
+		width:"275px",
+		onChange:function (value, event, form) {
+			if (this.getParentItem() && this.getParentItem().getParentItem() && this.getParentItem().getParentItem().getOnChangeMethod()) {
+				return this.getParentItem().getParentItem().getOnChangeMethod().call(this, value, event, form);
+			} else {
+				return this.setInstanceValue(value);
+			}
+		},
+		forceUpdate:true,
+		updateElement:function(value) {
+			OSelect_XFormItem.prototype.updateElement.call(this, value);
+		},
+		cssStyle:"margin-bottom:5px;margin-top:5px;border:2px inset gray;"				
+	};
+	
+	var selectChckGrp = {
+		type:_GROUP_,
+		numCols:3,
+		colSizes:["130px","15px","130px"],
+		items:[
+			selectChck,
+			{type:_DWT_BUTTON_,label:ZaMsg.SelectAll,width:"120px",
+				onActivate:function (ev) {
+					var lstElement = this.getParentItem().items[0];
+					if(lstElement) {
+						lstElement.selectAll(ev);
+					}
+				}
+			},
+			{type:_CELLSPACER_,width:"15px"},
+			{type:_DWT_BUTTON_,label:ZaMsg.DeselectAll,width:"120px",
+				onActivate:function (ev) {
+					var lstElement = this.getParentItem().items[0];
+					if(lstElement) {
+						lstElement.deselectAll(ev);
+					}
+				}
+			}
+		]
+		
+	}
+		
+	this.items = [checkBox,{type:_CELLSPACER_,width:this.labelWidth},selectChckGrp];
+	
+	
+	Composite_XFormItem.prototype.initializeItems.call(this);
+}
+
+/**
+*	_SUPER_ZIMLET_SELECT_CHECK_ form item type
+**/
+SuperZimlet_Select_XFormItem = function () {}
+XFormItemFactory.createItemType("_SUPER_ZIMLET_SELECT_CHECK_", "super_zimlet_select_check", SuperZimlet_Select_XFormItem, Super_XFormItem);
+SuperZimlet_Select_XFormItem.prototype.numCols=2;
+SuperZimlet_Select_XFormItem.prototype.colSizes=["275px","275px"];
+SuperZimlet_Select_XFormItem.prototype.nowrap = false;
+SuperZimlet_Select_XFormItem.prototype.labelWrap = true;
+SuperZimlet_Select_XFormItem.prototype.items = [];
+SuperZimlet_Select_XFormItem.prototype.labelWidth = "275px";
+
+SuperZimlet_Select_XFormItem.prototype.initializeItems = function() {
 	var selectRef = this.getInheritedProperty("selectRef");
 	var limitLabel = this.getInheritedProperty("limitLabel");
-	//var resetToSuperLabel = this.getInheritedProperty("resetToSuperLabel");
 	var choices = this.getInheritedProperty("choices");	
 	var radioBox1 = {type:_RADIO_, groupname:"zimlet_select_check_grp"+selectRef,ref:".",
 		label:ZaMsg.NAD_UseCosSettings, labelLocation:_RIGHT_,
@@ -685,7 +757,6 @@ Zimlet_Select_XFormItem.prototype.initializeItems = function() {
 		colSpan:3,
 		ref:selectRef,
 		width:"275px",
-		//onChange:Composite_XFormItem.onFieldChange,
 		onChange:function (value, event, form) {
 			if (this.getParentItem() && this.getParentItem().getParentItem() && this.getParentItem().getParentItem().getOnChangeMethod()) {
 				return this.getParentItem().getParentItem().getOnChangeMethod().call(this, value, event, form);
@@ -695,7 +766,6 @@ Zimlet_Select_XFormItem.prototype.initializeItems = function() {
 		},
 		forceUpdate:true,
 		updateElement:function(value) {
-			//Super_XFormItem.updateCss.call(this,5);
 			OSelect_XFormItem.prototype.updateElement.call(this, value);
 		},
 		cssStyle:"margin-bottom:5px;margin-top:5px;border:2px inset gray;"				
@@ -727,16 +797,6 @@ Zimlet_Select_XFormItem.prototype.initializeItems = function() {
 		]
 		
 	}
-	
-	/*var anchorHlpr = {	
-		type:_SUPER_ANCHOR_HELPER_, ref:".",label:resetToSuperLabel,
-		relevant:"Super_XFormItem.checkIfOverWriten.call(item)",
-		relevantBehavior:_BLOCK_HIDE_,
-		onChange:Composite_XFormItem.onFieldChange,
-		cssStyle: (anchorCssStyle ? anchorCssStyle : "width:150px"),
-		valign:_TOP_
-		
-	};*/
 		
 	this.items = [radioBox1,radioBox2,{type:_CELLSPACER_,width:this.labelWidth},selectChckGrp/*,{type:_CELLSPACER_,width:"15px"},anchorHlpr*/];
 	
@@ -745,13 +805,13 @@ Zimlet_Select_XFormItem.prototype.initializeItems = function() {
 }
 
 /**
-*	ZIMLETWIZ_SELECT_CHECK form item type
+*	_SUPER_ZIMLETWIZ_SELECT_CHECK_ form item type
 **/
-ZimletWiz_Select_XFormItem = function () {}
-XFormItemFactory.createItemType("_ZIMLETWIZ_SELECT_CHECK_", "zimletwiz_select_check", ZimletWiz_Select_XFormItem, Zimlet_Select_XFormItem);
-ZimletWiz_Select_XFormItem.prototype.numCols=2;
-ZimletWiz_Select_XFormItem.prototype.colSizes=["200px","275px"];
-ZimletWiz_Select_XFormItem.prototype.labelWidth = "200px";
+SuperZimletWiz_Select_XFormItem = function () {}
+XFormItemFactory.createItemType("_SUPER_ZIMLETWIZ_SELECT_CHECK_", "super_zimletwiz_select_check", SuperZimletWiz_Select_XFormItem, SuperZimlet_Select_XFormItem);
+SuperZimletWiz_Select_XFormItem.prototype.numCols=2;
+SuperZimletWiz_Select_XFormItem.prototype.colSizes=["200px","275px"];
+SuperZimletWiz_Select_XFormItem.prototype.labelWidth = "200px";
 
 /**
 *	SUPER_SELECT1 form item type
