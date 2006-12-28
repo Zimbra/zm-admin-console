@@ -354,19 +354,14 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 							]}										
 						]
 					},
-					{type:_ZATABCASE_, relevant:"instance[ZaModel.currentTab]==4", numCols:2, colSizes:["10px", "400px"],
+					{type:_ZATABCASE_, numCols:1, relevant:"instance[ZaModel.currentTab]==4", 
 						items: [
-							{type:_SPACER_},	
-							{type:_CELLSPACER_},				  	  	
-							{type:_GROUP_,items:[
-								{	
-									ref:ZaCos.A_zimbraPrefSkin, type:_OSELECT1_, 
-									msgName:ZaMsg.NAD_zimbraPrefSkin,label:ZaMsg.NAD_zimbraPrefSkin, labelLocation:_LEFT_, 
-									onChange:ZaTabView.onFormFieldChanged,choices:this._app.getInstalledSkins(),
-									relevant:"ZaCosXFormView.gotSkins.call(this)"
-								}					  	  							
-							]},
-							{type:_SPACER_},
+							{type:_ZAGROUP_,items:[							{	
+								ref:ZaCos.A_zimbraPrefSkin, type:_OSELECT1_, 
+								msgName:ZaMsg.NAD_zimbraPrefSkin,label:ZaMsg.NAD_zimbraPrefSkin, labelLocation:_LEFT_, 
+								onChange:ZaTabView.onFormFieldChanged,choices:this._app.getInstalledSkins(),
+								relevant:"ZaCosXFormView.gotSkins.call(this)"
+							}]},
 							{type:_ZAGROUP_, numCols:1,colSizes:["auto"], 
 								items: [
 									{type:_ZIMLET_SELECT_CHECK_,
