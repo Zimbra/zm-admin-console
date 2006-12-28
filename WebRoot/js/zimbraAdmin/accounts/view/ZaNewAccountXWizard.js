@@ -98,6 +98,7 @@ ZaNewAccountXWizard.SKINS_STEP = 7;
 ZaNewAccountXWizard.ZIMLETS_STEP = 8;
 ZaNewAccountXWizard.ADVANCED_STEP = 9;
 
+ZaNewAccountXWizard.zimletChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
 ZaNewAccountXWizard.prototype = new ZaXWizardDialog;
 ZaNewAccountXWizard.prototype.constructor = ZaNewAccountXWizard;
 ZaXDialog.XFormModifiers["ZaNewAccountXWizard"] = new Array();
@@ -286,70 +287,37 @@ function(entry) {
 		}
 	}
 	if(ZaSettings.ZIMLETS_ENABLED) {
-		var _tmpZimlets = [];
 		var zimlets = entry.attrs[ZaAccount.A_zimbraZimletAvailableZimlets];
 		if(zimlets != null && zimlets != "") {
+			var _tmpZimlets = [];
 			if (AjxUtil.isString(zimlets))	 {
 				zimlets = [zimlets];
 			}
-			
-			var cnt = zimlets.length;
-			for(var i=0; i<cnt; i++) {
-				var zimlet = zimlets[i];
-				_tmpZimlets[i] = new String(zimlet);
-				_tmpZimlets[i].id = "id_"+zimlet;
-			}
-			
-			this._containedObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
+
+			this._containedObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] = zimlets;
 		} else
 			this._containedObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] = null;		
 		
 		
-		//convert strings to objects
-		/*
-		var zimlets;
-		if(ZaSettings.COSES_ENABLED) {	
-			 zimlets = this._containedObject.cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
-		} else {
-			 zimlets = this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets];
-		}
+
+		var allZimlets = ZaZimlet.getAll(this._app, "extension");
 		_tmpZimlets = [];
-		if(zimlets == null) {
-			zimlets = [];
-		} else if (AjxUtil.isString(zimlets))	 {
-			zimlets = [zimlets];
-		}
-		
-		for(var i=0; i<zimlets.length; i++) {
-			var zimlet = zimlets[i];
-			_tmpZimlets[i] = new String(zimlet);
-			_tmpZimlets[i].id = "id_"+zimlet;
-		}
-		if(ZaSettings.COSES_ENABLED) {			
-			this._containedObject.cos.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
-		} else {
-			this._containedObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] = _tmpZimlets;
-		}*/
-					
-		//convert strings to objects
-		var zimlets = ZaZimlet.getAll(this._app, "extension");
-		_tmpZimlets = [];
-		if(zimlets == null) {
-			zimlets = [];
+		if(allZimlets == null) {
+			allZimlets = [];
 		} 
 		
-		if(zimlets instanceof ZaItemList || zimlets instanceof AjxVector)
-			zimlets = zimlets.getArray();
-			
-		var cnt = zimlets.length;
-		//convert strings to objects	
+		if(allZimlets instanceof ZaItemList || allZimlets instanceof AjxVector)
+			allZimlets = allZimlets.getArray();
+		
+		var cnt = allZimlets.length;
+		//convert objects to strings	
 		for(var i=0; i<cnt; i++) {
-			var zimlet = zimlets[i];
-			_tmpZimlets[i] = new String(zimlet.name);
-			_tmpZimlets[i].id = "id_"+zimlet.name;
+			var zimlet = allZimlets[i];
+			_tmpZimlets[i] = zimlet.name;
 		}
-		this._containedObject[ZaAccount.A_zimbraInstalledZimletPool] = _tmpZimlets;		
-	}	
+		ZaNewAccountXWizard.zimletChoices.setChoices(_tmpZimlets);
+		ZaNewAccountXWizard.zimletChoices.dirtyChoices();		
+	}
 	this._localXForm.setInstance(this._containedObject);
 }
 
@@ -942,13 +910,25 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 	if(ZaSettings.ZIMLETS_ENABLED) {
 		cases.push({type:_CASE_,id:"account_form_zimlets_step", numCols:1, width:"100%", relevant:"instance[ZaModel.currentStep]==ZaNewAccountXWizard.ZIMLETS_STEP", 
 						items: [	
-							{type:_SPACER_},
+		/*					{type:_SPACER_},
 							{sourceRef: ZaAccount.A_zimbraInstalledZimletPool, 
 								ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
 								type:_SUPER_DWT_CHOOSER_, sorted:true, 
 								resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
 								forceUpdate:true,widgetClass:ZaZimletPoolChooser,
 								width:"100%"
+							}*/
+							{type:_ZAWIZGROUP_, colSizes:["20px","475px"],
+								items: [
+									{type:_CELLSPACER_,width:"20px"},
+									{type:_ZIMLET_SELECT_CHECK_,
+										selectRef:ZaAccount.A_zimbraZimletAvailableZimlets, 
+										ref:ZaAccount.A_zimbraZimletAvailableZimlets, 
+										choices:ZaNewAccountXWizard.zimletChoices,
+										resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+										relevant:("instance[ZaModel.currentStep]==ZaNewAccountXWizard.ZIMLETS_STEP")
+									}
+								]
 							}							
 						]
 		});			
