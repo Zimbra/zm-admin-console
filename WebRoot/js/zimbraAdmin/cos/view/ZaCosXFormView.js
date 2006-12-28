@@ -278,7 +278,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 									labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
 								}
 							]},
-							{type:_ZA_TOP_GROUPER_, id:"cos_prefs_mail_sending",borderCssClass:"LowPadedTopGrouperBorder",label:ZaMsg.NAD_MailOptionsReceiving,items :[							
+							{type:_ZA_TOP_GROUPER_, id:"cos_prefs_mail_sending",borderCssClass:"LowPadedTopGrouperBorder",label:ZaMsg.NAD_MailOptionsSending,items :[							
 								{ref:ZaCos.A_zimbraPrefSaveToSent, type:_CHECKBOX_, msgName:ZaMsg.NAD_prefSaveToSent,label:ZaMsg.NAD_prefSaveToSent, 
 									trueValue:"TRUE", falseValue:"FALSE", onChange:ZaTabView.onFormFieldChanged
 								},							
