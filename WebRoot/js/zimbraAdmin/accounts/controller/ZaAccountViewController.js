@@ -289,6 +289,8 @@ function () {
 					mods[ZaAccount.A_zimbraZimletAvailableZimlets].push(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets][i]);
 				}
 			}
+		} else if(this._currentObject.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] != null) {
+			mods[ZaAccount.A_zimbraZimletAvailableZimlets] = "";
 		}
 	}
 	//save changed fields
