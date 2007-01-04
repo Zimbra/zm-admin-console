@@ -1410,7 +1410,9 @@ function (value, event, form){
 		}
 	}
 
-	form.parent.setDirty(true);	
+	if(form.parent.setDirty)
+		form.parent.setDirty(true);	
+		
 	this.setInstanceValue(value);
 	form.refresh();
 }
