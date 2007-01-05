@@ -1036,27 +1036,26 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 				});
 	}
 	
-	var zimbraFeatureMailForwardingEnabledType = _SUPER_CHECKBOX_ ;
-	if (ZaSettings.isDomainAdmin || !ZaSettings.COSES_ENABLED) {
-		zimbraFeatureMailForwardingEnabledType = _CHECKBOX_ ;
-	}
-	
 	if(ZaSettings.ACCOUNTS_FORWARDING_ENABLED) {
-		cases.push({type:_ZATABCASE_, numCols:2, relevant:("instance[ZaModel.currentTab] == " + _tab7), 
+		cases.push({type:_ZATABCASE_,id:"account_form_forwarding_tab", numCols:2, colSizes:["275px","auto"], 
+					relevant:("instance[ZaModel.currentTab] == " + _tab7), 
 					items: [
-						{ref:ZaAccount.A_zimbraFeatureMailForwardingEnabled,resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-							type:zimbraFeatureMailForwardingEnabledType, 
-							label:ZaMsg.NAD_zimbraFeatureMailForwardingEnabled,  
+						{
+							ref:ZaAccount.A_zimbraFeatureMailForwardingEnabled,
+							resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
+							type:_SUPER_CHECKBOX_, colSpan:2,
+							checkBoxLabel:ZaMsg.NAD_zimbraFeatureMailForwardingEnabled,  
 							trueValue:"TRUE", falseValue:"FALSE",
 							onChange:ZaTabView.onFormFieldChanged
 						},
-						{ref:ZaAccount.A_zimbraPrefMailForwardingAddress, type:_TEXTFIELD_,width:250,
-							msgName:ZaMsg.NAD_zimbraPrefMailForwardingAddress,label:ZaMsg.NAD_zimbraPrefMailForwardingAddress+":", labelLocation:_LEFT_,  
+						{ref:ZaAccount.A_zimbraPrefMailForwardingAddress, type:_TEXTFIELD_, width:275,
+							msgName:ZaMsg.NAD_zimbraPrefMailForwardingAddress,
+							label:ZaMsg.NAD_zimbraPrefMailForwardingAddress+":", labelLocation:_LEFT_,  
 							onChange:ZaTabView.onFormFieldChanged,
 							relevantBehavior:_DISABLE_, align:_LEFT_,
 							relevant:"this.getModel().getInstanceValue(this.getInstance(),ZaAccount.A_zimbraFeatureMailForwardingEnabled) == \"TRUE\""
 						},
-						{type:_SPACER_},
+						{type:_SPACER_,colSpan:2},
 						{type:_SEPARATOR_,colSpan:2},
 						{ref:ZaAccount.A_zimbraMailForwardingAddress,type:_REPEAT_,
 							labelCssClass:"xform_label", label:ZaMsg.NAD_EditFwdGroup,colSpan:"*", labelLocation:_LEFT_, 
@@ -1066,7 +1065,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 							showAddOnNextRow:true, 
 							removeButtonLabel:ZaMsg.NAD_RemoveAddress,								
 							items: [
-								{ref:".", type:_TEXTFIELD_, label:null, onChange:ZaTabView.onFormFieldChanged, width:250}
+								{ref:".", type:_TEXTFIELD_, label:null, onChange:ZaTabView.onFormFieldChanged, width:275}
 							],
 							onRemove:ZaAccountXFormView.onRepeatRemove
 						}
