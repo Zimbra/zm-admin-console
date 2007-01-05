@@ -982,15 +982,16 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 							],
 							cssStyle:"padding-top:5px; padding-bottom:5px"
 						},				
-						{type:_ZA_PLAIN_GROUPER_, id:"account_prefs_contacts_general",colSizes:["auto"],numCols:1,
+						{type:_ZA_PLAIN_GROUPER_, id:"account_prefs_contacts_general",/*colSizes:["auto"],numCols:1,*/
 							//label:ZaMsg.NAD_ContactsOptions,
 							items :[
 								{ref:ZaAccount.A_zimbraPrefAutoAddAddressEnabled, type:_SUPER_CHECKBOX_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
 									msgName:ZaMsg.NAD_zimbraPrefAutoAddAddressEnabled,checkBoxLabel:ZaMsg.NAD_zimbraPrefAutoAddAddressEnabled, 
-									trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged
+									trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged,
+									colSpan:2
 								},							
-								{ref:ZaAccount.A_zimbraPrefGalAutoCompleteEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_zimbraPrefGalAutoCompleteEnabled,checkBoxLabel:ZaMsg.NAD_zimbraPrefGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},	
+								{ref:ZaAccount.A_zimbraPrefGalAutoCompleteEnabled,colSpan:2, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_zimbraPrefGalAutoCompleteEnabled,checkBoxLabel:ZaMsg.NAD_zimbraPrefGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE",onChange:ZaTabView.onFormFieldChanged},	
 								{ref:ZaAccount.A_zimbraPrefContactsPerPage, type:_SUPER_SELECT1_, msgName:ZaMsg.NAD_PrefContactsPerPage,label:ZaMsg.NAD_PrefContactsPerPage+":", labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, valueLabel:null,onChange:ZaTabView.onFormFieldChanged}		
 							]
 						},
