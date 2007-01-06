@@ -252,9 +252,9 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 					this.getForm().itemChanged(this, elementValue, event);
 				}
 			},			
-			{ref:ZaResource.A_zimbraCalResType, type:_OSELECT1_, msgName:ZaMsg.NAD_ResType,label:ZaMsg.NAD_ResType, 
+/*			{ref:ZaResource.A_zimbraCalResType, type:_OSELECT1_, msgName:ZaMsg.NAD_ResType,label:ZaMsg.NAD_ResType, 
 				labelLocation:_LEFT_, choices:ZaResource.resTypeChoices
-			},		
+			},	*/	
 			{ref:ZaResource.A_name, type:_EMAILADDR_, msgName:ZaMsg.NAD_ResAccountName,label:ZaMsg.NAD_ResAccountName, 
 				labelLocation:_LEFT_,id:"resource_email_addr",
 				onChange: function(value, event, form) {
