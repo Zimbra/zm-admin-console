@@ -629,3 +629,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaWizLabel {
 	width:200px;
 }
+
+.ZaHighlightedText {
+ @NoticeText@
+}
