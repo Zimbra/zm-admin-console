@@ -1057,6 +1057,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 						},
 						{type:_SPACER_,colSpan:2},
 						{type:_SEPARATOR_,colSpan:2},
+						{type:_SPACER_,colSpan:2},
 						{ref:ZaAccount.A_zimbraMailForwardingAddress,type:_REPEAT_,
 							labelCssClass:"xform_label", label:ZaMsg.NAD_EditFwdGroup,colSpan:"*", labelLocation:_LEFT_, 
 							addButtonLabel:ZaMsg.NAD_AddAddress, 
