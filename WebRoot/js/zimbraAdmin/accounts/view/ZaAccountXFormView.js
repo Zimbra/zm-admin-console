@@ -1037,7 +1037,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 	}
 	
 	if(ZaSettings.ACCOUNTS_FORWARDING_ENABLED) {
-		cases.push({type:_ZATABCASE_,id:"account_form_forwarding_tab", numCols:2, colSizes:["275px","auto"], 
+		cases.push({type:_ZATABCASE_,id:"account_form_forwarding_tab", numCols:2, colSizes:["275px","275px"], 
 					relevant:("instance[ZaModel.currentTab] == " + _tab7), 
 					items: [
 						{
@@ -1048,7 +1048,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 							trueValue:"TRUE", falseValue:"FALSE",
 							onChange:ZaTabView.onFormFieldChanged
 						},
-						{ref:ZaAccount.A_zimbraPrefMailForwardingAddress, type:_TEXTFIELD_, width:275,
+						{ref:ZaAccount.A_zimbraPrefMailForwardingAddress, type:_TEXTFIELD_, width:230,
 							msgName:ZaMsg.NAD_zimbraPrefMailForwardingAddress,
 							label:ZaMsg.NAD_zimbraPrefMailForwardingAddress+":", labelLocation:_LEFT_,  
 							onChange:ZaTabView.onFormFieldChanged,
@@ -1065,7 +1065,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 							showAddOnNextRow:true, 
 							removeButtonLabel:ZaMsg.NAD_RemoveAddress,								
 							items: [
-								{ref:".", type:_TEXTFIELD_, label:null, onChange:ZaTabView.onFormFieldChanged, width:275}
+								{ref:".", type:_TEXTFIELD_, label:null, onChange:ZaTabView.onFormFieldChanged, width:230}
 							],
 							onRemove:ZaAccountXFormView.onRepeatRemove
 						}
