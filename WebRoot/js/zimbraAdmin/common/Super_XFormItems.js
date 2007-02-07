@@ -1322,6 +1322,47 @@ ZACenterGrouper_XFormItem.prototype.borderCssClass = "CenterGrouperBorder";
 function ZAAllScreenGrouper_XFormItem() {}
 XFormItemFactory.createItemType("_ZAALLSCREEN_GROUPER_", "zaallscreen_grouper", ZAAllScreenGrouper_XFormItem, Grouper_XFormItem);
 ZAAllScreenGrouper_XFormItem.prototype.borderCssClass = "AllScreenGrouperBorder";
+/*ZAAllScreenGrouper_XFormItem.prototype.outputHTML = function (html, updateScript, indent, currentCol) {
+	var form = this.getForm();
+	form.outputItemList(this.getItems(), this, html, updateScript, indent, this.getNumCols(), currentCol);
+	if(this.cacheInheritedMethod("getCustomWidth", "$getCustomWidth")) {
+		var container = (form.parent instanceof DwtControl) ? form.parent : AjxCore.objectWithId(window._dwtShell);		
+		if(container) {
+			if(this.cacheInheritedMethod("resizeHdlr", "$resizeHdlr")) {
+				container.addControlListener(new AjxListener(this, this.cacheInheritedMethod("resizeHdlr", "$resizeHdlr")));
+			}
+		}
+	}
+}
+ZAAllScreenGrouper_XFormItem.prototype.getCustomWidth = function () {
+	try {
+		var element = this.getElement();
+		var container = element.parentNode;
+		var minWidth = this.getInheritedProperty("minWidth");
+
+		if(container && minWidth) {
+			if(container.offsetWidth<minWidth && element.offsetWidth <= minWidth) {
+				return minWidth;
+			} else if(container.offsetWidth>minWidth)  {
+				return "100%";
+			}
+		}	
+		
+	} catch (ex) {
+        
+	}
+	return "100%";  
+}
+ZAAllScreenGrouper_XFormItem.prototype.resizeHdlr = 
+function() {
+	try {
+		var element = this.getElement();
+		var width = this.cacheInheritedMethod("getCustomWidth", "$getCustomWidth").call(this);
+		element.style.width = width;
+	} catch (ex) {
+		
+	}
+};*/
 
 function ZASmallCenterGrouper_XFormItem() {}
 XFormItemFactory.createItemType("_ZASMALL_CENTER_GROUPER_", "zasmall_center_grouper", ZASmallCenterGrouper_XFormItem, Grouper_XFormItem);
