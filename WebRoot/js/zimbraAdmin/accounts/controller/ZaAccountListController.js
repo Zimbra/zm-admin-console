@@ -41,7 +41,7 @@ function ZaAccountListController(appCtxt, container, app) {
    	
 	this._currentPageNum = 1;
 //	this._currentQuery = new ZaSearchQuery("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES], false, "");
-	this._currentQuery = "";
+	this._currentQuery = null;
 	this._currentSortField = ZaAccount.A_uid;
 	this._currentSortOrder = "1";
 	this.searchTypes = [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES];
@@ -65,8 +65,9 @@ ZaController.initPopupMenuMethods["ZaAccountListController"] = new Array();
 
 ZaAccountListController.prototype.show = function (doPush) {
 	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,CONS:null,show:doPush});
+	
 	var searchParams = {
-			query:this._currentQuery, 
+			query:this._currentQuery ,
 			types:this.searchTypes,
 			sortBy:this._currentSortField,
 			offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
