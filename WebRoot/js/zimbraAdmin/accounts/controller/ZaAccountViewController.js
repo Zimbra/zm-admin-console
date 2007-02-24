@@ -40,7 +40,6 @@ function ZaAccountViewController(appCtxt, container, app) {
 	this._helpURL = ZaAccountViewController.helpURL;
 	this.deleteMsg = ZaMsg.Q_DELETE_ACCOUNT;
 	this._toolbarOperations = new Array();
-	this.tabConstructor = ZaAccountXFormView;
 }
 
 ZaAccountViewController.prototype = new ZaXFormViewController();
@@ -59,8 +58,8 @@ ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 */
 
 ZaAccountViewController.prototype.show = 
-function(entry, openInNewTab, skipRefresh) {
-	this._setView(entry, openInNewTab, skipRefresh);
+function(entry, skipRefresh) {
+	this._setView(entry, skipRefresh);
 }
 
 ZaAccountViewController.initToolbarMethod =
@@ -94,23 +93,14 @@ function(entry) {
 			this._initToolbar();
 			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);
 	
-	  		this._contentView = this._view = new this.tabConstructor(this._container, this._app);
+	  		this._view = new ZaAccountXFormView(this._container, this._app);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
-			
-			var tabParams = {
-				openInNewTab: true,
-				tabId: this.getContentViewId()
-			}
-				  		
-	    	this._app.createView(this.getContentViewId(), elements, tabParams);
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		  		
+	    	this._app.createView(ZaZimbraAdmin._ACCOUNT_VIEW, elements);
 	    	this._UICreated = true;
-	    	//associate the controller with the view by viewId
-	    	this._app._controllers[this.getContentViewId ()] = this ;
   		}
-		//this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
-		this._app.pushView(this.getContentViewId()) ;
+		this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
 		if(entry.id) {
 			try {
 				entry.refresh(!ZaSettings.COSES_ENABLED);

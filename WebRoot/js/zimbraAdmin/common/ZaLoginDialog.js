@@ -99,11 +99,10 @@ function(username, bReloginMode) {
  }
  
 ZaLoginDialog.prototype.popup =
-function(loc,bReloginMode) {
+function(loc) {
 	if (this._poppedUp) return;
-	if(!bReloginMode)
-		this.cleanup(true);
-		
+	
+	this.cleanup(true);
 	var thisZ = this._zIndex;
 	// if we're modal, setup the veil effect,
 	// and track which dialogs are open
@@ -128,13 +127,13 @@ function(loc,bReloginMode) {
 
 
 ZaLoginDialog.prototype.setVisible = 
-function(visible, transparentBg,bReloginMode) {
+function(visible, transparentBg) {
 	if (!!visible == this.isPoppedUp()) {
 		return;
 	}
 	
 	if (visible) {
-		this.popup(null,bReloginMode);
+		this.popup();
 	} else {
 		this.popdown();
 	}

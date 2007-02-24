@@ -56,16 +56,6 @@ function () {
 	return ZaMsg.GlobalStats_view_title;
 }
 
-ZaGlobalStatsView.prototype.getTabIcon =
-function () {
-	return "Statistics";
-}
-
-ZaGlobalStatsView.prototype.getTabToolTip =
-function () {
-	return ZaMsg.GlobalStats_view_title;
-}
-
 ZaGlobalStatsView.prototype._resetTabSizes = 
 function (width, height) {
     var tabBarSize = this._tabBar.getSize();

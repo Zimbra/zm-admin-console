@@ -34,26 +34,6 @@ ZaSettings.MAXSEARCHRESULTS = "50";
 /**
 * Look for admin name cookies and admin type cookies
 **/
-ZaSettings.postInit = function() {
-	//Instrumentation code start	
-	if(ZaSettings.initMethods) {
-		var cnt = ZaSettings.initMethods.length;
-		for(var i = 0; i < cnt; i++) {
-			if(typeof(ZaSettings.initMethods[i]) == "function") {
-				ZaSettings.initMethods[i].call(this);
-			}
-		}
-	}	
-	//Instrumentation code end	
-	var shell = DwtShell.getShell(window);
-	var appCtxt = ZaAppCtxt.getFromShell(shell);
-	var appController = appCtxt.getAppController();
-	
-	appController._launchApp();	
-	ZaZimbraAdmin.setOnbeforeunload(ZaZimbraAdmin._confirmExitMethod);
-	ZaSettings.initialized = true;
-	ZaSettings.initializing = false;
-};
 ZaSettings.init = function () {
 	if(ZaSettings.initialized || ZaSettings.initializing)
 		return;
@@ -96,10 +76,9 @@ ZaSettings.init = function () {
 			}
 			try {
 				if(includes.length > 0)
-					AjxInclude(includes, null,new AjxCallback(ZaSettings.postInit ));	
+					AjxInclude(includes, null,new AjxCallback(this, ZaSettings.postInit));	
 			} catch (ex) {
 				//go on
-				throw ex;
 			}
 					
 		} else {
@@ -119,7 +98,26 @@ ZaSettings.init = function () {
 	
 };
 
-
+ZaSettings.postInit = function() {
+	//Instrumentation code start	
+	if(ZaSettings.initMethods) {
+		var cnt = ZaSettings.initMethods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(ZaSettings.initMethods[i]) == "function") {
+				ZaSettings.initMethods[i].call(this);
+			}
+		}
+	}	
+	//Instrumentation code end	
+	var shell = DwtShell.getShell(window);
+	var appCtxt = ZaAppCtxt.getFromShell(shell);
+	var appController = appCtxt.getAppController();
+	
+	appController._launchApp();	
+	ZaZimbraAdmin.setOnbeforeunload(ZaZimbraAdmin._confirmExitMethod);
+	ZaSettings.initialized = true;
+	ZaSettings.initializing = false;
+};
 /**
 * Static method so that static code can get the default value of a setting if it needs to.
 *
@@ -165,9 +163,6 @@ ZaSettings.SKIN_STATUS_ID				= i++;
 ZaSettings.SKIN_TREE_ID					= i++;
 ZaSettings.SKIN_TREE_FOOTER_ID			= i++;
 ZaSettings.SKIN_USER_INFO_ID				= i++;
-ZaSettings.SKIN_APP_TABS_ID				= i++;
-ZaSettings.SKIN_HELP_ID					= i++ ;
-ZaSettings.SKIN_DW_ID					= i++ ;
 
 //CONSTANTS FOR ROLE-BASED ACCESS
 ZaSettings.STATUS_ENABLED= true;
@@ -220,10 +215,3 @@ ZaSettings.INIT[ZaSettings.SKIN_TREE_ID]					= [null, ZaSettings.T_CONFIG, ZaSet
 ZaSettings.INIT[ZaSettings.SKIN_TREE_FOOTER_ID]			= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_tree_footer"];
 
 ZaSettings.INIT[ZaSettings.SKIN_USER_INFO_ID]				= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_quota"];
-ZaSettings.timeZoneChoices = new XFormChoices(AjxTimezoneData.TIMEZONE_RULES, XFormChoices.OBJECT_LIST, "serverId", "serverId");	
-ZaSettings.INIT[ZaSettings.SKIN_APP_TABS_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_app_tabs"];
-
-ZaSettings.SKIN_LOGOFF_DOM_ID = "skin_container_logoff" ;
-ZaSettings.SKIN_HELP_DOM_ID = "skin_container_help" ;
-ZaSettings.SKIN_DW_DOM_ID = "skin_container_dw" ;
-ZaSettings.SKIN_TABS_DOM_ID = "skin_container_app_tabs" ;
