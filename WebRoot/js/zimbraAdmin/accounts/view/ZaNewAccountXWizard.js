@@ -157,8 +157,7 @@ function() {
 				this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
 			break;
 			case ZmCsfeException.ACCT_INVALID_PASSWORD:
-				this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_INVALID, ex);
-				this._app.getAppCtxt().getErrorDialog().showDetail(true);
+				this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_INVALID);
 			break;
 			default:
 				this._app.getCurrentController()._handleException(ex, "ZaNewAccountXWizard.prototype.finishWizard", null, false);
@@ -565,12 +564,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 							checkBoxLabel:ZaMsg.NAD_zimbraFeatureMailForwardingEnabled,  
 							trueValue:"TRUE", falseValue:"FALSE"
 						},
-						{ref:ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled, 
-							type:_CHECKBOX_, 
-							msgName:ZaMsg.NAD_zimbraPrefMailLocalDeliveryDisabled,
-							label:ZaMsg.NAD_zimbraPrefMailLocalDeliveryDisabled, 
-							trueValue:"TRUE", falseValue:"FALSE"
-						},
 						{ref:ZaAccount.A_zimbraPrefMailForwardingAddress,width:250,
 							labelCssClass:"xform_label",
 							type:_TEXTFIELD_, msgName:ZaMsg.NAD_zimbraPrefMailForwardingAddress,
@@ -580,8 +573,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 							nowrap:false,labelWrap:true, 
 							relevant:"this.getModel().getInstanceValue(this.getInstance(),ZaAccount.A_zimbraFeatureMailForwardingEnabled) == \"TRUE\""
 						},		
+						{type:_SPACER_},
 						{type:_SEPARATOR_,colSpan:2},											
-						{ref:ZaAccount.A_zimbraMailForwardingAddress, type:_REPEAT_, 
+						{ref:ZaAccount.A_zimbraMailForwardingAddress, type:_REPEAT_, colSpan:2, 
 							label:ZaMsg.NAD_EditFwdGroup, labelLocation:_LEFT_,labelCssClass:"xform_label",
 							repeatInstance:emptyAlias, 
 							showAddButton:true, showRemoveButton:true, 
@@ -731,6 +725,12 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 						{type:_ZAWIZ_TOP_GROUPER_, id:"account_prefs_mail_receiving",
 							label:ZaMsg.NAD_MailOptionsReceiving,
 							items :[
+								{ref:ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled, 
+									type:_ZA_CHECKBOX_, 
+									msgName:ZaMsg.NAD_zimbraPrefMailLocalDeliveryDisabled,
+									label:ZaMsg.NAD_zimbraPrefMailLocalDeliveryDisabled, 
+									trueValue:"TRUE", falseValue:"FALSE"
+								},
 								{ref:ZaAccount.A_zimbraPrefMailPollingInterval, type:_SUPER_LIFETIME_, 
 									colSizes:["200px","130px","120px","150px"],
 									msgName:ZaMsg.NAD_zimbraPrefMailPollingInterval,
@@ -877,7 +877,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 						},					
 						{type:_ZA_PLAIN_GROUPER_, id:"account_prefs_calendar_general",colSizes:["auto"],numCols:1,
 							items :[
-								{ref:ZaAccount.A_zimbraPrefTimeZoneId, type:_SUPERWIZ_SELECT1_, msgName:ZaMsg.NAD_zimbraPrefTimeZoneId,label:ZaMsg.NAD_zimbraPrefTimeZoneId+":", labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS},							
 								{ref:ZaAccount.A_zimbraPrefCalendarApptReminderWarningTime, type:_SUPERWIZ_SELECT1_, msgName:ZaMsg.NAD_zimbraPrefCalendarApptReminderWarningTime,label:ZaMsg.NAD_zimbraPrefCalendarApptReminderWarningTime+":", labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS},
 								{ref:ZaAccount.A_zimbraPrefCalendarAlwaysShowMiniCal, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_alwaysShowMiniCal,checkBoxLabel:ZaMsg.NAD_alwaysShowMiniCal, trueValue:"TRUE", falseValue:"FALSE"},
 								{ref:ZaAccount.A_zimbraPrefCalendarUseQuickAdd, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.NAD_useQuickAdd,checkBoxLabel:ZaMsg.NAD_useQuickAdd, trueValue:"TRUE", falseValue:"FALSE"},

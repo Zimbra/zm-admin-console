@@ -39,7 +39,6 @@ ZaServer.prototype = new ZaItem;
 ZaServer.prototype.constructor = ZaServer;
 ZaItem.loadMethods["ZaServer"] = new Array();
 ZaItem.initMethods["ZaServer"] = new Array();
-ZaItem.modifyMethods["ZaServer"] = new Array();
 
 //attribute name constants, this values are taken from zimbra.schema
 ZaServer.A_name = "cn";
@@ -127,8 +126,9 @@ ZaServer.A_VolumeRootPath = "rootpath";
 ZaServer.A_VolumeCompressBlobs = "compressBlobs";
 ZaServer.A_VolumeCompressionThreshold = "compressionThreshold";
 ZaServer.A_VolumeType = "type";
-ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
-ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
+ZaServer.A_CurrentPrimaryMsgVolumeId = "current_pri_msg_volume_id";
+ZaServer.A_CurrentSecondaryMsgVolumeId = "current_sec_msg_volume_id";
+ZaServer.A_CurrentIndexMsgVolumeId = "current_index_volume_id";
 
 //mail proxy
 ZaServer.A_zimbraImapProxyBindPort="zimbraImapProxyBindPort";
@@ -140,31 +140,16 @@ ZaServer.A_zimbraPop3SSLProxyBindPort="zimbraPop3SSLProxyBindPort";
 ZaServer.A_zimbraIsMonitorHost = "zimbraIsMonitorHost";
 ZaServer.A_showVolumes = "show_volumes"; //this attribute is immutable
 ZaServer.A_zimbraLogHostname = "zimbraLogHostname";
-ZaServer.A_isCurrentVolume = "isCurrentVolume";
+
 ZaServer.STANDALONE = "standalone";
 ZaServer.MASTER = "master";
 ZaServer.SLAVE = "slave";
 
-ZaServer.MSG = 1;
+ZaServer.PRI_MSG = 1;
+ZaServer.SEC_MSG = 2;
 ZaServer.INDEX = 10;
-ZaServer.currentkeys = {};
-ZaServer.currentkeys[ZaServer.MSG] = ZaServer.A_CurrentMsgVolumeId;
-ZaServer.currentkeys[ZaServer.INDEX] = ZaServer.A_CurrentIndexVolumeId;
-ZaServer.volumeTypes =[ZaServer.MSG,ZaServer.INDEX];
+ZaServer.volumeTypeChoices = new XFormChoices({1:ZaMsg.NAD_VOLUME_Msg, 10:ZaMsg.NAD_VOLUME_Index}, XFormChoices.HASH);
 
-ZaServer.volumeTypeChoices = new XFormChoices({1:ZaMsg.VM_VOLUME_Msg, 10:ZaMsg.VM_VOLUME_Index}, XFormChoices.HASH);
-ZaServer.volumeObjModel = {
-	items: [
-		{id:ZaServer.A_isCurrentVolume, type: _ENUM_, choices: [false,true]	},
-		{id:ZaServer.A_VolumeId, type:_NUMBER_},
-		{id:ZaServer.A_VolumeName, type:_STRING_},
-		{id:ZaServer.A_VolumeType, type:_ENUM_, choices:ZaServer.volumeTypes,defaultValue:ZaServer.MSG},
-		{id:ZaServer.A_VolumeRootPath, type:_STRING_},
-		{id:ZaServer.A_VolumeCompressBlobs, type:_ENUM_, choices:[false,true], defaultValue:true},
-		{id:ZaServer.A_VolumeCompressionThreshold, type:_NUMBER_,defaultValue:4096}				
-	],
-	type:_OBJECT_
-}
 		
 ZaServer.myXModel = {
 	items: [
@@ -198,7 +183,7 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraMtaAuthEnabled, ref:"attrs/" +  ZaServer.A_zimbraMtaAuthEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaTlsAuthOnly, ref:"attrs/" +  ZaServer.A_zimbraMtaTlsAuthOnly, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaRelayHost, ref:"attrs/" +  ZaServer.A_zimbraMtaRelayHost, type: _COS_HOSTNAME_OR_IP_, maxLength: 256 },
-		{id:ZaServer.A_zimbraMtaMyNetworks, ref:"attrs/" +  ZaServer.A_zimbraMtaMyNetworks, type:_COS_HOSTNAME_OR_IP_, maxLength: 256 },
+		{id:ZaServer.A_zimbraMtaMyNetworks, ref:"attrs/" +  ZaServer.A_zimbraMtaMyNetworks, type:_COS_STRING_, maxLength: 256},
 		{id:ZaServer.A_zimbraMtaDnsLookupsEnabled, ref:"attrs/" +  ZaServer.A_zimbraMtaDnsLookupsEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		// ...other...
 		{id:ZaServer.A_SmtpHostname, ref:"attrs/" +  ZaServer.A_SmtpHostname, type:_COS_HOSTNAME_OR_IP_, maxLength: 256 },
@@ -240,9 +225,20 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_MasterRedologClientTimeoutSec, ref:"attrs/" + ZaServer.A_MasterRedologClientTimeoutSec, type:_STRING_},		
 		{id:ZaServer.A_MasterRedologClientTcpNoDelay, ref:"attrs/" + ZaServer.A_MasterRedologClientTcpNoDelay, type:_STRING_},		
 		{id:ZaServer.A_zimbraUserServicesEnabled, ref:"attrs/" + ZaServer.A_zimbraUserServicesEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaServer.A_Volumes, type:_LIST_, listItem:ZaServer.volumeObjModel},
+		{id:ZaServer.A_Volumes, type:_LIST_, listItem:
+			{type:_OBJECT_,
+				items: [
+					{id:ZaServer.A_VolumeId, type:_NUMBER_},
+					{id:ZaServer.A_VolumeName, type:_STRING_},
+					{id:ZaServer.A_VolumeType, type:_ENUM_, choices:[ZaServer.PRI_MSG,ZaServer.SEC_MSG,ZaServer.INDEX],defaultValue:ZaServer.PRI_MSG},
+					{id:ZaServer.A_VolumeRootPath, type:_STRING_},
+					{id:ZaServer.A_VolumeCompressBlobs, type:_ENUM_, choices:[0,1], defaultValue:1},
+					{id:ZaServer.A_VolumeCompressionThreshold, type:_NUMBER_,defaultValue:4096}				
+				]
+			}
+		},
 		{id:ZaServer.A_showVolumes, ref:ZaServer.A_showVolumes, type: _ENUM_, choices: [false,true]}
-	]	
+	]
 };
 		
 ZaServer.prototype.toString = function() {
@@ -263,158 +259,40 @@ function(app) {
 	return list;
 }
 
-ZaServer.modifyMethod = function (tmpObj) {
-	if(tmpObj.attrs == null) {
-		//show error msg
-		this._app.getCurrentController()._errorDialog.setMessage(ZaMsg.ERROR_UNKNOWN, null, DwtMessageDialog.CRITICAL_STYLE, null);
-		this._app.getCurrentController()._errorDialog.popup();		
-		return false;	
-	}
-	
-	// update zimbraServiceEnabled
-	var svcInstalled = AjxUtil.isString(tmpObj.attrs[ZaServer.A_zimbraServiceInstalled])
-							? [ tmpObj.attrs[ZaServer.A_zimbraServiceInstalled] ]
-							: tmpObj.attrs[ZaServer.A_zimbraServiceInstalled];
-	if (svcInstalled) {
-		// get list of actually enabled fields
-		var enabled = [];
-		for (var i = 0; i < svcInstalled.length; i++) {
-			var service = svcInstalled[i];
-			if (tmpObj.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+service]) {
-				enabled.push(service);
-			}			
-		}
-		
-		// see if list of actually enabled fields is same as before
-		
-		var dirty = false; 
-		
-		if (this.attrs[ZaServer.A_zimbraServiceEnabled]) {
-			var prevEnabled = AjxUtil.isString(this.attrs[ZaServer.A_zimbraServiceEnabled])
-							? [ this.attrs[ZaServer.A_zimbraServiceEnabled] ]
-							: this.attrs[ZaServer.A_zimbraServiceEnabled];
-							
-			dirty = (enabled.length != prevEnabled.length);		
-			
-			if (!dirty) {
-				for (var i = 0; i < prevEnabled.length; i++) {
-					var service = prevEnabled[i];
-					if (!tmpObj.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+service]) {
-						dirty = true;
-						break;
-					}
-				}
-			}
-		}
-		
-		// save new list of enabled fields
-		if (dirty) {
-			tmpObj.attrs[ZaServer.A_zimbraServiceEnabled] = enabled;
-		}
-	}	
-
-	//modify volumes
-	if(this.attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
-		//remove Volumes
-		if(tmpObj[ZaServer.A_RemovedVolumes]) {
-			var cnt = tmpObj[ZaServer.A_RemovedVolumes].length;
-			for(var i = 0; i < cnt; i++) {
-				if(tmpObj[ZaServer.A_RemovedVolumes][i][ZaServer.A_VolumeId] > 0) {
-					this.deleteVolume(tmpObj[ZaServer.A_RemovedVolumes][i][ZaServer.A_VolumeId]);			
-				}
-			}
-		}
-	
-		if(tmpObj[ZaServer.A_Volumes]) {			
-			var tmpVolumeMap = new Array();
-			var cnt = tmpObj[ZaServer.A_Volumes].length;
-			for(var i = 0; i < cnt; i++) {
-				tmpVolumeMap.push(tmpObj[ZaServer.A_Volumes][i]);
-			}
-		
-			//create new Volumes
-			cnt = tmpVolumeMap.length;
-			for(var i = 0; i < cnt; i++) {
-				//consider only new rows (no VolumeID)
-				//ignore empty rows, Bug 4425
-				if(!tmpVolumeMap[i][ZaServer.A_VolumeId] && tmpVolumeMap[i][ZaServer.A_VolumeName] && tmpVolumeMap[i][ZaServer.A_VolumeRootPath]) {
-					this.createVolume(tmpVolumeMap[i]);			
-				}
-			}
-	
-			//modify existing volumes
-			cnt--;	
-			var cnt2 = this[ZaServer.A_Volumes].length;
-			for(var i = cnt; i >= 0; i--) {
-				var newVolume = tmpVolumeMap[i];
-				var oldVolume;
-				for (var ix =0; ix < cnt2; ix++) {
-					oldVolume = this[ZaServer.A_Volumes][ix];
-					if(oldVolume[ZaServer.A_VolumeId] == newVolume[ZaServer.A_VolumeId]) {
-						//check attributes
-						var modified = false;
-						for(var attr in oldVolume) {
-							if(oldVolume[attr] != newVolume[attr]) {
-								modified = true;
-								break;
-							}
-						}
-						
-						if(modified) {
-							this.modifyVolume(tmpVolumeMap[i]);
-						}
-						tmpVolumeMap.splice(i,1);
-					}
-				}
-			}
-		}
-
-		//set current volumes
-		for(var key in ZaServer.currentkeys) {
-			if(this[ZaServer.currentkeys[key]] !=tmpObj[ZaServer.currentkeys[key]] && tmpObj[ZaServer.currentkeys[key]]) {
-				this.setCurrentVolume(tmpObj[ZaServer.currentkeys[key]], key);
-			}
-			
-		}
-	}	
-		
-	//create a ModifyServerRequest SOAP request
+/**
+* @param mods - map of modified attributes
+* modifies object's information in the database
+**/
+ZaServer.prototype.modify =
+function(mods) {
 	var soapDoc = AjxSoapDoc.create("ModifyServerRequest", "urn:zimbraAdmin", null);
 	soapDoc.set("id", this.id);
-	//get the list of changed fields
-	var mods = new Object();
-	for (var a in tmpObj.attrs) {
-		if(a == ZaItem.A_objectClass || /^_/.test(a) || a == ZaServer.A_zimbraServiceInstalled)
-			continue;
-		
-		if (this.attrs[a] != tmpObj.attrs[a] ) {
-			if(tmpObj.attrs[a] instanceof Array) {
-				var array = tmpObj.attrs[a];
-				if (array.length > 0) {
-					for (var i = 0; i < array.length; i++) {
-						var attr = soapDoc.set("a", array[i]);
-						attr.setAttribute("n", a);
-					}
-				} else {
-					var attr = soapDoc.set("a");
-					attr.setAttribute("n", a);
-				}	
-			} else {
-				var attr = soapDoc.set("a", tmpObj.attrs[a]);
-				attr.setAttribute("n", a);
+	for (var aname in mods) {
+		if (mods[aname] instanceof Array) {
+			var array = mods[aname];
+			if (array.length > 0) {
+				for (var i = 0; i < array.length; i++) {
+					var attr = soapDoc.set("a", array[i]);
+					attr.setAttribute("n", aname);
+				}
+			}
+			else {
+				var attr = soapDoc.set("a");
+				attr.setAttribute("n", aname);
 			}
 		}
+		else {
+			var attr = soapDoc.set("a", mods[aname]);
+			attr.setAttribute("n", aname);
+		}
 	}
-	//modify the server
+
 	var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var resp = command.invoke(params).Body.ModifyServerResponse;		
-	this.initFromJS(resp.server[0]);		
-
+	this.initFromJS(resp.server[0]);
 }
-ZaItem.modifyMethods["ZaServer"].push(ZaServer.modifyMethod);
-
 
 /**
 * Returns HTML for a tool tip for this domain.
@@ -523,55 +401,32 @@ function () {
 	if(!this.id)
 		return;
 	var soapDoc = AjxSoapDoc.create("GetCurrentVolumesRequest", "urn:zimbraAdmin", null);
-	var command = new ZmCsfeCommand();
-	var params = new Object();
-	params.soapDoc = soapDoc;	
-	params.asyncMode = false;
-	params.targetServer = this.id;
-	resp = command.invoke(params);		
-	var resp = resp.Body.GetCurrentVolumesResponse;
-
-//	var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;	
+	//find out which server I am on
+	var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;	
 	
 	
-	var volumes = resp.volume;
-	if(volumes) {
-		var cnt = volumes.length;
-		for (var i=0; i< cnt;  i++) {
-			var volume = volumes[i];
-			for(var key in ZaServer.currentkeys) {
-				if(volume[ZaServer.A_VolumeType]==key) {
-					this[ZaServer.currentkeys[key]] = volume[ZaServer.A_VolumeId];
-				}
-			}			
+	var children = respNode.childNodes;
+	for (var i=0; i< children.length;  i++) {
+		var child = children[i];
+		if(child.nodeName == 'volume') {
+			if(child.getAttribute(ZaServer.A_VolumeType) == ZaServer.PRI_MSG) {
+				this[ZaServer.A_CurrentPrimaryMsgVolumeId] =  child.getAttribute(ZaServer.A_VolumeId);
+			} else if (child.getAttribute(ZaServer.A_VolumeType) == ZaServer.SEC_MSG) {
+				this[ZaServer.A_CurrentSecondaryMsgVolumeId] =  child.getAttribute(ZaServer.A_VolumeId);			
+			} else if (child.getAttribute(ZaServer.A_VolumeType) == ZaServer.INDEX) {
+				this[ZaServer.A_CurrentIndexMsgVolumeId] =  child.getAttribute(ZaServer.A_VolumeId);						
+			}
 		}
 	}
 }
-
 ZaServer.prototype.getMyVolumes = 
 function() {
 	this[ZaServer.A_Volumes] = new Array();
 	if(!this.id)
 		return;
 	var soapDoc = AjxSoapDoc.create("GetAllVolumesRequest", "urn:zimbraAdmin", null);
-	var command = new ZmCsfeCommand();
-	var params = new Object();
-	params.soapDoc = soapDoc;	
-	params.asyncMode = false;
-	params.targetServer = this.id;
-	resp = command.invoke(params);		
-	var resp = resp.Body.GetAllVolumesResponse;
+	var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;	
 
-//	var respNode = ZmCsfeCommand.invoke(soapDoc, false, null, this.id, true).firstChild;	
-
-	var volumes = resp.volume;
-	if(volumes) {
-		var cnt = volumes.length;
-		for (var i=0; i< cnt;  i++) {
-			this[ZaServer.A_Volumes].push(volumes[i]);	
-		}
-	}/*
-	
 	var children = respNode.childNodes;
 	for (var i=0; i< children.length;  i++) {
 		var child = children[i];
@@ -585,17 +440,7 @@ function() {
 			volume[ZaServer.A_VolumeType] = child.getAttribute(ZaServer.A_VolumeType);						
 			this[ZaServer.A_Volumes].push(volume);
 		}
-	}*/
-}
-
-ZaServer.compareVolumesByName = function (a,b) {
-	
-	if(a[ZaServer.A_VolumeName]>b[ZaServer.A_VolumeName])
-		return 1;
-	if(a[ZaServer.A_VolumeName]<b[ZaServer.A_VolumeName])
-		return -1;
-	return 0;
-	
+	}
 }
 
 ZaServer.prototype.deleteVolume =

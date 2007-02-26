@@ -58,6 +58,7 @@ AddrACL_XFormItem.prototype.items = [
 	{type:_DYNSELECT_, width:"200px", inputSize:30, ref:"name", editable:true, forceUpdate:true,
 		dataFetcherClass:ZaSearch,
 		elementChanged:function(val,instanceValue, event) {
+			var v = val;
 			this.getForm().itemChanged(this, val, event);			
 		}
 	},
