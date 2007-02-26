@@ -81,8 +81,7 @@ ZaSearchListController.prototype.show = function (doPush) {
 ZaSearchListController.prototype._show = 
 function (list) {
 	this._updateUI(list);
-	//this._app.pushView(ZaZimbraAdmin._SEARCH_LIST_VIEW);
-	this._app.pushView(this.getContentViewId());
+	this._app.pushView(ZaZimbraAdmin._SEARCH_LIST_VIEW);
 }
 
 /**
@@ -277,13 +276,8 @@ function () {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	//this._app.createView(ZaZimbraAdmin._SEARCH_LIST_VIEW, elements);
-	var tabParams = {
-		openInNewTab: true,
-		tabId: this.getContentViewId()
-	}
-	this._app.createView(this.getContentViewId(), elements, tabParams) ;
-	
+	this._app.createView(ZaZimbraAdmin._SEARCH_LIST_VIEW, elements);
+
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 	
@@ -292,7 +286,6 @@ function () {
 	this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 	this._removeConfirmMessageDialog = this._app.dialogs["ConfirmMessageDialog"] = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 	this._UICreated = true;
-	this._app._controllers[this.getContentViewId ()] = this ;
 }
 
 
