@@ -60,21 +60,32 @@ Contributor(s):
     <title>Zimbra Spreadsheet Prototype</title>
 	<style type="text/css">
 	<!--
-    @import url(<%= contextPath %>/css/imgs,common,dwt,msgview,login,zm,spellcheck,wiki,<%= skin %>_imgs,skin.css?v=<%= vers %><%= inSkinDebugMode || inDevMode ? "&debug=1" : "" %>&skin=<%= skin %>);
-    @import url(<%=contextPath %>/ALE/spreadsheet/style.css?v=<%=vers%>);
+    @import url(<%= contextPath %>/css/imgs,common,dwt,msgview,login,zm,spellcheck,wiki,spreadsheet,<%= skin %>_imgs,skin.css?v=<%= vers %><%= inSkinDebugMode || inDevMode ? "&debug=1" : "" %>&skin=<%= skin %>);
 	-->
 	</style>
-    <script type="text/javascript" src="<%=contextPath %>/js/msgs/I18nMsg,AjxMsg,ZMsg,ZmMsg.js<%=ext %>?v=<%=vers %>"></script>
-    <jsp:include page="../../public/Boot.jsp"/>
-<% if ( (mode != null) && (mode.equalsIgnoreCase("mjsf")) ) { %>
-    <jsp:include page="../../public/Ajax.jsp"/>
-    <jsp:include page="index_js.jsp"/>
-<% } else { %>
-    <script type='text/javascript'>
-      AjxPackage.setExtension(".js");
-    </script>
-    <script type="text/javascript" src="<%=contextPath %>/ALE/spreadsheet/spreadsheet_all.js<%=ext%>?v=<%=vers%>"></script>
-<% } %>
+    <jsp:include page="Messages.jsp"/>
+    <jsp:include page="Boot.jsp"/>
+    <%
+      String packages = "Ajax,Spreadsheet";
+
+      String extraPackages = request.getParameter("packages");
+      if (extraPackages != null) packages += ","+extraPackages;
+
+      String pprefix = inDevMode ? "public/jsp" : "js";
+      String psuffix = inDevMode ? ".jsp" : "_all.js";
+
+      String[] pnames = packages.split(",");
+      for (String pname : pnames) {
+          String pageurl = "/"+pprefix+"/"+pname+psuffix;
+          if (inDevMode) { %>
+              <jsp:include>
+                  <jsp:attribute name='page'><%=pageurl%></jsp:attribute>
+              </jsp:include>
+          <% } else { %>
+              <script type="text/javascript" src="<%=contextPath%><%=pageurl%><%=ext%>?v=<%=vers%>"></script>
+          <% } %>
+      <% }
+    %>
   </head>
     <body>
     <noscript><p><b>Javascript must be enabled to use this.</b></p></noscript>

@@ -35,11 +35,11 @@ ZaCosListController.prototype.constructor = ZaCosListController;
 //ZaCosListController.COS_VIEW = "ZaCosListController.COS_VIEW";
 
 ZaCosListController.prototype.show = 
-function(list) {
+function(list, openInNewTab) {
     if (!this._contentView) {
     	this._ops = new Array();
     	this._ops.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener)));
-    	this._ops.push(new ZaOperation(ZaOperation.DUPLICATE, ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener)));    	    	
+   	this._ops.push(new ZaOperation(ZaOperation.DUPLICATE, ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener)));    	    	
     	this._ops.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.COSTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaCosListController.prototype._editButtonListener)));    	
     	this._ops.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaCosListController.prototype._deleteButtonListener)));    	    	
 		this._ops.push(new ZaOperation(ZaOperation.NONE));
@@ -50,29 +50,47 @@ function(list) {
 		var elements = new Object();
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		 
-		this._app.createView(ZaZimbraAdmin._COS_LIST_VIEW, elements);
+		//this._app.createView(ZaZimbraAdmin._COS_LIST_VIEW, elements);
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab() 
+		}
+		this._app.createView(this.getContentViewId(), elements, tabParams) ;
+		
 		if (list != null)
 			this._contentView.set(list.getVector());
 
     	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._ops);		
-		this._app.pushView(ZaZimbraAdmin._COS_LIST_VIEW);
+		//this._app.pushView(ZaZimbraAdmin._COS_LIST_VIEW);
+		this._app.pushView(this.getContentViewId());
 		
 		//set a selection listener on the account list view
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 		this._removeConfirmMessageDialog = this._app.dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);							
+
+		this._UICreated = true;
+		this._app._controllers[this.getContentViewId ()] = this ;
 	} else {
 		if (list != null)
 			this._contentView.set(list.getVector());	
 
-		this._app.pushView(ZaZimbraAdmin._COS_LIST_VIEW);
+		//this._app.pushView(ZaZimbraAdmin._COS_LIST_VIEW);
+		this._app.pushView(this.getContentViewId());
 	}
 //	this._app.setCurrentController(this);		
 	this._removeList = new Array();
 	if (list != null)
 		this._list = list;
 		
-	this._changeActionsState();			
+	this._changeActionsState();		
+	/*
+	if (openInNewTab) {//when a ctrl shortcut is pressed
+		
+	}else{ //open in the main tab
+		this.updateMainTab ("COS") ;	
+	}*/
 }
 
 
@@ -224,53 +242,112 @@ function(ev) {
 ZaCosListController.prototype._deleteButtonListener =
 function(ev) {
 	this._removeList = new Array();
+	this._itemsInTabList = [] ;
 	if(this._contentView.getSelectionCount() > 0) {
 		var arrItems = this._contentView.getSelection();
 		var cnt = arrItems.length;
 		for(var key =0; key < cnt; key++) {
 		
 		//	var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
-			if(arrItems[key]) {
-				this._removeList.push(arrItems[key]);
+			var item = arrItems[key];
+			if (item) {
+				if (this._app.getTabGroup().getTabByItemId (item.id)) {
+					this._itemsInTabList.push (item) ;
+				}else{
+					this._removeList.push(item);
+				}
 			}
 		}
 	}
-	if(this._removeList.length) {
-		dlgMsg = ZaMsg.Q_DELETE_COSES;
-		dlgMsg +=  "<br><ul>";
-		var i=0;
-		for(var key in this._removeList) {
-			if(i > 19) {
-				dlgMsg += "<li>...</li>";
-				break;
-			}
-			dlgMsg += "<li>";
-			if(this._removeList[key].name.length > 50) {
-				//split it
-				var endIx = 49;
-				var beginIx = 0; //
-				while(endIx < this._removeList[key].name.length) { //
-					dlgMsg +=  this._removeList[key].name.slice(beginIx, endIx); //
-					beginIx = endIx + 1; //
-					if(beginIx >= (this._removeList[key].name.length) ) //
-						break;
-					
-					endIx = ( this._removeList[key].name.length <= (endIx + 50) ) ? this._removeList[key].name.length-1 : (endIx + 50);
-					dlgMsg +=  "<br>";	
-				}
-			} else {
-				dlgMsg += this._removeList[key].name;
-			}
-			dlgMsg += "</li>";
-			i++;
+	
+	if (this._itemsInTabList.length > 0) {
+		if(!this._app.dialogs["ConfirmDeleteItemsInTabDialog"]) {
+			this._app.dialogs["ConfirmDeleteItemsInTabDialog"] = 
+				new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.CANCEL_BUTTON], this._app,
+						[ZaMsgDialog.CLOSE_TAB_DELETE_BUTTON_DESC , ZaMsgDialog.NO_DELETE_BUTTON_DESC]);			
 		}
-		dlgMsg += "</ul>";
+		
+		
+		var msg = ZaMsg.dl_warning_delete_accounts_in_tab ; ;
+		msg += ZaCosListController.getDlMsgFromList (this._itemsInTabList) ;
+		
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].setMessage(msg, DwtMessageDialog.WARNING_STYLE);	
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
+				ZaMsgDialog.CLOSE_TAB_DELETE_BUTTON, ZaCosListController.prototype._closeTabsBeforeRemove, this);
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
+				ZaMsgDialog.NO_DELETE_BUTTON, ZaCosListController.prototype._deleteCosInRemoveList, this);		
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popup();
+		
+	}else{
+		this._deleteCosInRemoveList ();
+	}
+}
+
+ZaCosListController.prototype._closeTabsBeforeRemove =
+function () {
+	//DBG.println (AjxDebug.DBG1, "Close the tabs before Remove ...");
+	this.closeTabsInRemoveList() ;
+	/*
+	var tabGroup = this._app.getTabGroup();
+	for (var i=0; i< this._itemsInTabList.length ; i ++) {
+		var item = this._itemsInTabList[i];
+		tabGroup.removeTab (tabGroup.getTabByItemId(item.id)) ;
+		this._removeList.push(item);
+	}*/
+	//this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
+	this._deleteCosInRemoveList();
+}
+
+ZaCosListController.prototype._deleteCosInRemoveList =
+function () {
+	if (this._app.dialogs["ConfirmDeleteItemsInTabDialog"]) {
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
+	}
+	if(this._removeList.length) {
+		var dlgMsg = ZaMsg.Q_DELETE_COSES;
+		dlgMsg += ZaCosListController.getDlMsgFromList (this._removeList) ;
 		this._removeConfirmMessageDialog.setMessage(dlgMsg, DwtMessageDialog.INFO_STYLE);
 		this._removeConfirmMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaCosListController.prototype._deleteCosCallback, this);
 		this._removeConfirmMessageDialog.registerCallback(DwtDialog.NO_BUTTON, ZaCosListController.prototype._donotDeleteCosCallback, this);		
 		this._removeConfirmMessageDialog.popup();
 	}
+	
+} 
+
+ZaCosListController.getDlMsgFromList =
+function (listArr) {
+	dlgMsg =  "<br><ul>";
+	var i=0;
+	for(var key in listArr) {
+		if(i > 19) {
+			dlgMsg += "<li>...</li>";
+			break;
+		}
+		dlgMsg += "<li>";
+		if(listArr[key].name.length > 50) {
+			//split it
+			var endIx = 49;
+			var beginIx = 0; //
+			while(endIx < listArr[key].name.length) { //
+				dlgMsg +=  listArr[key].name.slice(beginIx, endIx); //
+				beginIx = endIx + 1; //
+				if(beginIx >= (listArr[key].name.length) ) //
+					break;
+				
+				endIx = ( listArr[key].name.length <= (endIx + 50) ) ? listArr[key].name.length-1 : (endIx + 50);
+				dlgMsg +=  "<br>";	
+			}
+		} else {
+			dlgMsg += listArr[key].name;
+		}
+		dlgMsg += "</li>";
+		i++;
+	}
+	dlgMsg += "</ul>";
+	
+	return dlgMsg ;
 }
+
 
 ZaCosListController.prototype._deleteCosCallback = 
 function () {

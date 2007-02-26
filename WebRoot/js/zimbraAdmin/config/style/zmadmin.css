@@ -329,11 +329,10 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 	width:100%;
 }
 
-
-
-
-
-
+.LogoContainer {
+	left: 27px;
+	top: 6px;
+}
 
 .DwtTabViewPage .DwtButton { 
   width: 60px;
@@ -632,4 +631,9 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 .ZaHighlightedText {
  @NoticeText@
+}
+
+.ZaStaleData {
+	font-style:italic;
+	@Text-disabled@
 }

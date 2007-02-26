@@ -48,6 +48,10 @@ ZaCosXFormView.prototype.setObject =
 function(entry) {
 	this._containedObject = new Object();
 	this._containedObject.attrs = new Object();
+	
+	this._containedObject.name = entry.name;
+	this._containedObject.type = entry.type ;
+	
 	if(entry.id)
 		this._containedObject.id = entry.id;
 		
@@ -170,6 +174,7 @@ function(entry) {
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
 		
 	this._localXForm.setInstance(this._containedObject);
+	this.updateTab();
 }
 
 ZaCosXFormView.gotSkins = function () {
@@ -378,11 +383,16 @@ ZaCosXFormView.myXFormModifier = function(xFormObject) {
 							},					
 
 							{type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_calendar_general",items :[
+								{ref:ZaCos.A_zimbraPrefTimeZoneId, type:_OSELECT1_,
+									 msgName:ZaMsg.NAD_zimbraPrefTimeZoneId,label:ZaMsg.NAD_zimbraPrefTimeZoneId+":", 
+									 labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged,
+									 labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
+								},
 								{ref:ZaCos.A_zimbraPrefCalendarApptReminderWarningTime, type:_OSELECT1_,
 									 msgName:ZaMsg.NAD_zimbraPrefCalendarApptReminderWarningTime,label:ZaMsg.NAD_zimbraPrefCalendarApptReminderWarningTime+":", 
 									 labelLocation:_LEFT_, onChange:ZaTabView.onFormFieldChanged,
 									 labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
-								 },							
+								},							
 								{ref:ZaCos.A_zimbraPrefCalendarAlwaysShowMiniCal, type:_CHECKBOX_, 
 									msgName:ZaMsg.NAD_alwaysShowMiniCal,label:ZaMsg.NAD_alwaysShowMiniCal, 
 									trueValue:"TRUE", falseValue:"FALSE", onChange:ZaTabView.onFormFieldChanged,
