@@ -477,9 +477,7 @@ function (item, offset){
 			if (ZaSettings.DOMAINS_ENABLED){
 				if (searchByDomain){
 					try {
-						var emailChunks = curInstance[ZaAccount.A_name].split("@");
-						domainName = emailChunks[1];
-					//	var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
+						var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
 					} catch (ex) {
 						domainName = ZaSettings.myDomainName;
 					}

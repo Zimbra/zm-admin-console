@@ -58,11 +58,6 @@ function () {
 	return ZaMsg.PostQ_title;
 }
 
-ZaMTAListView.prototype.getTabIcon =
-function () {
-	return "Queue";
-}
-
 ZaMTAListView.prototype.setUI = 
 function () {
 	ZaListView.prototype.setUI.call(this);
