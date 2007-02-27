@@ -54,14 +54,8 @@ function() {
 
 ZaZimletListView.prototype.getTitle = 
 function () {
-	return ZaMsg.Zimlets_view_title;
+	return ZaMsg.Servers_view_title;
 }
-
-ZaZimletListView.prototype.getTabIcon = 
-function () {
-	return "zimlet" ;
-}
-
 /**
 * Renders a single item as a DIV element.
 */
