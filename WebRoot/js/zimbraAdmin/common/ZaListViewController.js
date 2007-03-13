@@ -79,9 +79,9 @@ function() {
 }
 
 ZaListViewController.prototype._updateUI = 
-function(list, openInNewTab, openInSearchTab) {
+function(list) {
     if (!this._UICreated) {
-		this._createUI(openInNewTab, openInSearchTab);
+		this._createUI();
 	} 
 	if (list) {
 		var tmpArr = new Array();
@@ -125,15 +125,6 @@ function(list, openInNewTab, openInSearchTab) {
 	}
 }
 
-ZaListViewController.prototype.closeButtonListener =
-function(ev, noPopView, func, obj, params) {
-	if (noPopView) {
-		func.call(obj, params) ;
-	}else{
-		this._app.popView () ;
-	}
-}
-
 ZaListViewController.prototype.searchCallback =
 function(params, resp) {
 	try {
@@ -150,9 +141,9 @@ function(params, resp) {
 			var limit = params.limit ? params.limit : this.RESULTSPERPAGE; 
 			this.numPages = Math.ceil(this._searchTotal/params.limit);
 			if(params.show)
-				this._show(this._list, params.openInNewTab, params.openInSearchTab);			
+				this._show(this._list);			
 			else
-				this._updateUI(this._list, params.openInNewTab, params.openInSearchTab);
+				this._updateUI(this._list);
 		}
 	} catch (ex) {
 		if (ex.code != ZmCsfeException.MAIL_QUERY_PARSE_ERROR) {

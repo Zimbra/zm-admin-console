@@ -103,7 +103,7 @@ function() {
 ZaAppCtxt.prototype.getErrorDialog = 
 function() {
 	if (!this._errorDialog)
-		this._errorDialog = new ZaErrorDialog(this.getShell());
+		this._errorDialog = new ZaErrorDialog(this.getShell(), this);
 	return this._errorDialog;
 }
 

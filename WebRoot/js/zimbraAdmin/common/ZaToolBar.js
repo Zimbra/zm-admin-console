@@ -119,7 +119,7 @@ ZaToolBar.prototype._createButton =
 function(buttonId, imageId, text, disImageId, toolTip, enabled, className, type, menuOpList) {
 	if (!className)
 		className = "DwtToolbarButton"
-	var b = this._buttons[buttonId] = new ZaToolBarButton(this, null, className);
+	var b = this._buttons[buttonId] = new DwtButton(this, null, className);
 	if (imageId)
 		b.setImage(imageId);
 	if (text)
@@ -140,9 +140,9 @@ function(buttonId, imageId, text, disImageId, toolTip, enabled, className, type,
 
 
 ZaToolBar.prototype._createLabel =
-function(buttonId, imageId, text, disImageId, toolTip, enabled, className, style) {
+function(buttonId, imageId, text, disImageId, toolTip, enabled, className) {
 
-	var b = this._buttons[buttonId] = new ZaToolBarLabel(this, null, className);
+	var b = this._buttons[buttonId] = new DwtLabel(this, null, className);
 	if (imageId)
 		b.setImage(imageId);
 	if (text)

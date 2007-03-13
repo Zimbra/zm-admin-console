@@ -111,17 +111,14 @@ function() {
 				//throw	
 				throw (new AjxException(ZaMsg.FAILED_MOVE_ALIAS, AjxException.UNKNOWN_ERROR, "MoveAliasXDialog.prototype.moveAlias", "Alias name is not available"));
 			}
-			this._app.getAccountListController().show();	
-			this._containedObject.resultMsg = String(ZaMsg.Alias_Moved_To).replace("{0}",name).replace("{1}",this._containedObject[ZaSearch.A_selected].name); 
-			return true;							
-		}else{
-			this._app.getCurrentController().popupErrorDialog( AjxMessageFormat.format(ZaMsg.WARNING_ALIASES_TARGET_NON_EXIST,[this._containedObject[ZaSearch.A_selected]]));
+			this._app.getAccountListController().show();							
 		}
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex, "MoveAliasXDialog.prototype.moveAlias", null, false);
 		return false;
 	}
-	return false;
+	this._containedObject.resultMsg = String(ZaMsg.Alias_Moved_To).replace("{0}",name).replace("{1}",this._containedObject[ZaSearch.A_selected].name); 
+	return true;	
 }
 /*
 MoveAliasXDialog.prototype.searchAccounts = 

@@ -109,6 +109,12 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 
 /* other UI pieces */
+.ZaAppChooser {
+	margin-left:2px;
+	margin-top:5px;
+	height: 100%;
+}
+
 
 .currentAppLabel .Text {
 	font-size: 13px;
@@ -283,7 +289,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .admin_xform_number_input_disabled {
 	width:5em;
 	background-color:transparent;
-	color:@AppC+60@;
+	color:@_BaseColorD60_@;
 }
 
 .admin_xform_name_input {
@@ -323,10 +329,11 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 	width:100%;
 }
 
-.LogoContainer {
-	left: 27px;
-	top: 6px;
-}
+
+
+
+
+
 
 .DwtTabViewPage .DwtButton { 
   width: 60px;
@@ -626,25 +633,3 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaHighlightedText {
  @NoticeText@
 }
-
-.ZaStaleData {
-	font-style:italic;
-	@Text-disabled@
-}
-
-.ZaNowrapTitle {
-	@NoWrap@
-}
-
-
-
-/* normal buttons, like in a dialog */
-.ZaAppTabButton 							{				}
-
-
-.ZaAppTabButton .Text 						{	@NormalButtonText@				}
-
-.ZAppTabBorder 		{@AppTabContainer@ }
-
-.ZSelected .ZAppTabBorder					{	@AppTabContainer-selected@	}
-.DwtTabButton .ZButtonBorder { border: none; background-color: transparent; }
