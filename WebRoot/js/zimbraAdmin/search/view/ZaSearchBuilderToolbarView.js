@@ -47,6 +47,7 @@ function ZaSearchBuilderToolbarView (parent, app){
 	ZaToolBar.call(this, parent, this._ops, null, AjxEnv.isIE ? null : "ZaSearchBuilderToolBar" );
 	
 	
+	this._table.width = "100%";
 	this._app = app;
 	this.zShow(false);
 	//this.setVisible (false);

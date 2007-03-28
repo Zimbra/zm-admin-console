@@ -33,7 +33,6 @@
 function ZaGlobalStatsView(parent, app) {
 	this._app = app;
 	DwtTabView.call(this, parent);
-	
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	this._msgCountPage = new ZaGlobalMessageCountPage(this, app);
 	this._msgsVolumePage = new ZaGlobalMessageVolumePage(this, app);
@@ -53,21 +52,6 @@ function() {
 }
 
 ZaGlobalStatsView.prototype.getTitle = 
-function () {
-	return ZaMsg.GlobalStats_view_title;
-}
-
-ZaGlobalStatsView.prototype.getTabTitle = 
-function () {
-	return ZaMsg.GlobalStats_view_title;
-}
-
-ZaGlobalStatsView.prototype.getTabIcon =
-function () {
-	return "Statistics";
-}
-
-ZaGlobalStatsView.prototype.getTabToolTip =
 function () {
 	return ZaMsg.GlobalStats_view_title;
 }
@@ -93,17 +77,9 @@ function (width, height) {
 	}		
 }
 
-ZaGlobalStatsView.prototype._createHtml = 
+ZaGlobalStatsView.prototype._createHTML = 
 function() {
-	DwtTabView.prototype._createHtml.call(this);
-	
-	//create a Title Table
-	this._table = document.createElement("table") ;
-		
-	//this.getHtmlElement().appendChild(this._table) ;
-	var htmlEl = this.getHtmlElement()
-	htmlEl.insertBefore (this._table, htmlEl.firstChild);
-	
+	DwtTabView.prototype._createHTML.call(this);
 	var row1;
 	//var col1;
 	var row2;

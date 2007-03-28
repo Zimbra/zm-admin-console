@@ -56,40 +56,8 @@ function() {
 
 ZaAccountListView.prototype.getTitle = 
 function () {
-	var title = ZaMsg.Addresses_view_title ;
-	var cc = this._app.getControllerById (this.__internalId) ;
-	switch (cc._defaultType) {
-		case ZaItem.DL :
-			title = ZaMsg.DL_view_title; break ;
-		case ZaItem.ALIAS :
-			title = ZaMsg.Aliases_view_title; break ;
-		case ZaItem.RESOURCE : 
-			title = ZaMsg.Resourse_view_title; break ;	
-		default :
-			title = ZaMsg.Accounts_view_title ;
-	}	
-	
-	return title;
+	return ZaMsg.Accounts_view_title;
 }
-
-ZaAccountListView.prototype.getTabIcon =
-function () {
-	var icon = null ;
-	var cc = this._app.getControllerById (this.__internalId) ;
-	switch (cc._defaultType) {
-		case ZaItem.DL :
-			icon = "Group"; break ;
-		case ZaItem.ALIAS :
-			icon = "AccountAlias" ; break ;
-		case ZaItem.RESOURCE : 
-			icon = "Resource" ; break ;	
-		default :
-			icon = "Account" ;
-	}	
-	
-	return icon ;
-}
-
 /**
 * Renders a single item as a DIV element.
 */
@@ -161,7 +129,7 @@ function(account, now, isDndIcon) {
 			if (account.type == ZaItem.ACCOUNT) {
 				status = ZaAccount._accountStatus(account.attrs[ZaAccount.A_accountStatus]);
 			} else if (account.type == ZaItem.DL) {
-				status = ZaDistributionList._dlStatus[account.attrs.zimbraMailStatus];
+				status = account.attrs.zimbraMailStatus;
 			}else if ( account.type == ZaItem.RESOURCE) {
 				status = ZaResource.getAccountStatusLabel(account.attrs[ZaAccount.A_accountStatus]);
 			} 
@@ -192,7 +160,7 @@ function() {
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible	
 	headerList[2] = new ZaListHeaderItem(ZaAccount.A_displayname, ZaMsg.ALV_DspName_col, null, "220px", sortable++,ZaAccount.A_displayname, true, true);
 
-	headerList[3] = new ZaListHeaderItem(ZaAccount.A_accountStatus, ZaMsg.ALV_Status_col, null, "120px", sortable++,ZaAccount.A_accountStatus, true, true);
+	headerList[3] = new ZaListHeaderItem(ZaAccount.A_accountStatus, ZaMsg.ALV_Status_col, null, "80px", sortable++,ZaAccount.A_accountStatus, true, true);
 
 	headerList[4] = new ZaListHeaderItem(ZaAccount.A_description, ZaMsg.ALV_Description_col, null, "auto", null, null,false, true );
 	
