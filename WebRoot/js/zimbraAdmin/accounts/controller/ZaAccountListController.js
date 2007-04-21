@@ -422,10 +422,12 @@ ZaAccountListController.prototype._editItem = function (item) {
 	} else if (type == ZaItem.DL) {
 		this._app.getDistributionListController().show(item);
 	} else if(type == ZaItem.ALIAS) {
-		var account = new ZaAccount(this._app);
-		if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId]) {
+		var account = ZaSearch.findAccount (ZaItem.A_zimbraId,item.attrs[ZaAlias.A_AliasTargetId]);
+		if(account.type == ZaItem.ACCOUNT) {
 			account.load("id", item.attrs[ZaAlias.A_AliasTargetId], (!ZaSettings.COSES_ENABLED));
 			this._app.getAccountViewController().show(account);
+		} else if (account.type == ZaItem.DL) { 
+			this._app.getDistributionListController().show(account);
 		}
 	} else if (type == ZaItem.RESOURCE ){
 		this._app.getResourceController().show(item);

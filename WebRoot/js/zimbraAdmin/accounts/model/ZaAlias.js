@@ -40,7 +40,18 @@ ZaItem._ATTR[ZaAlias.A_targetAccount] = ZaMsg.attrDesc_aliasFor;
 
 ZaAlias.prototype.remove = 
 function(callback) {
-	var soapDoc = AjxSoapDoc.create("RemoveAccountAliasRequest", "urn:zimbraAdmin", null);
+	//find out whether this is an account on an alias
+	var item = null;
+	var soapDoc = null;
+	if(this.attrs && this.attrs[ZaAlias.A_AliasTargetId]) {
+		item = ZaSearch.findAccount (ZaItem.A_zimbraId,this.attrs[ZaAlias.A_AliasTargetId]);
+	}	
+	if(item && item.type == ZaItem.DL) {
+		soapDoc = AjxSoapDoc.create("RemoveDistributionListAliasRequest", "urn:zimbraAdmin", null);		
+	} else {
+		soapDoc = AjxSoapDoc.create("RemoveAccountAliasRequest", "urn:zimbraAdmin", null);		
+	}
+
 	soapDoc.set("id", this.attrs[ZaAlias.A_AliasTargetId]);
 	soapDoc.set("alias", this.name);
 	this.deleteCommand = new ZmCsfeCommand();

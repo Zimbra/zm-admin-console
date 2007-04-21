@@ -157,13 +157,14 @@ function (params) {
 ZaSearch.findAccount = function(by, val) {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", "urn:zimbraAdmin", null);
 	soapDoc.getMethod().setAttribute("limit", "1");
+	soapDoc.getMethod().setAttribute("types", [ZaSearch.ACCOUNTS,ZaSearch.DLS].join(","));	
 	var query = ["(",by,"=",val,")"].join("");
 	soapDoc.set("query", query);
 	var command = new ZmCsfeCommand();
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	var resp = command.invoke(cmdParams).Body.SearchDirectoryResponse;	
-	var list = new ZaItemList(ZaAccount, this._app);	
+	var list = new ZaItemList(null, this._app);	
 	list.loadFromJS(resp);	
 	return list.getArray()[0];
 }
