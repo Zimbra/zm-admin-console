@@ -35,23 +35,13 @@ ZaAlias.prototype = new ZaItem;
 ZaAlias.prototype.constructor = ZaAlias;
 ZaAlias.A_AliasTargetId = "zimbraAliasTargetId";
 ZaAlias.A_targetAccount = "targetAccount";
+ZaAlias.A_index = "index";
 
 ZaItem._ATTR[ZaAlias.A_targetAccount] = ZaMsg.attrDesc_aliasFor;
 
 ZaAlias.prototype.remove = 
 function(callback) {
-	//find out whether this is an account on an alias
-	var item = null;
-	var soapDoc = null;
-	if(this.attrs && this.attrs[ZaAlias.A_AliasTargetId]) {
-		item = ZaSearch.findAccount (ZaItem.A_zimbraId,this.attrs[ZaAlias.A_AliasTargetId]);
-	}	
-	if(item && item.type == ZaItem.DL) {
-		soapDoc = AjxSoapDoc.create("RemoveDistributionListAliasRequest", "urn:zimbraAdmin", null);		
-	} else {
-		soapDoc = AjxSoapDoc.create("RemoveAccountAliasRequest", "urn:zimbraAdmin", null);		
-	}
-
+	var soapDoc = AjxSoapDoc.create("RemoveAccountAliasRequest", "urn:zimbraAdmin", null);
 	soapDoc.set("id", this.attrs[ZaAlias.A_AliasTargetId]);
 	soapDoc.set("alias", this.name);
 	this.deleteCommand = new ZmCsfeCommand();
@@ -103,4 +93,57 @@ function() {
 		this._toolTip = html.join("");
 	}
 	return this._toolTip;
+}
+
+ZaAlias.myXModel = { 
+	items: [
+		{id:ZaAccount.A_name, type:_STRING_, ref:"name", pattern:AjxUtil.EMAIL_FULL_RE},
+		{id:ZaAlias.A_AliasTargetId, type:_STRING_, ref:ZaAlias.A_AliasTargetId},
+		{id:ZaAlias.A_targetAccount, type:_STRING_, ref:ZaAlias.A_targetAccount, pattern:AjxUtil.EMAIL_FULL_RE},		
+		{id:ZaAlias.A_index, type:_NUMBER_, ref:ZaAlias.A_index}
+	]
+}
+
+ZaAlias.prototype.addAlias = 
+function (form) {
+	var app = form.parent._app ;
+	var instance = form.getInstance() ;
+	var newAlias = instance [ZaAccount.A_name] ;
+	var accountName = instance [ZaAlias.A_targetAccount] ;
+	
+	try {
+		//get the account obj
+		var acct = ZaAlias.getAccountByName(app, accountName) ;
+		
+		//add the alias to the account
+		acct.addAlias ( newAlias ) ;  
+		this._app.getAccountViewController().fireCreationEvent(this);
+		form.parent.popdown();
+	} catch (ex) {
+		if(ex.code == ZmCsfeException.ACCT_EXISTS ||ex.code == ZmCsfeException.ACCT_NO_SUCH_ACCOUNT) {
+			app.getCurrentController().popupErrorDialog(ZaMsg.WARNING_ALIAS_EXISTS + " " + newAlias 
+					+ "<BR />" + ex.msg );
+		} else {
+			//if failed for another reason - jump out
+			app.getCurrentController()._handleException(ex, "ZaAlias.addAlias", null, false);
+		}
+	}
+}
+
+ZaAlias.getAccountByName =
+function (app, val) {
+	var soapDoc = AjxSoapDoc.create("GetAccountRequest", "urn:zimbraAdmin", null);
+	soapDoc.getMethod().setAttribute("applyCos", "0");		
+	
+	var elBy = soapDoc.set("account", val);
+	elBy.setAttribute("by", "name");
+
+	var getAccCommand = new ZmCsfeCommand();
+	var params = new Object();
+	params.soapDoc = soapDoc;	
+	var resp = getAccCommand.invoke(params).Body.GetAccountResponse;
+	var acct = new ZaAccount(app) ;
+	acct.attrs = new Object();
+	acct.initFromJS(resp.account[0]);
+	return acct ;
 }

@@ -40,6 +40,7 @@ function ZaAccountViewController(appCtxt, container, app) {
 	this._helpURL = ZaAccountViewController.helpURL;
 	this.deleteMsg = ZaMsg.Q_DELETE_ACCOUNT;
 	this._toolbarOperations = new Array();
+	this.tabConstructor = ZaAccountXFormView;
 }
 
 ZaAccountViewController.prototype = new ZaXFormViewController();
@@ -58,8 +59,8 @@ ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 */
 
 ZaAccountViewController.prototype.show = 
-function(entry, skipRefresh) {
-	this._setView(entry, skipRefresh);
+function(entry, openInNewTab, skipRefresh) {
+	this._setView(entry, openInNewTab, skipRefresh);
 }
 
 ZaAccountViewController.initToolbarMethod =
@@ -93,14 +94,23 @@ function(entry) {
 			this._initToolbar();
 			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);
 	
-	  		this._view = new ZaAccountXFormView(this._container, this._app);
+	  		this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		  		
-	    	this._app.createView(ZaZimbraAdmin._ACCOUNT_VIEW, elements);
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
+			
+			var tabParams = {
+				openInNewTab: true,
+				tabId: this.getContentViewId()
+			}
+				  		
+	    	this._app.createView(this.getContentViewId(), elements, tabParams);
 	    	this._UICreated = true;
+	    	//associate the controller with the view by viewId
+	    	this._app._controllers[this.getContentViewId ()] = this ;
   		}
-		this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
+		//this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
+		this._app.pushView(this.getContentViewId()) ;
 		if(entry.id) {
 			try {
 				entry.refresh(!ZaSettings.COSES_ENABLED);
@@ -109,6 +119,8 @@ function(entry) {
 				this._handleException(ex, null, null, false);
 				if (ex.code ==  ZmCsfeException.SVC_PERM_DENIED) {
 					this._app.popView();
+					return ;
+					
 				}
 			}
 		}
@@ -346,6 +358,13 @@ function () {
 								} else {
 									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS1,[account.name, tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);								
 								}							
+							break;	
+							case ZaItem.RESOURCE:
+								if(account.name == tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]) {
+									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS5,[account.name]);								
+								} else {
+									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS6,[account.name, tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);								
+								}							
 							break;							
 							default:
 								failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS0,[tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);							
@@ -408,7 +427,7 @@ function () {
 }
 
 ZaAccountViewController.prototype._findAlias = function (alias) {
-	var searchQuery = new ZaSearchQuery(ZaSearch.getSearchByNameQuery(alias), [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS], null, false);
+	var searchQuery = new ZaSearchQuery(ZaSearch.getSearchByNameQuery(alias), [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES], null, false);
 	// this search should only return one result
 	var results = ZaSearch.searchByQueryHolder(searchQuery, 1, null, null, this._app);
 	return results.list.getArray()[0];

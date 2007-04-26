@@ -191,7 +191,7 @@ ZaServerMBXStatsPage.prototype._getXForm = function () {
 	sourceHeaderList[2] = new ZaListHeaderItem(ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE, 	ZaMsg.MBXStats_DISKUSAGE,	
 												null, 120,  sortable++,  ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE, true, true);
 	sourceHeaderList[3] = new ZaListHeaderItem(ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE,	ZaMsg.MBXStats_QUOTAUSAGE, 	
-												null, null,  sortable++, ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE, true, true);
+												null, "auto",  sortable++, ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE, false, true);
 	
 	var ffTableStyle = "width:100%;overflow:visible;" ;
 	var tableStyle = 	AjxEnv.isIE  ? ffTableStyle + "height:100%;" : ffTableStyle ;
@@ -301,14 +301,14 @@ function (curPage, totalPage, hide ){
 					}
 					
 					if (curPage && totalPage) {
-						toolBar.getButton("mbxPageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [curPage, totalPage]));
+						toolBar.getButton("PageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [curPage, totalPage]));
 					} 
 					
 					//update the help link for the Mbx Stats
 					controller._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/viewing_mailbox_quotas.htm";
 				}else {
 					toolBar.enable([ZaOperation.PAGE_FORWARD, ZaOperation.PAGE_BACK, ZaOperation.LABEL], false);
-					toolBar.getButton("mbxPageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]));
+					toolBar.getButton("PageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]));
 					//change the help link back
 					controller._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/monitoring/checking_usage_statistics.htm";
 				}

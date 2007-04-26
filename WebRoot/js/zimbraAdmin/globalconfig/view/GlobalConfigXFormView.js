@@ -44,6 +44,21 @@ function () {
 	return ZaMsg.GlobalConfig_view_title;
 }
 
+GlobalConfigXFormView.prototype.getTabIcon =
+function () {
+	return "GlobalSettings";
+}
+
+GlobalConfigXFormView.prototype.getTabTitle =
+function () {
+	return this.getTitle();
+}
+
+GlobalConfigXFormView.prototype.getTabToolTip =
+function () {
+	return this.getTitle ();
+}
+
 GlobalConfigXFormView.myXFormModifier = function(xFormObject) {	
 	xFormObject.tableCssStyle = "width:100%;overflow:auto;";
 	
@@ -159,6 +174,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 			    	  	  	var newExtId = form.getId()+"_input_"+ZaGlobalConfig.A_zimbraMtaBlockedExtension;
 			    	  	  	var newExtFormItem =form.getItemById(newExtId);
 			    	  	  	newExtFormItem.setInstanceValue("");
+			    	  	  	form.parent.setDirty(true);	
 			    	  	  	form.refresh();
 			    	  	  }
 			    	  	}
@@ -272,26 +288,26 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 						{type: _ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAP_ServiceGrp, 
 						  items: [						
 							{ ref: ZaGlobalConfig.A_zimbraImapServerEnabled, type:_CHECKBOX_, 
-							  label: ZaMsg.NAD_IMAP_Service, 
+							  label: ZaMsg.IMAP_Service, 
 							  trueValue:"TRUE", falseValue:"FALSE", 
 							  onChange:ZaTabView.onFormFieldChanged
 	  						},
 						  	{ ref: ZaGlobalConfig.A_zimbraImapSSLServerEnabled, type:_CHECKBOX_, 
 					  	  	  relevant: "instance.attrs[ZaGlobalConfig.A_zimbraImapServerEnabled] == 'TRUE'", 
 					  	  	  relevantBehavior: _DISABLE_,
-						  	  label: ZaMsg.NAD_IMAP_SSLService, 
+						  	  label: ZaMsg.IMAP_SSLService, 
 						  	  trueValue:"TRUE", falseValue:"FALSE", 
 						  	  onChange:ZaTabView.onFormFieldChanged
 					  	  	},
 							{ ref: ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, type:_CHECKBOX_, 
 					  	  	  relevant: "instance.attrs[ZaGlobalConfig.A_zimbraImapServerEnabled] == 'TRUE'", 
 					  	  	  relevantBehavior: _DISABLE_,
-							  label: ZaMsg.NAD_IMAP_CleartextLoginEnabled,
+							  label: ZaMsg.IMAP_CleartextLoginEnabled,
 							  trueValue:"TRUE", falseValue:"FALSE", 
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},  						
 							{ ref: ZaGlobalConfig.A_zimbraImapNumThreads, type:_TEXTFIELD_, 
-							  label: ZaMsg.NAD_IMAP_NumThreads,
+							  label: ZaMsg.IMAP_NumThreads,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	}		
@@ -300,22 +316,22 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 						{type:_ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAP_NetworkGrp, 
 						  items: [											  	
 							{ ref: ZaGlobalConfig.A_zimbraImapBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.NAD_IMAP_Port,
+							  label: ZaMsg.IMAP_Port,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},		
 							{ ref: ZaGlobalConfig.A_zimbraImapSSLBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.NAD_IMAP_SSLPort,
+							  label: ZaMsg.IMAP_SSLPort,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},					  	
 							{ ref: ZaGlobalConfig.A_zimbraImapProxyBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.NAD_IMAP_Proxy_Port,
+							  label: ZaMsg.IMAP_Proxy_Port,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},	
 							{ ref: ZaGlobalConfig.A_zimbraImapSSLProxyBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.NAD_IMAP_SSL_Proxy_Port,
+							  label: ZaMsg.IMAP_SSL_Proxy_Port,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	}

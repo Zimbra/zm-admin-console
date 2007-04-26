@@ -29,44 +29,43 @@
 * A normal DwtMessageDialog w/ a "Report" button that will post user info to the 
 * server when clicked.
 */
-function ZaErrorDialog(parent, appCtxt) {
+function ZaErrorDialog(parent) {
 	if (arguments.length === 0) {return;}
 
-	this._appCtxt = appCtxt;
-	// go ahead and cache the navigator info now (since it should never change)		
-
-	var detailButton = new DwtDialog_ButtonDescriptor(ZaErrorDialog.DETAIL_BUTTON, null, DwtDialog.ALIGN_LEFT);
+	var detailButton = new DwtDialog_ButtonDescriptor(ZaErrorDialog.DETAIL_BUTTON, AjxMsg.detail, DwtDialog.ALIGN_LEFT);
 	DwtMessageDialog.call(this, parent, null, null, [detailButton]);
 
 	// setup the detail button
 	this._detailCell = document.getElementById(this._detailCellId);
 	var detailBtn = this._button[ZaErrorDialog.DETAIL_BUTTON];
 	detailBtn.setImage("SelectPullDownArrow");
-	// arrow icon is too big so hack it to fit (instead of adding new image)
-	Dwt.setSize(detailBtn.getHtmlElement(), 22, (AjxEnv.isIE ? 21 : 19));
-	detailBtn.getHtmlElement().style.overflow = "hidden";
-
 	this.registerCallback(ZaErrorDialog.DETAIL_BUTTON, this._showDetail, this);
 }
 
 ZaErrorDialog.prototype = new DwtMessageDialog;
 ZaErrorDialog.prototype.constructor = ZaErrorDialog;
 
-
-// Consts
-
-ZaErrorDialog.REPORT_BUTTON = ++DwtDialog.LAST_BUTTON;
-ZaErrorDialog.DETAIL_BUTTON = ++DwtDialog.LAST_BUTTON;
-ZaErrorDialog.SCHEME = (location.protocol == 'https:') ? "https:" : "http:";
-ZaErrorDialog.REPORT_URL = ZaErrorDialog.SCHEME + "//www.zimbra.com/e/";
-
-
-// Public methods
-
-ZaErrorDialog.prototype.toString = 
-function() {
+ZaErrorDialog.prototype.toString = function() {
 	return "ZaErrorDialog";
 };
+
+//
+// Constants
+//
+
+ZaErrorDialog.DETAIL_BUTTON = ++DwtDialog.LAST_BUTTON;
+
+//
+// Data
+//
+
+ZaErrorDialog.prototype._detailsVisible = false;
+
+ZaErrorDialog.prototype.CONTROLS_TEMPLATE = "zimbra.templates.Widgets#ZmErrorDialogControls";
+
+//
+// Public methods
+//
 
 ZaErrorDialog.prototype.reset =
 function() {
@@ -88,18 +87,34 @@ function(msgStr, detailStr, style, title) {
 ZaErrorDialog.prototype.setDetailString = 
 function(text) {
 	if (!(this._buttonElementId[ZaErrorDialog.DETAIL_BUTTON])) {return;}
-	this._detailStr = text;
-	if (text) {
-		this._button[ZaErrorDialog.DETAIL_BUTTON].setVisible(true);
-		if (this._detailCell && this._detailCell.innerHTML !== "") {
-			this._detailCell.innerHTML = this._getDetailHtml(); //update detailCell if it is shown
-		}
-	} else {
-		this._button[ZaErrorDialog.DETAIL_BUTTON].setVisible(false);
-		if (this._detailCell) {
-			this._detailCell.innerHTML = "";
-		}
+
+    this._detailStr = text;
+
+    this._button[ZaErrorDialog.DETAIL_BUTTON].setVisible(text != null);
+    if (this._detailsEl) {
+        this._detailsEl.innerHTML = text || "";
 	}
+};
+
+// Displays the detail text
+ZaErrorDialog.prototype.showDetail = function(show) {
+	if (this._detailsContainerEl) {
+        var image = show ? "SelectPullUpArrow": "SelectPullDownArrow";
+        this._button[ZaErrorDialog.DETAIL_BUTTON].setImage(image);
+        if (this._detailsEl) {
+            this._detailsEl.innerHTML = this._getDetailHtml();
+        }
+    }
+};
+
+//
+// Protected methods
+//
+
+ZaErrorDialog.prototype._createHtmlFromTemplate = function(templateId, data) {
+    DwtMessageDialog.prototype._createHtmlFromTemplate.call(this, templateId, data);
+    this._detailsContainerEl = document.getElementById(data.id+"_details_container");
+    this._detailsEl = document.getElementById(data.id+"_details");
 };
 
 ZaErrorDialog.prototype._getContentHtml =
@@ -123,13 +138,11 @@ function() {
 
 // Displays the detail text
 ZaErrorDialog.prototype._showDetail = function() {
-	if (this._detailCell) {
-		if (this._detailCell.innerHTML === "") {
-			this._button[ZaErrorDialog.DETAIL_BUTTON].setImage("SelectPullUpArrow");
-			this._detailCell.innerHTML = this._getDetailHtml();
-		} else {
-			this._button[ZaErrorDialog.DETAIL_BUTTON].setImage("SelectPullDownArrow");
-			this._detailCell.innerHTML = "";
-		}
-	}
+    var detailsEl = this._detailsContainerEl || this._detailsEl;
+    if (detailsEl) {
+        this._detailsVisible = !this._detailsVisible;
+        var visible = this._detailsVisible;
+        Dwt.setVisible(detailsEl, visible);
+        this._button[ZaErrorDialog.DETAIL_BUTTON].setImage(visible ? "SelectPullUpArrow" : "SelectPullDownArrow");
+    }
 };

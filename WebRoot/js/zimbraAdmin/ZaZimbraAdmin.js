@@ -54,10 +54,12 @@ ZaZimbraAdmin.prototype.constructor = ZaZimbraAdmin;
 ZaZimbraAdmin._instance = null;
 
 ZaZimbraAdmin.ADMIN_APP = "admin";
+ZaZimbraAdmin.currentUserName = "" ;
 
 ZaZimbraAdmin.VIEW_INDEX = 0;
 
 ZaZimbraAdmin._ADDRESSES = ZaZimbraAdmin.VIEW_INDEX++;
+ZaZimbraAdmin._SEARCHES = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._ACCOUNTS_LIST_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._ALIASES_LIST_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._DISTRIBUTION_LISTS_LIST_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
@@ -299,7 +301,7 @@ function() {
 		var resp = command.invoke(params);
 		//var resp = ZmCsfeCommand.invoke(soapDoc, null, null, null, false);		
 		//initialize my rights
-		//ZaZimbraAdmin.initInfo (resp);
+		ZaZimbraAdmin.initInfo (resp);
 		if(!ZaSettings.initialized)
 			ZaSettings.init();
 		else
@@ -311,25 +313,31 @@ function() {
 }
 
 //process the GetInfoRequest response to set the domainAdminMaxMailQuota value in MB
-/*
+
 ZaZimbraAdmin.initInfo =
 function (resp) {
-	if (resp && resp.Body && resp.Body.GetInfoResponse && resp.Body.GetInfoResponse.attrs && resp.Body.GetInfoResponse.attrs.attr){
-		var attrsArr = resp.Body.GetInfoResponse.attrs.attr ;
-		for ( var i=0; i < attrsArr.length; i ++) {
-			if (attrsArr[i].name == "zimbraDomainAdminMaxMailQuota") {
-				var v = attrsArr[i]._content ;
-				if (v != null && v.length > 0) {
-					v = v / 1048576 ;
-					if(v != Math.round(v)) {
-						v= Number(v).toFixed(2);
-	  				}
+	if (resp && resp.Body && resp.Body.GetInfoResponse && resp.Body.GetInfoResponse.attrs){
+		if(resp.Body.GetInfoResponse.attrs.attr && resp.Body.GetInfoResponse.attrs.attr instanceof Array) {
+			var attrsArr = resp.Body.GetInfoResponse.attrs.attr;
+			for ( var i=0; i < attrsArr.length; i ++) {
+				if (attrsArr[i].name == "displayName") {
+					var v = attrsArr[i]._content ;
+					if (v != null && v.length > 0) {
+						ZaZimbraAdmin.currentUserName = v ;
+					}
 				}
-				ZaZimbraAdmin.domainAdminMaxMailQuota = v ;
 			}
+		} else if (resp.Body.GetInfoResponse.attrs._attrs && typeof(resp.Body.GetInfoResponse.attrs._attrs) == "object") {
+			var attrsArr = resp.Body.GetInfoResponse.attrs._attrs;
+			if(attrsArr["displayName"] && attrsArr["displayName"].length) 
+				ZaZimbraAdmin.currentUserName = attrsArr["displayName"];
+		}	
+		//fallback to email address	
+		if (ZaZimbraAdmin.currentUserName.length <=0 && resp.Body.GetInfoResponse.name){
+			ZaZimbraAdmin.currentUserName = resp.Body.GetInfoResponse.name;
 		}
 	}
-}*/
+}
 
 ZaZimbraAdmin.prototype._setLicenseStatusMessage = function () {
 	if ((typeof ZaLicense == "function") && (ZaSettings.LICENSE_ENABLED)){
@@ -354,7 +362,7 @@ function(statusBox) {
 	statusBox.getHtmlElement().className = "statusBox";
 }
 
-
+/*
 ZaZimbraAdmin.prototype._createAppChooser =
 function() {
 	var buttons = new Array();
@@ -380,6 +388,83 @@ function() {
 
 	return appChooser;
 }
+*/
+ZaZimbraAdmin.prototype._createAppTabs =
+function () {
+	var appTabGroup = new ZaAppTabGroup(this._shell, this.getApp());
+	return appTabGroup ;
+}
+
+/*
+ZaZimbraAdmin.prototype._createMainTab =
+function () {
+	var tabGroup = this._app.getTabGroup() ;
+	tabGroup._mainTab = new ZaAppTab (tabGroup , this._app, 
+				//this._app.getViewById(this._tabId)["APP CONTENT"].getTitle(), 
+				//"Status",
+				null, null,  
+				null, null, false, true);
+	
+} */
+
+ZaZimbraAdmin.prototype._createHelpLink =
+function() {
+
+	var helpLabel = new DwtComposite (this._shell, "HelpContainer", Dwt.RELATIVE_STYLE);
+	var listener = new AjxListener(this, this._helpListener);
+	var helpEl = helpLabel.getHtmlElement();
+		
+	var adminObj = this ;
+	helpLabel.getHtmlElement().onclick = function () { ZaZimbraAdmin.prototype._helpListener.call(adminObj) ;};
+	helpLabel.setCursor ("pointer") ;
+	
+	helpLabel.getHtmlElement().innerHTML = 
+		this._getAppLink(null, "Help",  ZaMsg.helpDesk);
+	
+	helpLabel.reparentHtmlElement (ZaSettings.SKIN_HELP_DOM_ID) ;
+}
+
+ZaZimbraAdmin.prototype._createDownloadLink =
+function() {
+	var dwLabel = new DwtComposite (this._shell, "DWContainer", Dwt.RELATIVE_STYLE);
+	var listener = new AjxListener(this, this._dwListener);
+	
+	//AjxTK addListener doesn't seem to work
+	var adminObj = this ;
+	dwLabel.getHtmlElement().onclick = function () { ZaZimbraAdmin.prototype._dwListener.call(adminObj) ;};
+	dwLabel.setCursor ("pointer") ;
+	
+	dwLabel.getHtmlElement().innerHTML = 
+		this._getAppLink(null, "MigrationWiz",  ZaMsg.goToMigrationWiz);
+	
+	dwLabel.reparentHtmlElement (ZaSettings.SKIN_DW_DOM_ID) ;
+}
+
+ZaZimbraAdmin.prototype._setUserName =
+function () {
+	var e = document.getElementById("skin_container_username") ;
+	e.innerHTML = ZaZimbraAdmin.currentUserName ;
+}
+
+ZaZimbraAdmin.prototype._helpListener =
+function(ev) {
+	//DBG.println(AjxDebug.DBG1, "Help is clicked ...") ;
+	if(this._app.getCurrentController()) {
+		this._app.getCurrentController().switchToNextView(this._app.getHelpViewController(), ZaHelpViewController.prototype.show, null);
+	} else {					
+		this._app.getHelpViewController().show();
+	}
+}
+
+ZaZimbraAdmin.prototype._dwListener = 
+function (ev) {
+	//DBG.println(AjxDebug.DBG1, "Download is clicked ...") ;
+	if(this._app.getCurrentController()) {
+		this._app.getCurrentController().switchToNextView(this._app.getMigrationWizController(), ZaMigrationWizController.prototype.show, null);
+	} else {					
+		this._app.getMigrationWizController().show();
+	}
+}
 
 ZaZimbraAdmin.prototype._createBanner =
 function() {
@@ -393,6 +478,44 @@ function() {
 	banner.getHtmlElement().innerHTML = html.join("");
 	return banner;
 }
+
+ZaZimbraAdmin.prototype._createLogOff =
+function () {
+	var logoff = document.getElementById(ZaSettings.SKIN_LOGOFF_DOM_ID);
+	if (logoff) logoff.innerHTML = this._getAppLink("ZaZimbraAdmin.logOff();", "Logoff",  ZaMsg.logOff);
+	logoff.style.cursor = "pointer" ;
+}
+
+//set the html content for logoff, help and download
+ZaZimbraAdmin.prototype._getAppLink =
+function(staticFunc, icon, lbl) {
+	var html = [];
+	var i = 0;
+	html[i++] = "<table border=0 cellpadding=1 cellspacing=1 align=right><tr>";
+	
+	//html[i++] = "<td align=right><a  href='javascript:;'";
+	html[i++] = "<td align=right><span ";
+	if (staticFunc) {
+		html[i++] = " onclick='" + staticFunc + "' " ;
+	}
+	html[i++] = ">";
+	html[i++] = AjxImg.getImageHtml(icon, null, "border=0");
+	//html[i++] = "</a></td>";
+	html[i++] = "</span></td>";
+	
+	html[i++] = "<td width=1% align=right style='white-space:nowrap; font-weight:bold'><span " ;
+	if (staticFunc) {
+		html[i++] = " onclick='" + staticFunc + "' " ;
+	}
+	html[i++] = ">";
+	html[i++] = lbl;
+	html[i++] = "</span></td></tr></table>";
+	
+	//var cell = document.getElementById(id);
+	//if (cell) cell.innerHTML = html.join("");
+	return html.join("");
+}
+
 // Private methods
 
 ZaZimbraAdmin._killSplash =
@@ -409,6 +532,7 @@ function(shell) {
 		ZaZimbraAdmin._splashScreen = new ZaSplashScreen(shell);
 	}
 }
+/*
 ZaZimbraAdmin.prototype._appButtonListener =
 function(ev) {
 	//var searchController = this._appCtxt.getSearchController();
@@ -451,7 +575,7 @@ function(ev) {
 			ZaZimbraAdmin.logOff();
 			break;
 	}
-}
+}*/
 
 ZaZimbraAdmin.prototype._showAccountsView = function (defaultType, ev){
 /*	var queryHldr = this._getCurrentQueryHolder();
@@ -552,14 +676,17 @@ function() {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_SASH] = new DwtSash(this._shell, DwtSash.HORIZONTAL_STYLE,"console_inset_app_l", 20);
 	elements[ZaAppViewMgr.C_BANNER] = this._createBanner();		
-	elements[ZaAppViewMgr.C_APP_CHOOSER] = this._createAppChooser();
+	//elements[ZaAppViewMgr.C_APP_CHOOSER] = this._createAppChooser();
 	elements[ZaAppViewMgr.C_STATUS] = this._statusBox = new DwtText(this._shell, "statusBox", Dwt.ABSOLUTE_STYLE);
 	this._statusBox.setScrollStyle(Dwt.CLIP);
 	this._setLicenseStatusMessage();
 	// the outer element of the entire skin is hidden until this point
 	// so that the skin won't flash (become briefly visible) during app loading
-	if (skin && skin.showSkin)
-		skin.showSkin(true);		
+	if (skin && skin.showSkin){
+		skin.showSkin(true);	
+		//hide the advanced search builder at the beginning
+		skin.showSearchBuilder(false);  
+	}	
 	this._appViewMgr.addComponents(elements, true);
 
 	var elements = new Object();
@@ -567,12 +694,23 @@ function() {
 	elements[ZaAppViewMgr.C_SEARCH] = this._app.getSearchListController().getSearchPanel();		
 	elements[ZaAppViewMgr.C_SEARCH_BUILDER_TOOLBAR] = this._app.getSearchBuilderToolbarController ().getSearchBuilderTBPanel();
 	elements[ZaAppViewMgr.C_SEARCH_BUILDER] = this._app.getSearchBuilderController().getSearchBuilderPanel();
+	//Use reparentHtmlelement to add the tabs. Reenable this line if it doesn't work well.
+	elements[ZaAppViewMgr.C_APP_TABS] = this._createAppTabs() ;
 	elements[ZaAppViewMgr.C_CURRENT_APP] = new ZaCurrentAppToolBar(this._shell);
 	this._appViewMgr.addComponents(elements, true);
 
+	//add logoff
+	this._createLogOff();
+	this._createHelpLink();
+	this._createDownloadLink() ;
+	this._setUserName() ;
+	//this._createAppTabs() ;
+	
 	this._app.launch();
-
-
+	
+	//create main Tab
+	//this._createMainTab() ;
+	
 	ZaZimbraAdmin._killSplash();
 };
 
@@ -588,7 +726,13 @@ function(ev) {
 // This method is called by the window.onbeforeunload method.
 ZaZimbraAdmin._confirmExitMethod =
 function() {
-	return ZaMsg.appExitWarning;
+	//check whether all the tabs are clean by close them
+	var msg = ZaMsg.appExitWarning ;
+	var tabTitles = ZaAppTabGroup.getDirtyTabTitles() ;
+	if ( tabTitles.length > 0 ){
+		msg = ZaMsg.appExitWarningWithDirtyTab + "\n" + tabTitles.join("\n");
+	}
+	return msg;
 }
 
 ZaZimbraAdmin.setOnbeforeunload = 

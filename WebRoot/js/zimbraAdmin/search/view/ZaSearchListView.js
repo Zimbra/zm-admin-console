@@ -57,6 +57,27 @@ ZaSearchListView.prototype.getTitle =
 function () {
 	return ZaMsg.Accounts_view_title;
 }
+
+ZaSearchListView.prototype.getTabIcon =
+function () {
+	return "search" ;
+}
+
+ZaSearchListView.prototype.getTabTitle =
+function () {
+	return ZaMsg.Search_view_title ;
+}
+
+ZaSearchListView.prototype.getTabToolTip =
+function () {
+	var controller = this._app.getCurrentController () ;
+	if (controller && controller._currentQuery) {
+		return ZaMsg.tt_tab_Search + controller._currentQuery ;
+	}else {
+		return ZaMsg.Search_view_title ;
+	}
+}
+
 /**
 * Renders a single item as a DIV element.
 */

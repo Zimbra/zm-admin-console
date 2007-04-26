@@ -32,9 +32,7 @@
 **/
 function ZaOverviewPanelController(appCtxt, container, app) {
 	ZaController.call(this, appCtxt, container, app, "ZaOverviewPanelController");
-
 	this._init(appCtxt, container);
-	
 	this._setView();
 }
 
@@ -179,6 +177,37 @@ function (resp) {
 		}		
 	}
 }
+ZaOverviewPanelController.prototype.updateSavedSearchTreeList =
+function () {
+	var isExpanded = this._savedSearchTi.getExpanded();
+	
+	//remove the old treeitems
+	for (var i=0; i<this._savedSearchMapArr.length; i++) {
+		this._savedSearchTi.removeChild(this._savedSearchMapArr[i]);
+	}
+	
+	this._savedSearchMapArr = [];
+	//add the new tree items
+	try {	
+		var savedSearchList = this._app.getSavedSearchList();
+		if(savedSearchList && savedSearchList.length) {
+			var cnt = savedSearchList.length;
+			for(var ix=0; ix< cnt; ix++) {
+				var ti1 = new DwtTreeItem(this._savedSearchTi);			
+				ti1.setText(savedSearchList[ix].name);	
+				ti1.setImage("SearchFolder");
+				ti1.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._SEARCH_LIST_VIEW);
+				ti1.setData("name", savedSearchList[ix].name);
+				ti1.setData("query", savedSearchList[ix].query); //keep the query information here
+				this._savedSearchMapArr.push(ti1);
+			}
+		}
+		//keep the orginal expanded state
+		if (isExpanded) this._savedSearchTi.setExpanded(true, false);
+	} catch (ex) {
+		this._handleException(ex, "ZaOverviewPanelController.prototype.updateSavedSearchTreeList ", null, false);
+	}
+}
 
 ZaOverviewPanelController.prototype.updateDomainList = 
 function (list) {
@@ -195,7 +224,7 @@ function (list) {
 			ti1.setText(domainList[ix].name);	
 			ti1.setImage("Domain");
 			ti1.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._DOMAIN_VIEW);
-			ti1.setData(ZaOverviewPanelController._OBJ_ID, domainList[ix].name);
+			ti1.setData(ZaOverviewPanelController._OBJ_ID, domainList[ix].id);
 			this._domainsMap[domainList[ix].id] = ti1;
 		}
 	}
@@ -315,6 +344,7 @@ function (appCtxt, container) {
 	this._domainsTi = null;
 	this._serversTi = null;
 	this._statusTi = null;
+	this._savedSearchTi = null ;
 	this._currentDomain = "";	
 	this._app = appCtxt.getAppController().getApp(ZaZimbraAdmin.ADMIN_APP);
 			
@@ -332,7 +362,9 @@ function (appCtxt, container) {
 	
 	if(ZaSettings.MAILQ_ENABLED)
 		this._mailqMap = new Object();
-	
+		
+	if (ZaSettings.SAVE_SEARCH_ENABLED) 
+		this._savedSearchMapArr = [] ;
 }
 
 ZaOverviewPanelController.prototype._setView =
@@ -542,6 +574,7 @@ function() {
 		} catch (ex) {
 			this._handleException(ex, "ZaOverviewPanelController.prototype._buildFolderTree", null, false);
 		}
+		this._monitoringTi.addSeparator();
 		
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATUS] = ZaOverviewPanelController.statusTreeListener;		
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATISTICS] = ZaOverviewPanelController.statsTreeListener;				
@@ -549,6 +582,35 @@ function() {
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._POSTQ_VIEW] = ZaOverviewPanelController.postqTreeListener;				
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW] = ZaOverviewPanelController.postqByServerTreeListener;						
 	}
+	
+	//SavedSearches Tree	
+	if(ZaSettings.SAVE_SEARCH_ENABLED) {
+		this._savedSearchTi = new DwtTreeItem(tree, null, null, null, null, "overviewHeader");
+		this._savedSearchTi.enableSelection(false);
+		this._savedSearchTi.setText(ZaMsg.OVP_savedSearches);
+		this._savedSearchTi.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._SEARCHES);
+		
+		try {	
+			var savedSearchList = this._app.getSavedSearchList();
+			if(savedSearchList && savedSearchList.length) {
+				var cnt = savedSearchList.length;
+				for(var ix=0; ix< cnt; ix++) {
+					var ti1 = new DwtTreeItem(this._savedSearchTi);			
+					ti1.setText(savedSearchList[ix].name);	
+					ti1.setImage("SearchFolder");
+					ti1.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._SEARCH_LIST_VIEW);
+					ti1.setData("name", savedSearchList[ix].name);
+					ti1.setData("query", savedSearchList[ix].query); //keep the query information here
+					this._savedSearchMapArr.push(ti1);
+				}
+			}
+		} catch (ex) {
+			this._handleException(ex, "ZaOverviewPanelController.prototype._buildFolderTree", null, false);
+		}
+		
+		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._SEARCH_LIST_VIEW] = ZaOverviewPanelController.searchListTreeListener;
+	}
+	
 		
 	if(ZaSettings.ADDRESSES_ENABLED)
 		this._addressesTi.setExpanded(true, false);
@@ -561,7 +623,10 @@ function() {
 	
 	if(this._statusTi)
 		tree.setSelection(this._statusTi, true);	
-		
+	
+	if (ZaSettings.SAVE_SEARCH_ENABLED) 
+		this._savedSearchTi.setExpanded(true, false);
+			
 	//Instrumentation code start
 	if(ZaOverviewPanelController.treeModifiers) {
 		var methods = ZaOverviewPanelController.treeModifiers;
@@ -603,23 +668,31 @@ function () {
 
 ZaOverviewPanelController.prototype._overviewTreeListener =
 function(ev) {
-	if (ev.detail == DwtTree.ITEM_SELECTED) {
-	//DBG.dumpObj(ev);	
+	try {
+		var eventHandler = null ;
 		var treeItemType = ev.item.getData(ZaOverviewPanelController._TID);
-		//DBG.println("ti = "+treeItemType);
-		try {
-			if (treeItemType != null && 
-				ZaOverviewPanelController.overviewTreeListeners[treeItemType] &&
-				typeof (ZaOverviewPanelController.overviewTreeListeners[treeItemType]) == "function") {
-				ZaOverviewPanelController.overviewTreeListeners[treeItemType].call(this, ev);
+		if (treeItemType != null && 
+			ZaOverviewPanelController.overviewTreeListeners[treeItemType] &&
+			typeof (ZaOverviewPanelController.overviewTreeListeners[treeItemType]) == "function") {
+			eventHandler = ZaOverviewPanelController.overviewTreeListeners[treeItemType] ;
+		}
+		if (eventHandler) {
+			if (ev.detail == DwtTree.ITEM_SELECTED ) {
+					eventHandler.call(this, ev);
+				
+			}else if (ev.detail == DwtTree.ITEM_ACTIONED) {
+				if (treeItemType == ZaZimbraAdmin._SEARCH_LIST_VIEW) { //saved search item is actioned.
+					if (AjxEnv.hasFirebug) console.debug("Saved Search tree Item is actioned.") ;
+					eventHandler.call(this, ev) ;
+				}	
 			}
-		} catch (ex) {
+		}
+	} catch (ex) {
 			if(!ex) {
 				ex = new ZmCsfeException("Unknown error", AjxException.UNKNOWN_ERROR, "ZaOverviewPanelController.prototype._overviewTreeListener", "Unknown error")
 			}
 			this._handleException(ex, "ZaOverviewPanelController.prototype._overviewTreeListener", null, false);
 		}
-	}
 }
 
 /* default tree listeners */
@@ -635,14 +708,14 @@ ZaOverviewPanelController.cosTreeListener = function (ev) {
 }
 
 ZaOverviewPanelController.domainTreeListener = function (ev) {
-	var domain = new ZaDomain(this._app);
-	domain.name = ev.item.getData(ZaOverviewPanelController._OBJ_ID);
-	domain.attrs[ZaDomain.A_domainName]=ev.item.getData(ZaOverviewPanelController._OBJ_ID);
+	//var domain = new ZaDomain(this._app);
+	//domain.name = ev.item.getData(ZaOverviewPanelController._OBJ_ID);
+	//domain.attrs[ZaDomain.A_domainName]=ev.item.getData(ZaOverviewPanelController._OBJ_ID);
 	//domain.name = ev.item.getData(ZaOverviewPanelController._OBJ_ID);
 	//domain.load("name",ev.item.getData(ZaOverviewPanelController._OBJ_ID));	
 	if(this._app.getCurrentController()) {
 		this._app.getCurrentController().switchToNextView(this._app.getDomainController(),
-		 ZaDomainController.prototype.show,domain);
+		 ZaDomainController.prototype.show,this._app.getDomainList(true).getItemById(ev.item.getData(ZaOverviewPanelController._OBJ_ID)));
 	} else {	
 						
 		this._app.getDomainController().show(domain);
@@ -744,6 +817,19 @@ ZaOverviewPanelController.accountListTreeListener = function (ev) {
 ZaOverviewPanelController.resourceListTreeListener = function (ev) {
 	this._showAccountsView(ZaItem.RESOURCE,ev);
 	this._modifySearchMenuButton(ZaItem.RESOURCE) ;
+}
+
+ZaOverviewPanelController.searchListTreeListener = function (ev) {
+	var searchField = this._app.getSearchListController()._searchField ;
+	var name = ev.item.getData("name") ;
+	var query = ev.item.getData("query");
+	if (ev.detail == DwtTree.ITEM_SELECTED) {
+		if (AjxEnv.hasFirebug) console.debug("Run the saved search ...") ;
+		searchField.selectSavedSearch(name, query);
+	}else if (ev.detail == DwtTree.ITEM_ACTIONED){
+		searchField._currentSavedSearch = {name: name, query: query};
+		searchField.getSavedSearchActionMenu().popup(0, ev.docX, ev.docY);
+	}
 }
 
 ZaOverviewPanelController.zimletListTreeListener = function (ev) {

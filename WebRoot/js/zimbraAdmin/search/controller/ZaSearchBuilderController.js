@@ -77,6 +77,17 @@ function () {
 	return this._searchBuilderVisible ;
 } 
 
+//test if the current query string is LDAP query string or a basic search string.
+ZaSearchBuilderController.prototype.isAdvancedSearch =
+function (query) {
+	var regEx =  /\([^\(\)\=]+=[^\(\)\=]+\)/ ; //ldap query string regEx
+	if (query.match(regEx) != null) {
+		return true ;
+	}
+	
+	return  false ;
+} 
+
 ZaSearchBuilderController.handleOptions =
 function (value, event, form){
 	DBG.println(AjxDebug.DBG3, "Handling the options on the search builder toolbar ...");
@@ -286,6 +297,10 @@ function (filter, key, value) {
 		if (value == "TRUE")  filter.push(ZaSearch.RESOURCES);
 	/*}else if (key == ZaSearchOption.A_objTypeDomain) {
 		if (value == "TRUE")  filter.push(ZaSearch.DOMAINS);*/
+	}else if (key == ZaSearchOption.A_objTypeAccountAdmin) {
+		if (value == "TRUE")  entry = "(" + key + "=" + value + ")" ; //no * for the TRUE or FALSE value
+	}else if (ZaSearchOption.A_objTypeAccountDomainAdmin && key == ZaSearchOption.A_objTypeAccountDomainAdmin){
+		if (value == "TRUE")  entry = "(" + key + "=" + value + ")" ; //no * for the TRUE or FALSE value
 	}else if (key == ZaSearchOption.A_domainListChecked) {	
 		if (value.size () > 0) {
 				entry = ZaSearchBuilderController.getOrFilter4ListArray (

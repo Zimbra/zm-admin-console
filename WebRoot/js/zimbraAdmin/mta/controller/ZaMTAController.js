@@ -38,6 +38,7 @@ function ZaMTAController(appCtxt, container,app) {
 	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/monitoring/monitoring_zimbra_mta_mail_queues.htm";				
 	this._toolbarOperations = new Array();
 	this.objType = ZaEvent.S_MTA;	
+	this.tabConstructor = ZaMTAXFormView;	
 }
 
 ZaMTAController.prototype = new ZaXFormViewController();
@@ -51,8 +52,10 @@ ZaController.setViewMethods["ZaMTAController"] = new Array();
 */
 ZaMTAController.prototype.show = 
 function(entry) {
-	this._setView(entry);
-	this.setDirty(false);
+	if (! this.selectExistingTabByItemId(entry.id)){
+		this._setView(entry, true);
+		this.setDirty(false);
+	}
 }
 
 /**
@@ -65,7 +68,8 @@ function(entry) {
 	if(!this._UICreated) {
 		this._createUI();
 	} 
-	this._app.pushView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW);
+	//this._app.pushView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW);
+	this._app.pushView(this.getContentViewId());
 	this._view.setDirty(false);
 	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
 	this._currentObject = entry;
@@ -94,7 +98,7 @@ ZaController.initToolbarMethods["ZaMTAController"].push(ZaMTAController.initTool
 **/
 ZaMTAController.prototype._createUI =
 function () {
-	this._view = new ZaMTAXFormView(this._container, this._app);
+	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 
 	this._initToolbar();
 	//always add Help button at the end of the toolbar
@@ -105,8 +109,14 @@ function () {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-    this._app.createView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW, elements);
+    //this._app.createView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW, elements);
+    var tabParams = {
+			openInNewTab: true,
+			tabId: this.getContentViewId()
+		}
+	this._app.createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
+	this._app._controllers[this.getContentViewId ()] = this ;
 }
 
 

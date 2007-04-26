@@ -49,8 +49,8 @@ function MoveAliasXDialog(parent,  app, w, h) {
 MoveAliasXDialog.prototype = new ZaXDialog;
 MoveAliasXDialog.prototype.constructor = MoveAliasXDialog;
 MoveAliasXDialog.resultChoices = new XFormChoices([], XFormChoices.OBJECT_REFERENCE_LIST, null, "name");
-MoveAliasXDialog.MOVE_BUTTON= ++ZA_BTN_INDEX;
-MoveAliasXDialog.CLOSE_BUTTON = ++ZA_BTN_INDEX;
+MoveAliasXDialog.MOVE_BUTTON= ++DwtDialog.LAST_BUTTON;
+MoveAliasXDialog.CLOSE_BUTTON = ++DwtDialog.LAST_BUTTON;
 
 MoveAliasXDialog.prototype.popup = 
 function (loc) {
@@ -111,14 +111,17 @@ function() {
 				//throw	
 				throw (new AjxException(ZaMsg.FAILED_MOVE_ALIAS, AjxException.UNKNOWN_ERROR, "MoveAliasXDialog.prototype.moveAlias", "Alias name is not available"));
 			}
-			this._app.getAccountListController().show();							
+			this._app.getAccountListController().show();	
+			this._containedObject.resultMsg = String(ZaMsg.Alias_Moved_To).replace("{0}",name).replace("{1}",this._containedObject[ZaSearch.A_selected].name); 
+			return true;							
+		}else{
+			this._app.getCurrentController().popupErrorDialog( AjxMessageFormat.format(ZaMsg.WARNING_ALIASES_TARGET_NON_EXIST,[this._containedObject[ZaSearch.A_selected]]));
 		}
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex, "MoveAliasXDialog.prototype.moveAlias", null, false);
 		return false;
 	}
-	this._containedObject.resultMsg = String(ZaMsg.Alias_Moved_To).replace("{0}",name).replace("{1}",this._containedObject[ZaSearch.A_selected].name); 
-	return true;	
+	return false;
 }
 /*
 MoveAliasXDialog.prototype.searchAccounts = 
