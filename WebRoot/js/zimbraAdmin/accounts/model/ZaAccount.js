@@ -249,7 +249,7 @@ function(tmpObj, app) {
 			}		
 		}
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaAccount.checkValues", null, false);
+		app.getCurrentController()._handleException(ex, "ZaAccount.checkValues", null, false);
 	}	
 	//if the account did not have a valid cos id - pick the first COS
 	//validate password length against this account's COS setting
@@ -1443,7 +1443,7 @@ function (value, event, form){
 		this.setInstanceValue(value);
 		form.refresh();
 	} catch (ex) {
-		form.getController()._handleException(ex, "ZaAccount.prototype.getCurrentCos", null, false);	
+		form.parent._app.getCurrentController()._handleException(ex, "ZaAccount.setDomainChanged", null, false);	
 	}
 }
 
