@@ -788,7 +788,7 @@ ZaOverviewPanelController.postqTreeListener = function (ev) {
 	if(this._app.getCurrentController()) {
 		this._app.getCurrentController().switchToNextView(this._app.getMTAListController(), ZaMTAListController.prototype.show, ZaMTA.getAll(this._app));
 	} else {
-		this._app.getMTAListController().show(ZaServer.getAll(this._app));
+		this._app.getMTAListController().show(ZaMTA.getAll(this._app));
 	}
 }
 
