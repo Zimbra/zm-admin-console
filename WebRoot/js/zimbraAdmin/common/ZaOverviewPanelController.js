@@ -520,7 +520,19 @@ function() {
 			this._handleException(ex, "ZaOverviewPanelController.prototype._buildFolderTree", null, false);
 		}
 		
-		this._postqTi = new DwtTreeItem(this._monitoringTi);
+		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATUS] = ZaOverviewPanelController.statusTreeListener;		
+		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATISTICS] = ZaOverviewPanelController.statsTreeListener;				
+		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATISTICS_BY_SERVER] = ZaOverviewPanelController.statsByServerTreeListener;						
+	}
+
+
+	if(ZaSettings.TOOLS_ENABLED) {
+		this._toolsTi = new DwtTreeItem(tree, null, null, null, null, "overviewHeader");
+		this._toolsTi.enableSelection(false);	
+		this._toolsTi.setText(ZaMsg.OVP_tools);
+		this._toolsTi.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._MONITORING);
+		
+		this._postqTi = new DwtTreeItem(this._toolsTi);
 		this._postqTi.setText(ZaMsg.OVP_postq);
 		this._postqTi.setImage("Queue");
 		this._postqTi.setData(ZaOverviewPanelController._TID, ZaZimbraAdmin._POSTQ_VIEW);
@@ -543,12 +555,10 @@ function() {
 			this._handleException(ex, "ZaOverviewPanelController.prototype._buildFolderTree", null, false);
 		}
 		
-		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATUS] = ZaOverviewPanelController.statusTreeListener;		
-		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATISTICS] = ZaOverviewPanelController.statsTreeListener;				
-		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._STATISTICS_BY_SERVER] = ZaOverviewPanelController.statsByServerTreeListener;						
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._POSTQ_VIEW] = ZaOverviewPanelController.postqTreeListener;				
 		ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW] = ZaOverviewPanelController.postqByServerTreeListener;						
 	}
+
 		
 	if(ZaSettings.ADDRESSES_ENABLED)
 		this._addressesTi.setExpanded(true, false);
@@ -559,6 +569,9 @@ function() {
 	if(ZaSettings.MONITORING_ENABLED)
 		this._monitoringTi.setExpanded(true, false);
 	
+	if(ZaSettings.TOOLS_ENABLED)
+		this._toolsTi.setExpanded(true, false);
+			
 	if(this._statusTi)
 		tree.setSelection(this._statusTi, true);	
 		

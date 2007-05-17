@@ -194,6 +194,7 @@ ZaSettings.SKIN_PREFS_ENABLED = true;
 ZaSettings.LICENSE_ENABLED = true;
 ZaSettings.ZIMLETS_ENABLED = true;
 ZaSettings.ADMIN_ZIMLETS_ENABLED = true;
+ZaSettings.TOOLS_ENABLED = true;
 
 // initialization for settings: [name, type, data type, default value]
 ZaSettings.INIT = new Object();
