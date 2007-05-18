@@ -633,3 +633,10 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaHighlightedText {
  @NoticeText@
 }
+
+/* Search builder outer container */
+.ZaXMbxSearchBuilder {
+	height: 225px;		/* ??? SIZE */
+	width: 100%;
+	overflow: hidden;
+}
