@@ -640,3 +640,8 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 	width: 100%;
 	overflow: hidden;
 }
+
+.ZaXMBxPickerGrid {
+	@ToolbarContainer@
+	@InsetBg@ @OutsetBorder@
+}
