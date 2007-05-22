@@ -16,7 +16,7 @@
 * @author Greg Solovyev
 **/
 function ZaZimlet(app) {
-	ZaItem.call(this, app);
+	ZaItem.call(this, app,"ZaZimlet");
 	this.label = "";
 	this[ZaModel.currentStep] = 1;
 }
