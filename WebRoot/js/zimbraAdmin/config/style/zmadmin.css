@@ -645,3 +645,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 	@ToolbarContainer@
 	@InsetBg@ @OutsetBorder@
 }
+
+.ZaXMBxAccountsListGrouper {
+	width:280px;
+}
