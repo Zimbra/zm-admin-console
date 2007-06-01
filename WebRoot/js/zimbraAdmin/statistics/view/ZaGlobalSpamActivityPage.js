@@ -51,6 +51,7 @@ ZaGlobalSpamActivityPage.prototype._createHTML =
 function () {
 	var idx = 0;
 	var html = new Array(50);
+	html[idx++] = "<h3 style='padding-left: 10px'>" + ZaMsg.Stats_AV_Header + "</h3>" ;
 	html[idx++] = "<div style='width:70ex;'>";	
 	html[idx++] = "<table cellpadding='5' cellspacing='4' border='0' align='left'>";	
 	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</td></tr>";	
