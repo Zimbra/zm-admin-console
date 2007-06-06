@@ -49,6 +49,7 @@ function ZaListViewController(appCtxt, container, app, iKeyName) {
 
 ZaListViewController.prototype = new ZaController();
 ZaListViewController.prototype.constructor = ZaListViewController;
+ZaListViewController.changeActionsStateMethods = new Object();
 
 ZaListViewController.prototype._nextPageListener = 
 function (ev) {
@@ -175,7 +176,32 @@ function (nextViewCtrlr, func, params) {
 
 ZaListViewController.prototype._changeActionsState =
 function () {
-	
+	var opsArray1 = new Array();
+	var opsArray2 = new Array();
+
+	if(ZaListViewController.changeActionsStateMethods[this._iKeyName]) {
+		var methods = ZaListViewController.changeActionsStateMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				try {
+					methods[i].call(this,opsArray1,opsArray2);
+				} catch (ex) {
+					this._handleException(ex, "ZaListViewController.prototype.changeActionsState");
+				}
+			}
+		}
+	}	
+
+	if(opsArray1.length) {
+		this._toolbar.enable(opsArray1, true);
+		this._actionMenu.enable(opsArray1, true);
+	}
+	if(opsArray2.length) {
+		this._toolbar.enable(opsArray2, false);
+		this._actionMenu.enable(opsArray2, false);
+	}	
+
 }
 /**
 * @param ev
