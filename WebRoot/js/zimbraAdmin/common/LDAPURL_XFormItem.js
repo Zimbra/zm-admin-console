@@ -30,22 +30,13 @@
 * @constructor LDAPURL_XFormItem
 * @author Greg Solovyev
 **/
-LDAPURL_XFormItem = function() {}
+function LDAPURL_XFormItem() {}
 XFormItemFactory.createItemType("_LDAPURL_", "ldapurl", LDAPURL_XFormItem, Composite_XFormItem);
 LDAPURL_XFormItem.prototype.numCols = 5;
 LDAPURL_XFormItem.prototype.nowrap = true;
 LDAPURL_XFormItem.prototype._protocolPart = "ldap://";
 LDAPURL_XFormItem.prototype._serverPart = "";
 LDAPURL_XFormItem.prototype._portPart = "389";
-LDAPURL_XFormItem.prototype.defSSLPort = "636";
-LDAPURL_XFormItem.prototype.defPort = "389";
-LDAPURL_XFormItem.prototype.initializeItems = function () {
-	var ldapPort = this.getInheritedProperty("ldapPort");
-	var ldapSSLPort = this.getInheritedProperty("ldapSSLPort");
-	this.defPort = ldapPort ? ldapPort : "389";
-    this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";	
-	Composite_XFormItem.prototype.initializeItems.call(this);
-}
 
 LDAPURL_XFormItem.prototype.items = [
 	{type:_OUTPUT_, width:"35px", ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
@@ -94,7 +85,7 @@ LDAPURL_XFormItem.prototype.items = [
 	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,value:":"},
 	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_, 
 		getDisplayValue:function (itemVal) {
-			var val = this.getParentItem().defPort;
+			var val = "389";
 			if(itemVal) {
 				var URLChunks = itemVal.split(/[:\/]/);
 					
@@ -143,10 +134,10 @@ LDAPURL_XFormItem.prototype.items = [
 		elementChanged:function(isChecked, instanceValue, event) {
 			if(isChecked) {
 				this.getParentItem()._protocolPart = "ldaps://";
-				this.getParentItem()._portPart = this.getParentItem().defSSLPort;
+				this.getParentItem()._portPart = 636;
 			} else {
 				this.getParentItem()._protocolPart = "ldap://";
-				this.getParentItem()._portPart = this.getParentItem().defPort;
+				this.getParentItem()._portPart = 389;
 			}
 			var val = this.getParentItem()._protocolPart + this.getParentItem()._serverPart+ ":" + this.getParentItem()._portPart;
 			this.getForm().itemChanged(this.getParentItem(), val, event);

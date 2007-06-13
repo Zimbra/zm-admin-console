@@ -38,7 +38,7 @@
 * @see ZaGlobalConfigViewController
 **/
 
-ZaXFormViewController = function(appCtxt, container, app, iKeyName) {
+function ZaXFormViewController(appCtxt, container, app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._currentObject = null;
 	ZaController.call(this, appCtxt, container, app, iKeyName);
@@ -65,39 +65,32 @@ function(details) {
 	}
 }
 
+
+
+
 //Listeners for default toolbar buttons (close, save, delete)
 /**
 * member of ZaXFormViewController
 * @param 	ev event object
-* 			noPopView - It should be set to true when close a hidden tab
 * handles the Close button click. Returns to the list view.
 **/ 
 ZaXFormViewController.prototype.closeButtonListener =
-function(ev, noPopView, func, obj, params) {
+function(ev) {
 	//prompt if the user wants to save the changes
 	if(this._view.isDirty()) {
 		//parameters for the confirmation dialog's callback 
-		var args = new Object();
-		if (noPopView) {
-			args["obj"] = obj ;
-			args["func"] = func ;
-			args["params"] = params ;
-		}else{
-			args["obj"] = this._app;		
-			args["params"] = null;
-			args["func"] = ZaApp.prototype.popView;
-		}
+		var args = new Object();		
+		args["params"] = null;
+		args["obj"] = this._app;
+		args["func"] = ZaApp.prototype.popView;
 		//ask if the user wants to save changes		
 		this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
 		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
 		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
 		this._app.dialogs["confirmMessageDialog"].popup();
-	} else if (noPopView){
-		func.call(obj, params) ;
-	}else{
+	} else {
 		this._app.popView();
-		//this._app.getTabGroup().removeCurrentTab(true) ;
-	}
+	}	
 }
 
 /**
@@ -153,10 +146,9 @@ function (params) {
 		if(this._saveChanges()) {
 			this.fireChangeEvent(this._currentObject);			
 			params["func"].call(params["obj"], params["params"]);	
-			//this._app.getTabGroup().removeCurrentTab(true) ;
 		}
 	} catch (ex) {
-		this._handleException(ex, ZaXFormViewController.prototype.saveAndGoAway, null, false);
+		this._handleException(ex, "ZaXFormViewController.prototype.saveAndGoAway", null, false);
 	}
 }
 
@@ -173,8 +165,7 @@ function () {
 			this.fireRemovalEvent(this._currentObject);
 		}
 		this.closeCnfrmDlg();	
-		this._app.popView();		
-		//this._app.getTabGroup().removeCurrentTab(true) ;	
+		this._app.popView();			
 	} catch (ex) {
 		this.closeCnfrmDlg();	
 		this._handleException(ex, "ZaXFormViewController.prototype.deleteAndGoAway", null, false);				
@@ -197,10 +188,6 @@ function (params) {
 **/
 ZaXFormViewController.prototype.switchToNextView = 
 function (nextViewCtrlr, func, params) {
-	//since we use the tabs to hold the invidual views. There is not need to 
-	//test if the current view is dirty or not.
-	//The dirty view will be warned when user try to close the tab(s)
-	/*
 	if(this._view.isDirty()) {
 		//parameters for the confirmation dialog's callback 
 		var args = new Object();		
@@ -215,9 +202,7 @@ function (nextViewCtrlr, func, params) {
 		this._app.dialogs["confirmMessageDialog"].popup();
 	} else {
 		func.call(nextViewCtrlr, params);
-	}*/
-	
-	func.call(nextViewCtrlr, params);
+	}
 }
 
 /**
@@ -237,53 +222,6 @@ function (isD) {
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
 }
 
-/**
-*	@method setViewMethod 
-*	@param entry - data object
-*/
-ZaXFormViewController.setViewMethod =
-function(entry) {
-	if(entry.load)
-		entry.load();
-		
-	if(!this._UICreated) {
-		this._createUI();
-	} 
-//	this._app.pushView(ZaZimbraAdmin._SERVER_VIEW);
-	this._app.pushView(this.getContentViewId());
-	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
-	this._currentObject = entry;
-}
 
-/**
-* @method _createUI
-**/
-ZaXFormViewController.prototype._createUI =
-function () {
-	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 
-	this._initToolbar();
-	//always add Help button at the end of the toolbar
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));							
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);		
-	
-	var elements = new Object();
-	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-    var tabParams = {
-		openInNewTab: true,
-		tabId: this.getContentViewId()
-	}
-	this._app.createView(this.getContentViewId(), elements, tabParams) ;
-	this._UICreated = true;
-	this._app._controllers[this.getContentViewId ()] = this ;
-}
-
-ZaXFormViewController.prototype._findAlias = function (alias) {
-	var searchQuery = new ZaSearchQuery(ZaSearch.getSearchByNameQuery(alias), [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES], null, false);
-	// this search should only return one result
-	var results = ZaSearch.searchByQueryHolder(searchQuery, 1, null, null, this._app);
-	return results.list.getArray()[0];
-};
 

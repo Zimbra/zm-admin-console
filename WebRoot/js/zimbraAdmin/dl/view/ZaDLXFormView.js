@@ -30,12 +30,8 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaDLXFormView = function(parent, app) {
+function ZaDLXFormView (parent, app) {
 	ZaTabView.call(this, parent, app,"ZaDLXFormView");
-	this.dlStatusChoices = [
-		{value:"enabled", label:ZaMsg.DL_Status_enabled}, 
-		{value:"disabled", label:ZaMsg.DL_Status_disabled}
-	];
 	this.initForm(ZaDistributionList.myXModel,this.getMyXForm());
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(app.getDistributionListController(), ZaDLController.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(app.getDistributionListController(), ZaDLController.prototype.handleXFormChange));	
@@ -48,11 +44,6 @@ ZaTabView.XFormModifiers["ZaDLXFormView"] = new Array();
 ZaDLXFormView.prototype.getTitle = 
 function () {
 	return ZaMsg.DL_view_title;
-}
-
-ZaDLXFormView.prototype.getTabIcon =
-function () {
-	return "Group" ;
 }
 
 /**
@@ -286,17 +277,11 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
  	var values = val.split(/[\r\n,;]+/);
 	var cnt = values.length;
  	var members = new Array();
- 	var stdEmailRegEx = /([^\<\;]*)\<([^\>]+)\>/ ;
 	for (var i = 0; i < cnt; i++) {
 		var tmpval = AjxStringUtil.trim(values[i],true);
-		var result ;
 		if (tmpval) {
-			if ((result = stdEmailRegEx.exec(tmpval)) != null) {
-				tmpval = result[2];
-			}
-			
 			if(!AjxUtil.EMAIL_FULL_RE.test(tmpval) ) {
-				//how error msg
+				//show error msg
 				form.parent._app.getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.WARNING_DL_INVALID_EMAIL,[values[i]]),null,null,DwtMessageDialog.WARNING_STYLE);
 				return false;
 			}
@@ -310,7 +295,6 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
 ZaDLXFormView.prototype.setObject = 
 function (entry) {
 	this._containedObject = entry.clone();
-	this._containedObject.type = entry.type ;
 	
 	if(!entry[ZaModel.currentTab])
 		this._containedObject[ZaModel.currentTab] = "1";
@@ -318,8 +302,6 @@ function (entry) {
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
 		
 	this._localXForm.setInstance(this._containedObject);	
-	
-	this.updateTab();
 }
 
 ZaDLXFormView.prototype.searchAccounts = 
@@ -381,9 +363,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 						{type:_AJX_IMAGE_, src:"Group_32", label:null, rowSpan:2},
 						{type:_OUTPUT_, ref:"name", label:null,cssClass:"AdminTitle", rowSpan:2},
 						{type:_OUTPUT_, ref:"id", label:ZaMsg.NAD_ZimbraID},
-						{type:_OUTPUT_, ref:"zimbraMailStatus", label:ZaMsg.NAD_AccountStatus,
-								choices: this.dlStatusChoices
-						}
+						{type:_OUTPUT_, ref:"zimbraMailStatus", label:ZaMsg.NAD_AccountStatus}
 					]
 				}
 			],
@@ -393,8 +373,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 				[ 
 					{value:1, label:ZaMsg.DLXV_TabMembers}, 
 					{value:2, label:ZaMsg.DLXV_TabNotes},
-					{value:3, label:ZaMsg.TABT_MemberOf},
-					{value:4, label:ZaMsg.TABT_Aliases}
+					{value:3, label:ZaMsg.TABT_MemberOf}
 				], 
 			ref: ZaModel.currentTab, colSpan:"*",cssClass:"ZaTabBar", id:"xform_tabbar"
 		},
@@ -418,8 +397,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
         						    	cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged
         						    },
         							{ref: "zimbraMailStatus", type:_CHECKBOX_, trueValue:"enabled", falseValue:"disabled", align:_LEFT_,
-        								label:ZaMsg.DLXV_LabelEnabled, msgName:ZaMsg.DLXV_LabelEnabled, labelLocation:_LEFT_,
-        								labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
+        								label:ZaMsg.DLXV_LabelEnabled, msgName:ZaMsg.DLXV_LabelEnabled, labelLocation:_LEFT_,labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
         							},	
         							/*{ref:ZaDistributionList.A_isgroup, type:_CHECKBOX_, trueValue:1, falseValue:0, align:_LEFT_,
         								label:ZaMsg.DLXV_LabelIsgroup, msgName:ZaMsg.DLXV_LabelIsgroup, labelLocation:_LEFT_,labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
@@ -709,41 +687,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 							]
 						}
 					]
-				},
-				//DL Alias
-				{type:_ZATABCASE_, width:"100%", numCols:1, colSizes:["auto"],
-					relevant:("instance[ZaModel.currentTab] == 4"),
-					items: [
-						{type:_ZA_TOP_GROUPER_, borderCssClass:"LowPadedTopGrouperBorder",
-							 width:"100%", numCols:1,colSizes:["auto"],
-							label:ZaMsg.NAD_EditDLAliasesGroup,
-							items :[
-								{ref:ZaAccount.A_zimbraMailAlias, type:_DWT_LIST_, height:"200", width:"350px", 
-									forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource", 
-									headerList:null,onSelection:ZaAccountXFormView.aliasSelectionListener
-								},
-								{type:_GROUP_, numCols:5, width:"350px", colSizes:["100px","auto","100px","auto","100px"], 
-									cssStyle:"margin-bottom:10px;padding-bottom:0px;margin-top:10px;pxmargin-left:10px;margin-right:10px;",
-									items: [
-										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
-											onActivate:"ZaAccountXFormView.deleteAliasButtonListener.call(this);",
-											relevant:"ZaAccountXFormView.isDeleteAliasEnabled.call(this)", relevantBehavior:_DISABLE_
-										},
-										{type:_CELLSPACER_},
-										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Edit,width:"100px",
-											onActivate:"ZaAccountXFormView.editAliasButtonListener.call(this);",
-											relevant:"ZaAccountXFormView.isEditAliasEnabled.call(this)", relevantBehavior:_DISABLE_
-										},
-										{type:_CELLSPACER_},
-										{type:_DWT_BUTTON_, label:ZaMsg.NAD_Add,width:"100px",
-											onActivate:"ZaAccountXFormView.addAliasButtonListener.call(this);"
-										}
-									]
-								}
-							]
-						}
-					]
-				}//END of DL Alias
+				}		
 			]
 		}
 	]

@@ -30,7 +30,7 @@
 * this is the wizard dialog for deployig a zimlet or an admin extension
 * @author Greg Solovyev
 **/
-ZaZimletDeployXWizard = function(parent, app) {
+function ZaZimletDeployXWizard(parent, app) {
 	ZaXWizardDialog.call(this, parent, app, null, ZaMsg.ZMLT_DeployZimletWizardTitle, "550px", "300px","ZaZimletDeployXWizard");
 	this._app = app;
 	this.stepChoices = [

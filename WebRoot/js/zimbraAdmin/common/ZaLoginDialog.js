@@ -23,10 +23,10 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaLoginDialog = function(parent, zIndex, className, appCtxt) {
+function ZaLoginDialog(parent, zIndex, className, appCtxt) { 
 
     className = className || "ZaLoginDialog";
-    DwtBaseDialog.call(this, parent, className, ZaMsg.login, zIndex);
+    DwtDialog.call(this, parent, className, ZaMsg.login, DwtDialog.NO_BUTTONS);
 
 	//license expiration warning won't show before login.
 	//var licenseStatus = ZaZimbraAdmin.getLicenseStatus();
@@ -46,7 +46,7 @@ ZaLoginDialog = function(parent, zIndex, className, appCtxt) {
 	this.setContent(html);
 }
 
-ZaLoginDialog.prototype = new DwtBaseDialog;
+ZaLoginDialog.prototype = new DwtDialog;
 ZaLoginDialog.prototype.constructor = ZaLoginDialog;
 
 ZaLoginDialog.prototype.toString = 
@@ -57,6 +57,12 @@ function() {
 ZaLoginDialog.prototype.registerCallback =
 function(func, obj) {
 	this._callback = new AjxCallback(obj, func);
+}
+
+ZaLoginDialog.prototype.clearAll =
+function() {
+	ZLoginFactory.get(ZLoginFactory.USER_ID).value = "";
+	ZLoginFactory.get(ZLoginFactory.PASSWORD_ID).value = "";
 }
 
 ZaLoginDialog.prototype.clearPassword =
@@ -93,11 +99,10 @@ function(username, bReloginMode) {
  }
  
 ZaLoginDialog.prototype.popup =
-function(loc,bReloginMode) {
+function(loc) {
 	if (this._poppedUp) return;
-	if(!bReloginMode)
-		this.cleanup(true);
-		
+	
+	this.cleanup(true);
 	var thisZ = this._zIndex;
 	// if we're modal, setup the veil effect,
 	// and track which dialogs are open
@@ -122,13 +127,13 @@ function(loc,bReloginMode) {
 
 
 ZaLoginDialog.prototype.setVisible = 
-function(visible, transparentBg,bReloginMode) {
+function(visible, transparentBg) {
 	if (!!visible == this.isPoppedUp()) {
 		return;
 	}
 	
 	if (visible) {
-		this.popup(null,bReloginMode);
+		this.popup();
 	} else {
 		this.popdown();
 	}

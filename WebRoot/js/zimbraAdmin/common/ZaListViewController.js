@@ -35,7 +35,7 @@
 * @see ZaAccountListController
 * @see ZDomainListController
 **/
-ZaListViewController = function(appCtxt, container, app, iKeyName) {
+function ZaListViewController(appCtxt, container, app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._currentPageNum = 1;	
    	this._toolbarOperations = new Array();
@@ -80,9 +80,9 @@ function() {
 }
 
 ZaListViewController.prototype._updateUI = 
-function(list, openInNewTab, openInSearchTab) {
+function(list) {
     if (!this._UICreated) {
-		this._createUI(openInNewTab, openInSearchTab);
+		this._createUI();
 	} 
 	if (list) {
 		var tmpArr = new Array();
@@ -98,7 +98,7 @@ function(list, openInNewTab, openInSearchTab) {
 		this._contentView.set(AjxVector.fromArray(tmpArr), this._contentView._defaultColumnSortable);	
 	}
 	this._removeList = new Array();
-	this.changeActionsState();
+	this._changeActionsState();
 	
 	var s_result_start_n = (this._currentPageNum - 1) * this.RESULTSPERPAGE + 1;
 	var s_result_end_n = this._currentPageNum  * this.RESULTSPERPAGE;
@@ -126,15 +126,6 @@ function(list, openInNewTab, openInSearchTab) {
 	}
 }
 
-ZaListViewController.prototype.closeButtonListener =
-function(ev, noPopView, func, obj, params) {
-	if (noPopView) {
-		func.call(obj, params) ;
-	}else{
-		this._app.popView () ;
-	}
-}
-
 ZaListViewController.prototype.searchCallback =
 function(params, resp) {
 	try {
@@ -159,9 +150,9 @@ function(params, resp) {
 			var limit = params.limit ? params.limit : this.RESULTSPERPAGE; 
 			this.numPages = Math.ceil(this._searchTotal/params.limit);
 			if(params.show)
-				this._show(this._list, params.openInNewTab, params.openInSearchTab);			
+				this._show(this._list);			
 			else
-				this._updateUI(this._list, params.openInNewTab, params.openInSearchTab);
+				this._updateUI(this._list);
 		}
 	} catch (ex) {
 		if (ex.code != ZmCsfeException.MAIL_QUERY_PARSE_ERROR) {
@@ -183,7 +174,7 @@ function (nextViewCtrlr, func, params) {
 	func.call(nextViewCtrlr, params);
 }
 
-ZaListViewController.prototype.changeActionsState =
+ZaListViewController.prototype._changeActionsState =
 function () {
 	var opsArray1 = new Array();
 	var opsArray2 = new Array();

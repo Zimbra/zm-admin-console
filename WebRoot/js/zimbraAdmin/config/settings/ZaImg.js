@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaImg = function() {
+function ZaImg() {
 }
 
 ZaImg.PATH = ZaSettings.CONFIG_PATH + "/img/";

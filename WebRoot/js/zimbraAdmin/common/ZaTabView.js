@@ -33,7 +33,7 @@
 * @extends DwtComposite
 * @author Greg Solovyev
 **/
-ZaTabView = function(parent, app, iKeyName) {
+function ZaTabView (parent, app, iKeyName) {
 	if (arguments.length == 0) return;
 	DwtComposite.call(this, parent, "DwtTabView", Dwt.ABSOLUTE_STYLE);	
 	this._iKeyName = iKeyName;
@@ -76,7 +76,7 @@ ZaTabView.DEFAULT_TAB = 1;
 ZaTabView.prototype.initForm = 
 function (xModelMetaData, xFormMetaData) {
 	if(xModelMetaData == null || xFormMetaData == null)
-		throw new AjxException(ZaMsg.ERROR_METADATA_NOT_DEFINED, AjxException.INVALID_PARAM, "DwtXWizardDialog.prototype._initForm");
+		throw new AjxException("Metadata for XForm and/or XModel are not defined", AjxException.INVALID_PARAM, "DwtXWizardDialog.prototype._initForm");
 
 	this._localXModel = new XModel(xModelMetaData);
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
@@ -147,8 +147,6 @@ ZaTabView.prototype.setObject =
 function(entry) {
 	this._containedObject = new Object();
 	this._containedObject.attrs = new Object();
-	this._containedObject.type = entry.type ;
-	this._containedObject.name = entry.name ;
 	
 	for (var a in entry.attrs) {
 		if(entry.attrs[a] instanceof Array) {
@@ -158,14 +156,12 @@ function(entry) {
 		}
 	}
 	
-	
 	if(!entry[ZaModel.currentTab])
 		this._containedObject[ZaModel.currentTab] = "1";
 	else
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
 		
 	this._localXForm.setInstance(this._containedObject);
-	this.updateTab();
 }
 
 ZaTabView.prototype.setEnabled = 
@@ -221,44 +217,3 @@ function (value, event, form) {
 	return value;
 }
 
-ZaTabView.prototype.getTabToolTip =
-function () {
-	if (this._containedObject && this._containedObject.name && this._containedObject.type) {
-		return	ZaMsg.TBB_Edit + " " +  this._containedObject.type + " " + this._containedObject.name ;
-	}else{
-		return "" ;
-	}
-}
-
-ZaTabView.prototype.getTabIcon = 
-function () {
-	if (this._containedObject && this._containedObject.type) {
-		return this._containedObject.type ;
-	}else{
-		return "" ;
-	}
-}
-
-ZaTabView.prototype.getTabTitle =
-function () {
-	if (this._containedObject && this._containedObject.name) {
-		return this._containedObject.name ;
-	}else{
-		return "" ;
-	}
-}
-
-//this method will be called whenever the item object of the view is updated
-//it should be called in the setObject function of the view class
-ZaTabView.prototype.updateTab =
-function () {
-	var tab = this.getAppTab ();
-	tab.resetLabel (this.getTabTitle()) ;
-	tab.setImage (this.getTabIcon());
-	tab.setToolTipContent (this.getTabToolTip()) ;
-}
-
-ZaTabView.prototype.getAppTab =
-function () {
-	return this._app.getTabGroup().getTabById(this.__internalId) ;
-}

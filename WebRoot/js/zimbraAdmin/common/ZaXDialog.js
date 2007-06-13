@@ -33,7 +33,7 @@
 * @param h (height)
 **/
 
-ZaXDialog = function(parent, app, className, title, w, h,iKeyName) {
+function ZaXDialog(parent, app, className, title, w, h,iKeyName) {
 	if (arguments.length == 0) return;
 	this._iKeyName = iKeyName;	
 	var clsName = className || "DwtDialog";
@@ -73,6 +73,7 @@ ZaXDialog = function(parent, app, className, title, w, h,iKeyName) {
 	this._createContentHtml();
 	this._helpURL = ZaXDialog.helpURL;	
 }
+ZA_BTN_INDEX = DwtDialog.NO_BUTTONS;
 ZaXDialog.helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/administration_console_help.htm";
 ZaXDialog.prototype = new DwtDialog;
 ZaXDialog.prototype.constructor = ZaXDialog;
@@ -89,7 +90,7 @@ ZaXDialog.XFormModifiers = new Object();
 /**
 * 
 **/
-ZaXDialog.HELP_BUTTON = ++DwtDialog.LAST_BUTTON;
+ZaXDialog.HELP_BUTTON = ++ZA_BTN_INDEX;
 /**
 * public method _initForm
 * @param xModelMetaData
@@ -172,7 +173,18 @@ function () {
 	col2.width = this._contentW;
 	col2.appendChild(this._pageDiv);
 
-	this._getContentDiv().appendChild(this._table);
+	this._contentDiv.appendChild(this._table);
+}
+
+/**
+*  ZaXDialog
+* Override _addChild method. We need internal control over layout of the children in this class.
+* Child elements are added to this control in the _createHTML method.
+* @param child
+**/
+ZaXDialog.prototype.addChild =
+function(child) {
+	this._children.add(child);
 }
 
 /**

@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaSkinPoolChooser = function(params) {
+function ZaSkinPoolChooser(params) {
  	if (arguments.length == 0) return;
 /*
  	this.splitButtons = params.splitButtons;

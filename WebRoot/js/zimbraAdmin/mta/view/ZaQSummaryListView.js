@@ -26,7 +26,7 @@
  /**
  * @author Greg Solovyev
  **/
-ZaQSummaryListView = function(parent, className, posStyle, headerList) {
+function ZaQSummaryListView(parent, className, posStyle, headerList) {
 	//var headerList = this._getHeaderList();
 	ZaListView.call(this, parent, className, posStyle, headerList);
 }

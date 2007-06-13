@@ -29,7 +29,7 @@
 * this is a static class taht provides method for searching LDAP
 * @author Greg Solovyev
 **/
-ZaSearch = function(app) {
+function ZaSearch(app) {
 	if(app)
 		this._app = app;
 		
@@ -66,20 +66,6 @@ ZaSearch.A_fdistributionlists = "f_distributionlists";
 ZaSearch.A_fResources = "f_resources";
 
 ZaSearch._currentQuery = null;
-ZaSearch._savedSearchToBeUpdated = true ; //initial value to be true
-
-ZaSearch.PREDEFINED_SAVED_SEARCHES_FOR_ADMIN_ONLY = [
-	{name: "Admin Accounts" , query: "(|(zimbraIsAdminAccount=TRUE)(zimbraIsDomainAdminAccount=TRUE))"}
-];
-
-ZaSearch.PREDEFINED_SAVED_SEARCHES = [
-	{name: "Locked Out Accounts", query: "(zimbraAccountStatus=*lockout*)"},
-	{name: "Closed Accounts", query: "(zimbraAccountStatus=*closed*)"},
-	{name: "Maintenance Accounts", query: "(zimbraAccountStatus=*maintenance*)"},
-	{name: "Non-Active Accounts", query: "(!(zimbraAccountStatus=*active*))" },
-	{name: "Inactive Accounts (30 days)", query: "(zimbraLastLogonTimestamp<=###JSON:{func: ZaSearch.getTimestampByDays, args:[-30]}###)"},
-	{name: "Inactive Accounts (90 days)", query: "(zimbraLastLogonTimestamp<=###JSON:{func: ZaSearch.getTimestampByDays, args:[-90]}###)"}
-];
 
 /**
 * @param app reference to ZaApp
@@ -96,7 +82,6 @@ ZaSearch.standardAttributes = [ZaAccount.A_displayname,
 							ZaAccount.A_mailHost, 
 							ZaAccount.A_uid ,
 							ZaAccount.A_accountStatus,
-							ZaAccount.A_zimbraLastLogonTimestamp,
 							ZaAccount.A_description,
 							ZaDistributionList.A_mailStatus,
 							ZaResource.A_zimbraCalResType,
@@ -159,7 +144,7 @@ function (params) {
 		soapDoc.getMethod().setAttribute("maxResults", params.maxResults.toString());
 	}	
 	
-	//var command = new ZmCsfeCommand();
+	var command = new ZmCsfeCommand();
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	if(params.callback) {
@@ -167,9 +152,8 @@ function (params) {
 		cmdParams.callback = params.callback;
 	}
 	try {
-		//only returned for synchronous calls
-		return ZaRequestMgr.invoke(cmdParams, params);
-		
+		var resp = command.invoke(cmdParams);
+		return resp ;	//only returned for synchronous calls
 	}catch(ex) {
 		if (params.ignoreTooManyResultsException ) {
 			ZaSearch.handleTooManyResultsException (ex, cmdParams.exceptionFrom || "ZaSearch.searchDirectory") ;
@@ -196,13 +180,14 @@ ZaSearch.handleTooManyResultsException = function (ex, from) {
 ZaSearch.findAccount = function(by, val) {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", "urn:zimbraAdmin", null);
 	soapDoc.getMethod().setAttribute("limit", "1");
+	soapDoc.getMethod().setAttribute("types", [ZaSearch.ACCOUNTS,ZaSearch.DLS].join(","));	
 	var query = ["(",by,"=",val,")"].join("");
 	soapDoc.set("query", query);
 	var command = new ZmCsfeCommand();
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	var resp = command.invoke(cmdParams).Body.SearchDirectoryResponse;	
-	var list = new ZaItemList(ZaAccount, this._app);	
+	var list = new ZaItemList(null, this._app);	
 	list.loadFromJS(resp);	
 	return list.getArray()[0];
 }
@@ -232,11 +217,10 @@ ZaSearch.prototype.dynSelectSearchAccounts = function (value, event, callback) {
 	try {
 		var params = new Object();
 		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, callback);
-		params.types = [ZaSearch.ACCOUNTS, ZaSearch.DLS];
+		params.types = [ZaSearch.ACCOUNTS];
 		params.callback = dataCallback;
 		params.sortBy = ZaAccount.A_name;
 		params.query = ZaSearch.getSearchByNameQuery(value);
-		params.controller = this._app.getCurrentController();
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataFetcher");		
@@ -251,7 +235,6 @@ ZaSearch.prototype.dynSelectSearchGroups = function (value, event, callback) {
 		params.callback = dataCallback;
 		params.sortBy = ZaAccount.A_name;
 		params.query = ZaSearch.getSearchByNameQuery(value);
-		params.controller = this._app.getCurrentController();
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataFetcher");		
@@ -266,7 +249,6 @@ ZaSearch.prototype.dynSelectSearchDomains = function (value, event, callback) {
 		params.callback = dataCallback;
 		params.sortBy = ZaDomain.A_domainName;
 		params.query = ZaSearch.getSearchByNameQuery(value);
-		params.controller = this._app.getCurrentController();
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchDomains");		
@@ -343,7 +325,6 @@ function(query, types, pagenum, orderby, isascending, app, attrs, limit, domainN
 	if(maxResults) {
 		params["maxResults"] = maxResults.toString();
 	}	
-	params.controller = app.getCurrentController ();
 	var resp = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse ;
 	
 	var list = new ZaItemList(null, app);	
@@ -439,7 +420,7 @@ ZaSearch.myXModel = {
 	]
 }
 
-ZaSearchQuery = function(queryString, types, byDomain, byVal, attrsCommaSeparatedString, limit) {
+function ZaSearchQuery (queryString, types, byDomain, byVal, attrsCommaSeparatedString, limit) {
 	this.queryString = queryString;
 	this.isByDomain = byDomain;
 	this.byValAttr = byVal;
@@ -455,158 +436,21 @@ ZaSearch.searchResultCountsView =
 function (opArr) {
 	opArr.push(new ZaOperation(ZaOperation.SEP));								
 	opArr.push(new ZaOperation(ZaOperation.LABEL, AjxMessageFormat.format (ZaMsg.searchResultCount, [0,0]),
-													 null, null, null, null,null,null,"ZaSearchResultCountLabel",ZaOperation.SEARCH_RESULT_COUNT));	
+													 null, null, null, null,null,null,null,ZaOperation.SEARCH_RESULT_COUNT));	
 	opArr.push(new ZaOperation(ZaOperation.SEP));
 }
 
 ZaSearch.getUsedDomainAccounts =
-function (domainName, controller) {
+function (domainName) {
 	var params = {
 		domain: domainName,
 		limit: "0",
 		type: "accounts",
 		offset: "0",
 		applyCos: "0",
-		attrs: "",
-		controller: controller
+		attrs: ""
 	}
 	
 	var resp = ZaSearch.searchDirectory(params) ;
 	return resp.Body.SearchDirectoryResponse.searchTotal ;
 }
-
-//modify the saved search 
-//@param savedSearchArray : the array contains the saved searches obj to be modified.
-//         		The object is {name: "saved search name", query : "saved search query" }
-ZaSearch.modifySavedSearches =
-function (savedSearchArray, callback) {
-	var soapDoc = AjxSoapDoc.create("ModifyAdminSavedSearchesRequest", "urn:zimbraAdmin", null);
-	for (var i=0; i < savedSearchArray.length; i ++) {
-		var cSavedSearch = savedSearchArray[i] ;
-		var el = soapDoc.set("search", cSavedSearch.query) ;
-		el.setAttribute("name", cSavedSearch.name) ;
-	}
-		
-	var command = new ZmCsfeCommand();
-	var cmdParams = new Object();
-	cmdParams.soapDoc = soapDoc;
-	if (callback) {
-		cmdParams.asyncMode = true;
-		cmdParams.callback = callback;
-	}	
-	command.invoke(cmdParams);	
-}
-
-//get saved searches
-//@param searchNameArr: the array contains all the saved search names whose queries will be returned.
-ZaSearch.getSavedSearches = 
-function (searchNameArr, callback) {
-	var soapDoc = AjxSoapDoc.create("GetAdminSavedSearchesRequest", "urn:zimbraAdmin", null);
-	if (searchNameArr) {
-		for (var i=0; i < searchNameArr.length; i ++) {
-			var el = soapDoc.set("search", "") ;
-			el.setAttribute("name", searchNameArr[i]) ;
-		}
-	}
-		
-	var command = new ZmCsfeCommand();
-	var cmdParams = new Object();
-	cmdParams.soapDoc = soapDoc;	
-	if (callback) {
-		cmdParams.asyncMode = true;
-		cmdParams.callback = callback;
-	}
-	return command.invoke(cmdParams);	
-}
-
-ZaSearch.updateSavedSearch =
-function (resp) {
-	if (AjxEnv.hasFirebug) console.debug("Update Saved Search ... ");
-	ZaSearch.SAVED_SEARCHES = [] ;
-	var respObj = resp._data || resp ;
-	var searchResults = respObj.Body.GetAdminSavedSearchesResponse.search;
-	
-	if (searchResults) {
-		for (var i=0; i < searchResults.length; i++) {
-			ZaSearch.SAVED_SEARCHES.push ({
-				name: searchResults[i].name,
-				query: searchResults[i]._content
-			})
-		}
-	}
-	
-	ZaSearch._savedSearchToBeUpdated = false ;
-}
-
-ZaSearch.loadPredefinedSearch =
-function () {
-	var currentSavedSearches = ZaSearch.getSavedSearches().Body.GetAdminSavedSearchesResponse.search;
-	
-	if (! currentSavedSearches){//load the predefined searches
-		if (AjxEnv.hasFirebug) console.log("Load the predefined saved searches ...") ;
-		var savedSearchArr = [] ;
-		if (!ZaSettings.isDomainAdmin) { //admin only searches
-			for (var m=0; m < ZaSearch.PREDEFINED_SAVED_SEARCHES_FOR_ADMIN_ONLY.length; m++){
-				savedSearchArr.push (ZaSearch.PREDEFINED_SAVED_SEARCHES_FOR_ADMIN_ONLY[m]) ;
-			}
-		}
-		
-		for (var n=0; n < ZaSearch.PREDEFINED_SAVED_SEARCHES.length; n ++) {
-			savedSearchArr.push (ZaSearch.PREDEFINED_SAVED_SEARCHES[n]) ;
-		}
-		
-		ZaSearch.modifySavedSearches (savedSearchArr) ;
-	}
-}
-
-/**
- * parse saved search query to allow the following searches:
- * - "Inactive Accounts (30 Days)" -- returns all accounts not logged in in 30 days
- * - "Inactive Accounts (90 Days)" -- returns all accounts not logged in in 90 days
- * 
- * This is a temperary solution to allow some dynamic data to be kept in the saved search 
- * and parsed on the client side before we have a formal query language.
- * 
- * Currently, it supports
- * 1)###JSON:{func: %function_name%, args:[%days%]}### : 
- * 	{func: %function_name%, args:[%days%]} is a JSON object with function name and arguments
- * 	 examples: 	{func: ZaSearch.getTimestampByDays , args: [30] } 				
- * 			
- * 
- */
-ZaSearch.parseSavedSearchQuery =
-function (query) {
-	if (query == null || query.length <= 0) return ;
-	//if (AjxEnv.hasFirebug) console.log("Original Saved Search query: " + query) ;
-	var regEx = /^(.+)#{3}JSON:(.+)#{3}(.+)$/ ;
-	var results = query.match(regEx) ;
-	if (results != null) {
-		query = results[1];
-		eval ("var jsonObj = " + results[2] ) ;
-		//call the function
-		query += jsonObj.func(jsonObj.args) ;
-		query += results[3];
-	}
-	//if (AjxEnv.hasFirebug) console.log("Parsed Saved Search query: " + query) ;
-	return query ;
-}
-
-/**
- * return the server time string yyyyMMddHHmmssZ by current time + days
- * days: signed integer, can be 30 or -90, etc.
- */
-ZaSearch.getTimestampByDays =
-function (days) {
-	//if (AjxEnv.hasFirebug) console.log("Get the timestamp of " + days + " days.");	
-	var d = parseInt(days)	;
-	var dateObj = new Date();
-	var now = dateObj.getTime();
-	dateObj.setTime(now + d * 86400 * 1000);
-	return ZaUtil.getAdminServerDateTime(dateObj, true) ;
-}
-
-
-//Keep the saved searches
-//A sample saved search object:
-// {name:"savedA", query:"users"};
-ZaSearch.SAVED_SEARCHES = [];

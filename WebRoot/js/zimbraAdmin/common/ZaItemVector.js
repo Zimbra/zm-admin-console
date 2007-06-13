@@ -30,7 +30,7 @@
 * @constructor
 **/
 
-ZaItemVector = function() {
+function ZaItemVector() {
 	AjxVector.call(this, null);
 }
 

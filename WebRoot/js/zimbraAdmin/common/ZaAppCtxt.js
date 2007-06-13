@@ -27,7 +27,7 @@
 * @constructor ZaAppCtxt
 * @class ZaAppCtxt
 */
-ZaAppCtxt = function() {
+function ZaAppCtxt() {
 }
 
 ZaAppCtxt.LABEL = "appCtxt";
@@ -103,7 +103,7 @@ function() {
 ZaAppCtxt.prototype.getErrorDialog = 
 function() {
 	if (!this._errorDialog)
-		this._errorDialog = new ZaErrorDialog(this.getShell());
+		this._errorDialog = new ZaErrorDialog(this.getShell(), this);
 	return this._errorDialog;
 }
 

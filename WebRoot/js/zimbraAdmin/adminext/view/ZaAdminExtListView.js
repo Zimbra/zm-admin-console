@@ -30,7 +30,7 @@
 * @author Greg Solovyev
 **/
 
-ZaAdminExtListView = function(parent) {
+function ZaAdminExtListView(parent) {
 
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
@@ -54,12 +54,7 @@ function() {
 
 ZaAdminExtListView.prototype.getTitle = 
 function () {
-	return ZaMsg.AdminZimlets_view_title;
-}
-
-ZaAdminExtListView.prototype.getTabIcon =
-function () {
-	return "AdminExtension" ;
+	return ZaMsg.Servers_view_title;
 }
 /**
 * Renders a single item as a DIV element.
@@ -103,7 +98,7 @@ function() {
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
 	var sortable=1;
 	headerList[0] = new ZaListHeaderItem(ZaZimlet.A_name, ZaMsg.CLV_Name_col, null, 200, sortable++, "name", true, true);
-	headerList[1] = new ZaListHeaderItem(ZaZimlet.A_zimbraZimletDescription, ZaMsg.DLV_Description_col, null, "auto", null, ZaZimlet.A_zimbraZimletDescription, false, true);
+	headerList[1] = new ZaListHeaderItem(ZaZimlet.A_zimbraZimletDescription, ZaMsg.DLV_Description_col, null, null, null, ZaZimlet.A_zimbraZimletDescription, true, true);
 	return headerList;
 }
 

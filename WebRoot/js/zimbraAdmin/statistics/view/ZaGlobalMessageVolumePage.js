@@ -30,11 +30,11 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaGlobalMessageVolumePage = function(parent, app) {
+function ZaGlobalMessageVolumePage (parent, app) {
 	DwtTabViewPage.call(this, parent);
 	this._fieldIds = new Object(); //stores the ids of all the form elements
 	this._app = app;
-	//this._createHTML();
+	this._createHTML();
 	this.initialized=false;
 	this.setScrollStyle(DwtControl.SCROLL);	
 }
@@ -47,66 +47,34 @@ function() {
 	return "ZaGlobalMessageVolumePage";
 }
 
-ZaGlobalMessageVolumePage.prototype.showMe =  function(refresh) {
-	DwtTabViewPage.prototype.showMe.call(this);	
-	if(refresh) {
-		this.setObject();
-	}
-}
-
-ZaGlobalMessageVolumePage.prototype.setObject =
+ZaGlobalMessageVolumePage.prototype._createHTML = 
 function () {
-	var imgElement = document.getElementById(this._hourImgID);
-	var newSrc = ["/service/statsimg/mta.ALL.hour.Message_Bytes.gif?rand=",Math.random()].join("");
-	if(imgElement) {
-		imgElement.src = newSrc;
-	}
-	imgElement = document.getElementById(this._dayImgID);	
-	newSrc = ["/service/statsimg/mta.ALL.day.Message_Bytes.gif?rand=",Math.random()].join("");			
-	if(imgElement) {
-		imgElement.src = newSrc;
-	}
-	imgElement = document.getElementById(this._monthImgID);		
-	newSrc = ["/service/statsimg/mta.ALL.month.Message_Bytes.gif?rand=",Math.random()].join("");		
-	if(imgElement) {
-		imgElement.src = newSrc;
-	}			
-	imgElement = document.getElementById(this._yearImgID);		
-	newSrc = ["/service/statsimg/mta.ALL.year.Message_Bytes.gif?rand=",Math.random()].join("");		
-	if(imgElement) {
-		imgElement.src = newSrc;
-	}			
-}
-
-ZaGlobalMessageVolumePage.prototype._createHtml = 
-function () {
-	DwtTabViewPage.prototype._createHtml.call(this);
 	var idx = 0;
 	var html = new Array(50);
-	this._hourImgID = Dwt.getNextId();
-	this._dayImgID = Dwt.getNextId();
-	this._monthImgID = Dwt.getNextId();		
-	this._yearImgID = Dwt.getNextId();	
-	html[idx++] = "<h3 style='padding-left: 10px'>" + ZaMsg.Stats_MV_Header + "</h3>" ;	
+	html[idx++] = "<h3 style='padding-left: 10px'>" + ZaMsg.Stats_MV_Header + "</h3>" ;
 	html[idx++] = "<div style='width:70ex;'>";	
 	html[idx++] = "<table cellpadding='5' cellspacing='4' border='0' align='left'>";	
 	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</td></tr>";	
 	html[idx++] = "<tr valign='top'><td align='left'>";
-	html[idx++] = "<img src='#' alt='" + ZaMsg.Stats_Unavailable + "' id='" + this._hourImgID + "'>";	
+	html[idx++] = "<img  alt='" + ZaMsg.Stats_Unavailable + "' src='";
+	html[idx++] = "/service/statsimg/mta.ALL.hour.Message_Bytes.gif'>";
 	html[idx++] = "</td></tr>";
 	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</td></tr>";	
 	html[idx++] = "<tr valign='top'><td align='left'>";
-	html[idx++] = "<img src='#' alt='" + ZaMsg.Stats_Unavailable + "' id='" + this._dayImgID + "'>";	
+	html[idx++] = "<img  alt='" + ZaMsg.Stats_Unavailable + "' src='";
+	html[idx++] = "/service/statsimg/mta.ALL.day.Message_Bytes.gif'>";
 	html[idx++] = "</td></tr>";
 	html[idx++] = "<tr valign='top'><td align='left'>&nbsp;&nbsp;</td></tr>";	
 	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</td></tr>";	
 	html[idx++] = "<tr valign='top'><td align='left'>";
-	html[idx++] = "<img src='#' alt='" + ZaMsg.Stats_Unavailable + "' id='" + this._monthImgID + "'>";	
+	html[idx++] = "<img  alt='" + ZaMsg.Stats_Unavailable + "' src='";
+	html[idx++] = "/service/statsimg/mta.ALL.month.Message_Bytes.gif'>";
 	html[idx++] = "</td></tr>";
 	html[idx++] = "<tr valign='top'><td align='left'>&nbsp;&nbsp;</td></tr>";		
 	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</td></tr>";	
 	html[idx++] = "<tr valign='top'><td align='left'>";
-	html[idx++] = "<img src='#' alt='" + ZaMsg.Stats_Unavailable + "' id='" + this._yearImgID + "'>";
+	html[idx++] = "<img  alt='" + ZaMsg.Stats_Unavailable + "' src='";
+	html[idx++] = "/service/statsimg/mta.ALL.year.Message_Bytes.gif'>";
 	html[idx++] = "</td></tr>";
 	html[idx++] = "</table>";
 	html[idx++] = "</div>";

@@ -24,7 +24,7 @@
  */
 
 
-ZaServerVersionInfo = function() {}
+function ZaServerVersionInfo() {}
 
 ZaServerVersionInfo.load = function () {
 	if (!ZaServerVersionInfo._loaded){

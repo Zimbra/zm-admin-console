@@ -30,7 +30,7 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaMTAXFormView = function(parent, app) {
+function ZaMTAXFormView (parent, app) {
 	ZaTabView.call(this, parent, app,"ZaMTAXFormView");	
 		
 	this.initForm(ZaMTA.myXModel,this.getMyXForm());
@@ -55,11 +55,6 @@ ZaMTAXFormView.tabChoices = new XFormChoices([{value:ZaMTAXFormView._tab1, label
 				{value:ZaMTAXFormView._tab5, label:ZaMsg.PQV_Tab_CorruptQ}],
 				XFormChoices.OBJECT_LIST, "value", "label");
 
-ZaMTAXFormView.prototype.getTabIcon =
-function () {
-	return "Queue" ;
-}
-
 ZaMTAXFormView.prototype.setObject = 
 function (entry) {
 	this._containedObject = entry;
@@ -79,7 +74,6 @@ function (entry) {
 	ZaMTAXFormView.tabChoices.dirtyChoices();
 	this._localXForm.setInstance(this._containedObject);	
 	ZaMTAXFormView.prototype.handleXFormChange.call(this);
-	this.updateTab();
 }
 ZaMTAXFormView.prototype.handleXFormChange = function () {
 	if(this._containedObject[ZaModel.currentTab] == "1" && (this._containedObject[ZaMTA.A_DeferredQ][ZaMTA.A_Status]==ZaMTA.STATUS_IDLE)) {
@@ -603,7 +597,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						]}		
 					]
 				},							
-				{type:_ZATABCASE_, numCols:1,  relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",/*colSizes:["10", "250","10","250","10"], */relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [

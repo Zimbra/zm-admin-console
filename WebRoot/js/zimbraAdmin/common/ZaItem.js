@@ -27,7 +27,7 @@
 * @class ZaItem
 * @param app reference to the application instance
 **/
-ZaItem = function(app, iKeyName) {
+function ZaItem(app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._app = app;
 	this._iKeyName = iKeyName;
@@ -55,22 +55,10 @@ ZaItem.MAILQ_ITEM = "message";
 ZaItem.MAILQ = "mailque";
 ZaItem.A_objectClass = "objectClass";
 ZaItem.A_zimbraId = "zimbraId";
-ZaItem.A_cn = "cn" ;
 
 /* Translation of  the attribute names to the screen names */
 ZaItem._ATTR = new Object();
 ZaItem._ATTR[ZaItem.A_zimbraId] = ZaMsg.attrDesc_zimbraId;
-
-/*
-ZaItem.prototype.getTabToolTip =
-function () {
-	return	ZaMsg.TBB_Edit + " " +  this.type + " " + this.name ;
-}
-
-ZaItem.prototype.getTabIcon = 
-function () {
-	return this.type ;
-}*/
 
 ZaItem.prototype.toString = 
 function() {
@@ -257,7 +245,6 @@ ZaItem.prototype.initFromJS =
 function (obj) {
 	if(!obj)
 		return;
-		
 	this.name = obj.name;
 	this.id = obj.id;
 	if (obj.isgroup == false) {
@@ -271,7 +258,7 @@ function (obj) {
 		for(var ix = 0; ix < len; ix++) {
 			if(!this.attrs[[obj.a[ix].n]]) {
 				this.attrs[[obj.a[ix].n]] = obj.a[ix]._content;
-			}else {
+			} else {
 				if(!(this.attrs[[obj.a[ix].n]] instanceof Array)) {
 					this.attrs[[obj.a[ix].n]] = [this.attrs[[obj.a[ix].n]]];
 				} 
@@ -341,48 +328,3 @@ ZaItem.prototype._init = function (app) {
 	//Instrumentation code end
 }
 
-/**
-* @param newAlias
-* addAlias adds one alias to the account. Adding each alias takes separate Soap Request
-**/
-ZaItem.prototype.addAlias = 
-function (newAlias) {
-	var soapCmd  ;
-	switch(this.type) {
-		case ZaItem.ACCOUNT: soapCmd = "AddAccountAliasRequest" ; break ;
-		case ZaItem.DL: soapCmd = "AddDistributionListAliasRequest" ; break ;
-		default: throw new Error("Can't add alias for account type: " + this.type) ;				
-	}
-	
-	var soapDoc = AjxSoapDoc.create(soapCmd, "urn:zimbraAdmin", null);
-	soapDoc.set("id", this.id);
-	soapDoc.set("alias", newAlias);	
-	
-	var command = new ZmCsfeCommand();
-	var params = new Object();
-	params.soapDoc = soapDoc;	
-	command.invoke(params);
-}
-
-/**
-* @param aliasToRemove
-* addAlias adds one alias to the account. Adding each alias takes separate Soap Request
-**/
-ZaItem.prototype.removeAlias = 
-function (aliasToRemove) {
-	var soapCmd  ;
-	
-	switch(this.type) {
-		case ZaItem.ACCOUNT: soapCmd = "RemoveAccountAliasRequest" ; break ;
-		case ZaItem.DL: soapCmd = "RemoveDistributionListAliasRequest" ; break ;
-		default: throw new Error("Can't add alias for account type: " + account.type) ;				
-	}
-	
-	var soapDoc = AjxSoapDoc.create(soapCmd, "urn:zimbraAdmin", null);
-	soapDoc.set("id", this.id);
-	soapDoc.set("alias", aliasToRemove);	
-	var command = new ZmCsfeCommand();
-	var params = new Object();
-	params.soapDoc = soapDoc;	
-	command.invoke(params);	
-}

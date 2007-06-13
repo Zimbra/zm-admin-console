@@ -30,7 +30,7 @@
 * @author Greg Solovyev
 **/
 
-ZaMTAListView = function(parent) {
+function ZaMTAListView(parent) {
 
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
@@ -56,11 +56,6 @@ function() {
 ZaMTAListView.prototype.getTitle = 
 function () {
 	return ZaMsg.PostQ_title;
-}
-
-ZaMTAListView.prototype.getTabIcon =
-function () {
-	return "Queue";
 }
 
 ZaMTAListView.prototype.setUI = 

@@ -15,8 +15,8 @@
 * this class is a model for managing Zimlets
 * @author Greg Solovyev
 **/
-ZaZimlet = function(app) {
-	ZaItem.call(this, app);
+function ZaZimlet(app) {
+	ZaItem.call(this, app,"ZaZimlet");
 	this.label = "";
 	this[ZaModel.currentStep] = 1;
 }
@@ -69,16 +69,6 @@ function(app, exclude) {
 	var list = new ZaItemList(ZaZimlet, app);
 	list.loadFromJS(resp);	
 	return list;
-}
-
-ZaZimlet.prototype.isEnabled =
-function () {
-	var status = this.attrs[ZaZimlet.A_zimbraZimletEnabled];
-	if (status != null && status == "TRUE") {
-		return true;
-	}else {
-		return false ;
-	}
 }
 
 ZaZimlet.prototype.enable = function (enabled, callback) {

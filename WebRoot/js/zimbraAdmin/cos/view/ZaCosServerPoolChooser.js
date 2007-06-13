@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaCosServerPoolChooser = function(params) {
+function ZaCosServerPoolChooser(params) {
  	if (arguments.length == 0) return;
  	DwtChooser.call(this, params);
 }

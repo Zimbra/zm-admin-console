@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaAppChooser = function(parent, className, buttons) {
+function ZaAppChooser(parent, className, buttons) {
 
 	className = className ? className : "ZaAppChooser";
 	DwtToolBar.call(this, parent, className, Dwt.ABSOLUTE_STYLE, null, null, null, DwtToolBar.VERT_STYLE);

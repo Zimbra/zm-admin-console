@@ -30,7 +30,7 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-ZaServicesListView = function(parent, app, clsName) {
+function ZaServicesListView(parent, app, clsName) {
 	if (arguments.length == 0) return;
 	this._app = app;
 	var className = clsName || "ZaServicesListView";
@@ -60,10 +60,6 @@ function () {
 	return ZaMsg.Status_view_title;
 }
 
-ZaServicesListView.prototype.getTabIcon = 
-function () {
-	return "Status" ;
-}
 /**
 * Renders a single item as a DIV element.
 */
@@ -164,16 +160,8 @@ function(html, idx, item, onlyServiceInfo, serviceName) {
 			html[idx++] = "<td width=";
 			html[idx++] = this._headerList[i]._width;
 			html[idx++] = " aligh=left>";
-			if (onlyServiceInfo) {
-				if(((new Date()).getTime()/1000 - item.timestamp) > 21*60*60/1000) {
-					html[idx++] = "<span class='ZaStaleData'>";
-					html[idx++] = AjxStringUtil.htmlEncode(item.time);
-					html[idx++] = "&nbsp;";
-					html[idx++] = ZaMsg.DataIsStale;
-					html[idx++] = "</span>";					
-				} else {
-					html[idx++] = AjxStringUtil.htmlEncode(item.time);
-				}
+			if (onlyServiceInfo){
+				html[idx++] = AjxStringUtil.htmlEncode(item.time);
 			} else {
 				html[idx++] = AjxStringUtil.htmlEncode(" ");
 			}

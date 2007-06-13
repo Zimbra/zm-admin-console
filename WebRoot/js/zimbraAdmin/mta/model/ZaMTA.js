@@ -30,7 +30,7 @@
 * @contructor
 * @param app reference to the application instance
 **/
-ZaMTA = function(app) {
+function ZaMTA(app) {
 	ZaItem.call(this, app,"ZaMTA");
 	this._init(app);
 }
@@ -104,16 +104,6 @@ ZaMTA.ActionRequeue = "requeue";
 ZaMTA.ActionDelete = "delete";
 ZaMTA.ActionHold = "hold";
 ZaMTA.ActionRelease = "release";
-
-ZaMTA.prototype.getTabToolTip =
-function () {
-	return ZaMsg.tt_tab_MTA + " " + this.type + " " + this.name ;
-}
-
-ZaMTA.prototype.getTabIcon = 
-function () {
-	return "Queue" ;
-}
 
 ZaMTA.prototype.QCountsCallback = function (resp) {
 	try {

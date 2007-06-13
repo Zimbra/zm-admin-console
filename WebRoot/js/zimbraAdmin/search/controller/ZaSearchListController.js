@@ -32,7 +32,7 @@
 * @extends ZaController
 * @author Greg Solovyev
 **/
-ZaSearchListController = function(appCtxt, container, app) {
+function ZaSearchListController(appCtxt, container, app) {
 	ZaListViewController.call(this, appCtxt, container, app, "ZaSearchListController");
     //Account operations
    	this._toolbarOperations = new Array();
@@ -57,7 +57,7 @@ ZaSearchListController.prototype.constructor = ZaSearchListController;
 ZaSearchListController.helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_accounts/provisioning_accounts.htm";
 ZaController.initToolbarMethods["ZaSearchListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaSearchListController"] = new Array();
-ZaListViewController.changeActionsStateMethods["ZaSearchListController"] = new Array();
+
 ZaSearchListController.prototype.show = function (doPush) {
 	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,CONS:null,show:doPush});
 	/*
@@ -73,17 +73,15 @@ ZaSearchListController.prototype.show = function (doPush) {
 			sortAscending:this._currentSortOrder,
 			limit:this.RESULTSPERPAGE,
 			attrs:this.fetchAttrs,
-			callback:callback,
-			controller: this
+			callback:callback
 	}
 	ZaSearch.searchDirectory(searchParams);
 }
 
 ZaSearchListController.prototype._show = 
-function (list, openInNewTab, openInSearchTab) {
-	this._updateUI(list, openInNewTab, openInSearchTab);
-	//this._app.pushView(ZaZimbraAdmin._SEARCH_LIST_VIEW);
-	this._app.pushView(this.getContentViewId());
+function (list) {
+	this._updateUI(list);
+	this._app.pushView(ZaZimbraAdmin._SEARCH_LIST_VIEW);
 }
 
 /**
@@ -180,8 +178,7 @@ ZaSearchListController.prototype._searchFieldCallback =
 function(params) {
 	var callback;
 	var controller = this;
-	callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,show:true});
-	/*if((AjxUtil.indexOf(params.types,ZaSearch.DOMAINS)>-1) && 
+	if((AjxUtil.indexOf(params.types,ZaSearch.DOMAINS)>-1) && 
 			((AjxUtil.indexOf(params.types,ZaSearch.ACCOUNTS)>-1) || 
 				(AjxUtil.indexOf(params.types,ZaSearch.ALIASES)>-1) || 
 				(AjxUtil.indexOf(params.types,ZaSearch.RESOURCES)>-1) ||
@@ -189,13 +186,13 @@ function(params) {
 
 			callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,show:true});			
 	} else if (AjxUtil.indexOf(params.types,ZaSearch.DOMAINS)>-1) {
-		controller = this._app.getDomainListController(null, true);
+		controller = this._app.getDomainListController();
 	} else if((AjxUtil.indexOf(params.types,ZaSearch.ACCOUNTS)>-1) || 
 				(AjxUtil.indexOf(params.types,ZaSearch.ALIASES)>-1) || 
 				(AjxUtil.indexOf(params.types,ZaSearch.RESOURCES)>-1) ||
 				(AjxUtil.indexOf(params.types,ZaSearch.DLS)>-1)) {
 		
-		controller = this._app.getAccountListController(null, true);
+		controller = this._app.getAccountListController();
 		
 		if((AjxUtil.indexOf(params.types,ZaSearch.ACCOUNTS)>-1)&& 
 				!(AjxUtil.indexOf(params.types,ZaSearch.ALIASES)>-1) && 
@@ -218,13 +215,11 @@ function(params) {
 				(AjxUtil.indexOf(params.types,ZaSearch.DLS)>-1)) { 
 			controller.setDefaultType(ZaItem.DL);
 		} 
-	}*/
+	}
 	if(controller.setSearchTypes)
 		controller.setSearchTypes(params.types);
-	
-	controller._currentQuery = params.query ;
 		
-	var callback = new AjxCallback(controller, controller.searchCallback, {limit:controller.RESULTSPERPAGE,show:true, openInSearchTab: true});
+	var callback = new AjxCallback(controller, controller.searchCallback, {limit:controller.RESULTSPERPAGE,show:true});
 	var searchParams = {
 			query:params.query, 
 			types:params.types,
@@ -233,8 +228,7 @@ function(params) {
 			sortAscending:this._currentSortOrder,
 			limit:this.RESULTSPERPAGE,
 			attrs:ZaSearch.standardAttributes,
-			callback:callback,
-			controller: controller
+			callback:callback
 	}
 	ZaSearch.searchDirectory(searchParams);
 }
@@ -244,9 +238,6 @@ ZaSearchListController.initPopupMenuMethod =
 function () {
     this._popupOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaSearchListController.prototype._editButtonListener)));
 	this._popupOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaSearchListController.prototype._deleteButtonListener)));
-	if(ZaSettings.ACCOUNTS_MOVE_ALIAS_ENABLED)	
-		this._popupOperations.push(new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener)));		    	
-	
 }
 ZaController.initPopupMenuMethods["ZaSearchListController"].push(ZaSearchListController.initPopupMenuMethod);
 
@@ -258,25 +249,8 @@ function () {
 	// first button in the toolbar is a menu.
     this._toolbarOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaSearchListController.prototype._editButtonListener)));
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaSearchListController.prototype._deleteButtonListener)));
-	if(ZaSettings.ACCOUNTS_MOVE_ALIAS_ENABLED) {	
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener)));		    	
-	}	
 }
 ZaController.initToolbarMethods["ZaSearchListController"].push(ZaSearchListController.initToolbarMethod);
-
-ZaSearchListController.prototype.reset =
-function () {
-	this._toolbarOperations = new Array();
-   	this._popupOperations = new Array();			
-   	
-	this._currentPageNum = 1;
-	this._currentQuery = null;
-	this._currentSortField = ZaAccount.A_uid;
-	this._currentSortOrder = "1";
-	this.pages = new Object();
-	this._UICreated = false;
-	this.objType = ZaEvent.S_ACCOUNT;	
-}
 
 //private and protected methods
 ZaSearchListController.prototype._createUI = 
@@ -284,7 +258,6 @@ function () {
 	//create accounts list view
 	// create the menu operations/listeners first	
 	this._contentView = new ZaSearchListView(this._container, this._app);
-	this._app._controllers[this.getContentViewId ()] = this ;
 	this._newDLListener = new AjxListener(this, ZaSearchListController.prototype._newDistributionListListener);
 	this._newAcctListener = new AjxListener(this, ZaSearchListController.prototype._newAccountListener);
 	this._newResListener = new AjxListener(this, ZaSearchListController.prototype._newResourceListener);
@@ -303,15 +276,8 @@ function () {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	//this._app.createView(ZaZimbraAdmin._SEARCH_LIST_VIEW, elements);
-	//always open the search list view in the search tab
-	var tabParams = {
-		openInNewTab: false,
-		tabId: this.getContentViewId(),
-		tab: this._app.getTabGroup().getSearchTab ()
-	}
-	this._app.createView(this.getContentViewId(), elements, tabParams) ;
-	
+	this._app.createView(ZaZimbraAdmin._SEARCH_LIST_VIEW, elements);
+
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 	
@@ -322,14 +288,6 @@ function () {
 	this._UICreated = true;
 }
 
-ZaSearchListController.prototype.closeButtonListener =
-function(ev, noPopView, func, obj, params) {
-	if (noPopView) {
-		func.call(obj, params) ;
-	}else{
-		this._app.popView () ;
-	}
-}
 
 // new account button was pressed
 ZaSearchListController.prototype._newAccountListener =
@@ -384,13 +342,13 @@ function(ev) {
 			this._editItem(ev.item);
 		}
 	} else {
-		this.changeActionsState();
+		this._changeActionsState();
 	}
 }
 
 ZaSearchListController.prototype._listActionListener =
 function (ev) {
-	this.changeActionsState();
+	this._changeActionsState();
 	this._actionMenu.popup(0, ev.docX, ev.docY);
 }
 
@@ -412,14 +370,10 @@ function(ev) {
 * It call ZaAccountViewController.show method
 * in order to display the Account View
 **/
+
 ZaSearchListController.prototype._deleteButtonListener =
 function(ev) {
 	ZaAccountListController.prototype._deleteButtonListener.call(this, ev);
-}
-
-ZaSearchListController.prototype._deleteAccountsInRemoveList =
-function (ev) {
-	ZaAccountListController.prototype._deleteAccountsInRemoveList.call (this, ev) ;
 }
 
 ZaSearchListController.prototype._editItem = function (item) {
@@ -429,12 +383,10 @@ ZaSearchListController.prototype._editItem = function (item) {
 	} else if (type == ZaItem.DL) {
 		this._app.getDistributionListController().show(item);
 	} else if(type == ZaItem.ALIAS) {
-		var targetObj = item.getAliasTargetObj() ;
-		
-		if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_ACCOUNT) {			
-			this._app.getAccountViewController().show(targetObj, true);
-		}else if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_DL){
-			this._app.getDistributionListController().show(targetObj, true);
+		var account = new ZaAccount(this._app);
+		if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId]) {
+			account.load("id", item.attrs[ZaAlias.A_AliasTargetId], (!ZaSettings.COSES_ENABLED));
+			this._app.getAccountViewController().show(account);
 		}
 	} else if (type == ZaItem.RESOURCE ){
 		this._app.getResourceController().show(item);
@@ -443,26 +395,26 @@ ZaSearchListController.prototype._editItem = function (item) {
 	}
 };
 
-ZaSearchListController.changeActionsStateMethod = 
-function (opsArray1, opsArray2) {
+
+
+ZaSearchListController.prototype._changeActionsState = 
+function () {
 	var cnt = this._contentView.getSelectionCount();
 	if(cnt == 1) {
-		var item = this._contentView.getSelection()[0];		
-		opsArray1.push(ZaOperation.EDIT)
-		opsArray1.push(ZaOperation.DELETE);
-		if(item.type == ZaItem.ALIAS) {
-			opsArray1.push(ZaOperation.MOVE_ALIAS);
-		} else {
-			opsArray2.push(ZaOperation.MOVE_ALIAS);			
-		}	
+		var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE];
+		this._toolbar.enable(opsArray, true);
+		this._actionMenu.enable(opsArray, true);
 	} else if (cnt > 1){
-		opsArray1.push(ZaOperation.DELETE);
-		opsArray2.push(ZaOperation.EDIT)
-		opsArray2.push(ZaOperation.MOVE_ALIAS);
+		var opsArray1 = [ZaOperation.EDIT];
+		this._toolbar.enable(opsArray1, false);
+		this._actionMenu.enable(opsArray1, false);
+
+		var opsArray2 = [ZaOperation.DELETE];
+		this._toolbar.enable(opsArray2, true);
+		this._actionMenu.enable(opsArray2, true);
 	} else {
-		opsArray2.push(ZaOperation.DELETE);
-		opsArray2.push(ZaOperation.EDIT)
-		opsArray2.push(ZaOperation.MOVE_ALIAS);		
+		var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE];
+		this._toolbar.enable(opsArray, false);
+		this._actionMenu.enable(opsArray, false);
 	}
 }
-ZaListViewController.changeActionsStateMethods["ZaSearchListController"].push(ZaSearchListController.changeActionsStateMethod);

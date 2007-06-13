@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaForwardingAddress = function() {
+function ZaForwardingAddress() {
 	ZaItem.call(this, ZaEvent.S_ACCOUNT);
 	this.attrs = new Object();
 	this.id = "";

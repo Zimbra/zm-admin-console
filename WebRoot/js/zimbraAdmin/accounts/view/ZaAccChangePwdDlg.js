@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaAccChangePwdDlg = function(parent,  app) {
+function ZaAccChangePwdDlg(parent,  app) {
 	DwtDialog.call(this, parent, null, ZaMsg.CHNP_Title);
 	this._fieldIds = new Object();
 	this._app = app;

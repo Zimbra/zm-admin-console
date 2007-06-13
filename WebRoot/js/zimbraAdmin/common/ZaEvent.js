@@ -32,7 +32,7 @@
 * The event has a data type (eg conversation), an event type (eg delete), a source (the
 * data object generating the event), and a hash of arbitrary information (details).
 */
-ZaEvent = function(type) {
+function ZaEvent(type) {
 
 	this.type = type; //source type
 	this.event = null; //event type

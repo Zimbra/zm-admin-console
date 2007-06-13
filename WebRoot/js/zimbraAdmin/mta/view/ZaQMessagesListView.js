@@ -26,7 +26,7 @@
  /**
  * @author Greg Solovyev
  **/
-ZaQMessagesListView = function(parent, className, posStyle, headerList) {
+function ZaQMessagesListView(parent, className, posStyle, headerList) {
 	//var headerList = this._getHeaderList();
 	ZaListView.call(this, parent, className, posStyle, headerList);
 }

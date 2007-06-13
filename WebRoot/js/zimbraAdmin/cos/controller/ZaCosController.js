@@ -31,14 +31,13 @@
 * @param abApp
 **/
 
-ZaCosController = function(appCtxt, container,app) {
+function ZaCosController(appCtxt, container,app) {
 	ZaXFormViewController.call(this, appCtxt, container,app, "ZaCosController");
 	this._UICreated = false;	
 	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/cos/creating_classes_of_service.htm";		
 	this.deleteMsg = ZaMsg.Q_DELETE_COS;
 	this.objType = ZaEvent.S_COS;
 	this._toolbarOperations = new Array();	
-	this.tabConstructor = ZaCosXFormView;
 }
 
 ZaCosController.prototype = new ZaXFormViewController();
@@ -53,10 +52,7 @@ ZaController.setViewMethods["ZaCosController"] = new Array();
 
 ZaCosController.prototype.show = 
 function(entry) {
-	//check if the tab with the same cos ei
-	if (! this.selectExistingTabByItemId(entry.id)){
-		this._setView(entry, true);
-	}
+	this._setView(entry);
 }
 
 
@@ -75,22 +71,15 @@ function(entry) {
 			this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));							
 			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);
 	
-		  	this._contentView = this._view = new this.tabConstructor(this._container, this._app, entry.id);
+		  	this._view = new ZaCosXFormView(this._container, this._app, entry.id);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;			  	
-		    //this._app.createView(ZaZimbraAdmin._COS_VIEW, elements);
-		    var tabParams = {
-				openInNewTab: true,
-				tabId: this.getContentViewId()
-			}  	
-		    this._app.createView(this.getContentViewId(), elements, tabParams) ;
-			this._UICreated = true;
-			this._app._controllers[this.getContentViewId ()] = this ;
+		    this._app.createView(ZaZimbraAdmin._COS_VIEW, elements);  	
+		    this._UICreated = true;
 	  	}
 	
-		//this._app.pushView(ZaZimbraAdmin._COS_VIEW);
-		this._app.pushView(this.getContentViewId());
+		this._app.pushView(ZaZimbraAdmin._COS_VIEW);
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
 		if(!entry.id || (entry.name == "default")) {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
@@ -121,7 +110,7 @@ function () {
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.COSTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener)));
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.COSTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
    	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosController.prototype._newButtonListener, [true])));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosController.prototype._newButtonListener)));
 	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener)));    	    	
 }
 ZaController.initToolbarMethods["ZaCosController"].push(ZaCosController.initToolbarMethod);
@@ -235,57 +224,28 @@ function () {
 	* check values
 	**/
 	
-	//if(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseChars] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseChars])) {
-if( !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseChars])) {
-		//show error msg
-		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_zimbraPasswordMinUpperCaseChars + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
-		this._errorDialog.popup();		
-		return false;
-	}	
-
-	if(tmpObj.attrs[ZaCos.A_zimbraPasswordMinLowerCaseChars] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinLowerCaseChars])) {
-		//show error msg
-		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_zimbraPasswordMinLowerCaseChars + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
-		this._errorDialog.popup();		
-		return false;
-	}
-	
-	if(tmpObj.attrs[ZaCos.A_zimbraPasswordMinPunctuationChars] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinPunctuationChars])) {
-		//show error msg
-		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_zimbraPasswordMinPunctuationChars + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
-		this._errorDialog.popup();		
-		return false;
-	}
-
-	if(tmpObj.attrs[ZaCos.A_zimbraPasswordMinNumericChars] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinNumericChars])) {
-		//show error msg
-		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_zimbraPasswordMinNumericChars + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
-		this._errorDialog.popup();		
-		return false;
-	}
-
-	if(tmpObj.attrs[ZaCos.A_zimbraMailQuota] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMailQuota])) {
+	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMailQuota])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_MailQuota + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
 		return false;
 	}
 
-	if(tmpObj.attrs[ZaCos.A_zimbraContactMaxNumEntries] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraContactMaxNumEntries])) {
+	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraContactMaxNumEntries])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_ContactMaxNumEntries + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
 		return false;
 	}
 	
-	if(tmpObj.attrs[ZaCos.A_zimbraMinPwdLength] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMinPwdLength])) {
+	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMinPwdLength])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_passMinLength + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
 		return false;
 	}
 	
-	if(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength])) {
+	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_passMaxLength + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
@@ -299,14 +259,14 @@ if( !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseCh
 		return false;
 	}	
 
-	if(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge])) {
+	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_passMinAge + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
 		return false;
 	}		
 	
-	if(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge])) {
+	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_passMaxAge + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
@@ -320,7 +280,7 @@ if( !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseCh
 		return false;
 	}
 		
-	if(tmpObj.attrs[ZaCos.A_zimbraAuthTokenLifetime] && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraAuthTokenLifetime])) {
+	if(!AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraAuthTokenLifetime])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_AuthTokenLifetime + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
@@ -333,14 +293,14 @@ if( !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseCh
 		this._errorDialog.popup();		
 		return false;
 	}		*/
-	if(tmpObj.attrs[ZaCos.A_zimbraMailIdleSessionTimeout] && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraMailIdleSessionTimeout])) {
+	if(!AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraMailIdleSessionTimeout])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_MailIdleSessionTimeout + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
 		return false;
 	}			
 	
-	if(tmpObj.attrs[ZaCos.A_zimbraPrefMailPollingInterval] && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPrefMailPollingInterval])) {
+	if(!AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPrefMailPollingInterval])) {
 		//show error msg
 		this._errorDialog.setMessage(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_zimbraPrefMailPollingInterval + " ! ", null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
@@ -513,22 +473,19 @@ if( !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraPasswordMinUpperCaseCh
 					tmpMods.push(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets][i]);
 				}
 			}
-			if(isNew) {
-				mods[ZaCos.A_zimbraZimletAvailableZimlets] = tmpMods;
-			} else {
-				//check if changed
-				if(this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] != null) {
-					if(this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] instanceof Array) {
-						if(tmpMods.join(",") != this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets].join(",")) {
-							mods[ZaCos.A_zimbraZimletAvailableZimlets] = tmpMods;
-						}
-					} else if (tmpMods.join(",") != [this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets]].join(",")) {
+			
+			//check if changed
+			if(this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] != null) {
+				if(this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] instanceof Array) {
+					if(tmpMods.join(",") != this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets].join(",")) {
 						mods[ZaCos.A_zimbraZimletAvailableZimlets] = tmpMods;
 					}
-				} else {
+				} else if (tmpMods.join(",") != [this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets]].join(",")) {
 					mods[ZaCos.A_zimbraZimletAvailableZimlets] = tmpMods;
-				}			
-			}
+				}
+			} else {
+				mods[ZaCos.A_zimbraZimletAvailableZimlets] = tmpMods;
+			}			
 		} else if(this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] != null) {
 			mods[ZaCos.A_zimbraZimletAvailableZimlets] = "";
 		}
@@ -601,29 +558,25 @@ function () {
 			continue;			
 		newCos.attrs[aname] = defCos.attrs[aname];
 	}	
-	this._setView(newCos, true);
+	this._setView(newCos);
 }
 
 // new button was pressed
 ZaCosController.prototype._newButtonListener =
-function(openInNewTab, ev) {
-	if (openInNewTab) {
-		ZaCosListController.prototype._newButtonListener.call (this) ;
-	}else{
-		if(this._view.isDirty()) {
-			//parameters for the confirmation dialog's callback 
-			var args = new Object();		
-			args["params"] = null;
-			args["obj"] = this;
-			args["func"] = ZaCosController.prototype.newCos;
-			//ask if the user wants to save changes		
-			this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);								
-			this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
-			this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
-			this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
-			this._app.dialogs["confirmMessageDialog"].popup();
-		} else {
-			this.newCos();
-		}	
-	}
+function(ev) {
+	if(this._view.isDirty()) {
+		//parameters for the confirmation dialog's callback 
+		var args = new Object();		
+		args["params"] = null;
+		args["obj"] = this;
+		args["func"] = ZaCosController.prototype.newCos;
+		//ask if the user wants to save changes		
+		this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);								
+		this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
+		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
+		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
+		this._app.dialogs["confirmMessageDialog"].popup();
+	} else {
+		this.newCos();
+	}	
 }

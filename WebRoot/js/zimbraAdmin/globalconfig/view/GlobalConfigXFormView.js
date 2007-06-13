@@ -30,7 +30,7 @@
 * @param app
 * @author Greg Solovyev
 **/
-GlobalConfigXFormView = function(parent, app) {
+function GlobalConfigXFormView (parent, app) {
 	ZaTabView.call(this, parent, app,"GlobalConfigXFormView");
 	this.initForm(ZaGlobalConfig.myXModel,this.getMyXForm());
 }
@@ -42,21 +42,6 @@ ZaTabView.XFormModifiers["GlobalConfigXFormView"] = new Array();
 GlobalConfigXFormView.prototype.getTitle = 
 function () {
 	return ZaMsg.GlobalConfig_view_title;
-}
-
-GlobalConfigXFormView.prototype.getTabIcon =
-function () {
-	return "GlobalSettings";
-}
-
-GlobalConfigXFormView.prototype.getTabTitle =
-function () {
-	return this.getTitle();
-}
-
-GlobalConfigXFormView.prototype.getTabToolTip =
-function () {
-	return this.getTitle ();
 }
 
 GlobalConfigXFormView.myXFormModifier = function(xFormObject) {	
@@ -103,10 +88,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 	                	          	var query = "(zimbraDomainName=" + n + "*)";
                         	        this.getForm().getController().searchDomains(query);
                             	}
-							},
-							{ref: ZaGlobalConfig.A_zimbraDataSourceNumThreads, type:_INPUT_, 
-							  label: ZaMsg.NAD_zimbraDataSourceNumThreads, width: "5em",
-							  onChange:ZaTabView.onFormFieldChanged
 							}
 						]
 					}
@@ -178,7 +159,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 			    	  	  	var newExtId = form.getId()+"_input_"+ZaGlobalConfig.A_zimbraMtaBlockedExtension;
 			    	  	  	var newExtFormItem =form.getItemById(newExtId);
 			    	  	  	newExtFormItem.setInstanceValue("");
-			    	  	  	form.parent.setDirty(true);	
 			    	  	  	form.refresh();
 			    	  	  }
 			    	  	}
@@ -237,10 +217,10 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 								  label: ZaMsg.NAD_MTA_MaxMsgSize, width: "6em",
 								  onChange:ZaTabView.onFormFieldChanged
 		  						},
-								/*{ ref: ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _TEXTFIELD_, 
+								{ ref: ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _TEXTFIELD_, 
 								  label: ZaMsg.NAD_MTA_MaxUploadSize, width: "6em",
 								  onChange:ZaTabView.onFormFieldChanged
-	  							},*/
+	  							},
 	  							{ ref: ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, type: _CHECKBOX_,
 									label: ZaMsg.NAD_add_x_orginate_IP, trueValue: "TRUE", falseValue: "FALSE",
 					   	  			onChange: ZaTabView.onFormFieldChanged
@@ -292,26 +272,26 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 						{type: _ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAP_ServiceGrp, 
 						  items: [						
 							{ ref: ZaGlobalConfig.A_zimbraImapServerEnabled, type:_CHECKBOX_, 
-							  label: ZaMsg.IMAP_Service, 
+							  label: ZaMsg.NAD_IMAP_Service, 
 							  trueValue:"TRUE", falseValue:"FALSE", 
 							  onChange:ZaTabView.onFormFieldChanged
 	  						},
 						  	{ ref: ZaGlobalConfig.A_zimbraImapSSLServerEnabled, type:_CHECKBOX_, 
 					  	  	  relevant: "instance.attrs[ZaGlobalConfig.A_zimbraImapServerEnabled] == 'TRUE'", 
 					  	  	  relevantBehavior: _DISABLE_,
-						  	  label: ZaMsg.IMAP_SSLService, 
+						  	  label: ZaMsg.NAD_IMAP_SSLService, 
 						  	  trueValue:"TRUE", falseValue:"FALSE", 
 						  	  onChange:ZaTabView.onFormFieldChanged
 					  	  	},
 							{ ref: ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, type:_CHECKBOX_, 
 					  	  	  relevant: "instance.attrs[ZaGlobalConfig.A_zimbraImapServerEnabled] == 'TRUE'", 
 					  	  	  relevantBehavior: _DISABLE_,
-							  label: ZaMsg.IMAP_CleartextLoginEnabled,
+							  label: ZaMsg.NAD_IMAP_CleartextLoginEnabled,
 							  trueValue:"TRUE", falseValue:"FALSE", 
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},  						
 							{ ref: ZaGlobalConfig.A_zimbraImapNumThreads, type:_TEXTFIELD_, 
-							  label: ZaMsg.IMAP_NumThreads,
+							  label: ZaMsg.NAD_IMAP_NumThreads,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	}		
@@ -320,22 +300,22 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 						{type:_ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAP_NetworkGrp, 
 						  items: [											  	
 							{ ref: ZaGlobalConfig.A_zimbraImapBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.IMAP_Port,
+							  label: ZaMsg.NAD_IMAP_Port,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},		
 							{ ref: ZaGlobalConfig.A_zimbraImapSSLBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.IMAP_SSLPort,
+							  label: ZaMsg.NAD_IMAP_SSLPort,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},					  	
 							{ ref: ZaGlobalConfig.A_zimbraImapProxyBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.IMAP_Proxy_Port,
+							  label: ZaMsg.NAD_IMAP_Proxy_Port,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	},	
 							{ ref: ZaGlobalConfig.A_zimbraImapSSLProxyBindPort, type:_TEXTFIELD_, 
-							  label: ZaMsg.IMAP_SSL_Proxy_Port,
+							  label: ZaMsg.NAD_IMAP_SSL_Proxy_Port,
 							  width: "5em",
 							  onChange:ZaTabView.onFormFieldChanged
 						  	}
@@ -407,7 +387,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 				{type: _ZATABCASE_, relevant: "instance[ZaModel.currentTab] == 6", 
 					colSizes:["auto"],numCols:1,id:"global_asav_tab",
 				 	items: [
-						/*{type:_ZA_PLAIN_GROUPER_, 
+						{type:_ZA_PLAIN_GROUPER_, 
 						  items: [					 		
 							{ref: ZaGlobalConfig.A_zimbraSpamCheckEnabled, type: _CHECKBOX_,
 							  	label: ZaMsg.NAD_Enable_ASAV,
@@ -419,21 +399,21 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
 								}
 					  	    }
 					  	  ]
-						},*/
+						},
 						{type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_AS_Settings, 
 						  items: [							
 						  	{ ref: ZaGlobalConfig.A_zimbraSpamKillPercent, type: _INPUT_,
-/*					   	      relevant: "instance.attrs[ZaGlobalConfig.A_zimbraSpamCheckEnabled] == 'TRUE'", relevantBehavior: _DISABLE_,*/
+					   	      relevant: "instance.attrs[ZaGlobalConfig.A_zimbraSpamCheckEnabled] == 'TRUE'", relevantBehavior: _DISABLE_,
 						  	  label: ZaMsg.NAD_Spam_KillPercent, width: "4em",
 							  onChange: ZaTabView.onFormFieldChanged
 						  	},
 						  	{ ref: ZaGlobalConfig.A_zimbraSpamTagPercent, type: _INPUT_,
-/*					   	      relevant: "instance.attrs[ZaGlobalConfig.A_zimbraSpamCheckEnabled] == 'TRUE'", relevantBehavior: _DISABLE_,*/
+					   	      relevant: "instance.attrs[ZaGlobalConfig.A_zimbraSpamCheckEnabled] == 'TRUE'", relevantBehavior: _DISABLE_,
 						  	  label: ZaMsg.NAD_Spam_TagPercent, width: "4em",
 							  onChange: ZaTabView.onFormFieldChanged
 						  	},
 						  	{ ref: ZaGlobalConfig.A_zimbraSpamSubjectTag, type: _INPUT_,
-/*					   	      relevant: "instance.attrs[ZaGlobalConfig.A_zimbraSpamCheckEnabled] == 'TRUE'", relevantBehavior: _DISABLE_,*/
+					   	      relevant: "instance.attrs[ZaGlobalConfig.A_zimbraSpamCheckEnabled] == 'TRUE'", relevantBehavior: _DISABLE_,
 						  	  label: ZaMsg.NAD_Spam_SubjectPrefix, width: "20em",
 							  onChange: ZaTabView.onFormFieldChanged
 						  	}

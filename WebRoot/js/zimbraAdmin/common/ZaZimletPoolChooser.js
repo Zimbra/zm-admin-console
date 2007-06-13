@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaZimletPoolChooser = function(params) {
+function ZaZimletPoolChooser(params) {
  	if (arguments.length == 0) return;
 		
  	DwtChooser.call(this, params);

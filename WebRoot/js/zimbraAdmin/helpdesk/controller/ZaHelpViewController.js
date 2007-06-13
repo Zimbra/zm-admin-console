@@ -31,10 +31,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaHelpViewController = function(appCtxt, container, app) {
+function ZaHelpViewController(appCtxt, container, app) {
 
 	ZaController.call(this, appCtxt, container, app,"ZaHelpViewController");
-	this.tabConstructor = ZaHelpView;
 }
 
 ZaHelpViewController.prototype = new ZaController();
@@ -42,28 +41,12 @@ ZaHelpViewController.prototype.constructor = ZaHelpViewController;
 
 
 ZaHelpViewController.prototype.show = 
-function(openInNewTab) {
+function() {
     if (!this._contentView) {
 		var elements = new Object();
-		this._contentView = new this.tabConstructor(this._container, this._app);
+		this._contentView = new ZaHelpView(this._container, this._app);
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-		var tabParams = {
-			openInNewTab: false,
-			tabId: this.getContentViewId(),
-			tab: this.getMainTab() 
-		}
-		//this._app.createView(ZaZimbraAdmin._HELP_VIEW, elements);
-		this._app.createView(this.getContentViewId(), elements, tabParams) ;
-		this._UICreated = true;
-		this._app._controllers[this.getContentViewId ()] = this ;
+		this._app.createView(ZaZimbraAdmin._HELP_VIEW, elements);
 	}
-	//this._app.pushView(ZaZimbraAdmin._HELP_VIEW);
-	this._app.pushView(this.getContentViewId());
-	
-	/*
-	if (openInNewTab) {//when a ctrl shortcut is pressed
-		
-	}else{ //open in the main tab
-		this.updateMainTab ("Help", ZaMsg.Help_view_title ) ;	
-	} */
+	this._app.pushView(ZaZimbraAdmin._HELP_VIEW);
 };

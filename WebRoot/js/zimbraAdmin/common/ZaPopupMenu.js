@@ -34,7 +34,7 @@
 * This widget class extends DwtMenu. Similar to ZaToolBar, this class creates
 * buttons form an array of ZaOperation objects
 **/
-ZaPopupMenu = function(parent, className, dialog, opList) {
+function ZaPopupMenu(parent, className, dialog, opList) {
 	if (arguments.length == 0) return;
 	className = className || "ActionMenu";
 	DwtMenu.call(this, parent, DwtMenu.POPUP_STYLE, className, null, dialog);
@@ -45,7 +45,7 @@ ZaPopupMenu = function(parent, className, dialog, opList) {
 			if(opList[ix].id == ZaOperation.NONE  || opList[ix].id == ZaOperation.HELP)
 				continue;
 				
-			var style = (opList[ix].id == ZaOperation.SEP) ? DwtMenuItem.SEPARATOR_STYLE : DwtMenuItem.NO_STYLE;
+			var style = (opList[ix].id == ZaOperation.SEP) ? DwtMenuItem.SEPARATOR_STYLE : DwtMenuItem.CASCADE_STYLE;
 			this.createMenuItem(opList[ix].id, opList[ix].imageId, opList[ix].caption, null, true,style,null);
 			this.addSelectionListener(opList[ix].id, opList[ix].listener);		
 		}

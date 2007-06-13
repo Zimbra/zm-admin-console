@@ -28,23 +28,19 @@
  * @author EMC
  * Distribution list controller 
  */
-ZaDLController = function(appCtxt, container, app) {
+function ZaDLController (appCtxt, container, app) {
 	ZaXFormViewController.call(this, appCtxt, container, app, "ZaDLController");
 	this._UICreated = false;
 	this._toolbarOperations = new Array();
 	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_accounts/distribution_lists.htm";	
 	this.deleteMsg = ZaMsg.Q_DELETE_DL;
-	this.objType = ZaEvent.S_ACCOUNT;
-	this.tabConstructor = ZaDLXFormView;
-	this._removeAliasArr = [];
-	this._addAliasArr = [];		
+	this.objType = ZaEvent.S_ACCOUNT;	
 }
 
 ZaDLController.prototype = new ZaXFormViewController();
 ZaDLController.prototype.constructor = ZaDLController;
 
 ZaController.initToolbarMethods["ZaDLController"] = new Array();
-ZaController.setViewMethods["ZaDLController"] = [];
 
 ZaDLController.prototype.toString = function () {
 	return "ZaDLController";
@@ -55,19 +51,12 @@ ZaDLController.prototype.handleXFormChange = function (ev) {
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
 	}
 }
-ZaDLController.prototype.show = 
-function(entry, openInNewTab, skipRefresh) {
-	this._setView(entry, openInNewTab, skipRefresh);
-}
-
-ZaDLController.setViewMethod =
-function (entry)	{
+ZaDLController.prototype.show = function(entry) {
     if (!this._UICreated) {
 		this._createUI();
 	} 	
 	try {
-		//this._app.pushView(ZaZimbraAdmin._DL_VIEW);
-		this._app.pushView(this.getContentViewId());
+		this._app.pushView(ZaZimbraAdmin._DL_VIEW);
 		if(!entry.id) {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
 		} else {
@@ -75,22 +64,20 @@ function (entry)	{
 			entry.getMembers();
 		}	
 		this._view.setDirty(false);
-		entry[ZaModel.currentTab] = "1";
+		entry[ZaModel.currentTab] = "1"
 		this._view.setObject(entry);
 		this._currentObject = entry;
-		
 	} catch (ex) {
 		this._handleException(ex, "ZaDLController.prototype.show", null, false);
 	}	
 };
-ZaController.setViewMethods["ZaDLController"].push(ZaDLController.setViewMethod);
 
 ZaDLController.initToolbarMethod =
 function () {
    	this._toolbarOperations.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener)));
    	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
    	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.DLTBB_New_tt, "Group", "GroupDis", new AjxListener(this, this.newButtonListener, [true])));   			    	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.DLTBB_New_tt, "Group", "GroupDis", new AjxListener(this, this.newButtonListener)));   			    	
    	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.DLTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener)));    	    	
 }
 ZaController.initToolbarMethods["ZaDLController"].push(ZaDLController.initToolbarMethod);
@@ -102,26 +89,22 @@ ZaDLController.prototype.newDl = function () {
 
 // new button was pressed
 ZaDLController.prototype.newButtonListener =
-function(openInNewTab, ev) {
-	if (openInNewTab) {
-		ZaAccountListController.prototype._newDistributionListListener.call (this) ;
-	}else{
-		if(this._view.isDirty()) {
-			//parameters for the confirmation dialog's callback 
-			var args = new Object();		
-			args["params"] = null;
-			args["obj"] = this;
-			args["func"] = ZaDLController.prototype.newDl;
-			//ask if the user wants to save changes		
-			this._app.dialogs["confirmMessageDialog"] = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);								
-			this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
-			this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
-			this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
-			this._app.dialogs["confirmMessageDialog"].popup();
-		} else {
-			this.newDl();
-		}	
-	}
+function(ev) {
+	if(this._view.isDirty()) {
+		//parameters for the confirmation dialog's callback 
+		var args = new Object();		
+		args["params"] = null;
+		args["obj"] = this;
+		args["func"] = ZaDLController.prototype.newDl;
+		//ask if the user wants to save changes		
+		this._app.dialogs["confirmMessageDialog"] = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);								
+		this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
+		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
+		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
+		this._app.dialogs["confirmMessageDialog"].popup();
+	} else {
+		this.newDl();
+	}	
 }
 
 /**
@@ -145,7 +128,7 @@ ZaDLController.prototype._createUI =
 function () {
 	//create accounts list view
 	// create the menu operations/listeners first	
-	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
+	this._view = new ZaDLXFormView(this._container, this._app);
 
     this._initToolbar();
 	//always add Help button at the end of the toolbar    
@@ -157,16 +140,10 @@ function () {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	//this._app.createView(ZaZimbraAdmin._DL_VIEW, elements);
-	var tabParams = {
-			openInNewTab: true,
-			tabId: this.getContentViewId()
-		}
-	this._app.createView(this.getContentViewId(), elements, tabParams) ;
-	
+	this._app.createView(ZaZimbraAdmin._DL_VIEW, elements);
+
 	this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 	this._UICreated = true;
-	this._app._controllers[this.getContentViewId()] = this ;
 }
 /**
  * This method is called by an asynchronous command when
@@ -180,6 +157,7 @@ ZaDLController.prototype.saveChangesCallback = function (obj, resp) {
 		if(resp.isException()) {
 			throw(resp.getException());
 		} else {
+
 			if (resp.getResponse() && resp.getResponse().Body) {
 				if(resp.getResponse().Body.ModifyDistributionListResponse) {
 					this.getProgressDialog().setProgress({numTotal:100,numDone:100,progressMsg:ZaMsg.MSG_SAVING_DL})
@@ -199,83 +177,8 @@ ZaDLController.prototype.saveChangesCallback = function (obj, resp) {
 				}
 			}
 			
-			// add/remove aliases
-			try {
-				for(var ix=0; ix < this._removeAliasArr.length; ix++) {
-					this._currentObject.removeAlias(this._removeAliasArr [ix]);
-				}
-			} catch (ex) {
-				this._handleException(ex, "ZaDLController.prototype._saveChanges", null, false);
-					
-				return false;
-			}
 			
-			var failedAliases = "";
-			var failedAliasesCnt = 0;
-			try {
-				for(var ix=0; ix < this._addAliasArr.length; ix++) {
-					var curAlias = this._addAliasArr[ix] ;
-					try {
-						if(curAlias) {
-							if(!AjxUtil.EMAIL_FULL_RE.test(curAlias)) {
-								//show error msg
-								this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_ALIAS_INVALID,[curAlias]), null, DwtMessageDialog.CRITICAL_STYLE, null);
-								this._errorDialog.popup();		
-								break;						
-							}
-							this._currentObject.addAlias(curAlias);
-						}
-					} catch (ex) {
-						if(ex.code == ZmCsfeException.ACCT_EXISTS || ex.code == ZmCsfeException.DISTRIBUTION_LIST_EXISTS) {
-							//if failed because account exists just show a warning
-							var account = this._findAlias(curAlias);
-							switch(account.type) {
-								case ZaItem.DL:
-									if(account.name == curAlias) {
-										failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS3,[account.name]);								
-									} else {
-										failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS4,[account.name, curAlias]);								
-									}
-								break;
-								case ZaItem.ACCOUNT:
-									if(account.name == curAlias) {
-										failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS2,[account.name]);								
-									} else {
-										failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS1,[account.name, curAlias]);								
-									}							
-								break;	
-								case ZaItem.RESOURCE:
-									if(account.name == curAlias) {
-										failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS5,[account.name]);								
-									} else {
-										failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS6,[account.name, obj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);								
-									}							
-								break;							
-								default:
-									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS0,[curAlias]);							
-								break;
-							}
-							failedAliasesCnt++;
-						} else {
-							//if failed for another reason - jump out
-							throw (ex);
-						}
-					}
-				}
-		
-				if(failedAliasesCnt == 1) {
-					this._errorDialog.setMessage(ZaMsg.WARNING_ALIAS_EXISTS + failedAliases, "", DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
-					this._errorDialog.popup();			
-				} else if(failedAliasesCnt > 1) {
-					this._errorDialog.setMessage(ZaMsg.WARNING_ALIASES_EXIST + failedAliases, "", DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
-					this._errorDialog.popup();			
-				}
-			} catch (ex) {
-				this.popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex, true);	
-				return false;
-			}
-						
-			//add/remove memberOf lists
+
 			if(obj._addList && obj._addList.size()) {
 				var finishedCallback = new AjxCallback(this,this.saveChangesCallback, obj);
 				this._currentObject.addNewMembersAsync(obj,finishedCallback);
@@ -321,7 +224,8 @@ ZaDLController.prototype.saveChangesCallback = function (obj, resp) {
 				this._view.setObject(this._currentObject);			
 				this.fireChangeEvent(this._currentObject);	
 				this.getProgressDialog().popdown();				
-			}	
+			}				
+		
 		}
 	} catch (ex) {
 		this.getProgressDialog().popdown();	
@@ -331,10 +235,6 @@ ZaDLController.prototype.saveChangesCallback = function (obj, resp) {
 }
 
 ZaDLController.prototype._saveChanges = function () {
-	//reset the alias arr value
-	this._addAliasArr = [] ;
-	this._removeAliasArr = [];
-	
 	var retval = false;
 	var newName = null;
 	try { 
@@ -380,59 +280,7 @@ ZaDLController.prototype._saveChanges = function () {
 		if(!ZaDistributionList.checkValues(obj, this._app))
 			return retval;
 		
-		//generate add-remove aliases obj and execute in the call back
-		var tmpObjCnt = -1;
-		var currentObjCnt = -1;
-		
-		if(obj.attrs[ZaAccount.A_zimbraMailAlias]) {
-			if(typeof obj.attrs[ZaAccount.A_zimbraMailAlias] == "string") {
-				var tmpStr = obj.attrs[ZaAccount.A_zimbraMailAlias];
-				obj.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
-				obj.attrs[ZaAccount.A_zimbraMailAlias].push(tmpStr);
-			}
-			tmpObjCnt = obj.attrs[ZaAccount.A_zimbraMailAlias].length - 1;
-		}
-		
-		if(this._currentObject.attrs[ZaAccount.A_zimbraMailAlias]) {
-			if(typeof this._currentObject.attrs[ZaAccount.A_zimbraMailAlias] == "string") {
-				var tmpStr = this._currentObject.attrs[ZaAccount.A_zimbraMailAlias];
-				this._currentObject.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
-				this._currentObject.attrs[ZaAccount.A_zimbraMailAlias].push(tmpStr);
-			}
-			currentObjCnt = this._currentObject.attrs[ZaAccount.A_zimbraMailAlias].length - 1;
-		}
-	
-		//diff two arrays
-		for(var tmpIx=tmpObjCnt; tmpIx >= 0; tmpIx--) {
-			for(var currIx=currentObjCnt; currIx >=0; currIx--) {
-				if(obj.attrs[ZaAccount.A_zimbraMailAlias][tmpIx] == this._currentObject.attrs[ZaAccount.A_zimbraMailAlias][currIx]) {
-					//this alias already exists
-					obj.attrs[ZaAccount.A_zimbraMailAlias].splice(tmpIx,1);
-					this._currentObject.attrs[ZaAccount.A_zimbraMailAlias].splice(currIx,1);
-					break;
-				}
-			}
-		}
-		//remove the aliases 
-		if(currentObjCnt != -1) {
-			currentObjCnt = this._currentObject.attrs[ZaAccount.A_zimbraMailAlias].length;
-		} 
-	
-		for(var ix=0; ix < currentObjCnt; ix++) {
-			this._removeAliasArr.push(this._currentObject.attrs[ZaAccount.A_zimbraMailAlias][ix]);
-		}
-		
-		if(tmpObjCnt != -1) {
-			tmpObjCnt = obj.attrs[ZaAccount.A_zimbraMailAlias].length;
-		}
-
-		for(var ix=0; ix < tmpObjCnt; ix++) {
-			if(obj.attrs[ZaAccount.A_zimbraMailAlias][ix]) {
-				this._addAliasArr.push(obj.attrs[ZaAccount.A_zimbraMailAlias][ix]) ;
-			}
-		}	
-		
-		//check if need to rename
+			//check if need to rename
 		if(this._currentObject && obj.name != this._currentObject.name && this._currentObject.id) {
 			//	var emailRegEx = /^([a-zA-Z0-9_\-])+((\.)?([a-zA-Z0-9_\-])+)*@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 			/*	if(!AjxUtil.EMAIL_RE.test(obj.name) ) {
@@ -475,6 +323,12 @@ ZaDLController.prototype._saveChanges = function () {
 			this._totalToRemove = obj._removeList.size();				
 			ZaDistributionList.create(obj,new AjxCallback(this, this.saveChangesCallback,obj ));
 			return true;
+			/*this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true); 
+			if(_tmpObj != null) {
+				this.fireCreationEvent(_tmpObj);
+				this._currentObject = _tmpObj;
+				return true;
+			}*/
 		}
 	} catch (ex) {
 		var handled = false;

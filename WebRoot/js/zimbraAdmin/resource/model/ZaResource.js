@@ -30,7 +30,7 @@
 * this class is a model for zimbra calendar resource account 
 * @author Charles Cao
 **/
-ZaResource = function(app) {
+function ZaResource(app) {
 	ZaItem.call(this, app,"ZaResource");
 	this._init(app);
 	this.type=ZaItem.RESOURCE;
@@ -139,11 +139,16 @@ function(tmpObj, app) {
 	
 	//find out what is this account's COS
 	if(ZaSettings.COSES_ENABLED) {
-		var cosList = app.getCosList();
-		myCos = cosList.getItemById(tmpObj.attrs[ZaResource.A_COSId]);
-		if(!myCos && cosList.size() > 0) {
-			myCos = cosList.getArray()[0];
-			tmpObj.attrs[ZaResource.A_COSId] = cosList.getArray()[0].id;
+		var cosList = app.getCosList().getArray();
+		for(var ix in cosList) {
+			if(cosList[ix].id == tmpObj.attrs[ZaResource.A_COSId]) {
+				myCos = cosList[ix];
+				break;
+			}
+		}
+		if(!myCos && cosList.length > 0) {
+			myCos = cosList[0];
+			tmpObj.attrs[ZaResource.A_COSId] = cosList[0].id;
 		}		
 	}
 	//if the account did not have a valid cos id - pick the first COS
@@ -242,6 +247,17 @@ function (tmpObj, resource, app) {
 		params.soapDoc = soapDoc;	
 		resp = createResCommand.invoke(params).Body.CreateCalendarResourceResponse;
 	} catch (ex) {
+		/*switch(ex.code) {
+			case ZmCsfeException.ACCT_EXISTS:
+				app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
+			break;
+			case ZmCsfeException.ACCT_INVALID_PASSWORD:
+				app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_INVALID);
+			break;						
+			default:
+				app.getCurrentController()._handleException(ex, "ZaResource.create", null, false);
+			break;
+		}*/
 		throw ex;
 		return null ;
 	}

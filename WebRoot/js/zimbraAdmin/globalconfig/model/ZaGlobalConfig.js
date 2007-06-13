@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaGlobalConfig = function(app) {
+function ZaGlobalConfig(app) {
 	ZaItem.call(this, app, "ZaGlobalConfig");
 	this.attrs = new Object();
 //	this.attrsInternal = new Object();	
@@ -42,7 +42,6 @@ ZaGlobalConfig.MTA_RESTRICTIONS = [
 //general
 ZaGlobalConfig.A_zimbraLastLogonTimestampFrequency = "zimbraLastLogonTimestampFrequency";
 ZaGlobalConfig.A_zimbraDefaultDomainName = "zimbraDefaultDomainName";
-ZaGlobalConfig.A_zimbraDataSourceNumThreads = "zimbraDataSourceNumThreads" ;
 // attachements
 ZaGlobalConfig.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
 
@@ -85,7 +84,7 @@ ZaGlobalConfig.A_zimbraRedologArchiveDir = "zimbraRedologArchiveDir";
 ZaGlobalConfig.A_zimbraRedologBacklogDir = "zimbraRedologBacklogDir";
 ZaGlobalConfig.A_zimbraRedologRolloverFileSizeKB = "zimbraRedologRolloverFileSizeKB";
 ZaGlobalConfig.A_zimbraRedologFsyncIntervalMS = "zimbraRedologFsyncIntervalMS";
-//ZaGlobalConfig.A_zimbraFileUploadMaxSize = "zimbraFileUploadMaxSize"
+ZaGlobalConfig.A_zimbraFileUploadMaxSize = "zimbraFileUploadMaxSize"
 
 // smtp
 ZaGlobalConfig.A_zimbraSmtpHostname = "zimbraSmtpHostname";
@@ -98,6 +97,7 @@ ZaGlobalConfig.A_zimbraPop3SSLBindPort = "zimbraPop3SSLBindPort";
 ZaGlobalConfig.A_zimbraPop3SSLServerEnabled = "zimbraPop3SSLServerEnabled";
 ZaGlobalConfig.A_zimbraPop3CleartextLoginEnabled = "zimbraPop3CleartextLoginEnabled";
 // imap
+ZaGlobalConfig.A_zimbraImapNumThreads = "zimbraImapNumThreads";
 ZaGlobalConfig.A_zimbraImapBindPort = "zimbraImapBindPort";
 ZaGlobalConfig.A_zimbraImapServerEnabled = "zimbraImapServerEnabled";
 ZaGlobalConfig.A_zimbraImapSSLBindPort = "zimbraImapSSLBindPort";
@@ -309,7 +309,6 @@ ZaGlobalConfig.myXModel = {
 	  	// ...other...
 		{ id:ZaGlobalConfig.A_zimbraGalMaxResults, ref:"attrs/" + ZaGlobalConfig.A_zimbraGalMaxResults , type:_NUMBER_, minInclusive: 0 },
 		{ id:ZaGlobalConfig.A_zimbraDefaultDomainName, ref:"attrs/" + ZaGlobalConfig.A_zimbraDefaultDomainName, type:_STRING_, maxLength: 256},
-		{ id:ZaGlobalConfig.A_zimbraDataSourceNumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraDataSourceNumThreads , type:_NUMBER_, minInclusive: 1 },
 		{ id:ZaGlobalConfig.A_currentMonitorHost, ref: "attrs/"+ZaGlobalConfig.A_currentMonitorHost, type: _STRING_ },
 		// attachments
 		{ id:ZaGlobalConfig.A_zimbraAttachmentsBlocked, ref:"attrs/" + ZaGlobalConfig.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
@@ -322,7 +321,7 @@ ZaGlobalConfig.myXModel = {
 		{ id:ZaGlobalConfig.A_zimbraSmtpHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraSmtpHostname, type:_HOSTNAME_OR_IP_, maxLength: 256 },
 		{ id:ZaGlobalConfig.A_zimbraSmtpPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraSmtpPort, type:_PORT_ },
 		{ id:ZaGlobalConfig.A_zimbraMtaMaxMessageSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaMaxMessageSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES, required: true },
-		//{ id:ZaGlobalConfig.A_zimbraFileUploadMaxSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES, required: true },		
+		{ id:ZaGlobalConfig.A_zimbraFileUploadMaxSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES, required: true },		
 		{ id:ZaGlobalConfig.A_zimbraMtaRelayHost, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
 		{ id:ZaGlobalConfig.A_zimbraMtaMyNetworks, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaMyNetworks, type: _STRING_, maxLength: 256 },
 		{ id:ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
@@ -347,6 +346,7 @@ ZaGlobalConfig.myXModel = {
 		{ id:ZaGlobalConfig.A_zimbraPop3BindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3BindPort, type:_PORT_ },
 		{ id:ZaGlobalConfig.A_zimbraPop3SSLBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3SSLBindPort, type:_PORT_ },
 		// imap
+		{ id:ZaGlobalConfig.A_zimbraImapNumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapNumThreads, type:_NUMBER_, minInclusive: 0},						 
 		{ id:ZaGlobalConfig.A_zimbraImapServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},						
 		{ id:ZaGlobalConfig.A_zimbraImapSSLServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapSSLServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},								
 		{ id:ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},										

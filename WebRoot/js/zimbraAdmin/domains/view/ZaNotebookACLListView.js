@@ -26,7 +26,7 @@
  /**
  * @author Greg Solovyev
  **/
-ZaNotebookACLListView = function(parent, className, posStyle, headerList) {
+function ZaNotebookACLListView(parent, className, posStyle, headerList) {
 	//var headerList = this._getHeaderList();
 	ZaListView.call(this, parent, className, posStyle, headerList);
 }

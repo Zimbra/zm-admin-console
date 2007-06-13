@@ -30,7 +30,7 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaNewDomainXWizard = function(parent, app) {
+function ZaNewDomainXWizard (parent, app) {
 	this._app=app;
 	ZaXWizardDialog.call(this, parent,app, null, ZaMsg.NDD_Title, "550px", "300px","ZaNewDomainXWizard");
 

@@ -57,7 +57,7 @@ MLifetime_XModelItem.prototype.validateType = function (value) {
 * @constructor Lifetime_XFormItem
 * @author Greg Solovyev
 **/
-Lifetime_XFormItem = function() {}
+function Lifetime_XFormItem() {}
 XFormItemFactory.createItemType("_LIFETIME_", "lifetime", Lifetime_XFormItem, Composite_XFormItem);
 
 Lifetime_XFormItem.prototype.TIME_CHOICES = [
@@ -111,7 +111,7 @@ Lifetime_XFormItem.prototype.items = [
 	}
 ];
 
-Lifetime1_XFormItem = function() {}
+function Lifetime1_XFormItem() {}
 XFormItemFactory.createItemType("_LIFETIME1_", "lifetime1", Lifetime1_XFormItem, Composite_XFormItem);
 
 Lifetime1_XFormItem.prototype.TIME_CHOICES = [

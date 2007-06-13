@@ -30,7 +30,7 @@
 * 
 * @author Ross Dargahi
 */
-ZaKeyMap = function() {
+function ZaKeyMap() {
 	DwtKeyMap.call(this);
 	// Note that FF on the mac has an issue reporting the ALT+<keycode> it
 	// always ends up reporting undefined for the <keycode>. For this reason I

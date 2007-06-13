@@ -31,7 +31,7 @@
 * @author Greg Solovyev
 **/
 
-ZaDomainListView = function(parent) {
+function ZaDomainListView(parent) {
 
 //	var className = "ZaDomainListView";
 	var className = null;
@@ -59,12 +59,6 @@ ZaDomainListView.prototype.getTitle =
 function () {
 	return ZaMsg.Domain_view_title;
 }
-
-ZaDomainListView.prototype.getTabIcon =
-function () {
-	return "Domain" ;
-}
-
 /**
 * Renders a single item as a DIV element.
 */

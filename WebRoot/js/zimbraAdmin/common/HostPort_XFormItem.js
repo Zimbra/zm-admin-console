@@ -30,7 +30,7 @@
 * @constructor HostPort_XFormItem
 * @author Greg Solovyev
 **/
-HostPort_XFormItem = function() {}
+function HostPort_XFormItem() {}
 XFormItemFactory.createItemType("_HOSTPORT_", "hostport", HostPort_XFormItem, Composite_XFormItem);
 HostPort_XFormItem.prototype.numCols = 3;
 HostPort_XFormItem.prototype.nowrap = true;

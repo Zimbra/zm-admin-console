@@ -33,10 +33,9 @@
 * Abstract class list views. All the List views in the Admin panel extend this class.
 * @author Greg Solovyev
 **/
-ZaListView = function(parent, className, posStyle, headerList) {
+function ZaListView(parent, className, posStyle, headerList) {
 	if (arguments.length == 0) return;
 	DwtListView.call(this, parent, className, posStyle, headerList);
-	this.setViewPrefix(this.getHTMLElId());
 }
 
 ZaListView.prototype = new DwtListView;
@@ -51,21 +50,6 @@ ZaListView.ITEM_FLAG_CLICKED = DwtListView._LAST_REASON + 1;
 
 // abstract methods
 ZaListView.prototype._createItemHtml = function(item) {}
-
-ZaListView.prototype.getTabToolTip =
-function () {
-	return	this.getTitle ();
-}
-
-ZaListView.prototype.getTabIcon = 
-function () {
-	return "" ;
-}
-
-ZaListView.prototype.getTabTitle =
-function () {
-	return this.getTitle() ;
-}
 
 ZaListView.prototype._mouseOverAction =
 function(ev, div) {
@@ -82,13 +66,7 @@ function(ev, div) {
     } else if (_type == DwtListView.TYPE_LIST_ITEM){
 		var item = this.getItemFromElement(div);
 		if (item && item.getToolTip)
-			var tt_content = "" ;
-			try {	
-				 tt_content = item.getToolTip() ;
-			}catch (e) {
-				 tt_content = e.msg ;
-			}
-			this.setToolTipContent(tt_content);
+			this.setToolTipContent(item.getToolTip());
 	}
 }
 
@@ -162,7 +140,7 @@ function() {
 	return this.parent;
 }*/
 
-ZaListHeaderItem = function(idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible) {
+function ZaListHeaderItem(idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible) {
 	DwtListHeaderItem.call(this, idPrefix, label, iconInfo, width, sortable, resizeable, visible);
 	this._sortField = sortField;	
 	this._initialized = false;

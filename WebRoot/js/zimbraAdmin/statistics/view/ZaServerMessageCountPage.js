@@ -30,11 +30,11 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaServerMessageCountPage = function(parent, app) {
+function ZaServerMessageCountPage (parent, app) {
 	DwtTabViewPage.call(this, parent);
 	this._fieldIds = new Object(); //stores the ids of all the form elements
 	this._app = app;
-	//this._createHTML();
+	this._createHTML();
 	this.initialized=false;
 	this.setScrollStyle(DwtControl.SCROLL);	
 }
@@ -47,35 +47,28 @@ function() {
 	return "ZaServerMessageCountPage";
 }
 
-ZaServerMessageCountPage.prototype.showMe =  function(refresh) {
-	DwtTabViewPage.prototype.showMe.call(this);	
-	if(refresh && this._currentObject) {
-		this.setObject(this._currentObject);
-	}
-}
-
 ZaServerMessageCountPage.prototype.setObject =
 function (item) {
-	this._currentObject = item;	
+		
 	if(item) {
 		if(item.attrs && item.attrs[ZaServer.A_ServiceHostname]) {
 			var imgElement = document.getElementById(this._hourImgID);
-			var newSrc = ["/service/statsimg/mta.", item.name, ".hour.Message_Count.gif?rand=",Math.random()].join("");
+			var newSrc = "/service/statsimg/mta." + item.name + ".hour.Message_Count.gif";
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}
 			imgElement = document.getElementById(this._dayImgID);	
-			newSrc = ["/service/statsimg/mta.", item.name, ".day.Message_Count.gif?rand=",Math.random()].join("");			
+			newSrc = "/service/statsimg/mta." + item.name + ".day.Message_Count.gif";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}
 			imgElement = document.getElementById(this._monthImgID);		
-			newSrc = ["/service/statsimg/mta.", item.name, ".month.Message_Count.gif?rand=",Math.random()].join("");			
+			newSrc = "/service/statsimg/mta." + item.name + ".month.Message_Count.gif";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}			
 			imgElement = document.getElementById(this._yearImgID);		
-			newSrc = ["/service/statsimg/mta.", item.name, ".year.Message_Count.gif?rand=",Math.random()].join();			
+			newSrc = "/service/statsimg/mta." + item.name + ".year.Message_Count.gif";			
 			if(imgElement) {
 				imgElement.src = newSrc;
 			}			
@@ -83,9 +76,8 @@ function (item) {
 	}
 }
 
-ZaServerMessageCountPage.prototype._createHtml = 
+ZaServerMessageCountPage.prototype._createHTML = 
 function () {
-	DwtTabViewPage.prototype._createHtml.call(this);
 	var idx = 0;
 	var html = new Array(50);
 	this._hourImgID = Dwt.getNextId();

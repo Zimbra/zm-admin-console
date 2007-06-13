@@ -30,7 +30,7 @@
 * @constructor ACLXFormItem
 * @author Greg Solovyev
 **/
-ACLXFormItem = function() {}
+function ACLXFormItem() {}
 XFormItemFactory.createItemType("_ACL_", "acl", ACLXFormItem, Composite_XFormItem);
 ACLXFormItem.prototype.numCols = 6;
 ACLXFormItem.prototype.nowrap = true;

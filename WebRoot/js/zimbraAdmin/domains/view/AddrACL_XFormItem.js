@@ -30,7 +30,7 @@
 * @constructor AddrACL_XFormItem
 * @author Greg Solovyev
 **/
-AddrACL_XFormItem = function() {}
+function AddrACL_XFormItem() {}
 XFormItemFactory.createItemType("_ADDR_ACL_", "addracl", AddrACL_XFormItem, Composite_XFormItem);
 AddrACL_XFormItem.prototype.numCols = 5;
 AddrACL_XFormItem.prototype.nowrap = true;
@@ -58,6 +58,7 @@ AddrACL_XFormItem.prototype.items = [
 	{type:_DYNSELECT_, width:"200px", inputSize:30, ref:"name", editable:true, forceUpdate:true,
 		dataFetcherClass:ZaSearch,
 		elementChanged:function(val,instanceValue, event) {
+			var v = val;
 			this.getForm().itemChanged(this, val, event);			
 		}
 	},

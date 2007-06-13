@@ -27,7 +27,7 @@
 * @constructor
 * @class ZaMTAListController
 **/
-ZaMTAListController = function(appCtxt, container, app) {
+function ZaMTAListController(appCtxt, container, app) {
 	ZaController.call(this, appCtxt, container, app,"ZaMTAListController");
    	this._toolbarOperations = new Array();
    	this._popupOperations = new Array();			
@@ -42,7 +42,7 @@ ZaController.initToolbarMethods["ZaMTAListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaMTAListController"] = new Array();
 
 ZaMTAListController.prototype.show = 
-function(list, openInNewTab) {
+function(list) {
 
     if (!this._UICreated) {
 		this._createUI();
@@ -70,19 +70,13 @@ function(list, openInNewTab) {
 			tmp[i].load();
 		}
 	}	
-	//this._app.pushView(ZaZimbraAdmin._POSTQ_VIEW);			
-	this._app.pushView(this.getContentViewId());
+	this._app.pushView(ZaZimbraAdmin._POSTQ_VIEW);			
+	
 	this._removeList = new Array();
 	if (list != null)
 		this._list = list;
 		
-	this.changeActionsState();		
-	/*
-	if (openInNewTab) {//when a ctrl shortcut is pressed
-		
-	}else{ //open in the main tab
-		this.updateMainTab ("Queue") ;	
-	}*/
+	this._changeActionsState();		
 }
 
 ZaMTAListController.initToolbarMethod =
@@ -117,20 +111,15 @@ ZaMTAListController.prototype._createUI = function () {
 			this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 		}
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-		var tabParams = {
-			openInNewTab: false,
-			tabId: this.getContentViewId(),
-			tab: this.getMainTab() 
-		}
-		//this._app.createView(ZaZimbraAdmin._POSTQ_VIEW, elements);		
-		this._app.createView(this.getContentViewId(), elements, tabParams) ;
-		
+		this._app.createView(ZaZimbraAdmin._POSTQ_VIEW, elements);
+
+
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 		this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);					
+	
 		
 		this._UICreated = true;
-		this._app._controllers[this.getContentViewId ()] = this ;
 	} catch (ex) {
 		this._handleException(ex, "ZaMTAListController.prototype._createUI", null, false);
 		return;
@@ -173,13 +162,13 @@ function(ev) {
 			this._app.getMTAController().show(ev.item);
 		}
 	} else {
-		this.changeActionsState();	
+		this._changeActionsState();	
 	}
 }
 
 ZaMTAListController.prototype._listActionListener =
 function (ev) {
-	this.changeActionsState();
+	this._changeActionsState();
 	this._actionMenu.popup(0, ev.docX, ev.docY);
 }
 /**
@@ -196,7 +185,7 @@ function(ev) {
 }
 
 
-ZaMTAListController.prototype.changeActionsState = 
+ZaMTAListController.prototype._changeActionsState = 
 function () {
 	var cnt = this._contentView.getSelectionCount();
 	if(cnt == 1) {
@@ -260,7 +249,7 @@ function () {
 	this.getQCounts();
 }
 
-ZaMTAListController.prototype.changeActionsState = 
+ZaMTAListController.prototype._changeActionsState = 
 function () {
 	var cnt = this._contentView.getSelectionCount();
 	if(cnt == 1) {

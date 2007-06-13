@@ -27,7 +27,7 @@
   * This is the list containing the auto complete match contact lists
   * @author Charles Cao
   */
-ZaContactList = function(app) {
+function ZaContactList (app) {
 	this._list = [];	//this is the array holds all the match objects
 	this._app = app;
 }
@@ -47,7 +47,6 @@ function (str, callback){
 		params.applyCos = "0";
 		myCallback = new AjxCallback(this, this.getDataCallback, callback);
 		params.callback = myCallback;
-		params.controller = this._app.getCurrentController () ;
 		ZaSearch.searchDirectory(params);
 	}	catch (ex){
 		this._app.getCurrentController()._handleException(ex, "ZaContactList.prototype.getContactList");	
@@ -103,8 +102,7 @@ function(callback, resp){
 				data[i]["contact"][ZaAccount.A_name ] = arr[i][ZaAccount.A_name]; 			
 				data[i]["contact"][ZaAccount.A_telephoneNumber ] = arr[i].attrs[ZaAccount.A_telephoneNumber]; 						
 				data[i][ZaContactList.matchText] = data[i]["contact"][ZaAccount.A_displayname] + "< " + data[i]["contact"][ZaAccount.A_name ] + ">";
-				data[i][ZaContactList.matchValue] = data[i]["contact"][ZaAccount.A_displayname] ;
- ;
+				data[i][ZaContactList.matchValue] = data[i]["contact"][ZaAccount.A_displayname] ; ;
 			} 
 			/**
 			 * data is an array contains all the matching items.

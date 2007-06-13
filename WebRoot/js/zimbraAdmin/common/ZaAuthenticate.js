@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaAuthenticate = function(appCtxt) {
+function ZaAuthenticate(appCtxt) {
 	if (arguments.length == 0) return;
 	this._appCtxt = appCtxt;
 	this.uname = "";
