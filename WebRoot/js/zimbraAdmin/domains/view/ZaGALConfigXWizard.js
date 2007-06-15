@@ -30,7 +30,7 @@
 * @param app
 * @author Greg Solovyev
 **/
-function ZaGALConfigXWizard (parent, app) {
+ZaGALConfigXWizard = function(parent, app) {
 	this._app=app;
 	ZaXWizardDialog.call(this, parent,app, null, ZaMsg.NCD_GALConfigTitle, "550px", "300px","ZaGALConfigXWizard");
 	this.stepChoices = [
@@ -55,7 +55,7 @@ function ZaGALConfigXWizard (parent, app) {
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaGALConfigXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaGALConfigXWizard.prototype.handleXFormChange));	
 	this.lastErrorStep=0;
-	this._helpURL="/zimbraAdmin/adminhelp/html/WebHelp/managing_domains/using_the_global_address_list_(gal).htm"
+	this._helpURL = location.pathname + "adminhelp/html/WebHelp/managing_domains/using_the_global_address_list_(gal).htm"
 	
 }
 
@@ -144,7 +144,7 @@ function (value, event, form) {
 		form.getInstance().attrs[ZaDomain.A_GalLdapFilter] = "ad";
 		form.getInstance().attrs[ZaDomain.A_zimbraGalAutoCompleteLdapFilter] = "adAutoComplete";
 	} else {
-		form.getInstance().attrs[ZaDomain.A_GalLdapFilter] = "";
+		//form.getInstance().attrs[ZaDomain.A_GalLdapFilter] = "";
 		form.getInstance().attrs[ZaDomain.A_zimbraGalAutoCompleteLdapFilter] = "(|(cn=%s*)(sn=%s*)(gn=%s*)(mail=%s*))";
 	}
 	this.setInstanceValue(value);	
@@ -155,7 +155,7 @@ ZaGALConfigXWizard.onGalModeChange =
 function (value, event, form) {
 	this.setInstanceValue(value);
 	if(value != "zimbra") {
-		form.getInstance().attrs[ZaDomain.A_GalLdapFilter] = "";
+		//form.getInstance().attrs[ZaDomain.A_GalLdapFilter] = "";
 		if(!form.getInstance().attrs[ZaDomain.A_GALServerType]) {
 			form.getInstance().attrs[ZaDomain.A_GALServerType] = "ldap";
 		}

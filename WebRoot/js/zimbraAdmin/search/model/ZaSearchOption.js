@@ -29,7 +29,7 @@
 * Provides the data model and UI items for the advanced search options
 * @author Charles Cao
 **/
-function ZaSearchOption(app) {
+ZaSearchOption = function(app) {
 	if(app)
 		this._app = app;
 }
@@ -39,6 +39,7 @@ ZaSearchOption.BASIC_TYPE_ID = ZaSearchOption.ID ++ ;
 ZaSearchOption.OBJECT_TYPE_ID = ZaSearchOption.ID ++ ;
 ZaSearchOption.DOMAIN_ID = ZaSearchOption.ID ++ ;
 ZaSearchOption.SERVER_ID = ZaSearchOption.ID ++ ;
+ZaSearchOption.ADVANCED_ID = ZaSearchOption.ID ++ ;
 //ZaSearchOption.REMOVE_ID = ZaSearchOption.ID ++ ;
 
 //ZaSearchOption.A_basic_query = ZaSearch.A_query ;
@@ -51,6 +52,14 @@ ZaSearchOption.A_basic_zimbraId = ZaItem.A_zimbraId ;
 ZaSearchOption.A_basic_status = ZaAccount.A_accountStatus ;
 
 ZaSearchOption.A_objTypeAccount = "option_" + ZaSearch.ACCOUNTS ;
+ZaSearchOption.A_objTypeAccountAdmin = ZaAccount.A_isAdminAccount ;
+ZaSearchOption.A_enableAccountLastLoginTime_From = "enable_" + ZaAccount.A_zimbraLastLogonTimestamp + "_From" ;
+ZaSearchOption.A_enableAccountLastLoginTime_To = "enable_" + ZaAccount.A_zimbraLastLogonTimestamp + "_To" ;
+ZaSearchOption.A_includeNeverLoginedAccounts = "include_never_login_accounts" ;
+ZaSearchOption.A_accountLastLoginTime_From = ZaAccount.A_zimbraLastLogonTimestamp + "_From" ;
+ZaSearchOption.A_accountLastLoginTime_To = ZaAccount.A_zimbraLastLogonTimestamp + "_To" ;
+ZaSearchOption.A_accountLastLoginTime = ZaAccount.A_zimbraLastLogonTimestamp ;
+//ZaSearchOption.A_objTypeAccountRegular = "option_" + ZaSearch.ACCOUNTS + "_regular" ;
 ZaSearchOption.A_objTypeDl = "option_" + ZaSearch.DLS ;
 ZaSearchOption.A_objTypeAlias = "option_" + ZaSearch.ALIASES;
 ZaSearchOption.A_objTypeResource = "option_" + ZaSearch.RESOURCES;
@@ -83,24 +92,33 @@ function (optionId){
 	var basicItems = [
 			//{id: ZaSearchOption.A_basic_query, ref: "options/" + ZaSearchOption.A_basic_query, type: _STRING_},
 			{id: ZaSearchOption.A_basic_uid, ref: "options/" + ZaSearchOption.A_basic_uid, type: _STRING_},
+			{id: ZaSearchOption.A_objTypeAccountAdmin, ref: "options/" + ZaSearchOption.A_objTypeAccountAdmin, type: _STRING_},
 			//{id: ZaSearchOption.A_basic_cn, ref: "options/" + ZaSearchOption.A_basic_cn, type: _STRING_},
 			{id: ZaSearchOption.A_basic_sn, ref: "options/" + ZaSearchOption.A_basic_sn, type: _STRING_},
 			{id: ZaSearchOption.A_basic_displayName, ref: "options/" + ZaSearchOption.A_basic_displayName, type: _STRING_},
 			{id: ZaSearchOption.A_basic_zimbraId, ref: "options/" + ZaSearchOption.A_basic_zimbraId, type: _STRING_},
 			//{id: ZaSearchOption.A_basic_mail, ref: "options/" + ZaSearchOption.A_basic_mail, type: _STRING_}
+			//{id: ZaSearchOption.A_accountLastLoginTime, ref: "options/" + ZaSearchOption.A_accountLastLoginTime, type: _STRING_},
 			{id: ZaSearchOption.A_basic_status, ref: "options/" + ZaSearchOption.A_basic_status, type: _STRING_}
 		];
 		
+	//network build
+	if (ZaSearchOption.A_objTypeAccountDomainAdmin) {
+		basicItems.push (
+			{id: ZaSearchOption.A_objTypeAccountDomainAdmin, ref: "options/" + ZaSearchOption.A_objTypeAccountDomainAdmin, type: _STRING_}
+		);
+	}
 	
 	var objTypeItems = [
 			{id: ZaSearchOption.A_objTypeAccount, ref: "options/" + ZaSearchOption.A_objTypeAccount, type: _STRING_},
+			//{id: ZaSearchOption.A_objTypeAccountRegular, ref: "options/" + ZaSearchOption.A_objTypeAccountRegular, type: _STRING_},
 			{id: ZaSearchOption.A_objTypeDl, ref: "options/" + ZaSearchOption.A_objTypeDl, type: _STRING_},
 			{id: ZaSearchOption.A_objTypeAlias, ref: "options/" + ZaSearchOption.A_objTypeAlias, type: _STRING_},
 			{id: ZaSearchOption.A_objTypeResource, ref: "options/" + ZaSearchOption.A_objTypeResource, type: _STRING_},
 			{id: ZaSearchOption.A_objTypeDomain, ref: "options/" + ZaSearchOption.A_objTypeDomain, type: _STRING_}
 		
 		];
-		
+	
 	var domainItems = [	
 			//{id: ZaSearchOption.A_domainAll, ref: "options/" + ZaSearchOption.A_domainAll, type: _STRING_},
 			{id: ZaSearchOption.A_domainFilter, ref: "options/" + ZaSearchOption.A_domainFilter, type: _STRING_},
@@ -115,6 +133,18 @@ function (optionId){
 			{id: ZaSearchOption.A_serverList, ref: "options/" + ZaSearchOption.A_serverList, type:_LIST_}		
 		];
 	
+	var advancedItems = [
+			
+			//Should not have the options path since they are only flags and will not be included in the ldap search attrs
+			{id: ZaSearchOption.A_enableAccountLastLoginTime_From, ref: ZaSearchOption.A_enableAccountLastLoginTime_From, type: _STRING_ },
+			{id: ZaSearchOption.A_enableAccountLastLoginTime_To, ref: ZaSearchOption.A_enableAccountLastLoginTime_To, type: _STRING_ },
+			{id: ZaSearchOption.A_includeNeverLoginedAccounts, ref: ZaSearchOption.A_includeNeverLoginedAccounts, type: _STRING_ },
+			
+			//last login time
+			{id: ZaSearchOption.A_accountLastLoginTime_From, ref: "options/" + ZaSearchOption.A_accountLastLoginTime_From, type:_DATETIME_},	
+			{id: ZaSearchOption.A_accountLastLoginTime_To, ref: "options/" + ZaSearchOption.A_accountLastLoginTime_To, type:_DATETIME_}
+	];
+	
 	if (optionId == ZaSearchOption.OBJECT_TYPE_ID) { 
 		xmodel.items = objTypeItems ; 
 	}else if (optionId == ZaSearchOption.DOMAIN_ID) {
@@ -123,6 +153,8 @@ function (optionId){
 		xmodel.items = serverItems;
 	}else if (optionId == ZaSearchOption.BASIC_TYPE_ID) {
 		xmodel.items = basicItems ;
+	}else if (optionId == ZaSearchOption.ADVANCED_ID) {
+		xmodel.items = advancedItems ;
 	}
 	
 	return xmodel ;
@@ -130,9 +162,10 @@ function (optionId){
 
 ZaSearchOption.getObjectTypeXForm = 
 function (optionId, height){
+	var marginTop = ZaSearchOptionView.HEADER_HEIGHT + 8 ;
 	var xform = {
 			numCols:2, width: 150, cssClass: "ZaSearchOptionOverview",
-			cssStyle: "margin-top: 30px;", 
+			cssStyle: "margin-top: " + marginTop + "px", 
 			items: []
 	}
 	
@@ -168,9 +201,43 @@ function (optionId, height){
 		 	msgName:ZaMsg.NAD_AccountStatus,label:ZaMsg.NAD_AccountStatus, 
 		 	labelLocation:_LEFT_, choices:ZaSearchOption.accountStatusChoices,
 		 	onChange: ZaSearchBuilderController.handleOptions
-		 }
-	
+		 },
+		 {	type: _GROUP_, name:"special search cases",
+		 	 colSpan: "2", numCols:2, width: 150, items: []
+		 } /*,
+		 { type: _GROUP_, width: 150, numCols: 1, colSpan: "*", items:[
+		 		{type:_OUTPUT_, value: "Last Access Time: " },
+		 		{ref:ZaSearchOption.A_accountLastLoginTime, type:_DWT_DATETIME_,
+		 			label:"", labelLocation:_LEFT_
+				}
+			]
+		 } */
 	];
+	
+	var i = basicItems.length ;
+	
+	if (!ZaSettings.isDomainAdmin) {
+		var adminOnlyItem =  
+			 	{ type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAccountAdmin,
+					trueValue:"TRUE", falseValue:"FALSE",
+					label: ZaMsg.SearchFilter_Accounts_admin, 
+					align: _LEFT_, labelLocation:_RIGHT_, 
+					onChange: ZaSearchBuilderController.handleOptions
+				 };
+				 
+		basicItems[i-1].items.push (adminOnlyItem) ;
+	}
+	
+	if (ZaSearchOption.A_objTypeAccountDomainAdmin) {
+			var domainAdminObjTypeItem = { 
+					type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAccountDomainAdmin,
+					trueValue:"TRUE", falseValue:"FALSE",
+					label: ZaMsg.SearchFilter_Accounts_domainadmin, 
+					align: _LEFT_, labelLocation:_RIGHT_, 
+					onChange: ZaSearchBuilderController.handleOptions
+				 } ;
+			basicItems[i-1].items.push( domainAdminObjTypeItem ) ;
+		}
 	
 	var objTypeItems = [
 		{ type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAccount,
@@ -206,6 +273,8 @@ function (optionId, height){
 			onChange: ZaSearchBuilderController.handleOptions
 		 } **/
 	] ;
+	
+	
 	
 	var domainItems = [
 	/*
@@ -259,6 +328,54 @@ function (optionId, height){
 		 }
 	];
 	
+	var advancedItems = [
+		{ type: _GROUP_,  numCols: 2, items:[
+		 		{type:_OUTPUT_, colSpan: "*", cssClass: "ZaSearchOptionViewSubHeader", 
+		 			value: ZaMsg.search_option_lastAccessTime  },
+		 		{type: _GROUP_, numCols: 5, colSpan: "*", 
+		 			items: [
+		 				{type: _CELL_SPACER_, width: 40 },
+		 				{type: _CHECKBOX_, ref: ZaSearchOption.A_enableAccountLastLoginTime_From, 
+			 				label: ZaMsg.enable_search_option_label_from,
+			 				trueValue:"TRUE", falseValue:"FALSE",
+			 				align: _LEFT_, labelLocation:_RIGHT_, 
+							onChange: ZaSearchBuilderController.handleOptions },
+		 				{type: _CHECKBOX_, ref: ZaSearchOption.A_enableAccountLastLoginTime_To, 
+			 				label: ZaMsg.enable_search_option_label_to ,
+			 				trueValue:"TRUE", falseValue:"FALSE",
+			 				align: _LEFT_, labelLocation:_RIGHT_, 
+							onChange: ZaSearchBuilderController.handleOptions }
+		 			]
+		 		},
+		 		{type: _GROUP_, numCols: 3, colSpan: "*", 
+		 			items: [
+		 				{type: _CELL_SPACER_, width: 40 },
+		 				{type: _CHECKBOX_, ref: ZaSearchOption.A_includeNeverLoginedAccounts,
+			 				label: ZaMsg.includeNeverLoginedAccounts,
+			 				trueValue:"TRUE", falseValue:"FALSE",
+			 				align: _LEFT_, labelLocation:_RIGHT_, 
+							onChange: ZaSearchBuilderController.handleOptions }
+		 			]
+		 		},
+		 		{type: _GROUP_, colSpan: "*", numCols: 2, colSize: ["40px", "auto"],
+		 			items: [
+			 		{ref:ZaSearchOption.A_accountLastLoginTime_From, colSpan: "*", type:_DWT_DATETIME_,
+			 			onChange: ZaSearchBuilderController.handleOptions,
+			 			relevant: "instance[ZaSearchOption.A_enableAccountLastLoginTime_From] == 'TRUE'", 
+			 			relevantBehavior: _HIDE_ , 
+			 			label:ZaMsg.search_option_label_from, labelLocation:_LEFT_
+					},
+					{ref:ZaSearchOption.A_accountLastLoginTime_To, colSpan: "*", type:_DWT_DATETIME_,
+			 			onChange: ZaSearchBuilderController.handleOptions,	
+			 			relevant: "instance[ZaSearchOption.A_enableAccountLastLoginTime_To] == 'TRUE'", 
+			 			relevantBehavior: _HIDE_ ,	 				
+			 			label:ZaMsg.search_option_label_to, labelLocation:_LEFT_
+					}]
+		 		},
+				{type:_SPACER_} //used to avoid the missing border of the calendar
+			]
+		 }
+	]
 	
 	if (optionId == ZaSearchOption.OBJECT_TYPE_ID) { 
 		xform.items = objTypeItems ; 
@@ -269,6 +386,9 @@ function (optionId, height){
 	}else if (optionId == ZaSearchOption.BASIC_TYPE_ID) {
 		xform.items = basicItems ;
 		xform.width = ZaSearchOptionView.BASIC_OPTION_WIDTH ;
+	}else if (optionId == ZaSearchOption.ADVANCED_ID) {
+		xform.items = advancedItems ;
+		xform.width = ZaSearchOptionView.ADVANCED_OPTION_WIDTH ;
 	}
 	
 	return xform ;
@@ -284,6 +404,7 @@ function (optionId) {
 		optionInstance["options"][ZaSearchOption.A_objTypeAlias] = "TRUE" ;
 		optionInstance["options"][ZaSearchOption.A_objTypeDl] = "TRUE" ;
 		optionInstance["options"][ZaSearchOption.A_objTypeResource] = "TRUE" ;
+		//optionInstance["options"][ZaSearchOption.A_accountLastLoginTime_From] = 
 		//optionInstance["options"][ZaSearchOption.A_objTypeDomain] = "FALSE" ;
 	}else if (optionId == ZaSearchOption.DOMAIN_ID) {
 		//optionInstance["options"][ZaSearchOption.A_domainAll] = "TRUE" ;
@@ -291,6 +412,10 @@ function (optionId) {
 		//optionInstance["options"][ZaSearchOption.A_serverAll] = "TRUE" ;
 	}else if (optionId == ZaSearchOption.BASIC_TYPE_ID) {
 		//no default value
+	}else if (optionId == ZaSearchOption.ADVANCED_ID) {
+		optionInstance[ZaSearchOption.A_enableAccountLastLoginTime_From] = "TRUE" ;
+		optionInstance[ZaSearchOption.A_enableAccountLastLoginTime_To] = "TRUE" ;
+		optionInstance[ZaSearchOption.A_includeNeverLoginedAccounts] = "FALSE" ;
 	}
 	
 	return optionInstance ;
@@ -305,7 +430,7 @@ function () {
 
 /////////////////////////////////////////////////////////////////////////////////////
 //the list view for the domain and server filter
-function ZaOptionList (parent, app, className) {
+ZaOptionList = function(parent, app, className) {
 	//DwtListView.call(this, parent, null, Dwt.STATIC_STYLE);
 	DwtListView.call(this, parent, null, Dwt.ABSOLUTE_STYLE);
 }

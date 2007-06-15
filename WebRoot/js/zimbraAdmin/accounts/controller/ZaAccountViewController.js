@@ -33,18 +33,19 @@
 * @author Greg Solovyev
 **/
 
-function ZaAccountViewController(appCtxt, container, app) {
+ZaAccountViewController = function(appCtxt, container, app) {
 	ZaXFormViewController.call(this, appCtxt, container, app, "ZaAccountViewController");
 	this._UICreated = false;
 	this.objType = ZaEvent.S_ACCOUNT;
 	this._helpURL = ZaAccountViewController.helpURL;
 	this.deleteMsg = ZaMsg.Q_DELETE_ACCOUNT;
 	this._toolbarOperations = new Array();
+	this.tabConstructor = ZaAccountXFormView;
 }
 
 ZaAccountViewController.prototype = new ZaXFormViewController();
 ZaAccountViewController.prototype.constructor = ZaAccountViewController;
-ZaAccountViewController.helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_accounts/editing_accounts.htm";		
+ZaAccountViewController.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/editing_accounts.htm";		
 ZaController.initToolbarMethods["ZaAccountViewController"] = new Array();
 ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 //public methods
@@ -58,8 +59,8 @@ ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 */
 
 ZaAccountViewController.prototype.show = 
-function(entry, skipRefresh) {
-	this._setView(entry, skipRefresh);
+function(entry, openInNewTab, skipRefresh) {
+	this._setView(entry, openInNewTab, skipRefresh);
 }
 
 ZaAccountViewController.initToolbarMethod =
@@ -74,9 +75,6 @@ function () {
 
 	if(ZaSettings.ACCOUNTS_REINDEX_ENABLED)
 		this._toolbarOperations.push(new ZaOperation(ZaOperation.REINDEX_MAILBOX, ZaMsg.ACTBB_ReindexMbx, ZaMsg.ACTBB_ReindexMbx_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaAccountViewController.prototype._reindexMbxListener)));					
-
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));		
 }
 ZaController.initToolbarMethods["ZaAccountViewController"].push(ZaAccountViewController.initToolbarMethod);
 
@@ -91,16 +89,29 @@ function(entry) {
 		if(!this._UICreated) {
 
 			this._initToolbar();
+			//make sure these are last
+			this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
+			this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));		
+			
 			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);
 	
-	  		this._view = new ZaAccountXFormView(this._container, this._app);
+	  		this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		  		
-	    	this._app.createView(ZaZimbraAdmin._ACCOUNT_VIEW, elements);
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
+			
+			var tabParams = {
+				openInNewTab: true,
+				tabId: this.getContentViewId()
+			}
+				  		
+	    	this._app.createView(this.getContentViewId(), elements, tabParams);
 	    	this._UICreated = true;
+	    	//associate the controller with the view by viewId
+	    	this._app._controllers[this.getContentViewId ()] = this ;
   		}
-		this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
+		//this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
+		this._app.pushView(this.getContentViewId()) ;
 		if(entry.id) {
 			try {
 				entry.refresh(!ZaSettings.COSES_ENABLED);
@@ -109,6 +120,8 @@ function(entry) {
 				this._handleException(ex, null, null, false);
 				if (ex.code ==  ZmCsfeException.SVC_PERM_DENIED) {
 					this._app.popView();
+					return ;
+					
 				}
 			}
 		}
@@ -346,6 +359,13 @@ function () {
 								} else {
 									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS1,[account.name, tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);								
 								}							
+							break;	
+							case ZaItem.RESOURCE:
+								if(account.name == tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]) {
+									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS5,[account.name]);								
+								} else {
+									failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS6,[account.name, tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);								
+								}							
 							break;							
 							default:
 								failedAliases += "<br>" +AjxMessageFormat.format(ZaMsg.WARNING_EACH_ALIAS0,[tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]);							
@@ -406,15 +426,6 @@ function () {
 	}
 	return true;
 }
-
-ZaAccountViewController.prototype._findAlias = function (alias) {
-	var searchQuery = new ZaSearchQuery(ZaSearch.getSearchByNameQuery(alias), [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS], null, false);
-	// this search should only return one result
-	var results = ZaSearch.searchByQueryHolder(searchQuery, 1, null, null, this._app);
-	return results.list.getArray()[0];
-};
-
-
 
 // new button was pressed
 ZaAccountViewController.prototype._newButtonListener =

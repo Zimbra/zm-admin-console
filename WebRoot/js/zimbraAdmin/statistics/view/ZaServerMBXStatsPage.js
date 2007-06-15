@@ -35,7 +35,7 @@
 * @author Charles Cao
 **/
 		
-function ZaServerMBXStatsPage (parent, app) {
+ZaServerMBXStatsPage = function(parent, app) {
 	DwtTabViewPage.call(this, parent);
 	this._app = app;
 	this._rendered = false;
@@ -48,7 +48,7 @@ function ZaServerMBXStatsPage (parent, app) {
 ZaServerMBXStatsPage.prototype = new DwtTabViewPage;
 ZaServerMBXStatsPage.prototype.constructor = ZaServerMBXStatsPage;
 
-ZaServerMBXStatsPage.MBX_DISPLAY_LIMIT = 25; //default 20
+ZaServerMBXStatsPage.MBX_DISPLAY_LIMIT = ZaSettings.RESULTSPERPAGE; 
 ZaServerMBXStatsPage.XFORM_ITEM_ACCOUNT = "account";
 ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE = "diskUsage";
 ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE = "quotaUsage";
@@ -191,7 +191,7 @@ ZaServerMBXStatsPage.prototype._getXForm = function () {
 	sourceHeaderList[2] = new ZaListHeaderItem(ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE, 	ZaMsg.MBXStats_DISKUSAGE,	
 												null, 120,  sortable++,  ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE, true, true);
 	sourceHeaderList[3] = new ZaListHeaderItem(ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE,	ZaMsg.MBXStats_QUOTAUSAGE, 	
-												null, null,  sortable++, ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE, true, true);
+												null, "auto",  sortable++, ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE, false, true);
 	
 	var ffTableStyle = "width:100%;overflow:visible;" ;
 	var tableStyle = 	AjxEnv.isIE  ? ffTableStyle + "height:100%;" : ffTableStyle ;
@@ -301,16 +301,16 @@ function (curPage, totalPage, hide ){
 					}
 					
 					if (curPage && totalPage) {
-						toolBar.getButton("mbxPageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [curPage, totalPage]));
+						toolBar.getButton("PageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [curPage, totalPage]));
 					} 
 					
 					//update the help link for the Mbx Stats
-					controller._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_servers/viewing_mailbox_quotas.htm";
+					controller._helpURL = location.pathname + "adminhelp/html/WebHelp/managing_servers/viewing_mailbox_quotas.htm";
 				}else {
 					toolBar.enable([ZaOperation.PAGE_FORWARD, ZaOperation.PAGE_BACK, ZaOperation.LABEL], false);
-					toolBar.getButton("mbxPageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]));
+					toolBar.getButton("PageInfo").setText(AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]));
 					//change the help link back
-					controller._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/monitoring/checking_usage_statistics.htm";
+					controller._helpURL = location.pathname + "adminhelp/html/WebHelp/monitoring/checking_usage_statistics.htm";
 				}
 			}
 		}
@@ -323,7 +323,7 @@ function (curPage, totalPage, hide ){
 // This is the list view for the display of mbx accounts
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function ZaServerMbxListView(parent, className, posStyle, headerList) {
+ZaServerMbxListView = function(parent, className, posStyle, headerList) {
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	ZaListView.call(this, parent, className, posStyle, headerList);
 	//hacking to display the scroll bar for the mbx lists.
@@ -351,9 +351,10 @@ function(mbx, now, isDndIcon) {
 	div[DwtListView._SELECTED_STYLE_CLASS] = div[DwtListView._STYLE_CLASS] + "-" + DwtCssStyle.SELECTED;
 	div.className = div[DwtListView._STYLE_CLASS];
 	this.associateItemWithElement(mbx, div, DwtListView.TYPE_LIST_ITEM);
+	div.style.height = "20";
 	
 	var idx = 0;
-	html[idx++] = "<table width='100%' cellspacing='2' cellpadding='0'>";
+	html[idx++] = "<table width='100%'  height='20' cellspacing='2' cellpadding='0'>";
 
 	html[idx++] = "<tr>";
 	if(this._headerList) {

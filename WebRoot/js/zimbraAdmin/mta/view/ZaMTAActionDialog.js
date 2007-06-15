@@ -31,7 +31,7 @@
 * param w (width)
 * param h (height)
 **/
-function ZaMTAActionDialog(parent, app, title, w, h) {
+ZaMTAActionDialog = function(parent, app, title, w, h) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON,DwtDialog.OK_BUTTON];
 	ZaXDialog.call(this, parent, app, null, title, w,h);
@@ -41,7 +41,7 @@ function ZaMTAActionDialog(parent, app, title, w, h) {
 
 ZaMTAActionDialog.prototype = new ZaXDialog;
 ZaMTAActionDialog.prototype.constructor = ZaMTAActionDialog;
-ZaMTAActionDialog.helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/monitoring/monitoring_zimbra_mta_mail_queues.htm";		
+ZaMTAActionDialog.helpURL = location.pathname + "adminhelp/html/WebHelp/monitoring/monitoring_zimbra_mta_mail_queues.htm";		
 ZaMTAActionDialog.ACTION = "action";
 ZaMTAActionDialog.QNAME = "qname";
 ZaMTAActionDialog.MESSAGE = "message"; //Select what you want to action on
@@ -80,7 +80,7 @@ ZaMTAActionDialog.myXModel = {
 	]
 }
 
-function Q_MSGS_QUESTION_RADIO_XFormItem() {}
+Q_MSGS_QUESTION_RADIO_XFormItem = function() {}
 XFormItemFactory.createItemType("_Q_MSGS_QUESTION_RADIO_", "q_msgs_question_radio", Q_MSGS_QUESTION_RADIO_XFormItem, Composite_XFormItem);
 Q_MSGS_QUESTION_RADIO_XFormItem.prototype.numCols = 2;
 Q_MSGS_QUESTION_RADIO_XFormItem.prototype.nowrap = true;
@@ -108,7 +108,7 @@ Q_MSGS_QUESTION_RADIO_XFormItem.prototype.items = [
 	}
 ];
 
-function Q_FLTRD_QUESTION_RADIO_XFormItem() {}
+Q_FLTRD_QUESTION_RADIO_XFormItem = function() {}
 XFormItemFactory.createItemType("_Q_FLTRD_QUESTION_RADIO_", "q_fltrd_question_radio", Q_FLTRD_QUESTION_RADIO_XFormItem, Composite_XFormItem);
 Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.numCols = 2;
 Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.nowrap = true;

@@ -28,7 +28,7 @@
 * @class ZaDomainListController
 * This is a singleton object that controls all the user interaction with the list of ZaDomain objects
 **/
-function ZaDomainListController(appCtxt, container, app) {
+ZaDomainListController = function(appCtxt, container, app) {
 	ZaListViewController.call(this, appCtxt, container, app,"ZaDomainListController");
 	this._helpURL = ZaDomainListController.helpURL;	
 	this._currentQuery = new ZaSearchQuery("", [ZaSearch.DOMAINS], false, "");
@@ -40,7 +40,7 @@ function ZaDomainListController(appCtxt, container, app) {
 
 ZaDomainListController.prototype = new ZaListViewController();
 ZaDomainListController.prototype.constructor = ZaDomainListController;
-ZaDomainListController.helpURL =  "/zimbraAdmin/adminhelp/html/WebHelp/managing_domains/managing_domains.htm";
+ZaDomainListController.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_domains/managing_domains.htm";
 ZaController.initToolbarMethods["ZaDomainListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaDomainListController"] = new Array();
 
@@ -54,15 +54,23 @@ ZaDomainListController.prototype.show = function (doPush) {
 			offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
 			sortAscending:"1",
 			limit:this.RESULTSPERPAGE,
-			callback:callback
+			callback:callback,
+			controller: this
 	}
 	ZaSearch.searchDirectory(searchParams);
 }
 
 ZaDomainListController.prototype._show = 
-function (list) {
-	this._updateUI(list);
-	this._app.pushView(ZaZimbraAdmin._DOMAINS_LIST_VIEW);
+function (list,  openInNewTab, openInSearchTab) {
+	this._updateUI(list, openInNewTab, openInSearchTab);
+	//this._app.pushView(ZaZimbraAdmin._DOMAINS_LIST_VIEW);
+	this._app.pushView(this.getContentViewId(), openInNewTab, openInSearchTab);
+	
+	if (openInSearchTab) {
+		this._app.updateSearchTab();
+	}else{
+		this._app.updateTab(this.getMainTab(), this._app._currentViewId );
+	}
 }
 
 
@@ -98,6 +106,7 @@ function (ev) {
 			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
+			this.changeActionsState();			
 		}
 	}
 }
@@ -131,8 +140,9 @@ ZaController.initToolbarMethods["ZaDomainListController"].push(ZaDomainListContr
 
 //private and protected methods
 ZaDomainListController.prototype._createUI = 
-function () {
+function (openInNewTab, openInSearchTab) {
 	this._contentView = new ZaDomainListView(this._container);
+	this._app._controllers[this.getContentViewId ()] = this ;
 	// create the menu operations/listeners first	
     this._initToolbar();
 	//always add Help and navigation buttons at the end of the toolbar    
@@ -150,8 +160,14 @@ function () {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	this._app.createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
-
+	//this._app.createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
+	var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: openInSearchTab ? this.getSearchTab() : this.getMainTab() 
+		}
+	this._app.createView(this.getContentViewId(), elements, tabParams) ;
+	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 	
@@ -159,6 +175,7 @@ function () {
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 	this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 	this._removeConfirmMessageDialog = this._app.dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
+		
 	this._UICreated = true;
 }
 
@@ -209,13 +226,13 @@ function(ev) {
 			this._app.getDomainController().show(ev.item);
 		}
 	} else {
-		this._changeActionsState();	
+		this.changeActionsState();	
 	}
 }
 
 ZaDomainListController.prototype._listActionListener =
 function (ev) {
-	this._changeActionsState();
+	this.changeActionsState();
 	this._actionMenu.popup(0, ev.docX, ev.docY);
 }
 
@@ -285,49 +302,97 @@ function(ev) {
 ZaDomainListController.prototype._deleteButtonListener =
 function(ev) {
 	this._removeList = new Array();
+	this._itemsInTabList = [] ;
 	if(this._contentView.getSelectionCount()>0) {
 		var arrItems = this._contentView.getSelection();
 		var cnt = arrItems.length;
 		for(var key =0; key < cnt; key++) {
-			if(arrItems[key]) {
-				this._removeList.push(arrItems[key]);
+			var item = arrItems[key];
+			if (item) {
+				if (this._app.getTabGroup().getTabByItemId (item.id)) {
+					this._itemsInTabList.push (item) ;
+				}else{
+					this._removeList.push(item);
+				}
 			}
 		}
 	}
-	if(this._removeList.length) {
-		dlgMsg = ZaMsg.Q_DELETE_DOMAINS;
-		dlgMsg += "<br>";
-		for(var key in this._removeList) {
-			if(i > 19) {
-				dlgMsg += "<li>...</li>";
-				break;
-			}
-			dlgMsg += "<li>";
-			if(this._removeList[key].name.length > 50) {
-				//split it
-				var endIx = 49;
-				var beginIx = 0; //
-				while(endIx < this._removeList[key].name.length) { //
-					dlgMsg +=  this._removeList[key].name.slice(beginIx, endIx); //
-					beginIx = endIx + 1; //
-					if(beginIx >= (this._removeList[key].name.length) ) //
-						break;
-					
-					endIx = ( this._removeList[key].name.length <= (endIx + 50) ) ? this._removeList[key].name.length-1 : (endIx + 50);
-					dlgMsg +=  "<br>";	
-				}
-			} else {
-				dlgMsg += this._removeList[key].name;
-			}
-			dlgMsg += "</li>";
-			i++;
+	
+	if (this._itemsInTabList.length > 0) {
+		if(!this._app.dialogs["ConfirmDeleteItemsInTabDialog"]) {
+			this._app.dialogs["ConfirmDeleteItemsInTabDialog"] = 
+				new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.CANCEL_BUTTON], this._app,
+						[ZaMsgDialog.CLOSE_TAB_DELETE_BUTTON_DESC , ZaMsgDialog.NO_DELETE_BUTTON_DESC]);			
 		}
-		dlgMsg += "</ul>";
+		
+		var msg = ZaMsg.dl_warning_delete_accounts_in_tab ; ;
+		msg += ZaDomainListController.getDlMsgFromList (this._itemsInTabList) ;
+		
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].setMessage(msg, DwtMessageDialog.WARNING_STYLE);	
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
+				ZaMsgDialog.CLOSE_TAB_DELETE_BUTTON, ZaDomainListController.prototype._closeTabsBeforeRemove, this);
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
+				ZaMsgDialog.NO_DELETE_BUTTON, ZaDomainListController.prototype._deleteDomainInRemoveList, this);		
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popup();
+		
+	}else{
+		this._deleteDomainInRemoveList ();
+	}
+}
+
+
+ZaDomainListController.prototype._closeTabsBeforeRemove =
+function () {
+	this.closeTabsInRemoveList() ;
+	this._deleteDomainInRemoveList();
+}
+
+ZaDomainListController.prototype._deleteDomainInRemoveList =
+function () {
+	if (this._app.dialogs["ConfirmDeleteItemsInTabDialog"]) {
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
+	}
+	if(this._removeList.length) {
+		var dlgMsg = ZaMsg.Q_DELETE_DOMAINS;
+		dlgMsg += ZaDomainListController.getDlMsgFromList (this._removeList);
 		this._removeConfirmMessageDialog.setMessage(dlgMsg, DwtMessageDialog.INFO_STYLE);
 		this._removeConfirmMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaDomainListController.prototype._deleteDomainsCallback, this);
 		this._removeConfirmMessageDialog.registerCallback(DwtDialog.NO_BUTTON, ZaDomainListController.prototype._donotDeleteDomainsCallback, this);		
 		this._removeConfirmMessageDialog.popup();
 	}
+	
+} 
+
+ZaDomainListController.getDlMsgFromList =
+function (listArr) {
+	var	dlgMsg = "<br><ul>";
+	for(var key in listArr) {
+		if(i > 19) {
+			dlgMsg += "<li>...</li>";
+			break;
+		}
+		dlgMsg += "<li>";
+		if(listArr[key].name.length > 50) {
+			//split it
+			var endIx = 49;
+			var beginIx = 0; //
+			while(endIx < listArr[key].name.length) { //
+				dlgMsg +=  listArr[key].name.slice(beginIx, endIx); //
+				beginIx = endIx + 1; //
+				if(beginIx >= (listArr[key].name.length) ) //
+					break;
+				
+				endIx = ( listArr[key].name.length <= (endIx + 50) ) ? listArr[key].name.length-1 : (endIx + 50);
+				dlgMsg +=  "<br>";	
+			}
+		} else {
+			dlgMsg += listArr[key].name;
+		}
+		dlgMsg += "</li>";
+		i++;
+	}
+	dlgMsg += "</ul>";
+	return dlgMsg ;
 }
 
 ZaDomainListController.prototype._deleteDomainsCallback = 
@@ -363,25 +428,27 @@ function () {
 	this._removeConfirmMessageDialog.popdown();
 }
 
-ZaDomainListController.prototype._changeActionsState = 
+ZaDomainListController.prototype.changeActionsState = 
 function () {
-	var cnt = this._contentView.getSelectionCount();
-	if(cnt == 1) {
-		var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE, ZaOperation.AUTH_WIZARD, ZaOperation.GAL_WIZARD];
-		this._toolbar.enable(opsArray, true);
-		this._actionMenu.enable(opsArray, true);
-	} else if (cnt > 1){
-		var opsArray1 = [ZaOperation.EDIT, ZaOperation.AUTH_WIZARD, ZaOperation.GAL_WIZARD];
-		this._toolbar.enable(opsArray1, false);
-		this._actionMenu.enable(opsArray1, false);
-
-		var opsArray2 = [ZaOperation.DELETE];
-		this._toolbar.enable(opsArray2, true);
-		this._actionMenu.enable(opsArray2, true);
-	} else {
-		var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE, ZaOperation.AUTH_WIZARD, ZaOperation.GAL_WIZARD];
-		this._toolbar.enable(opsArray, false);
-		this._actionMenu.enable(opsArray, false);
+	if(this._contentView) {
+		var cnt = this._contentView.getSelectionCount();
+		if(cnt == 1) {
+			var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE, ZaOperation.AUTH_WIZARD, ZaOperation.GAL_WIZARD];
+			this._toolbar.enable(opsArray, true);
+			this._actionMenu.enable(opsArray, true);
+		} else if (cnt > 1){
+			var opsArray1 = [ZaOperation.EDIT, ZaOperation.AUTH_WIZARD, ZaOperation.GAL_WIZARD];
+			this._toolbar.enable(opsArray1, false);
+			this._actionMenu.enable(opsArray1, false);
+	
+			var opsArray2 = [ZaOperation.DELETE];
+			this._toolbar.enable(opsArray2, true);
+			this._actionMenu.enable(opsArray2, true);
+		} else {
+			var opsArray = [ZaOperation.EDIT, ZaOperation.DELETE, ZaOperation.AUTH_WIZARD, ZaOperation.GAL_WIZARD];
+			this._toolbar.enable(opsArray, false);
+			this._actionMenu.enable(opsArray, false);
+		}
 	}
 }
 

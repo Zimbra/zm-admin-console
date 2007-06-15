@@ -30,9 +30,10 @@
 * @param app
 * @author Greg Solovyev
 **/
-function ZaMigrationWizView (parent, app) {
+ZaMigrationWizView = function(parent, app) {
 	if (arguments.length == 0) return;
 	ZaTabView.call(this, parent, app, "ZaMigrationWizView");
+	this.setScrollStyle(Dwt.SCROLL);
 	this.initForm(new Object(), this.getMyXForm())
 //	this._createHTML();
 }
@@ -40,6 +41,22 @@ function ZaMigrationWizView (parent, app) {
 ZaMigrationWizView.prototype = new ZaTabView();
 ZaMigrationWizView.prototype.constructor = ZaMigrationWizView;
 ZaTabView.XFormModifiers["ZaMigrationWizView"] = new Array();
+
+ZaMigrationWizView.prototype.getTabIcon =
+function () {
+	return "MigrationWiz" ;
+}
+
+ZaMigrationWizView.prototype.getTabTitle =
+function () {
+	return ZaMsg.Migration_wiz_title ;
+}
+
+ZaMigrationWizView.prototype.getTitle =
+function () {
+	return ZaMsg.Migration_wiz_title ;
+}
+
 /**
 * @param xModelMetaData - XModel metadata that describes data model
 * @param xFormMetaData - XForm metadata that describes the form
@@ -72,66 +89,60 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 			{type:_SPACER_, colSpan:"*"},
 			{type:_OUTPUT_, label:null, value:ZaMsg.DOWNLOAD_FOR_ADMIN, colSpan:"*", cssStyle:"font-size:10pt;font-weight: bold;"},
 			{type:_SPACER_, colSpan:"*"},
-			{type:_GROUP_, numCols:3, colSpan:"*", zName:"DownloadsForAdmin",
+			{type:_GROUP_, numCols:1, colSpan:"*", zName:"DownloadsForAdmin",
 				items: [
-				/*
-					{type:_GROUP_,numCols:4,
-						items: [
-							{type:_OUTPUT_, value:AjxImg.getImageHtml("MigrationWiz")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.IMPORT_WIZ_DOWNLOAD_LINK},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:("("+ZaMsg.IMPORT_WIZ_DOWNLOAD_HELP+")")},
-							{type:_CELLSPACER_}							
-						]
-					},*/
-					{type:_GROUP_,numCols:4,
+					//Exchange Mig Wiz
+					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("MigrationWiz")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.MIG_WIZ_DOWNLOAD_LINK},
-							{type:_CELLSPACER_},
-							{type:_CELLSPACER_}							
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.MIG_WIZ_DOWNLOAD_LINK}
+						]
+					},
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.MIG_WIZ_DOWNLOAD_TEXT},
+
+					//Groupwise Mig Wiz
+					{type:_GROUP_,numCols:2,
+						items: [
+							{type:_OUTPUT_,  value:AjxImg.getImageHtml("MigrationWiz")},
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.GROUPWISE_MIG_WIZ_DOWNLOAD_LINK}
 							
 						]
 					},
-					{type:_GROUP_,numCols:4,
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.GROUPWISE_MIG_WIZ_DOWNLOAD_TEXT},
+					
+					//Domino Mig Wiz
+					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("MigrationWiz")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.DOMINO_MIG_WIZ_DOWNLOAD_LINK},
-							{type:_CELLSPACER_},
-							{type:_CELLSPACER_}							
-							
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.DOMINO_MIG_WIZ_DOWNLOAD_LINK}						
 						]
 					},
-					{type:_GROUP_,numCols:4,
-						items: [
-							{type:_OUTPUT_,  value:AjxImg.getImageHtml("MigrationWiz")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.GROUPWISE_MIG_WIZ_DOWNLOAD_LINK},
-							{type:_CELLSPACER_},
-							{type:_CELLSPACER_}							
-							
-						]
-					}
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.DOMINO_MIG_WIZ_DOWNLOAD_TEXT}
 				]
 			},
 			{type:_SPACER_, colSpan:"*"},
 			{type:_OUTPUT_, label:null, value:ZaMsg.DOWNLOAD_FOR_USER,  colSpan:"*", cssStyle:"font-size:10pt;font-weight: bold;"},
 			{type:_SPACER_, colSpan:"*"},
-			{type:_GROUP_, numCols:3, colSpan:"*", zName:"DownloadsForUser",
+			{type:_GROUP_, numCols:1, colSpan:"*", zName:"DownloadsForUser",
 				items: [
-					{type:_GROUP_,numCols:4,
+					//PST import
+					{type: _GROUP_ , numCols:3,
 						items: [
 							{type:_OUTPUT_, value:AjxImg.getImageHtml("MigrationWiz")},
 							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.IMPORT_WIZ_DOWNLOAD_LINK},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:("("+ZaMsg.IMPORT_WIZ_DOWNLOAD_HELP+")")},
-							{type:_CELLSPACER_}							
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:["(<A HREF='",location.pathname,"adminhelp/pdf/User Instructions for ZCS Import Wizard.pdf'>",ZaMsg.IMPORT_WIZ_DOWNLOAD_HELP,"</a>)"].join("")}
 						]
 					},
-					{type:_GROUP_,numCols:4,
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.IMPORT_WIZ_DOWNLOAD_TEXT},
+					
+					//TOASTER
+					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_, value:AjxImg.getImageHtml("MigrationWiz")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_LINK},
-							{type:_CELLSPACER_}							
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_LINK}
 						]
-					}
+					},
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_TEXT}
 				]
 			}
 		];

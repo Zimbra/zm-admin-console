@@ -25,10 +25,11 @@
  /**
  * @author EMC
  **/
-function ZaDistributionList(app, id, name, memberList, description, notes) {
+ZaDistributionList = function(app, id, name, memberList, description, notes) {
 	ZaItem.call(this, app);
 	this.attrs = new Object();
 	this.attrs[ZaDistributionList.A_mailStatus] = "enabled";
+	this.attrs[ZaAccount.A_zimbraMailAlias] = [];
 	this.id = (id != null)? id: null;
 	this.type = ZaItem.DL;
 	this.name = (name != null) ? name: null;
@@ -72,6 +73,12 @@ ZaDistributionList.MEMBER_QUERY_LIMIT = 25;
 ZaDistributionList.A_zimbraGroupId = "zimbraGroupId";
 
 ZaDistributionList.A_mailStatus = "zimbraMailStatus";
+
+ZaDistributionList._dlStatus = {
+	enabled  : ZaMsg.DL_Status_enabled ,
+	disabled : ZaMsg.DL_Status_disabled
+}
+
 ZaDistributionList.searchAttributes = AjxBuffer.concat(ZaAccount.A_displayname,",",
 													   ZaItem.A_zimbraId,  "," , 
 													   ZaAccount.A_mailHost , "," , 
@@ -225,7 +232,7 @@ function(tmpObj, callback) {
 		soapDoc.set(ZaDistributionList.A_isgroup, 0); //might have issue
 	}*/
 	for (var aname in tmpObj.attrs) {
-		if(aname == ZaItem.A_objectClass || aname==ZaAccount.A_mail 
+		if(aname == ZaItem.A_objectClass || aname==ZaAccount.A_mail || aname == ZaItem.A_cn
 			|| aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid
 			|| aname == ZaDistributionList.A_zimbraGroupId || aname == ZaAccount.A_zimbraMailAlias) {
 			continue;
@@ -270,20 +277,15 @@ function(tmpObj, callback) {
 * @return ZaDistributionList
 **/
 ZaDistributionList.create =
-function(tmpObj, callback) {
-	
+function(tmpObj, callback) {	
 	//create SOAP request
 	var soapDoc = AjxSoapDoc.create("CreateDistributionListRequest", "urn:zimbraAdmin", null);
 	soapDoc.set(ZaAccount.A_name, tmpObj.name);
-	/*
-	if (tmpObj[ZaDistributionList.A_isgroup] != null) {
-		soapDoc.set(ZaDistributionList.A_isgroup, tmpObj[ZaDistributionList.A_isgroup]);
-	}else{
-		soapDoc.set(ZaDistributionList.A_isgroup, 0);
-	}*/
 	var resp;
 	for (var aname in tmpObj.attrs) {
-		if(aname == ZaItem.A_objectClass || aname == ZaAccount.A_mail || aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid) {
+		if(aname == ZaItem.A_objectClass || aname == ZaAccount.A_mail 
+			|| aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid
+			|| aname == ZaAccount.A_zimbraMailAlias) {
 			continue;
 		}	
 		
@@ -739,6 +741,35 @@ ZaDistributionList.prototype.initFromDom = function(node) {
 	}
 };
 
+ZaDistributionList.prototype.initFromJS = 
+function (dl) {
+	if(!dl)
+		return;
+		
+	this.attrs = new Object();	
+	this.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
+	this.name = dl.name;
+	this.id = dl.id;
+	var len = dl.a.length;
+
+	for(var ix = 0; ix < len; ix++) {
+		//we have to handle the special case for DL because server returns the dl itself as the zimbraMailAlias
+		if ( dl.a[ix].n == ZaAccount.A_zimbraMailAlias
+					&& dl.a[ix]._content == this.name) {				
+			continue ;
+		}
+		
+		if(!this.attrs[[dl.a[ix].n]]) {
+			this.attrs[[dl.a[ix].n]] = dl.a[ix]._content;
+		} else {
+			if(!(this.attrs[[dl.a[ix].n]] instanceof Array)) {
+				this.attrs[[dl.a[ix].n]] = [this.attrs[[dl.a[ix].n]]];
+			} 
+			this.attrs[[dl.a[ix].n]].push(dl.a[ix]._content);
+		}
+	}
+	
+}
 
 ZaDistributionList.prototype.removeAllMembers = function () {
 	var arr = this._memberList.getArray();
@@ -756,7 +787,7 @@ ZaDistributionList.prototype.setMembers = function (list) {
  * Small wrapper class for a distribution list member.
  * The id is needed at a higher level for DwtLists to work correctly.
  */
-function ZaDistributionListMember (name) {
+ZaDistributionListMember = function(name) {
 	this[ZaAccount.A_name] = name;
 	this.id = "ZADLM_" + name;
 
@@ -823,6 +854,7 @@ ZaDistributionList.myXModel = {
 		{id:ZaAccount.A_zimbraHideInGal, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideInGal, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A_notes, ref:"attrs/"+ZaAccount.A_notes, type:_STRING_},
 		{id:ZaAccount.A_displayname, type:_STRING_, ref:"attrs/"+ZaAccount.A_displayname},
+		{id:ZaAccount.A_zimbraMailAlias, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraMailAlias, listItem:{type:_STRING_}},
 		{id:ZaDistributionList.A_mailStatus, ref:"attrs/"+ZaDistributionList.A_mailStatus, type:_STRING_}
 		//,{id:ZaDistributionList.A_isgroup, ref:ZaDistributionList.A_isgroup, type: _ENUM_, choices:ZaModel.BOOLEAN_CHOICES1}
 	]

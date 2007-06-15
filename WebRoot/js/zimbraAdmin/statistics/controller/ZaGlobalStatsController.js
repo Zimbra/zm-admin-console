@@ -31,32 +31,64 @@
 * @param app
 * @author Greg Solovyev
 **/
-function ZaGlobalStatsController(appCtxt, container, app) {
+ZaGlobalStatsController = function(appCtxt, container, app) {
 
-	ZaController.call(this, appCtxt, container, app);
-	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/monitoring/checking_usage_statistics.htm";	
+	ZaController.call(this, appCtxt, container, app,"ZaGlobalStatsController");
+	this._helpURL = location.pathname + "adminhelp/html/WebHelp/monitoring/checking_usage_statistics.htm";
+	this.tabConstructor = ZaGlobalStatsView;		
 }
 
 ZaGlobalStatsController.prototype = new ZaController();
 ZaGlobalStatsController.prototype.constructor = ZaGlobalStatsController;
-
+ZaController.setViewMethods["ZaGlobalStatsController"] = [];
 //ZaGlobalStatsController.STATUS_VIEW = "ZaGlobalStatsController.STATUS_VIEW";
 
 ZaGlobalStatsController.prototype.show = 
 function() {
+	this._setView();
+	this._app.pushView(this.getContentViewId());
+	var item=new Object();
+	try {		
+		item[ZaModel.currentTab] = "1"
+		this._contentView.setObject(item);
+	} catch (ex) {
+		this._handleException(ex, "ZaGlobalConfigViewController.prototype.show", null, false);
+	}
+	this._currentObject = item;	
+}
+
+
+ZaGlobalStatsController.setViewMethod =
+function() {	
     if (!this._contentView) {
-		this._contentView = new ZaGlobalStatsView(this._container, this._app);
+		this._contentView  = new this.tabConstructor(this._container, this._app);
 		var elements = new Object();
 		this._ops = new Array();
+		this._ops = new Array();
+		this._ops.push(new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener)));
 		this._ops.push(new ZaOperation(ZaOperation.NONE));
 		this._ops.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
 		this._toolbar = new ZaToolBar(this._container, this._ops);    		
 		
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-		this._app.createView(ZaZimbraAdmin._STATISTICS, elements);
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab()
+		}
+		this._app.createView(this.getContentViewId(), elements, tabParams) ;
+		this._UICreated = true;
+		this._app._controllers[this.getContentViewId ()] = this ;		
 	}
-	this._app.pushView(ZaZimbraAdmin._STATISTICS);
-//	this._app.setCurrentController(this);
 }
+ZaController.setViewMethods["ZaGlobalStatsController"].push(ZaGlobalStatsController.setViewMethod);
 
+
+ZaGlobalStatsController.prototype.refreshListener =
+function (ev) {
+	var currentTabView = this._contentView._tabs[this._contentView._currentTabKey]["view"];
+	if (currentTabView && currentTabView.showMe) {
+		currentTabView.showMe(2) ; //force server side cache to be refreshed.
+	}
+}

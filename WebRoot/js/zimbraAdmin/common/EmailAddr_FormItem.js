@@ -30,7 +30,7 @@
 * @constructor EmailAddr_XFormItem
 * @author Greg Solovyev
 **/
-function EmailAddr_XFormItem() {}
+EmailAddr_XFormItem = function() {}
 XFormItemFactory.createItemType("_EMAILADDR_", "emailaddr", EmailAddr_XFormItem, Composite_XFormItem);
 EmailAddr_XFormItem.domainChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "name", "name");
 EmailAddr_XFormItem.choicesDirty = false ;
@@ -175,7 +175,7 @@ EmailAddr_XFormItem.prototype.items = [
 			if (!this._acAction) {
 				this._acInterval = 500 ;
 				this._acActionId = -1;
-				this._acAction = new AjxTimedAction(app, app.scheduledSearchDomains);
+				this._acAction = new AjxTimedAction(app, app.scheduledSearchDomains, this);
 			}
 			
 			AjxTimedAction.scheduleAction (this._acAction, this._acInterval);

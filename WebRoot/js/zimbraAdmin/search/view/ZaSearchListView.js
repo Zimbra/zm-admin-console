@@ -30,7 +30,7 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-function ZaSearchListView(parent, app) {
+ZaSearchListView = function(parent, app) {
 	this._app = app;
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
@@ -57,6 +57,27 @@ ZaSearchListView.prototype.getTitle =
 function () {
 	return ZaMsg.Accounts_view_title;
 }
+
+ZaSearchListView.prototype.getTabIcon =
+function () {
+	return "search" ;
+}
+
+ZaSearchListView.prototype.getTabTitle =
+function () {
+	return ZaMsg.Search_view_title ;
+}
+
+ZaSearchListView.prototype.getTabToolTip =
+function () {
+	var controller = this._app.getCurrentController () ;
+	if (controller && controller._currentQuery) {
+		return ZaMsg.tt_tab_Search + controller._currentQuery ;
+	}else {
+		return ZaMsg.Search_view_title ;
+	}
+}
+
 /**
 * Renders a single item as a DIV element.
 */
@@ -77,6 +98,8 @@ function(account, now, isDndIcon) {
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
 		var id = this._headerList[i]._id;
+		var IEWidth = this._headerList[i]._width + 4 ;
+		
 		if(id.indexOf("type")==0) {
 			// type
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
@@ -108,7 +131,7 @@ function(account, now, isDndIcon) {
 			html[idx++] = "</td>";
 		} else if(id.indexOf(ZaAccount.A_name)==0) {
 			// name
-			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td nowrap width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			if(account.type == ZaItem.DOMAIN) {
 				html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaDomain.A_domainName]);
 			} else {
@@ -117,12 +140,12 @@ function(account, now, isDndIcon) {
 			html[idx++] = "</nobr></td>";
 		} else if (id.indexOf(ZaAccount.A_displayname)==0) {
 			// display name
-			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td nowrap width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaAccount.A_displayname]);
 			html[idx++] = "</nobr></td>";	
 		} else if(id.indexOf(ZaAccount.A_accountStatus)==0) {
 			// status
-			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			var status = "";
 			if (account.type == ZaItem.ACCOUNT) {
 				status = ZaAccount._accountStatus(account.attrs[ZaAccount.A_accountStatus]);
@@ -133,6 +156,11 @@ function(account, now, isDndIcon) {
 			} 
 			html[idx++] = status;
 			html[idx++] = "</nobr></td>";		
+		}else if (id.indexOf(ZaAccount.A_zimbraLastLogonTimestamp)==0 ) {
+			// display last login time for accounts only
+			html[idx++] = "<td width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
+			html[idx++] = AjxStringUtil.htmlEncode(ZaAccount.getLastLoginTime(account.attrs[ZaAccount.A_zimbraLastLogonTimestamp]));
+			html[idx++] = "</nobr></td>";	
 		} else if (id.indexOf(ZaAccount.A_description)==0) {		
 			// description
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
@@ -150,17 +178,17 @@ function() {
 
 	var headerList = new Array();
 	var sortable = 1;
-	
-	headerList[0] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, "40px", null, null, true, true);
+	var i = 0
+	headerList[i++] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, "40px", null, null, true, true);
 	this._defaultColumnSortable = sortable ;
-	headerList[1] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.CLV_Name_col, null, "220px", null,  null, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.CLV_Name_col, null, "220px", null,  null, true, true);
 	
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible	
-	headerList[2] = new ZaListHeaderItem(ZaAccount.A_displayname, ZaMsg.ALV_DspName_col, null, "220px",  null, null, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_displayname, ZaMsg.ALV_DspName_col, null, "220px",  null, null, true, true);
 
-	headerList[3] = new ZaListHeaderItem(ZaAccount.A_accountStatus, ZaMsg.ALV_Status_col, null, "80px",  null, null, true, true);
-
-	headerList[4] = new ZaListHeaderItem(ZaAccount.A_description, ZaMsg.ALV_Description_col, null, null, null, null,true, true );
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_accountStatus, ZaMsg.ALV_Status_col, null, "80px",  null, null, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_zimbraLastLogonTimestamp, ZaMsg.ALV_Last_Login, null, "120px", null, null, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_description, ZaMsg.ALV_Description_col, null, null, null, null,true, true );
 	
 	return headerList;
 }

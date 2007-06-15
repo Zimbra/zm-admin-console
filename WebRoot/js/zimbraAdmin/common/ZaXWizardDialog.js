@@ -36,7 +36,7 @@
 * This class represents a reusable wizard dialog. 
 * After calling the constructor, define metadata for and call initForm to draw the contents of the dialog
 */
-function ZaXWizardDialog (parent, app, className, title, w, h,iKeyName, extraButtons) {
+ZaXWizardDialog = function(parent, app, className, title, w, h,iKeyName, extraButtons) {
 	if (arguments.length == 0) return;
 
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON];
@@ -67,7 +67,7 @@ ZaXWizardDialog.Z_CURTAIN = Dwt.Z_CURTAIN;
 ZaXWizardDialog.NEXT_BUTTON = DwtWizardDialog.NEXT_BUTTON;
 ZaXWizardDialog.PREV_BUTTON = DwtWizardDialog.PREV_BUTTON
 ZaXWizardDialog.FINISH_BUTTON = DwtWizardDialog.FINISH_BUTTON;
-ZaXWizardDialog.HELP_BUTTON = ++ZA_BTN_INDEX;
+ZaXWizardDialog.HELP_BUTTON = ++DwtDialog.LAST_BUTTON;
 
 //public methods
 ZaXWizardDialog.prototype.toString = 
@@ -98,6 +98,8 @@ function(pageKey) {
 	this._containedObject[ZaModel.currentStep] = pageKey;
 	//reset the domain lists
 	EmailAddr_XFormItem.resetDomainLists.call (this);
+	//release the focus to make the cursor visible
+	this._localXForm.releaseFocus();
 	this._localXForm.refresh(); //run update script
 }
 
@@ -155,7 +157,7 @@ function (stepTitle) {
 ZaXWizardDialog.prototype.initForm = 
 function (xModelMetaData, xFormMetaData) {
 	if(xModelMetaData == null || xFormMetaData == null)
-		throw new AjxException("Metadata for XForm and/or XModel are not defined", AjxException.INVALID_PARAM, "ZaXWizardDialog.prototype.initForm");
+		throw new AjxException(ZaMsg.ERROR_METADATA_NOT_DEFINED, AjxException.INVALID_PARAM, "ZaXWizardDialog.prototype.initForm");
 		
 	this._localXModel = new XModel(xModelMetaData);
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
@@ -200,7 +202,7 @@ function(entry) {
 * @constructor
 * @param parent
 **/
-function ZaXWizProgressBar(parent) {
+ZaXWizProgressBar = function(parent) {
 	if (arguments.length == 0) return;
 	DwtComposite.call(this, parent, "ZaXWizProgressBar", DwtControl.STATIC_STYLE);
 	this._table = document.createElement("table");
@@ -277,7 +279,7 @@ function(child) {
 * @constructor
 * @param parent
 **/
-function ZaXWizStepLabel (parent) {
+ZaXWizStepLabel = function(parent) {
 	DwtLabel.call(this, parent, DwtLabel.ALIGN_CENTER, "ZaXWizStepLabel");
 }
 

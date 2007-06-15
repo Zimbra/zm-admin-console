@@ -31,7 +31,7 @@
 * @author Greg Solovyev
 **/
 
-function ZaCosListView(parent) {
+ZaCosListView = function(parent) {
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	
@@ -53,6 +53,11 @@ function() {
 ZaCosListView.prototype.getTitle = 
 function () {
 	return ZaMsg.COS_view_title;
+}
+
+ZaCosListView.prototype.getTabIcon =
+function () {
+	return "COS" ;
 }
 
 /**

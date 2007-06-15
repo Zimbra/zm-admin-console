@@ -29,7 +29,7 @@
 * @contructor ZaAccountMemberOfListView
 * @author Charles Cao
 **/
-function ZaAccountMemberOfListView(parent, className, posStyle, headerList){
+ZaAccountMemberOfListView = function(parent, className, posStyle, headerList){
 	ZaListView.call(this, parent, className, posStyle, headerList);
 }
 
@@ -477,7 +477,9 @@ function (item, offset){
 			if (ZaSettings.DOMAINS_ENABLED){
 				if (searchByDomain){
 					try {
-						var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
+						var emailChunks = curInstance[ZaAccount.A_name].split("@");
+						domainName = emailChunks[1];
+					//	var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
 					} catch (ex) {
 						domainName = ZaSettings.myDomainName;
 					}
@@ -497,7 +499,8 @@ function (item, offset){
 							domain: domainName,
 							applyCos: 0,
 							attrs: attrs,
-							types: [ZaSearch.DLS]
+							types: [ZaSearch.DLS],
+							controller: xform.parent._app.getCurrentController()
 						 } ;
 					
 			var result = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse;
@@ -619,7 +622,7 @@ function(){
  * the non group dls. 
  * 
  */
-function S_Dwt_List_XFormItem(){}
+S_Dwt_List_XFormItem = function(){}
 XFormItemFactory.createItemType("_S_DWT_LIST_", "s_dwt_list", S_Dwt_List_XFormItem, Dwt_List_XFormItem);
 
 
@@ -714,7 +717,7 @@ S_Dwt_List_XFormItem.prototype.setItems = function (itemArray){
 * @contructor ZaAccountMemberOfListView
 * @author Charles Cao
 **/
-function ZaAccountMemberOfsourceHeaderList (type) {
+ZaAccountMemberOfsourceHeaderList = function(type) {
 	var sourceHeaderList = new Array();
 	var sortable = 0;
 	

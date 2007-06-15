@@ -35,7 +35,7 @@
 * @see ZaAccountListController
 * @see ZDomainListController
 **/
-function ZaListViewController(appCtxt, container, app, iKeyName) {
+ZaListViewController = function(appCtxt, container, app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._currentPageNum = 1;	
    	this._toolbarOperations = new Array();
@@ -80,9 +80,9 @@ function() {
 }
 
 ZaListViewController.prototype._updateUI = 
-function(list) {
+function(list, openInNewTab, openInSearchTab) {
     if (!this._UICreated) {
-		this._createUI();
+		this._createUI(openInNewTab, openInSearchTab);
 	} 
 	if (list) {
 		var tmpArr = new Array();
@@ -98,7 +98,7 @@ function(list) {
 		this._contentView.set(AjxVector.fromArray(tmpArr), this._contentView._defaultColumnSortable);	
 	}
 	this._removeList = new Array();
-	this._changeActionsState();
+	this.changeActionsState();
 	
 	var s_result_start_n = (this._currentPageNum - 1) * this.RESULTSPERPAGE + 1;
 	var s_result_end_n = this._currentPageNum  * this.RESULTSPERPAGE;
@@ -126,6 +126,15 @@ function(list) {
 	}
 }
 
+ZaListViewController.prototype.closeButtonListener =
+function(ev, noPopView, func, obj, params) {
+	if (noPopView) {
+		func.call(obj, params) ;
+	}else{
+		this._app.popView () ;
+	}
+}
+
 ZaListViewController.prototype.searchCallback =
 function(params, resp) {
 	try {
@@ -150,9 +159,9 @@ function(params, resp) {
 			var limit = params.limit ? params.limit : this.RESULTSPERPAGE; 
 			this.numPages = Math.ceil(this._searchTotal/params.limit);
 			if(params.show)
-				this._show(this._list);			
+				this._show(this._list, params.openInNewTab, params.openInSearchTab);			
 			else
-				this._updateUI(this._list);
+				this._updateUI(this._list, params.openInNewTab, params.openInSearchTab);
 		}
 	} catch (ex) {
 		if (ex.code != ZmCsfeException.MAIL_QUERY_PARSE_ERROR) {
@@ -174,7 +183,7 @@ function (nextViewCtrlr, func, params) {
 	func.call(nextViewCtrlr, params);
 }
 
-ZaListViewController.prototype._changeActionsState =
+ZaListViewController.prototype.changeActionsState =
 function () {
 	var opsArray1 = new Array();
 	var opsArray2 = new Array();

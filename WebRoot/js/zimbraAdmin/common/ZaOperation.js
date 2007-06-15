@@ -34,7 +34,7 @@
 * @param lsnr AjxListener
 **/
 
-function ZaOperation(id, caption, tooltip, imgId, disImgId, lsnr, type, menuOpList, className, labelId) {
+ZaOperation = function(id, caption, tooltip, imgId, disImgId, lsnr, type, menuOpList, className, labelId) {
 	this.id = id;
 	this.caption = caption;
 	this.tt = tooltip;
@@ -98,6 +98,11 @@ ZaOperation.SEARCH_BY_DOMAIN = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_BY_SERVER = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_BY_BASIC =  ++ZA_OP_INDEX;
 ZaOperation.SEARCH_BY_REMOVE_ALL =  ++ZA_OP_INDEX;
+ZaOperation.SEARCH_BY_ADVANCED = ++ZA_OP_INDEX;
 ZaOperation.DEPLOY_ZIMLET =  ++ZA_OP_INDEX;
-ZaOperation.ENABLE_ZIMLET =  ++ZA_OP_INDEX;
-ZaOperation.DISABLE_ZIMLET =  ++ZA_OP_INDEX;
+//ZaOperation.ENABLE_ZIMLET =  ++ZA_OP_INDEX;
+//ZaOperation.DISABLE_ZIMLET =  ++ZA_OP_INDEX;
+ZaOperation.CLOSE_TAB = ++ZA_OP_INDEX;
+ZaOperation.CLOSE_OTHER_TAB = ++ZA_OP_INDEX;
+ZaOperation.CLOSE_ALL_TAB = ++ZA_OP_INDEX;
+ZaOperation.TOGGLE = ++ZA_OP_INDEX;

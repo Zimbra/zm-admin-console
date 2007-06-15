@@ -30,6 +30,25 @@
 * @param parent
 * param app
 **/
+
+
+DeleteAcctsPgrsDlg = function(parent,  app, w, h) {
+	if (arguments.length == 0) return;
+	this._app = app;
+	this._standardButtons = [DwtDialog.OK_BUTTON];
+	var helpButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.HELP_BUTTON, ZaMsg.TBB_Help, DwtDialog.ALIGN_LEFT, new AjxCallback(this, this._helpButtonListener));
+	var abortButton = new DwtDialog_ButtonDescriptor(DeleteAcctsPgrsDlg.ABORT_BUTTON, ZaMsg.NAD_AbortDeleting, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.abortDeletingAccounts));		
+	this._extraButtons = [helpButton, abortButton];
+	ZaXDialog.call(this, parent, app, null, ZaMsg.NAD_DeletingAccTitle, w, h);
+	this._containedObject = [];
+//	this._deletedAccounts = [];
+	this._currentIndex = 0;
+	this._currentAccount = null;
+	this.initForm(DeleteAcctsPgrsDlg.myXModel,this.getMyXForm());
+	this._pollHandler = null;	
+	this._aborted = false;
+}
+
 DeleteAcctsPgrsDlg._ERROR_MSG = "errorMsg";
 DeleteAcctsPgrsDlg._STATUS = "status";
 DeleteAcctsPgrsDlg._DELETED_ACCTS = "deletedAccounts";
@@ -47,27 +66,9 @@ DeleteAcctsPgrsDlg.myXModel = {
 		{ref:DeleteAcctsPgrsDlg._DELETED_ACCTS, type:_LIST_,setter:"set", setterScope:_MODEL_, getter: "getDeletedAccounts", getterScope:_MODEL_}
 	]
 }
-
-function DeleteAcctsPgrsDlg(parent,  app, w, h) {
-	if (arguments.length == 0) return;
-	this._app = app;
-	this._standardButtons = [DwtDialog.OK_BUTTON];
-	var helpButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.HELP_BUTTON, ZaMsg.TBB_Help, DwtDialog.ALIGN_LEFT, new AjxCallback(this, this._helpButtonListener));
-	var abortButton = new DwtDialog_ButtonDescriptor(DeleteAcctsPgrsDlg.ABORT_BUTTON, ZaMsg.NAD_AbortDeleting, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.abortDeletingAccounts));		
-	this._extraButtons = [helpButton, abortButton];
-	ZaXDialog.call(this, parent, app, null, ZaMsg.NAD_DeletingAccTitle, w, h);
-	this._containedObject = [];
-//	this._deletedAccounts = [];
-	this._currentIndex = 0;
-	this._currentAccount = null;
-	this.initForm(DeleteAcctsPgrsDlg.myXModel,this.getMyXForm());
-	this._pollHandler = null;	
-	this._aborted = false;
-}
-
 DeleteAcctsPgrsDlg.prototype = new ZaXDialog;
 DeleteAcctsPgrsDlg.prototype.constructor = DeleteAcctsPgrsDlg;
-DeleteAcctsPgrsDlg.ABORT_BUTTON = ++ZA_BTN_INDEX;
+DeleteAcctsPgrsDlg.ABORT_BUTTON = ++DwtDialog.LAST_BUTTON;
 
 /**
 * @method setObject sets the object contained in the view

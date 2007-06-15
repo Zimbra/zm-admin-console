@@ -30,7 +30,7 @@
 * @author Greg Solovyev
 **/
 
-function ZaZimletListView(parent) {
+ZaZimletListView = function(parent) {
 
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
@@ -54,8 +54,14 @@ function() {
 
 ZaZimletListView.prototype.getTitle = 
 function () {
-	return ZaMsg.Servers_view_title;
+	return ZaMsg.Zimlets_view_title;
 }
+
+ZaZimletListView.prototype.getTabIcon = 
+function () {
+	return "zimlet" ;
+}
+
 /**
 * Renders a single item as a DIV element.
 */

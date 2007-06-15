@@ -30,7 +30,7 @@
 * @author Greg Solovyev
 **/
 
-function ZaServerListView(parent) {
+ZaServerListView = function(parent) {
 
 //	var className = "ZaServerListView";
 	var className = null;
@@ -58,6 +58,12 @@ ZaServerListView.prototype.getTitle =
 function () {
 	return ZaMsg.Servers_view_title;
 }
+
+ZaServerListView.prototype.getTabIcon =
+function () {
+	return "Server";
+}
+
 /**
 * Renders a single item as a DIV element.
 */

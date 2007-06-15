@@ -30,7 +30,7 @@
 * @param app
 * @author Greg Solovyev
 **/
-function ZaAuthConfigXWizard (parent, app) {
+ZaAuthConfigXWizard = function(parent, app) {
 	this._app=app;
 	ZaXWizardDialog.call(this, parent,app, null, ZaMsg.NCD_AuthConfigTitle, "550px", "300px","ZaAuthConfigXWizard");
 
@@ -65,7 +65,7 @@ function ZaAuthConfigXWizard (parent, app) {
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaAuthConfigXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaAuthConfigXWizard.prototype.handleXFormChange));	
 	this.lastErrorStep=0;	
-	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_domains/authentication_settings.htm";
+	this._helpURL = location.pathname + "adminhelp/html/WebHelp/managing_domains/authentication_settings.htm";
 }
 
 ZaAuthConfigXWizard.prototype = new ZaXWizardDialog;

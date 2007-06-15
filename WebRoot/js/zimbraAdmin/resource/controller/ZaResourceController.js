@@ -28,19 +28,21 @@
  * @author Charles Cao
  * resource controller 
  */  
-function ZaResourceController (appCtxt, container, app) {
+ZaResourceController = function(appCtxt, container, app) {
 	ZaXFormViewController.call(this, appCtxt, container, app, "ZaResourceController");
 	this._UICreated = false;
 	this._toolbarOperations = new Array();
-	this._helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_accounts/managing_resource.htm";	
+	this._helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/managing_resource.htm";	
 	this.deleteMsg = ZaMsg.Q_DELETE_RES;
 	this.objType = ZaEvent.S_ACCOUNT;	
+	this.tabConstructor = ZaResourceXFormView;	
 }
 
 ZaResourceController.prototype = new ZaXFormViewController();
 ZaResourceController.prototype.constructor = ZaResourceController;
 
 ZaController.initToolbarMethods["ZaResourceController"] = new Array();
+ZaController.setViewMethods["ZaResourceController"] = [];
 
 ZaResourceController.prototype.toString = function () {
 	return "ZaResourceController";
@@ -53,22 +55,28 @@ ZaResourceController.prototype.setDirty = function (isDirty) {
 ZaResourceController.prototype.handleXFormChange = function (ev) {
 	if(ev && ev.form.hasErrors()) { 
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
-	}	
+	}	/*
 	else if(ev && ev.formItem instanceof Dwt_TabBar_XFormItem) {	
 		//do nothing - only switch the tab and it won't change the dirty status of the xform
 		//this._view.setDirty (false);	
-	}else {
+	}else if (this._UICreated){
 		this._view.setDirty (true);
 		//this._toolbar.getButton(ZaOperation.SAVE).setEnabled(true);
-	}
+	}*/
 }
-ZaResourceController.prototype.show = function(entry) {
+ZaResourceController.prototype.show =
+function(entry, openInNewTab, skipRefresh) {
+	this._setView(entry, openInNewTab, skipRefresh);
+}
+
+ZaResourceController.setViewMethod =
+function (entry)	{
     if (!this._UICreated) {
 		this._createUI();
 	} 	
 	try {
-		this._app.pushView(ZaZimbraAdmin._RESOURCE_VIEW);
-		
+		//this._app.pushView(ZaZimbraAdmin._RESOURCE_VIEW);
+		this._app.pushView(this.getContentViewId());
 		if(!entry.id) {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
 		} else {
@@ -87,6 +95,7 @@ ZaResourceController.prototype.show = function(entry) {
 		this._handleException(ex, "ZaResourceController.prototype.show", null, false);
 	}	
 };
+ZaController.setViewMethods["ZaResourceController"].push(ZaResourceController.setViewMethod);
 
 ZaResourceController.initToolbarMethod =
 function () {
@@ -136,7 +145,7 @@ ZaResourceController.prototype._createUI =
 function () {
 	//create accounts list view
 	// create the menu operations/listeners first	
-	this._view = new ZaResourceXFormView(this._container, this._app);
+	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 
     this._initToolbar();
 	//always add Help button at the end of the toolbar    
@@ -148,10 +157,16 @@ function () {
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	this._app.createView(ZaZimbraAdmin._RESOURCE_VIEW, elements);
-
+	//this._app.createView(ZaZimbraAdmin._RESOURCE_VIEW, elements);
+	var tabParams = {
+			openInNewTab: true,
+			tabId: this.getContentViewId()
+		}
+	this._app.createView(this.getContentViewId(), elements, tabParams) ;
+	
 	this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 	this._UICreated = true;
+	this._app._controllers[this.getContentViewId ()] = this ;
 }
 
 

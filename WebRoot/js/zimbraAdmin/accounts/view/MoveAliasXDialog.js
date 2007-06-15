@@ -30,7 +30,7 @@
 * @param parent
 * param app
 **/
-function MoveAliasXDialog(parent,  app, w, h) {
+MoveAliasXDialog = function(parent,  app, w, h) {
 	if (arguments.length == 0) return;
 	this._app = app;
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON];
@@ -49,8 +49,8 @@ function MoveAliasXDialog(parent,  app, w, h) {
 MoveAliasXDialog.prototype = new ZaXDialog;
 MoveAliasXDialog.prototype.constructor = MoveAliasXDialog;
 MoveAliasXDialog.resultChoices = new XFormChoices([], XFormChoices.OBJECT_REFERENCE_LIST, null, "name");
-MoveAliasXDialog.MOVE_BUTTON= ++ZA_BTN_INDEX;
-MoveAliasXDialog.CLOSE_BUTTON = ++ZA_BTN_INDEX;
+MoveAliasXDialog.MOVE_BUTTON= ++DwtDialog.LAST_BUTTON;
+MoveAliasXDialog.CLOSE_BUTTON = ++DwtDialog.LAST_BUTTON;
 
 MoveAliasXDialog.prototype.popup = 
 function (loc) {
@@ -111,43 +111,19 @@ function() {
 				//throw	
 				throw (new AjxException(ZaMsg.FAILED_MOVE_ALIAS, AjxException.UNKNOWN_ERROR, "MoveAliasXDialog.prototype.moveAlias", "Alias name is not available"));
 			}
-			this._app.getAccountListController().show();							
+			this._app.getAccountListController().show();	
+			this._containedObject.resultMsg = String(ZaMsg.Alias_Moved_To).replace("{0}",name).replace("{1}",this._containedObject[ZaSearch.A_selected].name); 
+			return true;							
+		}else{
+			this._app.getCurrentController().popupErrorDialog( AjxMessageFormat.format(ZaMsg.WARNING_ALIASES_TARGET_NON_EXIST,[this._containedObject[ZaSearch.A_selected]]));
 		}
 	} catch (ex) {
 		this._app.getCurrentController()._handleException(ex, "MoveAliasXDialog.prototype.moveAlias", null, false);
 		return false;
 	}
-	this._containedObject.resultMsg = String(ZaMsg.Alias_Moved_To).replace("{0}",name).replace("{1}",this._containedObject[ZaSearch.A_selected].name); 
-	return true;	
+	return false;
 }
-/*
-MoveAliasXDialog.prototype.searchAccounts = 
-function (ev) {
-	try {
-		var  searchQueryHolder = new ZaSearchQuery(ZaSearch.getSearchByNameQuery(this._containedObject[ZaSearch.A_query]), [ZaSearch.ACCOUNTS], false, "");
-		var result = ZaSearch.searchByQueryHolder(searchQueryHolder, this._containedObject[ZaSearch.A_pagenum], ZaAccount.A_name, null, this._app);
-		if(result.list) {
-			MoveAliasXDialog.resultChoices.setChoices(result.list.getArray());
-			MoveAliasXDialog.resultChoices.dirtyChoices();
-		}
-		this._localXForm.refresh();
-		this._button[MoveAliasXDialog.MOVE_BUTTON].setEnabled(false);
-	} catch (ex) {
-		// Only restart on error if we are not initialized and it isn't a parse error
-		if (ex.code != ZmCsfeException.MAIL_QUERY_PARSE_ERROR) {
-			this._app.getCurrentController()._handleException(ex, "MoveAliasXDialog.prototype.searchAccounts", null, (this._inited) ? false : true);
-		} else {
-			this.popupErrorDialog(ZaMsg.queryParseError, ex);
-			this._searchField.setEnabled(true);	
-		}
-	}
-}*/
-/*
-MoveAliasXDialog.srchButtonHndlr = 
-function(evt) {
-	var fieldObj = this.getForm().parent;
-	fieldObj.searchAccounts(evt);
-}*/
+
 
 MoveAliasXDialog.prototype.getMyXForm = 
 function() {	
@@ -172,7 +148,9 @@ function() {
 								width:"200px", inputSize:30, editable:true, forceUpdate:true,
 								choices:new XFormChoices([], XFormChoices.OBJECT_REFERENCE_LIST, "name", "name"),
 								onChange: function(value, event, form){
-									if (( value instanceof ZaAccount)  && (value.id)){ //an account is selected
+									if ((( value instanceof ZaAccount) || value instanceof ZaDistributionList) 
+											&& (value.id)){ 
+										//an account or DL is selected
 										form.parent._button[MoveAliasXDialog.MOVE_BUTTON].setEnabled(true);
 									}
 									this.setInstanceValue(value);	

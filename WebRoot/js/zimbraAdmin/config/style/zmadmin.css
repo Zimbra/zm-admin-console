@@ -109,14 +109,8 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 
 
 /* other UI pieces */
-.ZaAppChooser {
-	margin-left:2px;
-	margin-top:5px;
-	height: 100%;
-}
 
-
-.currentAppLabel .Text {
+.currentAppLabel td {
 	font-size: 13px;
 	line-height:18px;
 	font-weight: bold;
@@ -289,7 +283,7 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .admin_xform_number_input_disabled {
 	width:5em;
 	background-color:transparent;
-	color:@_BaseColorD60_@;
+	color:@AppC+60@;
 }
 
 .admin_xform_name_input {
@@ -325,15 +319,18 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 	width:100%;
 }
 
+.SearchToolBar .ZToolbarTable {
+	width: 100%	
+}
+
 .SearchTBSearchField {
 	width:100%;
 }
 
-
-
-
-
-
+.LogoContainer {
+	left: 27px;
+	top: 6px;
+}
 
 .DwtTabViewPage .DwtButton { 
   width: 60px;
@@ -633,6 +630,82 @@ P, TD, DIV, SPAN, SELECT, INPUT, TEXTAREA, BUTTON {
 .ZaHighlightedText {
  @NoticeText@
 }
+
+.ZaStaleData {
+	font-style:italic;
+	@Text-disabled@
+}
+
+.ZaNowrapTitle {
+	@NoWrap@
+}
+
+
+
+/* normal buttons, like in a dialog */
+.ZaAppTabButton 							{				}
+
+
+.ZaAppTabButton .Text 						{	@NormalButtonText@				}
+
+.ZAppTabBorder 		{@AppTabContainer@ }
+
+.ZAppTabBorder { margin-top: 2px; }
+
+.ZSelected .ZAppTabBorder					{	@AppTabContainer-selected@	}
+.DwtTabButton .ZButtonBorder { border: none; background-color: transparent; }
+
+.ZaShowSavedSearchArrowButton ,
+.ZaShowSavedSearchArrowButton .ZWidget ,
+.ZaShowSavedSearchArrowButton .ZButtonBorder{
+	border: none ;		
+}
+
+.ZaShowSavedSearchArrowButton .ZWidgetTitle {
+	padding: 0px ;	
+}
+
+.ZaShowSavedSearchArrowButton .ZWidgetTable .ZLeftIcon div {
+	margin-left: 2px ;	
+}
+
+.ZToolbarButtonBorder,  .ZMenuItemBorder {
+	border: 2px solid transparent; 	
+#IFDEF MSIE
+	border: 1px solid transparent; 
+	border-color:@AppC+20@;	
+#ENDIF
+}
+
+.ZaSearchOptionViewSubHeader {
+	background-color:#F9F6F0;
+	border:thin solid;
+	margin:0px 0px 2px 2px;
+	text-align:center;
+}
+
+.ZaDownloadText {
+	margin-bottom:10px;
+	margin-left:3px;
+	margin-right:3px;
+	margin-top:5px;
+	font-size:12px;
+}
+
+/* Set the height of the advanced search button arbitrary */
+div.ZaAdvancedSearchButton table {
+	height: 24px ;	
+#IFDEF MSIE
+	height: 22px ;
+#ENDIF
+}
+
+.ZaSearchResultCountLabel {
+	#IFDEF MSIE
+		margin-top: 5px ;
+	#ENDIF
+}
+
 
 /* Search builder outer container */
 .ZaXMbxSearchBuilder {

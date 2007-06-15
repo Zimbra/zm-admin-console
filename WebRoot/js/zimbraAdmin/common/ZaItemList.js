@@ -29,7 +29,7 @@
 * @param constructor {Function) a reference to a constructor function which is called to create a single instance of an object contained in the list.
 * @param app {ZaApp} {@link ZaApp} a reference to an instance of ZaApp. This reference is passed to constructor when a ZaItem object is constructed.
 **/
-function ZaItemList(constructor, app) {
+ZaItemList = function(constructor, app) {
 
 	if (arguments.length == 0) return;
 	ZaModel.call(this, true);
@@ -52,10 +52,18 @@ function() {
 ZaItemList.prototype.replace =
 function (item, index) {
 	this._vector.replace(item, index);
-	if (item.id) {
+if (item.id) {
 		this._idHash[item.id] = item;
 	}	
 }
+
+ZaItemList.prototype.replaceItem =
+function (item) {
+	if (item.id) {
+		this._idHash[item.id] = item;
+	}
+}
+
 
 /**
 * Adds an item to the list.
@@ -191,10 +199,21 @@ function(resp) {
 				}
 				item.type = ix;	
 				item.initFromJS(arr[i]);
+				
+				//special cases
 				if (item instanceof ZaDomain && item.attrs[ZaDomain.A_domainType] == "alias"){
 					continue ;
 				}
-				this.add(item);			
+				if (item instanceof ZaAlias) {
+					item.attrs[ZaAlias.A_targetType] = arr[i][ZaAlias.A_targetType] ;
+					item.attrs[ZaAlias.A_targetAccount] = arr[i][ZaAlias.A_targetAccount] ;
+				}
+				
+				if(this._idHash[item.id]) {
+					this._idHash[item.id].initFromJS(arr[i]);
+				} else {
+					this.add(item);								
+				}
 			}
 		}  
 	}

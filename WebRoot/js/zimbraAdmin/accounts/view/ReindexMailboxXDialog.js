@@ -31,7 +31,7 @@
 * param w (width)
 * param h (height)
 **/
-function ReindexMailboxXDialog(parent,  app, w, h) {
+ReindexMailboxXDialog = function(parent,  app, w, h) {
 	if (arguments.length == 0) return;
 	ZaXDialog.call(this, parent, app, null, ZaMsg.Reindex_Title, null,null);
 	this.initForm(ZaReindexMailbox.myXModel,this.getMyXForm());
@@ -45,7 +45,7 @@ function ReindexMailboxXDialog(parent,  app, w, h) {
 
 ReindexMailboxXDialog.prototype = new ZaXDialog;
 ReindexMailboxXDialog.prototype.constructor = ReindexMailboxXDialog;
-ReindexMailboxXDialog.helpURL = "/zimbraAdmin/adminhelp/html/WebHelp/managing_accounts/re-indexing_a_mailbox.htm";		
+ReindexMailboxXDialog.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/re-indexing_a_mailbox.htm";		
 
 ReindexMailboxXDialog.prototype.popup = 
 function () {
