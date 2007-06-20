@@ -197,7 +197,7 @@ AjxEnv.DEFAULT_LOCALE = "<%=request.getLocale()%>";
 		var offlineMode = "<%= (offlineMode != null) ? offlineMode : "" %>";
 		var isDev = "<%= (isDev != null) ? isDev : "" %>";
 
-		ZmZimbraMail.run(document.domain, app, null, offlineMode, isDev);
+		ZmZimbraMail.run({domain:document.domain, app:app, offlineMode:offlineMode, devMode:isDev});
 	}
 
     //	START DOMContentLoaded
