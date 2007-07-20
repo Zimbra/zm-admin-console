@@ -152,12 +152,16 @@ function(msg, ex, noExecReset,style)  {
 		    detailStr += ex.detail;
 		    detailStr += "\n";			    
 		}
-		
 		if(!detailStr || detailStr == "") {
 			for (var ix in ex) {
 				detailStr += ix;
 				detailStr += ": ";
-				detailStr += ex[ix].toString();
+				try {
+					detailStr += ex[ix].toString();
+				} catch (e) {
+					//Continue reporting the error, we probably got a permission denied accessing the property
+					detailStr += "N/A";
+				}
 				detailStr += "\n";
 			}
 		}

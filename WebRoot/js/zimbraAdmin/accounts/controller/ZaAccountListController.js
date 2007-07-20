@@ -224,7 +224,7 @@ function (delegateToken, tokenLifetime, mailServer) {
 	if (tokenLifetime) {
 		html[i++] = "<input type='hidden' name='atl' value='" + tokenLifetime + "'>";
 	}
-			
+	
 	form.innerHTML = html.join('');
 		
 				
