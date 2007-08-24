@@ -69,3 +69,13 @@ ZaModel.getTimeZoneChoices = function () {
 }
 ZaModel.TIME_ZONE_CHOICES = ZaModel.getTimeZoneChoices() ;
 
+ZaModel.setUnrecoganizedTimezone = function (tz) {
+	var new_tz = "Unrecognized";
+	for (var i=0; i < ZaModel.TIME_ZONE_CHOICES.length; i ++) {
+		if (tz == ZaModel.TIME_ZONE_CHOICES[i].value) {
+			new_tz = tz ;
+			break ;
+		}	
+	}
+	return new_tz ;
+}
