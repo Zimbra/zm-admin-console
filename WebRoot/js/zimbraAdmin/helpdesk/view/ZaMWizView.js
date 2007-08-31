@@ -100,7 +100,9 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_}							
 							
 						]
-					},
+					}
+					/* disable for the bug 19041
+					,
 					{type:_GROUP_,numCols:4,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("MigrationWiz")},
@@ -109,7 +111,7 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 							{type:_CELLSPACER_}							
 							
 						]
-					}
+					}*/
 				]
 			},
 			{type:_SPACER_, colSpan:"*"},
