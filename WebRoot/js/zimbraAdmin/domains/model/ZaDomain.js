@@ -200,14 +200,16 @@ function(app) {
 		ignoreTooManyResultsException: true,
 		exceptionFrom: "ZaDomain.getAll"
 	}
-	
-	var resp = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse;
 	var list = new ZaItemList(ZaDomain, app);
-	if(resp != null) {
-		ZaSearch.TOO_MANY_RESULTS_FLAG = false;
-		list.loadFromJS(resp);		
-	}
-	return list;
+	var respResults = ZaSearch.searchDirectory(params);
+	if(respResults != null) {
+		var resp = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse;
+		if(resp != null) {
+			ZaSearch.TOO_MANY_RESULTS_FLAG = false;
+			list.loadFromJS(resp);		
+		}
+	} 
+	return list;	
 }
 
 /**
