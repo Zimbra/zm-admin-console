@@ -812,7 +812,11 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 									type:_SUPER_SELECT1_, msgName:ZaMsg.NAD_zimbraPrefMailItemsPerPage,
 									label:ZaMsg.NAD_zimbraPrefMailItemsPerPage, labelLocation:_LEFT_, 
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, valueLabel:null,
-									onChange:ZaTabView.onFormFieldChanged}
+									onChange:ZaTabView.onFormFieldChanged},
+								{ref:ZaAccount.A_zimbraPrefMailDefaultCharset, type:_SUPER_SELECT1_,
+									labelCssStyle:"width:175px", colSizes:["375px","190px"], 
+									msgName:ZaMsg.NAD_zimbraPrefMailDefaultCharset,label:ZaMsg.NAD_zimbraPrefMailDefaultCharset,
+									 labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS,  onChange:ZaTabView.onFormFieldChanged}
 							]
 						},
 						{type:_ZA_TOP_GROUPER_, id:"account_prefs_mail_receiving",

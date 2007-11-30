@@ -130,6 +130,7 @@ ZaAccount.A_zimbraPrefCalendarApptReminderWarningTime = "zimbraPrefCalendarApptR
 ZaAccount.A_zimbraPrefSkin = "zimbraPrefSkin";
 ZaAccount.A_zimbraPrefGalAutoCompleteEnabled = "zimbraPrefGalAutoCompleteEnabled";
 ZaAccount.A_zimbraPrefTimeZoneId = "zimbraPrefTimeZoneId";
+ZaAccount.A_zimbraPrefMailDefaultCharset = "zimbraPrefMailDefaultCharset";
 //features
 ZaAccount.A_zimbraFeaturePop3DataSourceEnabled = "zimbraFeaturePop3DataSourceEnabled";
 ZaAccount.A_zimbraFeatureIdentitiesEnabled = "zimbraFeatureIdentitiesEnabled";
@@ -1251,6 +1252,7 @@ ZaAccount.myXModel = {
 		{id:ZaAccount.A_prefMailSignature, type:_STRING_, ref:"attrs/"+ZaAccount.A_prefMailSignature},
 		{id:ZaAccount.A_prefMailSignatureEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_prefMailSignatureEnabled},
 		//preferences
+		{id:ZaAccount.A_zimbraPrefMailDefaultCharset,type:_COS_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefMailDefaultCharset, choices:ZaSettings.mailCharsetChoices},
 		{id:ZaAccount.A_zimbraPrefSentMailFolder, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefSentMailFolder},
 		{id:ZaAccount.A_zimbraPrefIncludeSpamInSearch, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefIncludeSpamInSearch, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A_zimbraPrefIncludeTrashInSearch, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefIncludeTrashInSearch, choices:ZaModel.BOOLEAN_CHOICES},
@@ -1514,6 +1516,15 @@ function () {
 		}
 	}
 
+	//handle the unrecognized mail charset
+	var mdc = this.attrs[ZaAccount.A_zimbraPrefMailDefaultCharset] ;
+	if (mdc) {
+		var n_mdc = ZaModel.setUnrecoganizedChoiceValue(mdc, ZaSettings.mailCharsetChoices) ;
+		if (mdc != n_mdc) {
+			this.attrs[ZaAccount.A_zimbraPrefMailDefaultCharset] = n_mdc ;
+			warning += AjxMessageFormat.format(ZaMsg.WARNING_CHARSET_INVALID , [ mdc, "account - \"" + this.name +"\""]);
+		}
+	}
 	//display warnings about the if manageSpecialAttrs return value
 	if (warning && warning.length > 0) {
 		this._app.getCurrentController().popupMsgDialog (warning, true);
