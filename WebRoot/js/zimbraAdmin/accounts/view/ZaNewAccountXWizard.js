@@ -185,7 +185,6 @@ function() {
 						types: [ZaSearch.DLS,ZaSearch.ALIASES,ZaSearch.ACCOUNTS,ZaSearch.RESOURCES],
 						controller: this._app.getCurrentController()
 					 };
-					
 		try {			
 			var resp = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse;		
 		} catch (ex) {
