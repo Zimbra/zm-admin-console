@@ -601,7 +601,7 @@ function (tmpObj, account, app) {
 	tmpObj.attrs[ZaAccount.A_mail] = tmpObj.name;	
 	var resp;	
 	//create SOAP request
-	var soapDoc = AjxSoapDoc.create("CreateAccountRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("CreateAccountRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.set(ZaAccount.A_name, tmpObj.name);
 	if(tmpObj.attrs[ZaAccount.A_password] && tmpObj.attrs[ZaAccount.A_password].length > 0)
 		soapDoc.set(ZaAccount.A_password, tmpObj.attrs[ZaAccount.A_password]);
@@ -759,7 +759,7 @@ function(mods) {
 	}
 	
 	//update the object
-	var soapDoc = AjxSoapDoc.create("ModifyAccountRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("ModifyAccountRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.set("id", this.id);
 	for (var aname in mods) {
 		//multy value attribute
@@ -811,7 +811,7 @@ ZaItem.modifyMethods["ZaAccount"].push(ZaAccount.modifyMethod);
 ZaAccount.getViewMailLink = 
 function(accId, app) {
 	var retVal={authToken:"", lifetime:0};
-	var soapDoc = AjxSoapDoc.create("DelegateAuthRequest", "urn:zimbraAdmin", null);	
+	var soapDoc = AjxSoapDoc.create("DelegateAuthRequest", ZaZimbraAdmin.URN, null);	
 	var attr = soapDoc.set("account", accId);
 	attr.setAttribute("by", "id");
 	
@@ -860,7 +860,7 @@ ZaReindexMailbox.myXModel = {
 
 ZaAccount.prototype.remove = 
 function(callback) {
-	var soapDoc = AjxSoapDoc.create("DeleteAccountRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("DeleteAccountRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.set("id", this.id);
 	this.deleteCommand = new ZmCsfeCommand();
 	var params = new Object();
@@ -874,7 +874,7 @@ function(callback) {
 
 ZaAccount.getReindexStatus = 
 function (mbxId, callback) {
-	var soapDoc = AjxSoapDoc.create("ReIndexRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("ReIndexRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.getMethod().setAttribute("action", "status");
 	var attr = soapDoc.set("mbox", null);
 	attr.setAttribute("id", mbxId);
@@ -903,7 +903,7 @@ function (mbxId, callback) {
 
 ZaAccount.startReindexMailbox = 
 function (mbxId, callback) {
-	var soapDoc = AjxSoapDoc.create("ReIndexRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("ReIndexRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.getMethod().setAttribute("action", "start");
 	var attr = soapDoc.set("mbox", null);
 	attr.setAttribute("id", mbxId);
@@ -929,7 +929,7 @@ function (mbxId, callback) {
 
 ZaAccount.abortReindexMailbox = 
 function (mbxId, callback) {
-	var soapDoc = AjxSoapDoc.create("ReIndexRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("ReIndexRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.getMethod().setAttribute("action", "cancel");
 	var attr = soapDoc.set("mbox", null);
 	attr.setAttribute("id", mbxId);
@@ -1158,7 +1158,7 @@ function() {
 
 ZaAccount.loadMethod = 
 function(by, val, withCos) {
-	var soapDoc = AjxSoapDoc.create("GetAccountRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("GetAccountRequest", ZaZimbraAdmin.URN, null);
 	if(withCos) {
 		soapDoc.getMethod().setAttribute("applyCos", "1");	
 	} else {
@@ -1177,7 +1177,7 @@ function(by, val, withCos) {
 	this.attrs = new Object();
 	this.initFromJS(resp.account[0]);
 
-	soapDoc = AjxSoapDoc.create("GetMailboxRequest", "urn:zimbraAdmin", null);
+	soapDoc = AjxSoapDoc.create("GetMailboxRequest", ZaZimbraAdmin.URN, null);
 	var mbox = soapDoc.set("mbox", "");
 	mbox.setAttribute("id", this.attrs[ZaItem.A_zimbraId]);
 	try {
@@ -1263,7 +1263,7 @@ function (newName) {
 **/
 ZaAccount.renameMethod = 
 function (newName) {
-	var soapDoc = AjxSoapDoc.create("RenameAccountRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("RenameAccountRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.set("id", this.id);
 	soapDoc.set("newName", newName);	
 	var command = new ZmCsfeCommand();
@@ -1279,7 +1279,7 @@ ZaAccount.renameMethods.push(ZaAccount.renameMethod);
 **/
 ZaAccount.changePasswordMethod = 
 function (newPassword) {
-	var soapDoc = AjxSoapDoc.create("SetPasswordRequest", "urn:zimbraAdmin", null);
+	var soapDoc = AjxSoapDoc.create("SetPasswordRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.set("id", this.id);
 	soapDoc.set("newPassword", newPassword);	
 	var command = new ZmCsfeCommand();
@@ -1546,7 +1546,7 @@ function (value, event, form){
 		}else if (!ZaSettings.COSES_ENABLED ){
 			if ((!p._domains) || (!p._domains[newDomainName])){
 				//send the GetDomainRequest
-				var soapDoc = AjxSoapDoc.create("GetDomainRequest", "urn:zimbraAdmin", null);	
+				var soapDoc = AjxSoapDoc.create("GetDomainRequest", ZaZimbraAdmin.URN, null);	
 				var domainEl = soapDoc.set("domain", newDomainName);
 				domainEl.setAttribute ("by", "name");
 				//var getDomainCommand = new ZmCsfeCommand();
