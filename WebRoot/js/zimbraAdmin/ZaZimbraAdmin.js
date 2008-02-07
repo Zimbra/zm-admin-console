@@ -46,8 +46,8 @@ ZaZimbraAdmin.prototype.constructor = ZaZimbraAdmin;
 ZaZimbraAdmin._instance = null;
 
 ZaZimbraAdmin.ADMIN_APP = "admin";
-ZaZimbraAdmin.currentUserName = "" ;
-
+currentUserName = "" ;
+ZaZimbraAdmin.URN = "urn:zimbraAdmin";
 ZaZimbraAdmin.VIEW_INDEX = 0;
 
 ZaZimbraAdmin._ADDRESSES = ZaZimbraAdmin.VIEW_INDEX++;
