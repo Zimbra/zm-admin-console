@@ -333,7 +333,7 @@ function (resp) {
 				ZaZimbraAdmin.currentUserName = attrsArr["displayName"];
 		}	
 		//fallback to email address	
-		if (ZaZimbraAdmin.currentUserName.length <=0 && resp.Body.GetInfoResponse.name){
+		if ((!ZaZimbraAdmin.currentUserName || ZaZimbraAdmin.currentUserName.length <=0) && resp.Body.GetInfoResponse.name){
 			ZaZimbraAdmin.currentUserName = resp.Body.GetInfoResponse.name;
 		}
 	}
