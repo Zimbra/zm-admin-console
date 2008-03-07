@@ -28,6 +28,7 @@ AjxPackage.require("zimbraAdmin.common.ZaXDialog");
 AjxPackage.require("zimbraAdmin.common.ZaXWizardDialog");
 AjxPackage.require("zimbraAdmin.common.LDAPURL_XFormItem");
 AjxPackage.require("zimbraAdmin.common.HostPort_XFormItem");
+AjxPackage.require("zimbraAdmin.common.EmailAddr_FormItem");
 AjxPackage.require("zimbraAdmin.common.MailQuota_XModelItem");
 AjxPackage.require("zimbraAdmin.common.Super_XFormItems");
 AjxPackage.require("zimbraAdmin.common.ZaSplashScreen");
@@ -163,5 +164,3 @@ AjxPackage.require("zimbraAdmin.mta.view.ZaMTAListView");
 AjxPackage.require("zimbraAdmin.mta.view.ZaMTAXFormView");
 AjxPackage.require("zimbraAdmin.mta.view.ZaMTAActionDialog");
 AjxPackage.require("zimbraAdmin.accounts.view.ZaAccountMemberOfListView");
-
-AjxPackage.require("zimbraAdmin.common.EmailAddr_FormItem");
