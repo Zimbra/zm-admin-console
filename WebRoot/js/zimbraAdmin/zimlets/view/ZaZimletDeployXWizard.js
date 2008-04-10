@@ -43,7 +43,7 @@ ZaXDialog.XFormModifiers["ZaZimletDeployXWizard"] = new Array();
 ZaZimletDeployXWizard.ZimletUploadFormId = null;
 ZaZimletDeployXWizard.ZimletUploadAttachmentInputId = null;	
 
-ZaZimletDeployXWizard.prototype.getUploadFormHtml =
+ZaZimletDeployXWizard.getUploadFormHtml =
 function (){
 	ZaZimletDeployXWizard.ZimletUploadFormId = Dwt.getNextId();
 	ZaZimletDeployXWizard.ZimletUploadAttachmentInputId = Dwt.getNextId();	
@@ -59,20 +59,9 @@ function (){
 	html[idx++] = ZaZimletDeployXWizard.ZimletUploadFormId;
 	html[idx++] = "' enctype='multipart/form-data'><input id='";
 	html[idx++] = ZaZimletDeployXWizard.ZimletUploadAttachmentInputId;
-	html[idx++] = "' type=file  name='zimletFile' size='50' onChange=\"ZaZimletDeployXWizard.changeDeployBtnState(this,event||window.event,'" +this.getHTMLElId() +"')\"></input>";
+	html[idx++] = "' type=file  name='zimletFile' size='50'></input>";
 	html[idx++] = "</form></div>";
 	return html.join("");
-}
-
-ZaZimletDeployXWizard.changeDeployBtnState = function (obj, ev, DwtObjId) {
-	var wiz = DwtControl.ALL_BY_ID[DwtObjId];
-	if(wiz) {
-		if(obj.value) {
-			wiz.getButton(DwtWizardDialog.NEXT_BUTTON).setEnabled(true);
-		} else {
-			wiz.getButton(DwtWizardDialog.NEXT_BUTTON).setEnabled(false);
-		}
-	}
 }
 
 /**
@@ -94,7 +83,7 @@ function(entry) {
 ZaZimletDeployXWizard.prototype.popup = 
 function (loc) {
 	ZaXWizardDialog.prototype.popup.call(this, loc);
-	this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
+	this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
 	this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
 	this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);	
 	this._button[DwtWizardDialog.NEXT_BUTTON].setText(ZaMsg.ZMLT_DeployZimlet);		
@@ -130,24 +119,19 @@ function(uploadManager) {
 
 ZaZimletDeployXWizard.prototype.goNext = 
 function() {
-	var inputElement = document.getElementById(ZaZimletDeployXWizard.ZimletUploadAttachmentInputId);
-	if(inputElement && inputElement.value) {
-		this.setUploadManager(new AjxPost(this.getUploadFrameId()));
-		var zimletUploadCallback = new AjxCallback(this, this.uploadCallback);
-		var um = this.getUploadManager() ; 
-		window._uploadManager = um;
-		try {
-			um.execute(zimletUploadCallback, document.getElementById (ZaZimletDeployXWizard.ZimletUploadFormId));
-		} catch (ex) {
-			this._app.getCurrentController().popupErrorDialog(ZaMsg.ZMLT_zimletFileNameError) ;
-		}
-		this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-		this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);	
-		this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
-		ZaXWizardDialog.prototype.goNext.call(this);
-	} else {
+	this.setUploadManager(new AjxPost(this.getUploadFrameId()));
+	var zimletUploadCallback = new AjxCallback(this, this.uploadCallback);
+	var um = this.getUploadManager() ; 
+	window._uploadManager = um;
+	try {
+		um.execute(zimletUploadCallback, document.getElementById (ZaZimletDeployXWizard.ZimletUploadFormId));
+	} catch (ex) {
 		this._app.getCurrentController().popupErrorDialog(ZaMsg.ZMLT_zimletFileNameError) ;
 	}
+	this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
+	this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);	
+	this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
+	ZaXWizardDialog.prototype.goNext.call(this);
 }
 
 ZaZimletDeployXWizard.prototype.goPrev = 
@@ -264,7 +248,7 @@ ZaZimletDeployXWizard.myXFormModifier = function(xFormObject) {
 		type:_CASE_, numCols:1,relevant:"instance[ZaModel.currentStep] == 1",align:_LEFT_,valign:_TOP_,
 		items: [
 			{ type:_OUTPUT_, value: ZaMsg.ZMLT_uploadTitle, align: _LEFT_},
-			{ type:_OUTPUT_, value: this.getUploadFormHtml() }
+			{ type:_OUTPUT_, value: ZaZimletDeployXWizard.getUploadFormHtml() }
 		]
 	};
 	var case2 = {
