@@ -630,7 +630,7 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 									relevantBehavior:_HIDE_
 								},
 								{type:_TEXTAREA_, ref:ZaDomain.A_GALSyncTestMessage, label:ZaMsg.Domain_GALTestMessage, height:"200px", width:"380px",
-									relevant:"(instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_SKIPPED)",
+									relevant:"((instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_SKIPPED) && (instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_OK))",
 									relevantBehavior:_HIDE_
 								}
 							]
