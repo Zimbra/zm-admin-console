@@ -72,18 +72,18 @@ function(domain, now, isDragProxy) {
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
-		var field = this._headerList[i]._field;
-		if(field == ZaDomain.A_domainName) {
+		var id = this._headerList[i]._id;
+		if(id.indexOf(ZaDomain.A_domainName)==0) {
 			// name
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.name);
 			html[idx++] = "</nobr></td>";
-		} else if(field == ZaDomain.A_description) {
+		} else if(id.indexOf(ZaDomain.A_description)==0) {
 			// description		
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.attrs[ZaDomain.A_description]);
 			html[idx++] = "</nobr></td>";
-		} else if(field == ZaDomain.A_zimbraDomainStatus) {
+		} else if(id.indexOf(ZaDomain.A_zimbraDomainStatus)==0) {
 			// description		
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = ZaDomain._domainStatus(domain.attrs[ZaDomain.A_zimbraDomainStatus]);

@@ -356,13 +356,13 @@ function(mbx, now, isDragProxy) {
 		var percent = null ;
 		var percentInt = null ;
 		for(var i = 0; i < cnt; i++) {
-			var field = this._headerList[i]._field;
-			if(field == ZaServerMBXStatsPage.XFORM_ITEM_ACCOUNT) {
+			var id = this._headerList[i]._id;
+			if(id.indexOf(ZaServerMBXStatsPage.XFORM_ITEM_ACCOUNT) == 0) {
 				// account
 				html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
 				html[idx++] = AjxStringUtil.htmlEncode(mbx[ZaServerMBXStatsPage.XFORM_ITEM_ACCOUNT]);				
 				html[idx++] = "</nobr></td>";
-			} else if (field == ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE){ //this must before the QUOTA
+			} else if (id.indexOf(ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE) == 0){ //this must before the QUOTA
 				// quota usage
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 				//html[idx++] = AjxStringUtil.htmlEncode(mbx[ZaServerMBXStatsPage.XFORM_ITEM_QUOTAUSAGE]);
@@ -387,12 +387,12 @@ function(mbx, now, isDragProxy) {
 //				html[idx++] = "<div>Add the progress bar</div>";
 				html[idx++] = "</td>";	
 				progressBar.dispose ();		
-			} else if(field == ZaServerMBXStatsPage.XFORM_ITEM_QUOTA) {
+			} else if(id.indexOf(ZaServerMBXStatsPage.XFORM_ITEM_QUOTA) == 0) {
 				// quota
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(mbx[ZaServerMBXStatsPage.XFORM_ITEM_QUOTA]);
 				html[idx++] = "</td>";
-			} else if (field == ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE) {
+			} else if (id.indexOf(ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE) == 0) {
 				// mbx size
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(mbx[ZaServerMBXStatsPage.XFORM_ITEM_DISKUSAGE]);

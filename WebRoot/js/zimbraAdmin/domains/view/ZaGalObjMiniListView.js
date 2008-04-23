@@ -58,13 +58,13 @@ function(account, now, isDragProxy) {
 	} else if(this._headerList) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
-			var field = this._headerList[i]._field;
-		 	if(field == "fullName") {
+			var id = this._headerList[i]._id;
+		 	if(id.indexOf("fullName")==0) {
 				// name
 				html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 				html[idx++] = AjxStringUtil.htmlEncode(account.fullName);
 				html[idx++] = "</nobr></td>";
-			} else if (field == "email") {
+			} else if (id.indexOf("email")==0) {
 				// display name
 				html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 				html[idx++] = AjxStringUtil.htmlEncode(account.email);

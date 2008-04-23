@@ -100,10 +100,10 @@ function(account, now, isDragProxy) {
 	
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
-		var field = this._headerList[i]._field;
+		var id = this._headerList[i]._id;
 		var IEWidth = this._headerList[i]._width + 4 ;
 		
-		if(field == "type") {
+		if(id.indexOf("type")==0) {
 			// type
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 			switch(account.type) {
@@ -135,17 +135,17 @@ function(account, now, isDragProxy) {
 				break;
 			}
 			html[idx++] = "</td>";
-		} else if(field == ZaAccount.A_name) {
+		} else if(id.indexOf(ZaAccount.A_name)==0) {
 			// name
 			html[idx++] = "<td nowrap width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(account.name);
 			html[idx++] = "</nobr></td>";
-		} else if (field == ZaAccount.A_displayname) {
+		} else if (id.indexOf(ZaAccount.A_displayname)==0) {
 			// display name
 			html[idx++] = "<td nowrap width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaAccount.A_displayname]);
 			html[idx++] = "</nobr></td>";	
-		} else if(field == ZaAccount.A_accountStatus) {
+		} else if(id.indexOf(ZaAccount.A_accountStatus)==0) {
 			// status
 			html[idx++] = "<td width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			var status = "";
@@ -158,17 +158,17 @@ function(account, now, isDragProxy) {
 			} 
 			html[idx++] = status;
 			html[idx++] = "</nobr></td>";		
-		} else if (field == ZaAccount.A_zimbraLastLogonTimestamp) {
+		} else if (id.indexOf(ZaAccount.A_zimbraLastLogonTimestamp)==0 ) {
 			// display last login time for accounts only
 			html[idx++] = "<td nowrap width=" + (AjxEnv.isIE ? IEWidth : this._headerList[i]._width) + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(ZaAccount.getLastLoginTime(account.attrs[ZaAccount.A_zimbraLastLogonTimestamp]));
 			html[idx++] = "</nobr></td>";	
-		} else if (field == ZaAccount.A_description) {		
+		} else if (id.indexOf(ZaAccount.A_description)==0) {		
 			// description
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaAccount.A_description]);
 			html[idx++] = "</nobr></td>";	
-		} else if (field == "target" + ZaAlias.A_targetType) {
+		} else if (id.indexOf("target" + ZaAlias.A_targetType) == 0) {
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
 			var targetType = account.attrs[ZaAlias.A_targetType] ;
 			var targetType_desc ;
@@ -179,7 +179,7 @@ function(account, now, isDragProxy) {
 			}
 			html[idx++] = AjxStringUtil.htmlEncode(targetType_desc);
 			html[idx++] = "</nobr></td>";
-		} else if (field == ZaAlias.A_targetAccount) {
+		} else if (id.indexOf(ZaAlias.A_targetAccount) == 0) {
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaAlias.A_targetAccount]);
 			html[idx++] = "</nobr></td>";

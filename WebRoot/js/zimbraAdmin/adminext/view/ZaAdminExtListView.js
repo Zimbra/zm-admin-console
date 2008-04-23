@@ -69,13 +69,13 @@ function(zimlet, now, isDragProxy) {
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
-		var field = this._headerList[i]._field;
-		if(field == ZaZimlet.A_name) {	
+		var id = this._headerList[i]._id;
+		if(id.indexOf(ZaZimlet.A_name)==0) {	
 			// name
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(zimlet[ZaZimlet.A_name]);
 			html[idx++] = "</nobr></td>";
-		} else if(field == ZaZimlet.A_zimbraZimletDescription) {	
+		} else if(id.indexOf(ZaZimlet.A_zimbraZimletDescription )==0) {	
 			// description
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(zimlet.attrs[ZaZimlet.A_zimbraZimletDescription ]);

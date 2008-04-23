@@ -93,35 +93,35 @@ function(mta, now, isDragProxy) {
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
-		var field = this._headerList[i]._field;
-		if(field == ZaMTA.A_Servername) {	
+		var id = this._headerList[i]._id;
+		if(id.indexOf(ZaMTA.A_Servername)==0) {	
 			// name
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 			html[idx++] = AjxStringUtil.htmlEncode(mta[ZaMTA.A_name]);
 			html[idx++] = "</td>";
-		} else if(field == ZaMTA.A_DeferredQ) {	
+		} else if(id.indexOf(ZaMTA.A_DeferredQ)==0) {	
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><span id='" + (itemId+"_"+ZaMTA.A_DeferredQ)+ "'>";
 
 
 			html[idx++] = mta[ZaMTA.A_DeferredQ][ZaMTA.A_count];
 			html[idx++] = "</span></td>";
-		} else if(field == ZaMTA.A_IncomingQ) {	
+		} else if(id.indexOf(ZaMTA.A_IncomingQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><span id='" + (itemId+"_"+ZaMTA.A_IncomingQ)+ "'>";
 
 			html[idx++] = mta[ZaMTA.A_IncomingQ][ZaMTA.A_count];
 			html[idx++] = "</span></td>";
-		}  else if(field == ZaMTA.A_ActiveQ) {	
+		}  else if(id.indexOf(ZaMTA.A_ActiveQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><span id='" + (itemId+"_"+ZaMTA.A_ActiveQ)+ "'>";
 			html[idx++] = mta[ZaMTA.A_ActiveQ][ZaMTA.A_count];
 			html[idx++] = "</span></td>";
-		} else if(field == ZaMTA.A_CorruptQ) {	
+		} else if(id.indexOf(ZaMTA.A_CorruptQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><span id='" + (itemId+"_"+ZaMTA.A_CorruptQ)+ "'>";
 			html[idx++] = mta[ZaMTA.A_CorruptQ][ZaMTA.A_count];
 			html[idx++] = "</span></td>";
-		} else if(field == ZaMTA.A_HoldQ) {	
+		} else if(id.indexOf(ZaMTA.A_HoldQ)==0) {	
 
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><span id='" + (itemId+"_"+ZaMTA.A_HoldQ)+ "'>";
 			html[idx++] = mta[ZaMTA.A_HoldQ][ZaMTA.A_count];

@@ -25,12 +25,10 @@
 * Abstract class list views. All the List views in the Admin panel extend this class.
 * @author Greg Solovyev
 **/
-ZaListView = function(parent, className, posStyle, headerList, view) {
+ZaListView = function(parent, className, posStyle, headerList) {
 	if (arguments.length == 0) return;
-	var id = view ? DwtId.getListViewId(view) : null;
-	DwtListView.call(this, {parent:parent, className:className, posStyle:posStyle,
-							headerList:headerList, view:view, id:id});
-
+	DwtListView.call(this, parent, className, posStyle, headerList);
+	this.setViewPrefix(this.getHTMLElId());
 	//bug: 18787
 	//Set the ListView Div DwtControl.SCROLL(overflow: auto) And the Rows Dwt.VISIBLE
     //In this way, the view of lists can be controlled by the scroll of the list view 
@@ -105,7 +103,7 @@ ZaListView.prototype._mouseOutAction =
 function(mouseEv, div) {
 	if (div._type == DwtListView.TYPE_HEADER_ITEM) {
 		if(this._headerList[div._itemIndex]._sortable) {
-			div.className = (div.id != this._currentColId) ? "DwtListView-Column" : "DwtListView-Column DwtListView-ColumnActive"
+			div.className = div.id != this._currentColId ? "DwtListView-Column" : "DwtListView-Column DwtListView-ColumnActive"
 		}
 	}else if (div._type == DwtListView.TYPE_HEADER_SASH) {
 		div.style.cursor = "auto";
@@ -116,8 +114,7 @@ function(mouseEv, div) {
 ZaListView.prototype._setListEvent =
 function (ev, listEv, clickedEl) {
 	DwtListView.prototype._setListEvent.call(this, ev, listEv, clickedEl);
-	var parts = ev.target.id.split(DwtId.SEP);
-	listEv.field = parts && parts[2];
+	listEv.field = ev.target.id.substring(0, 3);
 	return true;
 }
 
@@ -149,9 +146,8 @@ function () {
 	}
 }
 
-ZaListHeaderItem = function(idPrefix, text, iconInfo, width, sortable, sortField, resizeable, visible) {
-	DwtListHeaderItem.call(this, {field:idPrefix, text:text, icon:iconInfo, width:width, sortable:sortable,
-								  resizeable:resizeable, visible:visible});
+ZaListHeaderItem = function(idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible) {
+	DwtListHeaderItem.call(this, idPrefix, label, iconInfo, width, sortable, resizeable, visible);
 	this._sortField = sortField;	
 	this._initialized = false;
 }
@@ -167,5 +163,5 @@ function() {
 
 ZaListHeaderItem.prototype.getLabel = 
 function () {
-	return this._text;
+	return this._label;
 }

@@ -558,18 +558,18 @@ ZaAccountMemberOfListView.prototype._createItemHtml = function (group, now, isDr
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			//if ()
-			var field = this._headerList[i]._field;
-			if(field == ZaAccountMemberOfListView.A_name) {
+			var id = this._headerList[i]._id;
+			if(id.indexOf(ZaAccountMemberOfListView.A_name) == 0) {
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(group[ZaAccountMemberOfListView.A_name]);				
 				html[idx++] = "</td>";			
 			}  /*
-			else if(field == ZaAccountMemberOfListView.A_isgroup) {
+			else if(id.indexOf(ZaAccountMemberOfListView.A_isgroup) == 0) {
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(group[ZaAccountMemberOfListView.A_isgroup] ? ZaMsg.Yes : ZaMsg.No);
 				html[idx++] = "</td>";
 			}*/
-			else if(field == ZaAccountMemberOfListView.A_via) {
+			else if(id.indexOf(ZaAccountMemberOfListView.A_via) == 0) {
 				html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(group[ZaAccountMemberOfListView.A_via]);
 				html[idx++] = "</td>";

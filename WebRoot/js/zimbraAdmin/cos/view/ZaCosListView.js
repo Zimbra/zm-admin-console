@@ -71,13 +71,13 @@ function(cos, no, isDragProxy) {
 
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
-		var field = this._headerList[i]._field;
-		if(field == ZaCos.A_name) {
+		var id = this._headerList[i]._id;
+		if(id.indexOf(ZaCos.A_name)==0) {
 		// name
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(cos.name);
 			html[idx++] = "</nobr></td>";
-		} else if (field == ZaCos.A_description) {
+		} else if (id.indexOf(ZaCos.A_description)==0) {
 			// description
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(cos.attrs[ZaCos.A_description]);
