@@ -34,7 +34,7 @@ LDAPURL_XFormItem.prototype.defPort = "389";
 LDAPURL_XFormItem.prototype.initializeItems = function () {
 	var ldapPort = this.getInheritedProperty("ldapPort");
 	var ldapSSLPort = this.getInheritedProperty("ldapSSLPort");
-	this._portPart=this.defPort = (ldapPort ? ldapPort : "389");
+	this.defPort = ldapPort ? ldapPort : "389";
     this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";	
 	Composite_XFormItem.prototype.initializeItems.call(this);
 }
