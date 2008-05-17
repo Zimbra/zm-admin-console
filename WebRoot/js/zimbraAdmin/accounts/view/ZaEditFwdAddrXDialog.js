@@ -29,12 +29,11 @@ ZaEditFwdAddrXDialog = function(parent,  app, w, h, title) {
     this._helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/forwarding_mail.htm";
     this._containedObject = {};
 	this.initForm(ZaAlias.myXModel,this.getMyXForm());
-	this._helpURL = ZaEditFwdAddrXDialog.helpURL;
 }
 
 ZaEditFwdAddrXDialog.prototype = new ZaXDialog;
 ZaEditFwdAddrXDialog.prototype.constructor = ZaEditFwdAddrXDialog;
-ZaEditFwdAddrXDialog.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/forwarding_mail.htm";
+
 ZaEditFwdAddrXDialog.prototype.getMyXForm = 
 function() {	
 	var xFormObject = {
