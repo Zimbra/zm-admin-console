@@ -188,18 +188,6 @@ function(msg, noExecReset)  {
 	}
 }
 
-
-ZaController.prototype.popupWarningDialog = 
-function(msg, noExecReset)  {
-	if (!noExecReset)
-		this._execFrame = {func: null, args: null, restartOnError: false};
-	
-	// popup alert
-	this._msgDialog.setMessage(msg, DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
-	if (!this._msgDialog.isPoppedUp()) {
-		this._msgDialog.popup();
-	}
-}
 ZaController.prototype.getControllerForView =
 function(view) {
 //	DBG.println(AjxDebug.DBG1, "*** controller not found for view " + view);
@@ -525,7 +513,7 @@ function (resp) {
 	 		var response = resp.getResponse();
 	 		var body = response.Body;		
 	 		
-	 		ZmCsfeCommand.setAuthToken(body.AuthResponse.authToken, -1, body.AuthResponse.sessionId.id);
+	 		ZmCsfeCommand.setAuthToken(body.AuthResponse.authToken, -1, body.AuthResponse.session.id);
 	 		
 			//Instrumentation code start
 			if(ZaAuthenticate.processResponseMethods) {
