@@ -47,7 +47,7 @@ ZaAccountListController = function(appCtxt, container, app) {
 }
 
 ZaAccountListController.prototype = new ZaListViewController();
-ZaAccountListController.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/provisioning_accounts.htm?locid="+AjxEnv.DEFAULT_LOCALE;
+ZaAccountListController.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/provisioning_accounts.htm";
 ZaController.initToolbarMethods["ZaAccountListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaAccountListController"] = new Array();
 ZaListViewController.changeActionsStateMethods["ZaAccountListController"] = new Array(); 
