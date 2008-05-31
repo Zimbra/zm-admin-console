@@ -93,7 +93,7 @@ ZaController.initPopupMenuMethods = new Object();
 ZaController.setViewMethods = new Object();
 
 
-ZaController.helpURL = location.pathname + "adminhelp/html/WebHelp/administration_console_help.htm";
+ZaController.helpURL = location.pathname + ZaUtil.HELP_URL + "administration_console_help.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 // Public methods
 ZaController.prototype.toString = 
 function() {
@@ -525,7 +525,7 @@ function (resp) {
 	 		var response = resp.getResponse();
 	 		var body = response.Body;		
 	 		
-	 		ZmCsfeCommand.setAuthToken(body.AuthResponse.authToken, -1, body.AuthResponse.sessionId.id);
+	 		ZmCsfeCommand.setAuthToken(body.AuthResponse.authToken, -1, body.AuthResponse.session.id);
 	 		
 			//Instrumentation code start
 			if(ZaAuthenticate.processResponseMethods) {
