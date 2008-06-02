@@ -23,8 +23,6 @@
 
 ZaUtil = function() {};
 
-ZaUtil.HELP_URL = "help/admin/html/";
-
 /*
  * @param v: all the valid life time value is end with smhd
  */
