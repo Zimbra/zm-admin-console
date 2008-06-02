@@ -46,7 +46,7 @@ DeleteAcctsPgrsDlg = function(parent,  app, w, h) {
 DeleteAcctsPgrsDlg._ERROR_MSG = "errorMsg";
 DeleteAcctsPgrsDlg._STATUS = "status";
 DeleteAcctsPgrsDlg._DELETED_ACCTS = "deletedAccounts";
-DeleteAcctsPgrsDlg.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/provisioning_accounts.htm?locid="+AjxEnv.DEFAULT_LOCALE;
+DeleteAcctsPgrsDlg.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/provisioning_accounts.htm";
 
 DeleteAcctsPgrsDlg.myXModel = {
 	getDeletedAccounts: function (model, instance) {
