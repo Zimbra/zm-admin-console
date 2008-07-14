@@ -670,12 +670,22 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject) {
 						},
 						{ref:ZaDomain.A_GalLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL, repeatInstance:"", showAddButton:true, showRemoveButton:true,  
 							addButtonLabel:ZaMsg.Domain_AddURL, 
+							relevant:"(instance.attrs[ZaDomain.A_GALServerType]==ZaDomain.GAL_ServerType_ad)",
 							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,
 							showAddOnNextRow:true,
 							items: [
 								{ref:".", type:_LDAPURL_, label:null,ldapSSLPort:"3269",ldapPort:"3268",  labelLocation:_NONE_}
 							]
 						},
+						{ref:ZaDomain.A_GalLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL, repeatInstance:"", showAddButton:true, showRemoveButton:true,  
+							addButtonLabel:ZaMsg.Domain_AddURL, 
+							relevant:"(instance.attrs[ZaDomain.A_GALServerType]==ZaDomain.GAL_ServerType_ldap)",
+							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,
+							showAddOnNextRow:true,
+							items: [
+								{ref:".", type:_LDAPURL_, label:null,ldapSSLPort:"636",ldapPort:"389",  labelLocation:_NONE_}
+							]
+						},						
 						{ref:ZaDomain.A_GalLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_GALServerType] == ZaDomain.GAL_ServerType_ldap", relevantBehavior:_DISABLE_},
 						{ref:ZaDomain.A_zimbraGalAutoCompleteLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_zimbraGalAutoCompleteLdapFilter, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_GALServerType] == 'ldap'", relevantBehavior:_DISABLE_},						
 						{ref:ZaDomain.A_GalLdapSearchBase, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapSearchBase, labelLocation:_LEFT_}
@@ -713,7 +723,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject) {
 							]
 						},
 						{ref:ZaDomain.A_zimbraGalSyncLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,
-							relevant:"ZaNewDomainXWizard.getGalSyncConfigSeparate.call(item)",
+							relevant:"(ZaNewDomainXWizard.getGalSyncConfigSeparate.call(item) && (instance.attrs[ZaDomain.A_GALSyncServerType]==ZaDomain.GAL_ServerType_ad))",
 							relevantBehavior:_DISABLE_,
 							addButtonLabel:ZaMsg.Domain_AddURL, 
 							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
@@ -722,6 +732,16 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject) {
 								{ref:".", type:_LDAPURL_, label:null,ldapSSLPort:"3269",ldapPort:"3268",  labelLocation:_NONE_}
 							]
 						},
+						{ref:ZaDomain.A_zimbraGalSyncLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,
+							relevant:"(ZaNewDomainXWizard.getGalSyncConfigSeparate.call(item) && (instance.attrs[ZaDomain.A_GALSyncServerType]==ZaDomain.GAL_ServerType_ldap))",
+							relevantBehavior:_DISABLE_,
+							addButtonLabel:ZaMsg.Domain_AddURL, 
+							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
+							showAddOnNextRow:true,							
+							items: [
+								{ref:".", type:_LDAPURL_, label:null,ldapSSLPort:"636",ldapPort:"389",  labelLocation:_NONE_}
+							]
+						},						
 						{ref:ZaDomain.A_zimbraGalSyncLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, textWrapping:"soft", 
 							relevant:"ZaNewDomainXWizard.getGalSyncLdapFilterEnabled.call(item)",
 							relevantBehavior:_DISABLE_
