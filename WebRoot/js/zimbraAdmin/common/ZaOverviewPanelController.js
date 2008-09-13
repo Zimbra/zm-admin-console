@@ -619,7 +619,7 @@ function() {
 	if(ZaSettings.ADDRESSES_ENABLED)
 		this._addressesTi.setExpanded(true, false);
 
-	if(ZaSettings.SYSTEM_CONFIG_ENABLED || ZaSettings.COSES_ENABLED || ZaSettings.SERVERS_ENABLED || ZaSettings.ADMIN_ZIMLETS_ENABLED || ZaSettings.ZIMLETS_ENABLED|| ZaSettings.GLOBAL_CONFIG_ENABLED || ZaSettings.DOMAIN_MX_RECORD_CHECK_ENABLED || ZaSettings.DOMAINS_ENABLED)	
+	if(ZaSettings.SYSTEM_CONFIG_ENABLED)	
 		this._configTi.setExpanded(true, false);
 	
 	if(ZaSettings.MONITORING_ENABLED)
