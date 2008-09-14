@@ -197,17 +197,13 @@ function () {
 				(this._currentObject.attrs[a] == undefined || this._currentObject.attrs[a] == null) && 
 				( (tmpObj.attrs[a] == "") || (tmpObj.attrs[a] == null) ) 
 			 )) {
-			if(this._currentObject.attrs[a] && tmpObj.attrs[a]) {
-				if(!(tmpObj.attrs[a] instanceof Array))
-					tmpObj.attrs[a] = [tmpObj.attrs[a]];
-				
-				if(!(this._currentObject.attrs[a] instanceof Array))
-					this._currentObject.attrs[a] = [this._currentObject.attrs[a]];	
-				
-				if(tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
-					mods[a] = tmpObj.attrs[a];
-					haveSmth = true;
-				} 
+			if(tmpObj.attrs[a] instanceof Array) {
+					if(this._currentObject.attrs[a] && tmpObj.attrs[a] 
+						&& tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
+						mods[a] = tmpObj.attrs[a];
+						haveSmth = true;
+					}	
+			} else if(tmpObj.attrs[a] != this._currentObject.attrs[a]) {
 			} else {
 				mods[a] = tmpObj.attrs[a];
 				haveSmth = true;
