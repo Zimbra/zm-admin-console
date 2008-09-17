@@ -199,25 +199,22 @@ function () {
 
 
 	for(var a in tmpObj.attrs) {
-		if(a == ZaItem.A_zimbraId || a==ZaDomain.A_domainName )
+		if(a == ZaItem.A_zimbraId || a==ZaDomain.A_domainName || a == ZaDomain.A_domainType)
 			continue;
 		
-		if (!( 
-				(this._currentObject.attrs[a] == undefined || this._currentObject.attrs[a] == null) && 
+		if (!( (this._currentObject.attrs[a] == undefined || this._currentObject.attrs[a] == null) &&
 				( (tmpObj.attrs[a] == "") || (tmpObj.attrs[a] == null) ) 
 			 )) {
-			if(this._currentObject.attrs[a] && tmpObj.attrs[a]) {
-				if(!(tmpObj.attrs[a] instanceof Array))
-					tmpObj.attrs[a] = [tmpObj.attrs[a]];
-				
-				if(!(this._currentObject.attrs[a] instanceof Array))
-					this._currentObject.attrs[a] = [this._currentObject.attrs[a]];	
-				
-				if(tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
-					mods[a] = tmpObj.attrs[a];
-					haveSmth = true;
-				} 
-			} else {
+			if(tmpObj.attrs[a] instanceof Array) {
+					if((this._currentObject.attrs[a] && tmpObj.attrs[a]
+						&& tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf())
+                        || (this._currentObject.attrs[a] == null && tmpObj.attrs[a] != null)
+                        || (this._currentObject.attrs[a] != null && (tmpObj.attrs[a] == null || tmpObj.attrs[a].length == 0)) )
+                    {
+						mods[a] = tmpObj.attrs[a];
+						haveSmth = true;
+					}	
+			} else if(tmpObj.attrs[a] != this._currentObject.attrs[a]) {
 				mods[a] = tmpObj.attrs[a];
 				haveSmth = true;
 			}
