@@ -1632,7 +1632,7 @@ function (value, event, form){
 				var domain = new ZaItem ();
 				domain.initFromJS (resp.domain[0]);
 				*/
-				var domain = ZaDomain.getDomainByName(newDomainName,form.parent._app);
+				var domain = ZaDomain.getDomainByName(newDomainName,form.parent._app)
 				//keep the domain instance, so the future call is not needed.
 				//it is used in new account and edit account
 				if (p._domains) {
