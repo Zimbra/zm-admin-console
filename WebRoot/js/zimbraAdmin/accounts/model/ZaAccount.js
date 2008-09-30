@@ -1625,6 +1625,7 @@ function (value, event, form){
         /*
         else if (!ZaSettings.COSES_ENABLED ){
 			if ((!p._domains) || (!p._domains[newDomainName])){
+				var domain = ZaDomain.getDomainByName(newDomainName,form.parent._app)
 				//keep the domain instance, so the future call is not needed.
 				//it is used in new account and edit account
 				if (p._domains) {
