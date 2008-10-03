@@ -442,9 +442,8 @@ function (domainItem, resp) {
 			this._domainList.loadFromJS(response);
 			this._appCtxt.getAppController().getOverviewPanelController().updateDomainList(this._domainList);				
 			EmailAddr_XFormItem.domainChoices.setChoices(this._domainList.getArray());
-			EmailAddr_XFormItem.domainChoices.setHasMore(response.more);
-			EmailAddr_XFormItem.domainChoices.setTotalAvailable(response.searchTotal);
 			EmailAddr_XFormItem.domainChoices.dirtyChoices();
+			
 			if (domainItem != null && domainItem instanceof XFormItem && this._domainList.size() <= 0) {
 				domainItem.setError(ZaMsg.ERROR_NO_SUCH_DOMAIN) ;
 				var event = new DwtXFormsEvent(this, domainItem, domainItem.getInstanceValue());
