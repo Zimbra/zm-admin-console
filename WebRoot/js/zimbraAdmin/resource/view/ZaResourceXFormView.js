@@ -77,9 +77,15 @@ function(entry) {
 		/**
 		* If this account does not have a COS assigned to it - assign default COS
 		**/
-		this._containedObject.cos = ZaCos.getCosById(this._containedObject.attrs[ZaResource.A_COSId], this._app);
+		if(this._containedObject.attrs[ZaResource.A_COSId]) {
+			this._containedObject.cos = ZaCos.getCosById(this._containedObject.attrs[ZaResource.A_COSId], this._app);
+		}
+		
 		if(!this._containedObject.cos) {
 			this._containedObject.cos = ZaCos.getCosByName("default", this._app);
+			this._containedObject[ZaResource.A2_autoCos] = "TRUE" ;
+		} else {
+			this._containedObject[ZaResource.A2_autoCos] = "FALSE" ;
 		}
 		if(!this._containedObject.cos) {
 			var cosList = this._app.getCosList().getArray();
@@ -134,18 +140,19 @@ function(entry) {
 
 ZaResourceXFormView.onCOSChanged = 
 function(value, event, form) {
-	/*var cosList = form.getController().getCosList().getArray();
-	var cnt = cosList.length;
-	for(var i = 0; i < cnt; i++) {
-		if(cosList[i].id == value) {
-			form.getInstance().cos = cosList[i];
-			break;
-		}
-	}*/
-	form.getInstance().cos = ZaCos.getCosById(value,form.parent._app)
 	form.parent.setDirty(true);
+	if(ZaItem.ID_PATTERN.test(value))  {
+		form.getInstance().cos = ZaCos.getCosById(value, form.parent._app);
+		this.setInstanceValue(value);
+	} else {
+		form.getInstance().cos = ZaCos.getCosByName(value, form.parent._app);
+		if(form.getInstance().cos) {
+			//value = form.getInstance().cos.id;
+			value = form.getInstance().cos.id;
+		} 
+	}
 	this.setInstanceValue(value);
-	return value;
+    return value;
 }
 
 ZaResourceXFormView.onRepeatRemove = 
@@ -218,9 +225,44 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject) {
 	}]};
 	if(ZaSettings.COSES_ENABLED) {
 		setupGroup.items.push(
-			{ref:ZaResource.A_COSId, type:_OSELECT1_, msgName:ZaMsg.NAD_ClassOfService,
+			/*{ref:ZaResource.A_COSId, type:_OSELECT1_, msgName:ZaMsg.NAD_ClassOfService,
 				label:ZaMsg.NAD_ClassOfService, labelLocation:_LEFT_, 
 				choices:this._app.getCosListChoices(), onChange:ZaResourceXFormView.onCOSChanged
+			}*/
+			{type:_GROUP_, numCols:3, nowrap:true, label:ZaMsg.NAD_ClassOfService, labelLocation:_LEFT_,
+				items: [
+					{ref:ZaResource.A_COSId, type:_DYNSELECT_,label: null, 
+						onChange:ZaResourceXFormView.onCOSChanged,
+						relevant:"instance[ZaResource.A2_autoCos]==\"FALSE\"",relevantBehavior:_DISABLE_ ,
+						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,choices:this.cosChoices,
+						dataFetcherClass:ZaSearch,editable:true,getDisplayValue:function(newValue) {
+								// dereference through the choices array, if provided
+								//newValue = this.getChoiceLabel(newValue);
+								if(ZaItem.ID_PATTERN.test(newValue)) {
+									var cos = ZaCos.getCosById(newValue, this.getForm().parent._app);
+									if(cos)
+										newValue = cos.name;
+								} 
+								if (newValue == null) {
+									newValue = "";
+								} else {
+									newValue = "" + newValue;
+								}
+								return newValue;
+							}
+					},
+					{ref:ZaResource.A2_autoCos, type:_CHECKBOX_, 
+						msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
+						trueValue:"TRUE", falseValue:"FALSE" ,
+						elementChanged: function(elementValue,instanceValue, event) {
+							this.getForm().parent.setDirty(true);
+							if(elementValue=="TRUE") {
+								ZaAccount.setDefaultCos(this.getInstance(), this.getForm().parent._app);	
+							}
+							this.getForm().itemChanged(this, elementValue, event);
+						}
+					}
+				]
 			}
 		);
 	}			
