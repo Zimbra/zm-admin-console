@@ -726,12 +726,12 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 									cssStyle:"margin-bottom:10px;padding-bottom:0px;margin-top:10px;pxmargin-left:10px;margin-right:10px;",
 									items: [
 										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
-											onActivate:"ZaAccountXFormView.deleteAliasButtonListener.call(this);",
+											onActivate:"ZaAccountXFormView.deleteAliasButtonListener.call(this);",id:"deleteAliasButton",
 											relevant:"ZaAccountXFormView.isDeleteAliasEnabled.call(this)", relevantBehavior:_DISABLE_
 										},
 										{type:_CELLSPACER_},
 										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Edit,width:"100px",
-											onActivate:"ZaAccountXFormView.editAliasButtonListener.call(this);",
+											onActivate:"ZaAccountXFormView.editAliasButtonListener.call(this);",id:"editAliasButton",
 											relevant:"ZaAccountXFormView.isEditAliasEnabled.call(this)", relevantBehavior:_DISABLE_
 										},
 										{type:_CELLSPACER_},

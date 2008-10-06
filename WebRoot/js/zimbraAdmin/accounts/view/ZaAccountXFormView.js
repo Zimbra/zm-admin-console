@@ -336,6 +336,7 @@ ZaAccountXFormView.deleteAliasButtonListener = function () {
 				
 		}
 	}
+	instance.alias_selection_cache=[];
 	this.getForm().parent.setDirty(true);
 	this.getForm().refresh();
 }
