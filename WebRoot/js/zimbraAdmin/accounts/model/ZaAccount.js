@@ -239,9 +239,7 @@ ZaAccount.RESULTSPERPAGE = ZaSettings.RESULTSPERPAGE;
 
 ZaAccount.A2_accountTypes = "accountTypes" ; //used to save the account types available to this account based on domain
 ZaAccount.A2_previousName = "previousName" ;
-ZaAccount.A2_alias_selection_cache = "alias_selection_cache";
-ZaAccount.A2_fwdAddr_selection_cache = "fwdAddr_selection_cache";
-ZaAccount.A2_fp_selection_cache = "fp_selection_cache"; 
+
 ZaAccount.checkValues = 
 function(tmpObj, app) {
 	/**
@@ -1531,9 +1529,6 @@ ZaAccount.myXModel = {
 		{id:ZaAccount.A2_autodisplayname, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A2_autoMailServer, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A2_autoCos, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaAccount.A2_alias_selection_cache, type:_LIST_},
-		{id:ZaAccount.A2_fwdAddr_selection_cache, type:_LIST_},
-		{id:ZaAccount.A2_fp_selection_cache, type:_LIST_},
 		{id:ZaAccount.A_zimbraHideInGal, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideInGal, choices:ZaModel.BOOLEAN_CHOICES},
 
 		//security
@@ -1544,6 +1539,18 @@ ZaAccount.myXModel = {
 
         //interop             
         {id:ZaAccount.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" +  ZaAccount.A_zimbraFreebusyExchangeUserOrg, type:_COS_STRING_}
+        /* , Put these model items into the ZaAccounteMemberOfListView
+		{id:ZaAccount.A2_isgroup, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_isgroup},
+		{id:ZaAccount.A2_directMemberList, type: _DWT_LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_directMemberList},
+		{id:ZaAccount.A2_indirectMemberList, type: _DWT_LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_indirectMemberList},
+		{id:ZaAccount.A2_nonMemberList, type: _DWT_LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_nonMemberList},
+		{id:ZaAccount.A2_directMemberList + "_offset", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_nonMemberList + "_offset", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_directMemberList + "_more", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_nonMemberList + "_more", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_showSameDomain, type: _ENUM_, choices:ZaModel.BOOLEAN_CHOICES, 
+			ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_showSameDomain, defaultValue: "FALSE" },
+		{id:"query", type:_STRING_} */
 	]
 };
 
@@ -1618,6 +1625,7 @@ function (value, event, form){
         /*
         else if (!ZaSettings.COSES_ENABLED ){
 			if ((!p._domains) || (!p._domains[newDomainName])){
+				var domain = ZaDomain.getDomainByName(newDomainName,form.parent._app)
 				//keep the domain instance, so the future call is not needed.
 				//it is used in new account and edit account
 				if (p._domains) {
@@ -1795,9 +1803,6 @@ ZaAccount.isEmailRetentionPolicyEnabled = function () {
     return true ;
 }
 
-ZaAccount.isEmailRetentionPolicyDisabled = function () {
-	return !ZaAccount.isEmailRetentionPolicyEnabled.call(this);
-}
 
 ZaAccount.getAccountTypeOutput = function (isNewAccount) {
     var form = this.getForm () ;
