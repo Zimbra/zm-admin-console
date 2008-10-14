@@ -798,13 +798,27 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
                             type:_SUPER_TEXTFIELD_,  textFieldWidth: "200px",
                             label:ZaMsg.NAD_zimbraSkinLogoAppBanner,
                             labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-                            onChange:ZaTabView.onFormFieldChanged
+                            onChange: ZaDomainXFormView.onAppLogoURLChange
+//                            onChange:ZaTabView.onFormFieldChanged
                         },
+                        { type:_SPACER_, height: 5 },
+                        {type:_OUTPUT_, id:ZaDomainXFormView.LogoAppBannerPreviewId,
+                            label:ZaMsg.NAD_zimbraLogoAppBannerPreview,
+                            getDisplayValue: ZaDomainXFormView.getAppLogoPreview,
+                            labelLocation:_LEFT_
+                        },
+                        { type:_SPACER_, height: 5 },
                         {ref:ZaDomain.A_zimbraSkinLogoLoginBanner,
                             type:_SUPER_TEXTFIELD_,  textFieldWidth: "200px",
                             label:ZaMsg.NAD_zimbraSkinLogoLoginBanner,
                             labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-                            onChange:ZaTabView.onFormFieldChanged
+                            onChange: ZaDomainXFormView.onLoginLogoURLChange
+                        },
+                        { type:_SPACER_, height: 5 },                            
+                        {type:_OUTPUT_, id:ZaDomainXFormView.LogoLoginBannerPreviewId,
+                            label:ZaMsg.NAD_zimbraLogoLoginBannerPreview,
+                            getDisplayValue: ZaDomainXFormView.getLoginLogoPreview,
+                            labelLocation:_LEFT_
                         }
                     ]
                 }
@@ -812,13 +826,63 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
 		};
     	switchGroup.items.push(case8);
 	}
-
     
     xFormObject.items.push(tabBar);
 	xFormObject.items.push(switchGroup);
 }
 
 ZaTabView.XFormModifiers["ZaDomainXFormView"].push(ZaDomainXFormView.myXFormModifier);
+
+ZaDomainXFormView.LogoAppBannerPreviewId = Dwt.getNextId() ;
+
+ZaDomainXFormView.onAppLogoURLChange = function (value, event, form) {
+    ZaTabView.onFormFieldChanged.call (this, value, event, form) ;
+
+    var appBannerPreviewItem = form.getItemsById (ZaDomainXFormView.LogoAppBannerPreviewId) [0];
+    appBannerPreviewItem.updateElement(ZaDomainXFormView.getAppLogoPreview.call(this)) ;
+}
+
+ZaDomainXFormView.getAppLogoPreview = function () {
+    var width =  120 ;
+    var height = 35 ;
+    var form = this.getForm ();
+    var instance = form.getInstance () ;
+    var src = instance.attrs [ZaDomain.A_zimbraSkinLogoAppBanner] ;
+
+    if (src == null && instance.cos != null)
+         var src = instance.cos.attrs [ZaDomain.A_zimbraSkinLogoAppBanner];
+
+    var out = AjxBuffer.concat ("<img width=", width, " height=", height,
+				" alt='", ZaMsg.AppBannerAlt , "' src=\"", src, "\"",
+			">")
+
+    return out ;
+}
+
+ZaDomainXFormView.LogoLoginBannerPreviewId = Dwt.getNextId() ;
+
+ZaDomainXFormView.onLoginLogoURLChange = function (value, event, form) {
+    ZaTabView.onFormFieldChanged.call (this, value, event, form) ;
+
+    var loginBannerPreviewItem = form.getItemsById (ZaDomainXFormView.LogoLoginBannerPreviewId) [0];
+    loginBannerPreviewItem.updateElement(ZaDomainXFormView.getLoginLogoPreview.call(this)) ;
+}
+
+ZaDomainXFormView.getLoginLogoPreview = function () {
+    var width =  450 ;
+    var height = 100 ;
+    var form = this.getForm ();
+    var instance = form.getInstance () ;
+    var src = instance.attrs [ZaDomain.A_zimbraSkinLogoLoginBanner]  ;
+    if (src == null && instance.cos != null)
+             var src =  instance.cos.attrs [ZaDomain.A_zimbraSkinLogoLoginBanner];
+
+    var out = AjxBuffer.concat ("<img width=", width, " height=", height,
+				" alt='", ZaMsg.LoginBannerAlt , "' src=\"", src, "\"",
+			">")
+
+    return out ;
+}
 
 
 ZaAccMiniListView = function(parent, className, posStyle, headerList) {
