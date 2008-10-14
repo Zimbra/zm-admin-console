@@ -754,7 +754,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
        	var case8 = {type:_ZATABCASE_, id:"domain_form_skin_tab", colSizes:["auto"],numCols:1,
         	relevant:("instance[ZaModel.currentTab] == " + tabIx),
 			items:[
-            	{type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_Skin_Settings,//colSizes:["175px","*"],
+            	{type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_Skin_Color_Settings,//colSizes:["175px","*"],
 					items: [
                     	{ref:ZaDomain.A_zimbraSkinForegroundColor,
                             type:_SUPER_DWT_COLORPICKER_,
@@ -765,27 +765,50 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
                             resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                             onChange:ZaTabView.onFormFieldChanged
                         }  ,
-                        {ref:ZaGlobalConfig.A_zimbraSkinBackgroundColor,
+                        {ref:ZaDomain.A_zimbraSkinBackgroundColor,
                             type:_SUPER_DWT_COLORPICKER_,
                             label:ZaMsg.NAD_zimbraSkinBackgroundColor,
                             labelLocation:_LEFT_,  resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                             onChange:ZaTabView.onFormFieldChanged
                         }  ,
-                        {ref:ZaGlobalConfig.A_zimbraSkinSecondaryColor,
+                        {ref:ZaDomain.A_zimbraSkinSecondaryColor,
                             type:_SUPER_DWT_COLORPICKER_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                             label:ZaMsg.NAD_zimbraSkinSecondaryColor,
                             labelLocation:_LEFT_,
                             onChange:ZaTabView.onFormFieldChanged
                         },
-                        {ref:ZaGlobalConfig.A_zimbraSkinSelectionColor,
+                        {ref:ZaDomain.A_zimbraSkinSelectionColor,
                             type:_SUPER_DWT_COLORPICKER_,
                             label:ZaMsg.NAD_zimbraSkinSelectionColor,
                             labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                             onChange:ZaTabView.onFormFieldChanged
                         }
 					]
-				}
-			]
+				},
+                    
+                {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_Skin_Logo_Settings,//colSizes:["175px","*"],
+					items: [
+                       {ref:ZaDomain.A_zimbraSkinLogoURL,
+                            type:_SUPER_TEXTFIELD_,  textFieldWidth: "200px",
+                            label:ZaMsg.NAD_zimbraSkinLogoURL,
+                            labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                            onChange:ZaTabView.onFormFieldChanged
+                        },
+                        {ref:ZaDomain.A_zimbraSkinLogoAppBanner,
+                            type:_SUPER_TEXTFIELD_,  textFieldWidth: "200px",
+                            label:ZaMsg.NAD_zimbraSkinLogoAppBanner,
+                            labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                            onChange:ZaTabView.onFormFieldChanged
+                        },
+                        {ref:ZaDomain.A_zimbraSkinLogoLoginBanner,
+                            type:_SUPER_TEXTFIELD_,  textFieldWidth: "200px",
+                            label:ZaMsg.NAD_zimbraSkinLogoLoginBanner,
+                            labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                            onChange:ZaTabView.onFormFieldChanged
+                        }
+                    ]
+                }
+            ]
 		};
     	switchGroup.items.push(case8);
 	}

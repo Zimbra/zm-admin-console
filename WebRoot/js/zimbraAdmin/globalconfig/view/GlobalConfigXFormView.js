@@ -561,9 +561,32 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject) {
                                     onChange:ZaTabView.onFormFieldChanged
                                 }
                             ]
+                        },
+
+                        {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_Skin_Logo_Settings,//colSizes:["175px","*"],
+                            items: [
+                                {ref:ZaGlobalConfig.A_zimbraSkinLogoURL,
+                                    type:_TEXTFIELD_,
+                                    label:ZaMsg.NAD_zimbraSkinLogoURL,
+                                    labelLocation:_LEFT_, width: 200,
+                                    onChange:ZaTabView.onFormFieldChanged
+                                } ,
+                                {ref:ZaGlobalConfig.A_zimbraSkinLogoAppBanner,
+                                    type:_TEXTFIELD_,
+                                    label:ZaMsg.NAD_zimbraSkinLogoAppBanner,
+                                    labelLocation:_LEFT_, width: 200,
+                                    onChange:ZaTabView.onFormFieldChanged
+                                } ,
+                                {ref:ZaGlobalConfig.A_zimbraSkinLogoLoginBanner,
+                                    type:_TEXTFIELD_,
+                                    label:ZaMsg.NAD_zimbraSkinLogoLoginBanner,
+                                    labelLocation:_LEFT_, width: 200,
+                                    onChange:ZaTabView.onFormFieldChanged
+                                }
+                            ]
                         }
-					]                    
-				}
+                    ]
+                }
             ]
 		}
 	];
