@@ -421,8 +421,7 @@ function () {
 
 ZaServerXFormView.currentVolumeChanged = function (value, event, form) {
 	this.getInstance()[ZaServer.A_Volumes]._version++;
-	this.setInstanceValue(value);
-	return value;
+	ZaTabView.onFormFieldChanged.call(this, value, event, form);
 }
 /**
 * This method is added to the map {@link ZaTabView#XFormModifiers}
@@ -897,7 +896,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject) {
 				
 				}
             ]
-		}
+		},
 
     ];
 };
