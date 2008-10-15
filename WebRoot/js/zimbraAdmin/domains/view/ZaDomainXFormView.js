@@ -345,8 +345,7 @@ function (value, event, form) {
 		var oldVal = this.getInstanceValue();
 		return oldVal;
 	} else {
-		this.setInstanceValue(value);
-		return value;
+		return ZaTabView.onFormFieldChanged.call(this, value, event, form);
 	}
 }
 
@@ -739,7 +738,8 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
                     	{type:_ZIMLET_SELECT_,
                             selectRef:ZaDomain.A_zimbraZimletDomainAvailableZimlets,
 							ref:ZaDomain.A_zimbraZimletDomainAvailableZimlets,
-							choices:ZaDomainXFormView.zimletChoices
+							choices:ZaDomainXFormView.zimletChoices,
+							onChange: ZaTabView.onFormFieldChanged
 						}
 					]
 				}
