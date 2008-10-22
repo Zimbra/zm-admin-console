@@ -225,6 +225,8 @@ ZaDomain.A_zimbraSkinLogoURL ="zimbraSkinLogoURL" ;
 ZaDomain.A_zimbraSkinLogoLoginBanner = "zimbraSkinLogoLoginBanner" ;
 ZaDomain.A_zimbraSkinLogoAppBanner = "zimbraSkinLogoAppBanner" ;
 
+ZaDomain.A_zimbraPrefTimeZoneId = "zimbraPrefTimeZoneId" ;
+
 //result codes returned from Check* requests
 ZaDomain.Check_OK = "check.OK";
 ZaDomain.Check_UNKNOWN_HOST="check.UNKNOWN_HOST";
@@ -1320,7 +1322,8 @@ ZaDomain.myXModel = {
 		{id:ZaDomain.A_GALSampleQuery, type:_STRING_,required:true},
 		{id:ZaDomain.A_AuthUseBindPassword, type:_STRING_,type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaDomain.A_AuthLdapSearchBindPasswordConfirm, type:_STRING_},				
-		{id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep, maxInclusive:2147483647}, 
+		{id:ZaDomain.A_zimbraPrefTimeZoneId,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraPrefTimeZoneId, choices:ZaSettings.timeZoneChoices},
+        {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep, maxInclusive:2147483647},
 		{id:ZaDomain.A_GALTestSearchResults, ref:ZaDomain.A_GALTestSearchResults, type:_LIST_, 
 			listItem: {type:_OBJECT_, 
 				items:[
