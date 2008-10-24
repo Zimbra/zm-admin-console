@@ -28,6 +28,7 @@ ZaDLXFormView = function(parent, app) {
 		{value:"enabled", label:ZaMsg.DL_Status_enabled}, 
 		{value:"disabled", label:ZaMsg.DL_Status_disabled}
 	];
+	this.TAB_INDEX = 0;
 	this.initForm(ZaDistributionList.myXModel,this.getMyXForm());
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaDLXFormView.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaDLXFormView.prototype.handleXFormChange));	
@@ -135,7 +136,7 @@ function(evt) {
 **/
 ZaDLXFormView.getMemberSelection = 
 function () {
-	var memberItem = this.getItemsById("members")[0];
+	var memberItem = this.getItemsById(ZaDistributionList.A2_members )[0];
 	var membersSelection = null;
 	if(memberItem) {
 		var membersSelection = memberItem.getSelection();
@@ -158,11 +159,12 @@ ZaDLXFormView.shouldEnableMemberListButtons = function() {
 * method of the XForm
 **/
 ZaDLXFormView.shouldEnableRemoveAllButton = function() {
-	var list = this.getForm().getItemsById("members")[0].widget.getList();
+	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaDistributionList.A2_members)));
+	/*var list = this.getForm().getItemsById(ZaDistributionList.A2_members)[0].widget.getList();
 	if (list != null) {
 		return ( list.size() > 0);
 	}
-	return false;
+	return false;*/
 };
 
 /**
@@ -244,7 +246,7 @@ ZaDLXFormView.addListToMemberList = function (list) {
 	if (this.getInstance().addMembers(list)) {
 		this.refresh();
 	}
-	this.getItemsById("members")[0].widget.setSelectedItems(list);
+	this.getItemsById(ZaDistributionList.A2_members )[0].widget.setSelectedItems(list);
 	this.getItemsById('removeButton')[0].widget.setEnabled(true);
 	this.parent.setDirty(true);
 };
@@ -347,7 +349,6 @@ function (orderby, isascending) {
 }
 
 
-
 ZaDLXFormView.myXFormModifier = function(xFormObject) {	
 	var sourceHeaderList = new Array();
 	var sortable=1;
@@ -362,7 +363,19 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 	var directMemberOfHeaderList = new ZaAccountMemberOfsourceHeaderList(ZaAccountMemberOfsourceHeaderList.DIRECT);
 	var indirectMemberOfHeaderList = new ZaAccountMemberOfsourceHeaderList(ZaAccountMemberOfsourceHeaderList.INDIRECT);
 	var nonMemberOfHeaderList = new ZaAccountMemberOfsourceHeaderList(ZaAccountMemberOfsourceHeaderList.NON);
+    
+    this.tabChoices = new Array();
 	
+	var _tab1 = ++this.TAB_INDEX;
+	var _tab2 = ++this.TAB_INDEX;	
+	var _tab3 = ++this.TAB_INDEX;	
+	var _tab4 = ++this.TAB_INDEX;	
+	
+	this.tabChoices.push({value:_tab1, label:ZaMsg.DLXV_TabMembers});
+	this.tabChoices.push({value:_tab2, label:ZaMsg.DLXV_TabNotes});
+	this.tabChoices.push({value:_tab3, label:ZaMsg.TABT_MemberOf});
+    this.tabChoices.push({value:_tab4, label:ZaMsg.TABT_Aliases});
+    	
 	xFormObject.tableCssStyle = "width:100%;overflow:auto;";
 	xFormObject.numCols=5;
 	xFormObject.colSizes = [10,"auto", 20, "auto", 10];
@@ -388,64 +401,58 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 			],
 			cssStyle:"padding-top:5px; padding-bottom:5px"
 		},
-		{type:_TAB_BAR_, choices:
-				[ 
-					{value:1, label:ZaMsg.DLXV_TabMembers}, 
-					{value:2, label:ZaMsg.DLXV_TabNotes},
-					{value:3, label:ZaMsg.TABT_MemberOf},
-					{value:4, label:ZaMsg.TABT_Aliases}
-				], 
+		{type:_TAB_BAR_, choices:this.tabChoices,
 			ref: ZaModel.currentTab, colSpan:"*",cssClass:"ZaTabBar", id:"xform_tabbar"
 		},
 		{type:_SWITCH_,
 			items:[
-				{type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 1",  numCols:2,  colSizes: ["50%","50%"], //["50%","47%", "3%"],
+				{type:_ZATABCASE_,  caseKey:_tab1,  numCols:2,  colSizes: ["50%","50%"], //["50%","47%", "3%"],
 				  items:[
 					 {type:_GROUP_, width: "98%", numCols: 1,  //colSizes:[10,120,"auto",20],
 						items:[	
  						    //{type:_CELLSPACER_, width:10, rowSpan:9},
  						    {type:_SPACER_, height:"5"}, 						    
  						    {type: _GROUP_, width: "98%", numCols: 2, colSizes:[100, "*"], items: [
- 						    		{ref:ZaAccount.A_name, type:_EMAILADDR_, msgName:ZaMsg.DLXV_LabelListName, label: ZaMsg.DLXV_LabelListName +":", 
-        								onChange:ZaTabView.onFormFieldChanged, forceUpdate:true, tableCssStyle: "width:100", inputWidth:"100",
+ 						    		{ref:ZaAccount.A_name, type:_EMAILADDR_, msgName:ZaMsg.DLXV_LabelListName, label: ZaMsg.DLXV_LabelListName +":", forceUpdate:true, tableCssStyle: "width:100", inputWidth:"100",
         								id:"dl_name_field"
         							},
         						    {ref:ZaAccount.A_displayname, type:_TEXTFIELD_, label:ZaMsg.NAD_DisplayName+":", msgName:ZaMsg.NAD_DisplayName,width:"100%",
-        						    	cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged, align: _LEFT_
+        						    	cssClass:"admin_xform_name_input", align: _LEFT_
         						    },							
         						    {ref:ZaAccount.A_description, type:_TEXTFIELD_, label: ZaMsg.DLXV_LabelDescription+":",msgName: ZaMsg.DLXV_LabelDescription, width:"100%",
-        						    	cssClass:"admin_xform_name_input", onChange:ZaTabView.onFormFieldChanged
+        						    	cssClass:"admin_xform_name_input"
         						    },
         							{ref: "zimbraMailStatus", type:_CHECKBOX_, trueValue:"enabled", falseValue:"disabled", align:_LEFT_,
         								label:ZaMsg.DLXV_LabelEnabled, msgName:ZaMsg.DLXV_LabelEnabled, labelLocation:_LEFT_,
-        								labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
+        								labelCssClass:"xform_label", cssStyle:"padding-left:0px"
         							},	
-        							/*{ref:ZaDistributionList.A_isgroup, type:_CHECKBOX_, trueValue:1, falseValue:0, align:_LEFT_,
-        								label:ZaMsg.DLXV_LabelIsgroup, msgName:ZaMsg.DLXV_LabelIsgroup, labelLocation:_LEFT_,labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
-        							},*/					    
-        							{ref:ZaAccount.A_zimbraHideInGal, type:_CHECKBOX_, trueValue:"TRUE", falseValue:"FALSE", align:_LEFT_,
-        								label:ZaMsg.NAD_zimbraHideInGal, msgName:ZaMsg.NAD_zimbraHideInGal, labelLocation:_LEFT_,labelCssClass:"xform_label", cssStyle:"padding-left:0px", onChange:ZaTabView.onFormFieldChanged
+	       							{ref:ZaAccount.A_zimbraHideInGal, type:_CHECKBOX_, trueValue:"TRUE", falseValue:"FALSE", align:_LEFT_,
+        								label:ZaMsg.NAD_zimbraHideInGal, msgName:ZaMsg.NAD_zimbraHideInGal, labelLocation:_LEFT_,labelCssClass:"xform_label", cssStyle:"padding-left:0px"
         							}
     							]
 							},
 					        {type:_SPACER_, height:"3"},
 					        {type:_OUTPUT_, value:ZaMsg.DLXV_LabelListMembers,  cssClass:"xform_label_left",
-        								width: AjxEnv.isIE ? 100 : 94, cssStyle:"text-align: right;"
-        								},
-							{ref:"members", type:_DWT_LIST_, height:"338", width:"98%", cssClass: "DLTarget", cssStyle:"margin-left: 5px; ",
-								widgetClass:ZaAccMiniListView, headerList:membersHeaderList,hideHeader:true},
+        						width: AjxEnv.isIE ? 100 : 94, cssStyle:"text-align: right;"
+        					},
+							{ref:ZaDistributionList.A2_members , type:_DWT_LIST_, height:"338", width:"98%", 
+								cssClass: "DLTarget", cssStyle:"margin-left: 5px; ",
+								widgetClass:ZaAccMiniListView, headerList:membersHeaderList,hideHeader:true
+							},
 					        {type:_SPACER_, height:"8"},
 						    {type:_GROUP_, width:"98%", numCols:8, colSizes:[85,5, 85,"100%",80,5,80,5], 
 								items:[
 									{type:_DWT_BUTTON_, label:ZaMsg.DLXV_ButtonRemoveAll, width:80, 
-									   relevant:"ZaDLXFormView.shouldEnableRemoveAllButton.call(item)",
-									   onActivate:"ZaDLXFormView.removeAllMembers.call(this,event)",
-									   relevantBehavior:_DISABLE_},
+									   enableDisableChecks:[ZaDLXFormView.shouldEnableRemoveAllButton],
+									   enableDisableChangeEventSources:[ZaDistributionList.A2_members],
+									   onActivate:"ZaDLXFormView.removeAllMembers.call(this,event)"
+									 },
 									{type:_CELLSPACER_},
 									{type:_DWT_BUTTON_, label:ZaMsg.DLXV_ButtonRemove, width:80, id:"removeButton",
 								      onActivate:"ZaDLXFormView.removeMembers.call(this,event)",
 								      relevant:"ZaDLXFormView.shouldEnableMemberListButtons.call(this)",
-								      relevantBehavior:_DISABLE_},
+								      relevantBehavior:_DISABLE_
+								    },
 									{type:_CELLSPACER_},
 									{type:_DWT_BUTTON_, label:ZaMsg.Previous, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										onActivate:"ZaDLXFormView.backMemButtonHndlr.call(this,event)", 
@@ -534,20 +541,19 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 				    }
 				  ]
 				},
-				{type:_ZATABCASE_, relevant:"instance[ZaModel.currentTab] == 2", colSizes:[10, "auto"], colSpan:"*",
+				{type:_ZATABCASE_, caseKey:_tab2, colSizes:[10, "auto"], colSpan:"*",
 					items:[
 					    {type:_SPACER_, height:5},
 					    {type:_SPACER_, height:5},
 					    {type:_CELLSPACER_, width:10 },
 					    {type: _OUTPUT_, value:ZaMsg.DLXV_LabelNotes, cssStyle:"align:left"},
 					    {type:_CELLSPACER_, width:10 },
-					    {ref:ZaAccount.A_notes, type:_TEXTAREA_, width:"90%", height:"400", labelCssStyle:"vertical-align: top",
-					    	onChange:ZaTabView.onFormFieldChanged
+					    {ref:ZaAccount.A_notes, type:_TEXTAREA_, width:"90%", height:"400", labelCssStyle:"vertical-align: top"
 					    }
 					]
 				 },
 				 //MemberOf Tab
-				{type:_ZATABCASE_, numCols:2, colSpan:"*", relevant:("instance[ZaModel.currentTab] == 3"), colSizes: ["50%", "50%"],
+				{type:_ZATABCASE_, numCols:2, colSpan:"*", caseKey:_tab3, colSizes: ["50%", "50%"],
 					items: [
 						//layout rapper around the direct/indrect list						
 						{type: _GROUP_, width: "98%", numCols: 1, //colSizes: ["auto", 20],
@@ -712,7 +718,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject) {
 				},
 				//DL Alias
 				{type:_ZATABCASE_, width:"100%", numCols:1, colSizes:["auto"],
-					relevant:("instance[ZaModel.currentTab] == 4"),
+					caseKey:_tab4,
 					items: [
 						{type:_ZA_TOP_GROUPER_, borderCssClass:"LowPadedTopGrouperBorder",
 							 width:"100%", numCols:1,colSizes:["auto"],
