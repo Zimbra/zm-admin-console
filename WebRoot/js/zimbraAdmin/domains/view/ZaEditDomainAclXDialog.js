@@ -39,10 +39,7 @@ function() {
 		numCols:2,
 		items:[
 			{type:_SWITCH_, items:[
-				{type:_CASE_,
-					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookGroupACLs]],
-					visibilityChangeEventSources:["gt"],
-				 	//relevant:"instance.gt==ZaDomain.A_NotebookGroupACLs",
+				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookGroupACLs",
 					items:[
 						{ref:".", type:_ADDR_ACL_, label:null, labelLocation:_NONE_,
 							visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false},
@@ -50,10 +47,7 @@ function() {
 						}						
 					]
 				},
-				{type:_CASE_, 
-					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookUserACLs]],
-					visibilityChangeEventSources:["gt"],
-					//relevant:"instance.gt==ZaDomain.A_NotebookUserACLs",
+				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookUserACLs",
 					items:[
 						{ref:".", type:_ADDR_ACL_, label:null, labelLocation:_NONE_,
 							visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false},
@@ -61,10 +55,7 @@ function() {
 						}						
 					]
 				},
-				{type:_CASE_, 
-					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookDomainACLs]],
-					visibilityChangeEventSources:["gt"],
-					//relevant:"instance.gt==ZaDomain.A_NotebookDomainACLs",
+				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookDomainACLs",
 					items:[
 						{ref:".", type:_ADDR_ACL_, label:null, labelLocation:_NONE_,
 							visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false},
@@ -72,19 +63,13 @@ function() {
 						}					
 					]
 				},
-				{type:_CASE_, 
-					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookAllACLs]],
-					visibilityChangeEventSources:["gt"],
-					//relevant:"instance.gt==ZaDomain.A_NotebookAllACLs",
+				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookAllACLs",
 					items:[
 						{ref:"acl", type:_ACL_, label:ZaMsg.ACL_All,labelLocation:_LEFT_,
 						visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false}}						
 					]
 				},								
-				{type:_CASE_, 
-					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookPublicACLs]],
-					visibilityChangeEventSources:["gt"],					
-					//relevant:"instance.gt==ZaDomain.A_NotebookPublicACLs",
+				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookPublicACLs",
 					items:[
 						{ref:"acl", type:_ACL_, visibleBoxes:{r:true,w:false,a:false,i:false,d:false,x:false},
 						label:ZaMsg.ACL_Public,labelLocation:_LEFT_}						
