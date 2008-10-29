@@ -22,12 +22,13 @@
 * @param app reference to the application instance
 * @author Greg Solovyev
 **/
-ZaCos = function() {
-	ZaItem.call(this,"ZaCos");
+ZaCos = function(app) {
+	ZaItem.call(this, app, "ZaCos");
 	this.attrs = new Object();
 //	this[ZaCos.A_zimbraMailHostPoolInternal] = new AjxVector();
 	this.id = "";
-	this.name="";	
+	this.name="";
+	this._app = app;	
 	this.type = ZaItem.COS;
 }
 ZaItem.loadMethods["ZaCos"] = new Array();
@@ -193,7 +194,7 @@ function (by, val) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-			controller: ZaApp.getInstance().getCurrentController(),
+			controller: this._app.getCurrentController(),
 			busyMsg: ZaMsg.BUSY_GET_COS
 		}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetCosResponse;
@@ -219,19 +220,19 @@ function (obj) {
 	var hostVector = new ZaItemVector();
 	if(this.attrs[ZaCos.A_zimbraMailHostPool] instanceof Array) {	
 		for(sname in this.attrs[ZaCos.A_zimbraMailHostPool]) {
-			if(ZaApp.getInstance().getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool][sname]]) {
-				hostVector.add(ZaApp.getInstance().getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool][sname]]);
+			if(this._app.getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool][sname]]) {
+				hostVector.add(this._app.getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool][sname]]);
 			} else {
-				var newServer = new ZaServer();
+				var newServer = new ZaServer(this._app);
 				newServer.load("id", this.attrs[ZaCos.A_zimbraMailHostPool][sname]);
 				hostVector.add(newServer);
 			}
 		}
 	} else if(typeof(this.attrs[ZaCos.A_zimbraMailHostPool]) == 'string'){
-		if(ZaApp.getInstance().getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool]]) {
-			hostVector.add(ZaApp.getInstance().getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool]]);
+		if(this._app.getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool]]) {
+			hostVector.add(this._app.getServerMap()[this.attrs[ZaCos.A_zimbraMailHostPool]]);
 		} else {
-			var newServer = new ZaServer();
+			var newServer = new ZaServer(this._app);
 			newServer.load("id", this.attrs[ZaCos.A_zimbraMailHostPool]);
 			hostVector.add(newServer);
 		}
@@ -283,7 +284,7 @@ function(name, mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-			controller: ZaApp.getInstance().getCurrentController(),
+			controller: this._app.getCurrentController(),
 			busyMsg : ZaMsg.BUSY_CREATE_COS
 		}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.CreateCosResponse;
@@ -303,7 +304,7 @@ function(newName) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_RENAME_COS
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.RenameCosResponse;
@@ -322,7 +323,7 @@ function() {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DELETE_COS
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -366,7 +367,7 @@ function (mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_COS
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyCosResponse;
@@ -404,17 +405,17 @@ function() {
 }
 
 ZaCos.getAll =
-function() {
+function(app) {
 	var soapDoc = AjxSoapDoc.create("GetAllCosRequest", ZaZimbraAdmin.URN, null);	
 	//var getAllCosCmd = new ZmCsfeCommand ();
 	var params = new Object ();
 	params.soapDoc = soapDoc ;
 	var reqMgrParams = {
-			controller: ZaApp.getInstance().getCurrentController(),
+			controller: app.getCurrentController(),
 			busyMsg: ZaMsg.BUSY_GET_ALL_COS
 		}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllCosResponse;
-	var list = new ZaItemList(ZaCos);
+	var list = new ZaItemList(ZaCos, app);
 	list.loadFromJS(resp);
 	//list.sortByName();	
 	
@@ -429,12 +430,29 @@ ZaCos.getCosChoices = function () {
     }
 }
 
-
+/** NOT USED in any code
+ZaCos.loadAll =
+function(app, container) {
+	if(!(container instanceof ZaItemList)) {
+		throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_ARGUMENT_X_MUST_BE_A, ["container", "ZaItemList"]), AjxException.INVALID_PARAM, "ZaCos.loadAll");
+	}
+	var soapDoc = AjxSoapDoc.create("GetAllCosRequest", ZaZimbraAdmin.URN, null);	
+	//var getAllCosCmd = new ZmCsfeCommand ();
+	var params = new Object ();
+	params.soapDoc = soapDoc ;
+	var reqMgrParams = {
+		controller : app.getCurrentController(),
+		busyMsg : ZaMsg.BUSY_GET_ALL_COS
+	}
+	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllCosResponse;
+	container.loadFromJS(resp);
+}
+*/
 
 
 
 ZaCos.getDefaultCos4Account =
-function (accountName){
+function (accountName, app){
 	var defaultCos ;
 	var defaultDomainCos ;
 
@@ -445,15 +463,15 @@ function (accountName){
 	
 	var domainName = ZaAccount.getDomain(accountName);
 	var domainCosId ;
-	var domain = ZaDomain.getDomainByName(domainName);
+	var domain = ZaDomain.getDomainByName(domainName,app);
 	if(domain) {
 		domainCosId = domain.attrs[ZaDomain.A_domainDefaultCOSId] ;
 		//when domainCosId doesn't exist, we always set default cos
 		if (!domainCosId) {
-			var cos = ZaCos.getCosByName("default");
+			var cos = ZaCos.getCosByName("default",app);
 			return cos ;
 		} else{
-			var cos = ZaCos.getCosById (domainCosId);
+			var cos = ZaCos.getCosById (domainCosId,app);
 		 	return cos ;
 			//return cosList.getItemById(domainCosId);
 		}
@@ -464,13 +482,13 @@ function (accountName){
 }
 
 ZaCos.getCosByName = 
-function(cosName) {
+function(cosName, app) {
 	if(!cosName)
 		return null;
 		
 	var cos = ZaCos.staticCosByNameCacheTable[cosName];
 	if(!cos) {
-		cos = new ZaCos();
+		cos = new ZaCos(app);
 		try {
 			cos.load("name", cosName);
 		} catch (ex) {
@@ -486,13 +504,13 @@ function(cosName) {
 } 
 
 ZaCos.getCosById = 
-function (cosId) {
+function (cosId, app) {
 	if(!cosId)
 		return null;
 		
 	var cos = ZaCos.staticCosByIdCacheTable[cosId];
 	if(!cos) {
-		cos = new ZaCos();
+		cos = new ZaCos(app);
 		try {
 			cos.load("id", cosId);
 		} catch (ex) {
@@ -662,7 +680,7 @@ function () {
 	
 	//display warnings about the if manageSpecialAttrs return value
 	if (warning && warning.length > 0) {
-		ZaApp.getInstance().getCurrentController().popupMsgDialog (warning, true);
+		this._app.getCurrentController().popupMsgDialog (warning, true);
 	}	
 	
 }

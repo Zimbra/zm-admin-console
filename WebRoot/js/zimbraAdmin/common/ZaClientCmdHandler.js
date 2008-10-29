@@ -17,7 +17,8 @@
 /**
 * @param app {ZaApp}
 **/
-ZaClientCmdHandler = function() {
+ZaClientCmdHandler = function(app) {
+	this._app = app;
 	this._settings = new Object();
 }
 
@@ -43,7 +44,7 @@ function(argv) {
 	} else if (argv[0] && argv[0].toLowerCase() == "domainsrch") {
 		ZaDomain.MAXSEARCHRESULTS = argv[1];
 		alert("Setting domain search limit to:" + argv[1]);
-        ZaApp.getInstance().searchDomains();
+        this._app.searchDomains();
     } else if (argv[0] && argv[0].toLowerCase() == "pagesize") {
 		ZaSettings.RESULTSPERPAGE = argv[1];
 		alert("Setting page size to:" + argv[1]);
