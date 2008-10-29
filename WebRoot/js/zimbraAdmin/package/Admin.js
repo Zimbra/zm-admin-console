@@ -126,6 +126,7 @@ AjxPackage.require("zimbraAdmin.domains.view.ZaNotebookACLListView");
 AjxPackage.require("zimbraAdmin.domains.view.ZaEditDomainAclXDialog");
 AjxPackage.require("zimbraAdmin.domains.view.ZaAddDomainAclXDialog");
 AjxPackage.require("zimbraAdmin.domains.view.ZaGalObjMiniListView");
+AjxPackage.require("zimbraAdmin.cos.view.ZaCosServerPoolChooser");
 AjxPackage.require("zimbraAdmin.cos.view.ZaCosListView");
 AjxPackage.require("zimbraAdmin.cos.view.ZaCosXFormView");
 AjxPackage.require("zimbraAdmin.search.view.ZaSearchToolBar");
