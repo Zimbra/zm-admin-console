@@ -25,11 +25,12 @@
 * @extends DwtComposite
 * @author Greg Solovyev
 **/
-ZaTabView = function(parent,iKeyName, cssClassName) {
+ZaTabView = function(parent, app, iKeyName, cssClassName) {
 	if (arguments.length == 0) return;
 	var className = cssClassName ? cssClassName : "DwtTabView";
 	DwtComposite.call(this, parent, className, Dwt.ABSOLUTE_STYLE);	
 	this._iKeyName = iKeyName;
+	this._app = app;
 	this._drawn = false;	
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	this._containedObject = null;
@@ -72,10 +73,8 @@ function (xModelMetaData, xFormMetaData) {
 
 	this._localXModel = new XModel(xModelMetaData);
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
-	this._localXForm.setController(ZaApp.getInstance());
+	this._localXForm.setController(this._app);
 	this._localXForm.draw();
-	var formChangeListener = new AjxListener(this, ZaTabView.prototype.setDirty,[true]) ;
-	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_CHANGED,formChangeListener);
 	this._drawn = true;
 }
 
@@ -172,7 +171,7 @@ function(enable) {
 **/
 ZaTabView.prototype.setDirty = 
 function (isD) {
-	ZaApp.getInstance().getCurrentController().setDirty(isD);
+	this._app.getCurrentController().setDirty(isD);
 	this._isDirty = isD;
 	//reset the domain lists
 	EmailAddr_XFormItem.resetDomainLists.call (this);
@@ -208,13 +207,12 @@ function () {
 	return this._isDirty;
 }
 
-/*
 ZaTabView.onFormFieldChanged = 
 function (value, event, form) {
 	form.parent.setDirty(true);	
 	this.setInstanceValue(value);
 	return value;
-}*/
+}
 
 ZaTabView.prototype.getTabToolTip =
 function () {
@@ -257,5 +255,5 @@ function () {
 
 ZaTabView.prototype.getAppTab =
 function () {
-	return ZaApp.getInstance().getTabGroup().getTabById(this.__internalId) ;
+	return this._app.getTabGroup().getTabById(this.__internalId) ;
 }
