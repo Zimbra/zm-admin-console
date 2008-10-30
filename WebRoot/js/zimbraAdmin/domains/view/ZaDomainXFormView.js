@@ -216,6 +216,18 @@ ZaDomainXFormView.hasACEName = function () {
 	return (this.instance.attrs[ZaDomain.A_domainName] != this.instance.name);
 }
 
+ZaDomainXFormView.resetAllColorThemes = function () {
+    var form = this.getForm() ;
+//    var instance = form.getInstance () ;
+    this.setInstanceValue ("", ZaDomain.A_zimbraSkinForegroundColor) ;
+    this.setInstanceValue ("", ZaDomain.A_zimbraSkinBackgroundColor) ;
+    this.setInstanceValue ("", ZaDomain.A_zimbraSkinSecondaryColor) ;
+    this.setInstanceValue ("", ZaDomain.A_zimbraSkinSelectionColor) ;
+
+    form.parent.setDirty(true);
+    form.refresh () ;        
+}
+
 ZaDomainXFormView.addButtonListener =
 function () {
 	var formPage = this.getForm().parent;
@@ -755,7 +767,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
     //domain skin properties
     if(ZaSettings.DOMAIN_SKIN_ENABLED) {
 		tabIx++;
-		tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_Skin});
+		tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_Themes});
        	var case8 = {type:_ZATABCASE_, id:"domain_form_skin_tab", colSizes:["auto"],numCols:1,
         	relevant:("instance[ZaModel.currentTab] == " + tabIx),
 			items:[
@@ -787,8 +799,13 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
                             label:ZaMsg.NAD_zimbraSkinSelectionColor,
                             labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                             onChange:ZaTabView.onFormFieldChanged
+                        },
+                        {type:_GROUP_,  colSpan: 2, cssStyle: "margin-top: 10px; margin-left: 200px", items: [
+                                {type: _DWT_BUTTON_,  label: ZaMsg.bt_ResetAllSkinColor,
+                                    onActivate: ZaDomainXFormView.resetAllColorThemes }
+                           ]
                         }
-					]
+                    ]
 				}
             ]
 		};
