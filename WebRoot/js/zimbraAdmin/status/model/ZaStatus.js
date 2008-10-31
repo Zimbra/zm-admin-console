@@ -21,9 +21,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaStatus = function() {
-	ZaItem.call(this,"ZaStatus");
-	this._init();	
+ZaStatus = function(app) {
+	ZaItem.call(this, app, "ZaStatus");
+	this._init(app);	
 }
 
 ZaStatus.prototype = new ZaItem;
@@ -42,7 +42,7 @@ ZaStatus.PRFX_Status = "status_status";
 ZaStatus.loadMethod = 
 function() {
 	try {
-		var logHost = ZaApp.getInstance().getGlobalConfig().attrs[ZaServer.A_zimbraLogHostname];		
+		var logHost = this._app.getGlobalConfig().attrs[ZaServer.A_zimbraLogHostname];		
 		//if zimbraLogHostname is set
 		if (logHost) {
 			var soapDoc = AjxSoapDoc.create("GetServiceStatusRequest", ZaZimbraAdmin.URN, null);
@@ -53,13 +53,13 @@ function() {
 			this.initFromJS(resp);
 		}	
 	} catch (ex) {
-			ZaApp.getInstance().getStatusViewController()._handleException(ex, "ZaStatus.loadMethod", null, false);		
+			this._app.getStatusViewController()._handleException(ex, "ZaStatus.loadMethod", null, false);		
 	}	
 }
 
 ZaItem.loadMethods["ZaStatus"].push(ZaStatus.loadMethod);
 
-ZaStatus.initMethod = function () {
+ZaStatus.initMethod = function (app) {
 	this.serverMap = new Object();
 	this.statusVector = new AjxVector();
 	this.id = Dwt.getNextId();

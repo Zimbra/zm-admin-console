@@ -22,12 +22,12 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaMTAXFormView = function(parent) {
-	ZaTabView.call(this, parent, "ZaMTAXFormView");	
+ZaMTAXFormView = function(parent, app) {
+	ZaTabView.call(this, parent, app,"ZaMTAXFormView");	
 		
 	this.initForm(ZaMTA.myXModel,this.getMyXForm());
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaMTAXFormView.prototype.handleXFormChange));	
-	this._localXForm.setController(ZaApp.getInstance());
+	this._localXForm.setController(this._app);
 }
 
 ZaMTAXFormView.prototype = new ZaTabView();
@@ -161,10 +161,10 @@ ZaMTAXFormView.showAllMsgs = function (ev) {
 }
 
 ZaMTAXFormView.actionButtonListener = function (action) {
-	var qName, field, dlgTitle,instance;
+	var qName, field, dlgTitle,instance, app, form;
 	qName = this.getRef();
 	form = this.getForm();
-	
+	app = form.getController();			
 	instance = this.getInstance();
 	var obj = new Object();
 	
@@ -192,7 +192,7 @@ ZaMTAXFormView.actionButtonListener = function (action) {
 		break;
 	}		
 	var view = form.parent;
-	view.selectActionDialog = ZaApp.getInstance().dialogs["selectActionDialog"] = new ZaMTAActionDialog(ZaApp.getInstance().getAppCtxt().getShell(),ZaApp.getInstance().dlgTitle);	
+	view.selectActionDialog = app.dialogs["selectActionDialog"] = new ZaMTAActionDialog(app.getAppCtxt().getShell(), app, dlgTitle);	
 	obj[ZaMTAActionDialog.MSG_IDS] = instance[qName][ZaMTA.MsgIDS];
 	obj[ZaMTAActionDialog.FLTR_ITEMS] = instance[qName][ZaMTA.A_selection_cache];	
 	obj[ZaMTAActionDialog.ANSWER] = ZaMTAActionDialog.SELECTED_MSGS; //default is selected messages
@@ -238,7 +238,7 @@ ZaMTAXFormView.prototype.actionDlgCallback = function(args)  {
 }
 
 ZaMTAXFormView.prototype.showConfirmationDlg = function (action, removelist,qName, field) {
-	this.confirmMessageDialog = ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);			
+	this.confirmMessageDialog = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 	if(removelist) {
 		if(field == ZaMTA.A_messages) {
 			var subst = "0";
@@ -524,7 +524,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 			cssClass:"ZaTabBar", id:"xform_tabbar"
 		},
 		{type:_SWITCH_, items:[
-				{type:_ZATABCASE_, numCols:1, caseKey:ZaMTAXFormView._tab1, 
+				{type:_ZATABCASE_, numCols:1, relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab1, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -605,7 +605,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						]}		
 					]
 				},							
-				{type:_ZATABCASE_, numCols:1,  caseKey:ZaMTAXFormView._tab2, 
+				{type:_ZATABCASE_, numCols:1,  relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -680,8 +680,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							}		
 					]
 				},
-				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",
-					caseKey:ZaMTAXFormView._tab3, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab3, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -754,8 +753,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						]}		
 					]
 				},
-				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",
-					caseKey:ZaMTAXFormView._tab4, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab4, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -831,8 +829,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 					]
 				},											
 					
-				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",
-					caseKey:ZaMTAXFormView._tab5, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab5, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						

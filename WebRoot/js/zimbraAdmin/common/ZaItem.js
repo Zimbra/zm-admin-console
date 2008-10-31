@@ -19,8 +19,9 @@
 * @class ZaItem
 * @param app reference to the application instance
 **/
-ZaItem = function(iKeyName) {
+ZaItem = function(app, iKeyName) {
 	if (arguments.length == 0) return;
+	this._app = app;
 	this._iKeyName = iKeyName;
 	ZaModel.call(this, true);
 
@@ -120,31 +121,31 @@ function(a, b, attr) {
 * Item Factory
 **/
 ZaItem.getFromType = 
-function (type) {
+function (type, app) {
 	switch (type) {
 		case ZaItem.ACCOUNT:
-			return new ZaAccount();
+			return new ZaAccount(app);
 
 		case ZaItem.ALIAS:
-			return new ZaAlias();
+			return new ZaAlias(app);
 
 		case ZaItem.DL:
-			return new ZaDistributionList();
+			return new ZaDistributionList(app);
 
 		case ZaItem.RESOURCE:
-			return new ZaResource();
+			return new ZaResource(app);
 		
 		case ZaItem.DOMAIN:
-			return new ZaDomain();
+			return new ZaDomain(app);
 
 		case ZaItem.COS:
-			return new ZaCos();
+			return new ZaCos(app);
 
 		case ZaItem.SERVER:
-			return new ZaServer();
+			return new ZaServer(app);
 
 		case ZaItem.MAILQ:
-			return new ZaMTA();
+			return new ZaMTA(app);
 
 	}
 }
@@ -211,15 +212,15 @@ ZaItem.prototype.modify = function (mods) {
 * ZaItem.createMethods[key] 
 * @see ZaItem#createMethods
 **/
-ZaItem.create = function (tmpObj, constructorFunction, key) {
-	var item = new constructorFunction();
+ZaItem.create = function (tmpObj, constructorFunction, key,  app) {
+	var item = new constructorFunction(app);
 	//Instrumentation code start
 	if(ZaItem.createMethods[key]) {
 		var methods = ZaItem.createMethods[key];
 		var cnt = methods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
-				methods[i].call(this, tmpObj, item);
+				methods[i].call(this, tmpObj, item, app);
 			}
 		}
 	}	
@@ -334,14 +335,14 @@ function(name) {
 	return (desc == null) ? name : desc;
 }
 
-ZaItem.prototype._init = function () {
+ZaItem.prototype._init = function (app) {
 	//Instrumentation code start
 	if(ZaItem.initMethods[this._iKeyName]) {
 		var methods = ZaItem.initMethods[this._iKeyName];
 		var cnt = methods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
-				methods[i].call(this);
+				methods[i].call(this,app);
 			}
 		}
 	}	
@@ -369,7 +370,7 @@ function (newAlias) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : aApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_ADD_ALIAS
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -396,7 +397,7 @@ function (aliasToRemove) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : tZaApp.getInstance().etCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_REMOVE_ALIAS
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -404,8 +405,8 @@ function (aliasToRemove) {
 
 ZaItem.checkInteropSettings  =
 function () {
-
-    var controller =  ZaApp.getInstance().getCurrentController() ;
+    var app =  this.getForm().parent._app ;
+    var controller =  app.getCurrentController() ;
 
     try {
 
