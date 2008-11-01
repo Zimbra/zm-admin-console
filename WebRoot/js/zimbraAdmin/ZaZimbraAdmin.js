@@ -570,7 +570,7 @@ function(shell) {
 **/
 ZaZimbraAdmin.prototype._createApp =
 function() {
-	this._app = new ZaApp(this._appCtxt, this._shell);	
+	this._app = ZaApp.getInstance(this._appCtxt, this._shell);	
 }
 
 

@@ -39,7 +39,17 @@ ZaApp = function(appCtxt, container) {
 	this.dialogs = {};
 	this._tabGroup = null ;
 }
-
+ZaApp.instance = null;
+ZaApp.getInstance = function (appCtxt, container) {
+	if(!ZaApp.instance) {
+	//	console.log("Trying to get ZaApp before it is instantiated") ;
+		if(!AjxUtil.isEmpty(appCtxt) && !AjxUtil.isEmpty(container)) {
+		//	console.log("Instantiating ZaApp ....") ; 
+			ZaApp.instance = new ZaApp(appCtxt, container);
+		}
+	}
+	return ZaApp.instance;
+}
 ZaApp.prototype.constructor = ZaApp;
 
 ZaApp.prototype.toString = 

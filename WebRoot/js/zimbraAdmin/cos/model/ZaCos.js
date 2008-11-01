@@ -456,6 +456,8 @@ function (accountName, app){
 	var defaultCos ;
 	var defaultDomainCos ;
 
+	if(!app)
+		app = ZaApp.getInstance();
 		
 	if (!accountName) {
 		return defaultCos; //default cos
@@ -485,7 +487,10 @@ ZaCos.getCosByName =
 function(cosName, app) {
 	if(!cosName)
 		return null;
-		
+	
+	if(!app)
+		app = ZaApp.getInstance();
+				
 	var cos = ZaCos.staticCosByNameCacheTable[cosName];
 	if(!cos) {
 		cos = new ZaCos(app);
@@ -507,6 +512,9 @@ ZaCos.getCosById =
 function (cosId, app) {
 	if(!cosId)
 		return null;
+		
+	if(!app)
+		app = ZaApp.getInstance();
 		
 	var cos = ZaCos.staticCosByIdCacheTable[cosId];
 	if(!cos) {

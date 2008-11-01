@@ -1604,6 +1604,25 @@ function (accountName) {
 	return accountName.substring(accountName.lastIndexOf ("@") + 1 ) ;	
 }
 
+ZaAccount.setCosChanged = function (value, event, form) {
+	var oldVal = this.getInstanceValue();
+	if(oldVal == value)
+		return;
+			
+	this.setInstanceValue(value);
+	
+	if(ZaItem.ID_PATTERN.test(value)) {
+		this.cos = ZaCos.getCosById(value);
+		form.parent.setDirty(true);
+		return value;
+	} else {
+		this.setError(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[value]));
+		var event = new DwtXFormsEvent(form, this, value);
+		form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return;
+	}
+} 
+
 ZaAccount.setDomainChanged =
 function (value, event, form){
 	//form.parent.setDirty(true);

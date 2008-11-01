@@ -350,7 +350,7 @@ function(entry) {
    
     this._localXForm.setInstance(this._containedObject);
 }
-
+/*
 ZaNewAccountXWizard.onCOSChanged = 
 function(value, event, form) {
 	if(ZaItem.ID_PATTERN.test(value))  {
@@ -370,7 +370,27 @@ function(value, event, form) {
     form.parent.updateAccountType();
     
     return value;
-}
+}*/
+
+ZaNewAccountXWizard.onCOSChanged = function (value, event, form) {
+	var oldVal = this.getInstanceValue();
+	if(oldVal == value)
+		return;
+			
+	this.setInstanceValue(value);
+	
+	if(ZaItem.ID_PATTERN.test(value)) {
+		this.cos = ZaCos.getCosById(value);
+		form.parent.updateAccountType();
+		form.parent._isCosChanged = true ;
+		return value;
+	} else {
+		this.setError(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[value]));
+		var event = new DwtXFormsEvent(form, this, value);
+		form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return;
+	}
+} 
 
 ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {	
 	var domainName;
@@ -481,14 +501,14 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject) {
 		setupGroup.items.push(
 			{type:_GROUP_, numCols:3, nowrap:true, label:ZaMsg.NAD_ClassOfService, labelLocation:_LEFT_,
 				items: [
-					/*{ref:ZaAccount.A_COSId, type:_OSELECT1_, msgName:ZaMsg.NAD_ClassOfService,label: null, 
-						relevant:"instance[ZaAccount.A2_autoCos]==\"FALSE\"", relevantBehavior:_DISABLE_ ,
-						labelLocation:_LEFT_, choices:this._app.getCosListChoices(), onChange:ZaNewAccountXWizard.onCOSChanged },
-					*/
-					{ref:ZaAccount.A_COSId, type:_DYNSELECT_,label: null, 
+					{ref:ZaAccount.A_COSId, type:_DYNSELECT_,label: null,
+						inputPreProcessor:ZaAccountXFormView.preProcessCOS, 
 						onChange:ZaNewAccountXWizard.onCOSChanged,
+						emptyText:ZaMsg.enterSearchTerm,
+						searchByProcessedValue:false,
 						relevant:"instance[ZaAccount.A2_autoCos]==\"FALSE\"",relevantBehavior:_DISABLE_ ,
-						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,choices:this.cosChoices,
+						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
+						choices:this.cosChoices,
 						dataFetcherClass:ZaSearch,editable:true,getDisplayValue:function(newValue) {
 								// dereference through the choices array, if provided
 								//newValue = this.getChoiceLabel(newValue);

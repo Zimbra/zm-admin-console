@@ -108,8 +108,8 @@ function(entry) {
 		if(this._containedObject.attrs[ZaAccount.A_COSId]) {	
 			this._containedObject[ZaAccount.A2_autoCos] = "FALSE" ;
 			
-			//this._containedObject.cos = this._app.getCosList().getItemById(this._containedObject.attrs[ZaAccount.A_COSId]);
-			this._containedObject.cos = ZaCos.getCosById(this._containedObject.attrs[ZaAccount.A_COSId],this._app);
+			//this._containedObject.cos = ZaApp.getInstance().getCosList().getItemById(this._containedObject.attrs[ZaAccount.A_COSId]);
+			this._containedObject.cos = ZaCos.getCosById(this._containedObject.attrs[ZaAccount.A_COSId]);
 			
 		}
 		if(!this._containedObject.cos) {
@@ -118,16 +118,7 @@ function(entry) {
 			* We did not find the COS assigned to this account,
 			* this means that the COS was deleted or wasn't assigned, therefore assign default COS to this account
 			**/
-			ZaAccount.setDefaultCos(this._containedObject, this._app) ;
-			if(!this._containedObject.cos) {
-				//default COS was not found - just assign the first COS
-				var hashMap = this._app.getCosList().getIdHash();
-				for(var id in hashMap) {
-					this._containedObject.cos = hashMap[id];
-					this._containedObject.attrs[ZaAccount.A_COSId] = id;					
-					break;
-				}
-			}
+			this._containedObject.cos = ZaCos.getDefaultCos4Account(this._containedObject.name);
 		}
 		this.cosChoices.setChoices([this._containedObject.cos]);
 		this.cosChoices.dirtyChoices();
@@ -216,25 +207,17 @@ ZaAccountXFormView.gotSkins = function () {
 		return ((this.parent._app.getInstalledSkins() != null) && (this.parent._app.getInstalledSkins().length > 0));
 }
 
-ZaAccountXFormView.onCOSChanged = 
-function(value, event, form) {
-	form.parent.setDirty(true);
+ZaAccountXFormView.preProcessCOS = 
+function(value,  form) {
+	var val = value;
 	if(ZaItem.ID_PATTERN.test(value))  {
-		form.getInstance().cos = ZaCos.getCosById(value, form.parent._app);
-		this.setInstanceValue(value);
+		val = value;
 	} else {
-		form.getInstance().cos = ZaCos.getCosByName(value, form.parent._app);
-		if(form.getInstance().cos) {
-			//value = form.getInstance().cos.id;
-			value = form.getInstance().cos.id;
-		} 
+		var cos = ZaCos.getCosByName(value);
+		if(cos)
+			val = cos.id;
 	}
-	this.setInstanceValue(value);
-
-      //if cos is changed,  update the account type information
-    form.parent.updateAccountType();
-    
-    return value;
+    return val;
 }
 
 //update the account type output and it is called when the domain name is changed.
@@ -893,13 +876,14 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject) {
 		setupGroup.items.push(
 			{type:_GROUP_, numCols:3, nowrap:true, label:ZaMsg.NAD_ClassOfService, labelLocation:_LEFT_,
 				items: [
-					/*{ref:ZaAccount.A_COSId, type:_OSELECT1_, msgName:ZaMsg.NAD_ClassOfService,label: null, 
-						relevant:"instance[ZaAccount.A2_autoCos]==\"FALSE\"", relevantBehavior:_DISABLE_ ,
-						labelLocation:_LEFT_, choices:this._app.getCosListChoices(), onChange:ZaAccountXFormView.onCOSChanged },*/
-					{ref:ZaAccount.A_COSId, type:_DYNSELECT_,label: null, 
-						onChange:ZaAccountXFormView.onCOSChanged,
+					{ref:ZaAccount.A_COSId, type:_DYNSELECT_,label: null,
+						inputPreProcessor:ZaAccountXFormView.preProcessCOS, 
+						onChange:ZaAccount.setCosChanged,
+						emptyText:ZaMsg.enterSearchTerm,
+						searchByProcessedValue:false,
 						relevant:"instance[ZaAccount.A2_autoCos]==\"FALSE\"",relevantBehavior:_DISABLE_ ,
-						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,choices:this.cosChoices,
+						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
+						choices:this.cosChoices,
 						dataFetcherClass:ZaSearch,editable:true,getDisplayValue:function(newValue) {
 								// dereference through the choices array, if provided
 								//newValue = this.getChoiceLabel(newValue);

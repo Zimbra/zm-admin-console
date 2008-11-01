@@ -380,20 +380,22 @@ function (value, event, form) {
 	}
 }
 
-ZaNewDomainXWizard.onCOSChanged = 
-function(value, event, form) {
-	if(ZaItem.ID_PATTERN.test(value))  {
-		this.setInstanceValue(value);
-	} else {
-		var cos = ZaCos.getCosByName(value, form.parent._app);
-		if(cos) {
-			//value = form.getInstance().cos.id;
-			value = cos.id;
-		} 
-	}
+ZaNewDomainXWizard.onCosChanged = function (value, event, form) {
+	var oldVal = this.getInstanceValue();
+	if(oldVal == value)
+		return;
+			
 	this.setInstanceValue(value);
-	return value;
-}
+	
+	if(!ZaItem.ID_PATTERN.test(value)) {
+		this.setError(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[value]));
+		var event = new DwtXFormsEvent(form, this, value);
+		form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return;
+	} else {
+		return value;
+	}
+} 
 
 ZaNewDomainXWizard.prototype.testAuthSettings =
 function () {
@@ -667,11 +669,13 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject) {
 						},*/
 						{ref:ZaDomain.A_domainDefaultCOSId, type:_DYNSELECT_, 
 							label:ZaMsg.Domain_DefaultCOS, labelLocation:_LEFT_, 
-							onChange:ZaNewDomainXWizard.onCOSChanged,
+							inputPreProcessor:ZaDomainXFormView.preProcessCOS,
+							searchByProcessedValue:false,
 							dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
 							choices:this.cosChoices,
 							dataFetcherClass:ZaSearch,
-							editable:true,
+							onChange:ZaNewDomainXWizard.onCosChanged,
+							emptyText:ZaMsg.enterSearchTerm,
 							getDisplayValue:function(newValue) {
 								// dereference through the choices array, if provided
 								//newValue = this.getChoiceLabel(newValue);

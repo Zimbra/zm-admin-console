@@ -40,6 +40,7 @@ ZaDomainXFormView = function(parent, app) {
 		{label:ZaMsg.AuthMech_ad, value:ZaDomain.AuthMech_ad}		
 	];
 	this.cosChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
+	this.catchAllChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
 	this.initForm(ZaDomain.myXModel,this.getMyXForm());
 }
 
@@ -147,9 +148,12 @@ function(entry) {
     var isCatchAllEnabled = this._containedObject.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]
             || this._containedObject.cos.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] ;
     if (isCatchAllEnabled && isCatchAllEnabled == "TRUE") {
-        var catchAllItem = this._localXForm.getItemsById("zimbraMailCatchAllAddress")[0] ;
-        catchAllItem.setChoices (ZaAccount.getCatchAllChoices(entry.name)) ;
+        //var catchAllItem = this._localXForm.getItemsById("zimbraMailCatchAllAddress")[0] ;
+        //catchAllItem.setChoices ([ZaAccount.getCatchAllAccount(entry.name)]) ;
+        
         this._containedObject[ZaAccount.A_zimbraMailCatchAllAddress] = entry [ZaAccount.A_zimbraMailCatchAllAddress] ;
+        this.catchAllChoices.setChoices ([entry[ZaAccount.A_zimbraMailCatchAllAddress]]) ;
+        this.catchAllChoices.dirtyChoices();
     }
     
  	if(ZaSettings.COSES_ENABLED) {	
@@ -362,21 +366,37 @@ function (value, event, form) {
 	}
 }
 
-ZaDomainXFormView.onCOSChanged = 
-function(value, event, form) {
-	form.parent.setDirty(true);
+ZaDomainXFormView.preProcessCOS = 
+function(value, form) {
+	var val = value;
 	if(ZaItem.ID_PATTERN.test(value))  {
-		this.setInstanceValue(value);
+		val = value;
 	} else {
 		var cos = ZaCos.getCosByName(value, form.parent._app);
 		if(cos) {
-			//value = form.getInstance().cos.id;
-			value = cos.id;
+			val = cos.id;
 		} 
 	}
-	this.setInstanceValue(value);
-	return value;
+	return val;
 }
+
+ZaDomainXFormView.onCosChanged = function (value, event, form) {
+	var oldVal = this.getInstanceValue();
+	if(oldVal == value)
+		return;
+			
+	this.setInstanceValue(value);
+	
+	if(ZaItem.ID_PATTERN.test(value)) {
+		form.parent.setDirty(true);
+		return value;
+	} else {
+		this.setError(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[value]));
+		var event = new DwtXFormsEvent(form, this, value);
+		form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return;
+	}
+} 
 
 ZaDomainXFormView.myXFormModifier = function(xFormObject) {	
 	xFormObject.tableCssStyle="width:100%;overflow:auto;";
@@ -422,13 +442,13 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
 			{ ref: "name", type:_OUTPUT_, 
 			  label:ZaMsg.Domain_DomainName                        
 			},
-            {ref:ZaAccount.A_zimbraMailCatchAllAddress, id: ZaAccount.A_zimbraMailCatchAllAddress, type:_OSELECT1_,
-               // relevant: "((instance.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] == 'TRUE') " +
-               //           "|| ((instance.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] == null) && (instance.cos.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] == 'TRUE')))" ,
+            {ref:ZaAccount.A_zimbraMailCatchAllAddress, id: ZaAccount.A_zimbraMailCatchAllAddress, type:_DYNSELECT_,
                 relevant: "ZaDomainXFormView.isCatchAllEnabled.call(this)" ,
                 relevantBehavior: _HIDE_,
+                dataFetcherClass:ZaSearch,
+                choices:this.catchAllChoices,
+                dataFetcherMethod:ZaSearch.prototype.dynSelectSearchAccounts,
                 label:ZaMsg.L_catchAll, labelLocation:_LEFT_,
-                //choices:ZaAccount.getCatchAllChoices(ZaSettings.myDomainName),
                 onChange:ZaDomainXFormView.onFormFieldChanged
             },
 
@@ -483,11 +503,13 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
 		case1.items.push(
 			{ref:ZaDomain.A_domainDefaultCOSId, type:_DYNSELECT_, 
 				label:ZaMsg.Domain_DefaultCOS, labelLocation:_LEFT_, 
-				onChange:ZaDomainXFormView.onCOSChanged,
+				inputPreProcessor:ZaDomainXFormView.preProcessCOS,
+				searchByProcessedValue:false,
 				dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
 				choices:this.cosChoices,
 				dataFetcherClass:ZaSearch,
-				editable:true,
+				onChange:ZaDomainXFormView.onCosChanged,
+				emptyText:ZaMsg.enterSearchTerm,
 				getDisplayValue:function(newValue) {
 					// dereference through the choices array, if provided
 					//newValue = this.getChoiceLabel(newValue);
