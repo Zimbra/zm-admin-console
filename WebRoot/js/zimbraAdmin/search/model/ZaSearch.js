@@ -142,7 +142,7 @@ function (params) {
 	if(params.applyCos)	
 		soapDoc.getMethod().setAttribute("applyCos", params.applyCos);
 	
-	if(params.domain)	
+	if(params.domain)
 		soapDoc.getMethod().setAttribute("domain", params.domain);
 
 	if(params.attrs && params.attrs.length>0)
@@ -216,12 +216,12 @@ ZaSearch.prototype.dynSelectDataCallback = function (callback, resp) {
 			throw(resp.getException());
 		} else {
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			var list = new ZaItemList(null, this._app);	
+			var list = new ZaItemList(null, ZaApp.getInstance());	
 			list.loadFromJS(response);	
 			callback.run(list.getArray(), response.more, response.searchTotal);
 		}
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataCallback");	
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataCallback");	
 	}
 }
 

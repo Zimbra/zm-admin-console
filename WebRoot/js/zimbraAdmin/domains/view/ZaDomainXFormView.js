@@ -40,7 +40,7 @@ ZaDomainXFormView = function(parent, app) {
 		{label:ZaMsg.AuthMech_ad, value:ZaDomain.AuthMech_ad}		
 	];
 	this.cosChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
-	this.catchAllChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
+	this.catchAllChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
 	this.initForm(ZaDomain.myXModel,this.getMyXForm());
 }
 
@@ -386,8 +386,10 @@ ZaDomainXFormView.onCosChanged = function (value, event, form) {
 		return;
 			
 	this.setInstanceValue(value);
-	
-	if(ZaItem.ID_PATTERN.test(value)) {
+	if(AjxUtil.isEmpty(value)) {
+		form.parent.setDirty(true);
+		return null;
+	} else if(ZaItem.ID_PATTERN.test(value)) {
 		form.parent.setDirty(true);
 		return value;
 	} else {
@@ -445,11 +447,40 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject) {
             {ref:ZaAccount.A_zimbraMailCatchAllAddress, id: ZaAccount.A_zimbraMailCatchAllAddress, type:_DYNSELECT_,
                 relevant: "ZaDomainXFormView.isCatchAllEnabled.call(this)" ,
                 relevantBehavior: _HIDE_,
-                dataFetcherClass:ZaSearch,
+                dataFetcherClass:null,
                 choices:this.catchAllChoices,
-                dataFetcherMethod:ZaSearch.prototype.dynSelectSearchAccounts,
+                emptyText:ZaMsg.enterSearchTerm,
+                dataFetcherInstance:true,
+                width:250,
+                //dataFetcherMethod:ZaSearch.prototype.dynSelectSearchAccounts,
+                dataFetcherMethod:function (value, event, callback) {
+                	try {
+							var params = new Object();
+							dataCallback = new AjxCallback(this, ZaSearch.prototype.dynSelectDataCallback, callback);
+							params.types = [ZaSearch.ACCOUNTS, ZaSearch.DLS];
+							params.callback = dataCallback;
+							params.sortBy = ZaAccount.A_name;
+							params.domain = this.name;
+							params.query = ZaSearch.getSearchByNameQuery(value);
+							params.controller = ZaApp.getInstance().getCurrentController();
+							ZaSearch.searchDirectory(params);
+						} catch (ex) {
+							this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataFetcher");		
+						}
+					
+                },
                 label:ZaMsg.L_catchAll, labelLocation:_LEFT_,
-                onChange:ZaDomainXFormView.onFormFieldChanged
+                onChange:ZaDomainXFormView.onFormFieldChanged,
+                getDisplayValue:function(newValue) {
+                	if(newValue && newValue.name)
+                		return newValue.name;
+                	else {
+                		if(!AjxUtil.isEmpty(newValue))
+                			return newValue;
+                		else
+                			return "";
+                	}
+                }
             },
 
 			{ ref: ZaDomain.A_domainName, type:_OUTPUT_,
