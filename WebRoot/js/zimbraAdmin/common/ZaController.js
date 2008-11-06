@@ -162,7 +162,11 @@ function(msg, ex, noExecReset,style)  {
 			for (var ix in ex) {
 				detailStr += ix;
 				detailStr += ": ";
-				detailStr += ex[ix].toString();
+				try {
+					detailStr += ex[ix].toString();
+				} catch (ex) {
+					//skip it
+				}
 				detailStr += "\n";
 			}
 		}
