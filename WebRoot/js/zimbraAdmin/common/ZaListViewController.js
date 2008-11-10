@@ -27,14 +27,14 @@
 * @see ZaAccountListController
 * @see ZDomainListController
 **/
-ZaListViewController = function(appCtxt, container,iKeyName) {
+ZaListViewController = function(appCtxt, container, app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._currentPageNum = 1;	
    	this._toolbarOperations = new Array();
    	this._popupOperations = new Array();	
 	//this.pages = new Object();
 	this._currentSortOrder = "1";
-	ZaController.call(this, appCtxt, container,iKeyName);
+	ZaController.call(this, appCtxt, container, app, iKeyName);
 	this.RESULTSPERPAGE = ZaSettings.RESULTSPERPAGE; 
 	this.MAXSEARCHRESULTS = ZaSettings.MAXSEARCHRESULTS;
 }
@@ -123,7 +123,7 @@ function(ev, noPopView, func, obj, params) {
 	if (noPopView) {
 		func.call(obj, params) ;
 	}else{
-		ZaApp.getInstance().popView () ;
+		this._app.popView () ;
 	}
 }
 
@@ -135,7 +135,7 @@ function(params, resp) {
 		}
 		if(resp.isException()) {
 			ZaSearch.handleTooManyResultsException(resp.getException(), "ZaListViewController.prototype.searchCallback");
-			this._list = new ZaItemList(params.CONS);	
+			this._list = new ZaItemList(params.CONS, this._app);	
 			this._searchTotal = 0;
 			this.numPages = 0;
 			if(params.show)
@@ -145,7 +145,7 @@ function(params, resp) {
 		}else{
 			ZaSearch.TOO_MANY_RESULTS_FLAG = false;
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			this._list = new ZaItemList(params.CONS);	
+			this._list = new ZaItemList(params.CONS, this._app);	
 			this._list.loadFromJS(response);	
 			this._searchTotal = response.searchTotal;
 			var limit = params.limit ? params.limit : this.RESULTSPERPAGE; 

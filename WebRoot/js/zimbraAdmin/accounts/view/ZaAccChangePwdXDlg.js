@@ -22,10 +22,11 @@
 * @param parent
 * param app
 **/
-ZaAccChangePwdXDlg = function(parent,   w, h) {
+ZaAccChangePwdXDlg = function(parent,  app, w, h) {
 	if (arguments.length == 0) return;
+	this._app = app;
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON,DwtDialog.OK_BUTTON];
-	ZaXDialog.call(this, parent, null, ZaMsg.CHNP_Title, w, h,"ZaAccChangePwdXDlg");
+	ZaXDialog.call(this, parent, app, null, ZaMsg.CHNP_Title, w, h,"ZaAccChangePwdXDlg");
 	this.initForm(ZaAccount.myXModel,this.getMyXForm());
     this._helpURL = ZaAccChangePwdXDlg.helpURL;
 }
