@@ -24,8 +24,8 @@
 * @author Greg Solovyev
 **/
 
-ZaZimletViewController = function(appCtxt, container, app) {
-	ZaXFormViewController.call(this, appCtxt, container, app, "ZaZimletViewController");
+ZaZimletViewController = function(appCtxt, container) {
+	ZaXFormViewController.call(this, appCtxt, container,"ZaZimletViewController");
 	this._UICreated = false;
 	this.objType = ZaEvent.S_ZIMLET;
 	this._helpURL = ZaAccountViewController.helpURL;
@@ -57,8 +57,8 @@ function(entry) {
 	if(!this._UICreated) {
 		this._createUI();
 	} 
-//	this._app.pushView(ZaZimbraAdmin._ZIMLET_VIEW);
-	this._app.pushView(this.getContentViewId());
+//	ZaApp.getInstance().pushView(ZaZimbraAdmin._ZIMLET_VIEW);
+	ZaApp.getInstance().pushView(this.getContentViewId());
 	this._view.setDirty(false);
 	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
 	this._currentObject = entry;
@@ -70,23 +70,23 @@ ZaController.setViewMethods["ZaZimletViewController"].push(ZaZimletViewControlle
 **/
 ZaZimletViewController.prototype._createUI =
 function () {
-	this._view = new this.tabConstructor(this._container, this._app);
+	this._view = new this.tabConstructor(this._container);
 
 	this._initToolbar();
 	//always add Help button at the end of the toolbar
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));							
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+	this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));							
 	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);		
 	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-    //this._app.createView(ZaZimbraAdmin._ZIMLET_VIEW, elements);
+    //ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_VIEW, elements);
 	var tabParams = {
 		openInNewTab: true,
 		tabId: this.getContentViewId()
 	}
-	this._app.createView(this.getContentViewId(), elements, tabParams) ;
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
-	this._app._controllers[this.getContentViewId ()] = this ;
+	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }
