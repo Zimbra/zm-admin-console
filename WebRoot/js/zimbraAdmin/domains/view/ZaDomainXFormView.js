@@ -145,12 +145,10 @@ function(entry) {
 	}
 
     //set the catchAllChoices
-    var isCatchAllEnabled = this._containedObject.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]
-            || this._containedObject.cos.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] ;
+    var isCatchAllEnabled = this._containedObject.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] ?
+    			this._containedObject.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] : this._containedObject.cos.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] ;
+    			
     if (isCatchAllEnabled && isCatchAllEnabled == "TRUE") {
-        //var catchAllItem = this._localXForm.getItemsById("zimbraMailCatchAllAddress")[0] ;
-        //catchAllItem.setChoices ([ZaAccount.getCatchAllAccount(entry.name)]) ;
-        
         this._containedObject[ZaAccount.A_zimbraMailCatchAllAddress] = entry [ZaAccount.A_zimbraMailCatchAllAddress] ;
         this.catchAllChoices.setChoices ([entry[ZaAccount.A_zimbraMailCatchAllAddress]]) ;
         this.catchAllChoices.dirtyChoices();
