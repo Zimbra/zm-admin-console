@@ -34,18 +34,13 @@ LDAPURL_XFormItem.prototype.defPort = "389";
 LDAPURL_XFormItem.prototype.initializeItems = function () {
 	var ldapPort = this.getInheritedProperty("ldapPort");
 	var ldapSSLPort = this.getInheritedProperty("ldapSSLPort");
-	this.defPort = ldapPort ? ldapPort : "389";
-    this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";
-    
+	this._portPart=this.defPort = (ldapPort ? ldapPort : "389");
+    this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";	
 	Composite_XFormItem.prototype.initializeItems.call(this);
-	
-    this.items[0].valueChangeEventSources = [this.getRefPath()];
-    this.items[1].valueChangeEventSources = [this.getRefPath()];
-    this.items[3].valueChangeEventSources = [this.getRefPath()];
 }
 
 LDAPURL_XFormItem.prototype.items = [
-	{type:_OUTPUT_, width:"35px", ref:".", labelLocation:_NONE_, label:null,
+	{type:_OUTPUT_, width:"35px", ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
 		getDisplayValue:function(itemVal) {
 			var val = "ldap://";
 			if(itemVal!=null && itemVal.length>0) {
@@ -63,7 +58,7 @@ LDAPURL_XFormItem.prototype.items = [
 			return val;
 		}
 	},
-	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,
+	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
 		required:true,
 		getDisplayValue:function (itemVal) {
 			var val = "";
@@ -88,12 +83,17 @@ LDAPURL_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,value:":", ref:null},
-	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, 
+	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,value:":"},
+	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_, 
 		getDisplayValue:function (itemVal) {
 			var val = this.getParentItem().defPort;
 			if(itemVal) {
 				var URLChunks = itemVal.split(/[:\/]/);
+					
+					/*DBG.println(AjxDebug.DBG1, "_TEXTFIELD_");
+					for(var ix in URLChunks) {
+						DBG.println(AjxDebug.DBG1, "URLChunks[" + ix + "] = " + URLChunks[ix]);
+					}*/
 					
 				if(AjxEnv.isIE) {
 					var tmp = parseInt(URLChunks[URLChunks.length-1]);
@@ -114,7 +114,7 @@ LDAPURL_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, 
+	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_,
 		getDisplayValue:function (itemVal) {
 			var val = false;
 			var protocol = "ldap://";
