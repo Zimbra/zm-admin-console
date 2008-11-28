@@ -21,16 +21,16 @@
 * Class to create the advance search options toolbar view
 * @author Charles Cao
 **/
-ZaSearchBuilderToolbarView = function(parent){
+ZaSearchBuilderToolbarView = function(parent, app){
 	//toolbar operations
 	this._ops = [] ;
 	this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_BASIC, ZaMsg.searchByBasic, ZaMsg.tt_searchByBasic, "SearchAll", "SearchAll", new AjxListener(this, this.basicTypeSelectHndlr)));
 	this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_ADDESS_TYPE, ZaMsg.searchByAddressType, ZaMsg.tt_searchByAddressType, "SearchAll", "SearchAll", new AjxListener(this, this.objTypeSelectHndlr)));
-	//if (!ZaSettings.isDomainAdmin) { //hide domain and server feature for the domain admin
+	if (!ZaSettings.isDomainAdmin) { //hide domain and server feature for the domain admin
 		DBG.println(AjxDebug.DBG1, "Domain Admin - No advanced cross domain or server search");
 		this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_DOMAIN, ZaMsg.searchByDomain, ZaMsg.tt_searchByDomain, "Domain", "DomainDis", new AjxListener(this, this.domainSelectHndlr)));
 		this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_SERVER, ZaMsg.searchByServer, ZaMsg.tt_searchByServer, "Server", "ServerDis", new AjxListener(this, this.serverSelectHndlr)));
-	//}
+	}
 	this._ops.push(new ZaOperation(	ZaOperation.SEARCH_BY_ADVANCED, ZaMsg.searchByAdvanced, ZaMsg.tt_searchByAdvanced, "SearchAll", "SearchAll", new AjxListener(this, this.advancedSelectHndlr)));
 	this._ops.push(new ZaOperation(ZaOperation.SEP));
 	this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_REMOVE_ALL, ZaMsg.searchByRemoveAll, ZaMsg.tt_searchByRemoveAll, null, null, new AjxListener(this, this.removeSelectHndlr), null, null, "ZaSearchBuilderOptionRemoveAll"));
@@ -40,11 +40,11 @@ ZaSearchBuilderToolbarView = function(parent){
 	ZaToolBar.call(this, parent, this._ops, null, AjxEnv.isIE ? null : "ZaSearchBuilderToolBar" );
 	
 	
-	this._app = ZaApp.getInstance();
+	this._app = app;
 	this.zShow(false);
 	//this.setVisible (false);
-
-	this._controller = ZaApp.getInstance().getSearchBuilderController () ;
+	this._app = app;
+	this._controller = this._app.getSearchBuilderController () ;
 	//this._searchBuilder
 	this._view = {};
 }
@@ -109,11 +109,11 @@ function (event) {
 	DBG.println (AjxDebug.DBG3, "Close ... ");
 	
 	this._controller.toggleVisible ();
-	ZaApp.getInstance()._appViewMgr.showSearchBuilder (this._controller.isSBVisible());
+	this._app._appViewMgr.showSearchBuilder (this._controller.isSBVisible());
 	
 	//clear the search field
 	this._controller.setQuery ();
 	
 	//reset the advanced search button tooltip
-	ZaApp.getInstance().getSearchListController()._searchField.setTooltipForSearchBuildButton (ZaMsg.tt_advanced_search_open);
+	this._app.getSearchListController()._searchField.setTooltipForSearchBuildButton (ZaMsg.tt_advanced_search_open);
 }

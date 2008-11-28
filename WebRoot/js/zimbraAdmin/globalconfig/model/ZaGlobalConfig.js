@@ -15,10 +15,9 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaGlobalConfig = function() {
-	ZaItem.call(this,"ZaGlobalConfig");
+ZaGlobalConfig = function(app) {
+	ZaItem.call(this, app, "ZaGlobalConfig");
 	this.attrs = new Object();
-	this.type = ZaItem.GLOBAL_CONFIG;
 //	this.attrsInternal = new Object();	
 	this.load();
 }
@@ -150,8 +149,7 @@ ZaGlobalConfig.A_zimbraSkinSelectionColor  = "zimbraSkinSelectionColor" ;
 ZaGlobalConfig.A_zimbraSkinLogoURL ="zimbraSkinLogoURL" ;
 ZaGlobalConfig.A_zimbraSkinLogoLoginBanner = "zimbraSkinLogoLoginBanner" ;
 ZaGlobalConfig.A_zimbraSkinLogoAppBanner = "zimbraSkinLogoAppBanner" ;
-ZaGlobalConfig.A2_blocked_extension_selection = "blocked_extension_selection";
-ZaGlobalConfig.A2_common_extension_selection = "common_extension_selection";
+
 
 ZaGlobalConfig.loadMethod = 
 function(by, val, withConfig) {
@@ -162,7 +160,7 @@ function(by, val, withConfig) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_CONFIG
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllConfigResponse;
@@ -172,15 +170,8 @@ ZaItem.loadMethods["ZaGlobalConfig"].push(ZaGlobalConfig.loadMethod);
 
 ZaGlobalConfig.prototype.initFromJS = function(obj) {
 	ZaItem.prototype.initFromJS.call(this, obj);
-	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension])) {
-		this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = [this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension]];
-	}
-	
-	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension])) {
-		this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension] = [this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension]];
-	}
-		
-	/*var blocked = this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension];
+
+	var blocked = this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension];
 	if (blocked == null) {
 		blocked = [];
 	}
@@ -223,7 +214,7 @@ ZaGlobalConfig.prototype.initFromJS = function(obj) {
 		}
 	}
 	this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = blocked;
-	*/
+
 	// convert available components to hidden fields for xform binding
 	var components = this.attrs[ZaGlobalConfig.A_zimbraComponentAvailable];
 	if (components) {
@@ -301,7 +292,7 @@ ZaGlobalConfig.modifyMethod = function (mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	command.invoke(params);
-	/*var newConfig = ZaApp.getInstance().getGlobalConfig(true);
+	/*var newConfig = this._app.getGlobalConfig(true);
 	if(newConfig.attrs) {
 		for (var aname in newConfig.attrs) {
 			this.attrs[aname] = newConfig.attrs[aname];
@@ -439,9 +430,7 @@ ZaGlobalConfig.myXModel = {
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme,
             type: _ENUM_, choices: ["basic", "form"]},
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ },
-        {id:ZaGlobalConfig.A2_blocked_extension_selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_common_extension_selection, type:_LIST_}
+        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ }
 
     ]
 }

@@ -31,12 +31,6 @@ ZaModel.getBooleanChoices1 = function () {
 }
 ZaModel.BOOLEAN_CHOICES1= ZaModel.getBooleanChoices1 ;
 
-ZaModel.getBooleanChoices2 = function () {
-    return [{value:"1", label:ZaMsg.Yes}, {value:"0", label:ZaMsg.No}, {value:null, label:ZaMsg.No}];
-}
-ZaModel.BOOLEAN_CHOICES2= ZaModel.getBooleanChoices2 ;
-
-
 ZaModel.FONT_SIZE_CHOICES = [
 	{value:"8pt", label: "8pt"},
 	{value:"10pt", label: "10pt"},
@@ -112,7 +106,7 @@ function(listener) {
 
 
 ZaModel.setUnrecoganizedTimezone = function (tz) {
-	var new_tz = ZaMsg.CHOICE_UNRECOGNIZED;
+	var new_tz = "Unrecognized";
 	var tzChoices = ZaSettings.timeZoneChoices.getChoices () ;
 	for (var i=0; i < tzChoices.values.length; i ++) {
 		if (tz == tzChoices.values[i]) {
@@ -124,7 +118,7 @@ ZaModel.setUnrecoganizedTimezone = function (tz) {
 }
 
 ZaModel.setUnrecoganizedChoiceValue = function (v, choices) {
-	var new_v = ZaMsg.CHOICE_UNRECOGNIZED;
+	var new_v = "Unrecognized";
 	
 	for (var i=0; i < choices.length; i ++) {
 		if (v == choices[i].value) {

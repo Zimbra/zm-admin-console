@@ -23,7 +23,8 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-ZaAccountListView = function(parent,listType) {
+ZaAccountListView = function(parent, app, listType) {
+	this._app = app;
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	this._listType = listType ;
@@ -47,7 +48,7 @@ function() {
 ZaAccountListView.prototype.getTitle = 
 function () {
 	var title = ZaMsg.Addresses_view_title ;
-	var cc = ZaApp.getInstance().getControllerById (this.__internalId) ;
+	var cc = this._app.getControllerById (this.__internalId) ;
 	switch (cc._defaultType) {
 		case ZaItem.DL :
 			title = ZaMsg.DL_view_title; break ;
@@ -65,7 +66,7 @@ function () {
 ZaAccountListView.prototype.getTabIcon =
 function () {
 	var icon = null ;
-	var cc = ZaApp.getInstance().getControllerById (this.__internalId) ;
+	var cc = this._app.getControllerById (this.__internalId) ;
 	switch (cc._defaultType) {
 		case ZaItem.DL :
 			icon = "Group"; break ;
@@ -109,9 +110,9 @@ function(account, now, isDragProxy) {
 				case ZaItem.ACCOUNT:
 					if(account.attrs[ZaAccount.A_isAdminAccount]=="TRUE") {
 						html[idx++] = AjxImg.getImageHtml("AdminUser");
-					}/* else if (ZaAccount.A_zimbraIsDomainAdminAccount && account.attrs[ZaAccount.A_zimbraIsDomainAdminAccount]=="TRUE") {
+					} else if (ZaAccount.A_zimbraIsDomainAdminAccount && account.attrs[ZaAccount.A_zimbraIsDomainAdminAccount]=="TRUE") {
 						html[idx++] = AjxImg.getImageHtml("DomainAdminUser");
-					}*/ else {
+					} else {
 						html[idx++] = AjxImg.getImageHtml("Account");
 					}	
 				break;
@@ -228,13 +229,13 @@ function(columnItem, bSortAsc) {
 			viewId=ZaZimbraAdmin._ACCOUNTS_LIST_VIEW;
 		}	
 		
-		var acctListController = ZaApp.getInstance().getAccountListController(viewId);
+		var acctListController = this._app.getAccountListController(viewId);
 			
 		acctListController.setSortOrder(bSortAsc);
 		acctListController.setSortField(columnItem.getSortField());
 		acctListController.show();
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex);
+		this._app.getCurrentController()._handleException(ex);
 	}
 }
 /*
