@@ -23,8 +23,8 @@
 * @param abApp
 **/
 
-ZaDomainController = function(appCtxt, container,app) {
-	ZaXFormViewController.call(this, appCtxt, container, app, "ZaDomainController");
+ZaDomainController = function(appCtxt, container) {
+	ZaXFormViewController.call(this, appCtxt, container,"ZaDomainController");
 	this._UICreated = false;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_domains/managing_domains.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 	this._toolbarOperations = new Array();			
@@ -60,33 +60,47 @@ function(entry) {
 **/
 ZaDomainController.initToolbarMethod =          
 function () {                                    
-	if (!ZaSettings.DOMAINS_ARE_READONLY || ZaSettings.CAN_MODIFY_CATCH_ALL_ADDRESS
-            || ZaSettings.DOMAIN_SKIN_ENABLED )
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.DTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener)));
-	
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.DTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
+	//if (!ZaSettings.DOMAINS_ARE_READONLY || ZaSettings.CAN_MODIFY_CATCH_ALL_ADDRESS
+      //      || ZaSettings.DOMAIN_SKIN_ENABLED ) {
+		this._toolbarOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.DTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
+		this._toolbarOrder.push(ZaOperation.SAVE);		
+	//}
+	this._toolbarOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.DTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));    	
+	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
 
-	if(ZaSettings.CAN_CREATE_DOMAINS)
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.DTBB_New_tt, "Domain", "DomainDis", new AjxListener(this, this._newButtonListener)));
+
+	this._toolbarOrder.push(ZaOperation.CLOSE);
+	this._toolbarOrder.push(ZaOperation.SEP);
+
+	//if(ZaZimbraAdmin.currentAdminAccount.rights[ZaDomain.RIGHT_CREATE_SUB_DOMAIN])
+		this._toolbarOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.DTBB_New_tt, "Domain", "DomainDis", new AjxListener(this, this._newButtonListener));
+		this._toolbarOrder.push(ZaOperation.NEW);		
+//	}
+
+//	if (ZaSettings.CAN_DELETE_DOMAINS ) {
+		this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.DTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
+		this._toolbarOrder.push(ZaOperation.DELETE);		    	    	
+//	}
 	
-	if (ZaSettings.CAN_DELETE_DOMAINS )
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.DTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener)));    	    	
-	
-	
-	if(ZaSettings.DOMAIN_GAL_WIZ_ENABLED) {
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.GAL_WIZARD, ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainController.prototype._galWizButtonListener)));   		
+	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_GAL_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+		this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
+		this._toolbarOperations[ZaOperation.GAL_WIZARD]=new ZaOperation(ZaOperation.GAL_WIZARD,ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainController.prototype._galWizButtonListener));   		
+		this._toolbarOrder.push(ZaOperation.SEP);
+		this._toolbarOrder.push(ZaOperation.GAL_WIZARD);			
 	}
-	if(ZaSettings.DOMAIN_AUTH_WIZ_ENABLED)
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.AUTH_WIZARD, ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainController.prototype._authWizButtonListener)));   		   		
+	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_AUTH_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+		this._toolbarOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainController.prototype._authWizButtonListener));
+		this._toolbarOrder.push(ZaOperation.AUTH_WIZARD);		   		   		
+	}
+	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_WIKI_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+		this._toolbarOperations[ZaOperation.INIT_NOTEBOOK]=new ZaOperation(ZaOperation.INIT_NOTEBOOK,ZaMsg.DTBB_InitNotebook, ZaMsg.DTBB_InitNotebook_tt, "NewNotebook", "NewNotebookDis", new AjxListener(this, ZaDomainController.prototype._initNotebookButtonListener));
+		this._toolbarOrder.push(ZaOperation.INIT_NOTEBOOK);		
+	}	
 	
-	if(ZaSettings.DOMAIN_WIKI_ENABLED)
-		this._toolbarOperations.push(new ZaOperation(ZaOperation.INIT_NOTEBOOK, ZaMsg.DTBB_InitNotebook, ZaMsg.DTBB_InitNotebook_tt, "NewNotebook", "NewNotebookDis", new AjxListener(this, ZaDomainController.prototype._initNotebookButtonListener)));
-		
-	if(ZaSettings.DOMAIN_MX_RECORD_CHECK_ENABLED)
-	   	this._toolbarOperations.push(new ZaOperation(ZaOperation.INIT_NOTEBOOK, ZaMsg.DTBB_CheckMX, ZaMsg.DTBB_CheckMX_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaDomainController.prototype._checkMXButtonListener)));
-
+	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_CHECK_MX_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	   	this._toolbarOperations[ZaOperation.CHECK_MX_RECORD]=new ZaOperation(ZaOperation.CHECK_MX_RECORD,ZaMsg.DTBB_CheckMX, ZaMsg.DTBB_CheckMX_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaDomainController.prototype._checkMXButtonListener));
+		this._toolbarOrder.push(ZaOperation.CHECK_MX_RECORD);	   	
+	}
 }
 ZaController.initToolbarMethods["ZaDomainController"].push(ZaDomainController.initToolbarMethod);
 
@@ -96,41 +110,42 @@ ZaController.initToolbarMethods["ZaDomainController"].push(ZaDomainController.in
 */
 ZaDomainController.setViewMethod =
 function(entry) {
-	entry.load("name", entry.attrs[ZaDomain.A_domainName]);
+	entry.load("name", entry.attrs[ZaDomain.A_domainName],false,true);
 	if(!this._UICreated) {
 		this._createUI();
 	} 
-	this._app.pushView(this.getContentViewId());
-	if(!ZaSettings.DOMAINS_ARE_READONLY)
+	ZaApp.getInstance().pushView(this.getContentViewId());
+	//if(!ZaSettings.DOMAINS_ARE_READONLY)
+	if(entry.setAttrs)
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);  		
 
 	if(entry.attrs[ZaDomain.A_zimbraDomainStatus] == ZaDomain.DOMAIN_STATUS_SHUTDOWN) {
-		if(ZaSettings.CAN_DELETE_DOMAINS)
+		if(entry.rights && entry.rights[ZaDomain.RIGHT_DELETE_DOMAIN])
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);
 		
-		if(ZaSettings.DOMAIN_GAL_WIZ_ENABLED)
+		if(entry.rights && entry.rights[ZaDomain.RIGHT_CONFIGURE_GAL])
 			this._toolbar.getButton(ZaOperation.GAL_WIZARD).setEnabled(false);
 		
-		if(ZaSettings.DOMAIN_AUTH_WIZ_ENABLED)
+		if(entry.rights && entry.rights[ZaDomain.RIGHT_CONFIGURE_AUTH])
 			this._toolbar.getButton(ZaOperation.AUTH_WIZARD).setEnabled(false);		
 		
-		if(ZaSettings.DOMAIN_WIKI_ENABLED)
+		if(ZaDomain.prototype.canConfigureWiki.call(entry))
 			this._toolbar.getButton(ZaOperation.INIT_NOTEBOOK).setEnabled(false);
 	} else {
-		if(ZaSettings.CAN_DELETE_DOMAINS) {
+		if(entry.rights && entry.rights[ZaDomain.RIGHT_DELETE_DOMAIN]) {
 			if(!entry.id) {
 				this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
 			} else {
 				this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);  				
 			}
 		}			
-		if(ZaSettings.DOMAIN_GAL_WIZ_ENABLED)
+		if(entry.rights && entry.rights[ZaDomain.RIGHT_CONFIGURE_GAL])
 			this._toolbar.getButton(ZaOperation.GAL_WIZARD).setEnabled(true);
 		
-		if(ZaSettings.DOMAIN_AUTH_WIZ_ENABLED)
+		if(entry.rights && entry.rights[ZaDomain.RIGHT_CONFIGURE_AUTH])
 			this._toolbar.getButton(ZaOperation.AUTH_WIZARD).setEnabled(true);		
 		
-		if(ZaSettings.DOMAIN_WIKI_ENABLED) {
+		if(ZaDomain.prototype.canConfigureWiki.call(entry)) {
 			if(entry.attrs[ZaDomain.A_zimbraNotebookAccount])
 				this._toolbar.getButton(ZaOperation.INIT_NOTEBOOK).setEnabled(false);
 			else
@@ -148,13 +163,15 @@ ZaController.setViewMethods["ZaDomainController"].push(ZaDomainController.setVie
 **/
 ZaDomainController.prototype._createUI =
 function () {
-	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
+	this._contentView = this._view = new this.tabConstructor(this._container);
 
 	this._initToolbar();
 	//always add Help button at the end of the toolbar
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
-	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));							
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);		
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));							
+	this._toolbarOrder.push(ZaOperation.NONE);
+	this._toolbarOrder.push(ZaOperation.HELP);	
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);		
 	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
@@ -163,9 +180,9 @@ function () {
 		openInNewTab: true,
 		tabId: this.getContentViewId()
 	}  		
-    this._app.createView(this.getContentViewId(), elements, tabParams) ;
+    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
-	this._app._controllers[this.getContentViewId ()] = this ;
+	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }
 
 ZaDomainController.prototype.saveButtonListener =
@@ -319,15 +336,13 @@ function () {
 		
 		}
 	}
-/*	if(tmpObj.attrs[ZaDomain.A_zimbraDomainStatus] != this._currentObject.attrs[ZaDomain.A_zimbraDomainStatus]) {
-		changeStatus = true;
-	}	*/	
+
 	if(haveSmth || writeACLs || catchAllChanged) {
 		try { 
 			var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
 			soapDoc.setMethodAttribute("onerror", "stop");		
 			if(renameNotebookAccount) {
-				var account = new ZaAccount(this._app);
+				var account = new ZaAccount();
 				account.load(ZaAccount.A_name,this._currentObject.attrs[ZaDomain.A_zimbraNotebookAccount]);
 				account.rename(tmpObj.attrs[ZaDomain.A_zimbraNotebookAccount]);
 			}
@@ -352,15 +367,13 @@ function () {
                 	this._currentObject[ZaAccount.A_zimbraMailCatchAllAddress] = tmpObj[ZaAccount.A_zimbraMailCatchAllAddress] ;
                 } else if (!AjxUtil.isEmpty(tmpObj[ZaAccount.A_zimbraMailCatchAllAddress]) && ZaItem.ID_PATTERN.test(tmpObj[ZaAccount.A_zimbraMailCatchAllAddress])) {
                 	var acc = new ZaAccount(ZaApp.getInstance());
-                	acc.load("id",tmpObj[ZaAccount.A_zimbraMailCatchAllAddress],false);
+                	acc.load("id",tmpObj[ZaAccount.A_zimbraMailCatchAllAddress],false,true);
                 	this._currentObject[ZaAccount.A_zimbraMailCatchAllAddress] = acc;
                 }
             }
 
 			if(haveSmth) {
 				var modifyDomainRequest = soapDoc.set("ModifyDomainRequest", null, null, ZaZimbraAdmin.URN);
-//				modifyDomainRequest.setAttribute("xmlns", ZaZimbraAdmin.URN);
-			
 				soapDoc.set("id", this._currentObject.id,modifyDomainRequest);
 				for (var aname in mods) {
 					//multy value attribute
@@ -397,18 +410,13 @@ function () {
 				
 			}
 	
-			/*if(changeStatus) {
-				var modifyDomainStatusRequest = soapDoc.set("ModifyDomainStatusRequest", null, null, ZaZimbraAdmin.URN); 
-//				modifyDomainStatusRequest.setAttribute("xmlns", ZaZimbraAdmin.URN);
-				soapDoc.set("id", this._currentObject.id,modifyDomainStatusRequest);
-				soapDoc.set("status", tmpObj.attrs[ZaDomain.A_zimbraDomainStatus],modifyDomainStatusRequest);
-			}*/
+
 			params.soapDoc = soapDoc;	
 			var callback = new AjxCallback(this, this.saveChangesCallback);	
 			params.asyncMode = true;
 			params.callback = callback;			
 			var reqMgrParams = {
-				controller : this._app.getCurrentController(),
+				controller : ZaApp.getInstance().getCurrentController(),
 				busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 			}	
 			ZaRequestMgr.invoke(params, reqMgrParams);			
@@ -417,6 +425,8 @@ function () {
 		} catch (ex) {
 			this._handleException(ex,"ZaDomainController.prototype._saveChanges");
 		}
+	} else {
+		return true;
 	}
 }
 
@@ -431,7 +441,7 @@ function () {
 ZaDomainController.prototype._showNewDomainWizard = 
 function () {
 	try {
-		this._newDomainWizard = this._app.dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, this._app);	
+		this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container);	
 		this._newDomainWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainController.prototype._finishNewButtonListener, this, null);			
 		this._newDomainWizard.setObject(this._currentObject);
 		this._newDomainWizard.popup();
@@ -447,14 +457,14 @@ function(ev) {
 		//parameters for the confirmation dialog's callback 
 		var args = new Object();		
 		args["params"] = null;
-		args["obj"] = this._app.getDomainController();
+		args["obj"] = ZaApp.getInstance().getDomainController();
 		args["func"] = ZaDomainController.prototype.newDomain;
 		//ask if the user wants to save changes		
-		//this._app.dialogs["confirmMessageDialog"] = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);								
-		this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
-		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
-		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
-		this._app.dialogs["confirmMessageDialog"].popup();
+		//ZaApp.getInstance().dialogs["confirmMessageDialog"] = ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON]);								
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();
 	} else {
 		this.newDomain();
 	}	
@@ -464,7 +474,7 @@ function(ev) {
 ZaDomainController.prototype._galWizButtonListener =
 function(ev) {
 	try {
-		this._galWizard = this._app.dialogs["galWizard"] = new ZaGALConfigXWizard(this._container, this._app);	
+		this._galWizard = ZaApp.getInstance().dialogs["galWizard"] = new ZaGALConfigXWizard(this._container);	
 		this._galWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainController.prototype._finishGalButtonListener, this, null);			
 		this._galWizard.setObject(this._currentObject);
 		this._galWizard.popup();
@@ -477,7 +487,7 @@ function(ev) {
 ZaDomainController.prototype._authWizButtonListener =
 function(ev) {
 	try {
-		this._authWizard = this._app.dialogs["authWizard"] =  new ZaAuthConfigXWizard(this._container, this._app);	
+		this._authWizard = ZaApp.getInstance().dialogs["authWizard"] =  new ZaAuthConfigXWizard(this._container);	
 		this._authWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainController.prototype._finishAuthButtonListener, this, null);			
 		this._authWizard.setObject(this._currentObject);
 		this._authWizard.popup();
@@ -527,11 +537,12 @@ function(ev) {
 ZaDomainController.prototype._finishNewButtonListener =
 function(ev) {
 	try {
-		var domain = ZaDomain.create(this._newDomainWizard.getObject(), this._app);
+		var domain = ZaDomain.create(this._newDomainWizard.getObject());
+		domain.load("id",domain.id,false,true);
 		if(domain != null) {
 			//if creation took place - fire an DomainChangeEvent
 			this.fireCreationEvent(domain);
-			if(ZaSettings.CAN_DELETE_DOMAINS)
+			if(domain.rights && domain.rights[ZaDomain.RIGHT_DELETE_DOMAIN])
 				this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);
 					
 			this._newDomainWizard.popdown();		
@@ -569,7 +580,7 @@ function (params, resp) {
 		var callback = new AjxCallback(this, this.setNotebookAclsCallback);				
 		ZaDomain.setNotebookACLs(params.obj, callback) ;
 //	}	
-	this._currentObject.refresh();
+	this._currentObject.refresh(false,true);
 	this.show(this._currentObject);
 }
 
@@ -603,11 +614,11 @@ function (resp) {
 			this._handleException(ex, "ZaDomainController.prototype.saveChangesCallback", null, false);
 		}
 	}
-	/*if(response.ModifyDomainResponse && response.ModifyDomainResponse.domain && response.ModifyDomainResponse.domain[0]) {
+	if(response.ModifyDomainResponse && response.ModifyDomainResponse.domain && response.ModifyDomainResponse.domain[0]) {
 		this._currentObject.initFromJS(response.ModifyDomainResponse.domain[0]);
-	}*/
-
-	this._currentObject.refresh(false);	
+	} else {
+		this._currentObject.refresh(false);
+	}	
 	this._view.setObject(this._currentObject);			
 	this.fireChangeEvent(this._currentObject);			
 }
@@ -673,7 +684,7 @@ function (resp) {
 ZaDomainController.prototype._initNotebookButtonListener = 
 function (ev) {
 	try {
-		this._initDomainNotebookWiz = this._app.dialogs["initDomainNotebookWiz"] = new ZaDomainNotebookXWizard(this._container, this._app);	
+		this._initDomainNotebookWiz = ZaApp.getInstance().dialogs["initDomainNotebookWiz"] = new ZaDomainNotebookXWizard(this._container);	
 		this._initDomainNotebookWiz.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainController.prototype._finishDomainNotebookListener, this, null);			
 		this._initDomainNotebookWiz.setObject(this._currentObject);
 		this._initDomainNotebookWiz.popup();

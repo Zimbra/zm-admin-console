@@ -22,9 +22,8 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaGALConfigXWizard = function(parent, app) {
-	this._app=app;
-	ZaXWizardDialog.call(this, parent,app, null, ZaMsg.NCD_GALConfigTitle, "550px", "300px","ZaGALConfigXWizard");
+ZaGALConfigXWizard = function(parent) {
+	ZaXWizardDialog.call(this, parent, null, ZaMsg.NCD_GALConfigTitle, "550px", "300px","ZaGALConfigXWizard");
 	this.stepChoices = [
 		{label:ZaMsg.TABT_GALMode, value:1},
 		{label:ZaMsg.TABT_GALConfiguration, value:2}, 
@@ -56,6 +55,16 @@ ZaGALConfigXWizard = function(parent, app) {
 ZaGALConfigXWizard.prototype = new ZaXWizardDialog;
 ZaGALConfigXWizard.prototype.constructor = ZaGALConfigXWizard;
 ZaXDialog.XFormModifiers["ZaGALConfigXWizard"] = new Array();
+
+ZaGALConfigXWizard.GALMODE_STEP = 1;
+ZaGALConfigXWizard.GAL_CONFIG_STEP_1 = 2;
+ZaGALConfigXWizard.GAL_CONFIG_STEP_2 = 3;
+ZaGALConfigXWizard.GAL_SYNC_CONFIG_STEP_1 = 4;
+ZaGALConfigXWizard.GAL_SYNC_CONFIG_STEP_2 = 5;
+ZaGALConfigXWizard.GAL_CONFIG_SUM_STEP = 6;
+ZaGALConfigXWizard.GAL_TEST_STEP = 7;
+ZaGALConfigXWizard.GAL_TEST_RESULT_STEP = 8;
+
 
 ZaGALConfigXWizard.prototype.handleXFormChange = 
 function () {
@@ -317,11 +326,11 @@ function() {
 	if(this._containedObject[ZaModel.currentStep] == 2 && this._containedObject.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal) {	
 		//check that Filter is provided and at least one server
 		if(!this._containedObject.attrs[ZaDomain.A_GalLdapFilter]) {
-			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);			
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);			
 			return;
 		}
 		if(!this._containedObject.attrs[ZaDomain.A_GalLdapURL] || this._containedObject.attrs[ZaDomain.A_GalLdapURL].length < 1) {
-			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);					
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);					
 			return;
 		}
 	} 
@@ -334,7 +343,7 @@ function() {
 		}
 		//check that passwords match
 		if(this._containedObject.attrs[ZaDomain.A_GalLdapBindPassword]!=this._containedObject.attrs[ZaDomain.A_GalLdapBindPasswordConfirm]) {
-			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
 			return false;
 		}
 		this.goPage(4);
@@ -346,7 +355,7 @@ function() {
 		}
 	} else if(this._containedObject[ZaModel.currentStep] == 6) {
 		if(!this._containedObject[ZaDomain.A_GALSampleQuery]) {
-			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_TERM_REQUIRED);			
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_TERM_REQUIRED);			
 			return;
 		}
  		this.testSetings();
@@ -373,20 +382,24 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 	resultHeaderList[1] = new ZaListHeaderItem("fullName", ZaMsg.ALV_FullName_col, null, "116px", null, "fullName", true, true);
 	
 	xFormObject.items = [
-		{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices},
+		{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices,valueChangeEventSources:[ZaModel.currentStep]},
 		{type:_SEPARATOR_, align:_CENTER_, valign:_TOP_},
 		{type:_SPACER_,  align:_CENTER_, valign:_TOP_},				
 		{type: _SWITCH_,
 			items: [
-				{type:_CASE_, relevant:"instance[ZaModel.currentStep] == 1", relevantBehaviorBehavior:_HIDE_,
+				{type:_CASE_, caseKey:ZaGALConfigXWizard.GALMODE_STEP, 
 					items: [
 						{ref:ZaDomain.A_GalMode, type:_OSELECT1_, label:ZaMsg.Domain_GalMode, labelLocation:_LEFT_, choices:this.GALModes, onChange:ZaGALConfigXWizard.onGalModeChange},
 						{ref:ZaDomain.A_GalMaxResults, type:_INPUT_, label:ZaMsg.NAD_GalMaxResults, labelLocation:_LEFT_}
 					]
 				},
-				{type:_CASE_, relevant:"(instance[ZaModel.currentStep] == 2 && instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal)", relevantBehavior:_HIDE_,
+				{type:_CASE_,
+					caseKey:ZaGALConfigXWizard.GAL_CONFIG_STEP_1,
+					visibilityChangeEventSources:[ZaModel.currentStep],
+					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaNewDomainXWizard.isDomainModeNotInternal],					
 					items: [
-						{ref:ZaDomain.A_GALServerType, type:_OSELECT1_, label:ZaMsg.Domain_GALServerType, labelLocation:_LEFT_, choices:this.GALServerTypes, onChange:ZaGALConfigXWizard.onGALServerTypeChange},
+						{ref:ZaDomain.A_GALServerType, type:_OSELECT1_, label:ZaMsg.Domain_GALServerType, labelLocation:_LEFT_, choices:this.GALServerTypes, 
+							onChange:ZaGALConfigXWizard.onGALServerTypeChange},
 						{type:_GROUP_, numCols:6, colSpan:6,label:"   ",labelLocation:_LEFT_,
 							items: [
 								{type:_OUTPUT_, label:null, labelLocation:_NONE_, value:" ", width:"35px"},
@@ -398,7 +411,9 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 						},
 						{ref:ZaDomain.A_GalLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,  
 							addButtonLabel:ZaMsg.Domain_AddURL, 
-							relevant:"(instance.attrs[ZaDomain.A_GALServerType]==ZaDomain.GAL_ServerType_ad)",
+							visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALServerType,ZaDomain.GAL_ServerType_ad]],
+							visibilityChangeEventSources:[ZaDomain.A_GALServerType],							
+							//relevant:"(instance.attrs[ZaDomain.A_GALServerType]==ZaDomain.GAL_ServerType_ad)",
 							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
 							showAddOnNextRow:true,							
 							items: [
@@ -406,33 +421,58 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 							]
 						},
 						{ref:ZaDomain.A_GalLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,  
-							addButtonLabel:ZaMsg.Domain_AddURL, 
-							relevant:"(instance.attrs[ZaDomain.A_GALServerType]==ZaDomain.GAL_ServerType_ldap)",
+							addButtonLabel:ZaMsg.Domain_AddURL,
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALServerType,ZaDomain.GAL_ServerType_ldap]],
+							visibilityChangeEventSources:[ZaDomain.A_GALServerType],								 
+							//relevant:"(instance.attrs[ZaDomain.A_GALServerType]==ZaDomain.GAL_ServerType_ldap)",
 							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
 							showAddOnNextRow:true,							
 							items: [
 								{ref:".", type:_LDAPURL_, label:null,ldapSSLPort:"636",ldapPort:"389",  labelLocation:_NONE_}
 							]
 						},
-						{ref:ZaDomain.A_GalLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, textWrapping:"soft", relevant:"instance.attrs[ZaDomain.A_GALServerType] == 'ldap'", relevantBehavior:_DISABLE_},
-						{ref:ZaDomain.A_zimbraGalAutoCompleteLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_zimbraGalAutoCompleteLdapFilter, labelLocation:_LEFT_, textWrapping:"soft", relevant:"instance.attrs[ZaDomain.A_GALServerType] == ZaDomain.GAL_ServerType_ldap", relevantBehavior:_DISABLE_},						
+						{ref:ZaDomain.A_GalLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, textWrapping:"soft", 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALServerType,ZaDomain.GAL_ServerType_ldap]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALServerType]							
+						},
+						{ref:ZaDomain.A_zimbraGalAutoCompleteLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_zimbraGalAutoCompleteLdapFilter, 
+							labelLocation:_LEFT_, textWrapping:"soft",
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALServerType,ZaDomain.GAL_ServerType_ldap]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALServerType]								 
+						},						
 						{ref:ZaDomain.A_GalLdapSearchBase, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapSearchBase, labelLocation:_LEFT_, textWrapping:"soft"}
 					]
 				},
-				{type:_CASE_, relevant:"(instance[ZaModel.currentStep] == 3 && instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal)", relevantBehavior:_HIDE_,
+				{type:_CASE_, 
+					caseKey:ZaGALConfigXWizard.GAL_CONFIG_STEP_2,
+					visibilityChangeEventSources:[ZaModel.currentStep],
+					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaNewDomainXWizard.isDomainModeNotInternal],					
 					items: [
 						{ref:ZaDomain.A_UseBindPassword, type:_CHECKBOX_, label:ZaMsg.Domain_UseBindPassword, labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label", align:_LEFT_},
-						{ref:ZaDomain.A_GalLdapBindDn, type:_INPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_UseBindPassword] == 'TRUE'", relevantBehavior:_DISABLE_},
-						{ref:ZaDomain.A_GalLdapBindPassword, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPassword, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_UseBindPassword] == 'TRUE'", relevantBehavior:_DISABLE_},
-						{ref:ZaDomain.A_GalLdapBindPasswordConfirm, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPasswordConfirm, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_UseBindPassword] == 'TRUE'", relevantBehavior:_DISABLE_}							
+						{ref:ZaDomain.A_GalLdapBindDn, type:_INPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_UseBindPassword,"TRUE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_UseBindPassword]							
+						},
+						{ref:ZaDomain.A_GalLdapBindPassword, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPassword, labelLocation:_LEFT_, 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_UseBindPassword,"TRUE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_UseBindPassword]							
+						},
+						{ref:ZaDomain.A_GalLdapBindPasswordConfirm, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPasswordConfirm, labelLocation:_LEFT_, 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_UseBindPassword,"TRUE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_UseBindPassword]							
+						}							
 					]			
 				},				
-				{type:_CASE_, relevant:"(instance[ZaModel.currentStep] == 2 && instance.attrs[ZaDomain.A_GalMode] == ZaDomain.GAL_Mode_internal)", relevantBehavior:_HIDE_,
+				{type:_CASE_, 
+					caseKey:ZaGALConfigXWizard.GAL_CONFIG_STEP_1,
+					visibilityChangeEventSources:[ZaModel.currentStep],
+					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,[XForm.checkInstanceValue,ZaDomain.A_GalMode,ZaDomain.GAL_Mode_internal]],					
 					items: [
 						{type:_OUTPUT_, value:ZaMsg.Domain_GAL_Config_Complete}
 					]
 				}, 
-				{type:_CASE_, relevant:"instance[ZaModel.currentStep] == 4", relevantBehavior:_HIDE_,
+				{type:_CASE_, 
+					caseKey:ZaGALConfigXWizard.GAL_SYNC_CONFIG_STEP_1,
 					items: [
 						{ref:ZaDomain.A_GALSyncUseGALSearch, type:_CHECKBOX_, label:ZaMsg.Domain_GALSyncUseGALSearch, 
 							labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE",
@@ -441,12 +481,12 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 						},
 						{ref:ZaDomain.A_GALSyncServerType, type:_OSELECT1_, label:ZaMsg.Domain_GALServerType, labelLocation:_LEFT_, 
 							choices:this.GALServerTypes, onChange:ZaGALConfigXWizard.onGALSyncServerTypeChange,
-							relevant:"ZaGALConfigXWizard.getGalSyncConfigSeparate.call(item)",
-							relevantBehavior:_DISABLE_
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch]
 						},
 						{type:_GROUP_, numCols:6, colSpan:6,label:"   ",labelLocation:_LEFT_,
-							relevant:"ZaGALConfigXWizard.getGalSyncConfigSeparate.call(item)",
-							relevantBehavior:_DISABLE_,
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch],							
 							items: [
 								{type:_OUTPUT_, label:null, labelLocation:_NONE_, value:" ", width:"35px"},
 								{type:_OUTPUT_, label:null, labelLocation:_NONE_, value:ZaMsg.Domain_GALServerName, width:"200px"},
@@ -456,8 +496,10 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 							]
 						},
 						{ref:ZaDomain.A_zimbraGalSyncLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,
-							relevant:"(ZaGALConfigXWizard.getGalSyncConfigSeparate.call(item) && (instance.attrs[ZaDomain.A_GALSyncServerType]==ZaDomain.GAL_ServerType_ad))",
-							relevantBehavior:_DISABLE_,
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch],
+							visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncServerType,ZaDomain.GAL_ServerType_ad]],
+							visibilityChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch,ZaDomain.A_GALSyncServerType],							
 							addButtonLabel:ZaMsg.Domain_AddURL, 
 							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
 							showAddOnNextRow:true,							
@@ -466,8 +508,10 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 							]
 						},
 						{ref:ZaDomain.A_zimbraGalSyncLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", repeatInstance:"", showAddButton:true, showRemoveButton:true,
-							relevant:"(ZaGALConfigXWizard.getGalSyncConfigSeparate.call(item)  && (instance.attrs[ZaDomain.A_GALSyncServerType]==ZaDomain.GAL_ServerType_ldap))",
-							relevantBehavior:_DISABLE_,
+							visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncServerType,ZaDomain.GAL_ServerType_ldap]],
+							visibilityChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch,ZaDomain.A_GALSyncServerType],							
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch,ZaDomain.A_GALSyncServerType],								
 							addButtonLabel:ZaMsg.Domain_AddURL, 
 							removeButtonLabel:ZaMsg.Domain_REPEAT_REMOVE,								
 							showAddOnNextRow:true,							
@@ -476,29 +520,43 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 							]
 						},
 						{ref:ZaDomain.A_zimbraGalSyncLdapFilter, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, textWrapping:"soft", 
-							relevant:"ZaGALConfigXWizard.getGalSyncLdapFilterEnabled.call(item)",
-							relevantBehavior:_DISABLE_
+							enableDisableChecks:[ZaGALConfigXWizard.getGalSyncLdapFilterEnabled],
+							enableDisableChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch, ZaDomain.A_GALSyncServerType]
 						},
 						{ref:ZaDomain.A_zimbraGalSyncLdapSearchBase, type:_TEXTAREA_, width:380, height:40, label:ZaMsg.Domain_GalLdapSearchBase, labelLocation:_LEFT_, textWrapping:"soft", 
-							relevant:"ZaGALConfigXWizard.getGalSyncConfigSeparate.call(item)",
-							relevantBehavior:_DISABLE_							
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_GALSyncUseGALSearch]								
 						}						
 					]
 				},
-				{type:_CASE_, relevant:"(instance[ZaModel.currentStep] == 5 && instance.attrs[ZaDomain.A_GalMode] != ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE')", relevantBehavior:_HIDE_,
+				{type:_CASE_, 
+					caseKey:ZaGALConfigXWizard.GAL_SYNC_CONFIG_STEP_2,
+					visibilityChangeEventSources:[ZaModel.currentStep],
+					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
 					items: [
 						{ref:ZaDomain.A_SyncUseBindPassword, type:_CHECKBOX_, label:ZaMsg.Domain_UseBindPassword, labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label", align:_LEFT_},
-						{ref:ZaDomain.A_zimbraGalSyncLdapBindDn, type:_INPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_SyncUseBindPassword] == 'TRUE'", relevantBehavior:_DISABLE_},
-						{ref:ZaDomain.A_zimbraGalSyncLdapBindPassword, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPassword, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_SyncUseBindPassword] == 'TRUE'", relevantBehavior:_DISABLE_},
-						{ref:ZaDomain.A_GalSyncLdapBindPasswordConfirm, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPasswordConfirm, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_SyncUseBindPassword] == 'TRUE'", relevantBehavior:_DISABLE_}							
+						{ref:ZaDomain.A_zimbraGalSyncLdapBindDn, type:_INPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_SyncUseBindPassword,"TRUE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_SyncUseBindPassword]							
+						},
+						{ref:ZaDomain.A_zimbraGalSyncLdapBindPassword, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPassword, labelLocation:_LEFT_, 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_SyncUseBindPassword,"TRUE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_SyncUseBindPassword]							
+						},
+						{ref:ZaDomain.A_GalSyncLdapBindPasswordConfirm, type:_SECRET_, label:ZaMsg.Domain_GalLdapBindPasswordConfirm, labelLocation:_LEFT_, 
+							enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A_SyncUseBindPassword,"TRUE"]],
+							enableDisableChangeEventSources:[ZaDomain.A_SyncUseBindPassword]							
+						}							
 					]			
 				},				
-				{type:_CASE_, relevant:"instance[ZaModel.currentStep] == 6", relevantBehavior:_HIDE_,width:"500px",
+				{type:_CASE_, caseKey:ZaGALConfigXWizard.GAL_CONFIG_SUM_STEP,width:"500px",
 					items: [
 						{ref:ZaDomain.A_GalMode, type:_OUTPUT_, label:ZaMsg.Domain_GalMode, choices:this.GALModes},
 						{ref:ZaDomain.A_GalMaxResults, type:_OUTPUT_, label:ZaMsg.NAD_GalMaxResults},
 						//search
-						{type:_ZAWIZ_TOP_GROUPER_, relevant:"instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal", relevantBehavior:_HIDE_,
+						{type:_ZAWIZ_TOP_GROUPER_,
+							visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal],
+							visibilityChangeEventSources:[ZaDomain.A_GalMode],
 							useParentTable:false,
 							numCols:2,colSpan:2,
 							label:ZaMsg.Domain_GALSearchConfigSummary,
@@ -509,10 +567,17 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 										{type:_OUTPUT_, ref:".", label:null,labelLocation:_NONE_}
 									]
 								},	
-								{ref:ZaDomain.A_GalLdapFilter, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_GALServerType] == 'ldap'", relevantBehavior:_HIDE_,required:true},
+								{ref:ZaDomain.A_GalLdapFilter, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_,required:true, 
+									visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALServerType,ZaDomain.GAL_ServerType_ldap]],
+									visibilityChangeEventSources:[ZaDomain.GAL_ServerType_ldap]									
+									
+								},
 								{ref:ZaDomain.A_GalLdapSearchBase, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapSearchBase, labelLocation:_LEFT_},
 								{ref:ZaDomain.A_UseBindPassword, type:_OUTPUT_, label:ZaMsg.Domain_UseBindPassword, labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE"},
-								{ref:ZaDomain.A_GalLdapBindDn, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, relevant:"instance.attrs[ZaDomain.A_UseBindPassword] == 'TRUE'", relevantBehavior:_HIDE_}
+								{ref:ZaDomain.A_GalLdapBindDn, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, 
+									visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_UseBindPassword,"TRUE"]],
+									visibilityChangeEventSources:[ZaDomain.A_UseBindPassword]									
+								}
 							]
 						},
 						//sync
@@ -523,39 +588,49 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 							items: [
 								{ref:ZaDomain.A_GALSyncUseGALSearch, type:_OUTPUT_, label:ZaMsg.Domain_GALSyncUseGALSearch, labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE"},
 								{ref:ZaDomain.A_GALSyncServerType, type:_OUTPUT_, label:ZaMsg.Domain_GALServerType, choices:this.GALServerTypes, labelLocation:_LEFT_,
-								relevant:"(instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE')", relevantBehavior:_HIDE_},
+									visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+									visibilityChangeEventSources:[ZaDomain.A_GalMode,ZaDomain.A_GALSyncUseGALSearch]									
+								},
 								{ref:ZaDomain.A_zimbraGalSyncLdapURL, type:_REPEAT_, label:ZaMsg.Domain_GalLdapURL+":", labelLocation:_LEFT_,showAddButton:false, showRemoveButton:false,
-									relevant:"(instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE')", relevantBehavior:_HIDE_,
+									visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+									visibilityChangeEventSources:[ZaDomain.A_GalMode,ZaDomain.A_GALSyncUseGALSearch],									
 									items:[
 										{type:_OUTPUT_, ref:".", label:null,labelLocation:_NONE_}
 									]
 								},	
-								{ref:ZaDomain.A_zimbraGalSyncLdapFilter, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_, 
-									relevant:"( (instance.attrs[ZaDomain.A_GALServerType] == 'ldap') && (instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE'))", 
-									relevantBehavior:_HIDE_,required:true},
+								{ref:ZaDomain.A_zimbraGalSyncLdapFilter, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapFilter, labelLocation:_LEFT_,required:true, 
+									visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"],[XForm.checkInstanceValue,ZaDomain.A_GALServerType,ZaDomain.GAL_ServerType_ldap]],
+									visibilityChangeEventSources:[ZaDomain.A_GalMode,ZaDomain.A_GALSyncUseGALSearch,ZaDomain.A_GALServerType]									
+								},
 								{ref:ZaDomain.A_zimbraGalSyncLdapSearchBase, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapSearchBase, labelLocation:_LEFT_,
-									relevant:"(instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE')", relevantBehavior:_HIDE_
+									visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+									visibilityChangeEventSources:[ZaDomain.A_GalMode,ZaDomain.A_GALSyncUseGALSearch]								
 								},
 								{ref:ZaDomain.A_SyncUseBindPassword, type:_OUTPUT_, label:ZaMsg.Domain_UseBindPassword, labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE",
-									relevant:"(instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE')", relevantBehavior:_HIDE_								
+									visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+									visibilityChangeEventSources:[ZaDomain.A_GalMode,ZaDomain.A_GALSyncUseGALSearch]									
 								},
 								{ref:ZaDomain.A_zimbraGalSyncLdapBindDn, type:_OUTPUT_, label:ZaMsg.Domain_GalLdapBindDn, labelLocation:_LEFT_, 
-									relevant:"( (instance.attrs[ZaDomain.A_UseBindPassword] == 'TRUE') && (instance.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal && instance.attrs[ZaDomain.A_GALSyncUseGALSearch]=='FALSE'))", 
-									relevantBehavior:_HIDE_
+									visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A_UseBindPassword,"TRUE"],[XForm.checkInstanceValue,ZaDomain.A_GALSyncUseGALSearch,"FALSE"]],
+									visibilityChangeEventSources:[ZaDomain.A_GalMode,ZaDomain.A_GALSyncUseGALSearch,ZaDomain.A_UseBindPassword]									
 								}
 							]
 						},
 						{ref:ZaDomain.A_GALSampleQuery, type:_INPUT_, label:ZaMsg.Domain_GALSampleSearchName, labelLocation:_LEFT_, labelWrap:true, cssStyle:"width:100px;"}					
 					]
 				},
-				{type:_CASE_, relevant:"instance[ZaModel.currentStep] == 7", relevantBehavior:_HIDE_,
+				{type:_CASE_, caseKey:ZaGALConfigXWizard.GAL_TEST_STEP, 
 					items: [
 						{type:_OUTPUT_, value:ZaMsg.Domain_GALTestingInProgress}
 					]	
 				}, 
-				{type:_CASE_, relevant:"instance[ZaModel.currentStep] == 8", relevantBehavior:_HIDE_,width:"500px",
+				{type:_CASE_, caseKey:ZaGALConfigXWizard.GAL_TEST_RESULT_STEP,
+					width:"500px",
 					items: [
-						{type:_ZAWIZ_TOP_GROUPER_, relevant:"instance[ZaDomain.A_GALSearchTestResultCode] == ZaDomain.Check_OK", 
+						{type:_ZAWIZ_TOP_GROUPER_, 
+							visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSearchTestResultCode,ZaDomain.Check_OK]] ,
+							visibilityChangeEventSources:[ZaDomain.A_GALSearchTestResultCode],							
+							//relevant:"instance[ZaDomain.A_GALSearchTestResultCode] == ZaDomain.Check_OK", 
 							label:ZaMsg.Domain_GALSearchTestResults,
 							numCols:2,
 							items: [
@@ -566,7 +641,10 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 									align:_CENTER_,				
 									style: DwtAlert.INFORMATION
 								},										
-								{type:_OUTPUT_, value:ZaMsg.Domain_GALSearchResult,  align:_CENTER_, colSpan:2, relevant:"(instance[ZaDomain.A_GALTestSearchResults]!=null && instance[ZaDomain.A_GALTestSearchResults].length>0)"},											
+								{type:_OUTPUT_, value:ZaMsg.Domain_GALSearchResult,  align:_CENTER_, colSpan:2, 
+									visibilityChecks:[[XForm.checkInstanceValueNotEmty,ZaDomain.A_GALTestSearchResults]]
+									
+								},											
 								{type:_SPACER_,  align:_CENTER_, valign:_TOP_, colSpan:"*"},	
 								{ref: ZaDomain.A_GALTestSearchResults, type:_DWT_LIST_, height:"140px", width:"260px",colSpan:2,
 			 				    	cssClass: "DLSource", forceUpdate: true, 
@@ -575,7 +653,13 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 			 				    }
 							]
 						},
-						{type:_ZAWIZ_TOP_GROUPER_, relevant:"instance[ZaDomain.A_GALSearchTestResultCode] != ZaDomain.Check_OK",
+						{type:_ZAWIZ_TOP_GROUPER_, 
+							visibilityChecks:[
+								function () { 
+									return (this.getInstanceValue(ZaDomain.A_GALSearchTestResultCode) != ZaDomain.Check_OK); 
+								} 
+							] ,
+							visibilityChangeEventSources:[ZaDomain.A_GALSearchTestResultCode],						
 							label:ZaMsg.Domain_GALSearchTestResults,
 							numCols:2,					
 							items: [
@@ -590,7 +674,13 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 								{type:_TEXTAREA_, ref:ZaDomain.A_GALSearchTestMessage, label:ZaMsg.Domain_GALTestMessage, height:"200px", width:"380px"}
 							]
 						},
-						{type:_ZAWIZ_TOP_GROUPER_, relevant:"instance[ZaDomain.A_GALSyncTestResultCode] == ZaDomain.Check_OK", 
+						{type:_ZAWIZ_TOP_GROUPER_,
+							visibilityChecks:[
+								function () { 
+									return (this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) === ZaDomain.Check_OK); 
+								} 
+							] ,
+							visibilityChangeEventSources:[ZaDomain.A_GALSyncTestResultCode],							 
 							label:ZaMsg.Domain_GALSyncTestResults,
 							numCols:2,
 							items: [
@@ -603,7 +693,13 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 								}
 							]
 						},
-						{type:_ZAWIZ_TOP_GROUPER_, relevant:"instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_OK",
+						{type:_ZAWIZ_TOP_GROUPER_, 
+							visibilityChecks:[
+								function () { 
+									return (this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) != ZaDomain.Check_OK); 
+								} 
+							] ,
+							visibilityChangeEventSources:[ZaDomain.A_GALSyncTestResultCode],								
 							label:ZaMsg.Domain_GALSyncTestResults,
 							numCols:2,						
 							items: [
@@ -613,8 +709,12 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 									iconVisible: true,
 									align:_CENTER_,				
 									style: DwtAlert.WARNING,
-									relevant:"(instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_SKIPPED)",
-									relevantBehavior:_HIDE_
+									visibilityChecks:[ 
+										function () {
+											return (this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) != ZaDomain.Check_SKIPPED); 	
+										}
+									],
+									visibilityChangeEventSources:[ZaDomain.A_GALSyncTestResultCode]									
 								},
 								{type:_DWT_ALERT_,content:ZaMsg.Domain_GALSyncTestSkipped,
 									ref:null,
@@ -622,16 +722,28 @@ ZaGALConfigXWizard.myXFormModifier = function(xFormObject) {
 									iconVisible: true,
 									align:_CENTER_,				
 									style: DwtAlert.WARNING,
-									relevant:"(instance[ZaDomain.A_GALSyncTestResultCode] == ZaDomain.Check_SKIPPED)",
-									relevantBehavior:_HIDE_
+									visibilityChecks:[ 
+										function () {
+											return (this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) == ZaDomain.Check_SKIPPED); 	
+										}
+									],
+									visibilityChangeEventSources:[ZaDomain.A_GALSyncTestResultCode]									
 								},															
 								{type:_OUTPUT_, ref:ZaDomain.A_GALSyncTestResultCode, label:ZaMsg.Domain_GALTestResult, choices:this.TestResultChoices,
-									relevant:"(instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_SKIPPED)",
-									relevantBehavior:_HIDE_
+									visibilityChecks:[ 
+										function () {
+											return (this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) != ZaDomain.Check_SKIPPED); 	
+										}
+									],
+									visibilityChangeEventSources:[ZaDomain.A_GALSyncTestResultCode]											
 								},
 								{type:_TEXTAREA_, ref:ZaDomain.A_GALSyncTestMessage, label:ZaMsg.Domain_GALTestMessage, height:"200px", width:"380px",
-									relevant:"((instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_SKIPPED) && (instance[ZaDomain.A_GALSyncTestResultCode] != ZaDomain.Check_OK))",
-									relevantBehavior:_HIDE_
+									visibilityChecks:[ 
+										function () {
+											return ((this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) != ZaDomain.Check_SKIPPED) && (this.getInstanceValue(ZaDomain.A_GALSyncTestResultCode) !=ZaDomain.Check_OK)); 	
+										}
+									],
+									visibilityChangeEventSources:[ZaDomain.A_GALSyncTestResultCode]											
 								}
 							]
 						}
