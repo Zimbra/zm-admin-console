@@ -15,8 +15,8 @@
  * ***** END LICENSE BLOCK *****
  */
 
-ZaCosListController = function(appCtxt, container) {
-	ZaListViewController.call(this, appCtxt, container,"ZaCosListController");
+ZaCosListController = function(appCtxt, container, app) {
+	ZaListViewController.call(this, appCtxt, container, app, "ZaCosListController");
 	this.objType = ZaEvent.S_COS;	
 	this._currentSortField = ZaCos.A_name;
 	this._currentPageNum = 1;
@@ -32,7 +32,7 @@ ZaCosListController.prototype = new ZaListViewController();
 ZaCosListController.prototype.constructor = ZaCosListController;
 ZaController.initToolbarMethods["ZaCosListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaCosListController"] = new Array();
-ZaController.changeActionsStateMethods["ZaCosListController"] = new Array(); 
+ZaListViewController.changeActionsStateMethods["ZaCosListController"] = new Array(); 
 
 //ZaCosListController.COS_VIEW = "ZaCosListController.COS_VIEW";
 
@@ -56,21 +56,21 @@ ZaCosListController.prototype.show = function (doPush) {
 ZaCosListController.prototype._show = 
 function (list, openInNewTab, openInSearchTab) {
 	this._updateUI(list, openInNewTab, openInSearchTab);
-	ZaApp.getInstance().pushView(this.getContentViewId (), openInNewTab, openInSearchTab);
+	this._app.pushView(this.getContentViewId (), openInNewTab, openInSearchTab);
 	if (openInSearchTab) {
-		ZaApp.getInstance().updateSearchTab();
+		this._app.updateSearchTab();
 	}else{
-		ZaApp.getInstance().updateTab(this.getMainTab(), ZaApp.getInstance()._currentViewId );
+		this._app.updateTab(this.getMainTab(), this._app._currentViewId );
 	}
 }
 
 
 ZaCosListController.initPopupMenuMethod =
 function () {
-   	this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener));
-   	this._popupOperations[ZaOperation.DUPLICATE]=new ZaOperation(ZaOperation.DUPLICATE,ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener));    	
-   	this._popupOperations[ZaOperation.EDIT]=new ZaOperation(ZaOperation.EDIT,ZaMsg.TBB_Edit, ZaMsg.COSTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaCosListController.prototype._editButtonListener));    	    	
-	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaCosListController.prototype._deleteButtonListener));   		
+   	this._popupOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener)));
+   	this._popupOperations.push(new ZaOperation(ZaOperation.DUPLICATE, ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener)));    	
+   	this._popupOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.COSTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaCosListController.prototype._editButtonListener)));    	    	
+	this._popupOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaCosListController.prototype._deleteButtonListener)));   		
 }
 ZaController.initPopupMenuMethods["ZaCosListController"].push(ZaCosListController.initPopupMenuMethod);
 
@@ -79,20 +79,11 @@ ZaController.initPopupMenuMethods["ZaCosListController"].push(ZaCosListControlle
 **/
 ZaCosListController.initToolbarMethod =
 function () {
-	this._toolbarOrder.push(ZaOperation.NEW);
-	this._toolbarOrder.push(ZaOperation.DUPLICATE);
-	this._toolbarOrder.push(ZaOperation.EDIT);
-	this._toolbarOrder.push(ZaOperation.DELETE);
-	this._toolbarOrder.push(ZaOperation.NONE);	
-	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
-	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
-	this._toolbarOrder.push(ZaOperation.HELP);
-		
-	
-   	this._toolbarOperations[ZaOperation.NEW] = new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener));
-   	this._toolbarOperations[ZaOperation.DUPLICATE] = new ZaOperation(ZaOperation.DUPLICATE, ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener));    	
-   	this._toolbarOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.COSTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaCosListController.prototype._editButtonListener));    	    	
-	this._toolbarOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaCosListController.prototype._deleteButtonListener));   		
+	// first button in the toolbar is a menu.
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener)));
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.DUPLICATE, ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener)));    	
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.COSTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaCosListController.prototype._editButtonListener)));    	    	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaCosListController.prototype._deleteButtonListener)));   		
 }
 ZaController.initToolbarMethods["ZaCosListController"].push(ZaCosListController.initToolbarMethod);
 
@@ -100,31 +91,31 @@ ZaController.initToolbarMethods["ZaCosListController"].push(ZaCosListController.
 ZaCosListController.prototype._createUI = 
 function (openInNewTab, openInSearchTab) {
 	this._contentView = new ZaCosListView(this._container);
-	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
+	this._app._controllers[this.getContentViewId ()] = this ;
 	// create the menu operations/listeners first	
     this._initToolbar();
 	//always add Help and navigation buttons at the end of the toolbar    
-	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);	
-	this._toolbarOperations[ZaOperation.PAGE_BACK]=new ZaOperation(ZaOperation.PAGE_BACK,ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.PAGE_BACK, ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener)));
 	
 	//add the acount number counts
 	ZaSearch.searchResultCountsView(this._toolbarOperations);
 	
-	this._toolbarOperations[ZaOperation.PAGE_FORWARD]=new ZaOperation(ZaOperation.PAGE_FORWARD,ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
-	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener)));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
 
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	//ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
+	//this._app.createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
 	var tabParams = {
 			openInNewTab: false,
 			tabId: this.getContentViewId(),
 			tab: openInSearchTab ? this.getSearchTab() : this.getMainTab() 
 		}
-	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	this._app.createView(this.getContentViewId(), elements, tabParams) ;
 	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
@@ -132,7 +123,7 @@ function (openInNewTab, openInSearchTab) {
 	//set a selection listener on the account list view
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 	this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
-	this._removeConfirmMessageDialog = ZaApp.getInstance().dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);			
+	this._removeConfirmMessageDialog = this._app.dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 		
 	this._UICreated = true;
 }
@@ -147,7 +138,7 @@ function (ev) {
 		if(ev.getDetails() && this._list) {
 			if (this._list) this._list.add(ev.getDetails());
 			if (this._contentView) this._contentView.setUI();
-			if(ZaApp.getInstance().getCurrentController() == this) {
+			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
 		}
@@ -165,7 +156,7 @@ function (ev) {
 		if(ev.getDetails() && this._list) {
 			if (this._list) this._list.remove(ev.getDetails());
 			if (this._contentView) this._contentView.setUI();
-			if(ZaApp.getInstance().getCurrentController() == this) {
+			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
 		}
@@ -183,7 +174,7 @@ function (ev) {
 				this._list.replace(details);
 			}
 			if (this._contentView) this._contentView.setUI();
-			if(ZaApp.getInstance().getCurrentController() == this) {
+			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
 		}
@@ -209,7 +200,7 @@ function(ev) {
 // duplicate button was pressed
 ZaCosListController.prototype._duplicateButtonListener =
 function(ev) {
-	var newCos = new ZaCos(); //new COS
+	var newCos = new ZaCos(this._app); //new COS
 	if(this._contentView && (this._contentView.getSelectionCount() == 1)) {
 		var item = this._contentView.getSelection()[0];
 		if(item && item.attrs) { //copy the attributes from the selected COS to the new COS
@@ -228,15 +219,15 @@ function(ev) {
 			}
 		}
 	}	
-	ZaApp.getInstance().getCosController().show(newCos);
+	this._app.getCosController().show(newCos);
 }
 
 // new button was pressed
 ZaCosListController.prototype._newButtonListener =
 function(ev) {
-	var newCos = new ZaCos();
+	var newCos = new ZaCos(this._app);
 	//load default COS
-	var defCos = ZaCos.getCosByName("default");
+	var defCos = ZaCos.getCosByName("default",this._app);
 	//copy values from default cos to the new cos
 	for(var aname in defCos.attrs) {
 		if( (aname == ZaItem.A_objectClass) || (aname == ZaItem.A_zimbraId) || (aname == ZaCos.A_name) || (aname == ZaCos.A_description) || (aname == ZaCos.A_notes) )
@@ -244,7 +235,7 @@ function(ev) {
 		newCos.attrs[aname] = defCos.attrs[aname];
 	}
 	
-	ZaApp.getInstance().getCosController().show(newCos);
+	this._app.getCosController().show(newCos);
 }
 
 /**
@@ -255,7 +246,7 @@ ZaCosListController.prototype._listSelectionListener =
 function(ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		if(ev.item) {
-			ZaApp.getInstance().getCosController().show(ev.item);
+			this._app.getCosController().show(ev.item);
 		}
 	} else {
 		this.changeActionsState();	
@@ -278,7 +269,7 @@ ZaCosListController.prototype._editButtonListener =
 function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
-		ZaApp.getInstance().getCosController().show(item);
+		this._app.getCosController().show(item);
 	}
 }
 
@@ -297,7 +288,7 @@ function(ev) {
 		//	var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
 			var item = arrItems[key];
 			if (item) {
-				if (ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
+				if (this._app.getTabGroup().getTabByItemId (item.id)) {
 					this._itemsInTabList.push (item) ;
 				}else{
 					this._removeList.push(item);
@@ -307,9 +298,9 @@ function(ev) {
 	}
 	
 	if (this._itemsInTabList.length > 0) {
-		if(!ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"]) {
-			ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"] = 
-				new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.CANCEL_BUTTON], 
+		if(!this._app.dialogs["ConfirmDeleteItemsInTabDialog"]) {
+			this._app.dialogs["ConfirmDeleteItemsInTabDialog"] = 
+				new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.CANCEL_BUTTON], this._app,
 						[ZaMsgDialog.CLOSE_TAB_DELETE_BUTTON_DESC , ZaMsgDialog.NO_DELETE_BUTTON_DESC]);			
 		}
 		
@@ -317,12 +308,12 @@ function(ev) {
 		var msg = ZaMsg.dl_warning_delete_accounts_in_tab ; ;
 		msg += ZaCosListController.getDlMsgFromList (this._itemsInTabList) ;
 		
-		ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"].setMessage(msg, DwtMessageDialog.WARNING_STYLE);	
-		ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].setMessage(msg, DwtMessageDialog.WARNING_STYLE);	
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
 				ZaMsgDialog.CLOSE_TAB_DELETE_BUTTON, ZaCosListController.prototype._closeTabsBeforeRemove, this);
-		ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].registerCallback(
 				ZaMsgDialog.NO_DELETE_BUTTON, ZaCosListController.prototype._deleteCosInRemoveList, this);		
-		ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"].popup();
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popup();
 		
 	}else{
 		this._deleteCosInRemoveList ();
@@ -334,20 +325,20 @@ function () {
 	//DBG.println (AjxDebug.DBG1, "Close the tabs before Remove ...");
 	this.closeTabsInRemoveList() ;
 	/*
-	var tabGroup = ZaApp.getInstance().getTabGroup();
+	var tabGroup = this._app.getTabGroup();
 	for (var i=0; i< this._itemsInTabList.length ; i ++) {
 		var item = this._itemsInTabList[i];
 		tabGroup.removeTab (tabGroup.getTabByItemId(item.id)) ;
 		this._removeList.push(item);
 	}*/
-	//ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
+	//this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
 	this._deleteCosInRemoveList();
 }
 
 ZaCosListController.prototype._deleteCosInRemoveList =
 function () {
-	if (ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"]) {
-		ZaApp.getInstance().dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
+	if (this._app.dialogs["ConfirmDeleteItemsInTabDialog"]) {
+		this._app.dialogs["ConfirmDeleteItemsInTabDialog"].popdown();
 	}
 	if(this._removeList.length) {
 		var dlgMsg = ZaMsg.Q_DELETE_COSES;
@@ -445,63 +436,30 @@ function (enableArray,disableArray) {
 	if(cnt == 1) {
 		var item = this._contentView.getSelection()[0];
 		if(item) {
-			if(hasDefault) {
-				if(this._toolbarOperations[ZaOperation.DELETE]) {
-					this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				}
-				
-				if(this._popupOperations[ZaOperation.DELETE]) {
-					this._popupOperations[ZaOperation.DELETE].enabled=false;
-				}
+			if(!hasDefault) {
+				enableArray.push(ZaOperation.EDIT);
+				enableArray.push(ZaOperation.DELETE);
+				enableArray.push(ZaOperation.DUPLICATE);							
+			} else {
+				enableArray.push(ZaOperation.EDIT);
+				disableArray.push(ZaOperation.DELETE);
+				enableArray.push(ZaOperation.DUPLICATE);											
 			}
 		}
 	} else if (cnt > 1){
 		if(!hasDefault) {
-			//enableArray.push(ZaOperation.DELETE);
+			enableArray.push(ZaOperation.DELETE);
 		} else {
-			if(this._toolbarOperations[ZaOperation.DELETE]) {
-				this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-			}		
-			
-			if(this._popupOperations[ZaOperation.DELETE]) {
-				this._popupOperations[ZaOperation.DELETE].enabled=false;
-			}					
+			disableArray.push(ZaOperation.DELETE);
 		}
-		if(this._toolbarOperations[ZaOperation.DUPLICATE]) {
-			this._toolbarOperations[ZaOperation.DUPLICATE].enabled=false;
-		}		
-		if(this._toolbarOperations[ZaOperation.EDIT]) {
-			this._toolbarOperations[ZaOperation.EDIT].enabled=false;
-		}
-		
-		if(this._popupOperations[ZaOperation.DUPLICATE]) {
-			this._popupOperations[ZaOperation.DUPLICATE].enabled=false;
-		}		
-		if(this._popupOperations[ZaOperation.EDIT]) {
-			this._popupOperations[ZaOperation.EDIT].enabled=false;
-		}					
+		disableArray.push(ZaOperation.DUPLICATE);		
+		disableArray.push(ZaOperation.EDIT);
 	} else {
-		if(this._toolbarOperations[ZaOperation.EDIT]) {
-			this._toolbarOperations[ZaOperation.EDIT].enabled=false;
-		}	
-		if(this._toolbarOperations[ZaOperation.DELETE]) {
-			this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-		}	
-		if(this._toolbarOperations[ZaOperation.DUPLICATE]) {
-			this._toolbarOperations[ZaOperation.DUPLICATE].enabled=false;
-		}
-
-		if(this._popupOperations[ZaOperation.EDIT]) {
-			this._popupOperations[ZaOperation.EDIT].enabled=false;
-		}	
-		if(this._popupOperations[ZaOperation.DELETE]) {
-			this._popupOperations[ZaOperation.DELETE].enabled=false;
-		}	
-		if(this._popupOperations[ZaOperation.DUPLICATE]) {
-			this._popupOperations[ZaOperation.DUPLICATE].enabled=false;
-		}		
+		disableArray.push(ZaOperation.EDIT);
+		disableArray.push(ZaOperation.DELETE);
+		disableArray.push(ZaOperation.DUPLICATE);						
 	}
 }
-ZaController.changeActionsStateMethods["ZaCosListController"].push(ZaCosListController.changeActionsStateMethod);
+ZaListViewController.changeActionsStateMethods["ZaCosListController"].push(ZaCosListController.changeActionsStateMethod);
 
 
