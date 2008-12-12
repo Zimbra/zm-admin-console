@@ -31,12 +31,6 @@ ZaModel.getBooleanChoices1 = function () {
 }
 ZaModel.BOOLEAN_CHOICES1= ZaModel.getBooleanChoices1 ;
 
-ZaModel.getBooleanChoices2 = function () {
-    return [{value:"1", label:ZaMsg.Yes}, {value:"0", label:ZaMsg.No}, {value:null, label:ZaMsg.No}];
-}
-ZaModel.BOOLEAN_CHOICES2= ZaModel.getBooleanChoices2 ;
-
-
 ZaModel.FONT_SIZE_CHOICES = [
 	{value:"8pt", label: "8pt"},
 	{value:"10pt", label: "10pt"},
@@ -109,7 +103,6 @@ ZaModel.prototype.removeChangeListener =
 function(listener) {
 	return this._evtMgr.removeListener(ZaEvent.L_MODIFY, listener);    	
 }
-
 
 ZaModel.setUnrecoganizedChoiceValue = function (v, choices) {
 	var new_v = ZaMsg.VALUE_UNRECOGNIZED;

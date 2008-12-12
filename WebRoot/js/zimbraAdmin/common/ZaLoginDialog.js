@@ -59,7 +59,7 @@ ZaLoginDialog.prototype.getLoginURL = function () {
 	params.soapDoc = soapDoc;
     params.noAuthToken = true ;
     var reqMgrParams = {
-		//controller: ZaApp.getInstance().getCurrentController()
+		//controller: this._app.getCurrentController()
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDomainInfoResponse;
     var obj = {};
@@ -124,9 +124,9 @@ function(loc,bReloginMode) {
 	if (loc) {
 		this._loc.x = loc.x;
 		this._loc.y = loc.y;
-		this._position(loc);
+		this._positionDialog(loc);
 	} else {
-		this._position();
+		this._positionDialog();
 	}
 	
 	this.setZIndex(thisZ);

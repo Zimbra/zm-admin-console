@@ -22,9 +22,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaHelpView = function(parent) {
+ZaHelpView = function(parent, app) {
 	if (arguments.length == 0) return;
-	ZaTabView.call(this, parent,"ZaHelpView");
+	ZaTabView.call(this, parent, app, "ZaHelpView");
 	this.setScrollStyle(Dwt.SCROLL);
 	this.initForm(new Object(), this.getMyXForm())
 //	this._createHTML();
