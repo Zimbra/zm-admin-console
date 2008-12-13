@@ -25,12 +25,11 @@
 * @extends DwtComposite
 * @author Greg Solovyev
 **/
-ZaTabView = function(parent, app, iKeyName, cssClassName) {
+ZaTabView = function(parent,iKeyName, cssClassName) {
 	if (arguments.length == 0) return;
 	var className = cssClassName ? cssClassName : "DwtTabView";
 	DwtComposite.call(this, parent, className, Dwt.ABSOLUTE_STYLE);	
 	this._iKeyName = iKeyName;
-	this._app = app;
 	this._drawn = false;	
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	this._containedObject = null;
@@ -73,8 +72,10 @@ function (xModelMetaData, xFormMetaData) {
 
 	this._localXModel = new XModel(xModelMetaData);
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
-	this._localXForm.setController(this._app);
+	this._localXForm.setController(ZaApp.getInstance());
 	this._localXForm.draw();
+	var formChangeListener = new AjxListener(this, ZaTabView.prototype.setDirty,[true]) ;
+	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_CHANGED,formChangeListener);
 	this._drawn = true;
 }
 
@@ -142,7 +143,19 @@ function(entry) {
 	this._containedObject.attrs = new Object();
 	this._containedObject.type = entry.type ;
 	this._containedObject.name = entry.name ;
+
+	if(entry.rights)
+		this._containedObject.rights = entry.rights;
 	
+	if(entry.setAttrs)
+		this._containedObject.setAttrs = entry.setAttrs;
+	
+	if(entry.getAttrs)
+		this._containedObject.getAttrs = entry.getAttrs;
+		
+	if(entry._defaultValues)
+		this._containedObject._defaultValues = entry._defaultValues;
+		
 	for (var a in entry.attrs) {
 		if(entry.attrs[a] instanceof Array) {
 			this._containedObject.attrs[a] = [].concat(entry.attrs[a]);
@@ -171,7 +184,7 @@ function(enable) {
 **/
 ZaTabView.prototype.setDirty = 
 function (isD) {
-	this._app.getCurrentController().setDirty(isD);
+	ZaApp.getInstance().getCurrentController().setDirty(isD);
 	this._isDirty = isD;
 	//reset the domain lists
 	EmailAddr_XFormItem.resetDomainLists.call (this);
@@ -207,6 +220,7 @@ function () {
 	return this._isDirty;
 }
 
+/*
 ZaTabView.onFormFieldChanged = 
 function (value, event, form) {
     if (this.getInstanceValue() != value) { //only set dirty when value is actually changed
@@ -214,7 +228,7 @@ function (value, event, form) {
     }
     this.setInstanceValue(value);
 	return value;
-}
+}*/
 
 ZaTabView.prototype.getTabToolTip =
 function () {
@@ -257,5 +271,5 @@ function () {
 
 ZaTabView.prototype.getAppTab =
 function () {
-	return this._app.getTabGroup().getTabById(this.__internalId) ;
+	return ZaApp.getInstance().getTabGroup().getTabById(this.__internalId) ;
 }
