@@ -21,10 +21,9 @@
 * this class is a model for managing Zimlets
 * @author Greg Solovyev
 **/
-ZaZimlet = function() {
-	ZaItem.call(this, "ZaZimlet");
+ZaZimlet = function(app) {
+	ZaItem.call(this, app);
 	this.label = "";
-	this.type = ZaItem.ZIMLET;
 	this[ZaModel.currentStep] = 1;
 }
 ZaZimlet.prototype = new ZaItem;
@@ -65,7 +64,7 @@ ZaZimlet.prototype.toString = function() {
 }
 
 ZaZimlet.getAll =
-function(exclude) {
+function(app, exclude) {
 	var exc = exclude ? exclude : "none";
 	var soapDoc = AjxSoapDoc.create("GetAllZimletsRequest", ZaZimbraAdmin.URN, null);	
 	soapDoc.getMethod().setAttribute("exclude", exc);	
@@ -73,12 +72,12 @@ function(exclude) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ZIMLET
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllZimletsResponse;	
 	
-	var list = new ZaItemList(ZaZimlet);
+	var list = new ZaItemList(ZaZimlet, app);
 	list.loadFromJS(resp);	
 	return list;
 }
@@ -113,7 +112,7 @@ ZaZimlet.prototype.enable = function (enabled, callback) {
 		params.callback = callback;
 	}
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_ZIMLET
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -189,7 +188,7 @@ function() {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_UNDEPLOY_ZIMLET
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -200,7 +199,7 @@ function() {
 	this.load();	
 }
 
-ZaZimlet.deploy = function (action,attId, callback) {
+ZaZimlet.deploy = function (app, action,attId, callback) {
 	var soapDoc = AjxSoapDoc.create("DeployZimletRequest", ZaZimbraAdmin.URN, null);
 	if(action)
 		soapDoc.getMethod().setAttribute("action", action);		
@@ -218,7 +217,7 @@ ZaZimlet.deploy = function (action,attId, callback) {
 	}
 	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DEPLOY_ZIMLET
 	}
 	
@@ -227,26 +226,23 @@ ZaZimlet.deploy = function (action,attId, callback) {
 
 ZaZimlet.loadMethod = 
 function(by, val, withConfig) {
-	var _val = val ? val : this.name ;
+	var _val = val ? val : this.name
 	var soapDoc = AjxSoapDoc.create("GetZimletRequest", ZaZimbraAdmin.URN, null);
 	var elZimlet = soapDoc.set("zimlet", "");
-	elZimlet.setAttribute("name", _val);
-	var params = {};
+	elZimlet.setAttribute("name", val);
+	//var command = new ZmCsfeCommand();
+	var params = new Object();
 	params.soapDoc = soapDoc;	
 	params.asyncMode = false;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ZIMLET
 	}
-	resp = ZaRequestMgr.invoke(params, reqMgrParams);
+	resp = command.invoke(params, reqMgrParams);		
 	this.initFromJS(resp.Body.GetZimletResponse.zimlet[0]);
 }
 ZaItem.loadMethods["ZaZimlet"].push(ZaZimlet.loadMethod);
 
 ZaZimlet.myXModel = { 
-	items:[
-        { id:ZaZimlet.A_name, ref:ZaZimlet.A_name, type: _STRING_ },    
-        { id:ZaZimlet.A_zimbraZimletDescription, ref:"attrs/" + ZaZimlet.A_zimbraZimletDescription, type: _STRING_ },
-        { id:ZaZimlet.A_zimbraZimletEnabled, ref:"attrs/" + ZaZimlet.A_zimbraZimletEnabled, type: _ENUM_,  choices:ZaModel.BOOLEAN_CHOICES} 
-    ]
+	items:[]	
 }

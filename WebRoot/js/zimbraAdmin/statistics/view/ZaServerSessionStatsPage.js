@@ -4,9 +4,9 @@
  * 
  * @author Charles Cao
  */
-ZaServerSessionStatsPage = function(parent) {
+ZaServerSessionStatsPage = function(parent, app) {
 	DwtTabViewPage.call(this, parent);
-
+	this._app = app;
 	//The response objects
 	this._adminSessResp = {} ;
 	this._imapSessResp = {} ;
@@ -155,7 +155,7 @@ function (tabId) {
 }
 ZaServerSessionStatsPage.prototype.updateToolbar = 
 function (tabId, hide ){
-	var controller = ZaApp.getInstance().getCurrentController();
+	var controller = this._app.getCurrentController();
 	try {
 		//enable the page back/forward button
 		if ( controller instanceof ZaServerStatsController ){
@@ -364,7 +364,7 @@ function (resp) {
 	}
 	
 	//show the lists
-	//this._adminListView = new ZaServerSessionListView(this) ;
+	//this._adminListView = new ZaServerSessionListView(this, this._app) ;
 	//this._adminListView.set(this._adminSessList) ;
 	if (this._localXForm) {
 		var instance = this._localXForm.getInstance();
@@ -456,7 +456,7 @@ ZaServerSessionStatsPage.prototype._getXForm = function () {
 
 		   {type:_SWITCH_, align:_LEFT_, valign:_TOP_, 
 		    items:[
-			   {type:_ZATABCASE_, caseKey:1, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 1", align:_LEFT_, valign:_TOP_, 
 			   		cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				   {ref: "soap", type:_DWT_LIST_ , width:"100%",  cssClass: "MBXList",     	
@@ -464,7 +464,7 @@ ZaServerSessionStatsPage.prototype._getXForm = function () {
 						   		headerList:headerList1, defaultColumnSortable: 1}
 				   ]
 			   },
-			   {type:_ZATABCASE_,  caseKey:2, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 2", align:_LEFT_, valign:_TOP_, 
 			    	cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				    {ref: "admin", type:_DWT_LIST_ , width:"100%",  cssClass: "MBXList",     	
@@ -473,7 +473,7 @@ ZaServerSessionStatsPage.prototype._getXForm = function () {
 				   ]
 			   },
 
-			   {type:_ZATABCASE_, caseKey:3, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 3", align:_LEFT_, valign:_TOP_, 
 			    	cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				   {ref: "imap", type:_DWT_LIST_ , width:"100%",  cssClass: "MBXList",     	
@@ -631,11 +631,11 @@ function(columnItem, bSortAsc) {
 	var sortBy = columnItem._sortField + (bSortAsc ? "Asc": "Desc") ;
 	if (AjxEnv.hasFirebug) console.log("SortBy: " + sortBy) ;
 	try {
-		var controller = ZaApp.getInstance().getCurrentController() ;
+		var controller = this._app.getCurrentController() ;
 		var sessStatsPage = controller._contentView._sessionPage ;
 		sessStatsPage.setSortBy (sortBy) ;
 		sessStatsPage.showMe(1);
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex);
+		this._app.getCurrentController()._handleException(ex);
 	}
 }
