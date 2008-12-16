@@ -513,6 +513,7 @@ function (opArr) {
 	opArr.push(new ZaOperation(ZaOperation.SEP));
 }
 
+/** Never use this call, always use CountAccountRequest
 ZaSearch.getUsedDomainAccounts =
 function (domainName, controller) {
 	var params = {
@@ -528,6 +529,7 @@ function (domainName, controller) {
 	var resp = ZaSearch.searchDirectory(params) ;
 	return resp.Body.SearchDirectoryResponse.searchTotal ;
 }
+*/
 
 //modify the saved search 
 //@param savedSearchArray : the array contains the saved searches obj to be modified.

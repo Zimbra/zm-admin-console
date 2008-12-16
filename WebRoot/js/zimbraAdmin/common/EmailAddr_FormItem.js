@@ -64,8 +64,8 @@ function () {
 	Composite_XFormItem.prototype.initializeItems.call(this);
 	try {
 		if(this.getForm().parent._app) {
-			this._domainPart = this.getForm().parent._app.getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraDefaultDomainName]
-		}
+			this._domainPart = this.getForm().parent._app.getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraDefaultDomainName];
+        }
 	} catch (ex) {
 		this._domainPart = null;
 	}
@@ -78,7 +78,7 @@ function () {
 			}
 		}
 	}
-		
+    this._oldDomainPart = this._domainPart ; //initialization time, old domain and current domain are the same ;		
 };
 
 EmailAddr_XFormItem.prototype.items = [
@@ -181,7 +181,8 @@ EmailAddr_XFormItem.prototype.items = [
 				}	
 			}
 			this.getParentItem()._domainPart = domainPart;
-			//bug: 14250, change the instance value here also even if the whole email address is invalid
+            this.getParentItem()._oldDomainPart = oldDomainPart ;
+            //bug: 14250, change the instance value here also even if the whole email address is invalid
 			this.getParentItem().setInstanceValue (val) ;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}	/*,
@@ -223,3 +224,12 @@ function (force) {
 		 EmailAddr_XFormItem.choicesDirty = false ;
 	}
 }
+
+EmailAddr_XFormItem.prototype.getOldDomainPart = function () {
+    return this._oldDomainPart ;
+}
+
+EmailAddr_XFormItem.prototype.getCurrentDomainPart = function () {
+    return this._domainPart ;
+}
+
