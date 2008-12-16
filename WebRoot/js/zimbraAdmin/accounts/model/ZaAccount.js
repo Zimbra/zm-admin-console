@@ -775,7 +775,7 @@ function(mods) {
 		ZaAccountMemberOfListView._addList = []; //reset
 	}catch (ex){
 		ZaAccountMemberOfListView._addList = []; //reset
-		this._app.getCurrentController()._handleException(ex, "ZaAccount.modifyMethod: add group failed", null, false);	//try not to halt the account modification	
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccount.modifyMethod: add group failed", null, false);	//try not to halt the account modification	
 	}
 	
 	try {
@@ -785,7 +785,7 @@ function(mods) {
 		ZaAccountMemberOfListView._removeList = []; //reset
 	}catch (ex){
 		ZaAccountMemberOfListView._removeList = []; //reset
-		this._app.getCurrentController()._handleException(ex, "ZaAccount.modifyMethod: remove group failed", null, false);		
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccount.modifyMethod: remove group failed", null, false);		
 	}
 	
 	//update the object
@@ -821,7 +821,7 @@ function(mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller: this._app.getCurrentController(),
+		controller: ZaApp.getInstance().getCurrentController(),
 		busyMsg: ZaMsg.BUSY_MODIFY_ACCOUNT 
 	} ;
 	
@@ -1203,7 +1203,7 @@ function(by, val, withCos) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller: this._app.getCurrentController()
+		controller: ZaApp.getInstance().getCurrentController()
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAccountResponse;
 	this.attrs = new Object();
@@ -1217,7 +1217,7 @@ function(by, val, withCos) {
 		params = new Object();
 		params.soapDoc = soapDoc;	
 		var reqMgrParams ={
-			controller: this._app.getCurrentController()
+			controller: ZaApp.getInstance().getCurrentController()
 		}
 		resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetMailboxResponse;
 		
@@ -1227,7 +1227,7 @@ function(by, val, withCos) {
 	} catch (ex) {
 		//show the error and go on
 		//we should not stop the Account from loading if some of the information cannot be accessed
-		this._app.getCurrentController()._handleException(ex, "ZaAccount.prototype.load", null, false);
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccount.prototype.load", null, false);
 	}
 				
 	this[ZaAccount.A2_confirmPassword] = null;
@@ -1257,7 +1257,7 @@ function(by, val, withCos) {
 	}
 	
 	//Make a GetAccountMembershipRequest
-	this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.getAccountMemberShip(this._app, val, by ) ;
+	this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.getAccountMemberShip(ZaApp.getInstance(), val, by ) ;
 	this[ZaAccount.A2_directMemberList + "_more"] = 
 			(this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
 	this[ZaAccount.A2_indirectMemberList + "_more"] = 
@@ -1277,7 +1277,7 @@ function(by, val, withCos) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller: this._app.getCurrentController()
+		controller: ZaApp.getInstance().getCurrentController()
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAccountInfoResponse;
 	if(resp[ZaAccount.A2_publicMailURL] && resp[ZaAccount.A2_publicMailURL][0])
@@ -1730,13 +1730,13 @@ function (){
 		if (cosId) {
 			currentCos = cosList.getItemById(cosId);
 		}*/
-		currentCos = ZaCos.getCosById(this.attrs[ZaAccount.A_COSId],this._app);
+		currentCos = ZaCos.getCosById(this.attrs[ZaAccount.A_COSId],ZaApp.getInstance());
 		if (!currentCos){
-			currentCos = ZaCos.getDefaultCos4Account( this.name, this._app );
+			currentCos = ZaCos.getDefaultCos4Account( this.name, ZaApp.getInstance() );
 		}
 		return currentCos ;
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaAccount.prototype.getCurrentCos", null, false);
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccount.prototype.getCurrentCos", null, false);
 	}	
 }
 
@@ -1782,7 +1782,7 @@ function () {
 	}
 	//display warnings about the if manageSpecialAttrs return value
 	if (warning && warning.length > 0) {
-		this._app.getCurrentController().popupMsgDialog (warning, true);
+		ZaApp.getInstance().getCurrentController().popupMsgDialog (warning, true);
 	}	
 }
 

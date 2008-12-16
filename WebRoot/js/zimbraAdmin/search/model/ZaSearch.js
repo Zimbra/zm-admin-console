@@ -200,7 +200,7 @@ ZaSearch.findAccount = function(by, val) {
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	var resp = command.invoke(cmdParams).Body.SearchDirectoryResponse;	
-	var list = new ZaItemList(ZaAccount, this._app);	
+	var list = new ZaItemList(ZaAccount, ZaApp.getInstance());	
 	list.loadFromJS(resp);	
 	return list.getArray()[0];
 }
