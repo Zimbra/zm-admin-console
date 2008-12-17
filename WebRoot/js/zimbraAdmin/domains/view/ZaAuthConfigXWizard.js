@@ -256,7 +256,12 @@ function(entry) {
 	}
 	this._containedObject[ZaDomain.A_AuthUseBindPassword] = entry[ZaDomain.A_AuthUseBindPassword];
 	this.setTitle(ZaMsg.NCD_AuthConfigTitle + " (" + entry.name + ")");
-	this._containedObject[ZaModel.currentStep] = 1;
+
+    if (ZaSettings.isDomainAdmin && (entry.attrs[ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled] == "TRUE")) {
+        this._containedObject [ZaDomain.A2_allowClearTextLDAPAuth] = "FALSE" ;
+    }
+
+    this._containedObject[ZaModel.currentStep] = 1;
 	this._localXForm.setInstance(this._containedObject);	
 }
 
@@ -413,3 +418,9 @@ ZaAuthConfigXWizard.myXFormModifier = function(xFormObject) {
 		];
 }
 ZaXDialog.XFormModifiers["ZaAuthConfigXWizard"].push(ZaAuthConfigXWizard.myXFormModifier);
+
+/*
+ZaAuthConfigXWizard.        allowClearTextLDAPAuth = function (instance , item) {
+   return (instance [ZaDomain.A2_allowClearTextLDAPAuth] == "TRUE") ; 
+}
+*/

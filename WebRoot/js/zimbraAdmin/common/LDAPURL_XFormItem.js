@@ -31,30 +31,37 @@ LDAPURL_XFormItem.prototype._serverPart = "";
 LDAPURL_XFormItem.prototype._portPart = "389";
 LDAPURL_XFormItem.prototype.defSSLPort = "636";
 LDAPURL_XFormItem.prototype.defPort = "389";
+
 LDAPURL_XFormItem.prototype.initializeItems = function () {
 	var ldapPort = this.getInheritedProperty("ldapPort");
 	var ldapSSLPort = this.getInheritedProperty("ldapSSLPort");
 	this._portPart=this.defPort = (ldapPort ? ldapPort : "389");
-    this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";	
-	Composite_XFormItem.prototype.initializeItems.call(this);
+    this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";
+    Composite_XFormItem.prototype.initializeItems.call(this);
 }
 
 LDAPURL_XFormItem.prototype.items = [
 	{type:_OUTPUT_, width:"35px", ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
 		getDisplayValue:function(itemVal) {
-			var val = "ldap://";
-			if(itemVal!=null && itemVal.length>0) {
-				var URLChunks = itemVal.split(/(:\/\/)/);
-				if(AjxEnv.isIE) {
-					if(URLChunks[0] == "ldap" || URLChunks[0] == "ldaps")
-						val = URLChunks[0] + "://";	
-				} else {
-					if(URLChunks.length==3) {
-						val = URLChunks[0] + URLChunks[1];
-					}
-				}
-			}
-			this.getParentItem()._protocolPart = val;
+            var val = "ldap://";
+            var instance = this.getForm().getInstance () ;
+            if ( instance [ZaDomain.A2_allowClearTextLDAPAuth] == "FALSE" )  {
+                val = "ldaps://" ; //force SSL
+            }
+
+            if(itemVal!=null && itemVal.length>0) {
+                var URLChunks = itemVal.split(/(:\/\/)/);
+                if(AjxEnv.isIE) {
+                    if(URLChunks[0] == "ldap" || URLChunks[0] == "ldaps")
+                        val = URLChunks[0] + "://";
+                } else {
+                    if(URLChunks.length==3) {
+                        val = URLChunks[0] + URLChunks[1];
+                    }
+                }
+            }
+
+            this.getParentItem()._protocolPart = val;
 			return val;
 		}
 	},
@@ -87,7 +94,12 @@ LDAPURL_XFormItem.prototype.items = [
 	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_, 
 		getDisplayValue:function (itemVal) {
 			var val = this.getParentItem().defPort;
-			if(itemVal) {
+            var instance = this.getForm().getInstance () ;
+            if ( instance [ZaDomain.A2_allowClearTextLDAPAuth] == "FALSE" )  {
+                val =  this.getParentItem().defSSLPort ; //force SSL
+            }
+
+            if(itemVal) {
 				var URLChunks = itemVal.split(/[:\/]/);
 					
 					/*DBG.println(AjxDebug.DBG1, "_TEXTFIELD_");
@@ -114,9 +126,16 @@ LDAPURL_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_,
+	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_,
+        label:null, relevantBehavior: _DISABLE_,
+//        relevant: "ZaAuthConfigXWizard.allowClearTextLDAPAuth (instance, item)" ,
+        relevant: "instance [ZaDomain.A2_allowClearTextLDAPAuth] != \"FALSE\""  ,
 		getDisplayValue:function (itemVal) {
-			var val = false;
+            var instance = this.getForm().getInstance () ;
+            if ( instance [ZaDomain.A2_allowClearTextLDAPAuth] == "FALSE" )
+                return true ; //force SSL 
+
+            var val = false;
 			var protocol = "ldap://";
 			if(itemVal!=null && itemVal.length>0) {
 				var URLChunks = itemVal.split(/[:\/]/);
