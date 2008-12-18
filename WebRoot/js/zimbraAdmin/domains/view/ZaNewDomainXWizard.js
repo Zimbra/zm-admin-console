@@ -588,13 +588,23 @@ function() {
 			this._app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);
 			return false;
 		}
+		
+
 		if(this._containedObject.attrs[ZaDomain.A_AuthMech]==ZaDomain.AuthMech_ad) {
 			this.goPage(13);		
 			this.changeButtonStateForStep(13);
 		} else {
+			var temp = this._containedObject.attrs[ZaDomain.A_AuthLdapURL].join(" ");
+			if(this._containedObject.attrs[ZaDomain.A_zimbraAuthLdapStartTlsEnabled] == "TRUE") {
+				//check that we don't have ldaps://
+				if(temp.indexOf("ldaps://") > -1) {
+					ZaApp.getInstance().getCurrentController().popupWarningDialog(ZaMsg.Domain_WarningStartTLSIgnored)
+				}		
+			}				
 			this.goPage(12);
 			this.changeButtonStateForStep(12);			
 		}
+		
 	} else if (this._containedObject[ZaModel.currentStep] == 12) {
 			//clear the password if the checkbox is unchecked
 		if(this._containedObject[ZaDomain.A_AuthUseBindPassword]=="FALSE") {
@@ -1004,6 +1014,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject) {
 												{ref:".", type:_LDAPURL_, label:null,ldapSSLPort:"636",ldapPort:"389", labelLocation:_NONE_}
 											]
 										},
+										{ref:ZaDomain.A_zimbraAuthLdapStartTlsEnabled, type:_CHECKBOX_, label:ZaMsg.Domain_AuthLdapStartTlsEnabled, labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label", align:_LEFT_},										
 										{ref:ZaDomain.A_AuthLdapSearchFilter, type:_TEXTAREA_, width:380, height:100, label:ZaMsg.Domain_AuthLdapFilter, labelLocation:_LEFT_, textWrapping:"soft"},
 										{ref:ZaDomain.A_AuthLdapSearchBase, type:_TEXTAREA_, width:380, height:50, label:ZaMsg.Domain_AuthLdapSearchBase, labelLocation:_LEFT_, textWrapping:"soft"},
 										{type:_OUTPUT_, value:ZaMsg.NAD_DomainsAuthStr, colSpan:2}
@@ -1047,7 +1058,8 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject) {
 									items:[
 										{type:_OUTPUT_, ref:".", label:null,labelLocation:_NONE_}
 									]
-								},											
+								},				
+								{ref:ZaDomain.A_zimbraAuthLdapStartTlsEnabled, type:_OUTPUT_, label:ZaMsg.Domain_AuthLdapStartTlsEnabled, labelLocation:_LEFT_,choices:ZaModel.BOOLEAN_CHOICES},					
 								{ref:ZaDomain.A_AuthLdapSearchFilter, type:_OUTPUT_, label:ZaMsg.Domain_AuthLdapFilter, labelLocation:_LEFT_},
 								{ref:ZaDomain.A_AuthLdapSearchBase, type:_OUTPUT_, label:ZaMsg.Domain_AuthLdapSearchBase, labelLocation:_LEFT_},
 								{ref:ZaDomain.A_AuthUseBindPassword, type:_OUTPUT_, label:ZaMsg.Domain_AuthUseBindPassword, labelLocation:_LEFT_,choices:ZaModel.BOOLEAN_CHOICES},											
