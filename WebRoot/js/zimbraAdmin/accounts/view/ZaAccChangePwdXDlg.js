@@ -22,11 +22,10 @@
 * @param parent
 * param app
 **/
-ZaAccChangePwdXDlg = function(parent,  app, w, h) {
+ZaAccChangePwdXDlg = function(parent,   w, h) {
 	if (arguments.length == 0) return;
-	this._app = app;
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON,DwtDialog.OK_BUTTON];
-	ZaXDialog.call(this, parent, app, null, ZaMsg.CHNP_Title, w, h,"ZaAccChangePwdXDlg");
+	ZaXDialog.call(this, parent, null, ZaMsg.CHNP_Title, w, h,"ZaAccChangePwdXDlg");
 	this.initForm(ZaAccount.myXModel,this.getMyXForm());
     this._helpURL = ZaAccChangePwdXDlg.helpURL;
 }
@@ -59,11 +58,11 @@ function() {
 			items:[
 			{ref:ZaAccount.A_password, type:_SECRET_, msgName:ZaMsg.NAD_Password,
 				label:ZaMsg.NAD_Password, labelLocation:_LEFT_, 
-				cssClass:"admin_xform_name_input"
+				cssClass:"admin_xform_name_input",visibilityChecks:[],enableDisableChecks:[]
 			},
 			{ref:ZaAccount.A2_confirmPassword, type:_SECRET_, msgName:ZaMsg.NAD_ConfirmPassword,
 				label:ZaMsg.NAD_ConfirmPassword, labelLocation:_LEFT_, 
-				cssClass:"admin_xform_name_input"
+				cssClass:"admin_xform_name_input",visibilityChecks:[],enableDisableChecks:[]
 			},
 			{ref:ZaAccount.A_zimbraPasswordMustChange,  type:_CHECKBOX_,  
 				msgName:ZaMsg.NAD_MustChangePwd,label:ZaMsg.NAD_MustChangePwd,trueValue:"TRUE", falseValue:"FALSE"}
