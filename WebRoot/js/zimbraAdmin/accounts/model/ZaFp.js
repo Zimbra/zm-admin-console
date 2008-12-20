@@ -36,6 +36,9 @@ ZaFp.getXModel = function ()
 {
     var model = { items:
       [
+    	{id:"getAttrs",type:_LIST_},
+    	{id:"setAttrs",type:_LIST_},
+    	{id:"rights",type:_LIST_},      
 		{id:ZaFp.A_name, type:_STRING_, ref:ZaFp.A_name},
 		{id:ZaFp.A_index, type:_NUMBER_, ref:ZaFp.A_index},
         {id:ZaFp.A_prefix, type:_STRING_, ref:ZaFp.A_prefix}
@@ -74,7 +77,7 @@ ZaFp.getEntry = function (obj) {
 }
 
 
-ZaFp.push = function (app, id) {
+ZaFp.push = function (id) {
     var soapDoc = AjxSoapDoc.create("PushFreeBusyRequest", ZaZimbraAdmin.URN, null);
 	var entry = soapDoc.set("account", "");
 	entry.setAttribute("id", id);
@@ -82,26 +85,26 @@ ZaFp.push = function (app, id) {
 		params = new Object();
 		params.soapDoc = soapDoc;
 		var reqMgrParams ={
-			controller: app.getCurrentController() ,
+			controller: ZaApp.getInstance().getCurrentController() ,
             asyncMode: false,
             busyMsg: ZaMsg.BUSY_PUSH_FP
         }
 		resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.PushFreeBusyResponse;
-        app.getCurrentController().popupMsgDialog (ZaMsg.PUSH_SUCCEED, true);
+        ZaApp.getInstance().getCurrentController().popupMsgDialog (ZaMsg.PUSH_SUCCEED, true);
     } catch (ex) {
 		//show the error and go on
 		//we should not stop the Account from loading if some of the information cannot be accessed
-		app.getCurrentController()._handleException(ex, "ZaFp.push", null, false);
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaFp.push", null, false);
 	}
 }
 
-ZaFp.getProviders = function (app) {
+ZaFp.getProviders = function () {
     var soapDoc = AjxSoapDoc.create("GetAllFreeBusyProvidersRequest", ZaZimbraAdmin.URN, null);
     try {
 		params = new Object();
 		params.soapDoc = soapDoc;
 		var reqMgrParams ={
-			controller: app.getCurrentController() ,
+			controller: ZaApp.getInstance().getCurrentController() ,
             asyncMode: false,
             busyMsg: ZaMsg.BUSY_GET_INTEROP_PROVIDERS
         }
@@ -121,7 +124,7 @@ ZaFp.getProviders = function (app) {
     } catch (ex) {
 		//show the error and go on
 		//we should not stop the Account from loading if some of the information cannot be accessed
-		app.getCurrentController()._handleException(ex, "ZaFp.push", null, false);
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaFp.push", null, false);
 	}
 }
 

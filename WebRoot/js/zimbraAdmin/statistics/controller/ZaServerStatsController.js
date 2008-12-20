@@ -23,9 +23,11 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaServerStatsController = function(appCtxt, container, app) {
-
-	ZaController.call(this, appCtxt, container, app, "ZaServerStatsController");
+ZaServerStatsController = function(appCtxt, container) {
+   	this._toolbarOperations = new Array();
+   	this._toolbarOrder = new Array();
+      	
+	ZaController.call(this, appCtxt, container,"ZaServerStatsController");
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/checking_usage_statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 	this.tabConstructor = ZaServerStatsView;
 }
@@ -46,53 +48,63 @@ function(entry, openInNewTab, skipRefresh) {
 ZaServerStatsController.setViewMethod =
 function(item) {	
     if (!this._contentView) {
-		this._view = this._contentView = new this.tabConstructor(this._container, this._app);
+		this._view = this._contentView = new this.tabConstructor(this._container);
 		var elements = new Object();
-		this._ops = new Array();
-		this._ops.push(new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener)));
-		this._ops.push(new ZaOperation(ZaOperation.NONE));
+
+		this._toolbarOperations[ZaOperation.REFRESH] = new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener));
+		this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
 		
-		this._ops.push(new ZaOperation(ZaOperation.PAGE_BACK, ZaMsg.Previous, ZaMsg.PrevPage_tt, 
+		this._toolbarOperations[ZaOperation.PAGE_BACK] = new ZaOperation(ZaOperation.PAGE_BACK, ZaMsg.Previous, ZaMsg.PrevPage_tt, 
 									"LeftArrow", "LeftArrowDis",  
-									new AjxListener(this, ZaServerStatsController.prototype._prevPageListener)));
+									new AjxListener(this, ZaServerStatsController.prototype._prevPageListener));
 		
-		this._ops.push(new ZaOperation(ZaOperation.SEP));								
-		this._ops.push(new ZaOperation(ZaOperation.LABEL, AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]),
-														 null, null, null, null,null,null, "ZaSearchResultCountLabel", "PageInfo"));	
-		this._ops.push(new ZaOperation(ZaOperation.SEP));							
-		
-		this._ops.push(new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Next, ZaMsg.NextPage_tt,
+		this._toolbarOperations[ZaOperation.SEP]=new ZaOperation(ZaOperation.SEP);								
+		this._toolbarOperations[ZaOperation.LABEL] = new ZaOperation(ZaOperation.LABEL, AjxMessageFormat.format (ZaMsg.MBXStats_PAGEINFO, [1,1]),
+														 null, null, null, null,null,null, "ZaSearchResultCountLabel", "PageInfo");	
+				
+		this._toolbarOperations[ZaOperation.PAGE_FORWARD] = new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Next, ZaMsg.NextPage_tt,
 									"RightArrow", "RightArrowDis", 
-									new AjxListener(this, ZaServerStatsController.prototype._nextPageListener)));
+									new AjxListener(this, ZaServerStatsController.prototype._nextPageListener));
 		
-		this._ops.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
-		this._toolbar = new ZaToolBar(this._container, this._ops);    		
+		this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
+		
+		
+		this._toolbarOrder.push(ZaOperation.REFRESH);
+		this._toolbarOrder.push(ZaOperation.NONE);
+		this._toolbarOrder.push(ZaOperation.PAGE_BACK);
+		this._toolbarOrder.push(ZaOperation.SEP);
+		this._toolbarOrder.push(ZaOperation.LABEL);
+		this._toolbarOrder.push(ZaOperation.SEP);		
+		this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
+		this._toolbarOrder.push(ZaOperation.HELP);
+			
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    		
 		
 		//disable the page_forward and page_back at the beginning
 		this._toolbar.enable([ZaOperation.PAGE_FORWARD, ZaOperation.PAGE_BACK, ZaOperation.LABEL], false);
 		
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
-		//this._app.createView(ZaZimbraAdmin._STATISTICS_BY_SERVER, elements);
+		//ZaApp.getInstance().createView(ZaZimbraAdmin._STATISTICS_BY_SERVER, elements);
 		var tabParams = {
 			openInNewTab: true,
 			tabId: this.getContentViewId()
 		}
-		this._app.createView(this.getContentViewId(), elements, tabParams) ;
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		this._UICreated = true;
-		this._app._controllers[this.getContentViewId ()] = this ;
+		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 	}
-//	this._app.pushView(ZaZimbraAdmin._STATISTICS_BY_SERVER);
-	this._app.pushView(this.getContentViewId());
-//	this._app.setCurrentController(this);
+//	ZaApp.getInstance().pushView(ZaZimbraAdmin._STATISTICS_BY_SERVER);
+	ZaApp.getInstance().pushView(this.getContentViewId());
+//	ZaApp.getInstance().setCurrentController(this);
 
 	this._contentView.setObject(item);
 
 	
 	//show the view in the new tab
 	/*
-	var tab = new ZaAppTab (this._app.getTabGroup(), this._app, 
-				item.name, "StatisticsByServer" , null, null, true, true, this._app._currentViewId) ;
+	var tab = new ZaAppTab (ZaApp.getInstance().getTabGroup(),  
+				item.name, "StatisticsByServer" , null, null, true, true, ZaApp.getInstance()._currentViewId) ;
 	tab.setToolTipContent(ZaMsg.tt_tab_View + " " + item.type + " " + item.name + " " + ZaMsg.tt_tab_Statistics) ;
 	*/	
 }
