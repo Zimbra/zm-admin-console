@@ -21,9 +21,7 @@
 * Provides the data model and UI items for the advanced search options
 * @author Charles Cao
 **/
-ZaSearchOption = function(app) {
-	if(app)
-		this._app = app;
+ZaSearchOption = function() {
 }
 
 ZaSearchOption.ID = 100;
@@ -167,25 +165,29 @@ function (optionId, height){
 		 { type: _TEXTFIELD_, ref:  ZaSearchOption.A_basic_uid,
 			label: ZaMsg.search_option_uid, align: _LEFT_, width: 100, 
 			onChange: ZaSearchBuilderController.handleOptions,
-		  	toolTipContent: ZaMsg.tt_search_option_uid
+		  	toolTipContent: ZaMsg.tt_search_option_uid,
+		  	enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type: _TEXTFIELD_, ref:  ZaSearchOption.A_basic_sn,
 			label: ZaMsg.search_option_sn, align: _LEFT_, width: 100, 
-			onChange: ZaSearchBuilderController.handleOptions
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type: _TEXTFIELD_, ref:  ZaSearchOption.A_basic_displayName,
 			label: ZaMsg.search_option_displayName, align: _LEFT_, width: 100, 
-			onChange: ZaSearchBuilderController.handleOptions
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type: _TEXTFIELD_, ref:  ZaSearchOption.A_basic_zimbraId,
 			label: ZaMsg.search_option_zimbraId, align: _LEFT_, width: 100, 
-			onChange: ZaSearchBuilderController.handleOptions
-			
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type:_OSELECT1_, ref:ZaSearchOption.A_basic_status, editable:false, 
 		 	msgName:ZaMsg.NAD_AccountStatus,label:ZaMsg.NAD_AccountStatus, 
 		 	labelLocation:_LEFT_, choices:accountStatusChoices,
-		 	onChange: ZaSearchBuilderController.handleOptions
+		 	onChange: ZaSearchBuilderController.handleOptions,
+		 	enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 {	type: _GROUP_, name:"special search cases",
 		 	 colSpan: "2", numCols:2, width: 150, items: []
@@ -201,17 +203,18 @@ function (optionId, height){
 	
 	var i = basicItems.length ;
 	
-	if (!ZaSettings.isDomainAdmin) {
+	//if (!ZaSettings.isDomainAdmin) {
 		var adminOnlyItem =  
 			 	{ type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAccountAdmin,
 					trueValue:"TRUE", falseValue:"FALSE",
 					label: ZaMsg.SearchFilter_Accounts_admin, 
 					align: _LEFT_, labelLocation:_RIGHT_, 
-					onChange: ZaSearchBuilderController.handleOptions
+					onChange: ZaSearchBuilderController.handleOptions,
+					enableDisableChecks:[],visibilityChecks:[]
 				 };
 				 
 		basicItems[i-1].items.push (adminOnlyItem) ;
-	}
+	//}
 	
 	if (ZaSearchOption.A_objTypeAccountDomainAdmin) {
 			var domainAdminObjTypeItem = { 
@@ -219,7 +222,8 @@ function (optionId, height){
 					trueValue:"TRUE", falseValue:"FALSE",
 					label: ZaMsg.SearchFilter_Accounts_domainadmin, 
 					align: _LEFT_, labelLocation:_RIGHT_, 
-					onChange: ZaSearchBuilderController.handleOptions
+					onChange: ZaSearchBuilderController.handleOptions,
+					enableDisableChecks:[],visibilityChecks:[]
 				 } ;
 			basicItems[i-1].items.push( domainAdminObjTypeItem ) ;
 		}
@@ -229,25 +233,29 @@ function (optionId, height){
 			trueValue:"TRUE", falseValue:"FALSE",
 			label: ZaMsg.SearchFilter_Accounts, 
 			align: _LEFT_, labelLocation:_RIGHT_, 
-			onChange: ZaSearchBuilderController.handleOptions
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeDl,
 			trueValue:"TRUE", falseValue:"FALSE",
 			label: ZaMsg.SearchFilter_DLs, 
 			align: _LEFT_, labelLocation:_RIGHT_, 
-			onChange: ZaSearchBuilderController.handleOptions
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAlias,
 			trueValue:"TRUE", falseValue:"FALSE",
 			label: ZaMsg.SearchFilter_Aliases, 
 			align: _LEFT_, labelLocation:_RIGHT_, 
-			onChange: ZaSearchBuilderController.handleOptions
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 { type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeResource,
 			trueValue:"TRUE", falseValue:"FALSE",
 			label: ZaMsg.SearchFilter_Resources, 
 			align: _RIGHT_, labelLocation:_RIGHT_, 
-			onChange: ZaSearchBuilderController.handleOptions
+			onChange: ZaSearchBuilderController.handleOptions,
+			enableDisableChecks:[],visibilityChecks:[]
 		 }/** Hide the domain search for now,
 		 { type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeDomain,
 			trueValue:"TRUE", falseValue:"FALSE",
@@ -274,17 +282,16 @@ function (optionId, height){
 			label: ZaMsg.search_option_filter, align: _LEFT_, width: ZaSearchOptionView.WIDTH - 50, 
 			inputHelp: ZaMsg.search_option_filter_input_help,
 		  	toolTipContent: ZaMsg.tt_domain_search_option_filter,
-			onChange: ZaSearchBuilderController.filterDomains
+			onChange: ZaSearchBuilderController.filterDomains,
+			enableDisableChecks:[],visibilityChecks:[]
 		 },
 		 
 		 {type: _OUTPUT_, value: ZaMsg.no_domain_found_msg, colSpan: "*",
-		  	relevant: "(instance.options[ZaSearchOption.A_domainList] == null) || (instance.options[ZaSearchOption.A_domainList].length <= 0) ", 
-	 			relevantBehavior: _HIDE_ 
+	 		visibilityChecks:[[XForm.checkInstanceValueEmty,ZaSearchOption.A_domainList]] 
 		 },
 		 {type: _GROUP_, width: ZaSearchOptionView.WIDTH, colSpan: "*", height: height - 30 - 25 - 5, 
 		 	cssStyle: "overflow:auto; position:absolute;margin-top: 5px;",
-		 	relevant: "((instance.options[ZaSearchOption.A_domainList] != null) && (instance.options[ZaSearchOption.A_domainList].length > 0)) ", 
-			relevantBehavior: _HIDE_ ,
+			visibilityChecks:[[XForm.checkInstanceValueNotEmty,ZaSearchOption.A_domainList]],
 		 	items :[
 				 
 				 {type: _DWT_LIST_, ref: ZaSearchOption.A_domainList,  width: ZaSearchOptionView.WIDTH - 2, height: height - 30 - 25,  
@@ -320,12 +327,14 @@ function (optionId, height){
 			 				label: ZaMsg.enable_search_option_label_from,
 			 				trueValue:"TRUE", falseValue:"FALSE",
 			 				align: _LEFT_, labelLocation:_RIGHT_, 
-							onChange: ZaSearchBuilderController.handleOptions },
+							onChange: ZaSearchBuilderController.handleOptions,
+							enableDisableChecks:[],visibilityChecks:[] },
 		 				{type: _CHECKBOX_, ref: ZaSearchOption.A_enableAccountLastLoginTime_To, 
 			 				label: ZaMsg.enable_search_option_label_to ,
 			 				trueValue:"TRUE", falseValue:"FALSE",
 			 				align: _LEFT_, labelLocation:_RIGHT_, 
-							onChange: ZaSearchBuilderController.handleOptions }
+							onChange: ZaSearchBuilderController.handleOptions,
+							enableDisableChecks:[],visibilityChecks:[] }
 		 			]
 		 		},
 		 		{type: _GROUP_, numCols: 3, colSpan: "*", 
@@ -335,21 +344,24 @@ function (optionId, height){
 			 				label: ZaMsg.includeNeverLoginedAccounts,
 			 				trueValue:"TRUE", falseValue:"FALSE",
 			 				align: _LEFT_, labelLocation:_RIGHT_, 
-							onChange: ZaSearchBuilderController.handleOptions }
+							onChange: ZaSearchBuilderController.handleOptions,
+							enableDisableChecks:[],visibilityChecks:[] }
 		 			]
 		 		},
 		 		{type: _GROUP_, colSpan: "*", numCols: 2, colSize: ["40px", "auto"],
 		 			items: [
 			 		{ref:ZaSearchOption.A_accountLastLoginTime_From, colSpan: "*", type:_DWT_DATETIME_,
 			 			onChange: ZaSearchBuilderController.handleOptions,
-			 			relevant: "instance[ZaSearchOption.A_enableAccountLastLoginTime_From] == 'TRUE'", 
-			 			relevantBehavior: _HIDE_ , 
+			 			visibilityChecks:[[XForm.checkInstanceValue,ZaSearchOption.A_enableAccountLastLoginTime_From,"TRUE"]],
+			 			//relevant: "instance[ZaSearchOption.A_enableAccountLastLoginTime_From] == 'TRUE'", 
+			 			
 			 			label:ZaMsg.search_option_label_from, labelLocation:_LEFT_
 					},
 					{ref:ZaSearchOption.A_accountLastLoginTime_To, colSpan: "*", type:_DWT_DATETIME_,
 			 			onChange: ZaSearchBuilderController.handleOptions,	
-			 			relevant: "instance[ZaSearchOption.A_enableAccountLastLoginTime_To] == 'TRUE'", 
-			 			relevantBehavior: _HIDE_ ,	 				
+			 			visibilityChecks:[[XForm.checkInstanceValue,ZaSearchOption.A_enableAccountLastLoginTime_To,"TRUE"]],
+			 			//relevant: "instance[ZaSearchOption.A_enableAccountLastLoginTime_To] == 'TRUE'", 
+			 				 				
 			 			label:ZaMsg.search_option_label_to, labelLocation:_LEFT_
 					}]
 		 		},
@@ -411,7 +423,7 @@ function () {
 
 /////////////////////////////////////////////////////////////////////////////////////
 //the list view for the domain and server filter
-ZaOptionList = function(parent, app, className) {
+ZaOptionList = function(parent,className) {
 	//DwtListView.call(this, parent, null, Dwt.STATIC_STYLE);
 	DwtListView.call(this, parent, null, Dwt.ABSOLUTE_STYLE);
 }
