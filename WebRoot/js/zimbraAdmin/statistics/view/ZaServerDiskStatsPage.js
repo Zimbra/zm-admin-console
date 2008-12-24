@@ -149,7 +149,7 @@ ZaServerDiskStatsPage.prototype._getXForm = function () {
 		    cssClass:"ZaTabBar", id:"xform_tabbar"
 		   },
 
-		   {type:_SWITCH_, align:_LEFT_, valign:_TOP_, 
+		   {type:_SWITCH_, align:_LEFT_, valign:_TOP_, deferred:false,
 		    items:[
 			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 1", align:_LEFT_, valign:_TOP_, 
 			   		cssStyle: "position: absolute; overflow: auto;",
