@@ -22,10 +22,10 @@
 * @param parent
 * param app
 **/
-ZaEditDomainAclXDialog = function(parent,  app, w, h) {
+ZaEditDomainAclXDialog = function(parent,w, h) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];	
-	ZaXDialog.call(this, parent, app, null, ZaMsg.Edit_perms_title, w, h);
+	ZaXDialog.call(this, parent,null, ZaMsg.Edit_perms_title, w, h);
 	this._containedObject = {acl:{r:0,w:0,i:0,d:0,a:0,x:0},name:"",gt:""};
 	this.initForm(ZaDomain.aclXModel,this.getMyXForm());
 }
@@ -39,7 +39,10 @@ function() {
 		numCols:2,
 		items:[
 			{type:_SWITCH_, items:[
-				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookGroupACLs",
+				{type:_CASE_,
+					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookGroupACLs]],
+					visibilityChangeEventSources:["gt"],
+				 	
 					items:[
 						{ref:".", type:_ADDR_ACL_, label:null, labelLocation:_NONE_,
 							visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false},
@@ -47,7 +50,10 @@ function() {
 						}						
 					]
 				},
-				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookUserACLs",
+				{type:_CASE_, 
+					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookUserACLs]],
+					visibilityChangeEventSources:["gt"],
+					
 					items:[
 						{ref:".", type:_ADDR_ACL_, label:null, labelLocation:_NONE_,
 							visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false},
@@ -55,7 +61,10 @@ function() {
 						}						
 					]
 				},
-				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookDomainACLs",
+				{type:_CASE_, 
+					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookDomainACLs]],
+					visibilityChangeEventSources:["gt"],
+					
 					items:[
 						{ref:".", type:_ADDR_ACL_, label:null, labelLocation:_NONE_,
 							visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false},
@@ -63,13 +72,19 @@ function() {
 						}					
 					]
 				},
-				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookAllACLs",
+				{type:_CASE_, 
+					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookAllACLs]],
+					visibilityChangeEventSources:["gt"],
+					
 					items:[
 						{ref:"acl", type:_ACL_, label:ZaMsg.ACL_All,labelLocation:_LEFT_,
 						visibleBoxes:{r:true,w:true,a:false,i:true,d:true,x:false}}						
 					]
 				},								
-				{type:_CASE_, relevant:"instance.gt==ZaDomain.A_NotebookPublicACLs",
+				{type:_CASE_, 
+					visibilityChecks:[[XForm.checkInstanceValue,"gt",ZaDomain.A_NotebookPublicACLs]],
+					visibilityChangeEventSources:["gt"],					
+					
 					items:[
 						{ref:"acl", type:_ACL_, visibleBoxes:{r:true,w:false,a:false,i:false,d:false,x:false},
 						label:ZaMsg.ACL_Public,labelLocation:_LEFT_}						
