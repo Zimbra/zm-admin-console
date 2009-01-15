@@ -22,10 +22,10 @@
 * @param parent
 * param app
 **/
-ZaProxyPortWarningXDialog = function(parent,  app, w, h, title, instance) {
+ZaProxyPortWarningXDialog = function(parent, w, h, title, instance) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];	
-	ZaXDialog.call(this, parent, app, null, title, w, h);
+	ZaXDialog.call(this, parent,null, title, w, h);
 	this._containedObject = instance ? instance :  {selectedChoice:0, choice1Label:"",choice2Label:"",choice3Label:"",warningMsg:""};
 	var objModel = {
 		items:[
@@ -58,7 +58,7 @@ function() {
 					},
 					{type:_RADIO_LABEL_,forceUpdate: true, ref:"selectedChoice",labelRef:"choice1Label",label:"N/A",groupname:"proxyChoice", value:0},
 					{type:_RADIO_LABEL_,forceUpdate: true, ref:"selectedChoice",labelRef:"choice2Label",label:"N/A",groupname:"proxyChoice", value:1},
-					{type:_RADIO_LABEL_,forceUpdate: true, ref:"selectedChoice",labelRef:"choice3Label",label:"N/A",groupname:"proxyChoice", value:2},
+					{type:_RADIO_LABEL_,forceUpdate: true, ref:"selectedChoice",labelRef:"choice3Label",label:"N/A",groupname:"proxyChoice", value:2}
 				]
 			}
 		]
