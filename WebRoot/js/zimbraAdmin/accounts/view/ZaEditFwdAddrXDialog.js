@@ -34,7 +34,7 @@ ZaEditFwdAddrXDialog = function(parent,  app, w, h, title) {
 
 ZaEditFwdAddrXDialog.prototype = new ZaXDialog;
 ZaEditFwdAddrXDialog.prototype.constructor = ZaEditFwdAddrXDialog;
-ZaEditFwdAddrXDialog.helpURL = location.pathname + "adminhelp/html/WebHelp/managing_accounts/forwarding_mail.htm";
+ZaEditFwdAddrXDialog.helpURL = location.pathname + "adminhelp/html/managing_accounts/forwarding_mail.htm";
 ZaEditFwdAddrXDialog.prototype.getMyXForm = 
 function() {	
 	var xFormObject = {
