@@ -22,8 +22,8 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-ZaSearchListView = function(parent) {
-
+ZaSearchListView = function(parent, app) {
+	this._app = app;
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	
@@ -60,7 +60,7 @@ function () {
 
 ZaSearchListView.prototype.getTabToolTip =
 function () {
-	var controller = ZaApp.getInstance().getSearchListController () ;
+	var controller = this._app.getSearchListController () ;
 	if (controller) {
 		if (controller._isAdvancedSearch && controller._currentQuery) {
 			return ZaMsg.tt_tab_Search + controller._currentQuery ;
@@ -158,8 +158,7 @@ function(account, now, isDragProxy) {
 		} else if (field == ZaAccount.A_description) {		
 			// description
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
-			html[idx++] = AjxStringUtil.htmlEncode(
-                    ZaItem.getDescriptionValue(account.attrs[ZaAccount.A_description]));
+			html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaAccount.A_description]);
 			html[idx++] = "</nobr></td>";	
 		}
 	}
@@ -192,12 +191,12 @@ function() {
 ZaSearchListView.prototype._sortColumn = 
 function(columnItem, bSortAsc) {
 	try {
-		ZaApp.getInstance().getAccountListController().setSortOrder(bSortAsc);
-		ZaApp.getInstance().getAccountListController().setSortField(columnItem.getSortField());
-		ZaApp.getInstance().getAccountListController().show();
-		//ZaApp.getInstance().getAccountListController().show(searchResult);
+		this._app.getAccountListController().setSortOrder(bSortAsc);
+		this._app.getAccountListController().setSortField(columnItem.getSortField());
+		this._app.getAccountListController().show();
+		//this._app.getAccountListController().show(searchResult);
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex);
+		this._app.getCurrentController()._handleException(ex);
 	}
 }
 

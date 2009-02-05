@@ -17,30 +17,45 @@
  /**
  * @author EMC
  **/
-ZaDistributionList = function(id, name, memberList, description, notes) {
-	ZaItem.call(this, "ZaDistributionList");
-    this._init();
-
-    this.attrs = new Object();
+ZaDistributionList = function(app, id, name, memberList, description, notes) {
+	ZaItem.call(this, app);
+	this.attrs = new Object();
 	this.attrs[ZaDistributionList.A_mailStatus] = "enabled";
 	this.attrs[ZaAccount.A_zimbraMailAlias] = [];
 	this.id = (id != null)? id: null;
 	this.type = ZaItem.DL;
 	this.name = (name != null) ? name: null;
 	this._selfMember = new ZaDistributionListMember(this.name);
-	//this[ZaDistributionList.A2_memberList] = (memberList != null) ? AjxVector.fromArray(memberList): new AjxVector();
+	this._memberList = (memberList != null)? AjxVector.fromArray(memberList): new AjxVector();
+	this.memberPool = new Array();
 	if (description != null) this.attrs.description = description;
 	if (notes != null) this.attrs.zimbraNotes = notes;
-	this[ZaDistributionList.A2_numMembers] = 0;
-	this[ZaDistributionList.A2_memberList] = (memberList != null) ? memberList: new Array();
-	this[ZaDistributionList.A2_memberPool] = new Array();
-
+	this.numMembers = 0;
+	//Utility members
+	this._origList = (memberList != null)? AjxVector.fromArray(memberList): new AjxVector();
+	this._addList = new AjxVector();
+	this._removeList = new AjxVector();
+	this._dirty = true;
+	this.poolPagenum=1;
+	this.poolNumPages=1;
+	this.memPagenum=1;
+	this.memNumPages=1;
+	this.query="";
+	//membership related instance variables
+	this[ZaAccount.A2_memberOf] = {	directMemberList: [],
+									indirectMemberList: [],
+									nonMemberList: []
+								};
+	this[ZaAccount.A2_directMemberList + "_more"] = 0;
+	this[ZaAccount.A2_directMemberList + "_offset"] = 0;
+	this[ZaAccount.A2_indirectMemberList + "_more"] = 0;
+	this[ZaAccount.A2_indirectMemberList + "_offset"] = 0;	
+	this[ZaAccount.A2_nonMemberList + "_more"] = 0;
+	this[ZaAccount.A2_nonMemberList + "_offset"] = 0;
 }
 
 ZaDistributionList.prototype = new ZaItem;
 ZaDistributionList.prototype.constructor = ZaDistributionList;
-
-ZaItem.loadMethods["ZaDistributionList"] = [];
 
 ZaDistributionList.EMAIL_ADDRESS = "ZDLEA";
 ZaDistributionList.DESCRIPTION = "ZDLDESC";
@@ -48,41 +63,13 @@ ZaDistributionList.ID = "ZDLID";
 ZaDistributionList.MEMBER_QUERY_LIMIT = 25;
 //ZaDistributionList.A_isgroup = "isgroup";
 ZaDistributionList.A_zimbraGroupId = "zimbraGroupId";
-ZaDistributionList.A_zimbraCreateTimestamp = "zimbraCreateTimestamp";
 
 ZaDistributionList.A_mailStatus = "zimbraMailStatus";
-ZaDistributionList.A2_members = "members";
-ZaDistributionList.A2_memberList = "memberList";
-ZaDistributionList.A2_origList = "origList";
-ZaDistributionList.A2_addList = "addList";
-ZaDistributionList.A2_removeList = "addList";
-ZaDistributionList.A2_query = "query";
-ZaDistributionList.A2_pagenum = "pagenum";
-ZaDistributionList.A2_poolPagenum = "poolPagenum";
-ZaDistributionList.A2_poolNumPages = "poolNumPages";
-ZaDistributionList.A2_numMembers = "numMembers";
-ZaDistributionList.A2_memPagenum = "memPagenum";
-ZaDistributionList.A2_memNumPages = "memNumPages";
-ZaDistributionList.A2_memberPool = "memberPool";
-ZaDistributionList.A2_optionalAdd = "optionalAdd";
-ZaDistributionList.A2_membersSelected = "membersSelected";
-ZaDistributionList.A2_nonmembersSelected = "nonmembersSelected";
-ZaDistributionList.A2_memberPoolSelected = "memberPoolSelected";
-ZaDistributionList.A2_directMemberSelected = "directMemberSelected";
-ZaDistributionList.A2_indirectMemberSelected = "indirectMemberSelected";
-ZaDistributionList.A2_directMemberList = "directMemberList";
-ZaDistributionList.A2_indirectMemberList = "indirectMemberList";
-ZaDistributionList.A2_nonMemberList = "nonMemberList";
+
 ZaDistributionList._dlStatus = {
 	enabled  : ZaMsg.DL_Status_enabled ,
 	disabled : ZaMsg.DL_Status_disabled
 }
-
-ZaDistributionList.RENAME_DL_RIGHT = "renameDistributionList";
-ZaDistributionList.ADD_DL_ALIAS_RIGHT = "addDistributionListAlias";
-ZaDistributionList.REMOVE_DL_ALIAS_RIGHT = "removeDistributionListAlias";
-ZaDistributionList.REMOVE_DL_MEMBER_RIGHT = "removeDistributionListMember";
-ZaDistributionList.ADD_DL_MEMBER_RIGHT = "addDistributionListMember";
 
 ZaDistributionList.searchAttributes = AjxBuffer.concat(ZaAccount.A_displayname,",",
 													   ZaItem.A_zimbraId,  "," , 
@@ -98,20 +85,24 @@ ZaDistributionList.searchAttributes = AjxBuffer.concat(ZaAccount.A_displayname,"
 
 ZaDistributionList.prototype.clone = function () {
 	var memberList;
-	if(this[ZaDistributionList.A2_memberList]) {
-		memberList = this[ZaDistributionList.A2_memberList];
+	if(this._memberList) {
+		memberList = this._memberList.getArray();
 	}
-	var dl = new ZaDistributionList( this.id, this.name, null, this.description, this.notes);
+	var dl = new ZaDistributionList(this._app, this.id, this.name, memberList, this.description, this.notes);
  	if (memberList != null) {
- 		dl[ZaDistributionList.A2_memberList] = new Array();
+ 		dl._memberList = new AjxVector();
  		for (var i = 0 ; i < memberList.length; ++i) {
- 			dl[ZaDistributionList.A2_memberList].push(memberList[i]);
+ 			dl._memberList.add(memberList[i]);
  		}
- 		dl[ZaDistributionList.A2_origList] = new AjxVector();
+ 		dl._origList = new AjxVector();
  		for (var i = 0 ; i < memberList.length; ++i) {
- 			dl[ZaDistributionList.A2_origList].add(memberList[i]);
+ 			dl._origList.add(memberList[i]);
  		}
- 	} 
+ 	} else {
+ 		this._memberList = null;
+ 		this._origList = null;
+ 	}
+
 	var val, tmp;
 	for (key in this.attrs) {
 		val = this.attrs[key];
@@ -152,10 +143,9 @@ ZaDistributionList.prototype.removeMembers = function (arr) {
 	return removed;
 };
 
-/*
 ZaDistributionList.prototype.refresh = function () {
-	this.load();
-}   */
+	this.getMembers();
+}
 
 /**
  * Adds a list of members
@@ -214,7 +204,7 @@ function (newName) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_RENAME_DL
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.RenameDistributionListResponse;	
@@ -235,8 +225,7 @@ function(tmpObj, callback) {
 	for (var aname in tmpObj.attrs) {
 		if(aname == ZaItem.A_objectClass || aname==ZaAccount.A_mail || aname == ZaItem.A_cn
 			|| aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid
-			|| aname == ZaDistributionList.A_zimbraGroupId || aname == ZaAccount.A_zimbraMailAlias
-            || aname == ZaDistributionList.A_zimbraCreateTimestamp) {
+			|| aname == ZaDistributionList.A_zimbraGroupId || aname == ZaAccount.A_zimbraMailAlias) {
 			continue;
 		}		
 		//multi-value attribute
@@ -267,7 +256,7 @@ function(tmpObj, callback) {
 		command.invoke(params);
 	} else {
 		var reqMgrParams = {
-			controller : ZaApp.getInstance().getCurrentController(),
+			controller : this._app.getCurrentController(),
 			busyMsg : ZaMsg.BUSY_MODIFY_DL
 		}
 		var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDistributionListResponse;	
@@ -323,31 +312,69 @@ function(tmpObj, callback) {
 	} catch (ex) {
 		switch(ex.code) {
 			case ZmCsfeException.DISTRIBUTION_LIST_EXISTS:
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
+				app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
 			break;
 			case ZmCsfeException.ACCT_EXISTS:
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
+				app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS);
 			break;
 			default:
-				ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.create", null, false);
+				app.getCurrentController()._handleException(ex, "ZaDistributionList.create", null, false);
 			break;
 		}
 		return null;
 	}
-
+	/*var dl = new ZaDistributionList(app);
+	dl.initFromJS(resp.dl[0]);
+	//dl.initFromDom(resp.firstChild);
+		
+	if(tmpObj._addList) {
+		dl.addNewMembers(tmpObj._addList);
+		dl.refresh();
+	}
+	
+	//add the membership information
+	//update the member of first
+	try {
+		if (ZaAccountMemberOfListView._addList.length >0) { //you have new membership to be added.
+			ZaAccountMemberOfListView.addNewGroupsBySoap(dl, ZaAccountMemberOfListView._addList);
+		}	
+		ZaAccountMemberOfListView._addList = []; //reset
+	}catch (ex){
+		ZaAccountMemberOfListView._addList = []; //reset
+		this._app.getCurrentController()._handleException(ex, "ZaDistributionList.create: add group failed", null, false);	//try not to halt the account modification	
+	}
+	//remvoe may not needed during the creation time.
+	try {
+		if (ZaAccountMemberOfListView._removeList.length >0){//you have membership to be removed
+			ZaAccountMemberOfListView.removeGroupsBySoap(dl, ZaAccountMemberOfListView._removeList);
+		}
+		ZaAccountMemberOfListView._removeList = []; //reset
+	}catch (ex){
+		ZaAccountMemberOfListView._removeList = []; //reset
+		this._app.getCurrentController()._handleException(ex, "ZaDistributionList.create: remove group failed", null, false);		
+	}
+	
+	dl.markClean();	
+	return dl;*/
 }
 
-ZaDistributionList.checkValues = function(tmpObj) {
+ZaDistributionList.checkValues = function(tmpObj, app) {
 	if(tmpObj.name == null || tmpObj.name.length < 1) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_DL_NAME_REQUIRED);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DL_NAME_REQUIRED);
 		return false;
 	}
-
+	
+	//var emailRegEx = /^([a-zA-Z0-9_\-])+((\.)?([a-zA-Z0-9_\-])+)*@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	/*if(!AjxUtil.EMAIL_SHORT_RE.test(tmpObj.name) ) {
+		//show error msg
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DL_NAME_INVALID);
+		return false;
+	}*/	
 	
 	if(tmpObj.name.lastIndexOf ("@")!=tmpObj.name.indexOf ("@")) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_DL_NAME_INVALID);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DL_NAME_INVALID);
 		return false;
 	}	
 
@@ -395,7 +422,7 @@ ZaDistributionList.prototype.setName = function (name) {
  * internal list of members is null
  */
 // TODO -- handle dynamic limit and offset
-ZaDistributionList.prototype.getMembers = function (by, val, limit) {
+ZaDistributionList.prototype.getMembers = function (limit) {
 	//DBG.println("Get members: memberList = " , this._memberList, "$");
 	if (this.id != null) {
 		this._memberList = null;
@@ -417,7 +444,7 @@ ZaDistributionList.prototype.getMembers = function (by, val, limit) {
 			var params = new Object();
 			params.soapDoc = soapDoc;
 			var reqMgrParams = {
-				controller : ZaApp.getInstance().getCurrentController(),
+				controller : this._app.getCurrentController(),
 				busyMsg : ZaMsg.BUSY_GET_DL
 			}
 			var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDistributionListResponse;	
@@ -441,14 +468,14 @@ ZaDistributionList.prototype.getMembers = function (by, val, limit) {
 			this.initFromJS(resp.dl[0]);
 			
 			//Make a GetAccountMembershipRequest
-	this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.getDlMemberShip(this.id, "id" ) ;
+	this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.getDlMemberShip(this._app, this.id, "id" ) ;
 	this[ZaAccount.A2_directMemberList + "_more"] = 
 			(this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
 	this[ZaAccount.A2_indirectMemberList + "_more"] = 
 			(this[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
 			
 		} catch (ex) {
-			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.prototype.getMembers", null, false);
+			this._app.getCurrentController()._handleException(ex, "ZaDistributionList.prototype.getMembers", null, false);
 			//DBG.dumpObj(ex);
 		}
 	} else if (this._memberList == null){
@@ -456,8 +483,6 @@ ZaDistributionList.prototype.getMembers = function (by, val, limit) {
 	}
 	return this._memberList;
 };
-
-ZaItem.loadMethods["ZaDistributionList"].push(ZaDistributionList.prototype.getMembers) ;
 
 ZaDistributionList.prototype.getMembersArray = function () {
 	if (this._memberList != null){
@@ -596,6 +621,25 @@ ZaDistributionList.prototype._dedupList = function (vector) {
 		}
 	}
 };
+/*
+ZaDistributionList.prototype.addMemberCallback = function (params, resp) {
+	if(resp.isException && resp.isException()) {
+		if(params.finishedCallback)
+			params.finishedCallback.run(false, resp.getException());
+			
+		return;
+	} 
+	if(this.stopAddingMembers) {
+		if(params.finishedCallback)
+			params.finishedCallback.run(false);
+		return;
+	} else if(params.list && (params.list instanceof Array) && params.list.length) {
+		this.addNewMembersAsync(params.list,params.finishedCallback);
+	} else {
+		if(params.finishedCallback)
+			params.finishedCallback.run(true);
+	}
+};*/
 
 ZaDistributionList.prototype.addNewMembersAsync = function (obj, finishedCallback) {
 	var addMemberSoapDoc, r;
@@ -616,6 +660,25 @@ ZaDistributionList.prototype.addNewMembersAsync = function (obj, finishedCallbac
 	command.invoke(params);
 };
 
+ZaDistributionList.prototype.addNewMembers = function (list) {
+	var addArray = list.getArray();
+	var len = addArray.length;
+	var addMemberSoapDoc;
+	//var command = new ZmCsfeCommand();
+	for (var i = 0; i < len; ++i) {
+		addMemberSoapDoc = AjxSoapDoc.create("AddDistributionListMemberRequest", ZaZimbraAdmin.URN, null);
+		addMemberSoapDoc.set("id", this.id);
+		addMemberSoapDoc.set("dlm", addArray[i].toString());
+		var params = new Object();
+		params.soapDoc = addMemberSoapDoc;	
+		var reqMgrParams = {
+			controller : this._app.getCurrentController(),
+			busyMsg : ZaMsg.BUSY_ADD_DL_MEMBER
+		}
+		ZaRequestMgr.invoke(params, reqMgrParams).Body.AddDistributionListMemberResponse;
+	}
+};
+
 ZaDistributionList.prototype.removeDeletedMembersAsync = function (list, finishedCallback) {
 	var removeMemberSoapDoc, r;
 	var command = new ZmCsfeCommand();
@@ -630,6 +693,25 @@ ZaDistributionList.prototype.removeDeletedMembersAsync = function (list, finishe
 	//params.callback = new AjxCallback(this, this.addMemberCallback, {list:list,finishedCallback:finishedCallback});
 	list.removeLast();
 	command.invoke(params);
+};
+
+ZaDistributionList.prototype.removeDeletedMembers = function (list) {
+	var removeArray = list.getArray();
+	var len = removeArray.length;
+	var addMemberSoapDoc, r, removeMemberSoapDoc;
+	//var command = new ZmCsfeCommand();	
+	for (var i = 0; i < len; ++i) {
+		removeMemberSoapDoc = AjxSoapDoc.create("RemoveDistributionListMemberRequest", ZaZimbraAdmin.URN, null);
+		removeMemberSoapDoc.set("id", this.id);
+		removeMemberSoapDoc.set("dlm", removeArray[i].toString());
+		var params = new Object();
+		params.soapDoc = removeMemberSoapDoc;	
+		var reqMgrParams = {
+			controller : this._app.getCurrentController(),
+			busyMsg : ZaMsg.BUSY_REMOVE_DL_MEMBER
+		}
+		ZaRequestMgr.invoke(params, reqMgrParams).Body.RemoveDistributionListMemberResponse;		
+	}
 };
 
 ZaDistributionList.prototype.initFromDom = function(node) {
@@ -713,33 +795,6 @@ ZaDistributionList.prototype.setMembers = function (list) {
 	return this._memberList = AjxVector.fromArray(list);
 };
 
-ZaDistributionList.compareTwoMembers = function (val1, val2) {
-	var a = AjxUtil.isEmpty(val1);
-	var b = AjxUtil.isEmpty(val2);
-	if(a && !b)
-		return -1;
-	
-	if(!a && b)
-		return 1;
-		
-	if(a && b)
-		return 0;
-		
-	if(AjxUtil.isEmpty(val1.name) && AjxUtil.isEmpty(val2.name))
-		return 0;
-	
-	if(val1.name == val2.name)
-		return 0;
-	
-	if (val1.name < val2.name)
-		return -1;
-		
-	if (val1.name > val2.name)
-		return 1;
-	
-	return 0;
-		
-}
 /**
  * Small wrapper class for a distribution list member.
  * The id is needed at a higher level for DwtLists to work correctly.
@@ -753,7 +808,6 @@ ZaDistributionListMember = function(name) {
 ZaDistributionListMember.prototype.toString = function () {
 	return this[ZaAccount.A_name];
 };
-
 
 
 ZaDistributionList.myXModel = {
@@ -782,15 +836,13 @@ ZaDistributionList.myXModel = {
 		instance.setMembers(value);
 	},
 	items: [
-		{id:ZaDistributionList.A2_query, type:_STRING_},
-		{id:ZaDistributionList.A2_pagenum, type:_NUMBER_, defaultValue:1},
-		{id:ZaDistributionList.A2_poolPagenum, type:_NUMBER_, defaultValue:1},
-		{id:ZaDistributionList.A2_poolNumPages, type:_NUMBER_, defaultValue:1},		
-		{id:ZaDistributionList.A2_memPagenum, type:_NUMBER_, defaultValue:1},
-		{id:ZaDistributionList.A2_memNumPages, type:_NUMBER_, defaultValue:1},	
-		{id:ZaDistributionList.A2_memberPool, type:_LIST_, setter:"setMemberPool", setterScope:_MODEL_, getter: "getMemberPool", getterScope:_MODEL_},
-		{id:ZaDistributionList.A2_memberList, type:_LIST_},
-		{id:ZaDistributionList.A2_optionalAdd, type:_STRING_},
+		{id:"query", type:_STRING_},
+		{id:"poolPagenum", type:_NUMBER_, defaultValue:1},
+		{id:"poolNumPages", type:_NUMBER_, defaultValue:1},		
+		{id:"memPagenum", type:_NUMBER_, defaultValue:1},
+		{id:"memNumPages", type:_NUMBER_, defaultValue:1},	
+		{id: "memberPool", type:_LIST_, setter:"setMemberPool", setterScope:_MODEL_, getter: "getMemberPool", getterScope:_MODEL_},
+		{id: "optionalAdd", type:_UNTYPED_},
 		{id:ZaAccount.A_name, type:_EMAIL_ADDRESS_, setter:"setName", setterScope: _INSTANCE_, required:true,
 		 constraints: {type:"method", value:
 					   function (value, form, formItem, instance) {
@@ -810,32 +862,13 @@ ZaDistributionList.myXModel = {
 					   }
 			}
 		},
-		//{id:ZaDistributionList.A2_members, type:_LIST_, getter: "getMembersArray", getterScope:_MODEL_, setter: "setMembersArray", setterScope:_MODEL_},
-		{id:ZaDistributionList.A2_members, type:_LIST_},
-//		{id:ZaAccount.A_description,ref:"attrs/"+ZaAccount.A_description, type:_STRING_},
-		ZaItem.descriptionModelItem,
-        {id:ZaAccount.A_zimbraHideInGal, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideInGal, choices:ZaModel.BOOLEAN_CHOICES},
+		{id: "members", type:_LIST_, getter: "getMembersArray", getterScope:_MODEL_, setter: "setMembersArray", setterScope:_MODEL_},
+		{id:ZaAccount.A_description,ref:"attrs/"+ZaAccount.A_description, type:_STRING_},
+		{id:ZaAccount.A_zimbraHideInGal, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideInGal, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaAccount.A_notes, ref:"attrs/"+ZaAccount.A_notes, type:_STRING_},
 		{id:ZaAccount.A_displayname, type:_STRING_, ref:"attrs/"+ZaAccount.A_displayname},
 		{id:ZaAccount.A_zimbraMailAlias, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraMailAlias, listItem:{type:_STRING_}},
-		{id:ZaDistributionList.A_mailStatus, ref:"attrs/"+ZaDistributionList.A_mailStatus, type:_STRING_},
-		{id:ZaDistributionList.A2_membersSelected, type:_LIST_},
-		{id:ZaDistributionList.A2_nonmembersSelected, type:_LIST_},
-		{id:ZaDistributionList.A2_memberPoolSelected, type:_LIST_},
-		{id:ZaDistributionList.A2_directMemberSelected, type:_LIST_},
-		{id:ZaDistributionList.A2_indirectMemberSelected, type:_LIST_},
-		{id:ZaAccount.A2_memberOf, type:_OBJECT_, items: [
-			{id:ZaDistributionList.A2_directMemberList, type:_LIST_},
-			{id:ZaDistributionList.A2_indirectMemberList, type:_LIST_},
-			{id:ZaDistributionList.A2_nonMemberList, type:_LIST_}
-			]
-		},		
-		{id:(ZaAccount.A2_directMemberList + "_more"), type:_LIST_},
-		{id:(ZaAccount.A2_directMemberList + "_offset"), type:_LIST_},
-		{id:(ZaAccount.A2_indirectMemberList + "_more"), type:_LIST_},
-		{id:(ZaAccount.A2_indirectMemberList + "_offset"), type:_LIST_},	
-		{id:(ZaAccount.A2_nonMemberList + "_more"), type:_LIST_},
-		{id:(ZaAccount.A2_nonMemberList + "_offset"), type:_LIST_}		
-		
+		{id:ZaDistributionList.A_mailStatus, ref:"attrs/"+ZaDistributionList.A_mailStatus, type:_STRING_}
+		//,{id:ZaDistributionList.A_isgroup, ref:ZaDistributionList.A_isgroup, type: _ENUM_, choices:ZaModel.BOOLEAN_CHOICES1}
 	]
 };

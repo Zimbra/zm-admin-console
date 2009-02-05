@@ -22,13 +22,13 @@
 * @param parent
 * param app
 **/
-ZaEditFpXDialog = function(parent, w, h, title) {
+ZaEditFpXDialog = function(parent,  app, w, h, title) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
-	ZaXDialog.call(this, parent,null, title, w, h);
+	ZaXDialog.call(this, parent, app, null, title, w, h);
     this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_global_settings/making_free_busy_view__available_.htm?locid="+AjxEnv.DEFAULT_LOCALE ;
     //get the provider first
-    ZaFp.getProviders();
+    ZaFp.getProviders(app);
     this._containedObject = {};
 	this.initForm(ZaFp.getXModel(),this.getMyXForm());
 }
@@ -43,8 +43,8 @@ function() {
 		items:[
             {type:_GROUP_,isTabGroup:true, items: [ //allows tab key iteration
                 {ref:ZaFp.A_prefix, type:_OSELECT1_, choices: ZaFp.INTEROP_PROVIDER_CHOICES,
-                    label:ZaMsg.Select_Interop_Provider, width:230,visibilityChecks:[],enableDisableChecks:[]} ,
-                {ref:ZaFp.A_name, type:_TEXTFIELD_, label:ZaMsg.Enter_ForeignAccount,width:230,visibilityChecks:[],enableDisableChecks:[]}
+                    label:ZaMsg.Select_Interop_Provider, width:230} ,
+                {ref:ZaFp.A_name, type:_TEXTFIELD_, label:ZaMsg.Enter_ForeignAccount,width:230}
 		       ]
             }
         ]

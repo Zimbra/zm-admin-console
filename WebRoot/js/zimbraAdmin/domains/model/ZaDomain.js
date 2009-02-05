@@ -23,18 +23,19 @@
 * @author Greg Solovyev
 **/
 
-ZaDomain = function() {
-	ZaItem.call(this,  "ZaDomain");
+ZaDomain = function(app) {
+	ZaItem.call(this, app, "ZaDomain");
 	this.attrs = new Object();
 	this.id = "";
 	this.name="";
 	this.type=ZaItem.DOMAIN;
-
+	this._app = app;
 	//default attributes
 	this.attrs[ZaDomain.A_GalMode] = ZaDomain.GAL_Mode_internal;
 	var globalConfig = null;
-	globalConfig = (ZaApp.getInstance() ? ZaApp.getInstance().getGlobalConfig(false): null );
-	 
+	if(app) {
+		globalConfig = app.getGlobalConfig(false);
+	} 
 	if(globalConfig) {
 		this.attrs[ZaDomain.A_GalMaxResults] = globalConfig.attrs[ZaGlobalConfig.A_zimbraGalMaxResults];
 	} else {
@@ -231,7 +232,6 @@ ZaDomain.A_zimbraPrefTimeZoneId = "zimbraPrefTimeZoneId" ;
 ZaDomain.A_zimbraAdminConsoleLoginMessage = "zimbraAdminConsoleLoginMessage" ;
 ZaDomain.A2_allowClearTextLDAPAuth = "allowClearTextLdapAuth" ;
 
-ZaDomain.A2_acl_selection_cache = "acl_selection_cache";
 //result codes returned from Check* requests
 ZaDomain.Check_OK = "check.OK";
 ZaDomain.Check_UNKNOWN_HOST="check.UNKNOWN_HOST";
@@ -249,15 +249,6 @@ ZaDomain.Check_SKIPPED = "Skiped";
 ZaDomain.AUTH_MECH_CHOICES = [ZaDomain.AuthMech_ad,ZaDomain.AuthMech_ldap,ZaDomain.AuthMech_zimbra];
 
 ZaDomain.LOCAL_DOMAIN_QUERY = "(zimbraDomainType=local)";
-
-//constants for rights
-ZaDomain.RIGHT_CREATE_TOP_DOMAIN = "createTopDomain";
-ZaDomain.RIGHT_DELETE_DOMAIN = "deleteDomain";
-ZaDomain.RIGHT_RENAME_DOMAIN = "renameDomain";
-ZaDomain.RIGHT_CREATE_SUB_DOMAIN = "createSubDomain";
-ZaDomain.RIGHT_CONFIGURE_GAL = "configureExternalGAL";
-ZaDomain.RIGHT_CONFIGURE_AUTH = "configureExternaAuth";
-ZaDomain.RIGHT_INIT_NOTEBOOK = "initNotebook";
 
 ZaDomain.cacheCounter = 0;
 ZaDomain.staticDomainByNameCacheTable = {};
@@ -279,9 +270,9 @@ ZaDomain.putDomainToCache = function(domain) {
 //Use ZaSearch.SearchDirectory
 //In order to keep the domain list synchronized with server, we use synchronous call here.
 ZaDomain.getAll =
-function() {
+function(app) {
 	var params = {
-		query: ZaDomain.LOCAL_DOMAIN_QUERY, 
+		query: (ZaSettings.DOMAINS_ENABLED ? ZaDomain.LOCAL_DOMAIN_QUERY : ""), 
 		types:[ZaSearch.DOMAINS],
 		sortBy:ZaDomain.A_domainName,
 		offset:"0",
@@ -289,9 +280,9 @@ function() {
 		limit:ZaDomain.MAXSEARCHRESULTS,
 		ignoreTooManyResultsException: true,
 		exceptionFrom: "ZaDomain.getAll",
-		controller: ZaApp.getInstance().getCurrentController()
+		controller: app.getCurrentController()
 	}
-	var list = new ZaItemList(ZaDomain);
+	var list = new ZaItemList(ZaDomain, app);
 	var responce = ZaSearch.searchDirectory(params);
 	if(responce) {
 		var resp = responce.Body.SearchDirectoryResponse;
@@ -310,61 +301,61 @@ function() {
 * @return ZaDomain
 **/
 ZaDomain.create =
-function(tmpObj) {
+function(tmpObj, app) {
 
 	if(tmpObj.attrs == null) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_UNKNOWN, null);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_UNKNOWN, null);
 		return null;	
 	}
 	
 	//name
 	if(tmpObj.attrs[ZaDomain.A_domainName] ==null || tmpObj.attrs[ZaDomain.A_domainName].length < 1) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_REQUIRED);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_REQUIRED);
 		return null;
 	}
 	tmpObj.name = tmpObj.attrs[ZaDomain.A_domainName];
 	//check values
 	if(!AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaDomain.A_GalMaxResults])) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_GalMaxResults + " ! ");
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_INVALID_VALUE + ": " + ZaMsg.NAD_GalMaxResults + " ! ");
 		return null;
 	}
 	
 	if(tmpObj.name.length > 256 || tmpObj.attrs[ZaDomain.A_domainName].length > 256) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_TOOLONG);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_TOOLONG);
 		return null;
 	}
 	
 	if(tmpObj.attrs[ZaDomain.A_GalMode]!=ZaDomain.GAL_Mode_internal) {	
 		//check that Filter is provided and at least one server
 		if(!tmpObj.attrs[ZaDomain.A_GalLdapFilter]) {
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);			
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);			
 			return null;
 		}
 		if(!tmpObj.attrs[ZaDomain.A_GalLdapURL] || tmpObj.attrs[ZaDomain.A_GalLdapURL].length < 1) {
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);					
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);					
 			return null;
 		}
 	} 	
 	if(tmpObj.attrs[ZaDomain.A_AuthMech]!=ZaDomain.AuthMech_zimbra) {	
 		if(!tmpObj.attrs[ZaDomain.A_AuthLdapURL]) {
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_LDAP_URL_REQUIRED);
 			return null;
 		}
 	}
 	/*var domainRegEx = AjxUtil.DOMAIN_NAME_FULL_RE;
 	if( !domainRegEx.test(tmpObj.attrs[ZaDomain.A_domainName]) ) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_INVALID);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_INVALID);
 		return null;
 	}
 	var nonAlphaNumEx = /[^a-zA-Z0-9\-\.]+/;
 	if(nonAlphaNumEx.test(tmpObj.attrs[ZaDomain.A_domainName]) ) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_INVALID);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_DOMAIN_NAME_INVALID);
 		return null;
 	}*/	
 
@@ -429,7 +420,7 @@ function(tmpObj) {
 	
 	/*	if(tmpObj.attrs[ZaDomain.A_AuthLdapSearchFilter] ==null || tmpObj.attrs[ZaDomain.A_AuthLdapSearchFilter].length < 1) {
 			//show error msg
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_SEARCH_FILTER_REQUIRED);
 			return null;
 		}
 	*/
@@ -510,20 +501,13 @@ function(tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_CREATE_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.CreateDomainResponse;	
 	newDomain.initFromJS(resp.domain[0]);
 
 	return newDomain;
-}
-
-ZaDomain.prototype.canConfigureWiki = function () {
-	if(this.rights || !this.getAttrs)
-		return false;
-	if(this.rights[ZaDomain.RIGHT_INIT_NOTEBOOK] && (this.setAttrs.all || this.setAttrs[ZaDomain.A_zimbraNotebookAccount]))
-		return true;
 }
 
 ZaDomain.testAuthSettings = 
@@ -845,7 +829,7 @@ function(tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController() ,
+		controller : this._app.getCurrentController() ,
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -909,7 +893,7 @@ function(tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -923,7 +907,7 @@ ZaDomain.prototype.setStatus = function (newStatus) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN_STATUS
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainStatusResponse;	
@@ -962,7 +946,7 @@ function(mods,overWriteACLs) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -996,12 +980,11 @@ function(mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
-	this.refresh(false,true);
-	//this.initFromJS(resp.domain[0]);
+	this.initFromJS(resp.domain[0]);
 	ZaDomain.putDomainToCache(this);	
 }
 ZaItem.modifyMethods["ZaDomain"].push(ZaDomain.modifyMethod);
@@ -1147,7 +1130,7 @@ ZaDomain.prototype.parseNotebookFolderAcls = function (resp) {
 			
 		}
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDomain.prototype.parseNotebookFolderAcls", null, false);	
+		this._app.getCurrentController()._handleException(ex, "ZaDomain.prototype.parseNotebookFolderAcls", null, false);	
 	}
 }
 /**
@@ -1190,50 +1173,27 @@ function(callback) {
 		params.callback = callback;
 	}
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DELETE_DOMAIN
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);	
 }
 
-ZaDomain.getLoginMessage = function () {
-    var domain = ZaDomain.getDomainByName (ZaSettings.myDomainName, true) ;
+ZaDomain.getLoginMessage = function (app) {
+    var domain = ZaDomain.getDomainByName (ZaSettings.myDomainName, app, true) ;
     return domain.attrs[ZaDomain.A_zimbraAdminConsoleLoginMessage]  ;
 }
 
 ZaDomain.getDomainByName = 
-function(domName) {
+function(domName, app, withConfig) {
 	if(!domName)
 		return null;
+	//TODO: Potential Bug - withConfig = 0 at initial invoke, and withConfig = 1 will never be executed	
 	var domain = ZaDomain.staticDomainByNameCacheTable[domName];
 	if(!domain) {
-		domain = new ZaDomain();
+		domain = new ZaDomain(app);
 		try {
-			domain.load("name", domName, false, true);
-		} catch (ex) {
-			/*if(ex.code == ZmCsfeException.NO_SUCH_DOMAIN) {
-				return null;
-			} else {
-				throw (ex);
-			}*/
-			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDomain.getDomainByName", null, false);
-		}
-
-		ZaDomain.putDomainToCache(domain);
-	} 
-	return domain;	
-} 
-
-ZaDomain.getDomainById = 
-function (domId) {
-	if(!domId)
-		return null;
-		
-	var domain = ZaDomain.staticDomainByIdCacheTable[domId];
-	if(!domain) {
-		domain = new ZaDomain();
-		try {
-			domain.load("id", domId, false, true);
+			domain.load("name", domName, withConfig);
 		} catch (ex) {
 			if(ex.code == ZmCsfeException.NO_SUCH_DOMAIN) {
 				return null;
@@ -1241,13 +1201,37 @@ function (domId) {
 				throw (ex);
 			}
 		}
-		ZaDomain.putDomainToCache(domain);
+		if(app)
+			ZaDomain.putDomainToCache(domain);
+	} 
+	return domain;	
+} 
+
+ZaDomain.getDomainById = 
+function (domId, app, withConfig) {
+	if(!domId)
+		return null;
+		
+	var domain = ZaDomain.staticDomainByIdCacheTable[domId];
+	if(!domain) {
+		domain = new ZaDomain(app);
+		try {
+			domain.load("id", domId, withConfig);
+		} catch (ex) {
+			if(ex.code == ZmCsfeException.NO_SUCH_DOMAIN) {
+				return null;
+			} else {
+				throw (ex);
+			}
+		}
+		if(app)
+			ZaDomain.putDomainToCache(domain);
 	}
 	return domId;
 }
 
 ZaDomain.loadMethod = 
-function(by, val) {
+function(by, val, withConfig) {
 	by = by ? by : "name";
 	val = val ? val : this.attrs[ZaDomain.A_domainName];
 	this.notebookAcls[ZaDomain.A_NotebookAllACLs] = {r:0,w:0,i:0,d:0,a:0,x:0};
@@ -1266,12 +1250,17 @@ function(by, val) {
 	var soapDoc = AjxSoapDoc.create("GetDomainRequest", ZaZimbraAdmin.URN, null);
 	var elBy = soapDoc.set("domain", val);
 	elBy.setAttribute("by", by);
+	if(withConfig || ZaSettings.isDomainAdmin)
+		soapDoc.getMethod().setAttribute("applyConfig", "1");
+	else
+		soapDoc.getMethod().setAttribute("applyConfig", "0");
+		
 	//var getDomainCommand = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	
 	var reqMgrParams = {
-		controller : (this._app ? ZaApp.getInstance().getCurrentController() : null),
+		controller : (this._app ? this._app.getCurrentController() : null),
 		busyMsg : ZaMsg.BUSY_GET_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDomainResponse;
@@ -1293,18 +1282,20 @@ function(by, val) {
 		try {
 			this.parseNotebookFolderAcls(getFolderCommand.invoke(params));
 		} catch (ex) {
-			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDomain.loadMethod", null, false);
+			if(this._app)
+				this._app.getCurrentController()._handleException(ex, "ZaDomain.loadMethod", null, false);
 		}
 	}
-	//this._defaultValues = ZaApp.getInstance().getGlobalConfig();	
+	if(this._app)
+		this.cos = this._app.getGlobalConfig();	
 }
 ZaItem.loadMethods["ZaDomain"].push(ZaDomain.loadMethod);
 
 ZaDomain.loadCatchAll = function () {
 	if((this.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] && this.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] == "TRUE")
-		|| (AjxUtil.isEmpty(this.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]) && 
-			(!AjxUtil.isEmpty(this._defaultValues.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]) &&
-				this._defaultValues.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] == "TRUE") )) {
+		|| (ZaSettings.GLOBAL_CONFIG_ENABLED && AjxUtil.isEmpty(this.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]) && 
+			(!AjxUtil.isEmpty(this.cos.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]) &&
+				this.cos.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled] == "TRUE") )) {
 		
 		var acc = ZaAccount.getCatchAllAccount (this.name);
 		if(!AjxUtil.isEmpty(acc) && !AjxUtil.isEmpty(acc.id) && !AjxUtil.isEmpty(acc.name)) {
@@ -1330,7 +1321,7 @@ function(obj, callback) {
 		params.callback = callback;
 	}
 	var reqMgrParams = {
-		controller : (this._app ? ZaApp.getInstance().getCurrentController() : null),
+		controller : (this._app ? this._app.getCurrentController() : null),
 		busyMsg : ZaMsg.BUSY_CHECKING_MX
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -1356,9 +1347,6 @@ ZaDomain.aclXModel = {
 
 ZaDomain.myXModel = {
 	items: [
-    	{id:"getAttrs",type:_LIST_},
-    	{id:"setAttrs",type:_LIST_},
-    	{id:"rights",type:_LIST_},	
 		{id:"name", type:_STRING_, ref:"name"},
 		{id:ZaItem.A_zimbraId, type:_STRING_, ref:"attrs/" + ZaItem.A_zimbraId},
 		{id:ZaDomain.A_domainName, type:_STRING_, ref:"attrs/" + ZaDomain.A_domainName, maxLength:255},
@@ -1369,9 +1357,8 @@ ZaDomain.myXModel = {
         {id:ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled},    
         {id:ZaDomain.A_zimbraAdminConsoleSkinEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminSkinAddressEnabled},
         {id:ZaDomain.A_zimbraVirtualHostname, type:_LIST_, listItem:{type:_STRING_, maxLength:255}, ref:"attrs/" + ZaDomain.A_zimbraVirtualHostname},
-//		{id:ZaDomain.A_description, type:_STRING_, ref:"attrs/" + ZaDomain.A_description},
-         ZaItem.descriptionModelItem,   
-        {id:ZaDomain.A_notes, type:_STRING_, ref:"attrs/" + ZaDomain.A_notes},
+		{id:ZaDomain.A_description, type:_STRING_, ref:"attrs/" + ZaDomain.A_description}, 
+		{id:ZaDomain.A_notes, type:_STRING_, ref:"attrs/" + ZaDomain.A_notes},
 		{id:ZaDomain.A_domainDefaultCOSId, type:_STRING_, ref:"attrs/" + ZaDomain.A_domainDefaultCOSId},		
 		{id:ZaDomain.A_GalMode, type:_STRING_, ref:"attrs/" + ZaDomain.A_GalMode},
 		{id:ZaDomain.A_GalMaxResults, type:_NUMBER_, ref:"attrs/" + ZaDomain.A_GalMaxResults, maxInclusive:2147483647, minInclusive:1},					
@@ -1414,10 +1401,8 @@ ZaDomain.myXModel = {
 		{id:ZaDomain.A_GALSampleQuery, type:_STRING_,required:true},
 		{id:ZaDomain.A_AuthUseBindPassword, type:_STRING_,type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaDomain.A_AuthLdapSearchBindPasswordConfirm, type:_STRING_},				
-		
 		{id:ZaDomain.A_zimbraPrefTimeZoneId,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraPrefTimeZoneId, choices:ZaSettings.timeZoneChoices},
         {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep, maxInclusive:2147483647},
-		{id:ZaDomain.A2_acl_selection_cache, type:_LIST_},
 		{id:ZaDomain.A_GALTestSearchResults, ref:ZaDomain.A_GALTestSearchResults, type:_LIST_, 
 			listItem: {type:_OBJECT_, 
 				items:[
@@ -1508,7 +1493,7 @@ ZaDomain.myXModel = {
 				]
 			}
 		},
-		{id:ZaDomain.A_allNotebookACLS, ref:ZaDomain.A_allNotebookACLS, type:_LIST_,
+		{id:ZaDomain.A_ACLS, ref:ZaDomain.A_allNotebookACLS, type:_LIST_,
 			listItem:{type:_OBJECT_,
 				items: [
 					{id:"acl", type:_OBJECT_,
@@ -1604,7 +1589,7 @@ ZaDomain.prototype.getAccountCountsByCoses = function () {
         var accountCountsByCoses = resp.Body.CountAccountResponse.cos ;
         return accountCountsByCoses ;
     }catch (ex) {
-        ZaApp.getInstance().getCurrentController().popupErrorDialog(
+        this._app.getCurrentController().popupErrorDialog(
                 AjxMessageFormat.format(ZaMsg.ERROR_GET_USED_ACCOUNTS, [this.name]), ex);
     }
 }
@@ -1641,7 +1626,7 @@ function (cosName, refresh) {
 ZaDomain.prototype.getMaxAccounts = function (cosName) {
     if (! this [ZaDomain.A2_account_limit] )  this[ZaDomain.A2_account_limit] = {} ;
 
-    //var cosName = ZaCos.getCosById (cosId).name ;
+    //var cosName = ZaCos.getCosById (cosId, this._app).name ;
     if (!this[ZaDomain.A2_account_limit][cosName]) this[ZaDomain.A2_account_limit][cosName] = {} ;
 
     if (! this [ZaDomain.A2_account_limit][cosName].max ) {
@@ -1649,9 +1634,9 @@ ZaDomain.prototype.getMaxAccounts = function (cosName) {
         var cosMaxAccounts = this.attrs[ZaDomain.A_zimbraDomainCOSMaxAccounts];
         for (var i=0; i < cosMaxAccounts.length; i ++) {
             var val = cosMaxAccounts[i].split(":") ;
-            var cos = ZaCos.getCosById (val[0]) ;
+            var cos = ZaCos.getCosById (val[0], this._app) ;
             if (cos == null) {
-                    ZaApp.getInstance().getCurrentController.popupErrorDialog(
+                    this._app.getCurrentController.popupErrorDialog(
                         AjxMessageFormat.format(ZaMsg.ERROR_INVALID_ACCOUNT_TYPE, [val[0]]));
                 return ;
             }
@@ -1666,7 +1651,7 @@ ZaDomain.prototype.getMaxAccounts = function (cosName) {
 }
 
 ZaDomain.prototype.getAvailableAccounts = function (cosName, refresh) {
-    //var cosName = ZaCos.getCosById (cosId).name ;
+    //var cosName = ZaCos.getCosById (cosId, this._app).name ;
     if (!this[ZaDomain.A2_account_limit][cosName]) this[ZaDomain.A2_account_limit][cosName] = {} ;
     if (! this [ZaDomain.A2_account_limit][cosName].available
             || refresh ) {
