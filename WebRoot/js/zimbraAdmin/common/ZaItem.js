@@ -19,9 +19,8 @@
 * @class ZaItem
 * @param app reference to the application instance
 **/
-ZaItem = function(app, iKeyName) {
+ZaItem = function(iKeyName) {
 	if (arguments.length == 0) return;
-	this._app = app;
 	this._iKeyName = iKeyName;
 	ZaModel.call(this, true);
 
@@ -37,11 +36,14 @@ ZaItem.createMethods = new Object();
 ZaItem.removeMethods = new Object();
 
 ZaItem.ACCOUNT = "account";
+//ZaItem.DL = "distributionlist";
 ZaItem.DL = "dl";
 ZaItem.ALIAS = "alias";
 ZaItem.RESOURCE = "calresource";
 ZaItem.DOMAIN = "domain";
 ZaItem.COS = "cos";
+ZaItem.GLOBAL_CONFIG = "config";
+ZaItem.GLOBAL_GRANT = "global";
 ZaItem.SERVER = "server";
 ZaItem.ZIMLET = "zimlet";
 ZaItem.MAILQ_ITEM = "message";
@@ -121,31 +123,31 @@ function(a, b, attr) {
 * Item Factory
 **/
 ZaItem.getFromType = 
-function (type, app) {
+function (type) {
 	switch (type) {
 		case ZaItem.ACCOUNT:
-			return new ZaAccount(app);
+			return new ZaAccount();
 
 		case ZaItem.ALIAS:
-			return new ZaAlias(app);
+			return new ZaAlias();
 
 		case ZaItem.DL:
-			return new ZaDistributionList(app);
+            return new ZaDistributionList();
 
 		case ZaItem.RESOURCE:
-			return new ZaResource(app);
+			return new ZaResource();
 		
 		case ZaItem.DOMAIN:
-			return new ZaDomain(app);
+			return new ZaDomain();
 
 		case ZaItem.COS:
-			return new ZaCos(app);
+			return new ZaCos();
 
 		case ZaItem.SERVER:
-			return new ZaServer(app);
+			return new ZaServer();
 
 		case ZaItem.MAILQ:
-			return new ZaMTA(app);
+			return new ZaMTA();
 
 	}
 }
@@ -166,8 +168,8 @@ function () {
 }
 
 ZaItem.prototype.refresh = 
-function () {
-	this.load();
+function (skipRights,expandDefaults) {
+	this.load(this.id ? "id" : null, this.id ? this.id : null,skipRights,expandDefaults);
 }
 
 ZaItem.prototype.copyTo = 
@@ -177,14 +179,196 @@ function (target/*, fullRecursion*/) {
 	}
 }
 
-ZaItem.prototype.load = function (by, val, withConfig) {
+ZaItem.prototype.parseTargetsRightsFromJS = function(targetObj) {
+	if(targetObj) {
+		if(targetObj.right && targetObj.right instanceof Array) {
+			var rights = targetObj.right;
+			if(!this.rights)
+				this.rights = {};
+				
+			for(var r in rights) {
+				this.rights[rights[r].n] = true;
+			}
+		}
+		if(targetObj.getAttrs && targetObj.getAttrs instanceof Array && 
+			targetObj.getAttrs[0]) {
+			if(!this.getAttrs)
+				this.getAttrs = {};
+			if(targetObj.getAttrs[0].a && targetObj.getAttrs[0].a instanceof Array) {
+				var getAttrs = targetObj.getAttrs[0].a;
+				for (var a in getAttrs) {
+					this.getAttrs[getAttrs[a].n] = true;
+					if(getAttrs[a]["default"] && getAttrs[a]["default"][0] && getAttrs[a]["default"][0].v && getAttrs[a]["default"][0].v instanceof Array) {
+						var cnt = getAttrs[a]["default"][0].v.length; 
+						for(var i = 0; i<cnt;i++) { 
+							this._defaultValues.attrs[getAttrs[a].n] = getAttrs[a]["default"][0].v[i]._content;
+						}
+					}
+				}
+			} 
+			if (targetObj.getAttrs[0].all){
+				this.getAttrs.all = true; 	
+			}
+		}			
+		if(targetObj.setAttrs && targetObj.setAttrs instanceof Array && 
+			targetObj.setAttrs[0]) {
+			if(!this.setAttrs)
+				this.setAttrs = {};
+				
+			if(targetObj.setAttrs[0].a && targetObj.setAttrs[0].a instanceof Array) {
+				var setAttrs = targetObj.setAttrs[0].a;
+				for (var a in setAttrs) {
+					this.setAttrs[setAttrs[a].n] = true;
+				}
+			} 
+			if(targetObj.setAttrs[0].all) {
+				this.setAttrs.all = true;
+			}
+		}	
+	}
+	
+}
+
+ZaItem.prototype.initEffectiveRightsFromJS = function(resp) {
+	this._defaultValues = {attrs:{}};
+	if(resp && resp.target && resp.target instanceof Array) {
+		this.parseTargetsRightsFromJS(resp.target[0]);
+		
+		/*if(resp.target[0]) {
+			if(resp.target[0].right && resp.target[0].right instanceof Array) {
+				var rights = resp.target[0].right;
+				if(!this.rights)
+					this.rights = {};
+					
+				for(var r in rights) {
+					this.rights[rights[r].n] = true;
+				}
+			}
+			if(resp.target[0].getAttrs && resp.target[0].getAttrs instanceof Array && 
+				resp.target[0].getAttrs[0]) {
+				if(!this.getAttrs)
+					this.getAttrs = {};
+				if(resp.target[0].getAttrs[0].a && resp.target[0].getAttrs[0].a instanceof Array) {
+					var getAttrs = resp.target[0].getAttrs[0].a;
+					for (var a in getAttrs) {
+						this.getAttrs[getAttrs[a].n] = true;
+						if(getAttrs[a]["default"] && getAttrs[a]["default"][0] && getAttrs[a]["default"][0].v && getAttrs[a]["default"][0].v instanceof Array) {
+							var cnt = getAttrs[a]["default"][0].v.length; 
+							for(var i = 0; i<cnt;i++) { 
+								this._defaultValues.attrs[getAttrs[a].n] = getAttrs[a]["default"][0].v[i]._content;
+							}
+						}
+					}
+				} 
+				if (resp.target[0].getAttrs[0].all){
+					this.getAttrs.all = true; 	
+				}
+			}			
+			if(resp.target[0].setAttrs && resp.target[0].setAttrs instanceof Array && 
+				resp.target[0].setAttrs[0]) {
+				if(!this.setAttrs)
+					this.setAttrs = {};
+					
+				if(resp.target[0].setAttrs[0].a && resp.target[0].setAttrs[0].a instanceof Array) {
+					var setAttrs = resp.target[0].setAttrs[0].a;
+					for (var a in setAttrs) {
+						this.setAttrs[setAttrs[a].n] = true;
+					}
+				} 
+				if(resp.target[0].setAttrs[0].all) {
+					this.setAttrs.all = true;
+				}
+			}	
+		}*/
+	}
+	
+}
+
+ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults) {
+	if(!this.type)
+		return;
+		
+	var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
+	if(expandDefaults) {
+		soapDoc.setMethodAttribute("expandAllAttrs","getAttrs");
+	}
+	
+	if(AjxUtil.isUndefined(val) || AjxUtil.isNull(val))
+		val = "";
+		
+	var elTarget = soapDoc.set("target", val);
+	
+	if(!AjxUtil.isEmpty(by))
+		elTarget.setAttribute("by",by);
+		
+	elTarget.setAttribute("type",this.type);
+
+
+	var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
+	elGrantee.setAttribute("by","id");
+	
+	var csfeParams = new Object();
+	csfeParams.soapDoc = soapDoc;	
+	var reqMgrParams = {} ;
+	reqMgrParams.controller = ZaApp.getInstance().getCurrentController();
+	reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
+	try {
+		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
+		this.initEffectiveRightsFromJS(resp);
+	} catch (ex) {
+		//not implemented yet
+	}
+}
+
+ZaItem.prototype.loadNewObjectDefaults = function (domainBy, domain, cosBy, cos) {
+	if(!this.type)
+		return;
+		
+	var soapDoc = AjxSoapDoc.create("GetCreateObjectAttrsRequest", ZaZimbraAdmin.URN, null);
+	var elTarget = soapDoc.set("target", "");
+	elTarget.setAttribute("type",this.type);	
+
+	
+	if(!AjxUtil.isEmpty(domain) && !AjxUtil.isEmpty(domainBy)) {
+		var elDomain = soapDoc.set("domain", domain);
+		elDomain.setAttribute("by",domainBy);
+	}
+
+	if(!AjxUtil.isEmpty(cos) && !AjxUtil.isEmpty(cosBy)) {
+		var elCos = soapDoc.set("cos", cos);
+		elCos.setAttribute("by",cosBy);
+	}
+	
+	var csfeParams = new Object();
+	csfeParams.soapDoc = soapDoc;	
+	var reqMgrParams = {} ;
+	reqMgrParams.controller = ZaApp.getInstance().getCurrentController();
+	reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
+	try {
+		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetCreateObjectAttrsResponse;
+		this.parseTargetsRightsFromJS(resp);
+	} catch (ex) {
+		//not implemented yet
+	}	
+}
+
+ZaItem.prototype.load = function (by, val, skipRights, expandDefaults) {
+	by = by ? by : "id";
+	val = val ? val : this.id;
+	//load rights
+	if(!skipRights) {
+		this.rights = null;
+		this.getAttrs = null;
+		this.setAttrs = null;
+		this.loadEffectiveRights(by,val,expandDefaults);
+	}		
 	//Instrumentation code start
 	if(ZaItem.loadMethods[this._iKeyName]) {
 		var methods = ZaItem.loadMethods[this._iKeyName];
 		var cnt = methods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
-				methods[i].call(this, by, val, withConfig);
+				methods[i].call(this, by, val);
 			}
 		}
 	}	
@@ -212,15 +396,15 @@ ZaItem.prototype.modify = function (mods) {
 * ZaItem.createMethods[key] 
 * @see ZaItem#createMethods
 **/
-ZaItem.create = function (tmpObj, constructorFunction, key,  app) {
-	var item = new constructorFunction(app);
+ZaItem.create = function (tmpObj, constructorFunction, key) {
+	var item = new constructorFunction();
 	//Instrumentation code start
 	if(ZaItem.createMethods[key]) {
 		var methods = ZaItem.createMethods[key];
 		var cnt = methods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
-				methods[i].call(this, tmpObj, item, app);
+				methods[i].call(this, tmpObj, item);
 			}
 		}
 	}	
@@ -233,7 +417,8 @@ function(node) {
 	this.name = node.getAttribute("name");
 	this.id = node.getAttribute("id");
 	this.attrs = new Object();
-	this.type = node.nodeName;
+	if(!AjxUtil.isEmpty(node.nodeName))
+		this.type = node.nodeName;
 	
 	var children = node.childNodes;
 	var cnt = children.length;
@@ -335,14 +520,14 @@ function(name) {
 	return (desc == null) ? name : desc;
 }
 
-ZaItem.prototype._init = function (app) {
+ZaItem.prototype._init = function () {
 	//Instrumentation code start
 	if(ZaItem.initMethods[this._iKeyName]) {
 		var methods = ZaItem.initMethods[this._iKeyName];
 		var cnt = methods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
-				methods[i].call(this,app);
+				methods[i].call(this);
 			}
 		}
 	}	
@@ -370,7 +555,7 @@ function (newAlias) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_ADD_ALIAS
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -397,7 +582,7 @@ function (aliasToRemove) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : tZaApp.getInstance().etCurrentController(),
 		busyMsg : ZaMsg.BUSY_REMOVE_ALIAS
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -405,8 +590,8 @@ function (aliasToRemove) {
 
 ZaItem.checkInteropSettings  =
 function () {
-    var app =  this.getForm().parent._app ;
-    var controller =  app.getCurrentController() ;
+
+    var controller =  ZaApp.getInstance().getCurrentController() ;
 
     try {
 
@@ -479,6 +664,71 @@ ZaItem.checkFBSettings = function (oldSettingObj, currentSettingObj, controller)
             busyMsg : ZaMsg.BUSY_MODIFY_INTEROP_SETTINGS
         }
         ZaRequestMgr.invoke(params, reqMgrParams) ;
+    }
+}
+
+
+//Sometimes, the admin extensions needs to modify the object value before it is set
+//We can add the modifer function in the extension and it will be called by the main program
+ZaItem.ObjectModifiers = {} ;
+ZaItem.prototype.modifyObject =
+function () {
+    if(ZaItem.ObjectModifiers[this._iKeyName]) {
+		var methods = ZaItem.ObjectModifiers[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this);
+			}
+		}
+	}
+}
+
+/** It is used to get the object description property value.
+ *  especially when it has multi-values
+ *
+ * @param desp
+ */
+ZaItem.descriptionModelItem =  {id:"description", type: _LIST_, ref:"attrs/description",
+            listItem:{type:_STRING_}
+        } ;
+
+ZaItem.descriptionXFormItem = {
+    ref:"description",  msgName:ZaMsg.NAD_Description,
+    label:ZaMsg.NAD_Description, labelLocation:_LEFT_, //cssClass:"admin_xform_name_input" ,
+    labelCssStyle:"vertical-align:top",
+    type:_REPEAT_,
+    align:_LEFT_,
+    repeatInstance:"",
+    showAddButton:false,
+    showRemoveButton:false,
+    showAddOnNextRow:false,
+    enableDisableChecks:[],
+    visibilityChecks:[],
+    //removeButtonLabel:ZaMsg.NAD_RemoveAddress,
+    items: [
+        {ref:".", type:_TEXTFIELD_,
+            enableDisableChecks:[],
+            visibilityChecks:[],
+            width:"30em"}
+    ]
+} ;
+
+ZaItem.getDescriptionValue = function (desp) {
+    if ( !desp)  desp = "";
+    
+    if (desp instanceof Array) {
+        desp = desp.toString ();
+    }
+
+    return desp ;
+}
+
+ZaItem.normalizeMultiValueAttr = function (entry, attrName) {
+    if (entry.attrs[attrName] == null) {
+        entry.attrs[attrName] = [];
+    } else if (! (entry.attrs[attrName] instanceof Array)) {
+        entry.attrs[attrName] = [entry.attrs[attrName]] ;
     }
 }
 
