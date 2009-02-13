@@ -22,9 +22,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaMigrationWizView = function(parent, app) {
+ZaMigrationWizView = function(parent) {
 	if (arguments.length == 0) return;
-	ZaTabView.call(this, parent, app, "ZaMigrationWizView");
+	ZaTabView.call(this, parent,"ZaMigrationWizView");
 	this.setScrollStyle(Dwt.SCROLL);
 	this.initForm(new Object(), this.getMyXForm())
 //	this._createHTML();
@@ -144,22 +144,8 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
                             }
 						]
 					},
-					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_TEXT},
-
-                    //ZDesktop
-					{type:_GROUP_,numCols:2,
-						items: [
-							{type:_OUTPUT_, value:AjxImg.getImageHtml("MigrationWiz")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null,
-                                value:ZaMsg.zdesktop_download_name
-                                        + " (" + ZaMigrationWizView.getDownloadLink(ZaMsg.ZDESKTOP_WIN_DOWNLOAD_LINK, ZaMsg.zdesktop_platform_windows) + " "
-                                        + ZaMigrationWizView.getDownloadLink(ZaMsg.ZDESKTOP_MAC_DOWNLOAD_LINK, ZaMsg.zdesktop_platform_mac) + " "
-                                        + ZaMigrationWizView.getDownloadLink(ZaMsg.ZDESKTOP_LINUX_DOWNLOAD_LINK, ZaMsg.zdesktop_platform_linux) + ")"
-                            }
-                        ]
-					},
-					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_DESKTOP_DOWNLOAD_TEXT}
-                ]
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_TEXT}
+				]
 			}
 		];
 }
