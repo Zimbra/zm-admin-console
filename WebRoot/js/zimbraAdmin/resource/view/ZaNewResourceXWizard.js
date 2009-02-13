@@ -321,6 +321,15 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 							this.getForm().itemChanged(this, elementValue, event);
 						},
 						choices:ZaResource.schedulePolicyChoices});	
+						
+	setupGroup.items.push({ref:ZaResource.A_zimbraCalResMaxNumConflictsAllowed, type:_TEXTFIELD_,
+		msgName:ZaMsg.zimbraCalResMaxNumConflictsAllowed, label:ZaMsg.zimbraCalResMaxNumConflictsAllowed,
+		labelLocation:_LEFT_, cssClass:"admin_xform_number_input"});		
+		
+	setupGroup.items.push({ref:ZaResource.A_zimbraCalResMaxPercentConflictsAllowed, type:_TEXTFIELD_,
+		msgName:ZaMsg.zimbraCalResMaxPercentConflictsAllowed, label:ZaMsg.zimbraCalResMaxPercentConflictsAllowed,
+		labelLocation:_LEFT_, cssClass:"admin_xform_number_input"});	
+								
 	setupGroup.items.push({ref:ZaResource.A_zimbraCalResAutoDeclineRecurring, type:_CHECKBOX_, 
 						relevant:"(instance[ZaResource.A2_schedulePolicy]!=ZaResource.SCHEDULE_POLICY_MANUAL)",relevantBehavior:_DISABLE_,
 						msgName:ZaMsg.NAD_DeclineRecurring,label:ZaMsg.NAD_DeclineRecurring, 

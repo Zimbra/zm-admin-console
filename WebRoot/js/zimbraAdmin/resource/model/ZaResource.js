@@ -60,6 +60,8 @@ ZaResource.A_zimbraDomainName = ZaAccount.A_zimbraDomainName;
 ZaResource.A_zimbraMinPwdLength = ZaAccount.A_zimbraMinPwdLength;
 ZaResource.A_zimbraMaxPwdLength = ZaAccount.A_zimbraMaxPwdLength;
 
+ZaResource.A_zimbraCalResMaxNumConflictsAllowed = "zimbraCalResMaxNumConflictsAllowed";
+ZaResource.A_zimbraCalResMaxPercentConflictsAllowed = "zimbraCalResMaxPercentConflictsAllowed";
 ZaResource.A_locationDisplayName = "zimbraCalResLocationDisplayName";
 ZaResource.A_zimbraAccountCalendarUserType = "zimbraAccountCalendarUserType";
 ZaResource.A_zimbraCalResAlwaysFree = "zimbraCalResAlwaysFree";
@@ -187,7 +189,8 @@ function(tmpObj, app) {
 			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
 			return false;		
 		}
-	} 		
+	} 	
+		
 	return true;
 }
 
@@ -585,6 +588,8 @@ ZaResource.myXModel = {
 		{id:ZaResource.A_zimbraCalResAutoDeclineIfBusy, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResAutoDeclineIfBusy}, //scheduling pocily
 		{id:ZaResource.A_zimbraCalResAlwaysFree, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResAlwaysFree}, //scheduling pocily
 		{id:ZaResource.A_zimbraCalResAutoDeclineRecurring, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResAutoDeclineRecurring},
+		{id:ZaResource.A_zimbraCalResMaxNumConflictsAllowed, type:_NUMBER_, ref:"attrs/"+ZaResource.A_zimbraCalResMaxNumConflictsAllowed,defaultValue:0,minInclusive:0},
+		{id:ZaResource.A_zimbraCalResMaxPercentConflictsAllowed, type:_NUMBER_, ref:"attrs/"+ZaResource.A_zimbraCalResMaxPercentConflictsAllowed,minInclusive:0,maxInclusive:100,defaultValue:0},
 		{id:ZaResource.A_description, type:_STRING_, ref:"attrs/"+ZaResource.A_description},
 		{id:ZaResource.A_notes, type:_STRING_, ref:"attrs/"+ZaResource.A_notes}, 
 		
