@@ -22,9 +22,9 @@
 * @contructor ZaServer
 * @param app reference to the application instance
 **/
-ZaServer = function() {
-	ZaItem.call(this, "ZaServer");
-	this._init();
+ZaServer = function(app) {
+	ZaItem.call(this, app,"ZaServer");
+	this._init(app);
 	//The type is required. The application tab uses it to show the right icon
 	this.type = ZaItem.SERVER ; 
 }
@@ -144,7 +144,6 @@ ZaServer.A_isCurrentVolume = "isCurrentVolume";
 ZaServer.STANDALONE = "standalone";
 ZaServer.MASTER = "master";
 ZaServer.SLAVE = "slave";
-ZaServer.A2_volume_selection_cache = "volume_selection_cache";
 
 ZaServer.MSG = 1;
 ZaServer.INDEX = 10;
@@ -326,8 +325,7 @@ ZaServer.volumeObjModel = {
 		{id:ZaServer.A_VolumeType, type:_ENUM_, choices:ZaServer.volumeTypes,defaultValue:ZaServer.MSG},
 		{id:ZaServer.A_VolumeRootPath, type:_STRING_},
 		{id:ZaServer.A_VolumeCompressBlobs, type:_ENUM_, choices:[false,true], defaultValue:true},
-		{id:ZaServer.A_VolumeCompressionThreshold, type:_NUMBER_,defaultValue:4096},
-		{id:"_index", type:_NUMBER_}				
+		{id:ZaServer.A_VolumeCompressionThreshold, type:_NUMBER_,defaultValue:4096}				
 	],
 	type:_OBJECT_
 }
@@ -336,9 +334,8 @@ ZaServer.myXModel = {
 	items: [
 		{id:ZaItem.A_zimbraId, type:_STRING_, ref:"attrs/" + ZaItem.A_zimbraId},
 		{id:ZaServer.A_name, ref:"attrs/" + ZaServer.A_name, type:_STRING_},
-//		{id:ZaServer.A_description, ref:"attrs/" +  ZaServer.A_description, type:_STRING_},
-         ZaItem.descriptionModelItem,   
-        {id:ZaServer.A_notes, ref:"attrs/" +  ZaServer.A_notes, type:_STRING_},
+		{id:ZaServer.A_description, ref:"attrs/" +  ZaServer.A_description, type:_STRING_},
+		{id:ZaServer.A_notes, ref:"attrs/" +  ZaServer.A_notes, type:_STRING_},		
 		{id:ZaServer.A_Service, ref:"attrs/" +  ZaServer.A_Service, type:_STRING_, maxLength: 256 },
 		{id:ZaServer.A_ServiceHostname, ref:"attrs/" +  ZaServer.A_ServiceHostname, type:_HOSTNAME_OR_IP_, maxLength: 256 },
 		// Services
@@ -409,11 +406,9 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_MasterRedologClientTimeoutSec, ref:"attrs/" + ZaServer.A_MasterRedologClientTimeoutSec, type:_STRING_},		
 		{id:ZaServer.A_MasterRedologClientTcpNoDelay, ref:"attrs/" + ZaServer.A_MasterRedologClientTcpNoDelay, type:_STRING_},		
 		{id:ZaServer.A_zimbraUserServicesEnabled, ref:"attrs/" + ZaServer.A_zimbraUserServicesEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaServer.A_Volumes,ref:ZaServer.A_Volumes, type:_LIST_, listItem:ZaServer.volumeObjModel},
-		{id:ZaServer.A_showVolumes, ref:ZaServer.A_showVolumes, type: _ENUM_, choices: [false,true]},
-		{id:ZaServer.A2_volume_selection_cache, ref:ZaServer.A2_volume_selection_cache, type:_LIST_},
-		{id:ZaServer.A_CurrentIndexVolumeId, ref:ZaServer.A_CurrentIndexVolumeId, type:_NUMBER_},
-		{id:ZaServer.A_CurrentMsgVolumeId, ref:ZaServer.A_CurrentMsgVolumeId, type:_NUMBER_}
+		{id:ZaServer.A_Volumes, type:_LIST_, listItem:ZaServer.volumeObjModel},
+		{id:ZaServer.A_showVolumes, ref:ZaServer.A_showVolumes, type: _ENUM_, choices: [false,true]}
+
     ]
 };
 		
@@ -422,18 +417,18 @@ ZaServer.prototype.toString = function() {
 }
 
 ZaServer.getAll =
-function() {
+function(app) {
 	var soapDoc = AjxSoapDoc.create("GetAllServersRequest", ZaZimbraAdmin.URN, null);	
 //	var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	params.asyncMode=false;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllServersResponse;	
-	var list = new ZaItemList(ZaServer);
+	var list = new ZaItemList(ZaServer, app);
 	list.loadFromJS(resp);	
 	return list;
 }
@@ -441,8 +436,8 @@ function() {
 ZaServer.modifyMethod = function (tmpObj) {
 	if(tmpObj.attrs == null) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController()._errorDialog.setMessage(ZaMsg.ERROR_UNKNOWN, null, DwtMessageDialog.CRITICAL_STYLE, null);
-		ZaApp.getInstance().getCurrentController()._errorDialog.popup();		
+		this._app.getCurrentController()._errorDialog.setMessage(ZaMsg.ERROR_UNKNOWN, null, DwtMessageDialog.CRITICAL_STYLE, null);
+		this._app.getCurrentController()._errorDialog.popup();		
 		return false;	
 	}
 	
@@ -593,7 +588,7 @@ ZaServer.modifyMethod = function (tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_SERVER
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyServerResponse;		
@@ -639,7 +634,7 @@ function() {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DELETE_SERVER
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -651,10 +646,15 @@ function() {
 }
 
 ZaServer.loadMethod = 
-function(by, val) {
+function(by, val, withConfig) {
 	var _by = by ? by : "id";
 	var _val = val ? val : this.id
 	var soapDoc = AjxSoapDoc.create("GetServerRequest", ZaZimbraAdmin.URN, null);
+	if(withConfig) {
+		soapDoc.getMethod().setAttribute("applyConfig", "1");	
+	} else {
+		soapDoc.getMethod().setAttribute("applyConfig", "0");		
+	}
 	var elBy = soapDoc.set("server", _val);
 	elBy.setAttribute("by", _by);
 	//var command = new ZmCsfeCommand();
@@ -662,13 +662,13 @@ function(by, val) {
 	params.soapDoc = soapDoc;	
 	params.asyncMode = false;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_SERVER
 	}
 	resp = ZaRequestMgr.invoke(params, reqMgrParams);		
 	this.initFromJS(resp.Body.GetServerResponse.server[0]);
 	
-	this._defaultValues = ZaApp.getInstance().getGlobalConfig();
+	this.cos = this._app.getGlobalConfig();
 
 	if(this.attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
 		this.getMyVolumes();
@@ -679,7 +679,7 @@ function(by, val) {
 ZaItem.loadMethods["ZaServer"].push(ZaServer.loadMethod);
 
 ZaServer.loadNIFS = 
-function(by, val) {
+function(by, val, withConfig) {
 	var _by = by ? by : "id";
 	var _val = val ? val : this.id
 	var soapDoc = AjxSoapDoc.create("GetServerNIfsRequest", ZaZimbraAdmin.URN, null);
@@ -690,7 +690,7 @@ function(by, val) {
 	params.soapDoc = soapDoc;	
 	params.asyncMode = false;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_SERVER
 	}
 	try {
@@ -706,7 +706,8 @@ function(by, val) {
 			}
 		}
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaServer.loadNIFS");
+		if(this._app)
+			this._app.getCurrentController()._handleException(ex, "ZaServer.loadNIFS");
 	}
 }
 
@@ -752,7 +753,7 @@ function () {
 	params.asyncMode = false;
 	params.targetServer = this.id;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_VOL
 	}
 	resp = ZaRequestMgr.invoke(params, reqMgrParams);		
@@ -785,7 +786,7 @@ function() {
 	params.targetServer = this.id;
 	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_VOL
 	}
 	resp = ZaRequestMgr.invoke(params, reqMgrParams);		
@@ -839,7 +840,7 @@ function (id) {
 	}
 	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DELETE_VOL
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams) ;
@@ -863,7 +864,7 @@ function (volume) {
 	}
 	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_CREATE_VOL
 	}
 	var response = ZaRequestMgr.invoke(params, reqMgrParams) ;
@@ -892,7 +893,7 @@ function (volume) {
 	}
 	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_VOL
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams) ;
@@ -911,13 +912,13 @@ ZaServer.prototype.setCurrentVolume = function (id, type) {
 	}
 	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_SET_VOL
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams) ;
 }
 
-ZaServer.initMethod = function () {
+ZaServer.initMethod = function (app) {
 	this.attrs = new Object();
 	this.id = "";
 	this.name="";

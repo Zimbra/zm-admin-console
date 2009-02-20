@@ -22,9 +22,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaHelpView = function(parent) {
+ZaHelpView = function(parent, app) {
 	if (arguments.length == 0) return;
-	ZaTabView.call(this, parent,"ZaHelpView");
+	ZaTabView.call(this, parent, app, "ZaHelpView");
 	this.setScrollStyle(Dwt.SCROLL);
 	this.initForm(new Object(), this.getMyXForm())
 //	this._createHTML();
@@ -65,13 +65,11 @@ function (xModelMetaData, xFormMetaData) {
 	this._localXForm.draw();
 	// This is specifically for the dwt button. If the instance is null, which here it is,
 	// dwt widgets don't get inserted into the xform, until you manually call refresh().
-//	this._localXForm.refresh();
-    //since 6.0, we use setInstance to force the item to got inserted to xform. An xform bug???
-    this._localXForm.setInstance({}) ;
-    this._drawn = true;                                    
+	this._localXForm.refresh();
+	this._drawn = true;
 }
 
-ZaHelpView.prototype.showAboutDialog = function () {                  
+ZaHelpView.prototype.showAboutDialog = function () {
     var appCtrl = this._appCtxt.getAppController() ;
     if (!appCtrl.aboutDialog) {
         appCtrl.aboutDialog = new ZaAboutDialog(this.shell,null,ZaMsg.about_title);
@@ -177,7 +175,7 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 			},
         {type: _SPACER_, height: 10 },    
         {type:_GROUP_, colSpan:"*", items: [
-                {type:_DWT_BUTTON_, id: "about_button", label:ZaMsg.About_Button_Label,
+                {type:_DWT_BUTTON_, label:ZaMsg.About_Button_Label,
                     onActivate:"this.getFormController().showAboutDialog()", width:"125px"}
             ]
         }

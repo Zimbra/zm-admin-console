@@ -29,13 +29,6 @@ ZaSettings.MAXSEARCHRESULTS = 50;
 ZaSettings.postInit = function() {
     if (AjxEnv.hasFirebug)
         console.log("Finishing loading all the zimlets, and ready to initialize the application ...");
-        
-	//Instrumentation code end	
-	var shell = DwtShell.getShell(window);
-	var appCtxt = ZaAppCtxt.getFromShell(shell);
-	var appController = appCtxt.getAppController();
-	appController._createApp();
-	        
     //Instrumentation code start
 	if(ZaSettings.initMethods) {
 		var cnt = ZaSettings.initMethods.length;
@@ -45,56 +38,16 @@ ZaSettings.postInit = function() {
 			}
 		}
 	}	
-
+	//Instrumentation code end	
+	var shell = DwtShell.getShell(window);
+	var appCtxt = ZaAppCtxt.getFromShell(shell);
+	var appController = appCtxt.getAppController();
 	
 	appController._launchApp();	
 	ZaZimbraAdmin.setOnbeforeunload(ZaZimbraAdmin._confirmExitMethod);
 	ZaSettings.initialized = true;
 	ZaSettings.initializing = false;
 };
-
-ZaSettings.initRights = function () {
-	ZaSettings.ENABLED_UI_COMPONENTS=[];
-	ZaZimbraAdmin.currentAdminAccount = new ZaAccount();
-	ZaZimbraAdmin.currentAdminAccount.load("name", ZaZimbraAdmin.currentUserLogin,false,true);
-	if(AjxUtil.isEmpty(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])) {
-		ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [];
-		//if this is a system admin account - enable access to all UI elements
-		if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsSystemAdminAccount] == 'TRUE') {
-			ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI] = true;
-		}			
-	} else {
-		if(typeof(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])=="string") {
-			ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]];
-			//ZaSettings.ENABLED_UI_COMPONENTS[ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]] = true;		
-		}	
-		var cnt = ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents].length;
-		for(var i=0;i<cnt;i++) {
-			ZaSettings.ENABLED_UI_COMPONENTS[ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents][i]] = true;
-		}
-	}
-	//load global permissions, e.g. createTopDomain, createCos
-	var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
-	var elTarget = soapDoc.set("target", "");
-	elTarget.setAttribute("type","global");
-
-
-	var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
-	elGrantee.setAttribute("by","id");
-	
-	var csfeParams = new Object();
-	csfeParams.soapDoc = soapDoc;	
-	var reqMgrParams = {} ;
-	reqMgrParams.controller = ZaApp.getInstance().getCurrentController();
-	reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
-	try {
-		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
-		ZaZimbraAdmin.currentAdminAccount.initEffectiveRightsFromJS(resp);
-	} catch (ex) {
-		//not implemented yet
-	}	
-}
-ZaSettings.initMethods.push(ZaSettings.initRights);
 
 ZaSettings.loadStyles = function(includes) {
     var head = document.getElementsByTagName("head")[0];
@@ -248,123 +201,55 @@ ZaSettings.SKIN_DW_ID					= i++ ;
 ZaSettings.SKIN_LOGIN_MSG_ID            = i++ ;
 
 //CONSTANTS FOR ROLE-BASED ACCESS
-/**
- * In order for an admin to be able to access a UI component, zimbraAdminConsoleUIComponents attribute of the admin's account should contain the corresponding values listed below
- */
-//carte blanche - gives access to any UI element
-ZaSettings.CARTE_BLANCHE_UI = "cartBlancheUI";
-
-ZaSettings.ALL_UI_COMPONENTS = [] ;
-
-//List views
-ZaSettings.ACCOUNT_LIST_VIEW = "accountListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.ACCOUNT_LIST_VIEW, label: ZaMsg.UI_Comp_AccountListView });
-ZaSettings.DOMAIN_LIST_VIEW = "domainListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.DOMAIN_LIST_VIEW, label: ZaMsg.UI_Comp_DomainListView });
-ZaSettings.ALIAS_LIST_VIEW = "aliasListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.ALIAS_LIST_VIEW, label: ZaMsg.UI_Comp_AliasListView });
-ZaSettings.DL_LIST_VIEW = "DLListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.DL_LIST_VIEW, label: ZaMsg.UI_Comp_DlListView });
-ZaSettings.RESOURCE_LIST_VIEW = "resourceListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.RESOURCE_LIST_VIEW, label: ZaMsg.UI_Comp_ResourceListView });
-ZaSettings.COS_LIST_VIEW = "COSListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.COS_LIST_VIEW, label: ZaMsg.UI_Comp_COSListView });
-ZaSettings.SERVER_LIST_VIEW = "serverListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.SERVER_LIST_VIEW, label: ZaMsg.UI_Comp_ServerListView });
-ZaSettings.GLOBAL_STATS_VIEW = "globalStatsView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.GLOBAL_STATS_VIEW, label: ZaMsg.UI_Comp_GlobalStatsView });
-ZaSettings.GLOBAL_STATUS_VIEW = "globalStatusView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.GLOBAL_STATUS_VIEW, label: ZaMsg.UI_Comp_GlobalStatusView });
-ZaSettings.SERVER_STATS_VIEW = "serverStatsView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.SERVER_STATS_VIEW, label: ZaMsg.UI_Comp_ServerStatsView });
-ZaSettings.MAILQ_VIEW = "mailQueueView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.MAILQ_VIEW, label: ZaMsg.UI_Comp_mailQueueView });
-
-ZaSettings.ZIMLET_LIST_VIEW = "zimletListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.ZIMLET_LIST_VIEW, label: ZaMsg.UI_Comp_ZimletListView });
-
-ZaSettings.ADMIN_ZIMLET_LIST_VIEW = "adminZimletListView";
-ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.ADMIN_ZIMLET_LIST_VIEW, label: ZaMsg.UI_Comp_AdminZimletListView });
-
-
-//List view groups
-ZaSettings.OVERVIEW_CONFIG_ITEMS = [ZaSettings.COS_LIST_VIEW,ZaSettings.ZIMLET_LIST_VIEW,ZaSettings.SERVER_LIST_VIEW,ZaSettings.ADMIN_ZIMLET_LIST_VIEW,ZaSettings.DOMAIN_LIST_VIEW,ZaSettings.GLOBAL_CONFIG_VIEW];
-ZaSettings.OVERVIEW_ADDRESSES_ITEMS = [ZaSettings.ACCOUNT_LIST_VIEW,ZaSettings.ALIAS_LIST_VIEW,ZaSettings.DL_LIST_VIEW,ZaSettings.RESOURCE_LIST_VIEW];
-ZaSettings.OVERVIEW_TOOLS_ITEMS = [ZaSettings.MAILQ_VIEW];
-ZaSettings.OVERVIEW_MONITORING_ITEMS = [ZaSettings.GLOBAL_STATS_VIEW,ZaSettings.GLOBAL_STATUS_VIEW,ZaSettings.SERVER_STATS_VIEW];
-
-//Account view tabs
-ZaSettings.ACCOUNTS_GENERAL_TAB = "accountsGeneralTab";
-ZaSettings.ACCOUNTS_CONTACT_TAB = "accountsContactTab";
-ZaSettings.ACCOUNTS_MEMBEROF_TAB = "accountsMemberOfTab";
-ZaSettings.ACCOUNTS_PREFS_TAB = "accountsPrefsTab";
-ZaSettings.ACCOUNTS_FEATURES_TAB = "accountsFeaturesTab";
-ZaSettings.ACCOUNTS_ADVANCED_TAB = "accountsAdvancedTab";
-ZaSettings.ACCOUNTS_FORWARDING_TAB = "accountsForwardingTab";
-ZaSettings.ACCOUNTS_ALIASES_TAB = "accountsAliasesTab";
-ZaSettings.ACCOUNTS_INTEROP_TAB = "accountsInteropTab";
-ZaSettings.ACCOUNTS_SKIN_TAB = "accountsSkinTab";
-ZaSettings.ACCOUNTS_ZIMLET_TAB = "accountsZimletTab";
-
-//Distribution list view tabs
-ZaSettings.DL_MEMBERS_TAB = "dlMembersTab";
-ZaSettings.DL_ALIASES_TAB = "dlAliasesTab";
-ZaSettings.DL_MEMBEROF_TAB = "dlMemberOfTab";
-ZaSettings.DL_NOTES_TAB = "dlMemberOfTab";
-
-//Miscelaneous operations
-ZaSettings.SAVE_SEARCH = "saveSearch";
-
-//Account operations
-ZaSettings.ACCOUNTS_CHPWD = "accountsChangePassword";
-ZaSettings.MOVE_ALIAS = "moveAlias";
-ZaSettings.ACCOUNTS_REINDEX = "accountsReindex";
-ZaSettings.ACCOUNTS_VIEW_MAIL = "accountsViewMail";
-ZaSettings.ACCOUNTS_ASSIGN_SERVER = "accountsAssignServer";
-ZaSettings.ACCOUNTS_RESTORE = "accountsRestore"; //this should be in bnr extension
-ZaSettings.ACCOUNTS_CREATE = "accountsCreate"; //this should be in bnr extension
-
-//Domain view tabs
-ZaSettings.DOMAIN_GENERAL_TAB = "domainGeneralTab";
-ZaSettings.DOMAIN_SKIN_TAB = "domainSkinsTab"; 
-ZaSettings.DOMAIN_WIKI_TAB = "domainWikiTab";
-ZaSettings.DOMAIN_VIRTUAL_HOST_TAB = "domainVirtualHostTab";
-ZaSettings.DOMAIN_INTEROP_TAB = "domainInteropTab";
-ZaSettings.DOMAIN_AUTH_TAB = "domainAuthTab";
-ZaSettings.DOMAIN_GAL_TAB = "domainGALTab";
-ZaSettings.DOMAIN_ZIMLETS_TAB = "domainGALTab";
-
-//Domain operations
-ZaSettings.DOMAIN_GAL_WIZ = "domainGALWizard";
-ZaSettings.DOMAIN_AUTH_WIZ = "domainAuthWizard";
-ZaSettings.DOMAIN_WIKI_WIZ = "domainWikiWizard";
-ZaSettings.DOMAIN_CHECK_MX_WIZ = "domainCheckMXWiz";
-
-//Distribution list view tabs
-ZaSettings.DL_NOTES_TAB = "dlNotesTab";
-ZaSettings.DL_MEMBEROF_TAB = "dlMemberOfTab";
-ZaSettings.DL_ALIASES_TAB = "dlAliasesTab";
-
-//Distribution list operations
-ZaSettings.DL_CREATE_RIGHT = "createDL";
-
-//Alias operations
-ZaSettings.ALIAS_CREATE_RIGHT = "createAlias";
-
-//Resources operations
-ZaSettings.RESOURCES_CREATE_RIGHT = "createResource";
-
-ZaSettings.GLOBAL_CONFIG_VIEW="globalConfigView";
-
-
+ZaSettings.STATUS_ENABLED= true;
+ZaSettings.STATS_ENABLED= true;
+ZaSettings.ACCOUNTS_CHPWD_ENABLED = true;
+ZaSettings.ACCOUNTS_ENABLED = true;
+ZaSettings.ACCOUNTS_FEATURES_ENABLED = true;
+ZaSettings.ACCOUNTS_ADVANCED_ENABLED = true;
+ZaSettings.ACCOUNTS_ALIASES_ENABLED=true;
+ZaSettings.ACCOUNTS_INTEROP_ENABLED = true ;
+ZaSettings.ACCOUNTS_FORWARDING_ENABLED=true;
+ZaSettings.ACCOUNTS_MOVE_ALIAS_ENABLED=true;
+ZaSettings.ACCOUNTS_REINDEX_ENABLED=true;
+ZaSettings.ACCOUNTS_PREFS_ENABLED = true;
+ZaSettings.ACCOUNTS_VIEW_MAIL_ENABLED = true;
 ZaSettings.ACCOUNTS_RESTORE_ENABLED = true;
-
+ZaSettings.ACCOUNTS_SECURITY_ENABLED = true;
+ZaSettings.COSES_ENABLED=true;
+ZaSettings.DOMAINS_ENABLED=true;
+ZaSettings.SERVERS_ENABLED=true;
+ZaSettings.SERVER_STATS_ENABLED=true;
+ZaSettings.GLOBAL_CONFIG_ENABLED= true;
+ZaSettings.DISTRIBUTION_LISTS_ENABLED = true;
+ZaSettings.MAILQ_ENABLED = true;
+ZaSettings.MONITORING_ENABLED = true;
+ZaSettings.SYSTEM_CONFIG_ENABLED = true;
+ZaSettings.ADDRESSES_ENABLED = true;
+ZaSettings.RESOURCES_ENABLED = true;
 ZaSettings.SKIN_PREFS_ENABLED = true;
 ZaSettings.LICENSE_ENABLED = true;
 ZaSettings.ZIMLETS_ENABLED = true;
 ZaSettings.ADMIN_ZIMLETS_ENABLED = true;
 ZaSettings.SAVE_SEARCH_ENABLED = true ;
-
+ZaSettings.TOOLS_ENABLED = true;
+ZaSettings.DOMAIN_MX_RECORD_CHECK_ENABLED = true;
+ZaSettings.CAN_MODIFY_CATCH_ALL_ADDRESS = false; //this attribute only take effective in domain admin
+ZaSettings.DOMAIN_SKIN_ENABLED = true ; //allow the skin properties tab in domain to show in domain admin
+ZaSettings.DOMAIN_GAL_WIZ_ENABLED = true;
+ZaSettings.DOMAIN_AUTH_WIZ_ENABLED = true;
+ZaSettings.DOMAINS_ARE_READONLY = false;
+ZaSettings.DOMAIN_WIKI_ENABLED = true;
+ZaSettings.DOMAIN_VIRTUAL_HOST_ENABLED = true;
+ZaSettings.DOMAIN_INTEROP_ENABLED = true;
+ZaSettings.NEW_ACCT_TIME_ZONE_ENABLED = false ;
+ZaSettings.CAN_CHANGE_DOMAIN_SERVICE_HOSTNAME = true;
+ZaSettings.CAN_CREATE_DOMAINS = true;
+ZaSettings.CAN_CHANGE_DOMAIN_ACC_LIMIT = true;
+ZaSettings.CAN_CHANGE_DOMAIN_STATUS = true;
+ZaSettings.CAN_DELETE_DOMAINS = true;
+ZaSettings.CAN_CHANGE_DOMAIN_DESCRIPTION = true;
+ZaSettings.CAN_CHANGE_DOMAIN_NOTES = true;
 // initialization for settings: [name, type, data type, default value]
 ZaSettings.INIT = new Object();
 // IDs FOR HTML COMPONENTS IN THE SKIN
@@ -567,32 +452,6 @@ ZaSettings.mailCharsetChoices = [
 	{ value: "x-windows-50221" , label: "x-windows-50221" } ,
 	{ value: "x-windows-874" , label: "x-windows-874" } ,
 	{ value: "x-windows-949" , label: "x-windows-949" } ,
-	{ value: "x-windows-950" , label: "x-windows-950" } ,                                   
+	{ value: "x-windows-950" , label: "x-windows-950" } ,
 	{ value: "x-windows-iso2022jp" , label: "x-windows-iso2022jp" } 
 ] ;
-
-ZaSettings.getLocaleChoices = function () {
-
-    if (! ZaSettings.localeChoices) {
-       //getAllLocalesRequest
-        var soapDoc = AjxSoapDoc.create("GetAllLocalesRequest", ZaZimbraAdmin.URN, null);
-        var params = {};
-        params.soapDoc = soapDoc;
-        var reqMgrParams = {
-                controller: (ZaApp.getInstance() ? ZaApp.getInstance().getCurrentController(): null ),
-                busyMsg : ZaMsg.BUSY_GET_LOCALE
-            }
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllLocalesResponse;
-        var locales = resp.locale ;
-        ZaSettings.localeChoices = [] ;
-
-        for (var i=0; i < locales.length; i ++) {
-            ZaSettings.localeChoices.push({
-                value: locales[i].id,
-                label: locales[i].name
-            });
-        }
-    }
-
-    return ZaSettings.localeChoices ;
-}
