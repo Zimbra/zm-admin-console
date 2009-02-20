@@ -22,9 +22,9 @@
 * this class is a model for zimbra calendar resource account 
 * @author Charles Cao
 **/
-ZaResource = function(app) {
-	ZaItem.call(this, app,"ZaResource");
-	this._init(app);
+ZaResource = function() {
+	ZaItem.call(this, "ZaResource");
+	this._init();
 	this.type=ZaItem.RESOURCE;
 }
 
@@ -112,81 +112,56 @@ ZaResource.searchAttributes = AjxBuffer.concat(ZaResource.A_displayname,",",
 											   ZaResource.A_zimbraCalResType);
 
 ZaResource.checkValues = 
-function(tmpObj, app) {
+function(tmpObj) {
 	/**
 	* check values
 	**/
 
 	if(tmpObj.name == null || tmpObj.name.length < 1) {
 		//show error msg
-		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_REQUIRED);
+		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_REQUIRED);
 		return false;
 	}
 	
 	/*if(!AjxUtil.EMAIL_SHORT_RE.test(tmpObj.name) ) {*/
 	if(tmpObj.name.lastIndexOf ("@")!=tmpObj.name.indexOf ("@")) {
 		//show error msg
-		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_INVALID);
+		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_INVALID);
 		return false;
 	}
 	
-	var myCos = null;
+
 	var maxPwdLen = Number.POSITIVE_INFINITY;
 	var minPwdLen = 1;	
 	
-	//find out what is this account's COS
-	if(ZaSettings.COSES_ENABLED) {
-		
-		if(tmpObj.attrs[ZaResource.A_COSId]) {
-			myCos = ZaCos.getCosById (tmpObj.attrs[ZaResource.A_COSId],app);
-		}
-		myCos = ZaCos.getCosById(tmpObj.attrs[ZaResource.A_COSId], app);
-		//myCos = cosList.getItemById(tmpObj.attrs[ZaResource.A_COSId]);
-		if(!myCos ) {
-			var cosList = app.getCosList();
-			if(cosList.size()>0) {
-				myCos = cosList.getArray()[0];
-				tmpObj.attrs[ZaResource.A_COSId] = cosList.getArray()[0].id;
-			}
-		}		
-	}
-	//if the account did not have a valid cos id - pick the first COS
 	//validate password length against this account's COS setting
 	if(tmpObj.attrs[ZaResource.A_zimbraMinPwdLength] != null) {
 		minPwdLen = tmpObj.attrs[ZaResource.A_zimbraMinPwdLength];
-	} else if(ZaSettings.COSES_ENABLED) {
-		if(myCos) {
-			if(myCos.attrs[ZaCos.A_zimbraMinPwdLength] > 0) {
-				minPwdLen = myCos.attrs[ZaCos.A_zimbraMinPwdLength];
-			}
-		}
+	} else  {
+		minPwdLen = tmpObj._defaultValues.attrs[ZaResource.A_zimbraMinPwdLength];
 	}
 	
 	if(tmpObj.attrs[ZaResource.A_zimbraMaxPwdLength] != null) {
 		maxPwdLen = tmpObj.attrs[ZaResource.A_zimbraMaxPwdLength];
-	} else if(ZaSettings.COSES_ENABLED) {
-		if(myCos) {
-			if(myCos.attrs[ZaCos.A_zimbraMaxPwdLength] > 0) {
-				maxPwdLen = myCos.attrs[ZaCos.A_zimbraMaxPwdLength];
-			}		
-		}
+	} else  {
+		maxPwdLen = tmpObj._defaultValues.attrs[ZaResource.A_zimbraMaxPwdLength];
 	}
 	//if there is a password - validate it
 	if(tmpObj.attrs[ZaResource.A_password]!=null || tmpObj[ZaResource.A2_confirmPassword]!=null) {
 		if(tmpObj.attrs[ZaResource.A_password] != tmpObj[ZaResource.A2_confirmPassword]) {
 			//show error msg
-			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
 			return false;
 		} 			
 		if(tmpObj.attrs[ZaResource.A_password].length < minPwdLen || AjxStringUtil.trim(tmpObj.attrs[ZaResource.A_password]).length < minPwdLen) { 
 			//show error msg
-			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen));
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen));
 			return false;		
 		}
 		
 		if(AjxStringUtil.trim(tmpObj.attrs[ZaResource.A_password]).length > maxPwdLen) { 
 			//show error msg
-			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
 			return false;		
 		}
 	} 	
@@ -202,7 +177,7 @@ function(tmpObj, app) {
 * @param resource {ZaResource}
 **/
 ZaResource.createMethod = 
-function (tmpObj, resource, app) {
+function (tmpObj, resource) {
 	tmpObj.attrs[ZaResource.A_mail] = tmpObj.name;	
 	var resp;	
 	//create SOAP request
@@ -251,7 +226,7 @@ function (tmpObj, resource, app) {
 		var params = new Object();
 		params.soapDoc = soapDoc;
 		var reqMgrParams = {
-			controller : app.getCurrentController(),
+			controller : ZaApp.getInstance().getCurrentController(),
 			busyMsg : ZaMsg.BUSY_CREATE_RESOURCE
 		}	
 		resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.CreateCalendarResourceResponse;
@@ -299,7 +274,7 @@ function(mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_RESOURCE
 	}
 	resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyCalendarResourceResponse;
@@ -454,7 +429,7 @@ function() {
 		idx = this._addRow(ZaMsg.NAD_ResourceName, this.attrs[ZaResource.A_displayname], html, idx);
 		idx = this._addRow(ZaMsg.NAD_ResType, 
 						ZaResource.getResTypeLabel(this.attrs[ZaResource.A_zimbraCalResType]), html, idx);
-		if(ZaSettings.SERVERS_ENABLED) {
+		if(this.getAttrs[ZaResource.A_mailHost]) {
 			idx = this._addRow(ZaMsg.NAD_MailServer, this.attrs[ZaResource.A_mailHost], html, idx);
 		}
 		
@@ -479,7 +454,7 @@ function(by, val, withCos) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_RESOURCE
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetCalendarResourceResponse;
@@ -507,7 +482,7 @@ function(by, val, withCos) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller: this._app.getCurrentController()
+		controller: ZaApp.getInstance().getCurrentController()
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAccountInfoResponse;
 	if(resp[ZaAccount.A2_publicMailURL] && resp[ZaAccount.A2_publicMailURL][0])
@@ -561,7 +536,7 @@ function (newName) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_RENAME_RESOURCE
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -590,8 +565,9 @@ ZaResource.myXModel = {
 		{id:ZaResource.A_zimbraCalResAutoDeclineRecurring, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResAutoDeclineRecurring},
 		{id:ZaResource.A_zimbraCalResMaxNumConflictsAllowed, type:_NUMBER_, ref:"attrs/"+ZaResource.A_zimbraCalResMaxNumConflictsAllowed,defaultValue:0,minInclusive:0},
 		{id:ZaResource.A_zimbraCalResMaxPercentConflictsAllowed, type:_NUMBER_, ref:"attrs/"+ZaResource.A_zimbraCalResMaxPercentConflictsAllowed,minInclusive:0,maxInclusive:100,defaultValue:0},
-		{id:ZaResource.A_description, type:_STRING_, ref:"attrs/"+ZaResource.A_description},
-		{id:ZaResource.A_notes, type:_STRING_, ref:"attrs/"+ZaResource.A_notes}, 
+//		{id:ZaResource.A_description, type:_STRING_, ref:"attrs/"+ZaResource.A_description},
+		ZaItem.descriptionModelItem ,
+          {id:ZaResource.A_notes, type:_STRING_, ref:"attrs/"+ZaResource.A_notes},
 		
 		//Resource Location
 		{id:ZaResource.A_zimbraCalResSite, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResSite},
@@ -661,7 +637,7 @@ ZaResource._SCHEDULE_POLICY_LABEL[ ZaResource.SCHEDULE_POLICY_ACCEPT_ALL] = ZaMs
 ZaResource._SCHEDULE_POLICY_LABEL[ ZaResource.SCHEDULE_POLICY_MANUAL] = ZaMsg.resScheduleManual;
 ZaResource._SCHEDULE_POLICY_LABEL[ ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY] = ZaMsg.resScheduleAcceptUnlessBusy;
 
-ZaResource.initMethod = function (app) {
+ZaResource.initMethod = function () {
 	this.attrs = new Object();
 	this.id = "";
 	this.name="";
@@ -679,12 +655,12 @@ function (elementValue,instanceValue, event){
 	this.getForm().refresh();	
 }
 
-//generate the account name automatically
-ZaResource.setAutoAccountName =
-function (instance, newValue) {
-	var oldAccName = instance[ZaResource.A_name] ;
-	var regEx = /[^a-zA-Z0-9_\-\.]/g ;
-	instance[ZaResource.A_name] = newValue.replace(regEx, "") + oldAccName.substring(oldAccName.indexOf("@")) ;	
+ZaResource.isLocation = function () {
+	return (this.getInstanceValue(ZaResource.A_zimbraCalResType).toLowerCase() ==  ZaResource.RESOURCE_TYPE_LOCATION.toLowerCase());
+}
+
+ZaResource.isSchedulePolicyNotManual = function () {
+	return (this.getInstanceValue(ZaResource.A2_schedulePolicy) != ZaResource.SCHEDULE_POLICY_MANUAL);
 }
 
 ZaResource.accountStatusChoices = [
