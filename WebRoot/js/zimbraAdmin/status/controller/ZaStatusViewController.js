@@ -24,10 +24,9 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-ZaStatusViewController = function(appCtxt, container) {
-	ZaController.call(this, appCtxt, container,"ZaStatusViewController");
+ZaStatusViewController = function(appCtxt, container, app) {
+	ZaController.call(this, appCtxt, container, app, "ZaStatusViewController");
    	this._toolbarOperations = new Array();
-   	this._toolbarOrder = new Array();
    	this._popupOperations = new Array();
 	this._UICreated = false;	
 }
@@ -42,12 +41,12 @@ ZaStatusViewController.prototype.show = function(openInNewTab) {
 	    if (!this._UICreated) {
 			this._createUI(openInNewTab);
 		}
-		var statusObj = new ZaStatus();
+		var statusObj = new ZaStatus(this._app);
 		statusObj.load();
 		var statusVector = statusObj.getStatusVector();
 		this._contentView.set(statusVector);
-//		ZaApp.getInstance().pushView(ZaZimbraAdmin._STATUS);
-		ZaApp.getInstance().pushView(this.getContentViewId());
+//		this._app.pushView(ZaZimbraAdmin._STATUS);
+		this._app.pushView(this.getContentViewId());
 		var now = new Date();
 		this._toolbar.getButton("refreshTime").setText(ZaMsg.TBB_LastUpdated + " " + AjxDateUtil.computeTimeString(now));
 		
@@ -68,22 +67,19 @@ ZaStatusViewController.initToolbarMethod =
 function () {
 	// first button in the toolbar is a menu.
 	var newMenuOpList = new Array();
-	this._toolbarOrder.push(ZaOperation.LABEL);
-	this._toolbarOrder.push(ZaOperation.SEP);
-	this._toolbarOrder.push(ZaOperation.REFRESH);
-	this._toolbarOperations[ZaOperation.LABEL] = new ZaOperation(ZaOperation.LABEL, ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime");	
-	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
-	this._toolbarOperations[ZaOperation.REFRESH] =new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener));	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.LABEL, ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener)));	
 }
 ZaController.initToolbarMethods["ZaStatusViewController"].push(ZaStatusViewController.initToolbarMethod);
 
 ZaStatusViewController.prototype._createUI = function (openInNewTab) {
 	try {
 		var elements = new Object();
-		this._contentView = new ZaServicesListView(this._container);
+		this._contentView = new ZaServicesListView(this._container, this._app);
 		this._initToolbar();
 		if(this._toolbarOperations && this._toolbarOperations.length) {
-			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder); 
+			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations); 
 			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 		}
 		this._initPopupMenu();
@@ -91,15 +87,15 @@ ZaStatusViewController.prototype._createUI = function (openInNewTab) {
 			this._acctionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 		}
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-		//ZaApp.getInstance().createView(ZaZimbraAdmin._STATUS, elements);
+		//this._app.createView(ZaZimbraAdmin._STATUS, elements);
 		var tabParams = {
 			openInNewTab: false,
 			tabId: this.getContentViewId(),
 			tab: this.getMainTab()
 		}
-		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+		this._app.createView(this.getContentViewId(), elements, tabParams) ;
 		this._UICreated = true;
-		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
+		this._app._controllers[this.getContentViewId ()] = this ;
 	} catch (ex) {
 		this._handleException(ex, "ZaStatusViewController.prototype._createUI", null, false);
 		return;

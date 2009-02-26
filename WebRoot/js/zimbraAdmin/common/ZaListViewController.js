@@ -27,18 +27,21 @@
 * @see ZaAccountListController
 * @see ZDomainListController
 **/
-ZaListViewController = function(appCtxt, container,iKeyName) {
+ZaListViewController = function(appCtxt, container, app, iKeyName) {
 	if (arguments.length == 0) return;
 	this._currentPageNum = 1;	
+   	this._toolbarOperations = new Array();
+   	this._popupOperations = new Array();	
 	//this.pages = new Object();
 	this._currentSortOrder = "1";
-	ZaController.call(this, appCtxt, container,iKeyName);
+	ZaController.call(this, appCtxt, container, app, iKeyName);
 	this.RESULTSPERPAGE = ZaSettings.RESULTSPERPAGE; 
 	this.MAXSEARCHRESULTS = ZaSettings.MAXSEARCHRESULTS;
 }
 
 ZaListViewController.prototype = new ZaController();
 ZaListViewController.prototype.constructor = ZaListViewController;
+ZaListViewController.changeActionsStateMethods = new Object();
 
 ZaListViewController.prototype._nextPageListener = 
 function (ev) {
@@ -120,7 +123,7 @@ function(ev, noPopView, func, obj, params) {
 	if (noPopView) {
 		func.call(obj, params) ;
 	}else{
-		ZaApp.getInstance().popView () ;
+		this._app.popView () ;
 	}
 }
 
@@ -132,7 +135,7 @@ function(params, resp) {
 		}
 		if(resp.isException()) {
 			ZaSearch.handleTooManyResultsException(resp.getException(), "ZaListViewController.prototype.searchCallback");
-			this._list = new ZaItemList(params.CONS);	
+			this._list = new ZaItemList(params.CONS, this._app);	
 			this._searchTotal = 0;
 			this.numPages = 0;
 			if(params.show)
@@ -142,7 +145,7 @@ function(params, resp) {
 		}else{
 			ZaSearch.TOO_MANY_RESULTS_FLAG = false;
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			this._list = new ZaItemList(params.CONS);	
+			this._list = new ZaItemList(params.CONS, this._app);	
 			this._list.loadFromJS(response);	
 			this._searchTotal = response.searchTotal;
 			var limit = params.limit ? params.limit : this.RESULTSPERPAGE; 
@@ -163,7 +166,35 @@ function(params, resp) {
 	}
 }
 
+ZaListViewController.prototype.changeActionsState =
+function () {
+	var opsArray1 = new Array();
+	var opsArray2 = new Array();
 
+	if(ZaListViewController.changeActionsStateMethods[this._iKeyName]) {
+		var methods = ZaListViewController.changeActionsStateMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				try {
+					methods[i].call(this,opsArray1,opsArray2);
+				} catch (ex) {
+					this._handleException(ex, "ZaListViewController.prototype.changeActionsState");
+				}
+			}
+		}
+	}	
+
+	if(opsArray1.length) {
+		this._toolbar.enable(opsArray1, true);
+		this._actionMenu.enable(opsArray1, true);
+	}
+	if(opsArray2.length) {
+		this._toolbar.enable(opsArray2, false);
+		this._actionMenu.enable(opsArray2, false);
+	}	
+
+}
 /**
 * @param ev
 * This listener is invoked by any other controller that can change an object in this controller
