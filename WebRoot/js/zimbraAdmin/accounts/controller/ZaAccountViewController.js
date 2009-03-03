@@ -25,21 +25,21 @@
 * @author Greg Solovyev
 **/
 
-ZaAccountViewController = function(appCtxt, container) {
-	ZaXFormViewController.call(this, appCtxt, container, "ZaAccountViewController");
+ZaAccountViewController = function(appCtxt, container, app) {
+	ZaXFormViewController.call(this, appCtxt, container, app, "ZaAccountViewController");
 	this._UICreated = false;
 	this.objType = ZaEvent.S_ACCOUNT;
 	this._helpURL = ZaAccountViewController.helpURL;
 	this.deleteMsg = ZaMsg.Q_DELETE_ACCOUNT;
+	this._toolbarOperations = new Array();
 	this.tabConstructor = ZaAccountXFormView;
 }
 
 ZaAccountViewController.prototype = new ZaXFormViewController();
 ZaAccountViewController.prototype.constructor = ZaAccountViewController;
 ZaAccountViewController.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/editing_accounts.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-ZaController.changeActionsStateMethods["ZaAccountViewController"] = new Array();
-ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 ZaController.initToolbarMethods["ZaAccountViewController"] = new Array();
+ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 //public methods
 
 /**
@@ -57,27 +57,16 @@ function(entry, openInNewTab, skipRefresh) {
 
 ZaAccountViewController.initToolbarMethod =
 function () {
-	this._toolbarOrder.push(ZaOperation.SAVE);
-	this._toolbarOrder.push(ZaOperation.CLOSE);
-	this._toolbarOrder.push(ZaOperation.SEP);
-	this._toolbarOrder.push(ZaOperation.NEW_WIZARD);
-	this._toolbarOrder.push(ZaOperation.DELETE);		
-	
-	
-	this._toolbarOperations[ZaOperation.SAVE]= new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-	this._toolbarOperations[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));    	
-	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
-	this._toolbarOperations[ZaOperation.NEW_WIZARD] = new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", new AjxListener(this, ZaAccountViewController.prototype._newButtonListener));   			    	
-	this._toolbarOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));    	    	
-	
-	//if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_VIEW_MAIL] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-		this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener));		
-		this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
-	//}
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_REINDEX] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-		this._toolbarOperations[ZaOperation.REINDEX_MAILBOX] = new ZaOperation(ZaOperation.REINDEX_MAILBOX, ZaMsg.ACTBB_ReindexMbx, ZaMsg.ACTBB_ReindexMbx_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaAccountViewController.prototype._reindexMbxListener));
-		this._toolbarOrder.push(ZaOperation.REINDEX_MAILBOX);
-	}					
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener)));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", new AjxListener(this, ZaAccountViewController.prototype._newButtonListener)));   			    	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener)));    	    	
+	if(ZaSettings.ACCOUNTS_VIEW_MAIL_ENABLED)
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener)));		
+
+	if(ZaSettings.ACCOUNTS_REINDEX_ENABLED)
+		this._toolbarOperations.push(new ZaOperation(ZaOperation.REINDEX_MAILBOX, ZaMsg.ACTBB_ReindexMbx, ZaMsg.ACTBB_ReindexMbx_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaAccountViewController.prototype._reindexMbxListener)));					
 }
 ZaController.initToolbarMethods["ZaAccountViewController"].push(ZaAccountViewController.initToolbarMethod);
 
@@ -93,14 +82,12 @@ function(entry) {
 
 			this._initToolbar();
 			//make sure these are last
-			this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
-			this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
-			this._toolbarOrder.push(ZaOperation.NONE);
-			this._toolbarOrder.push(ZaOperation.HELP);
-				
-			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder);
+			this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
+			this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));		
+			
+			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);
 	
-	  		this._contentView = this._view = new this.tabConstructor(this._container);
+	  		this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
@@ -110,21 +97,21 @@ function(entry) {
 				tabId: this.getContentViewId()
 			}
 				  		
-	    	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
+	    	this._app.createView(this.getContentViewId(), elements, tabParams);
 	    	this._UICreated = true;
 	    	//associate the controller with the view by viewId
-	    	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
+	    	this._app._controllers[this.getContentViewId ()] = this ;
   		}
-		//ZaApp.getInstance().pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
-		ZaApp.getInstance().pushView(this.getContentViewId()) ;
-		if(!AjxUtil.isEmpty(entry.id)) {
+		//this._app.pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
+		this._app.pushView(this.getContentViewId()) ;
+		if(entry.id) {
 			try {
-				entry.refresh(false,true);
+				entry.refresh(!ZaSettings.COSES_ENABLED);
 			} catch (ex) {
 				// Data corruption may cause anexception. We should catch it here in order to display the form anyway.
 				this._handleException(ex, null, null, false);
 				if (ex.code ==  ZmCsfeException.SVC_PERM_DENIED) {
-					ZaApp.getInstance().popView();
+					this._app.popView();
 					return ;
 					
 				}
@@ -138,9 +125,9 @@ function(entry) {
 		}	
 		this._view.setDirty(false);
 		entry.attrs[ZaAccount.A_password] = null; //get rid of VALUE-BLOCKED
-		entry[ZaModel.currentTab] = "1";
-		this._currentObject = entry;
+		entry[ZaModel.currentTab] = "1"
 		this._view.setObject(entry);
+		this._currentObject = entry;
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountViewController.prototype._setView", null, false);
 	}	
@@ -148,29 +135,6 @@ function(entry) {
 	this._domainsChanged = false;
 }
 ZaController.setViewMethods["ZaAccountViewController"].push(ZaAccountViewController.setViewMethod);
-
-ZaAccountViewController.changeActionsStateMethod = function () {
-	if(!this._currentObject)
-		return;
-		
-/*I	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_VIEW_MAIL] || 
-		ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {*/
-			if(!this._currentObject.rights || !this._currentObject.rights[ZaAccount.VIEW_MAIL_RIGHT])	{
-				this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
-			}
-	//}
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_REINDEX] || 
-		ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-		if(!this._currentObject.rights || !this._currentObject.rights[ZaAccount.REINDEX_MBX_RIGHT])	{
-			this._toolbarOperations[ZaOperation.REINDEX_MAILBOX].enabled = false;
-		}
-	}
-	if(this._toolbarOperations[ZaOperation.SAVE])	
-		this._toolbarOperations[ZaOperation.SAVE].enabled = false;
-}
-ZaController.changeActionsStateMethods["ZaAccountViewController"].push(ZaAccountViewController.changeActionsStateMethod);
-
-
 //Private/protected methods
 /**
 * saves the changes in the fields, calls modify or create on the current ZaAccount
@@ -223,17 +187,18 @@ function () {
 		
 	var mods = new Object();
 
-	if(!ZaAccount.checkValues(tmpObj))
+	if(!ZaAccount.checkValues(tmpObj, this._app))
 		return false;
 	
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_CHPWD] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	if(ZaSettings.ACCOUNTS_CHPWD_ENABLED) {
 		//change password if new password is provided
 		if(tmpObj.attrs[ZaAccount.A_password]!=null && tmpObj[ZaAccount.A2_confirmPassword]!=null && tmpObj.attrs[ZaAccount.A_password].length > 0) {
 			try {
 				this._currentObject.changePassword(tmpObj.attrs[ZaAccount.A_password]);
 			} catch (ex) {
 				this.popupErrorDialog(ZaMsg.FAILED_SAVE_ACCOUNT, ex, true);
-				return false;	
+				return false;				
+				
 			}
 		}
 	}
@@ -254,8 +219,8 @@ function () {
 				continue; //skip uid, it is changed throw a separate request
 			}
 			if(tmpObj.attrs[a] instanceof Array) {
-                if (!this._currentObject.attrs[a]) this._currentObject.attrs[a] = [] ;
-                if( tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
+				if(this._currentObject.attrs[a] && tmpObj.attrs[a] 
+					&& tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
 					mods[a] = tmpObj.attrs[a];
 				}
 			} else {
@@ -264,7 +229,7 @@ function () {
 		}
 	}
 
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_SKIN_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	if(ZaSettings.SKIN_PREFS_ENABLED) {
 		if(tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] != null) {
 			if(!(tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] instanceof Array)) {
 				mods[ZaAccount.A_zimbraAvailableSkin] = [tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin]];
@@ -280,7 +245,7 @@ function () {
 		}
 	}
 		
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_ZIMLET_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	if(ZaSettings.ZIMLETS_ENABLED) {
 		if(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] != null) {
 			if(!(tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets] instanceof Array)) {
 				mods[ZaAccount.A_zimbraZimletAvailableZimlets] = [tmpObj.attrs[ZaAccount.A_zimbraZimletAvailableZimlets]];
@@ -303,7 +268,7 @@ function () {
 	}
 	//save changed fields
 	try {	
-		this._currentObject.modify(mods, tmpObj);
+		this._currentObject.modify(mods);
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.ACCT_EXISTS) {
 			this.popupErrorDialog(ZaMsg.FAILED_CREATE_ACCOUNT_1, ex, true);
@@ -315,7 +280,7 @@ function () {
 	//add-remove aliases
 	var tmpObjCnt = -1;
 	var currentObjCnt = -1;
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_ALIASES_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	if(ZaSettings.ACCOUNTS_ALIASES_ENABLED) {
 		if(tmpObj.attrs[ZaAccount.A_zimbraMailAlias]) {
 			if(typeof tmpObj.attrs[ZaAccount.A_zimbraMailAlias] == "string") {
 				var tmpStr = tmpObj.attrs[ZaAccount.A_zimbraMailAlias];
@@ -366,6 +331,12 @@ function () {
 			for(var ix=0; ix < tmpObjCnt; ix++) {
 				try {
 					if(tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]) {
+						/*if(!AjxUtil.EMAIL_SHORT_RE.test(tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix])) {
+							//show error msg
+							this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_ALIAS_INVALID,[tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]), null, DwtMessageDialog.CRITICAL_STYLE, null);
+							this._errorDialog.popup();		
+							break;						
+						}*/
 						if(tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix].indexOf("@") != tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix].lastIndexOf("@")) {
 							//show error msg
 							this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_ALIAS_INVALID,[tmpObj.attrs[ZaAccount.A_zimbraMailAlias][ix]]), null, DwtMessageDialog.CRITICAL_STYLE, null);
@@ -436,12 +407,12 @@ function () {
 	var newName=null;
 	if(this._currentObject && tmpObj.name != this._currentObject.name) {
 		//var emailRegEx = /^([a-zA-Z0-9_\-])+((\.)?([a-zA-Z0-9_\-])+)*@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-		/*if(!AjxUtil.EMAIL_SHORT_RE.test(tmpObj.name) ) {
+		if(!AjxUtil.EMAIL_FULL_RE.test(tmpObj.name) ) {
 			//show error msg
 			this._errorDialog.setMessage(ZaMsg.ERROR_ACCOUNT_NAME_INVALID, null, DwtMessageDialog.CRITICAL_STYLE, null);
 			this._errorDialog.popup();		
 			return false;
-		}*/
+		}
 		newName = tmpObj.name;
 	}
 	
@@ -467,17 +438,15 @@ function () {
 ZaAccountViewController.prototype._newButtonListener =
 function(ev) {
 	try {
-		var newAccount = new ZaAccount();
-		newAccount.loadNewObjectDefaults("name", ZaSettings.myDomainName);
-		newAccount.getAttrs = {all:true};		
-		if(!ZaApp.getInstance()._newAccountWizard)
-			ZaApp.getInstance()._newAccountWizard = new ZaNewAccountXWizard(this._container);
+		var newAccount = new ZaAccount(this._app);
+		if(!this._app._newAccountWizard)
+			this._app._newAccountWizard = new ZaNewAccountXWizard(this._container, this._app);
         else { //update the account type if needed
-            ZaApp.getInstance()._newAccountWizard.updateAccountType () ;    
+            this._app._newAccountWizard.updateAccountType () ;    
         }
 
-        ZaApp.getInstance()._newAccountWizard.setObject(newAccount);
-		ZaApp.getInstance()._newAccountWizard.popup();
+        this._app._newAccountWizard.setObject(newAccount);
+		this._app._newAccountWizard.popup();
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountViewController.prototype._newButtonListener", null, false);
 	}
@@ -487,13 +456,13 @@ ZaAccountViewController.prototype._reindexMbxListener =
 function (ev) {
 	try {
 
-		if(!ZaApp.getInstance().dialogs["reindexWizard"])
-			ZaApp.getInstance().dialogs["reindexWizard"] = new ReindexMailboxXDialog(this._container);	
+		if(!this._app.dialogs["reindexWizard"])
+			this._app.dialogs["reindexWizard"] = new ReindexMailboxXDialog(this._container, this._app);	
 
 		var obj = new ZaReindexMailbox();
 		obj.mbxId = this._currentObject.id;
-		ZaApp.getInstance().dialogs["reindexWizard"].setObject(obj);
-		ZaApp.getInstance().dialogs["reindexWizard"].popup();
+		this._app.dialogs["reindexWizard"].setObject(obj);
+		this._app.dialogs["reindexWizard"].popup();
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountViewController.prototype._reindexMbxListener", null, false);
 	}

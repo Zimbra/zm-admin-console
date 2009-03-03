@@ -108,4 +108,3 @@ function (date, useUTC) {
 	return s.substring(0,8) + s.substring(9) ;
 }
 
-
