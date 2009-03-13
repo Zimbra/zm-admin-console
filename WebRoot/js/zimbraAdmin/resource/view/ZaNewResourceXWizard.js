@@ -32,7 +32,7 @@ ZaNewResourceXWizard = function(parent, app) {
 	];
 	
 	this._lastStep = this.stepChoices.length;
-
+	this.cosChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
 	this.initForm(ZaResource.myXModel,this.getMyXForm());	
    
 	this._localXForm.setController(this._app);	

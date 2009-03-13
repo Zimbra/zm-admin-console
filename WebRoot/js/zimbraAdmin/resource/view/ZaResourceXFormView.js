@@ -25,7 +25,7 @@
 **/
 ZaResourceXFormView = function(parent, app) {
 	ZaTabView.call(this, parent, app, "ZaResourceXFormView");	
-		
+	this.cosChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");	
 	this.initForm(ZaResource.myXModel,this.getMyXForm());
 	this._localXForm.setController(this._app);	
 	

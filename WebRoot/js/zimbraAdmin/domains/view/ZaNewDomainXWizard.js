@@ -76,7 +76,7 @@ ZaNewDomainXWizard = function(parent, app) {
 		{label:ZaMsg.AuthTest_check_INVALID_SEARCH_FILTER, value:ZaDomain.Check_INVALID_SEARCH_FILTER},
 		{label:ZaMsg.AuthTest_check_FAILURE, value:ZaDomain.Check_FAILURE}												
 	];
-	
+	this.cosChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
 	this.initForm(ZaDomain.myXModel,this.getMyXForm());		
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaNewDomainXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaNewDomainXWizard.prototype.handleXFormChange));	
@@ -387,13 +387,14 @@ ZaNewDomainXWizard.onCosChanged = function (value, event, form) {
 			
 	this.setInstanceValue(value);
 	
-	if(!ZaItem.ID_PATTERN.test(value)) {
+	if(ZaItem.ID_PATTERN.test(value)) {
+		this.cos = ZaCos.getCosById(value);
+		return value;
+	} else {
 		this.setError(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[value]));
 		var event = new DwtXFormsEvent(form, this, value);
 		form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
 		return;
-	} else {
-		return value;
 	}
 } 
 
