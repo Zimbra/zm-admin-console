@@ -218,81 +218,7 @@ function () {
 		}                                       
 	}
     
-   /*	if(ZaSettings.ZIMLETS_ENABLED) {
-		if(tmpObj.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] != null) {
-			var tmpMods = [];
-			if(!(tmpObj.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] instanceof Array)) {
-				tmpMods = [tmpObj.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets]];
-			} else {
-				var cnt = tmpObj.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets].length;
-				tmpMods = [];
-				for(var i = 0; i < cnt; i++) {
-					tmpMods.push(tmpObj.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets][i]);
-				}
-			}
-			if(isNew) {
-				mods[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = tmpMods;
-            } else {
-				//check if changed
-				if(this._currentObject.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] != null) {
-					if(this._currentObject.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] instanceof Array) {
-						if(tmpMods.join(",") != this._currentObject.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets].join(",")) {
-							mods[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = tmpMods;
-                        }
-					} else if (tmpMods.join(",") != [this._currentObject.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets]].join(",")) {
-						mods[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = tmpMods;
-                    }
-				} else {
-					mods[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = tmpMods;
-				}
-			}
-		} else if(this._currentObject.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] != null) {
-			mods[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = "";
-		}
-
-        if (mods[ZaDomain.A_zimbraZimletDomainAvailableZimlets] != null) {
-            haveSmth = true ;
-        }
-    }*/
-    /*
-	if(tmpObj.attrs[ZaDomain.A_notes] != this._currentObject.attrs[ZaDomain.A_notes]) {
-		mods[ZaDomain.A_notes] = tmpObj.attrs[ZaDomain.A_notes] ;
-		haveSmth = true;
-	}
-	if(tmpObj.attrs[ZaDomain.A_description] != this._currentObject.attrs[ZaDomain.A_description]) {
-		mods[ZaDomain.A_description] = tmpObj.attrs[ZaDomain.A_description] ;
-		haveSmth = true;
-	}
-	if(tmpObj.attrs[ZaDomain.A_domainDefaultCOSId] != this._currentObject.attrs[ZaDomain.A_domainDefaultCOSId]) {
-		mods[ZaDomain.A_domainDefaultCOSId] = tmpObj.attrs[ZaDomain.A_domainDefaultCOSId] ;
-		haveSmth = true;
-	}	
-
-	if(tmpObj.attrs[ZaDomain.A_zimbraPublicServiceHostname] != this._currentObject.attrs[ZaDomain.A_zimbraPublicServiceHostname]) {
-		mods[ZaDomain.A_zimbraPublicServiceHostname] = tmpObj.attrs[ZaDomain.A_zimbraPublicServiceHostname] ;
-		haveSmth = true;
-	}	
-	
-	if(tmpObj.attrs[ZaDomain.A_domainMaxAccounts] != this._currentObject.attrs[ZaDomain.A_domainMaxAccounts]) {
-		mods[ZaDomain.A_domainMaxAccounts] = tmpObj.attrs[ZaDomain.A_domainMaxAccounts] ;
-		haveSmth = true;
-	}
-	
-	if(tmpObj.attrs[ZaDomain.A_zimbraVirtualHostname].join(",").valueOf() !=  this._currentObject.attrs[ZaDomain.A_zimbraVirtualHostname].join(",").valueOf()) {
-		mods[ZaDomain.A_zimbraVirtualHostname] = tmpObj.attrs[ZaDomain.A_zimbraVirtualHostname] ;
-		haveSmth = true;		
-	}
-	if(tmpObj.attrs[ZaDomain.A_zimbraNotebookAccount] != this._currentObject.attrs[ZaDomain.A_zimbraNotebookAccount]) {
-		mods[ZaDomain.A_zimbraNotebookAccount] = tmpObj.attrs[ZaDomain.A_zimbraNotebookAccount] ;
-		haveSmth = true;
-		renameNotebookAccount = true;
-	}	
-	
-	if(tmpObj.attrs[ZaDomain.A_zimbraDomainStatus] != this._currentObject.attrs[ZaDomain.A_zimbraDomainStatus]) {
-		mods[ZaDomain.A_zimbraDomainStatus] = tmpObj.attrs[ZaDomain.A_zimbraDomainStatus] ;
-		haveSmth = true;
-	}
-	*/
+ 
 	var writeACLs = false;	
 	//var changeStatus = false;	
 	var permsToRevoke = [];
@@ -319,9 +245,7 @@ function () {
 		
 		}
 	}
-/*	if(tmpObj.attrs[ZaDomain.A_zimbraDomainStatus] != this._currentObject.attrs[ZaDomain.A_zimbraDomainStatus]) {
-		changeStatus = true;
-	}	*/	
+
 	if(haveSmth || writeACLs || catchAllChanged) {
 		try { 
 			var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");

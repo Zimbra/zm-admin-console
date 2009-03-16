@@ -1286,6 +1286,10 @@ function(by, val, withConfig) {
 				this._app.getCurrentController()._handleException(ex, "ZaDomain.loadMethod", null, false);
 		}
 	}
+	
+	if(!AjxUtil.isEmpty(this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets]) && (typeof this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] == "string")) {
+		this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = [this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets]];
+	}
 	if(this._app)
 		this.cos = this._app.getGlobalConfig();	
 }
