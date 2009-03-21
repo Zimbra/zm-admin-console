@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,16 +11,17 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
-ZaSearchField = function(parent, className, size, posStyle) {
+ZaSearchField = function(parent, className, size, posStyle, app) {
 
 	DwtComposite.call(this, parent, className, posStyle);
 	this._containedObject = new ZaSearch();
 	this._initForm(ZaSearch.myXModel,this._getMyXForm());
 	this._localXForm.setInstance(this._containedObject);
-	this._app = ZaApp.getInstance();
+	this._app = app;
 }
 
 ZaSearchField.prototype = new DwtComposite;
@@ -55,14 +57,14 @@ function() {
 	var query = this._containedObject[ZaSearch.A_query] = this._localXForm.getItemsById(ZaSearch.A_query)[0].getElement().value;
 
 	if (query.indexOf("$set:") == 0) {
-		ZaApp.getInstance().getAppCtxt().getClientCmdHdlr().execute((query.substr(5)).split(" "));
+		this._app.getAppCtxt().getClientCmdHdlr().execute((query.substr(5)).split(" "));
 		return;
 	}
 		
 	var params = {};
-	var sb_controller = ZaApp.getInstance().getSearchBuilderController();
+	var sb_controller = this._app.getSearchBuilderController();
 	var isAdvanced = sb_controller.isAdvancedSearch (query) ;
-	var searchListController = ZaApp.getInstance().getSearchListController() ;
+	var searchListController = this._app.getSearchListController() ;
 	searchListController._isAdvancedSearch = isAdvanced ;
 	
 	params.types = this.getSearchTypes();
@@ -82,7 +84,7 @@ function() {
 	
 	//set the currentController's _currentQuery
 	
-	ZaApp.getInstance().getCurrentController()._currentQuery = params.query ;
+	this._app.getCurrentController()._currentQuery = params.query ;
 	searchListController._currentQuery = params.query ;
 	
 	this._isSearchButtonClicked = false ;
@@ -90,10 +92,10 @@ function() {
 	if (this._callbackFunc != null) {
 		if (this._callbackObj != null) {
 			//this._callbackFunc.call(this._callbackObj, this, params);
-			ZaApp.getInstance().getCurrentController().switchToNextView(this._callbackObj,
+			this._app.getCurrentController().switchToNextView(this._callbackObj,
 		 this._callbackFunc, params);
 		} else {
-			ZaApp.getInstance().getCurrentController().switchToNextView(ZaApp.getInstance().getSearchListController(), this._callbackFunc, params);
+			this._app.getCurrentController().switchToNextView(this._app.getSearchListController(), this._callbackFunc, params);
 //			this._callbackFunc(this, params);
 		}
 	}
@@ -101,7 +103,7 @@ function() {
 
 ZaSearchField.prototype.getSearchTypes =
 function () {
-		var sb_controller = ZaApp.getInstance().getSearchBuilderController();
+		var sb_controller = this._app.getSearchBuilderController();
 		var query = this._localXForm.getItemsById(ZaSearch.A_query)[0].getElement().value ;
 		var isAdvancedSearch = sb_controller.isAdvancedSearch (query) ;
 		
@@ -119,12 +121,12 @@ function () {
 				objList.push(ZaSearch.DLS);
 			}
 
-            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.RESOURCE_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) { 
+            if (ZaSettings.RESOURCES_ENABLED) {
                 if(this._containedObject[ZaSearch.A_fResources] == "TRUE") {
                     objList.push(ZaSearch.RESOURCES);
                 }
             }
-            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) { 
+            if(ZaSettings.DOMAINS_ENABLED) {
 				if(this._containedObject[ZaSearch.A_fDomains] == "TRUE") {
 					objList.push(ZaSearch.DOMAINS);
 				}	
@@ -138,9 +140,10 @@ ZaSearchField.srchButtonHndlr =
 function(evt) {	
 	var fieldObj = this.getForm().parent;
 	//reset the search list toolbar parameters
-
+	//var searchListController = fieldObj._app.getSearchListController () ;
+	//searchListController.setPageNum(1);	
 	
-	var currentController = ZaApp.getInstance().getCurrentController ();
+	var currentController = fieldObj._app.getCurrentController ();
 	if (currentController && currentController.setPageNum) {
 		currentController.setPageNum (1) ;		
 	}
@@ -187,7 +190,7 @@ ZaSearchField.prototype.getSaveAndEditSeachDialog =
 function() {
 	if (!this._savedAndEditSearchDialog) {
 			this._savedAndEditSearchDialog = 
-					new ZaSaveSearchDialog (this) ;
+					new ZaSaveSearchDialog (this, this._app) ;
 	}
 	
 	return this._savedAndEditSearchDialog ;
@@ -267,10 +270,10 @@ ZaSearchField.prototype.getSavedSearchActionMenu =
 function () {
 	if (!this._savedSearchActionMenu) {
 		this._popupOperations = [];
-		this._popupOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", 
-				new AjxListener(this, this._editSavedSearchListener));
-		this._popupOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", 
-				new AjxListener(this, this._deleteSavedSearchListener));
+		this._popupOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Properties", "PropertiesDis", 
+				new AjxListener(this, this._editSavedSearchListener)));
+		this._popupOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", 
+				new AjxListener(this, this._deleteSavedSearchListener)));
 		this._savedSearchActionMenu = 
 			new ZaPopupMenu(this, "ActionMenu", null, this._popupOperations);
 	}
@@ -310,7 +313,7 @@ function (ev) {
 	if (this._savedSearchMenu && this._savedSearchMenu.isPoppedup()) {
 		callback = new AjxCallback (this, this.showSavedSearchMenus) ;
 	}else{
-		var overviewPanelCtrl = ZaApp.getInstance().getOverviewPanelController() ;
+		var overviewPanelCtrl = this._app.getOverviewPanelController() ;
 		callback = new AjxCallback (overviewPanelCtrl. overviewPanelCtrl.updateSavedSearchTreeList ()) ;
 	}*/
 	ZaSearch.modifySavedSearches(	
@@ -324,7 +327,7 @@ function () {
 	ZaSearch.updateSavedSearch (ZaSearch.getSavedSearches()); 
 	
 	//Update the Search Tree
-	var overviewPanelCtrl = ZaApp.getInstance()._appCtxt.getAppController().getOverviewPanelController() ;
+	var overviewPanelCtrl = this._app._appCtxt.getAppController().getOverviewPanelController() ;
 	overviewPanelCtrl.updateSavedSearchTreeList() ;
 	
 	//Update the SavedSearchMenu
@@ -375,10 +378,10 @@ ZaSearchField.advancedButtonHndlr =
 function (evt) {
 	//DBG.println(AjxDebug.DBG1, "Advanced Button Clicked ...") ;
 	var form = this.getForm() ;
-
-	var sb_controller = ZaApp.getInstance().getSearchBuilderController ();
+	var app = form.parent._app ;
+	var sb_controller = app.getSearchBuilderController ();
 	sb_controller.toggleVisible ();
-	ZaApp.getInstance()._appViewMgr.showSearchBuilder (sb_controller.isSBVisible());
+	app._appViewMgr.showSearchBuilder (sb_controller.isSBVisible());
 	
 	if (sb_controller.isSBVisible()) {
 		this.widget.setToolTipContent(ZaMsg.tt_advanced_search_close);
@@ -443,9 +446,9 @@ ZaSearchField.prototype.allFilterSelected = function (ev) {
 	this._containedObject[ZaSearch.A_fdistributionlists] = "TRUE";	
 	this._containedObject[ZaSearch.A_fAliases] = "TRUE";
 	this._containedObject[ZaSearch.A_fResources] = "TRUE";
-	//if(ZaSettings.DOMAINS_ENABLED) {
-	this._containedObject[ZaSearch.A_fDomains] = "TRUE";	
-	//}
+	if(ZaSettings.DOMAINS_ENABLED) {
+		this._containedObject[ZaSearch.A_fDomains] = "TRUE";	
+	}
 	this.setTooltipForSearchButton (ZaMsg.searchForAll);	
 }
 
@@ -482,13 +485,13 @@ ZaSearchField.prototype.resFilterSelected = function (ev) {
 }
 
 ZaSearchField.prototype.domainFilterSelected = function (ev) {
-	//if(ZaSettings.DOMAINS_ENABLED) {
+	if(ZaSettings.DOMAINS_ENABLED) {
 		this.resetSearchFilter();
 		//ev.item.parent.parent.setImage(ev.item.getImage());
 		this.setIconForSearchMenuButton ("Domain");
 		this._containedObject[ZaSearch.A_fDomains] = "TRUE";
 		this.setTooltipForSearchButton (ZaMsg.searchForDomains);	
-	//}
+	}
 }
 
 ZaSearchField.searchChoices = new XFormChoices([],XFormChoices.OBJECT_REFERENCE_LIST, null, "labelId");
@@ -499,9 +502,9 @@ ZaSearchField.prototype._getMyXForm = function() {
 	newMenuOpList.push(new ZaOperation(ZaOperation.SEARCH_DLS, ZaMsg.SearchFilter_DLs, ZaMsg.searchForDLs, "Group", "GroupDis", new AjxListener(this,this.dlFilterSelected)));		
 	newMenuOpList.push(new ZaOperation(ZaOperation.SEARCH_ALIASES, ZaMsg.SearchFilter_Aliases, ZaMsg.searchForAliases, "AccountAlias", "AccountAlias", new AjxListener(this, this.aliasFilterSelected)));		
 	newMenuOpList.push(new ZaOperation(ZaOperation.SEARCH_RESOURCES, ZaMsg.SearchFilter_Resources, ZaMsg.searchForResources, "Resource", "ResourceDis", new AjxListener(this, this.resFilterSelected)));		
-	//if(ZaSettings.DOMAINS_ENABLED) {
+	if(ZaSettings.DOMAINS_ENABLED) {
 		newMenuOpList.push(new ZaOperation(ZaOperation.SEARCH_DOMAINS, ZaMsg.SearchFilter_Domains, ZaMsg.searchForDomains, "Domain", "DomainDis", new AjxListener(this, this.domainFilterSelected)));			
-	//}
+	}
 	newMenuOpList.push(new ZaOperation(ZaOperation.SEP));				
 	newMenuOpList.push(new ZaOperation(ZaOperation.SEARCH_ALL, ZaMsg.SearchFilter_All, ZaMsg.searchForAll, "SearchAll", "SearchAll", new AjxListener(this, this.allFilterSelected)));		
 	ZaSearchField.searchChoices.setChoices(newMenuOpList);
@@ -529,8 +532,6 @@ ZaSearchField.prototype._getMyXForm = function() {
 							this.getForm().itemChanged(this, elementValue, event);
 						}
 					},
-					visibilityChecks:[],
-					enableDisableChecks:[],
 					//cssClass:"search_input", 
 					cssStyle:"overflow: hidden;", width:"100%"
 				},
@@ -585,8 +586,9 @@ function (xModelMetaData, xFormMetaData) {
 }
 
 //The popup dialog to allow user to specify the name/query of the search to be saved.
-ZaSaveSearchDialog = function(searchField) {
+ZaSaveSearchDialog = function(searchField, app) {
 	if (!searchField) return ; 
+	this._app = app;
 	this._searchField = searchField
 	DwtDialog.call(this, searchField.shell);
 	this._okButton = this.getButton(DwtDialog.OK_BUTTON);
