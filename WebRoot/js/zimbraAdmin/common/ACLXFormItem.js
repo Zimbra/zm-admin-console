@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -32,8 +34,7 @@ function () {
 	if(visibleBoxes.r)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_R, 
-				visibilityChecks:[],enableDisableChecks:[],
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_R, relevantBehavior:_PARENT_,
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["r"]==1);
 				},
@@ -58,8 +59,7 @@ function () {
 	if(visibleBoxes.w)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_W,
-				visibilityChecks:[],enableDisableChecks:[],
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_W, relevantBehavior:_PARENT_,
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["w"]==1);
 				},
@@ -83,8 +83,7 @@ function () {
 	if(visibleBoxes.d)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_D,
-				visibilityChecks:[],enableDisableChecks:[],
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_D, relevantBehavior:_PARENT_,
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["d"]==1);
 				},
@@ -109,8 +108,7 @@ function () {
 	if(visibleBoxes.i)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_I,
-				visibilityChecks:[],enableDisableChecks:[],
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_I, relevantBehavior:_PARENT_,
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["i"]==1);
 				},
@@ -135,8 +133,7 @@ function () {
 	if(visibleBoxes.x)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_X, 
-				visibilityChecks:[],enableDisableChecks:[],
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_X, relevantBehavior:_PARENT_,
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["x"]==1);
 				},
@@ -160,8 +157,7 @@ function () {
 	if(visibleBoxes.a)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_A, 
-				visibilityChecks:[],enableDisableChecks:[],
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_A, relevantBehavior:_PARENT_,
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["a"]==1);
 				},
