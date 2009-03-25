@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -20,12 +22,12 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaMTAXFormView = function(parent) {
-	ZaTabView.call(this, parent, "ZaMTAXFormView");	
+ZaMTAXFormView = function(parent, app) {
+	ZaTabView.call(this, parent, app,"ZaMTAXFormView");	
 		
 	this.initForm(ZaMTA.myXModel,this.getMyXForm());
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaMTAXFormView.prototype.handleXFormChange));	
-	this._localXForm.setController(ZaApp.getInstance());
+	this._localXForm.setController(this._app);
 }
 
 ZaMTAXFormView.prototype = new ZaTabView();
@@ -104,15 +106,13 @@ ZaMTAXFormView.filterListSelectionListener = function (ev) {
 		instance[qName][ZaMTA.A_selection_cache] = {};
 
 	var arr = this.widget.getSelection();
-	if(arr && arr.length) {
-		this.getModel().setInstanceValue(instance,qName + "/" + ZaMTA.A_selection_cache + "/" + filterName,arr);
-		//instance[qName][ZaMTA.A_selection_cache][filterName] = arr;
-	} else { 
-		this.getModel().setInstanceValue(instance,qName + "/" + ZaMTA.A_selection_cache + "/" + filterName,null);		
+	if(arr && arr.length)
+		instance[qName][ZaMTA.A_selection_cache][filterName] = arr;
+	else 
 		instance[qName][ZaMTA.A_selection_cache][filterName] = null;
-	}
+	
 	//rebuild the query
-	//this.getForm().refresh();
+	this.getForm().refresh();
 	instance._viewInternalId = this.getForm().parent.__internalId;
 	instance.getMailQStatus(qName, instance[qName][ZaMTA.A_selection_cache]);	
 }
@@ -129,8 +129,7 @@ ZaMTAXFormView.msgListSelectionListener = function (ev) {
 	if(!instance[qName][ZaMTA.MsgIDS])
 		instance[qName][ZaMTA.MsgIDS] = {};
 
-	this.getModel().setInstanceValue(instance,qName + "/" + ZaMTA.MsgIDS, AjxUtil.isEmpty(this.widget.getSelection()) ? {} : this.widget.getSelection()); 
-	//instance[qName][ZaMTA.MsgIDS] = this.widget.getSelection();
+	instance[qName][ZaMTA.MsgIDS] = this.widget.getSelection();
 }
 
 ZaMTAXFormView.searchQueue = function (ev) {
@@ -148,7 +147,7 @@ function (ev) {
 	this.setInstanceValue("",this.getRef()+"/"+ZaMTA.A_selection_cache);	
 
 	this.setInstanceValue("",this.getRef()+"/"+ZaMTA.A_query);		
-	//this.getForm().refresh();
+	this.getForm().refresh();
 	for(var x in ZaMTAXFormView._listObjects) {
 		if(ZaMTAXFormView._listObjects[x]) {
 			ZaMTAXFormView._listObjects[x].deselectAll();
@@ -162,10 +161,10 @@ ZaMTAXFormView.showAllMsgs = function (ev) {
 }
 
 ZaMTAXFormView.actionButtonListener = function (action) {
-	var qName, field, dlgTitle,instance;
+	var qName, field, dlgTitle,instance, app, form;
 	qName = this.getRef();
 	form = this.getForm();
-	
+	app = form.getController();			
 	instance = this.getInstance();
 	var obj = new Object();
 	
@@ -193,7 +192,7 @@ ZaMTAXFormView.actionButtonListener = function (action) {
 		break;
 	}		
 	var view = form.parent;
-	view.selectActionDialog = ZaApp.getInstance().dialogs["selectActionDialog"] = new ZaMTAActionDialog(ZaApp.getInstance().getAppCtxt().getShell(),ZaApp.getInstance().dlgTitle);	
+	view.selectActionDialog = app.dialogs["selectActionDialog"] = new ZaMTAActionDialog(app.getAppCtxt().getShell(), app, dlgTitle);	
 	obj[ZaMTAActionDialog.MSG_IDS] = instance[qName][ZaMTA.MsgIDS];
 	obj[ZaMTAActionDialog.FLTR_ITEMS] = instance[qName][ZaMTA.A_selection_cache];	
 	obj[ZaMTAActionDialog.ANSWER] = ZaMTAActionDialog.SELECTED_MSGS; //default is selected messages
@@ -239,7 +238,7 @@ ZaMTAXFormView.prototype.actionDlgCallback = function(args)  {
 }
 
 ZaMTAXFormView.prototype.showConfirmationDlg = function (action, removelist,qName, field) {
-	this.confirmMessageDialog = ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);			
+	this.confirmMessageDialog = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 	if(removelist) {
 		if(field == ZaMTA.A_messages) {
 			var subst = "0";
@@ -438,11 +437,6 @@ ZaMTAXFormView.listActionListener = function (ev) {
 	this.actionMenu.popup(0, ev.docX, ev.docY);	
 }
 
-ZaMTAXFormView.isParsingProgressBarVisible = function (quename) {
-	var instance = this.getInstance();
-	return (instance[quename][ZaMTA.A_Status] == ZaMTA.STATUS_SCANNING || instance[quename][ZaMTA.A_Status] == ZaMTA.STATUS_SCAN_COMPLETE);	
-}
-
 ZaMTAXFormView.refreshListener = function (ev) {
 	var refParts = this.getRef().split("/");
 	var filterName = refParts[1];
@@ -480,14 +474,14 @@ ZaMTAXFormView.createPopupMenu = function (listWidget) {
 * method of the XForm
 **/
 ZaMTAXFormView.shouldEnableMsgsForwardButton = function (qName) {
-	return (this.getInstanceValue(qName + "/" +ZaMTA.A_more));
+	return (this.instance[qName][ZaMTA.A_more]);
 };
 
 /**
 * method of the XForm
 **/
 ZaMTAXFormView.shouldEnableMsgsBackButton = function (qName) {
-	var val = this.getInstanceValue(qName + "/" + ZaMTA.A_pageNum);
+	var val = this.instance[qName][ZaMTA.A_pageNum];
 	return (val && (val>0));
 };
 
@@ -524,12 +518,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 			cssStyle:"padding-top:5px; padding-bottom:5px"
 		},
 		{type:_TAB_BAR_, ref:ZaModel.currentTab,
+			relevantBehavior:_HIDE_,
 			containerCssStyle: "padding-top:0px",
 			choices:ZaMTAXFormView.tabChoices,
 			cssClass:"ZaTabBar", id:"xform_tabbar"
 		},
 		{type:_SWITCH_, items:[
-				{type:_ZATABCASE_, numCols:1, caseKey:ZaMTAXFormView._tab1, 
+				{type:_ZATABCASE_, numCols:1, relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab1, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -539,8 +534,8 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								maxValue:null,
 								maxValueRef:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_count,
 								ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_totalComplete,
-								visibilityChecks:[[ZaMTAXFormView.isParsingProgressBarVisible,ZaMTA.A_DeferredQ]],
-								visibilityChangeEventSources:[ZaMTA.A_DeferredQ+"/"+ZaMTA.A_Status],
+								relevant:"instance[ZaMTA.A_DeferredQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCANNING || instance[ZaMTA.A_DeferredQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCAN_COMPLETE",
+								relevantBehavior:_HIDE_,
 								align:_CENTER_,	
 								wholeCssClass:"mtaprogressbar",
 								progressCssClass:"progressused"
@@ -595,15 +590,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_DeferredQ,
 										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
-										enableDisableChangeEventSources:[ZaMTA.A_DeferredQ + "/" + ZaMTA.A_pageNum],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_DeferredQ]]
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_DeferredQ +"\")")
 								    },								       
 									{type:_CELLSPACER_},
 									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_DeferredQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
-										enableDisableChangeEventSources:[ZaMTA.A_DeferredQ + "/" + ZaMTA.A_more],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_DeferredQ]]										
-										//onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_DeferredQ+"\")")
 								    }]
 								 }
 							]},			
@@ -612,7 +605,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						]}		
 					]
 				},							
-				{type:_ZATABCASE_, numCols:1,  caseKey:ZaMTAXFormView._tab2, 
+				{type:_ZATABCASE_, numCols:1,  relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab2, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -622,8 +615,8 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								maxValue:null,
 								maxValueRef:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_count,
 								ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_totalComplete,
-								visibilityChecks:[[ZaMTAXFormView.isParsingProgressBarVisible,ZaMTA.A_IncomingQ]],
-								visibilityChangeEventSources:[ZaMTA.A_IncomingQ+"/"+ZaMTA.A_Status],								
+								relevant:"instance[ZaMTA.A_IncomingQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCANNING || instance[ZaMTA.A_IncomingQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCAN_COMPLETE",
+								relevantBehavior:_HIDE_,
 								align:_CENTER_,	
 								wholeCssClass:"mtaprogressbar",
 								progressCssClass:"progressused"
@@ -671,15 +664,13 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_IncomingQ,
 										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
-										enableDisableChangeEventSources:[ZaMTA.A_IncomingQ + "/" + ZaMTA.A_pageNum],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_IncomingQ]]										
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_IncomingQ +"\")")
 								    },								       
 									{type:_CELLSPACER_},
 									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_IncomingQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
-										enableDisableChangeEventSources:[ZaMTA.A_IncomingQ + "/" + ZaMTA.A_more],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_IncomingQ]]										
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_IncomingQ+"\")")
 								    }]
 								}														
 							]},										
@@ -689,8 +680,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							}		
 					]
 				},
-				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",
-					caseKey:ZaMTAXFormView._tab3, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab3, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -700,8 +690,8 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								maxValue:null,
 								maxValueRef:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_count,
 								ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_totalComplete,
-								visibilityChecks:[[ZaMTAXFormView.isParsingProgressBarVisible,ZaMTA.A_ActiveQ]],
-								visibilityChangeEventSources:[ZaMTA.A_ActiveQ+"/"+ZaMTA.A_Status],								
+								relevant:"instance[ZaMTA.A_ActiveQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCANNING || instance[ZaMTA.A_ActiveQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCAN_COMPLETE",
+								relevantBehavior:_HIDE_,
 								align:_CENTER_,	
 								wholeCssClass:"mtaprogressbar",
 								progressCssClass:"progressused"
@@ -747,16 +737,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								{type:_GROUP_, numCols:3, items:[					
 									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_ActiveQ,
-										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)",
-										enableDisableChangeEventSources:[ZaMTA.A_ActiveQ + "/" + ZaMTA.A_pageNum],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_ActiveQ]]	
+										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_ActiveQ +"\")")
 								    },								       
 									{type:_CELLSPACER_},
 									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_ActiveQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
-										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)",
-										enableDisableChangeEventSources:[ZaMTA.A_ActiveQ + "/" + ZaMTA.A_more],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_ActiveQ]]										 
+										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_ActiveQ+"\")")
 								    }
 								 ]}
 							]},									
@@ -765,8 +753,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						]}		
 					]
 				},
-				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",
-					caseKey:ZaMTAXFormView._tab4, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab4, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "18%", "12%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
@@ -776,8 +763,8 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								maxValue:null,
 								maxValueRef:ZaMTA.A_HoldQ+"/"+ZaMTA.A_count,
 								ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_totalComplete,
-								visibilityChecks:[[ZaMTAXFormView.isParsingProgressBarVisible,ZaMTA.A_HoldQ]],
-								visibilityChangeEventSources:[ZaMTA.A_HoldQ+"/"+ZaMTA.A_Status],								
+								relevant:"instance[ZaMTA.A_HoldQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCANNING || instance[ZaMTA.A_HoldQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCAN_COMPLETE",
+								relevantBehavior:_HIDE_,
 								align:_CENTER_,	
 								wholeCssClass:"mtaprogressbar",
 								progressCssClass:"progressused"
@@ -824,16 +811,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								{type:_GROUP_, numCols:3, items:[								
 									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_HoldQ,
-										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)",
-										enableDisableChangeEventSources:[ZaMTA.A_HoldQ + "/" + ZaMTA.A_pageNum],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_HoldQ]]										 
+										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_HoldQ +"\")")
 								    },								       
 									{type:_CELLSPACER_},
 									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_HoldQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
-										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)",
-										enableDisableChangeEventSources:[ZaMTA.A_HoldQ + "/" + ZaMTA.A_more],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_HoldQ]]										 
+										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+										relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_HoldQ+"\")")
 							    	}
 							    ]}
 							]},								
@@ -844,8 +829,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 					]
 				},											
 					
-				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",
-					caseKey:ZaMTAXFormView._tab5, 
+				{type:_ZATABCASE_, numCols:1, cssClass:(AjxEnv.isIE ? "IEcontainer" : ""), width:"100%",relevant:"instance[ZaModel.currentTab] == " + ZaMTAXFormView._tab5, 
 					items:[	
 						{type:_SPACER_, height:"15"},
 						
@@ -856,8 +840,8 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								maxValue:null,
 								maxValueRef:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_count,
 								ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_totalComplete,
-								visibilityChecks:[[ZaMTAXFormView.isParsingProgressBarVisible,ZaMTA.A_CorruptQ]],
-								visibilityChangeEventSources:[ZaMTA.A_CorruptQ+"/"+ZaMTA.A_Status],								
+								relevant:"instance[ZaMTA.A_CorruptQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCANNING || instance[ZaMTA.A_CorruptQ][ZaMTA.A_Status] == ZaMTA.STATUS_SCAN_COMPLETE",
+								relevantBehavior:_HIDE_,
 								align:_CENTER_,	
 								wholeCssClass:"mtaprogressbar",
 								progressCssClass:"progressused"
@@ -904,16 +888,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_GROUP_, numCols:3, items:[
 								{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 									ref:ZaMTA.A_CorruptQ,
-									onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)",
-									enableDisableChangeEventSources:[ZaMTA.A_CorruptQ + "/" + ZaMTA.A_pageNum],
-									enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_CorruptQ]]									 
+									onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
+									relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsBackButton.call(this,\"" +ZaMTA.A_CorruptQ +"\")")
 							    },								       
 								{type:_CELLSPACER_},
 								{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 									ref:ZaMTA.A_CorruptQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
-									onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)",
-									enableDisableChangeEventSources:[ZaMTA.A_CorruptQ + "/" + ZaMTA.A_more],
-									enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_CorruptQ]]									 
+									onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+									relevantBehavior:_DISABLE_, relevant:("ZaMTAXFormView.shouldEnableMsgsForwardButton.call(this,\"" + ZaMTA.A_CorruptQ+"\")")
 							    }]
 							 }					
 						]},									

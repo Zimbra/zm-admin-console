@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -23,7 +25,7 @@
 * @param h (height)
 **/
 
-ZaXDialog = function(parent,className, title, w, h,iKeyName) {
+ZaXDialog = function(parent, app, className, title, w, h,iKeyName) {
 	if (arguments.length == 0) return;
 	this._iKeyName = iKeyName;	
 	var clsName = className || "DwtDialog";
@@ -34,7 +36,7 @@ ZaXDialog = function(parent,className, title, w, h,iKeyName) {
 		this._extraButtons = [helpButton];
 	}
 	DwtDialog.call(this, parent, clsName, title, this._standardButtons,this._extraButtons);
-	this._app = ZaApp.getInstance();
+	this._app = app;
 	this._localXForm = null;
 	this._localXModel = null;
 	this._drawn = false;
@@ -102,7 +104,7 @@ function (xModelMetaData, xFormMetaData, defaultInstance) {
 		
 	this._localXModel = new XModel(xModelMetaData);
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, defaultInstance, this);
-	this._localXForm.setController(ZaApp.getInstance());
+	this._localXForm.setController(this._app);
 	this._localXForm.draw(this._pageDiv);	
 	this._drawn = true;
 }
