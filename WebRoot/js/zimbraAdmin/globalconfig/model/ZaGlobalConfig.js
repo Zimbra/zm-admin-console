@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,13 +10,13 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
-ZaGlobalConfig = function(app) {
-	ZaItem.call(this, app, "ZaGlobalConfig");
+ZaGlobalConfig = function() {
+	ZaItem.call(this,"ZaGlobalConfig");
 	this.attrs = new Object();
+	this.type = ZaItem.GLOBAL_CONFIG;
 //	this.attrsInternal = new Object();	
 	this.load();
 }
@@ -151,18 +150,28 @@ ZaGlobalConfig.A_zimbraSkinSelectionColor  = "zimbraSkinSelectionColor" ;
 ZaGlobalConfig.A_zimbraSkinLogoURL ="zimbraSkinLogoURL" ;
 ZaGlobalConfig.A_zimbraSkinLogoLoginBanner = "zimbraSkinLogoLoginBanner" ;
 ZaGlobalConfig.A_zimbraSkinLogoAppBanner = "zimbraSkinLogoAppBanner" ;
+ZaGlobalConfig.A2_blocked_extension_selection = "blocked_extension_selection";
+ZaGlobalConfig.A2_common_extension_selection = "common_extension_selection";
 
+ZaGlobalConfig.__configInstance = null;
+ZaGlobalConfig.isDirty = true;
+
+ZaGlobalConfig.getInstance = function(refresh) {
+	if(refresh || ZaGlobalConfig.isDirty || !ZaGlobalConfig.__configInstance) {
+		ZaGlobalConfig.__configInstance = new ZaGlobalConfig();
+		ZaGlobalConfig.isDirty = false;
+	}
+	return ZaGlobalConfig.__configInstance;
+}
 
 ZaGlobalConfig.loadMethod = 
-function(by, val, withConfig) {
-	if(!ZaSettings.GLOBAL_CONFIG_ENABLED)
-		return;
+function(by, val) {
 	var soapDoc = AjxSoapDoc.create("GetAllConfigRequest", ZaZimbraAdmin.URN, null);
 	//var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_CONFIG
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllConfigResponse;
@@ -172,50 +181,14 @@ ZaItem.loadMethods["ZaGlobalConfig"].push(ZaGlobalConfig.loadMethod);
 
 ZaGlobalConfig.prototype.initFromJS = function(obj) {
 	ZaItem.prototype.initFromJS.call(this, obj);
-
-	var blocked = this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension];
-	if (blocked == null) {
-		blocked = [];
-	}
-	else if (AjxUtil.isString(blocked)) {
-		blocked = [ blocked ];
+	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension])) {
+		this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = [this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension]];
 	}
 	
-	// convert blocked extension lists to arrays
-	var common = this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension];
-	if (common == null) {
-		common = [];
+	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension])) {
+		this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension] = [this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension]];
 	}
-	else if (AjxUtil.isString(common)) {
-		common = [ common ];
-	}
-	var commonMap = {};
-	var unaddedBlockExt = [];
-	for (var i = 0; i < common.length; i++) {
-		var ext = common[i];
-		common[i] = new String(ext);
-		common[i].id = "id_"+ext;
-		commonMap[ext] = common[i];
 		
-		if (ZaUtil.findValueInArray(blocked, ext) <= -1) {
-			DBG.println(AjxDebug.DBG1, ext + " was added to the blocked list.");
-			//common.splice(i,1) ;
-			unaddedBlockExt.push(common[i]);
-		}
-	}
-	this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension] = unaddedBlockExt;
-		
-	for (var i = 0; i < blocked.length; i++) {
-		var ext = blocked[i];
-		if (commonMap[ext]) {
-			blocked[i] = commonMap[ext];
-		}
-		else {
-			blocked[i] = new String(ext);
-			blocked[i].id = "id_"+ext;
-		}
-	}
-	this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = blocked;
 
 	// convert available components to hidden fields for xform binding
 	var components = this.attrs[ZaGlobalConfig.A_zimbraComponentAvailable];
@@ -294,12 +267,7 @@ ZaGlobalConfig.modifyMethod = function (mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	command.invoke(params);
-	/*var newConfig = this._app.getGlobalConfig(true);
-	if(newConfig.attrs) {
-		for (var aname in newConfig.attrs) {
-			this.attrs[aname] = newConfig.attrs[aname];
-		}
-	}*/
+	ZaGlobalConfig.isDirty = true;
 }
 ZaItem.modifyMethods["ZaGlobalConfig"].push(ZaGlobalConfig.modifyMethod);
 
@@ -434,7 +402,9 @@ ZaGlobalConfig.myXModel = {
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme,
             type: _ENUM_, choices: ["basic", "form"]},
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ }
+        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ },
+        {id:ZaGlobalConfig.A2_blocked_extension_selection, type:_LIST_},
+        {id:ZaGlobalConfig.A2_common_extension_selection, type:_LIST_}
 
     ]
 }

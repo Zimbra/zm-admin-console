@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -59,7 +57,7 @@ ZaLoginDialog.prototype.getLoginURL = function () {
 	params.soapDoc = soapDoc;
     params.noAuthToken = true ;
     var reqMgrParams = {
-		//controller: this._app.getCurrentController()
+		//controller: ZaApp.getInstance().getCurrentController()
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDomainInfoResponse;
     var obj = {};
@@ -124,9 +122,9 @@ function(loc,bReloginMode) {
 	if (loc) {
 		this._loc.x = loc.x;
 		this._loc.y = loc.y;
-		this._positionDialog(loc);
+		this._position(loc);
 	} else {
-		this._positionDialog();
+		this._position();
 	}
 	
 	this.setZIndex(thisZ);

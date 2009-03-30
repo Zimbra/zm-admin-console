@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -30,7 +28,8 @@ HostPort_XFormItem.prototype._serverPart = "";
 HostPort_XFormItem.prototype._portPart = "";
 
 HostPort_XFormItem.prototype.items = [
-	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
+	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,
+		visibilityChecks:[],enableDisableChecks:[],
 		required:true,
 		getDisplayValue:function (itemVal) {
 			var val = "";
@@ -60,8 +59,9 @@ HostPort_XFormItem.prototype.items = [
 		onClick: "Super_HostPort_XFormItem.handleClick",
 		onMouseout: "Super_HostPort_XFormItem.handleMouseout"
 	},
-	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,value:":"},
-	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_, 
+	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,value:":"},
+	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,
+		visibilityChecks:[],enableDisableChecks:[],
 		getDisplayValue:function (itemVal) {
 			var val = "";
 			if(itemVal) {

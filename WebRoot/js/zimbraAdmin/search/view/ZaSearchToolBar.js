@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,15 +10,14 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
-ZaSearchToolBar = function(parent, posStyle, app) {
+ZaSearchToolBar = function(parent, posStyle) {
 
-	ZaToolBar.call(this, parent, null, posStyle, "SearchToolBar");
-	this._app = app;
-	this._searchField = new ZaSearchField(this, "SearchTBSearchField", 48, null, this._app);
+	ZaToolBar.call(this, parent, null,null, posStyle, "SearchToolBar");
+	this._app = ZaApp.getInstance();
+	this._searchField = new ZaSearchField(this, "SearchTBSearchField", 48, null);
 //	var h1 = this._searchField.getSize().y;
 		
 	//this.setSize(DwtControl.DEFAULT, Math.max(this._searchField.getSize().y, this.computeHeight()));

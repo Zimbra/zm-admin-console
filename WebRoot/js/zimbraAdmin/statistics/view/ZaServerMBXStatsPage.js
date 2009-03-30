@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
   
@@ -27,9 +25,9 @@
 * @author Charles Cao
 **/
 		
-ZaServerMBXStatsPage = function(parent, app) {
+ZaServerMBXStatsPage = function(parent) {
 	DwtTabViewPage.call(this, parent);
-	this._app = app;
+
 	this._rendered = false;
 	this._initialized = false ;
 	this._hide = true ; //indicate that the Mbx Quota Tab is hidden
@@ -119,7 +117,7 @@ ZaServerMBXStatsPage.prototype.getMbxes = function ( targetServer, offset, sortB
 	params.soapDoc = soapDoc ;
 	params.targetServer = targetServer ;
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_QUOTA
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetQuotaUsageResponse;
@@ -274,7 +272,7 @@ function (curInstance, serverid, offset, sortBy, sortAscending) {
 
 ZaServerMBXStatsPage.prototype.updateToolbar = 
 function (curPage, totalPage, hide ){
-	var controller = this._app.getCurrentController();
+	var controller = ZaApp.getInstance().getCurrentController();
 	try {
 		//enable the page back/forward button
 		if ( controller instanceof ZaServerStatsController ){

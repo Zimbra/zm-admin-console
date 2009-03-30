@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -23,9 +21,10 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaGlobalStatsController = function(appCtxt, container, app) {
-
-	ZaController.call(this, appCtxt, container, app,"ZaGlobalStatsController");
+ZaGlobalStatsController = function(appCtxt, container) {
+   	this._toolbarOperations = new Array();
+   	this._toolbarOrder = new Array();
+	ZaController.call(this, appCtxt, container, "ZaGlobalStatsController");
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/checking_usage_statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 	this.tabConstructor = ZaGlobalStatsView;		
 }
@@ -38,7 +37,7 @@ ZaController.setViewMethods["ZaGlobalStatsController"] = [];
 ZaGlobalStatsController.prototype.show = 
 function() {
 	this._setView();
-	this._app.pushView(this.getContentViewId());
+	ZaApp.getInstance().pushView(this.getContentViewId());
 	var item=new Object();
 	try {		
 		item[ZaModel.currentTab] = "1"
@@ -53,14 +52,19 @@ function() {
 ZaGlobalStatsController.setViewMethod =
 function() {	
     if (!this._contentView) {
-		this._contentView  = new this.tabConstructor(this._container, this._app);
+		this._contentView  = new this.tabConstructor(this._container);
 		var elements = new Object();
-		this._ops = new Array();
-		this._ops = new Array();
-		this._ops.push(new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener)));
-		this._ops.push(new ZaOperation(ZaOperation.NONE));
-		this._ops.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
-		this._toolbar = new ZaToolBar(this._container, this._ops);    		
+
+		this._toolbarOperations[ZaOperation.REFRESH] = new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener));
+		this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+		this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
+		
+		
+		this._toolbarOrder.push(ZaOperation.REFRESH);
+		this._toolbarOrder.push(ZaOperation.NONE);
+		this._toolbarOrder.push(ZaOperation.HELP);
+			
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    		
 		
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
@@ -69,9 +73,9 @@ function() {
 			tabId: this.getContentViewId(),
 			tab: this.getMainTab()
 		}
-		this._app.createView(this.getContentViewId(), elements, tabParams) ;
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		this._UICreated = true;
-		this._app._controllers[this.getContentViewId ()] = this ;		
+		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;		
 	}
 }
 ZaController.setViewMethods["ZaGlobalStatsController"].push(ZaGlobalStatsController.setViewMethod);

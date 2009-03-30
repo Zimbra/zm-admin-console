@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -21,13 +19,12 @@
 * Provides all the data and UI action controlls over the advanced search builder options
 * @author Charles Cao
 **/
-ZaSearchBuilderController = function(appCtxt, container, app) {
-	ZaController.call(this, appCtxt, container, app, "ZaSearchBuilderController");
+ZaSearchBuilderController = function(appCtxt, container) {
+	ZaController.call(this, appCtxt, container,"ZaSearchBuilderController");
    	this._option_views = [];
 	this._searchBuildPanel = null;
 	this._searchBuildTBPanel = null ;
 	this._searchBuilderVisible = false ; //also indicate whether the advanced search query should be used
-	//this._query = ZaSearch.getAdancedSearchQuery (ZaSearchOption.getDefaultInstance()) ;
 	this._query = null ;
 	this._searchTypes = null ;
 	this._objTypeOptionViewPosition = -1; //indicate the whether objTypeOptionView is visible or not by its position
@@ -42,7 +39,7 @@ ZaSearchBuilderController.prototype.getSearchBuilderPanel =
 function () {
 	if (! this._searchBuildPanel) {
 		DBG.println(AjxDebug.DBG3, "Initializing the search builder option panel.") ;
-		this._searchBuildPanel = new ZaSearchBuilderView (this._app.getAppCtxt().getShell(),  this._app);
+		this._searchBuildPanel = new ZaSearchBuilderView (ZaApp.getInstance().getAppCtxt().getShell());
 		//always display the basic search when the search builder view is initialized.
 		this.addOptionView (ZaSearchOption.BASIC_TYPE_ID) ;
 	}
@@ -54,7 +51,7 @@ ZaSearchBuilderController.prototype.getSearchBuilderTBPanel =
 function () {
 	if (! this._searchBuildTBPanel) {
 		DBG.println(AjxDebug.DBG3, "Initialize the search builder toolbar panel.") ;
-		this._searchBuildTBPanel = new ZaSearchBuilderToolbarView (this._app.getAppCtxt().getShell(),  this._app);
+		this._searchBuildTBPanel = new ZaSearchBuilderToolbarView (ZaApp.getInstance().getAppCtxt().getShell());
 	}
 	return this._searchBuildTBPanel ;
 }
@@ -85,7 +82,7 @@ function (value, event, form){
 	DBG.println(AjxDebug.DBG3, "Handling the options on the search builder toolbar ...");
 	
 	var controller = form.parent._controller ;
-	var searchField = controller._app.getSearchListController()._searchField ;
+	var searchField = ZaApp.getInstance().getSearchListController()._searchField ;
 	
 	var charCode = event.charCode;
 	if (charCode == 13 || charCode == 3) {
@@ -99,14 +96,29 @@ function (value, event, form){
 		if (value == "TRUE") { 
 			invertValue = "FALSE";
 		}
-		//can't both be set
-		if (invertValue == "FALSE" && this.getRef () == ZaSearchOption.A_objTypeAccountDomainAdmin) {
+
+        var ref = this.getRef () ; 
+        //can't both be set
+		if (invertValue == "FALSE" && ref == ZaSearchOption.A_objTypeAccountDomainAdmin) {
 			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeAccountAdmin) ;
-		}else if (invertValue == "FALSE" && this.getRef () == ZaSearchOption.A_objTypeAccountAdmin) {
+		}else if (invertValue == "FALSE" && ref == ZaSearchOption.A_objTypeAccountAdmin) {
 			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeAccountDomainAdmin) ;
 		}
-		
-		//set the query value
+
+        //set the advanced login timestamp attributes value
+        if ((ref == ZaSearchOption.A_enableAccountLastLoginTime_From || ref == ZaSearchOption.A_enableAccountLastLoginTime_To)
+            && ( value == "TRUE" )) {
+            var loginTimeRef ;
+            if (ref == ZaSearchOption.A_enableAccountLastLoginTime_From) loginTimeRef = ZaSearchOption.A_accountLastLoginTime_From ;
+            if (ref == ZaSearchOption.A_enableAccountLastLoginTime_To) loginTimeRef = ZaSearchOption.A_accountLastLoginTime_To ;
+
+            var loginTime = this.getInstanceValue (loginTimeRef);
+            if (!loginTime) {
+                this.setInstanceValue (new Date(), loginTimeRef) ;
+            }
+        }
+
+        //set the query value
 		controller.setQuery () ;
 	}
 	
@@ -134,7 +146,7 @@ function (value, event, form) {
 			//sortAscending:"0",
 			//limit: 20,
 			callback:callback,
-			controller: form.parent._app.getCurrentController()
+			controller: ZaApp.getInstance().getCurrentController()
 	}
 	ZaSearch.searchDirectory(searchParams);
 }
@@ -145,7 +157,7 @@ function () {
 	
 	var form = serverView._localXForm;
 	var instance = form.getInstance ()
-	var list = ZaServer.getAll(this._app).getArray ();
+	var list = ZaServer.getAll().getArray ();
 	var servers = new Array (list.length) ;
 	for (var i = 0; i < servers.length; i ++) {
 		servers [i] = list [i].name ;
@@ -317,7 +329,7 @@ function () {
 	DBG.println(AjxDebug.DBG1, "Current Query String = " + this._query) ;
 	
 	//update the search field textbox entry
-	var searchFieldXform = this._app.getSearchListController()._searchField._localXForm;
+	var searchFieldXform = ZaApp.getInstance().getSearchListController()._searchField._localXForm;
 	var	searchFieldInstance = searchFieldXform.getInstance ();
 	var searchFieldItem = searchFieldXform.getItemsById(ZaSearch.A_query)[0];
 	if (this.isSBVisible()){
@@ -553,7 +565,7 @@ function (optionId) {
 	}*/
 	
 	this._option_views.push(new ZaSearchOptionView (
-			searchPanel, this._app, optionId, 
+			searchPanel,  optionId, 
 			width,  position));
 }
 
