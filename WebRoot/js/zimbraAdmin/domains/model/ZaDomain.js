@@ -1201,8 +1201,7 @@ function(domName, app, withConfig) {
 				throw (ex);
 			}
 		}
-		if(app)
-			ZaDomain.putDomainToCache(domain);
+		ZaDomain.putDomainToCache(domain);
 	} 
 	return domain;	
 } 
@@ -1224,8 +1223,7 @@ function (domId, app, withConfig) {
 				throw (ex);
 			}
 		}
-		if(app)
-			ZaDomain.putDomainToCache(domain);
+		ZaDomain.putDomainToCache(domain);
 	}
 	return domId;
 }
