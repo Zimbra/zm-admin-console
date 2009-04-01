@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -17,9 +19,9 @@
   * This is the list containing the auto complete match contact lists
   * @author Charles Cao
   */
-ZaContactList = function() {
+ZaContactList = function(app) {
 	this._list = [];	//this is the array holds all the match objects
-
+	this._app = app;
 }
 
 ZaContactList.matchValue = ZaAccount.A_displayname; //the property name of the match ZaContactList
@@ -37,10 +39,10 @@ function (str, callback){
 		params.applyCos = "0";
 		myCallback = new AjxCallback(this, this.getDataCallback, callback);
 		params.callback = myCallback;
-		params.controller = ZaApp.getInstance().getCurrentController () ;
+		params.controller = this._app.getCurrentController () ;
 		ZaSearch.searchDirectory(params);
 	}	catch (ex){
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaContactList.prototype.getContactList");	
+		this._app.getCurrentController()._handleException(ex, "ZaContactList.prototype.getContactList");	
 	}
 }
 
@@ -83,7 +85,7 @@ function(callback, resp){
 		} else {
 			ZaSearch.TOO_MANY_RESULTS_FLAG = false ;
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			var list = new ZaItemList();	
+			var list = new ZaItemList(null, this._app);	
 			list.loadFromJS(response);
 			var arr = list.getArray();
 			var data = [];
@@ -108,7 +110,7 @@ function(callback, resp){
 			callback.run(data);			
 		}
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaContactList.prototype.getDataCallback");	
+		this._app.getCurrentController()._handleException(ex, "ZaContactList.prototype.getDataCallback");	
 	}		
 	
 };

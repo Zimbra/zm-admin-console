@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -21,8 +23,8 @@
 * @param app {ZaApp}
 * @author Greg Solovyev
 **/
-ZaZimletXFormView = function(parent) {
-	ZaTabView.call(this, parent,"ZaZimletXFormView");	
+ZaZimletXFormView = function(parent, app) {
+	ZaTabView.call(this, parent, app, "ZaZimletXFormView");	
 	this.initForm(ZaZimlet.myXModel,this.getMyXForm());
 }
 
@@ -54,35 +56,8 @@ function(entry) {
 	this._containedObject.type = entry.type ;
 	if(entry.id)
 		this._containedObject.id = entry.id;
-
-    if(!entry[ZaModel.currentTab])
-        this._containedObject[ZaModel.currentTab] = "1";
-    else
-        this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
-
-    this._localXForm.setInstance(this._containedObject) ;
-    this.updateTab();
+	this.updateTab();
 }
-ZaZimletXFormView.myXFormModifier = function(xFormObject) {
-    this.tabChoices = [] ;
-    var cases = [] ;
-    xFormObject.tableCssStyle="width:100%;";
-	xFormObject.items = [
-			{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", id:"xform_header",
-				items: [
-					{type:_GROUP_,	numCols:4,colSizes:["90px","350px","100px","200px"],
-                        items:[
-                            {type:_OUTPUT_, ref:"name", label:ZaMsg.NAD_zimletName},
-                            {type:_OUTPUT_, ref:ZaZimlet.A_zimbraZimletEnabled, label:ZaMsg.NAD_zimletStatus,choices:ZaModel.BOOLEAN_CHOICES },
-                            {type:_OUTPUT_, ref:ZaZimlet.A_zimbraZimletDescription, label:ZaMsg.NAD_Description, colSpan: "*"}
-                        ]
-                    }
-				],
-				cssStyle:"padding-top:5px; padding-bottom:5px"
-			},
-			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", id:"xform_tabbar"},
-			{type:_SWITCH_, align:_LEFT_, valign:_TOP_, items:cases}
-	];
-
+ZaZimletXFormView.myXFormModifier = function(xFormObject) {	
 };
 ZaTabView.XFormModifiers["ZaZimletXFormView"].push(ZaZimletXFormView.myXFormModifier);
