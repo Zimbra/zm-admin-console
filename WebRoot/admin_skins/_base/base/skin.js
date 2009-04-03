@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 function skin() {}
@@ -26,9 +28,9 @@ skin.hints = {
 	helpButton		: {	style:"link", 		container:"quota",
 						url: "@HelpAdminURL@", daUrl: "@HelpDelegatedURL@"	},
 	logoutButton	: { style:"link", 		container:"quota"	},
-	logo			: { url: "@LogoURL@" },
-	tree:			{ minWidth:150, maxWidth:300, containers: ["skin_td_tree_container", "skin_table", "skin_tr_tree", "skin_td_tree", "skin_container_tree"] }
+	logo			: { url: "@LogoURL@" }
 }
+
 
 /* PUBLIC API FOR SHOWING/HIDING PIECES OF THE SKIN */
 
@@ -79,11 +81,7 @@ skin.hideTreeFooter = function () {
 	this.showTreeFooter(false);
 }
 
-	
-skin.getTreeWidth = function() {
-	return Dwt.getSize(this._getEl(skin.hints.tree.containers[0])).x;
-};
-	
+
 skin.setTreeWidth = function(newWidth) {
 	skin.setSize("skin_col_tree", newWidth, null);
 }

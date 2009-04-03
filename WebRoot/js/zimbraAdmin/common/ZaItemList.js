@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -19,13 +21,13 @@
 * @param constructor {Function) a reference to a constructor function which is called to create a single instance of an object contained in the list.
 * @param app {ZaApp} {@link ZaApp} a reference to an instance of ZaApp. This reference is passed to constructor when a ZaItem object is constructed.
 **/
-ZaItemList = function(constructor) {
+ZaItemList = function(constructor, app) {
 
-	//if (arguments.length == 0) return;
+	if (arguments.length == 0) return;
 	ZaModel.call(this, true);
-	if(constructor)
-		this._constructor = constructor;
 
+	this._constructor = constructor;
+	this._app = app;
 	
 	this._vector = new ZaItemVector();
 	this._idHash = new Object();
@@ -133,6 +135,15 @@ function() {
 		this._idHash[id] = null;
 	this._idHash = new Object();
 }
+/*
+Sorting is done on the server
+ZaItemList.prototype.sortByName =
+function(descending) {
+	if (descending)
+		this._vector.getArray().sort(ZaItem.compareNamesDesc);
+	else 
+		this._vector.getArray().sort(ZaItem.compareNamesAsc);	
+}*/
 
 /**
 * Populates the list with elements created from the response to a SOAP command. Each
@@ -147,9 +158,9 @@ function(respNode) {
 	for (var i = 0; i < nodes.length; i++) {
 		var item;
 		if(this._constructor) {
-			item = new this._constructor();
+			item = new this._constructor(this._app);
 		} else {
-			item = ZaItem.getFromType(nodes[i].nodeName);
+			item = ZaItem.getFromType(nodes[i].nodeName, this._app);
 		}
 		item.type = nodes[i].nodeName;
 		item.initFromDom(nodes[i]);
@@ -174,9 +185,9 @@ function(resp) {
 			for(var i = 0; i < len; i++) {
 				var item;
 				if(this._constructor) {
-					item = new this._constructor();
+					item = new this._constructor(this._app);
 				} else {
-					item = ZaItem.getFromType(ix);
+					item = ZaItem.getFromType(ix, this._app);
 				}
 				item.type = ix;	
 				item.initFromJS(arr[i]);
