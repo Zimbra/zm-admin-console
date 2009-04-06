@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -56,7 +58,7 @@ ZaAppViewMgr = function(shell, controller, hasSkin) {
     this._shellSz = this._shell.getSize();
 	this._shell.addControlListener(new AjxListener(this, this._shellControlListener));
 	this._needBannerLayout = false;
-	this._sashSupported = (window.skin && typeof window.skin.setTreeWidth == "function");
+
 /*	this._sash = new DwtSash(this._shell, DwtSash.HORIZONTAL_STYLE, "AppSash-horiz", 5);
 	this._sash.registerCallback(this._sashCallback, this);
 */	
@@ -276,12 +278,8 @@ function(components, doFit, noSetZ) {
 			comp.zShow(false);
 		}
 
-		if (cid == ZaAppViewMgr.C_SASH) {
-			if (this._sashSupported){
-				comp.registerCallback(this._appTreeSashCallback, this);
-			}
+		if (cid == ZaAppViewMgr.C_SASH)
 			comp.setCursor("default");
-		}
 	}
 	if (doFit)
 		this._stickToGrid(list);
@@ -293,26 +291,18 @@ function(visible) {
 	this._components[ZaAppViewMgr.C_SEARCH_BUILDER_TOOLBAR].zShow(visible);
 	this._components[ZaAppViewMgr.C_SEARCH_BUILDER].zShow(visible);
     if (visible) this._isAdvancedSearchBuilderDisplayed = true ;
-   /* var list = [ZaAppViewMgr.C_SEARCH_BUILDER, ZaAppViewMgr.C_SEARCH_BUILDER_TOOLBAR,
+    var list = [ZaAppViewMgr.C_SEARCH_BUILDER, ZaAppViewMgr.C_SEARCH_BUILDER_TOOLBAR,
                 ZaAppViewMgr.C_LOGIN_MESSAGE,
                 ZaAppViewMgr.C_CURRENT_APP, ZaAppViewMgr.C_APP_CHOOSER, ZaAppViewMgr.C_APP_TABS,
 				ZaAppViewMgr.C_TREE,
 				ZaAppViewMgr.C_TREE_FOOTER, ZaAppViewMgr.C_TOOLBAR_TOP, ZaAppViewMgr.C_APP_CONTENT];
-	this._stickToGrid(list);*/
-	this.fitAll();
+	this._stickToGrid(list);
 	// search builder contains forms, and browsers have quirks around form fields and z-index
 	if (!visible) {
 		this._components[ZaAppViewMgr.C_SEARCH_BUILDER].setLocation(Dwt.LOC_NOWHERE, Dwt.LOC_NOWHERE);
 	}
 };
-ZaAppViewMgr.prototype.fitAll = function () {
-    var list = [ZaAppViewMgr.C_SEARCH_BUILDER, ZaAppViewMgr.C_SEARCH_BUILDER_TOOLBAR,
-                ZaAppViewMgr.C_LOGIN_MESSAGE,
-                ZaAppViewMgr.C_CURRENT_APP, ZaAppViewMgr.C_APP_CHOOSER, ZaAppViewMgr.C_APP_TABS,
-				ZaAppViewMgr.C_TREE,ZaAppViewMgr.C_SASH,
-				ZaAppViewMgr.C_TREE_FOOTER, ZaAppViewMgr.C_TOOLBAR_TOP, ZaAppViewMgr.C_APP_CONTENT];
-	this._stickToGrid(list);
-}
+
 ZaAppViewMgr.prototype._stickToGrid = 
 function(components) {
 	for (var i = 0; i < components.length; i++) {
@@ -345,11 +335,9 @@ function(components) {
                         y += 5 ;
                     }
                 }
-				try {
-                	comp.setBounds(contBds.x, y, contBds.width, h);
-				} catch (ex) {
-					ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAppViewMgr.prototype._stickToGrid", nul, false);
-				}
+
+                comp.setBounds(contBds.x, y, contBds.width, h);
+
                 this._contBounds[cid] = contBds;
 
 				//call the components resizeListener to rearrange the component layout
@@ -467,43 +455,3 @@ function(viewId) {
 		Dwt.setTitle(ZaMsg.zimbraTitle);	
 	}*/
 }
-
-// Handles app/tree movement. If you move the sash beyond the max or min width,
-// pins to the respective width.
-ZaAppViewMgr.prototype._appTreeSashCallback =
-function(delta) {
-	if (!window.skin) { return; }
-
-	// ask skin for width of tree, rather than hard-coding name of tree div here
-	var currentWidth = skin.getTreeWidth();
-	if (!currentWidth) { return 0; }
-
-	//DBG.println(AjxDebug.DBG3, "************ sash callback **************");
-	//DBG.println(AjxDebug.DBG3, "delta = " + delta);
-	//DBG.println(AjxDebug.DBG3, "shell width = " + this._shellSz.x);
-	//DBG.println(AjxDebug.DBG3, "current width = " + currentWidth);
-
-	// MOW: get the min/max sizes from the skin.hints
-	if (!this.treeMinSize) {
-		this.treeMinSize = window.skin.hints.tree.minWidth || 150;
-		this.treeMaxSize = window.skin.hints.tree.maxWidth || 300;
-	}
-
-	// pin the resize to the minimum and maximum allowable
-	if (currentWidth + delta > this.treeMaxSize) {
-		delta = Math.max(0, this.treeMaxSize - currentWidth);
-	}
-	if (currentWidth + delta < this.treeMinSize) {
-		delta = Math.min(0, this.treeMinSize - currentWidth);
-	}
-
-	// tell skin to resize the tree to keep the separation of tree/skin clean
-	var newTreeWidth = currentWidth + delta;
-
-	skin.setTreeWidth(newTreeWidth);
-
-	// call fitAll() on timeout, so we dont get into a problem w/ sash movement code
-	var me = this;
-	setTimeout(function(){me.fitAll(true)},0);
-	return delta;
-};

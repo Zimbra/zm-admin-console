@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -29,14 +31,13 @@ LDAPURL_XFormItem.prototype._serverPart = "";
 LDAPURL_XFormItem.prototype._portPart = "389";
 LDAPURL_XFormItem.prototype.defSSLPort = "636";
 LDAPURL_XFormItem.prototype.defPort = "389";
-LDAPURL_XFormItem.prototype.visibilityChecks = [XFormItem.prototype.hasReadPermission];
-LDAPURL_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
+
 LDAPURL_XFormItem.prototype.initializeItems = function () {
 	var ldapPort = this.getInheritedProperty("ldapPort");
 	var ldapSSLPort = this.getInheritedProperty("ldapSSLPort");
-	this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";
-    this.defPort = ldapPort ? ldapPort : "389";
 
+    this.defSSLPort = ldapSSLPort ? ldapSSLPort : "636";
+    this.defPort = ldapPort ? ldapPort : "389";
 
     var instance = this.getForm().getInstance () ;
     if ( instance [ZaDomain.A2_allowClearTextLDAPAuth] == "FALSE" )  {
@@ -47,16 +48,11 @@ LDAPURL_XFormItem.prototype.initializeItems = function () {
         this._protocolPart = "ldap://";
         this._portPart = this.defPort ;
     }
-
-	Composite_XFormItem.prototype.initializeItems.call(this);
-	
-    this.items[0].valueChangeEventSources = [this.getRefPath()];
-    this.items[1].valueChangeEventSources = [this.getRefPath()];
-    this.items[3].valueChangeEventSources = [this.getRefPath()];
+    Composite_XFormItem.prototype.initializeItems.call(this);
 }
 
 LDAPURL_XFormItem.prototype.items = [
-	{type:_OUTPUT_, width:"35px", ref:".", labelLocation:_NONE_, label:null,
+	{type:_OUTPUT_, width:"35px", ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
 		getDisplayValue:function(itemVal) {
              var val ;
 
@@ -80,10 +76,8 @@ LDAPURL_XFormItem.prototype.items = [
             return val;
 		}
 	},
-	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,
+	{type:_TEXTFIELD_, width:"200px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,
 		required:true,
-	 	visibilityChecks:[],
-	 	enableDisableChecks:[],		
 		getDisplayValue:function (itemVal) {
 			var val = "";
 			if(itemVal) {
@@ -107,10 +101,8 @@ LDAPURL_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,value:":", ref:null},
-	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, 
-	 	visibilityChecks:[],
-	 	enableDisableChecks:[],		
+	{type:_OUTPUT_, width:"5px", labelLocation:_NONE_, label:null,relevantBehavior:_PARENT_,value:":"},
+	{type:_TEXTFIELD_,width:"40px",forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, relevantBehavior:_PARENT_, 
 		getDisplayValue:function (itemVal) {
 			var val ;
            
@@ -140,13 +132,10 @@ LDAPURL_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, 
-		relevantBehavior: _DISABLE_,
-//        relevant: "ZaAuthConfigXWizard.allowClearTextLDAPAuth (instance, item)" ,
-        relevant: "instance [ZaDomain.A2_allowClearTextLDAPAuth] != \"FALSE\""  ,
-		visibilityChecks:[],
-	 	enableDisableChecks:[],
-		getDisplayValue:function (itemVal) {
+	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_,
+        label:null, relevantBehavior: _DISABLE_,
+        relevant: "(instance [ZaDomain.A2_allowClearTextLDAPAuth] != \"FALSE\")"  ,
+        getDisplayValue:function (itemVal) {
             var instance = this.getForm().getInstance () ;
             if ((itemVal==null || itemVal.length<=0) //make sure it is a new URL input
                     && (instance [ZaDomain.A2_allowClearTextLDAPAuth] && instance [ZaDomain.A2_allowClearTextLDAPAuth] == "FALSE" )) {
