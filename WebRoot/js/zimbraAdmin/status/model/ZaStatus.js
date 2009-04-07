@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -19,9 +21,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaStatus = function() {
-	ZaItem.call(this,"ZaStatus");
-	this._init();	
+ZaStatus = function(app) {
+	ZaItem.call(this, app, "ZaStatus");
+	this._init(app);	
 }
 
 ZaStatus.prototype = new ZaItem;
@@ -37,14 +39,10 @@ ZaStatus.PRFX_Service = "status_service";
 ZaStatus.PRFX_Time = "status_time";
 ZaStatus.PRFX_Status = "status_status";
 
-ZaStatus.prototype.load = function (by, val) {
-	ZaItem.prototype.load.call(this,by,val,true, false);
-}
-
 ZaStatus.loadMethod = 
 function() {
 	try {
-		var logHost = ZaApp.getInstance().getGlobalConfig().attrs[ZaServer.A_zimbraLogHostname];		
+		var logHost = this._app.getGlobalConfig().attrs[ZaServer.A_zimbraLogHostname];		
 		//if zimbraLogHostname is set
 		if (logHost) {
 			var soapDoc = AjxSoapDoc.create("GetServiceStatusRequest", ZaZimbraAdmin.URN, null);
@@ -55,13 +53,13 @@ function() {
 			this.initFromJS(resp);
 		}	
 	} catch (ex) {
-			ZaApp.getInstance().getStatusViewController()._handleException(ex, "ZaStatus.loadMethod", null, false);		
+			this._app.getStatusViewController()._handleException(ex, "ZaStatus.loadMethod", null, false);		
 	}	
 }
 
 ZaItem.loadMethods["ZaStatus"].push(ZaStatus.loadMethod);
 
-ZaStatus.initMethod = function () {
+ZaStatus.initMethod = function (app) {
 	this.serverMap = new Object();
 	this.statusVector = new AjxVector();
 	this.id = Dwt.getNextId();

@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -20,10 +22,10 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaServerDiskStatsPage = function(parent) {
+ZaServerDiskStatsPage = function(parent, app) {
 	DwtTabViewPage.call(this, parent);
 	this._fieldIds = new Object(); //stores the ids of all the form elements
-
+	this._app = app;
 	this.initialized=false;
 	this._rendered = false;
 }
@@ -147,16 +149,16 @@ ZaServerDiskStatsPage.prototype._getXForm = function () {
 		    cssClass:"ZaTabBar", id:"xform_tabbar"
 		   },
 
-		   {type:_SWITCH_, align:_LEFT_, valign:_TOP_, 
+		   {type:_SWITCH_, align:_LEFT_, valign:_TOP_, deferred:false,
 		    items:[
-			   {type:_ZATABCASE_, caseKey:1, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 1", align:_LEFT_, valign:_TOP_, 
 			   		cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				   {type:_SPACER_, height:10, colSpan:"*" },
 				   {ref: "images", type:_OUTPUT_ ,  getDisplayValue:"return this.getFormController().writeImageHtml(1)"}
 				   ]
 			   },
-			   {type:_ZATABCASE_,  caseKey:2, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 2", align:_LEFT_, valign:_TOP_, 
 			    	cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				   {type:_SPACER_, height:10, colSpan:"*" },
@@ -164,14 +166,14 @@ ZaServerDiskStatsPage.prototype._getXForm = function () {
 				   ]
 			   },
 
-			   {type:_ZATABCASE_,  caseKey:3, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 3", align:_LEFT_, valign:_TOP_, 
 			    	cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				   {type:_SPACER_, height:10, colSpan:"*" },
 				   {ref: "images", type:_OUTPUT_ , getDisplayValue:"return this.getFormController().writeImageHtml(3)"}
 				   ]
 			   },
-			   {type:_ZATABCASE_,  caseKey:4, align:_LEFT_, valign:_TOP_, 
+			   {type:_ZATABCASE_,  relevant:"instance[ZaModel.currentTab] == 4", align:_LEFT_, valign:_TOP_, 
 			    	cssStyle: "position: absolute; overflow: auto;",
 			    items:[
 				   {type:_SPACER_, height:10, colSpan:"*" },
