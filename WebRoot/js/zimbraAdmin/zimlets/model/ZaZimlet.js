@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 /**
@@ -21,9 +19,10 @@
 * this class is a model for managing Zimlets
 * @author Greg Solovyev
 **/
-ZaZimlet = function(app) {
-	ZaItem.call(this, app);
+ZaZimlet = function() {
+	ZaItem.call(this, "ZaZimlet");
 	this.label = "";
+	this.type = ZaItem.ZIMLET;
 	this[ZaModel.currentStep] = 1;
 }
 ZaZimlet.prototype = new ZaItem;
@@ -46,6 +45,7 @@ ZaZimlet.A_zimbraZimletContentObject = "zimbraZimletContentObject";
 ZaZimlet.A_zimbraZimletPanelItem = "zimbraZimletPanelItem";
 ZaZimlet.A_zimbraZimletScript = "zimbraZimletScript";
 ZaZimlet.A_zimbraZimletServerIndexRegex = "zimbraZimletServerIndexRegex";
+ZaZimlet.A_zimbraAdminExtDisableUIUndeploy = "zimbraAdminExtDisableUIUndeploy";
 ZaZimlet.A_attachmentId = "attId";
 ZaZimlet.A_deployStatus = "deployStatus";
 ZaZimlet.A_statusMsg = "statusMsg";
@@ -59,12 +59,13 @@ ZaZimlet.ACTION_DEPLOY_ALL = "deployAll";
 ZaZimlet.ACTION_DEPLOY_LOCAL = "deployLocal";
 ZaZimlet.ACTION_DEPLOY_STATUS = "status";
 ZaZimlet.A_progress = "progress";
+ZaZimlet.A_flushCache = "flushCache";
 ZaZimlet.prototype.toString = function() {
 	return this.name;
 }
 
 ZaZimlet.getAll =
-function(app, exclude) {
+function(exclude) {
 	var exc = exclude ? exclude : "none";
 	var soapDoc = AjxSoapDoc.create("GetAllZimletsRequest", ZaZimbraAdmin.URN, null);	
 	soapDoc.getMethod().setAttribute("exclude", exc);	
@@ -72,12 +73,12 @@ function(app, exclude) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ZIMLET
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllZimletsResponse;	
 	
-	var list = new ZaItemList(ZaZimlet, app);
+	var list = new ZaItemList(ZaZimlet);
 	list.loadFromJS(resp);	
 	return list;
 }
@@ -112,7 +113,7 @@ ZaZimlet.prototype.enable = function (enabled, callback) {
 		params.callback = callback;
 	}
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_ZIMLET
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -188,7 +189,7 @@ function() {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_UNDEPLOY_ZIMLET
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -198,12 +199,19 @@ ZaZimlet.prototype.refresh =
 function() {
 	this.load();	
 }
-
-ZaZimlet.deploy = function (app, action,attId, callback) {
+/**
+ * @param attrs {action:deployall|deploylocal|status,attId:"",flushCache:true|false}
+ */
+ZaZimlet.deploy = function (params,callback) {
+	var action = params.action ? params.action : ZaZimlet.ACTION_DEPLOY_ALL;
+	var attId = params.attId ? params.attId : null;
+	var flushCache = params.flushCache ? params.flushCache : "0";
 	var soapDoc = AjxSoapDoc.create("DeployZimletRequest", ZaZimbraAdmin.URN, null);
-	if(action)
-		soapDoc.getMethod().setAttribute("action", action);		
-		
+	soapDoc.getMethod().setAttribute("action", action);	
+	
+	if(action != ZaZimlet.ACTION_DEPLOY_STATUS)	
+		soapDoc.getMethod().setAttribute("flush", flushCache);
+	
 	var contentEl = soapDoc.set("content", "");
 	if(attId) {
 		contentEl.setAttribute("aid", attId);
@@ -217,7 +225,7 @@ ZaZimlet.deploy = function (app, action,attId, callback) {
 	}
 	
 	var reqMgrParams = {
-		controller : app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DEPLOY_ZIMLET
 	}
 	
@@ -225,24 +233,28 @@ ZaZimlet.deploy = function (app, action,attId, callback) {
 }
 
 ZaZimlet.loadMethod = 
-function(by, val, withConfig) {
-	var _val = val ? val : this.name
+function(by, val) {
+	var _val = val ? val : this.name ;
 	var soapDoc = AjxSoapDoc.create("GetZimletRequest", ZaZimbraAdmin.URN, null);
 	var elZimlet = soapDoc.set("zimlet", "");
-	elZimlet.setAttribute("name", val);
-	//var command = new ZmCsfeCommand();
-	var params = new Object();
+	elZimlet.setAttribute("name", _val);
+	var params = {};
 	params.soapDoc = soapDoc;	
 	params.asyncMode = false;
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ZIMLET
 	}
-	resp = command.invoke(params, reqMgrParams);		
+	resp = ZaRequestMgr.invoke(params, reqMgrParams);
 	this.initFromJS(resp.Body.GetZimletResponse.zimlet[0]);
 }
 ZaItem.loadMethods["ZaZimlet"].push(ZaZimlet.loadMethod);
 
 ZaZimlet.myXModel = { 
-	items:[]	
+	items:[
+        { id:ZaZimlet.A_name, ref:ZaZimlet.A_name, type: _STRING_ },
+        { id:ZaZimlet.A_flushCache,ref:ZaZimlet.A_flushCache,type: _ENUM_, choices:ZaModel.BOOLEAN_CHOICES2},
+        { id:ZaZimlet.A_zimbraZimletDescription, ref:"attrs/" + ZaZimlet.A_zimbraZimletDescription, type: _STRING_ },
+        { id:ZaZimlet.A_zimbraZimletEnabled, ref:"attrs/" + ZaZimlet.A_zimbraZimletEnabled, type: _ENUM_,  choices:ZaModel.BOOLEAN_CHOICES} 
+    ]
 }

@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -23,9 +21,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaHelpViewController = function(appCtxt, container, app) {
+ZaHelpViewController = function(appCtxt, container) {
 
-	ZaController.call(this, appCtxt, container, app,"ZaHelpViewController");
+	ZaController.call(this, appCtxt, container, "ZaHelpViewController");
 	this.tabConstructor = ZaHelpView;
 }
 
@@ -37,20 +35,20 @@ ZaHelpViewController.prototype.show =
 function(openInNewTab) {
     if (!this._contentView) {
 		var elements = new Object();
-		this._contentView = new this.tabConstructor(this._container, this._app);
+		this._contentView = new this.tabConstructor(this._container);
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		var tabParams = {
 			openInNewTab: false,
 			tabId: this.getContentViewId(),
 			tab: this.getMainTab() 
 		}
-		//this._app.createView(ZaZimbraAdmin._HELP_VIEW, elements);
-		this._app.createView(this.getContentViewId(), elements, tabParams) ;
+		//ZaApp.getInstance().createView(ZaZimbraAdmin._HELP_VIEW, elements);
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		this._UICreated = true;
-		this._app._controllers[this.getContentViewId ()] = this ;
+		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 	}
-	//this._app.pushView(ZaZimbraAdmin._HELP_VIEW);
-	this._app.pushView(this.getContentViewId());
+	//ZaApp.getInstance().pushView(ZaZimbraAdmin._HELP_VIEW);
+	ZaApp.getInstance().pushView(this.getContentViewId());
 	
 	/*
 	if (openInNewTab) {//when a ctrl shortcut is pressed

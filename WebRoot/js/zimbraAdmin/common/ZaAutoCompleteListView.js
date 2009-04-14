@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -70,7 +68,7 @@ ZaAutoCompleteListView = function(params) {
 		DBG.println(e.message);
 	}
 	var _dataLoaderClass = params.dataLoaderClass;
-	this._dataLoaderObject = new _dataLoaderClass(app);
+	this._dataLoaderObject = new _dataLoaderClass();
 	this._dataLoaderMethod = params.dataLoaderMethod;
 	this._dataLoading = false;
 	this._data = null ;

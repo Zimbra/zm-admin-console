@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -22,18 +20,26 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaGlobalStatsView = function(parent, app) {
-	this._app = app;
+ZaGlobalStatsView = function(parent) {
+
 	DwtTabView.call(this, parent);
 	
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
-	this._msgCountPage = new ZaGlobalMessageCountPage(this, app);
-	this._msgsVolumePage = new ZaGlobalMessageVolumePage(this, app);
-	this._spamPage = new ZaGlobalSpamActivityPage(this, app);	
-	this.addTab(ZaMsg.TABT_InMsgs, this._msgCountPage);		
-	this.addTab(ZaMsg.TABT_InData, this._msgsVolumePage);			
-	this.addTab(ZaMsg.TABT_Spam_Activity, this._spamPage);				
-//	this.setScrollStyle(DwtControl.SCROLL);
+    
+    if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_STATS_MSG_COUNT_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+        this._msgCountPage = new ZaGlobalMessageCountPage(this);
+        this.addTab(ZaMsg.TABT_InMsgs, this._msgCountPage);
+    }
+    
+    if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_STATS_MSG_VOL_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	    this._msgsVolumePage = new ZaGlobalMessageVolumePage(this);
+        this.addTab(ZaMsg.TABT_InData, this._msgsVolumePage);
+    }
+
+    if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_STATS_MSG_ASAV_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]){
+        this._spamPage = new ZaGlobalSpamActivityPage(this);
+        this.addTab(ZaMsg.TABT_Spam_Activity, this._spamPage);
+    }
 }
 
 ZaGlobalStatsView.prototype = new DwtTabView;

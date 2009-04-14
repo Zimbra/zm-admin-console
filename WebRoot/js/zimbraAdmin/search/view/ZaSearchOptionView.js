@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -27,7 +25,7 @@
  * 
  */
 
-ZaSearchOptionView = function(parent, app, optionId, width, position){
+ZaSearchOptionView = function(parent,optionId, width, position){
 	DwtComposite.call(this, parent, "ZaSearchOptionView", Dwt.ABSOLUTE_STYLE, true);		
 	this._width = width || ZaSearchOptionView.WIDTH ;
 	//var height = parent.getH () - 5;
@@ -37,10 +35,10 @@ ZaSearchOptionView = function(parent, app, optionId, width, position){
 	var x = parent.getNextOptionX();
 	var y = 0 ;
 	this.setBounds (x, y, this._width, height);
-	this._app = app;
+	this._app = ZaApp.getInstance();
 	this._position = position ;
 	this._optionId = optionId ;
-	this._controller = this._app.getSearchBuilderController () ;
+	this._controller = ZaApp.getInstance().getSearchBuilderController () ;
 	//this._label = new DwtLabel (this._header, DwtLabel.IMAGE_LEFT | DwtLabel.ALIGN_LEFT);
 	this._label;
 	if (optionId == ZaSearchOption.OBJECT_TYPE_ID) {
@@ -60,9 +58,9 @@ ZaSearchOptionView = function(parent, app, optionId, width, position){
 	tb_items.push(new ZaOperation(ZaOperation.NONE));
 	tb_items.push(new ZaOperation(ZaOperation.CLOSE, null, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
 	
-	this._header = new ZaToolBar (this, tb_items, null, "DwtToolBar") ;
+	this._header = new ZaToolBar (this, tb_items, null, null, "DwtToolBar") ;
 	//this._header.setSize (this._width, 25); //set the width, will lost the right border with the proper color.
-	this._header.setSize (null, ZaSearchOptionView.HEADER_HEIGHT);
+	this._header.setSize (this._width, ZaSearchOptionView.HEADER_HEIGHT);
 	this.initForm (ZaSearchOption.getObjectTypeXModel(optionId), ZaSearchOption.getObjectTypeXForm (optionId, height), ZaSearchOption.getDefaultInstance(optionId));
 }
 
@@ -101,7 +99,7 @@ function (xModelMetaData, xFormMetaData, xFormInstance) {
 	this._localXModel = new XModel(xModelMetaData);
 	//
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, xFormInstance , this);
-	this._localXForm.setController(this._app);
+	this._localXForm.setController(ZaApp.getInstance());
 	this._localXForm.draw();
 	this._drawn = true;
 }
