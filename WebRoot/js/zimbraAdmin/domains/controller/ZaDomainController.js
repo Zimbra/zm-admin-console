@@ -203,9 +203,10 @@ function () {
 		
 		if (!(AjxUtil.isEmpty(this._currentObject.attrs[a]) && AjxUtil.isEmpty(tmpObj.attrs[a]))) {
 			if(tmpObj.attrs[a] instanceof Array) {
-					if((this._currentObject.attrs[a] && tmpObj.attrs[a]
-						&& tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf())
-                        || (this._currentObject.attrs[a] == null && tmpObj.attrs[a] != null)
+					if((this._currentObject.attrs[a] && (this._currentObject.attrs[a] instanceof Array) && tmpObj.attrs[a]
+						&& (tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()))
+                        || (this._currentObject.attrs[a] == null && tmpObj.attrs[a] != null) ||
+                        !(this._currentObject.attrs[a] instanceof Array)
                         || (this._currentObject.attrs[a] != null && (tmpObj.attrs[a] == null || tmpObj.attrs[a].length == 0)) )
                     {
 						mods[a] = tmpObj.attrs[a];
