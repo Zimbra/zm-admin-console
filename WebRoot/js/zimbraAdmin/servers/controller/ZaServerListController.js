@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -19,8 +21,8 @@
 * This is a singleton object that controls all the user interaction with the list of ZaServer objects
 * @author Greg Solovyev
 **/
-ZaServerListController = function(appCtxt, container) {
-	ZaListViewController.call(this, appCtxt, container,"ZaServerListController");
+ZaServerListController = function(appCtxt, container, app) {
+	ZaListViewController.call(this, appCtxt, container, app,"ZaServerListController");
    	this._toolbarOperations = new Array();
    	this._popupOperations = new Array();			
 	
@@ -32,7 +34,6 @@ ZaServerListController.prototype.constructor = ZaServerListController;
 
 ZaController.initToolbarMethods["ZaServerListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaServerListController"] = new Array();
-ZaController.changeActionsStateMethods["ZaServerListController"] = new Array();
 
 /**
 * @param list {ZaItemList} a list of ZaServer {@link ZaServer} objects
@@ -45,8 +46,8 @@ function(list, openInNewTab) {
 	if (list != null)
 		this._contentView.set(list.getVector());
 	
-	//ZaApp.getInstance().pushView(ZaZimbraAdmin._SERVERS_LIST_VIEW);			
-	ZaApp.getInstance().pushView(this.getContentViewId());
+	//this._app.pushView(ZaZimbraAdmin._SERVERS_LIST_VIEW);			
+	this._app.pushView(this.getContentViewId());
 	this._removeList = new Array();
 	if (list != null)
 		this._list = list;
@@ -62,24 +63,17 @@ function(list, openInNewTab) {
 
 ZaServerListController.initToolbarMethod =
 function () {
-   	this._toolbarOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.SERTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaServerListController.prototype._editButtonListener));    	
-   	this._toolbarOperations[ZaOperation.FLUSH_CACHE] = new ZaOperation(ZaOperation.FLUSH_CACHE, ZaMsg.SERTBB_FlushCache, ZaMsg.SERTBB_FlushCache_tt, "Delete", "DeleteDis", new AjxListener(this, ZaServerListController.prototype._flushCacheButtonListener));
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.SERTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaServerListController.prototype._editButtonListener)));    	
    	//this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.SERTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaServerListController.prototype._deleteButtonListener)));    	    	
-	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
-	this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
-	
-	this._toolbarOrder.push(ZaOperation.EDIT);
-	this._toolbarOrder.push(ZaOperation.FLUSH_CACHE);
-	this._toolbarOrder.push(ZaOperation.NONE);	
-	this._toolbarOrder.push(ZaOperation.HELP);					
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));				
 }
 ZaController.initToolbarMethods["ZaServerListController"].push(ZaServerListController.initToolbarMethod);
 
 ZaServerListController.initPopupMenuMethod =
 function () {
-   	this._popupOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.SERTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaServerListController.prototype._editButtonListener));
-	this._popupOperations[ZaOperation.FLUSH_CACHE] = new ZaOperation(ZaOperation.FLUSH_CACHE, ZaMsg.SERTBB_FlushCache, ZaMsg.SERTBB_FlushCache_tt, "Delete", "DeleteDis", new AjxListener(this, ZaServerListController.prototype._flushCacheButtonListener));   	    	
-   	//this._popupOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.SERTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaServerListController.prototype._deleteButtonListener));    	    	
+   	this._popupOperations.push(new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.SERTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaServerListController.prototype._editButtonListener)));    	
+   	//this._popupOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.SERTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaServerListController.prototype._deleteButtonListener)));    	    	
 }
 ZaController.initPopupMenuMethods["ZaServerListController"].push(ZaServerListController.initPopupMenuMethod);
 
@@ -88,58 +82,46 @@ ZaServerListController.prototype._createUI = function () {
 		var elements = new Object();
 		this._contentView = new ZaServerListView(this._container);
 		this._initToolbar();
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder); 
-		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-
+		if(this._toolbarOperations && this._toolbarOperations.length) {
+			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations); 
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+		}
 		this._initPopupMenu();
-		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
+		if(this._popupOperations && this._popupOperations.length) {
+			this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
+		}
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-		//ZaApp.getInstance().createView(ZaZimbraAdmin._SERVERS_LIST_VIEW, elements);
+		//this._app.createView(ZaZimbraAdmin._SERVERS_LIST_VIEW, elements);
 		var tabParams = {
 			openInNewTab: false,
 			tabId: this.getContentViewId(),
 			tab: this.getMainTab() 
 		}
-		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+		this._app.createView(this.getContentViewId(), elements, tabParams) ;
 
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
-		this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);					
+		this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);					
 			
 		this._UICreated = true;
-		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
+		this._app._controllers[this.getContentViewId ()] = this ;
 	} catch (ex) {
 		this._handleException(ex, "ZaServerListController.prototype._createUI", null, false);
 		return;
 	}	
 }
 
-ZaServerListController.prototype._flushCacheButtonListener = 
-function(ev) {
+
+/*
+ZaServerListController.prototype.refresh = 
+function() {
 	try {
-		if(this._contentView.getSelectionCount()>0) {
-			var arrItems = this._contentView.getSelection();
-			if(arrItems && arrItems.length) {
-				if(!ZaApp.getInstance().dialogs["flushCacheDialog"]) {
-					ZaApp.getInstance().dialogs["flushCacheDialog"] = new ZaFlushCacheXDialog(this._container);
-				}
-				srvList = [];
-				srvList._version = 1;
-				for(var i=0;i<arrItems.length;i++) {
-					var srv = arrItems[i];
-					srv["status"] = 0;
-					srvList.push(srv);
-				}
-				obj = {statusMessage:null,flushZimlet:true,flushSkin:true,flushLocale:true,serverList:srvList,status:0};
-				ZaApp.getInstance().dialogs["flushCacheDialog"].setObject(obj);
-				ZaApp.getInstance().dialogs["flushCacheDialog"].popup();
-			}
-		}	
+		this._contentView.set(this._app.getServerList(true).getVector());
 	} catch (ex) {
-		this._handleException(ex, "ZaServerListController.prototype._flushCacheButtonListener", null, false);
+		this._handleException(ex, ZaServerListController.prototype.refresh, null, false);
 	}
-	return;
 }
+*/
 
 ZaServerListController.prototype.set = 
 function(serverList) {
@@ -159,7 +141,7 @@ function (ev) {
 		if (details) {
 			if (this._list) this._list.replace (details);
 			if (this._contentView) this._contentView.setUI();
-			if(ZaApp.getInstance().getCurrentController() == this) {
+			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
 			this.changeActionsState();
@@ -178,7 +160,7 @@ function (ev) {
 		if(ev.getDetails()) {
 			if (this._list) this._list.add(ev.getDetails());
 			if (this._contentView) this._contentView.setUI();
-			if(ZaApp.getInstance().getCurrentController() == this) {
+			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
 		}
@@ -196,7 +178,7 @@ function (ev) {
 		if(ev.getDetails()) {
 			if (this._list) this._list.remove(ev.getDetails());
 			if (this._contentView ) this._contentView.setUI();
-			if(ZaApp.getInstance().getCurrentController() == this) {
+			if(this._app.getCurrentController() == this) {
 				this.show();			
 			}
 		}
@@ -242,8 +224,8 @@ function(details) {
 // new button was pressed
 ZaServerListController.prototype._newButtonListener =
 function(ev) {
-	var newServer = new ZaServer();
-	ZaApp.getInstance().getServerController().show(newServer);
+	var newServer = new ZaServer(this._app);
+	this._app.getServerController().show(newServer);
 }
 
 /**
@@ -255,7 +237,7 @@ function(ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		if(ev.item) {
 			this._selectedItem = ev.item;
-			ZaApp.getInstance().getServerController().show(ev.item);
+			this._app.getServerController().show(ev.item);
 		}
 	} else {
 		this.changeActionsState();	
@@ -276,7 +258,7 @@ ZaServerListController.prototype._editButtonListener =
 function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
-		ZaApp.getInstance().getServerController().show(item);
+		this._app.getServerController().show(item);
 	}
 }
 
@@ -358,58 +340,22 @@ function () {
 	this._removeConfirmMessageDialog.popdown();
 }
 
-ZaServerListController.changeActionsStateMethod = 
+ZaServerListController.prototype.changeActionsState = 
 function () {
 	if(this._contentView) {
 		var cnt = this._contentView.getSelectionCount();
-		var enableFlush = true;
-		var servers = this._contentView.getSelection();
-		if(servers) {
-			var cnt = servers.length;
-			for(var i=0; i<cnt; i++) {
-				if(!servers[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled] || !servers[i].attrs[ZaServer.A_zimbraMailboxServiceInstalled]) {
-					enableFlush = false;
-					break;
-				} 
-					
-			}
-		}
 		if(cnt == 1) {
-			if(!enableFlush) {
-				if(this._toolbarOperations[ZaOperation.FLUSH_CACHE])	
-					this._toolbarOperations[ZaOperation.FLUSH_CACHE].enabled = false;
-					
-				if(this._popupOperations[ZaOperation.FLUSH_CACHE])	
-					this._popupOperations[ZaOperation.FLUSH_CACHE].enabled = false;
-			}
+			var opsArray = [ZaOperation.EDIT];
+			this._toolbar.enable(opsArray, true);
+			this._actionMenu.enable(opsArray, true);
 		} else if (cnt > 1){
-			if(this._toolbarOperations[ZaOperation.EDIT])	
-				this._toolbarOperations[ZaOperation.EDIT].enabled = false;
-				
-			if(this._popupOperations[ZaOperation.EDIT])	
-				this._popupOperations[ZaOperation.EDIT].enabled = false;
-				
-			if(!enableFlush) {
-				if(this._toolbarOperations[ZaOperation.FLUSH_CACHE])	
-					this._toolbarOperations[ZaOperation.FLUSH_CACHE].enabled = false;
-					
-				if(this._popupOperations[ZaOperation.FLUSH_CACHE])	
-					this._popupOperations[ZaOperation.FLUSH_CACHE].enabled = false;
-			}
-		} else if (cnt <1) {
-			if(this._toolbarOperations[ZaOperation.EDIT])	
-				this._toolbarOperations[ZaOperation.EDIT].enabled = false;
-				
-			if(this._popupOperations[ZaOperation.EDIT])	
-				this._popupOperations[ZaOperation.EDIT].enabled = false;
-
-			if(this._toolbarOperations[ZaOperation.FLUSH_CACHE])	
-				this._toolbarOperations[ZaOperation.FLUSH_CACHE].enabled = false;
-				
-			if(this._popupOperations[ZaOperation.FLUSH_CACHE])	
-				this._popupOperations[ZaOperation.FLUSH_CACHE].enabled = false;
-				
+			var opsArray1 = [ZaOperation.EDIT];
+			this._toolbar.enable(opsArray1, false);
+			this._actionMenu.enable(opsArray1, false);
+		} else {
+			var opsArray = [ZaOperation.EDIT];
+			this._toolbar.enable(opsArray, false);
+			this._actionMenu.enable(opsArray, false);
 		}
 	}
 }
-ZaController.changeActionsStateMethods["ZaServerListController"].push(ZaServerListController.changeActionsStateMethod);

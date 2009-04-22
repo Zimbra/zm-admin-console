@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -20,9 +22,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaMigrationWizView = function(parent) {
+ZaMigrationWizView = function(parent, app) {
 	if (arguments.length == 0) return;
-	ZaTabView.call(this, parent,"ZaMigrationWizView");
+	ZaTabView.call(this, parent, app, "ZaMigrationWizView");
 	this.setScrollStyle(Dwt.SCROLL);
 	this.initForm(new Object(), this.getMyXForm())
 //	this._createHTML();
@@ -142,8 +144,22 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
                             }
 						]
 					},
-					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_TEXT}
-				]
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_TOASTER_DOWNLOAD_TEXT},
+
+                    //ZDesktop
+					{type:_GROUP_,numCols:2,
+						items: [
+							{type:_OUTPUT_, value:AjxImg.getImageHtml("MigrationWiz")},
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null,
+                                value:ZaMsg.zdesktop_download_name
+                                        + " (" + ZaMigrationWizView.getDownloadLink(ZaMsg.ZDESKTOP_WIN_DOWNLOAD_LINK, ZaMsg.zdesktop_platform_windows) + " "
+                                        + ZaMigrationWizView.getDownloadLink(ZaMsg.ZDESKTOP_MAC_DOWNLOAD_LINK, ZaMsg.zdesktop_platform_mac) + " "
+                                        + ZaMigrationWizView.getDownloadLink(ZaMsg.ZDESKTOP_LINUX_DOWNLOAD_LINK, ZaMsg.zdesktop_platform_linux) + ")"
+                            }
+                        ]
+					},
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.ZIMBRA_DESKTOP_DOWNLOAD_TEXT}
+                ]
 			}
 		];
 }

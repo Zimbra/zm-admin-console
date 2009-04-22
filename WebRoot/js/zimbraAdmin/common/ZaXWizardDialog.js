@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -26,7 +28,7 @@
 * This class represents a reusable wizard dialog. 
 * After calling the constructor, define metadata for and call initForm to draw the contents of the dialog
 */
-ZaXWizardDialog = function(parent,className, title, w, h,iKeyName, extraButtons) {
+ZaXWizardDialog = function(parent, app, className, title, w, h,iKeyName, extraButtons) {
 	if (arguments.length == 0) return;
 
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON];
@@ -40,7 +42,7 @@ ZaXWizardDialog = function(parent,className, title, w, h,iKeyName, extraButtons)
 		var finishButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.FINISH_BUTTON, AjxMsg._finish, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.finishWizard));
 		this._extraButtons = [helpButton,prevButton,nextButton,finishButton];
 	}
-	ZaXDialog.call(this, parent,className,title, w, h,iKeyName);
+	ZaXDialog.call(this, parent,app, className,title, w, h,iKeyName);
 	this._pageIx = 1;
 	this._currentPage = 1;
 }
@@ -87,11 +89,12 @@ function () {
 **/
 ZaXWizardDialog.prototype.goPage = 
 function(pageKey) {
+	this._containedObject[ZaModel.currentStep] = pageKey;
 	//reset the domain lists
 	EmailAddr_XFormItem.resetDomainLists.call (this);
 	//release the focus to make the cursor visible
 	this._localXForm.releaseFocus();
-	this._localXModel.setInstanceValue(this._containedObject,ZaModel.currentStep, pageKey);
+	this._localXForm.refresh(); //run update script
 	if(this._localXForm.tabGroupIDs[pageKey])
 		this._localXForm.focusFirst(this._localXForm.tabGroupIDs[pageKey]);
 	else
@@ -156,7 +159,7 @@ function (xModelMetaData, xFormMetaData) {
 		
 	this._localXModel = new XModel(xModelMetaData);
 	this._localXForm = new XForm(xFormMetaData, this._localXModel, null, this);
-	this._localXForm.setController(ZaApp.getInstance());
+	this._localXForm.setController(this._app);
 	this._localXForm.draw(this._pageDiv);
 	this._drawn = true;
 }
@@ -189,3 +192,113 @@ function(entry) {
 	
 	this._localXForm.setInstance(this._containedObject.attrs);
 }
+
+
+
+/**
+* @class ZaXWizProgressBar
+* @constructor
+* @param parent
+**/
+ZaXWizProgressBar = function(parent) {
+	if (arguments.length == 0) return;
+	DwtComposite.call(this, parent, "ZaXWizProgressBar", DwtControl.STATIC_STYLE);
+	this._table = document.createElement("table");
+	this._table.border = 0;
+	this._table.cellPadding = 0;
+	this._table.cellSpacing = 0;
+	this._menuListeners = new AjxVector();
+	this.getHtmlElement().appendChild(this._table);
+	this._table.backgroundColor = DwtCssStyle.getProperty(this.parent.getHtmlElement(), "background-color");
+	this._stepsNumber = 0; //number of steps
+	this._steps = new Array();
+	this._lblHeader = new ZaXWizStepLabel(this);
+	this._lblHeader.setText("Step 0 of 0");
+	this._lblHeader.setActive(true);
+}
+
+
+ZaXWizProgressBar.prototype = new DwtComposite;
+ZaXWizProgressBar.prototype.constructor = ZaXWizProgressBar;
+
+ZaXWizProgressBar.prototype.toString = 
+function() {
+	return "ZaXWizProgressBar";
+}
+
+/**
+* member of  ZaXWizProgressBar
+* @param stepKey
+**/
+ZaXWizProgressBar.prototype.showStep = 
+function(stepKey) {
+	var szLabelTxt = "Step " + stepKey + " of " + this._stepsNumber;
+	if(this._steps[stepKey]) {
+		szLabelTxt = szLabelTxt + ": " + this._steps[stepKey];
+	}
+	this._lblHeader.setText(szLabelTxt);
+}
+
+/**
+* member of  ZaXWizProgressBar
+* @param stepKey
+* @param stepNumber
+**/
+ZaXWizProgressBar.prototype.addStep =
+function (stepKey, stepTitle) {
+	this._steps[stepKey] = stepTitle;
+	return (++this._stepsNumber);
+}
+
+/**
+* member of  ZaXWizProgressBar
+* @param child {dom element}
+**/
+ZaXWizProgressBar.prototype.addChild =
+function(child) {
+	this._children.add(child);
+	var row;
+	var col;
+	this._table.width = "100%";
+	row = (this._table.rows.length != 0) ? this._table.rows[0]: this._table.insertRow(0);
+	row.align = "center";
+	row.vAlign = "middle";
+		
+	col = row.insertCell(row.cells.length);
+	col.align = "center";
+	col.vAlign = "middle";
+	col.noWrap = true;
+	col.appendChild(child.getHtmlElement());
+}
+
+
+/**
+* @class ZaXWizStepLabel
+* @constructor
+* @param parent
+**/
+ZaXWizStepLabel = function(parent) {
+	DwtLabel.call(this, parent, DwtLabel.ALIGN_CENTER, "ZaXWizStepLabel");
+}
+
+ZaXWizStepLabel.prototype = new DwtLabel;
+ZaXWizStepLabel.prototype.constructor = ZaXWizStepLabel;
+
+ZaXWizStepLabel.prototype.toString = 
+function() {
+	return "ZaXWizStepLabel";
+}
+
+/**
+* member of  ZaXWizStepLabel
+* @param isActive {Boolean}
+**/
+ZaXWizStepLabel.prototype.setActive = 
+function(isActive) {
+	if (isActive) {
+ 		this._textCell.className="ZaXWizStepLabelActive";
+ 	} else {
+	 	this._textCell.className="ZaXWizStepLabelInactive";
+ 	}
+}
+

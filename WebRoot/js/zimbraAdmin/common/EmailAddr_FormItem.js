@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -30,7 +32,7 @@ DynSelectDomainPart_XFormItem.prototype.handleKeyPressDelay = function (event,va
 		return;
 		
 	var callback = new AjxCallback(this, this.changeChoicesCallback);
-	this.dataFetcherMethod.call(this.dataFetcherObject, {value:value, event:event, callback:callback});
+	this.dataFetcherMethod.call(this.dataFetcherObject, value, event, callback);
 	var val = "";
 	if(this.getParentItem()._namePart) {
 		val = this.getParentItem()._namePart;
@@ -53,8 +55,6 @@ EmailAddr_XFormItem.domainChoices = new XFormChoices([], XFormChoices.OBJECT_LIS
 EmailAddr_XFormItem.choicesDirty = false ;
 EmailAddr_XFormItem.prototype.numCols = 4;
 EmailAddr_XFormItem.prototype.nowrap = true;
-EmailAddr_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
-EmailAddr_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 EmailAddr_XFormItem.prototype.initializeItems = 
 function () {
 	this._inputWidth = this.getInheritedProperty("inputWidth");
@@ -63,9 +63,9 @@ function () {
 
 	Composite_XFormItem.prototype.initializeItems.call(this);
 	try {
-		
-		this._domainPart = ZaSettings.myDomainName;
-		
+		if(this.getForm().parent._app) {
+			this._domainPart = this.getForm().parent._app.getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraDefaultDomainName];
+        }
 	} catch (ex) {
 		this._domainPart = null;
 	}
@@ -82,9 +82,7 @@ function () {
 };
 
 EmailAddr_XFormItem.prototype.items = [
-	{type:_TEXTFIELD_,forceUpdate:true, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_name_input",
-	 visibilityChecks:[],
-	 enableDisableChecks:[],
+	{type:_TEXTFIELD_,forceUpdate:true, ref:".", labelLocation:_NONE_,relevantBehavior:_PARENT_, cssClass:"admin_xform_name_input",
 	 errorLocation:_PARENT_,
 		getDisplayValue:function (itemVal) {
 			var val = itemVal;
@@ -94,6 +92,7 @@ EmailAddr_XFormItem.prototype.items = [
 				if(emailChunks.length > 1 ) {
 					val = emailChunks[0];
 				} 
+				
 			} 
 
 			if(val === null || val ===undefined)
@@ -103,25 +102,39 @@ EmailAddr_XFormItem.prototype.items = [
 			return val;	
 		},
 		elementChanged:function(namePart, instanceValue, event) {
-            this.getParentItem()._namePart = namePart;
-            var val = namePart + "@";
+			var val = namePart + "@";
 			if(this.getParentItem()._domainPart)
 				val += this.getParentItem()._domainPart;
-            
-            this.getForm().itemChanged(this.getParentItem(), val, event);
+
+			this.getParentItem()._namePart = val;	
+			this.getForm().itemChanged(this.getParentItem(), val, event);
 			if (AjxEnv.hasFirebug) console.log("EmailAddr_XFormItem setting value to "+val);
 		}
 	},
 	{type:_OUTPUT_, value:"@"},
-	{type:_DYNSELECT_DOMAIN_PART_, ref:".", labelLocation:_NONE_,  
-	 	choices:EmailAddr_XFormItem.domainChoices,
-	 	editable:true,
-        bmolsnr:true,
-        toolTipContent:ZaMsg.tt_StartTypingDomainName,
-         //visibilityChecks:[EmailAddr_XFormItem.isNonSaticDomain],
-	 	visibilityChecks:[],
-	 	enableDisableChecks:[],
-	 	dataFetcherMethod:ZaSearch.prototype.dynSelectSearchDomains,
+	{type:_OUTPUT_,ref:".",relevant:"!ZaSettings.DOMAINS_ENABLED", relevantBehavior:_HIDE_,
+		choices:EmailAddr_XFormItem.domainChoices,
+		getDisplayValue:function (itemVal){
+			var val = null;
+			if(itemVal) {
+				var emailChunks = itemVal.split("@");
+			
+				if(emailChunks.length > 1 ) {
+					val = emailChunks[1];
+				} 
+			}
+			if(!val) {
+//				if(this.getChoices() && this.getChoices()._choiceObject && this.getChoices()._choiceObject[0])
+					val = this.getParentItem()._domainPart;
+			}	
+	//		this.getParentItem()._domainPart = val;
+			
+			return val;
+		}	
+	},
+	{type:_DYNSELECT_DOMAIN_PART_, ref:".", labelLocation:_NONE_, relevantBehavior:_HIDE_, 
+	 	choices:EmailAddr_XFormItem.domainChoices,editable:true,
+	 	relevant:"ZaSettings.DOMAINS_ENABLED",dataFetcherMethod:ZaSearch.prototype.dynSelectSearchDomains,
 		dataFetcherClass:ZaSearch,
 	 	errorLocation:_PARENT_,
 		getDisplayValue:function (itemVal){
@@ -170,21 +183,44 @@ EmailAddr_XFormItem.prototype.items = [
 			this.getParentItem()._domainPart = domainPart;
             this.getParentItem()._oldDomainPart = oldDomainPart ;
             //bug: 14250, change the instance value here also even if the whole email address is invalid
-			//this.getParentItem().setInstanceValue (val) ;
+			this.getParentItem().setInstanceValue (val) ;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
-		}	
+		}	/*,
+		keyUp:function(newValue,ev) {
+			if(!(ev.keyCode==XFG.ARROW_LEFT || ev.keyCode==XFG.ARROW_RIGHT)) {
+				//DBG.println(AjxDebug.DBG1, "EmailAddr_XFormItem.keyUp handled key code "+ ev.keyCode +" char code " + (new Date()).getTime());
+				var n = "";
+				if(newValue)
+					n = String(newValue).replace(/([\\\\\\*\\(\\)])/g, "\\$1");
+					
+				var query = "(zimbraDomainName="+n+"*)";
+				var app = this.getForm().parent._app ; 
+				app._domainQuery = query ;
+				//initialize the searchDomains action
+				
+				if (this.keyPressDelayHdlr != null) {
+					AjxTimedAction.cancelAction(this.keyPressDelayHdlr);					
+				}
+				
+				this._acInterval = DynSelect_XFormItem.LOAD_PAUSE;
+				this._acActionId = -1;
+				this._acAction = new AjxTimedAction(app, app.scheduledSearchDomains, this);
+				
+				this.keyPressDelayHdlr = AjxTimedAction.scheduleAction (this._acAction, this._acInterval);
+				
+				//this.getForm().getController().searchDomains(query);
+				EmailAddr_XFormItem.choicesDirty = true ;
+			}
+		}*/
 	}
 ];
 
-EmailAddr_XFormItem.prototype.resetEditedState = function () {
-	this.items[2].edited = false;
-}
 //reset the domainchoices for the domain list menu, bug 12495
 EmailAddr_XFormItem.resetDomainLists =
 function (force) {
 	if (force || EmailAddr_XFormItem.choicesDirty) {
 		DBG.println(AjxDebug.DBG3, "Reset the domain lists ....") ;
-		ZaApp.getInstance().searchDomains();
+		this._app.searchDomains();
 		 EmailAddr_XFormItem.choicesDirty = false ;
 	}
 }

@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -49,12 +51,9 @@ MLifetime_XModelItem.prototype.validateType = function (value) {
 **/
 Lifetime_XFormItem = function() {}
 XFormItemFactory.createItemType("_LIFETIME_", "lifetime", Lifetime_XFormItem, Composite_XFormItem);
-Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
-Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
+
 Lifetime_XFormItem.prototype.items = [
-	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_, cssClass:"admin_xform_number_input", 
-	 	visibilityChecks:[],
-	 	enableDisableChecks:[],		
+	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,relevantBehavior:_PARENT_, cssClass:"admin_xform_number_input", 
 		getDisplayValue:function (itemVal) {
 			var val = "";
 			if(itemVal != null && itemVal.length >0) {
@@ -76,9 +75,7 @@ Lifetime_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices: ZaModel.getTimeChoices(),
-		visibilityChecks:[],
-	 	enableDisableChecks:[],
+	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, relevantBehavior:_PARENT_, choices: ZaModel.getTimeChoices(),
 		getDisplayValue:function (itemVal){
 			var val = "d";
 			if(itemVal != null && itemVal.length >0) {
@@ -100,12 +97,9 @@ Lifetime_XFormItem.prototype.items = [
 
 Lifetime1_XFormItem = function() {}
 XFormItemFactory.createItemType("_LIFETIME1_", "lifetime1", Lifetime1_XFormItem, Composite_XFormItem);
-Lifetime1_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
-Lifetime1_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
+
 Lifetime1_XFormItem.prototype.items = [
-	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_number_input", 
-		visibilityChecks:[],
-	 	enableDisableChecks:[],
+	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,relevantBehavior:_PARENT_, cssClass:"admin_xform_number_input", 
 		getDisplayValue:function (itemVal) {
 			var val = "";
 			if(itemVal != null && itemVal.length >0) {
@@ -127,9 +121,7 @@ Lifetime1_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices:ZaModel.getTimeChoices1(),
-		visibilityChecks:[],
-	 	enableDisableChecks:[],
+	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, relevantBehavior:_PARENT_, choices:ZaModel.getTimeChoices1(),
 		getDisplayValue:function (itemVal){
 			var val = "d";
 			if(itemVal != null && itemVal.length >0) {
@@ -154,9 +146,7 @@ XFormItemFactory.createItemType("_LIFETIME2_", "lifetime2", Lifetime2_XFormItem,
 
 
 Lifetime2_XFormItem.prototype.items = [
-	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_number_input", 
-		visibilityChecks:[],
-	 	enableDisableChecks:[],		
+	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,relevantBehavior:_PARENT_, cssClass:"admin_xform_number_input", 
 		getDisplayValue:function (itemVal) {
 			var val = "";
 			if(itemVal != null && itemVal.length >0) {
@@ -179,5 +169,5 @@ Lifetime2_XFormItem.prototype.items = [
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OUTPUT_, ref:null, labelLocation:_NONE_, value:"d",getDisplayValue:function (itemVal){ return AjxMsg.days;}}
+	{type:_OUTPUT_, ref:null, labelLocation:_NONE_, relevantBehavior:_PARENT_,value:"d",getDisplayValue:function (itemVal){ return AjxMsg.days;}}
 ];
