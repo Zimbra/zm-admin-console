@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -22,9 +20,9 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-ZaServicesListView = function(parent, app, clsName) {
+ZaServicesListView = function(parent,clsName) {
 	if (arguments.length == 0) return;
-	this._app = app;
+
 	var className = clsName || "ZaServicesListView";
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	
@@ -157,7 +155,7 @@ function(html, idx, item, onlyServiceInfo, serviceName) {
 			html[idx++] = this._headerList[i]._width;
 			html[idx++] = " aligh=left>";
 			if (onlyServiceInfo) {
-				if(((new Date()).getTime()/1000 - item.timestamp) > 21*60*60/1000) {
+				if(((new Date()).getTime()- item.timestamp) > 21*60*1000) {
 					html[idx++] = "<span class='ZaStaleData'>";
 					html[idx++] = AjxStringUtil.htmlEncode(item.time);
 					html[idx++] = "&nbsp;";

@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -19,9 +17,9 @@
   * This is the list containing the auto complete match contact lists
   * @author Charles Cao
   */
-ZaContactList = function(app) {
+ZaContactList = function() {
 	this._list = [];	//this is the array holds all the match objects
-	this._app = app;
+
 }
 
 ZaContactList.matchValue = ZaAccount.A_displayname; //the property name of the match ZaContactList
@@ -31,18 +29,22 @@ ZaContactList.prototype.getContactList =
 function (str, callback){
 	try {
 		var params = {};
-		
+		var busyId = Dwt.getNextId ();
 		params.attrs = [ZaAccount.A_displayname, ZaAccount.A_mail, ZaAccount.A_telephoneNumber].join();
 		params.types = ZaSearch.ACCOUNTS ;
 		params.sortBy = ZaAccount.A_displayname;
 		params.query = ZaSearch.getSearchByDisplayNameQuery(str) ;
 		params.applyCos = "0";
-		myCallback = new AjxCallback(this, this.getDataCallback, callback);
+		myCallback = new AjxCallback(this, this.getDataCallback, {callback:callback,busyId:busyId});
 		params.callback = myCallback;
-		params.controller = this._app.getCurrentController () ;
+		params.controller = ZaApp.getInstance().getCurrentController () ;
+		params.showBusy = true;
+		params.busyMsg = ZaMsg.BUSY_SEARCHING;
+		params.skipCallbackIfCancelled = true; 
+		params.busyId = busyId;		
 		ZaSearch.searchDirectory(params);
 	}	catch (ex){
-		this._app.getCurrentController()._handleException(ex, "ZaContactList.prototype.getContactList");	
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaContactList.prototype.getContactList");	
 	}
 }
 
@@ -74,8 +76,12 @@ function(match, inputFieldXFormItem) {
 }; 
 
 ZaContactList.prototype.getDataCallback = 
-function(callback, resp){
+function(params, resp){
 	try {
+		var callback = params.callback;
+		if(params.busyId)
+			ZaApp.getInstance().getAppCtxt().getShell().setBusy(false, params.busyId);
+			
 		if(!resp) {
 			throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaContactList.prototype.getDataCallback"));
 		}
@@ -85,7 +91,7 @@ function(callback, resp){
 		} else {
 			ZaSearch.TOO_MANY_RESULTS_FLAG = false ;
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			var list = new ZaItemList(null, this._app);	
+			var list = new ZaItemList();	
 			list.loadFromJS(response);
 			var arr = list.getArray();
 			var data = [];
@@ -110,7 +116,7 @@ function(callback, resp){
 			callback.run(data);			
 		}
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaContactList.prototype.getDataCallback");	
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaContactList.prototype.getDataCallback");	
 	}		
 	
 };
