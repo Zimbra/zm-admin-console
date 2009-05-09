@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2007 Zimbra, Inc.
+ * Copyright (C) 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -22,10 +20,10 @@
 * @param parent
 * param app
 **/
-ZaEditVolumeXDialog = function(parent,  app, w, h, title) {
+ZaEditVolumeXDialog = function(parent, w, h, title) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];	
-	ZaXDialog.call(this, parent, app, null, title, w, h);
+	ZaXDialog.call(this, parent,null, title, w, h);
 	this._containedObject = {};
 	this.initForm(ZaServer.volumeObjModel,this.getMyXForm());
 }
@@ -40,17 +38,17 @@ function() {
 		items:[
 			{type:_ZAWIZGROUP_, isTabGroup:true,
 				items:[
-					{ref:ZaServer.A_VolumeName, type:_TEXTFIELD_, label:ZaMsg.VM_VolumeName+":", labelLocation:_LEFT_, width:250},
-					{ref:ZaServer.A_VolumeRootPath, type:_TEXTFIELD_, label:ZaMsg.VM_VolumeRootPath+":", labelLocation:_LEFT_, width:250},
-					{ref:ZaServer.A_VolumeType, type:_OSELECT1_, choices:ZaServer.volumeTypeChoices,width:250, label:ZaMsg.VM_VolumeType+":"},
+					{ref:ZaServer.A_VolumeName, type:_TEXTFIELD_, label:ZaMsg.VM_VolumeName+":", labelLocation:_LEFT_, width:250, visibilityChecks:[],enableDisableChecks:[]},
+					{ref:ZaServer.A_VolumeRootPath, type:_TEXTFIELD_, label:ZaMsg.VM_VolumeRootPath+":", labelLocation:_LEFT_, width:250, visibilityChecks:[],enableDisableChecks:[]},
+					{ref:ZaServer.A_VolumeType, type:_OSELECT1_, choices:ZaServer.volumeTypeChoices,width:250, label:ZaMsg.VM_VolumeType+":", visibilityChecks:[],enableDisableChecks:[]},
 					{ref:ZaServer.A_VolumeCompressBlobs,
 						type:_ZA_CHECKBOX_, label:ZaMsg.VM_VolumeCompressBlobs,
-						trueValue:true, falseValue:false
+						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{type:_GROUP_,numCols:3,colSpan:2,colSizes:["200px","150px","125px"],
 						items:[
-							{ref:ZaServer.A_VolumeCompressionThreshold, type:_TEXTFIELD_, label:ZaMsg.VM_VolumeCompressThreshold+":", labelLocation:_LEFT_},
-							{type:_OUTPUT_,label:null,labelLocation:_NONE_,value:ZaMsg.NAD_bytes,align:_LEFT_}
+							{ref:ZaServer.A_VolumeCompressionThreshold, type:_TEXTFIELD_, label:ZaMsg.VM_VolumeCompressThreshold+":", labelLocation:_LEFT_, visibilityChecks:[],enableDisableChecks:[]},
+							{type:_OUTPUT_,label:null,labelLocation:_NONE_,value:ZaMsg.NAD_bytes,align:_LEFT_, visibilityChecks:[],enableDisableChecks:[]}
 						]
 					}
 					

@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -37,6 +35,8 @@ ZaOperation = function(id, caption, tooltip, imgId, disImgId, lsnr, type, menuOp
 	this.menuOpList = menuOpList;
 	this.className = className;	
 	this.labelId = labelId;
+	this.enabled = true;
+	this.visible = true;
 }
 
 ZaOperation.prototype.toString = 
@@ -84,6 +84,7 @@ ZaOperation.HOLD = ++ZA_OP_INDEX;
 ZaOperation.REQUEUE = ++ZA_OP_INDEX;
 ZaOperation.RELEASE = ++ZA_OP_INDEX;
 ZaOperation.INIT_NOTEBOOK = ++ZA_OP_INDEX;
+ZaOperation.CHECK_MX_RECORD = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_RESULT_COUNT = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_BY_ADDESS_TYPE = ++ZA_OP_INDEX;
 ZaOperation.SEARCH_BY_DOMAIN = ++ZA_OP_INDEX;
@@ -100,3 +101,5 @@ ZaOperation.CLOSE_ALL_TAB = ++ZA_OP_INDEX;
 ZaOperation.TOGGLE = ++ZA_OP_INDEX;
 ZaOperation.DOWNLOAD_SERVER_CONFIG = ++ZA_OP_INDEX;
 ZaOperation.DOWNLOAD_GLOBAL_CONFIG = ++ZA_OP_INDEX;
+ZaOperation.VIEW_DOMAIN_ACCOUNTS = ++ZA_OP_INDEX;
+ZaOperation.FLUSH_CACHE = ++ZA_OP_INDEX;

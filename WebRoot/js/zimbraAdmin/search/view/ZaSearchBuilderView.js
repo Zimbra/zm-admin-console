@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -22,14 +20,14 @@
 * @author Charles Cao
 **/
 
-ZaSearchBuilderView = function(parent, app){
+ZaSearchBuilderView = function(parent){
 	DwtComposite.call(this, parent, "ZaSearchBuilderView", Dwt.ABSOLUTE_STYLE, true);		
 	var visible = false ;
 	this.zShow(visible);
-	this._app = app;
+	this._app = ZaApp.getInstance();
 	
 	this._option_next_x = 0;
-	this._controller = this._app.getSearchBuilderController () ;
+	this._controller = ZaApp.getInstance().getSearchBuilderController () ;
 	this.setScrollStyle(DwtControl.SCROLL);
 }
 

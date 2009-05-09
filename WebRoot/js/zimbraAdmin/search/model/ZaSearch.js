@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -21,10 +19,7 @@
 * this is a static class taht provides method for searching LDAP
 * @author Greg Solovyev
 **/
-ZaSearch = function(app) {
-	if(app)
-		this._app = app;
-		
+ZaSearch = function() {
 	this[ZaSearch.A_selected] = null;
 	this[ZaSearch.A_query] = "";
 	this[ZaSearch.A_fAliases] = "TRUE";
@@ -58,13 +53,15 @@ ZaSearch.A_fAccounts = "f_accounts";
 ZaSearch.A_fDomains = "f_domains";
 ZaSearch.A_fdistributionlists = "f_distributionlists";
 ZaSearch.A_fResources = "f_resources";
+ZaSearch.A_ResultMsg = "resultMsg";
 
 ZaSearch._currentQuery = null;
+ZaSearch._domain = null; //current searchDirectory's domain parameter
 ZaSearch._savedSearchToBeUpdated = true ; //initial value to be true
 
 ZaSearch.getPredefinedSavedSearchesForAdminOnly = function () {
     return   [
-        {name: ZaMsg.ss_admin_account , query: "(|(zimbraIsAdminAccount=TRUE)(zimbraIsDomainAdminAccount=TRUE))"}
+        {name: ZaMsg.ss_admin_account , query: "(|(zimbraIsAdminAccount=TRUE)(zimbraIsDelegatedAdminAccount=TRUE))"}
     ];
 }
                   
@@ -84,8 +81,8 @@ ZaSearch.getPredefinedSavedSearches =  function () {
 **/
 
 ZaSearch.getAll =
-function(app) {
-	return ZaSearch.search("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES,ZaSearch.DOMAINS], 1, ZaAccount.A_uid, true, app);
+function() {
+	return ZaSearch.search("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES,ZaSearch.DOMAINS], 1, ZaAccount.A_uid, true);
 }
 
 
@@ -142,11 +139,23 @@ function (params) {
 
 	if(params.applyCos)	
 		soapDoc.getMethod().setAttribute("applyCos", params.applyCos);
+	else 
+		soapDoc.getMethod().setAttribute("applyCos", false);
+		
 	
-	if(params.domain)
+	if(params.applyConfig)
+		soapDoc.getMethod().setAttribute("applyConfig", params.applyConfig);
+	else
+		soapDoc.getMethod().setAttribute("applyConfig", "false");
+		
+	if(params.domain)  {
 		soapDoc.getMethod().setAttribute("domain", params.domain);
+        ZaSearch._domain = params.domain;
+    } else{
+        ZaSearch._domain = null;        
+    }
 
-	if(params.attrs && params.attrs.length>0)
+    if(params.attrs && params.attrs.length>0)
 		soapDoc.getMethod().setAttribute("attrs", params.attrs.toString());
 		
 	if(params.types && params.types.length>0)
@@ -164,7 +173,10 @@ function (params) {
 	if(params.callback) {
 		cmdParams.asyncMode = true;
 		cmdParams.callback = params.callback;
+		cmdParams.skipCallbackIfCancelled = params.skipCallbackIfCancelled;
 	}
+	
+	
 	try {
 		//only returned for synchronous calls
 		return ZaRequestMgr.invoke(cmdParams, params);
@@ -201,12 +213,17 @@ ZaSearch.findAccount = function(by, val) {
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	var resp = command.invoke(cmdParams).Body.SearchDirectoryResponse;	
-	var list = new ZaItemList(ZaAccount, ZaApp.getInstance());	
+	var list = new ZaItemList(ZaAccount);	
 	list.loadFromJS(resp);	
 	return list.getArray()[0];
 }
 
-ZaSearch.prototype.dynSelectDataCallback = function (callback, resp) {
+ZaSearch.prototype.dynSelectDataCallback = function (params, resp) {
+	var callback = params.callback;
+	
+	if(params.busyId)
+		ZaApp.getInstance().getAppCtxt().getShell().setBusy(false, params.busyId);
+	
 	if(!callback)	
 		return;
 	try {
@@ -217,7 +234,7 @@ ZaSearch.prototype.dynSelectDataCallback = function (callback, resp) {
 			throw(resp.getException());
 		} else {
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			var list = new ZaItemList(null, ZaApp.getInstance());	
+			var list = new ZaItemList(null);	
 			list.loadFromJS(response);	
 			callback.run(list.getArray(), response.more, response.searchTotal);
 		}
@@ -226,7 +243,12 @@ ZaSearch.prototype.dynSelectDataCallback = function (callback, resp) {
 	}
 }
 
-ZaSearch.prototype.dynSelectSearchCosesCallback = function (callback, resp) {
+ZaSearch.prototype.dynSelectSearchCosesCallback = function (params, resp) {
+	var callback = params.callback;
+	
+	if(params.busyId)
+		ZaApp.getInstance().getAppCtxt().getShell().setBusy(false, params.busyId);
+
 	if(!callback)	
 		return;
 	try {
@@ -237,74 +259,123 @@ ZaSearch.prototype.dynSelectSearchCosesCallback = function (callback, resp) {
 			throw(resp.getException());
 		} else {
 			var response = resp.getResponse().Body.SearchDirectoryResponse;
-			var list = new ZaItemList(null, this._app);	
+			var list = new ZaItemList(null);	
 			list.loadFromJS(response);	
 			var choices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
 			choices.setChoices(list.getArray());
 			callback.run(list.getArray(), response.more, response.searchTotal);
 		}
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchCosesCallback");	
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchCosesCallback");	
 	}
 }
-
-ZaSearch.prototype.dynSelectSearchAccounts = function (value, event, callback) {
+/**
+ * @argument callArgs {value, event, callback}
+ */
+ZaSearch.prototype.dynSelectSearchAccounts = function (callArgs) {
 	try {
+		var value = callArgs["value"];
+		var event = callArgs["event"];
+		var callback = callArgs["callback"];
+		var busyId = Dwt.getNextId ();
+		
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, callback);
+		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId });
 		params.types = [ZaSearch.ACCOUNTS, ZaSearch.DLS];
 		params.callback = dataCallback;
 		params.sortBy = ZaAccount.A_name;
-		params.query = ZaSearch.getSearchByNameQuery(value);
-		params.controller = this._app.getCurrentController();
-		ZaSearch.searchDirectory(params);
+		params.query = ZaSearch.getSearchByNameQuery(value, params.types);
+		params.controller = ZaApp.getInstance().getCurrentController();
+		params.showBusy = true;
+		params.busyId = busyId;
+		params.busyMsg = ZaMsg.BUSY_SEARCHING;
+		params.skipCallbackIfCancelled = true; 		
+		ZaSearch.searchDirectory(params);		
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataFetcher");		
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchAccounts");		
 	}
 }
 
-ZaSearch.prototype.dynSelectSearchGroups = function (value, event, callback) {
+/**
+ * @argument callArgs {value, event, callback, extraLdapQuery}
+ */
+ZaSearch.prototype.dynSelectSearchGroups = function (callArgs) {
 	try {
+		var value = callArgs["value"];
+		var event = callArgs["event"];
+		var callback = callArgs["callback"];
+		var extraLdapQuery = callArgs["extraLdapQuery"];
+		var busyId = Dwt.getNextId ();
+		
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, callback);
+		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
 		params.types = [ZaSearch.DLS];
-		params.callback = dataCallback;
+        params.callback = dataCallback;
 		params.sortBy = ZaAccount.A_name;
-		params.query = ZaSearch.getSearchByNameQuery(value);
-		params.controller = this._app.getCurrentController();
+		params.query = ZaSearch.getSearchByNameQuery(value, params.types);
+        if (extraLdapQuery) params.query = "(&" + extraLdapQuery + params.query + ")" ; 
+        params.controller = ZaApp.getInstance().getCurrentController();
+		params.busyId = busyId;
+		params.showBusy = true;
+		params.busyMsg = ZaMsg.BUSY_SEARCHING;
+		params.skipCallbackIfCancelled = true; 		
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectDataFetcher");		
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchGroups");		
 	}
 }
 
-ZaSearch.prototype.dynSelectSearchDomains = function (value, event, callback) {
+/**
+ * @argument callArgs {value, event, callback}
+ */
+ZaSearch.prototype.dynSelectSearchDomains = function (callArgs) {
 	try {
+		var value = callArgs["value"];
+		var event = callArgs["event"];
+		var callback = callArgs["callback"];
+		var busyId = Dwt.getNextId();
+				
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, callback);
+		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
 		params.types = [ZaSearch.DOMAINS];
 		params.callback = dataCallback;
 		params.sortBy = ZaDomain.A_domainName;
 		params.query = ZaSearch.getSearchDomainByNameQuery(value);
-		params.controller = this._app.getCurrentController();
+		params.controller = ZaApp.getInstance().getCurrentController();
+		params.showBusy = true;
+		params.busyId = busyId;
+		params.busyMsg = ZaMsg.BUSY_SEARCHING_DOMAINS;
+		params.skipCallbackIfCancelled = true; 		
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchDomains");		
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchDomains");		
 	}
 }
 
-ZaSearch.prototype.dynSelectSearchCoses = function (value, event, callback) {
+/**
+ * @argument callArgs {value, event, callback}
+ */
+ZaSearch.prototype.dynSelectSearchCoses = function (callArgs) {
 	try {
+		var value = callArgs["value"];
+		var event = callArgs["event"];
+		var callback = callArgs["callback"];
+		var busyId = Dwt.getNextId();
+				
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectSearchCosesCallback, callback);
+		dataCallback = new AjxCallback(this, this.dynSelectSearchCosesCallback, {callback:callback,busyId:busyId});
 		params.types = [ZaSearch.COSES];
 		params.callback = dataCallback;
 		params.sortBy = ZaCos.A_name;
 		params.query = ZaSearch.getSearchCosByNameQuery(value);
-		params.controller = this._app.getCurrentController();
+		params.controller = ZaApp.getInstance().getCurrentController();
+		params.showBusy = true;
+		params.busyId = busyId;
+		params.busyMsg = ZaMsg.BUSY_SEARCHING_COSES;
+		params.skipCallbackIfCancelled = true;		
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchCoses");		
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchCoses");		
 	}
 }
 
@@ -321,7 +392,7 @@ ZaSearch.prototype.dynSelectSearchCoses = function (value, event, callback) {
 * @domainName - domain name (optional, if searching within one domain)
 **/
 ZaSearch.search =
-function(query, types, pagenum, orderby, isascending, app, attrs, limit, domainName, maxResults) {
+function(query, types, pagenum, orderby, isascending,  attrs, limit, domainName, maxResults) {
 	//if(!orderby) orderby = ZaAccount.A_uid;
 	if(!orderby) orderby = ZaAccount.A_name;
 	var myisascending = "1";
@@ -378,10 +449,10 @@ function(query, types, pagenum, orderby, isascending, app, attrs, limit, domainN
 	if(maxResults) {
 		params["maxResults"] = maxResults.toString();
 	}	
-	params.controller = app.getCurrentController ();
+	params.controller = ZaApp.getInstance().getCurrentController ();
 	var resp = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse ;
 	
-	var list = new ZaItemList(null, app);	
+	var list = new ZaItemList(null);	
 	list.loadFromJS(resp);
 		
 	var searchTotal = resp.searchTotal;
@@ -390,8 +461,8 @@ function(query, types, pagenum, orderby, isascending, app, attrs, limit, domainN
 }
 
 ZaSearch.searchByDomain = 
-function (domainName, types, pagenum, orderby, isascending, app, attrs, limit) {
-	return ZaSearch.search("", types, pagenum, orderby, isascending, app, attrs, limit, domainName);
+function (domainName, types, pagenum, orderby, isascending, attrs, limit) {
+	return ZaSearch.search("", types, pagenum, orderby, isascending,  attrs, limit, domainName);
 }
 
 ZaSearch.getSearchCosByNameQuery =
@@ -415,13 +486,29 @@ function(n) {
 }
 
 ZaSearch.getSearchByNameQuery =
-function(n) {
+function(n, types) {
 	if (n == null || n == "") {
 		return "";
 	} else {
 		n = String(n).replace(/([\\\\\\*\\(\\)])/g, "\\$1");
-		return ("(|(uid=*"+n+"*)(cn=*"+n+"*)(sn=*"+n+"*)(gn=*"+n+"*)(displayName=*"+n+"*)(zimbraId="+n+")" +
-                "(mail=*"+n+"*)(zimbraMailAlias=*"+n+"*)(zimbraMailDeliveryAddress=*"+n+"*)(zimbraDomainName=*"+n+"*))");
+        if (!types) types = [ZaSearch.ALIASES, ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.RESOURCES, ZaSearch.DOMAINS] ;
+        var query = [];
+        for (var i = 0 ; i < types.length; i ++) {
+            if (types[i] == "domains") {
+                query.push ("(zimbraDomainName=*"+n+"*)") ;
+            } else {
+                query.push("(mail=*"+n+"*)") ;
+                if (types[i] == "accounts" || types[i] == "resources") {
+                    query.push ("(zimbraMailDeliveryAddress=*"+n+"*)");
+                } else if (types[i] == "distributionlists" || types[i] == "aliases") {
+                    query.push("(zimbraMailAlias=*"+n+"*)(uid=*"+n+"*)")  ;
+                } 
+            }
+        }
+        return "(|" + query.join("") + ")" ;
+        /*
+        return ("(|(cn=*"+n+"*)(sn=*"+n+"*)(gn=*"+n+"*)(displayName=*"+n+"*)(zimbraId="+n+")" +
+                ")"); */
 	}
 }
 
@@ -436,17 +523,12 @@ function(n) {
 	}
 }
 
-ZaSearch.getAdancedSearchQuery =
-function (searchOptionsInstance) {
-	DBG.println (AjxDebug.DBG1, "Process the options instance to get the LDAP query string ...");
-}
-
 ZaSearch.searchByQueryHolder = 
-function (queryHolder, pagenum, orderby, isascending, app) {
+function (queryHolder, pagenum, orderby, isascending) {
 	if(queryHolder.isByDomain) {
- 		return ZaSearch.searchByDomain(queryHolder.byValAttr, queryHolder.types, pagenum, orderby, isascending, app);
+ 		return ZaSearch.searchByDomain(queryHolder.byValAttr, queryHolder.types, pagenum, orderby, isascending);
 	} else {
-		return ZaSearch.search(queryHolder.queryString, queryHolder.types, pagenum, orderby, isascending, app, queryHolder.fetchAttrs,
+		return ZaSearch.search(queryHolder.queryString, queryHolder.types, pagenum, orderby, isascending,  queryHolder.fetchAttrs,
 							   queryHolder.limit);	
 	}
 }
@@ -490,7 +572,8 @@ ZaSearch.myXModel = {
 		{id:ZaSearch.A_fAliases, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaSearch.A_fdistributionlists, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaSearch.A_fAccounts, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaSearch.A_pagenum, type:_NUMBER_}
+		{id:ZaSearch.A_pagenum, type:_NUMBER_},
+		{id:ZaSearch.A_ResultMsg, type:_STRING_}
 	]
 }
 
@@ -507,11 +590,62 @@ ZaSearchQuery = function(queryString, types, byDomain, byVal, attrsCommaSeparate
  * add the search result count information to the toolbar
  */
 ZaSearch.searchResultCountsView =
-function (opArr) {
-	opArr.push(new ZaOperation(ZaOperation.SEP));								
-	opArr.push(new ZaOperation(ZaOperation.LABEL, AjxMessageFormat.format (ZaMsg.searchResultCount, [0,0]),
-													 null, null, null, null,null,null,"ZaSearchResultCountLabel",ZaOperation.SEARCH_RESULT_COUNT));	
-	opArr.push(new ZaOperation(ZaOperation.SEP));
+function (opArr, orderArr) {
+    opArr[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);								
+	opArr[ZaOperation.LABEL] = new ZaOperation(ZaOperation.LABEL, AjxMessageFormat.format (ZaMsg.searchResultCount, [0,0]),
+													 null, null, null, null,null,null,"ZaSearchResultCountLabel",ZaOperation.SEARCH_RESULT_COUNT);	
+	opArr[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
+    for (var i =0; i < orderArr.length; i ++) {
+        if (orderArr[i] == ZaOperation.PAGE_BACK) {
+            orderArr.splice(i + 1, 0, ZaOperation.SEP, ZaOperation.LABEL,ZaOperation.SEP) ;
+            break ;
+        }
+    }
+}
+
+ZaSearch.isAccountExist = function (params) {
+    var currentController =  ZaApp.getInstance().getCurrentController() ;
+
+    var accountName = params.name ;
+    var isPopupErrorDialog = params.popupError ? true : false;
+
+    if (!accountName) {
+        currentController.popupErrorDialog(ZaMsg.error_account_missing);
+        return true ;
+    }
+
+    var params = { 	query: ["(mail=",accountName,")"].join(""),
+                    limit : 2,
+                    applyCos: 0,
+                    types: [ZaSearch.DLS,ZaSearch.ALIASES,ZaSearch.ACCOUNTS,ZaSearch.RESOURCES],
+                    controller: currentController
+                 };
+    try {
+        var resp = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse;
+    } catch (ex) {
+        currentController._handleException(ex, "ZaSearch.isAccountExist", null, false);
+    }
+    var list = new ZaItemList(null);
+    list.loadFromJS(resp);
+    if(list.size() > 0) {
+        if (isPopupErrorDialog) {
+            var acc = list.getArray()[0];
+            if(acc.type==ZaItem.ALIAS) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_aliasWithThisNameExists);
+            } else if (acc.type==ZaItem.RESOURCE) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_resourceWithThisNameExists);
+            } else if (acc.type==ZaItem.DL) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_dlWithThisNameExists);
+            } else {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_accountWithThisNameExists);
+            }
+        }
+
+    }else {
+        return false ;
+    }
+
+    return true;
 }
 
 /** Never use this call, always use CountAccountRequest
@@ -602,11 +736,11 @@ function () {
 	if (! currentSavedSearches){//load the predefined searches
 		if (AjxEnv.hasFirebug) console.log("Load the predefined saved searches ...") ;
 		var savedSearchArr = [] ;
-		if (!ZaSettings.isDomainAdmin) { //admin only searches
+		//if (!ZaSettings.isDomainAdmin) { //admin only searches
 			for (var m=0; m < ZaSearch.getPredefinedSavedSearchesForAdminOnly().length; m++){
 				savedSearchArr.push (ZaSearch.getPredefinedSavedSearchesForAdminOnly()[m]) ;
 			}
-		}
+		//}
 		
 		for (var n=0; n < ZaSearch.getPredefinedSavedSearches().length; n ++) {
 			savedSearchArr.push (ZaSearch.getPredefinedSavedSearches()[n]) ;

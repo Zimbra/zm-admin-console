@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -22,9 +20,9 @@
 * @param app
 * @author Greg Solovyev
 **/
-ZaHelpView = function(parent, app) {
+ZaHelpView = function(parent) {
 	if (arguments.length == 0) return;
-	ZaTabView.call(this, parent, app, "ZaHelpView");
+	ZaTabView.call(this, parent,"ZaHelpView");
 	this.setScrollStyle(Dwt.SCROLL);
 	this.initForm(new Object(), this.getMyXForm())
 //	this._createHTML();
@@ -65,11 +63,13 @@ function (xModelMetaData, xFormMetaData) {
 	this._localXForm.draw();
 	// This is specifically for the dwt button. If the instance is null, which here it is,
 	// dwt widgets don't get inserted into the xform, until you manually call refresh().
-	this._localXForm.refresh();
-	this._drawn = true;
+//	this._localXForm.refresh();
+    //since 6.0, we use setInstance to force the item to got inserted to xform. An xform bug???
+    this._localXForm.setInstance({}) ;
+    this._drawn = true;                                    
 }
 
-ZaHelpView.prototype.showAboutDialog = function () {
+ZaHelpView.prototype.showAboutDialog = function () {                  
     var appCtrl = this._appCtxt.getAppController() ;
     if (!appCtrl.aboutDialog) {
         appCtrl.aboutDialog = new ZaAboutDialog(this.shell,null,ZaMsg.about_title);
@@ -175,7 +175,7 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 			},
         {type: _SPACER_, height: 10 },    
         {type:_GROUP_, colSpan:"*", items: [
-                {type:_DWT_BUTTON_, label:ZaMsg.About_Button_Label,
+                {type:_DWT_BUTTON_, id: "about_button", label:ZaMsg.About_Button_Label,
                     onActivate:"this.getFormController().showAboutDialog()", width:"125px"}
             ]
         }

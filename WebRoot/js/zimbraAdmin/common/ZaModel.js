@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -30,6 +28,12 @@ ZaModel.getBooleanChoices1 = function () {
     return [{value:true, label:ZaMsg.Yes}, {value:false, label:ZaMsg.No}, {value:null, label:ZaMsg.No}];    
 }
 ZaModel.BOOLEAN_CHOICES1= ZaModel.getBooleanChoices1 ;
+
+ZaModel.getBooleanChoices2 = function () {
+    return [{value:"1", label:ZaMsg.Yes}, {value:"0", label:ZaMsg.No}, {value:null, label:ZaMsg.No}];
+}
+ZaModel.BOOLEAN_CHOICES2= ZaModel.getBooleanChoices2 ;
+
 
 ZaModel.FONT_SIZE_CHOICES = [
 	{value:"8pt", label: "8pt"},
@@ -103,6 +107,7 @@ ZaModel.prototype.removeChangeListener =
 function(listener) {
 	return this._evtMgr.removeListener(ZaEvent.L_MODIFY, listener);    	
 }
+
 
 ZaModel.setUnrecoganizedChoiceValue = function (v, choices) {
 	var new_v = ZaMsg.VALUE_UNRECOGNIZED;

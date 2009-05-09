@@ -1,8 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
- * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -11,7 +10,6 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -75,7 +73,7 @@ MailQuota2_XModelItem.prototype.getter = "getValue";
 
 MailQuota2_XModelItem.prototype.getValue = function(instance, current, ref) {
 	var value = this.getLocalValue(instance, current, ref);
-	if (value == null && ZaSettings.COSES_ENABLED) value = this.getSuperValue(instance, current, ref);
+	if (value == null) value = this.getSuperValue(instance, current, ref);
 	if(value <=0) 
 		value = ZaMsg.Unlimited;
 	return value;
@@ -85,7 +83,7 @@ MailQuota2_XModelItem.prototype.getSuperValue = function(ins, current, ref) {
 	if (!ins) { return null; }
 	var _ref  = ref  ? ref.replace("/", ".") : this.ref.replace("/", ".");
 //	var _ref = this.ref.replace("/", ".");
-	var value = (eval("ins.cos." + _ref) != null) ? Number(eval("ins.cos." + _ref) / 1048576).toFixed(0) : 0;
+	var value = (eval("ins._defaultValues." + _ref) != null) ? Number(eval("ins._defaultValues." + _ref) / 1048576).toFixed(0) : 0;
 	return value;
 }
 MailQuota2_XModelItem.prototype.getLocalValue = function(ins, current, ref) {
