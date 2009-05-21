@@ -829,7 +829,7 @@ function(tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController() ,
+		controller : ZaApp.getInstance().getCurrentController() ,
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -893,7 +893,7 @@ function(tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -907,7 +907,7 @@ ZaDomain.prototype.setStatus = function (newStatus) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN_STATUS
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainStatusResponse;	
@@ -946,7 +946,7 @@ function(mods,overWriteACLs) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -980,7 +980,7 @@ function(mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_DOMAIN
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDomainResponse;	
@@ -1130,7 +1130,7 @@ ZaDomain.prototype.parseNotebookFolderAcls = function (resp) {
 			
 		}
 	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaDomain.prototype.parseNotebookFolderAcls", null, false);	
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDomain.prototype.parseNotebookFolderAcls", null, false);
 	}
 }
 /**
@@ -1173,7 +1173,7 @@ function(callback) {
 		params.callback = callback;
 	}
 	var reqMgrParams = {
-		controller : this._app.getCurrentController(),
+		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_DELETE_DOMAIN
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);	
@@ -1258,7 +1258,7 @@ function(by, val, withConfig) {
 	params.soapDoc = soapDoc;	
 	
 	var reqMgrParams = {
-		controller : (this._app ? this._app.getCurrentController() : null),
+		controller : (ZaApp.getInstance() ? ZaApp.getInstance().getCurrentController() : null),
 		busyMsg : ZaMsg.BUSY_GET_DOMAIN
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDomainResponse;
@@ -1280,16 +1280,16 @@ function(by, val, withConfig) {
 		try {
 			this.parseNotebookFolderAcls(getFolderCommand.invoke(params));
 		} catch (ex) {
-			if(this._app)
-				this._app.getCurrentController()._handleException(ex, "ZaDomain.loadMethod", null, false);
+			if(ZaApp.getInstance())
+				ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDomain.loadMethod", null, false);
 		}
 	}
 	
 	if(!AjxUtil.isEmpty(this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets]) && (typeof this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] == "string")) {
 		this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets] = [this.attrs[ZaDomain.A_zimbraZimletDomainAvailableZimlets]];
 	}
-	if(this._app)
-		this.cos = this._app.getGlobalConfig();	
+	if(ZaApp.getInstance())
+		this.cos = ZaApp.getInstance().getGlobalConfig();
 }
 ZaItem.loadMethods["ZaDomain"].push(ZaDomain.loadMethod);
 
@@ -1323,7 +1323,7 @@ function(obj, callback) {
 		params.callback = callback;
 	}
 	var reqMgrParams = {
-		controller : (this._app ? this._app.getCurrentController() : null),
+		controller : (ZaApp.getInstance() ? ZaApp.getInstance().getCurrentController() : null),
 		busyMsg : ZaMsg.BUSY_CHECKING_MX
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -1584,14 +1584,14 @@ ZaDomain.prototype.getAccountCountsByCoses = function () {
         params.soapDoc = soapDoc;
 
         var reqMgrParams = {
-            controller : this._app.getCurrentController(),
+            controller : ZaApp.getInstance().getCurrentController(),
             busyMsg : ZaMsg.BUSY_COUNT_ACCOUNTS
         }
         var resp = ZaRequestMgr.invoke(params, reqMgrParams);
         var accountCountsByCoses = resp.Body.CountAccountResponse.cos ;
         return accountCountsByCoses ;
     }catch (ex) {
-        this._app.getCurrentController().popupErrorDialog(
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(
                 AjxMessageFormat.format(ZaMsg.ERROR_GET_USED_ACCOUNTS, [this.name]), ex);
     }
 }
@@ -1628,7 +1628,7 @@ function (cosName, refresh) {
 ZaDomain.prototype.getMaxAccounts = function (cosName) {
     if (! this [ZaDomain.A2_account_limit] )  this[ZaDomain.A2_account_limit] = {} ;
 
-    //var cosName = ZaCos.getCosById (cosId, this._app).name ;
+    //var cosName = ZaCos.getCosById (cosId, ZaApp.getInstance()).name ;
     if (!this[ZaDomain.A2_account_limit][cosName]) this[ZaDomain.A2_account_limit][cosName] = {} ;
 
     if (! this [ZaDomain.A2_account_limit][cosName].max ) {
@@ -1636,9 +1636,9 @@ ZaDomain.prototype.getMaxAccounts = function (cosName) {
         var cosMaxAccounts = this.attrs[ZaDomain.A_zimbraDomainCOSMaxAccounts];
         for (var i=0; i < cosMaxAccounts.length; i ++) {
             var val = cosMaxAccounts[i].split(":") ;
-            var cos = ZaCos.getCosById (val[0], this._app) ;
+            var cos = ZaCos.getCosById (val[0], ZaApp.getInstance()) ;
             if (cos == null) {
-                    this._app.getCurrentController.popupErrorDialog(
+                    ZaApp.getInstance().getCurrentController.popupErrorDialog(
                         AjxMessageFormat.format(ZaMsg.ERROR_INVALID_ACCOUNT_TYPE, [val[0]]));
                 return ;
             }
@@ -1653,7 +1653,7 @@ ZaDomain.prototype.getMaxAccounts = function (cosName) {
 }
 
 ZaDomain.prototype.getAvailableAccounts = function (cosName, refresh) {
-    //var cosName = ZaCos.getCosById (cosId, this._app).name ;
+    //var cosName = ZaCos.getCosById (cosId, ZaApp.getInstance()).name ;
     if (!this[ZaDomain.A2_account_limit][cosName]) this[ZaDomain.A2_account_limit][cosName] = {} ;
     if (! this [ZaDomain.A2_account_limit][cosName].available
             || refresh ) {
