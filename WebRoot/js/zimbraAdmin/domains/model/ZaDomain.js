@@ -1655,13 +1655,13 @@ ZaDomain.prototype.getMaxAccounts = function (cosName) {
 ZaDomain.prototype.getAvailableAccounts = function (cosName, refresh) {
     //var cosName = ZaCos.getCosById (cosId, ZaApp.getInstance()).name ;
     if (!this[ZaDomain.A2_account_limit][cosName]) this[ZaDomain.A2_account_limit][cosName] = {} ;
-    if (! this [ZaDomain.A2_account_limit][cosName].available
-            || refresh ) {
+//    if (! this [ZaDomain.A2_account_limit][cosName].available
+//           || refresh ) {
         //retrieve the used accounts
         var used = this.getUsedAccounts (cosName, refresh);
         var max = this.getMaxAccounts (cosName) ;
         this [ZaDomain.A2_account_limit][cosName].available = max - used ;
-    }
+//    }
 
     return this[ZaDomain.A2_account_limit][cosName].available;
 }
