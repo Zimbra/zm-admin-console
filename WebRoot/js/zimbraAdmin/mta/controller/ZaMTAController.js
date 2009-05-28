@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -22,8 +24,8 @@
 * @author Greg Solovyev
 **/
 
-ZaMTAController = function(appCtxt, container) {
-	ZaXFormViewController.call(this, appCtxt, container,"ZaMTAController");
+ZaMTAController = function(appCtxt, container,app) {
+	ZaXFormViewController.call(this, appCtxt, container,app,"ZaMTAController");
 	this._UICreated = false;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/monitoring_zimbra_mta_mail_queues.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 	this._toolbarOperations = new Array();
@@ -36,7 +38,6 @@ ZaMTAController.prototype.constructor = ZaMTAController;
 
 ZaController.initToolbarMethods["ZaMTAController"] = new Array();
 ZaController.setViewMethods["ZaMTAController"] = new Array();
-ZaController.changeActionsStateMethods["ZaMTAController"] = new Array();
 /**
 *	@method show
 *	@param entry - isntance of ZaServer class
@@ -59,8 +60,8 @@ function(entry) {
 	if(!this._UICreated) {
 		this._createUI();
 	} 
-	//ZaApp.getInstance().pushView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW);
-	ZaApp.getInstance().pushView(this.getContentViewId());
+	//this._app.pushView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW);
+	this._app.pushView(this.getContentViewId());
 	this._view.setDirty(false);
 	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
 	this._currentObject = entry;
@@ -77,12 +78,10 @@ ZaController.setViewMethods["ZaMTAController"].push(ZaMTAController.setViewMetho
 **/
 ZaMTAController.initToolbarMethod = 
 function () {
-	//this._toolbarOperations[ZaOperation.LABEL]=new ZaOperation(ZaOperation.LABEL,ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
-//	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
-	this._toolbarOrder.push(ZaOperation.FLUSH);
-	this._toolbarOrder.push(ZaOperation.CLOSE);
-	this._toolbarOperations[ZaOperation.FLUSH]=new ZaOperation(ZaOperation.FLUSH,ZaMsg.TBB_FlushQs, ZaMsg.TBB_TBB_FlushQs_tt, "FlushAllQueues", "FlushAllQueues", new AjxListener(this, this.flushListener));	
-	this._toolbarOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.SERTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));    	
+	//this._toolbarOperations.push(new ZaOperation(ZaOperation.LABEL, ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
+//	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.FLUSH, ZaMsg.TBB_FlushQs, ZaMsg.TBB_TBB_FlushQs_tt, "FlushAllQueues", "FlushAllQueues", new AjxListener(this, this.flushListener)));	
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.SERTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
 }
 ZaController.initToolbarMethods["ZaMTAController"].push(ZaMTAController.initToolbarMethod);
 
@@ -91,36 +90,34 @@ ZaController.initToolbarMethods["ZaMTAController"].push(ZaMTAController.initTool
 **/
 ZaMTAController.prototype._createUI =
 function () {
-	this._contentView = this._view = new this.tabConstructor(this._container);
+	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 
 	this._initToolbar();
 	//always add Help button at the end of the toolbar
-	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
-	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
-	this._toolbarOrder.push(ZaOperation.NONE);
-	this._toolbarOrder.push(ZaOperation.HELP);								
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);		
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));							
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);		
 	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-    //ZaApp.getInstance().createView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW, elements);
+    //this._app.createView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW, elements);
     var tabParams = {
 			openInNewTab: true,
 			tabId: this.getContentViewId()
 		}
-	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	this._app.createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
-	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
+	this._app._controllers[this.getContentViewId ()] = this ;
 }
 
 
 ZaMTAController.prototype.flushListener = function () {
-	//ZaApp.getInstance().dialogs["confirmMessageDialog"] = ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);					
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_FLUSH_QUEUES,  DwtMessageDialog.WARNING_STYLE);
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.flushQueues, this);		
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.closeCnfrmDlg, this, null);				
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();
+	//this._app.dialogs["confirmMessageDialog"] = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);					
+	this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_FLUSH_QUEUES,  DwtMessageDialog.WARNING_STYLE);
+	this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.flushQueues, this);		
+	this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.closeCnfrmDlg, this, null);				
+	this._app.dialogs["confirmMessageDialog"].popup();
 }
 
 ZaMTAController.prototype.flushQueues = function () {
@@ -138,7 +135,7 @@ ZaMTAController.prototype.flushQueues = function () {
 **/
 ZaMTAController.prototype.handleMTAChange =
 function (ev) {
-    if(ev && this._view && (this._view.__internalId==ZaApp.getInstance().getAppViewMgr().getCurrentView())) {
+    if(ev && this._view && (this._view.__internalId==this._app.getAppViewMgr().getCurrentView())) {
         if(ev.getDetail("obj") && (ev.getDetail("obj") instanceof ZaMTA) ) {
             if(this._currentObject && this._currentObject[ZaItem.A_zimbraId] == ev.getDetail("obj")[ZaItem.A_zimbraId]) {
                 this._currentObject = ev.getDetail("obj");

@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -106,51 +108,3 @@ function (date, useUTC) {
 	return s.substring(0,8) + s.substring(9) ;
 }
 
-ZaUtil.compareObjects = function(obj1, obj2) {
-	if(obj1.id==obj2.id)
-		return 0;
-	if (obj1.name > obj2.name)
-		return 1;
-	if (obj1.name < obj2.name)
-		return -1;	
-}
-
-ZaUtil.deepCloneObject = function (obj) {
-    var newObj = {};
-    if (obj) {
-        for (var key in obj) {
-            var v = obj [key] ;
-            if (v instanceof Array || v instanceof Object){
-                newObj [key] = ZaUtil.deepCloneObject (v) ;
-            }  else {
-                newObj [key] = v ;
-            }
-        }
-
-    }else {
-        return null ;
-    }
-
-    return newObj ;
-}
-
-/**
- * combine the object array property values
- *
- * an example:
- * var objArr =
- * [
- *      {name: "abc"},
- *      {name:"efg}
- * ]
- *
- * ZaUtil.join(objArr, "name", ":") => "abc:efg" 
- */
-ZaUtil.join = function (objArray, key, delimiter) {
-    if (objArray == null) return "" ;
-    var strArr = [] ;
-    for (var i=0; i < objArray.length; i ++) {
-        strArr.push (objArray[i][key]) ;
-    }
-    return strArr.join(delimiter) ;
-}
