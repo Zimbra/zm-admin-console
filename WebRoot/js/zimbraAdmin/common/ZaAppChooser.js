@@ -1,5 +1,6 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
  * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -79,7 +81,7 @@ ZaAppChooser.IMAGE[ZaAppChooser.B_ADDRESSES]	= "Account";
 ZaAppChooser.IMAGE[ZaAppChooser.B_STATUS]	= "Status";
 ZaAppChooser.IMAGE[ZaAppChooser.B_STATS]	= "Statistics";
 ZaAppChooser.IMAGE[ZaAppChooser.B_ACCOUNTS]	= "Account";
-ZaAppChooser.IMAGE[ZaAppChooser.B_DISTRIBUTION_LISTS]	= "DistributionList";
+ZaAppChooser.IMAGE[ZaAppChooser.B_DISTRIBUTION_LISTS]	= "Group";
 ZaAppChooser.IMAGE[ZaAppChooser.B_COSES]	= "COS";
 ZaAppChooser.IMAGE[ZaAppChooser.B_DOMAINS]	= "Domain";
 ZaAppChooser.IMAGE[ZaAppChooser.B_SERVERS]	= "Server";

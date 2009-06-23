@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -18,9 +20,10 @@
  * @author Charles Cao
  * resource controller 
  */  
-ZaResourceController = function(appCtxt, container) {
-	ZaXFormViewController.call(this, appCtxt, container,"ZaResourceController");
+ZaResourceController = function(appCtxt, container, app) {
+	ZaXFormViewController.call(this, appCtxt, container, app, "ZaResourceController");
 	this._UICreated = false;
+	this._toolbarOperations = new Array();
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/managing_resource.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 	this.deleteMsg = ZaMsg.Q_DELETE_RES;
 	this.objType = ZaEvent.S_ACCOUNT;	
@@ -32,7 +35,6 @@ ZaResourceController.prototype.constructor = ZaResourceController;
 
 ZaController.initToolbarMethods["ZaResourceController"] = new Array();
 ZaController.setViewMethods["ZaResourceController"] = [];
-ZaController.changeActionsStateMethods["ZaResourceController"] = new Array();
 
 ZaResourceController.prototype.toString = function () {
 	return "ZaResourceController";
@@ -59,18 +61,14 @@ function(entry, openInNewTab, skipRefresh) {
 	this._setView(entry, openInNewTab, skipRefresh);
 }
 
-ZaResourceController.changeActionsStateMethod = function () {
-	if(this._toolbarOperations[ZaOperation.SAVE])
-		this._toolbarOperations[ZaOperation.SAVE].enabled = false;
-}
-ZaController.changeActionsStateMethods["ZaResourceController"].push(ZaResourceController.changeActionsStateMethod);
-
 ZaResourceController.setViewMethod =
 function (entry)	{
-	this._createUI(entry);
+    if (!this._UICreated) {
+		this._createUI();
+	} 	
 	try {
-		//ZaApp.getInstance().pushView(ZaZimbraAdmin._RESOURCE_VIEW);
-		ZaApp.getInstance().pushView(this.getContentViewId());
+		//this._app.pushView(ZaZimbraAdmin._RESOURCE_VIEW);
+		this._app.pushView(this.getContentViewId());
 		if(!entry.id) {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
 		} else {
@@ -93,32 +91,22 @@ ZaController.setViewMethods["ZaResourceController"].push(ZaResourceController.se
 
 ZaResourceController.initToolbarMethod =
 function () {
-	this._toolbarOrder.push(ZaOperation.SAVE);
-	this._toolbarOrder.push(ZaOperation.CLOSE);
-	this._toolbarOrder.push(ZaOperation.SEP);
-	this._toolbarOrder.push(ZaOperation.NEW);
-	this._toolbarOrder.push(ZaOperation.DELETE);
-		
-   	this._toolbarOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-   	this._toolbarOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));    	
-   	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
-	this._toolbarOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.RESTBB_New_tt, "Resource", "ResourceDis", new AjxListener(this, this.newButtonListener));   			    	
-   	this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.RESTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));    	    	
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener)));
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener)));    	
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.SEP));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.RESTBB_New_tt, "Resource", "ResourceDis", new AjxListener(this, this.newButtonListener)));   			    	
+   	this._toolbarOperations.push(new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.RESTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener)));    	    	
 }
 ZaController.initToolbarMethods["ZaResourceController"].push(ZaResourceController.initToolbarMethod);
 
 ZaResourceController.prototype.newResource = function () {
 	try {
-		var newResource = new ZaResource();
-		//newResource.getAttrs = {all:true};
-		//newResource._defaultValues = {attrs:{}};	
-		newResource.loadNewObjectDefaults("name", ZaSettings.myDomainName);	
-		
-		if(!ZaApp.getInstance().dialogs["newResourceWizard"])
-			ZaApp.getInstance().dialogs["newResourceWizard"]= new ZaNewResourceXWizard(this._container);	
+		var newResource = new ZaResource(this._app);
+		if(!this._app.dialogs["newResourceWizard"])
+			this._app.dialogs["newResourceWizard"]= new ZaNewResourceXWizard(this._container, this._app);	
 
-		ZaApp.getInstance().dialogs["newResourceWizard"].setObject(newResource);
-		ZaApp.getInstance().dialogs["newResourceWizard"].popup();
+		this._app.dialogs["newResourceWizard"].setObject(newResource);
+		this._app.dialogs["newResourceWizard"].popup();
 	} catch (ex) {
 		this._handleException(ex, "ZaResourceController.prototype.newResource", null, false);
 	}
@@ -134,11 +122,11 @@ function(ev) {
 		args["obj"] = this;
 		args["func"] = ZaResourceController.prototype.newResource;
 		//ask if the user wants to save changes		
-		//ZaApp.getInstance().dialogs["confirmMessageDialog"] = ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON]);								
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();
+		//this._app.dialogs["confirmMessageDialog"] = this._app.dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON], this._app);								
+		this._app.dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
+		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
+		this._app.dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
+		this._app.dialogs["confirmMessageDialog"].popup();
 	} else {
 		this.newResource();
 	}	
@@ -146,32 +134,31 @@ function(ev) {
 
 //private and protected methods
 ZaResourceController.prototype._createUI = 
-function (entry) {
+function () {
 	//create accounts list view
 	// create the menu operations/listeners first	
-	this._contentView = this._view = new this.tabConstructor(this._container, entry);
+	this._contentView = this._view = new this.tabConstructor(this._container, this._app);
 
     this._initToolbar();
 	//always add Help button at the end of the toolbar    
-	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
-	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
-	this._toolbarOrder.push(ZaOperation.NONE);
-	this._toolbarOrder.push(ZaOperation.HELP);
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.NONE));
+	this._toolbarOperations.push(new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener)));		
+
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-	//ZaApp.getInstance().createView(ZaZimbraAdmin._RESOURCE_VIEW, elements);
+	//this._app.createView(ZaZimbraAdmin._RESOURCE_VIEW, elements);
 	var tabParams = {
 			openInNewTab: true,
 			tabId: this.getContentViewId()
 		}
-	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	this._app.createView(this.getContentViewId(), elements, tabParams) ;
 	
-	this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);			
+	this._removeConfirmMessageDialog = new ZaMsgDialog(this._app.getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], this._app);			
 	this._UICreated = true;
-	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
+	this._app._controllers[this.getContentViewId ()] = this ;
 }
 
 
@@ -231,7 +218,7 @@ function () {
 	if(this._currentObject && tmpObj.name != this._currentObject.name) {
 		//var emailRegEx = /^([a-zA-Z0-9_\-])+((\.)?([a-zA-Z0-9_\-])+)*@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 		/*if(!AjxUtil.EMAIL_SHORT_RE.test(tmpObj.name) ) {*/
-		if(!AjxUtil.isValidEmailNonReg(tmpObj.name)) {
+		if(tmpObj.name.lastIndexOf ("@")!=tmpObj.name.indexOf ("@")) {
 			//show error msg
 			this._errorDialog.setMessage(ZaMsg.ERROR_ACCOUNT_NAME_INVALID, null, DwtMessageDialog.CRITICAL_STYLE, null);
 			this._errorDialog.popup();		
@@ -242,10 +229,10 @@ function () {
 
 	var mods = new Object();
 	
-	if(!ZaResource.checkValues(tmpObj))
+	if(!ZaResource.checkValues(tmpObj, this._app))
 		return false;
 		
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNTS_CHPWD] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+	if(ZaSettings.ACCOUNTS_CHPWD_ENABLED) {
 		//change password if new password is provided
 		if(tmpObj.attrs[ZaResource.A_password]!=null && tmpObj[ZaResource.A2_confirmPassword]!=null && tmpObj.attrs[ZaResource.A_password].length > 0) {
 			try {
@@ -282,8 +269,7 @@ function () {
 	
 	//transfer the fields from the tmpObj to the _currentObject
 	for (var a in tmpObj.attrs) {
-		if(a == ZaResource.A_password || a == ZaItem.A_objectClass ||  a==ZaResource.A_mail
-                || a == ZaItem.A_zimbraId || a == ZaItem.A_zimbraACE) {
+		if(a == ZaResource.A_password || a == ZaItem.A_objectClass ||  a==ZaResource.A_mail || a == ZaItem.A_zimbraId) {
 			continue;
 		}	
 		//check if the value has been modified
