@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -19,17 +21,16 @@
 * @param constructor {Function) a reference to a constructor function which is called to create a single instance of an object contained in the list.
 * @param app {ZaApp} {@link ZaApp} a reference to an instance of ZaApp. This reference is passed to constructor when a ZaItem object is constructed.
 **/
-ZaItemList = function(constructor) {
+ZaItemList = function(constructor, app) {
 
-	//if (arguments.length == 0) return;
+	if (arguments.length == 0) return;
 	ZaModel.call(this, true);
-	if(constructor)
-		this._constructor = constructor;
 
-	this.loadedRights = false;
+	this._constructor = constructor;
+	this._app = app;
+	
 	this._vector = new ZaItemVector();
 	this._idHash = new Object();
-	this._targetIdHash = new Object();
 }
 
 ZaItemList.prototype = new ZaModel;
@@ -43,13 +44,9 @@ function() {
 ZaItemList.prototype.replace =
 function (item, index) {
 	this._vector.replace(item, index);
-	if (item.id) {
+if (item.id) {
 		this._idHash[item.id] = item;
-	}
-	if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId]) {
-		this._targetIdHash[item.attrs[ZaAlias.A_AliasTargetId]] = item;
-	}
-		
+	}	
 }
 
 ZaItemList.prototype.replaceItem =
@@ -57,10 +54,6 @@ function (item) {
 	if (item.id) {
 		this._idHash[item.id] = item;
 	}
-	if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId]) {
-		this._targetIdHash[item.attrs[ZaAlias.A_AliasTargetId]] = item;
-	}
-	
 }
 
 
@@ -76,9 +69,6 @@ function(item, index) {
 	if (item.id) {
 		this._idHash[item.id] = item;
 	}
-	if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId]) {
-		this._targetIdHash[item.attrs[ZaAlias.A_AliasTargetId]] = item;
-	}
 }
 
 /**
@@ -91,11 +81,6 @@ function(item) {
 	this._vector.remove(item);
 	if (item.id)
 		delete this._idHash[item.id];
-		
-	if(item.attrs && item.attrs[ZaAlias.A_AliasTargetId] && this._targetIdHash[item.attrs[ZaAlias.A_AliasTargetId]]) {
-		 delete this._targetIdHash[item.attrs[ZaAlias.A_AliasTargetId]];
-	}
-		
 }
 
 /**
@@ -137,8 +122,7 @@ function() {
 */
 ZaItemList.prototype.getItemById =
 function(id) {
-	return this._idHash[id] ? this._idHash[id] : 
-		this._targetIdHash[id] ? this._targetIdHash[id] : null;
+	return this._idHash[id];
 }
 
 /**
@@ -150,12 +134,16 @@ function() {
 	for (var id in this._idHash)
 		this._idHash[id] = null;
 	this._idHash = new Object();
-
-	for (var id in this._targetIdHash)
-		this._targetIdHash[id] = null;
-	
-	this._targetIdHash = null;
 }
+/*
+Sorting is done on the server
+ZaItemList.prototype.sortByName =
+function(descending) {
+	if (descending)
+		this._vector.getArray().sort(ZaItem.compareNamesDesc);
+	else 
+		this._vector.getArray().sort(ZaItem.compareNamesAsc);	
+}*/
 
 /**
 * Populates the list with elements created from the response to a SOAP command. Each
@@ -170,9 +158,9 @@ function(respNode) {
 	for (var i = 0; i < nodes.length; i++) {
 		var item;
 		if(this._constructor) {
-			item = new this._constructor();
+			item = new this._constructor(this._app);
 		} else {
-			item = ZaItem.getFromType(nodes[i].nodeName);
+			item = ZaItem.getFromType(nodes[i].nodeName, this._app);
 		}
 		item.type = nodes[i].nodeName;
 		item.initFromDom(nodes[i]);
@@ -197,9 +185,9 @@ function(resp) {
 			for(var i = 0; i < len; i++) {
 				var item;
 				if(this._constructor) {
-					item = new this._constructor();
+					item = new this._constructor(this._app);
 				} else {
-					item = ZaItem.getFromType(ix);
+					item = ZaItem.getFromType(ix, this._app);
 				}
 				item.type = ix;	
 				item.initFromJS(arr[i]);
@@ -223,66 +211,6 @@ function(resp) {
 	}
 }
 
-ZaItemList.prototype.loadEffectiveRights = function() {
-	var arr = this.getArray();
-	var cnt = arr.length;
-	var soapDoc, params, resp;
-	//batch the rest of the requests
-	soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
-	soapDoc.setMethodAttribute("onerror", "continue");	
-	
-	for(var i=0; i < cnt; i++) {
-		if(arr[i].id && arr[i].loadEffectiveRights && arr[i].type &&
-			(arr[i].type == ZaItem.ACCOUNT || arr[i].type == ZaItem.DL || arr[i].type == ZaItem.RESOURCE
-			|| arr[i].type == ZaItem.DOMAIN || arr[i].type == ZaItem.COS || arr[i].type == ZaItem.ZIMLET
-			|| arr[i].type == ZaItem.SERVER)) {
-			var getEffRightsDoc = soapDoc.set("GetEffectiveRightsRequest", null, null, ZaZimbraAdmin.URN);
-			var elTarget = soapDoc.set("target", arr[i].id, getEffRightsDoc);
-			elTarget.setAttribute("by","id");
-			elTarget.setAttribute("type", arr[i].type);
-			var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId, getEffRightsDoc);
-			elGrantee.setAttribute("by","id");			
-		} else if (arr[i].type == ZaItem.ALIAS && arr[i].attrs[ZaAlias.A_AliasTargetId]) {
-			var getEffRightsDoc = soapDoc.set("GetEffectiveRightsRequest", null, null, ZaZimbraAdmin.URN);
-			var elTarget = soapDoc.set("target", arr[i].attrs[ZaAlias.A_AliasTargetId], getEffRightsDoc);
-			elTarget.setAttribute("by","id");
-			elTarget.setAttribute("type", arr[i].attrs[ZaAlias.A_targetType]);
-			var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId, getEffRightsDoc);
-			elGrantee.setAttribute("by","id");						
-		}
-	}
-	params = new Object();
-	params.soapDoc = soapDoc;	
-	var reqMgrParams ={
-		controller:ZaApp.getInstance().getCurrentController(),
-		busyMsg:ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS
-	}
-	
-	var respObj = ZaRequestMgr.invoke(params, reqMgrParams);
-	if(respObj.isException && respObj.isException()) {
-		ZaApp.getInstance().getCurrentController()._handleException(respObj.getException(), "ZaItemList.prototype.loadEffectiveRights", null, false);
-	} else if(respObj.Body.BatchResponse.Fault) {
-		var fault = respObj.Body.BatchResponse.Fault;
-		if(fault instanceof Array)
-			fault = fault[0];
-		
-		if (fault) {
-			// JS response with fault
-			var ex = ZmCsfeCommand.faultToEx(fault);
-			ZaApp.getInstance().getCurrentController()._handleException(ex,"ZaItemList.prototype.loadEffectiveRights", null, false);
-		}
-	} else {
-		var batchResp = respObj.Body.BatchResponse;
-		if(batchResp.GetEffectiveRightsResponse && batchResp.GetEffectiveRightsResponse instanceof Array) {
-			var cnt2 =  batchResp.GetEffectiveRightsResponse.length;
-			for (var i=0; i < cnt2; i++) {
-				resp = batchResp.GetEffectiveRightsResponse[i];
-				this.getItemById(resp.target[0].id).initEffectiveRightsFromJS(resp);
-			}
-		}
-	}
-	this.loadedRights = true;		
-}
 /**
 * Grab the IDs out of a list of items, and return them as both a string and a hash.
 **/

@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -32,21 +34,20 @@ ZaAccountMemberOfListView.prototype.toString = function (){
 ZaAccountMemberOfListView.A_name = "name" ;
 //ZaAccountMemberOfListView.A_isgroup = "isgroup" ;
 ZaAccountMemberOfListView.A_via = "via" ;
+ZaAccountMemberOfListView._addList = [];
+ZaAccountMemberOfListView._removeList = [];
 ZaAccountMemberOfListView.SEARCH_LIMIT = 25 ;
 
 //modify the ZaAccount and ZaDistributionList model
 ZaAccountMemberOfListView.modelItems = [
 		//{id:ZaAccount.A2_isgroup, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_isgroup},
-		{id:ZaAccount.A2_directMemberList, type: _LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_directMemberList},
-		{id:ZaAccount.A2_indirectMemberList, type: _LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_indirectMemberList},
-		{id:ZaAccount.A2_nonMemberList, type: _LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_nonMemberList},
-        {id:ZaAccount.A2_nonMemberListSelected, type: _LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_nonMemberListSelected},
-        {id:ZaAccount.A2_directMemberListSelected, type: _LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_directMemberListSelected},
-        {id:ZaAccount.A2_indirectMemberListSelected, type: _LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_indirectMemberListSelected},
-        {id:ZaAccount.A2_directMemberList + "_offset", ref: ZaAccount.A2_directMemberList + "_offset", type:_NUMBER_, defaultValue: 0},
-		{id:ZaAccount.A2_nonMemberList + "_offset", ref: ZaAccount.A2_nonMemberList + "_offset", type:_NUMBER_, defaultValue: 0},
-		{id:ZaAccount.A2_directMemberList + "_more", ref: ZaAccount.A2_directMemberList + "_more", type:_NUMBER_, defaultValue: 0},
-		{id:ZaAccount.A2_nonMemberList + "_more", ref: ZaAccount.A2_nonMemberList + "_more", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_directMemberList, type: _DWT_LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_directMemberList},
+		{id:ZaAccount.A2_indirectMemberList, type: _DWT_LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_indirectMemberList},
+		{id:ZaAccount.A2_nonMemberList, type: _DWT_LIST_, ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_nonMemberList},
+		{id:ZaAccount.A2_directMemberList + "_offset", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_nonMemberList + "_offset", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_directMemberList + "_more", type:_NUMBER_, defaultValue: 0},
+		{id:ZaAccount.A2_nonMemberList + "_more", type:_NUMBER_, defaultValue: 0},
 		{id:ZaAccount.A2_showSameDomain, type: _ENUM_, choices:ZaModel.BOOLEAN_CHOICES, 
 			ref:ZaAccount.A2_memberOf + "/" + ZaAccount.A2_showSameDomain, defaultValue: "FALSE" },
 		{id:"query", type:_STRING_}
@@ -54,30 +55,6 @@ ZaAccountMemberOfListView.modelItems = [
 ZaAccount.myXModel.items = ZaAccount.myXModel.items.concat(ZaAccountMemberOfListView.modelItems);
 ZaDistributionList.myXModel.items = ZaDistributionList.myXModel.items.concat(ZaAccountMemberOfListView.modelItems);
 
-ZaAccountMemberOfListView.parseGetAccMembershipResponse =
-function(resp) {
-	var directML = [];
-	var indirectML = [];
-	var nonML = [];	
-	if (resp.dl && (resp.dl instanceof Array)){
-		var dls = resp.dl ;
-		var n = resp.dl.length ;
-		for (var i=0, d=0, m=0; m < n; m++ ){
-			if (dls[m].via && (dls[m].via.length >0)){ //indirect dl
-				indirectML[i] = { name: dls[m].name, id: dls[m].id, via: dls[m].via} ;
-				i ++ ;
-			} else{
-				directML[d] = { name: dls[m].name, id: dls[m].id } ;
-                var attrs = ZaItem.initAttrsFromJS (dls[m]) ;
-                if (attrs["zimbraIsAdminGroup"] != null) {
-                	directML[d]["zimbraIsAdminGroup"] = attrs["zimbraIsAdminGroup"] ; 
-                }
-                d ++ ;
-			}
-		}
-	}
-	return {directMemberList: directML,indirectMemberList: indirectML,nonMemberList: nonML};	
-}
 /**
  * @param app
  * @param val {account value corresponding to by}
@@ -90,7 +67,7 @@ function(resp) {
  * 					
  */
 ZaAccountMemberOfListView.getAccountMemberShip = 
-function (val, by){
+function (app, val, by){
 	var directML = [];
 	var indirectML = [];
 	var nonML = [];
@@ -104,29 +81,26 @@ function (val, by){
 		var params = new Object();
 		params.soapDoc = soapDoc;	
 		var reqMgrParams = {
-			controller: ZaApp.getInstance().getCurrentController ()
+			controller: app.getCurrentController ()
 		}
 		var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAccountMembershipResponse;
 		if (resp.dl && (resp.dl instanceof Array)){
 			var dls = resp.dl ;
 			var n = resp.dl.length ;
 			for (var i=0, d=0, m=0; m < n; m++ ){
+				//if (dls[m].isgroup) {
 				if (dls[m].via && (dls[m].via.length >0)){ //indirect dl
 					indirectML[i] = { name: dls[m].name, id: dls[m].id, via: dls[m].via} ;
 					i ++ ;
 				}else{
 					directML[d] = { name: dls[m].name, id: dls[m].id } ;
-                    var attrs = ZaItem.initAttrsFromJS (dls[m]) ;
-                    if (attrs["zimbraIsAdminGroup"] != null) {
-                        directML[d]["zimbraIsAdminGroup"] = attrs["zimbraIsAdminGroup"] ; 
-                    }
-                    d ++ ;
+					d ++ ;
 				}
 			}
 		}
+
 	}catch (ex){
-		ZaApp.getInstance().getCurrentController()._handleException(ex,
-                "ZaAccountMemberOfListView.getAccountMemberShip", null, false);
+		app.getCurrentController()._handleException(ex, "ZaAccountMemberOfListView.getAccountMemberShip", null, false);
 	}
 	
 	var memberOf = {	directMemberList: directML,
@@ -137,7 +111,7 @@ function (val, by){
 }
 
 ZaAccountMemberOfListView.getDlMemberShip = 
-function (val, by){
+function (app, val, by){
 	var directML = [];
 	var indirectML = [];
 	var nonML = [];
@@ -151,7 +125,7 @@ function (val, by){
 		var params = new Object();
 		params.soapDoc = soapDoc;	
 		var reqMgrParams = {
-			controller: ZaApp.getInstance().getCurrentController()
+			controller: app.getCurrentController()
 		}
 		var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDistributionListMembershipResponse;
 		
@@ -171,7 +145,7 @@ function (val, by){
 		}
 
 	}catch (ex){
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccountMemberOfListView.getDlMemberShip", null, false);
+		app.getCurrentController()._handleException(ex, "ZaAccountMemberOfListView.getDlMemberShip", null, false);
 	}
 	
 	var memberOf = {	directMemberList: directML,
@@ -179,27 +153,6 @@ function (val, by){
 						nonMemberList: nonML
 					};
 	return memberOf ;
-}
-
-ZaAccountMemberOfListView.cloneMemberOf = function (src) {
-    var memberOf = {};
-    for (var p in src[ZaAccount.A2_memberOf]) {
-        memberOf [p] = [] ;
-        for (var i = 0; i < src[ZaAccount.A2_memberOf][p].length; i ++) {
-            var v = src[ZaAccount.A2_memberOf][p][i] ;
-            if (v instanceof Object) {
-                var newV = {} ;
-                for (var p2 in v) {
-                    newV [p2] = v[p2] ;
-                }
-                memberOf[p].push (newV) ;
-            } else {
-                memberOf [p].push (v) ;
-            }
-        }
-    }
-
-    return memberOf;
 }
 
 ZaAccountMemberOfListView.removeAllGroups =
@@ -221,8 +174,8 @@ function (form, listArr){
 	var instance = form.getInstance();
 	var directMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
 	var indirectMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList];	
-	var nonMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_nonMemberList];		
-
+		
+	//add the removed lists to the _removedList
 	var j = -1;	
 	var dlName = null ;
 	var indirectArrFound = null;
@@ -239,7 +192,7 @@ function (form, listArr){
 				var indirectDls = indirectArrFound.join("<br />");			
 				msg = AjxMessageFormat.format (ZaMsg.Q_REMOVE_INDIRECT_GROUP, [dlName, indirectDls]);
 				
-				var confirmMessageDialog =  new ZaMsgDialog(form.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);					
+				var confirmMessageDialog =  new ZaMsgDialog(form.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], form.parent._app);					
 				
 				confirmMessageDialog.setMessage(msg,  DwtMessageDialog.WARNING_STYLE);
 				confirmMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaAccountMemberOfListView._removeConfirmedList, null ,
@@ -250,20 +203,28 @@ function (form, listArr){
 				//splice the entry in the callback method.
 				continue;
 			}			
-			directMemberList.splice(j, 1);
-            form.parent.setDirty(true);
-        }
+			directMemberList.splice(j, 1);			
+		}
+				
+		j = ZaUtil.findValueInObjArrByPropertyName(ZaAccountMemberOfListView._addList, dlName, ZaAccountMemberOfListView.A_name);
+		if (j >= 0){ //found in _addedList
+			ZaAccountMemberOfListView._addList.splice(j, 1);
+		}else{
+			ZaAccountMemberOfListView._removeList = ZaAccountMemberOfListView._removeList.concat(listArr[i]);
+			form.parent.setDirty(true);
+		}
 	}
-
-    form.getModel().setInstanceValue(instance, ZaAccount.A2_directMemberList, directMemberList) ;
-    form.getModel().setInstanceValue(instance, ZaAccount.A2_indirectMemberList, indirectMemberList) ;
-    form.getModel().setInstanceValue(instance, ZaAccount.A2_nonMemberList, nonMemberList) ;
+	
+	form.refresh();	
 };
 
 ZaAccountMemberOfListView._closeConfirmDialog =
 function (form, dialog){
 	if (dialog)
 		dialog.popdown();
+	
+	if (form) 
+		form.refresh();	
 };
 
 ZaAccountMemberOfListView._removeConfirmedList = 
@@ -271,14 +232,18 @@ function (form, dialog, directDlName, indirectDlsNameArr){
 	if (dialog) {
 		var instance = form.getInstance();
 		var directMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
-		var indirectMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList];
-        var nonMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_nonMemberList];
-        
-        var j = -1;
+		var indirectMemberList = instance[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList];	
+		var j = -1;
 		var m = -1;
 		//remove from directMemberList
 		j = ZaUtil.findValueInObjArrByPropertyName(directMemberList, directDlName, ZaAccountMemberOfListView.A_name);
 		if (j >= 0){		
+			m = ZaUtil.findValueInObjArrByPropertyName(ZaAccountMemberOfListView._addList, directDlName, ZaAccountMemberOfListView.A_name);
+			if (m >= 0){ //found in _addedList
+				ZaAccountMemberOfListView._addList.splice(m, 1);
+			}else{
+				ZaAccountMemberOfListView._removeList = ZaAccountMemberOfListView._removeList.concat(directMemberList[j]);
+			}
 			directMemberList.splice(j, 1);
 		}
 		
@@ -289,11 +254,25 @@ function (form, dialog, directDlName, indirectDlsNameArr){
 		}		
 		form.parent.setDirty(true);		
 		ZaAccountMemberOfListView._closeConfirmDialog(form, dialog);
-        form.getModel().setInstanceValue(instance, ZaAccount.A2_directMemberList, directMemberList) ;
-        form.getModel().setInstanceValue(instance, ZaAccount.A2_indirectMemberList, indirectMemberList) ;
-        form.getModel().setInstanceValue(instance, ZaAccount.A2_nonMemberList, nonMemberList) ;
-    }
+	}
 }
+
+/**
+ * find first property value match of an array element  
+ * This function is ported to the ZaUtil.findValueInObjArrByPropertyName
+ */
+ /*
+ZaAccountMemberOfListView._find =
+function (arr, value, property){
+	if (!property) property = ZaAccountMemberOfListView.A_name ;
+	   
+	for(var i=0; i<arr.length; i++) {
+		if (arr[i][property] == value){
+			return i ;
+		}
+	}	
+	return -1;
+}*/
 
 ZaAccountMemberOfListView._findIndirect  =
 function(arr, value, foundArr){
@@ -324,35 +303,20 @@ function(event, listId){
 	var form = this.getForm ();
 	var allSelections = ZaAccountMemberOfListView._getAllInList(form, listId);
 	ZaAccountMemberOfListView._addSelectedLists(form, allSelections);
-    
 };
 
 ZaAccountMemberOfListView._addSelectedLists=
 function (form, listArr){	
 	var instance = form.getInstance();
 	var memberOf = instance[ZaAccount.A2_memberOf];
-
-    //don't add the duplicated entry                                                           
-    var nonDupArr = [] ;
-    for (var i=0; i < listArr.length; i ++) {
-        var j = ZaUtil.findValueInObjArrByPropertyName(
-                instance[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList],
-                listArr[i][ZaAccountMemberOfListView.A_name], ZaAccountMemberOfListView.A_name);
-        
-        if (j >= 0) {
-            continue ;
-        } else {
-            nonDupArr.push(listArr [i]) ;
-        }
-    }
-
-
-    memberOf[ZaAccount.A2_directMemberList] = memberOf[ZaAccount.A2_directMemberList].concat(nonDupArr);
-    
+	memberOf[ZaAccount.A2_directMemberList] = memberOf[ZaAccount.A2_directMemberList].concat(listArr);
+	
+	//add the added lists to the _addList	
+	ZaAccountMemberOfListView._addList = ZaAccountMemberOfListView._addList.concat(listArr);
 	form.parent.setDirty(true);
-    form.getModel().setInstanceValue(instance, ZaAccount.A2_directMemberList, memberOf[ZaAccount.A2_directMemberList]) ;
-    form.getModel().setInstanceValue(instance, ZaAccount.A2_nonMemberList, memberOf[ZaAccount.A2_nonMemberList]) ;
-    form.getModel().setInstanceValue(instance, ZaAccount.A2_indirectMemberList, memberOf[ZaAccount.A2_indirectMemberList]) ;
+	
+	//form.setInstance(instance);
+	form.refresh();		
 };
 
 
@@ -376,7 +340,7 @@ function (form, listId){
  */
 ZaAccountMemberOfListView.shouldEnableAddRemoveButton =
 function (listId){
-	return  (ZaAccountMemberOfListView._getSelections(this.getForm(), listId).length > 0);
+	return  (ZaAccountMemberOfListView._getSelections(this, listId).length > 0);
 };
 
 /**
@@ -384,9 +348,8 @@ function (listId){
  */
 ZaAccountMemberOfListView.shouldEnableAllButton =
 function (listItemId){
-//	var list = this.getForm().getItemsById(listItemId)[0].widget.getList();
-    var list = this.getInstanceValue (listItemId) ;
-    if (list != null) return ( list.length > 0);
+	var list = this.getItemsById(listItemId)[0].widget.getList();
+	if (list != null) return ( list.size() > 0);
 	return false;
 };
 
@@ -401,82 +364,6 @@ function (listItemId){
 	var more = this.getInstance()[listItemId + "_more"] ;
 	return ((more && more > 0) ? true : false) ;		
 };
-
-ZaAccountMemberOfListView.addMemberList =
-function (tmpObj, item) {
-     try {
-        var addList = [];
-        if (tmpObj[ZaAccount.A2_memberOf] && tmpObj[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList]) {
-            var newDirectMember = tmpObj[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
-
-            //Compose the added dl list - any dl from new direct memberOf list, not in the current memberOf list
-            if (newDirectMember ) {
-                if (!newDirectMember instanceof Array) {
-                     newDirectMember = [newDirectMember] ;
-                }
-                
-                for (var i = 0; i < newDirectMember.length; i ++) {
-                    var dlName = newDirectMember[i].name ; //dl in the new direct member
-                    addList.push (newDirectMember[i]) ;
-                }
-
-                if (addList.length > 0) { //you have new membership to be added.
-                    ZaAccountMemberOfListView.addNewGroupsBySoap(item, addList);
-                }
-            }
-        }
-    }catch (ex){
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccountMemberOfListView.addMemberList: add group failed", null, false);	//try not to halt the account modification
-	}
-}
-ZaItem.createMethods["ZaAccount"].push (ZaAccountMemberOfListView.addMemberList) ;
-
-ZaAccountMemberOfListView.modifyMemberList =
-function (mods, tmpObj) {
-     try {
-        var addList = [];
-        var removeList = [] ;
-
-        var currentDirectMember = this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
-        var newDirectMember = tmpObj[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
-
-        //Compose the added dl list - any dl from new direct memberOf list, not in the current memberOf list
-        for (var i = 0; i < newDirectMember.length; i ++) {
-            var dlName = newDirectMember[i].name ; //dl in the new direct member
-            var j = ZaUtil.findValueInObjArrByPropertyName(currentDirectMember, dlName, ZaAccountMemberOfListView.A_name);
-            if (j >= 0){
-                //found in the current memberOf List, not need to add
-            }else{   //need to be added
-                addList.push (newDirectMember[i]) ;
-            }
-        }
-
-         //Compose the remove dl list - any dl in the current memberOf list not in the new direct member list, 
-         for (var m = 0; m < currentDirectMember.length; m ++) {
-             var dlName = currentDirectMember[m].name ; //dl in the current direct member
-             var j = ZaUtil.findValueInObjArrByPropertyName(newDirectMember, dlName, ZaAccountMemberOfListView.A_name);
-             if (j >= 0){
-                 //found in the new memberOf List, no need to remove
-             }else{   //need to be removed
-                 removeList.push (currentDirectMember[m]) ;
-             }
-         }
-
-
-        if (addList.length > 0) { //you have new membership to be added.
-            ZaAccountMemberOfListView.addNewGroupsBySoap(this, addList);
-        }
-
-         if (removeList.length >0){//you have membership to be removed
-			ZaAccountMemberOfListView.removeGroupsBySoap(this, removeList);
-		}
-
-    }catch (ex){
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaAccountMemberOfListView.modifyMemberList: add group failed", null, false);	//try not to halt the account modification
-	}
-}
-ZaItem.modifyMethods["ZaAccount"].push (ZaAccountMemberOfListView.modifyMemberList) ;
-ZaItem.modifyMethods["ZaDistributionList"].push(ZaAccountMemberOfListView.modifyMemberList);
 
 /*
  * Add the current account/dl to the new groups/dls 
@@ -527,7 +414,7 @@ function (){
 
 ZaAccountMemberOfListView.backButtonHndlr = 
 function (event, listItemId){
-	var currentOffset = this.getInstanceValue( listItemId + "_offset") ;
+	var currentOffset = this.getInstanceValue("/" + listItemId + "_offset") ;
 	if (currentOffset == null) currentOffset = 0;
 	var nextOffset = 0;
 	if (listItemId == ZaAccount.A2_nonMemberList) {		
@@ -535,15 +422,16 @@ function (event, listItemId){
 		ZaAccountMemberOfListView.doSearch(this, nextOffset) ;
 	}else{ //directMemmberList // if (listItemId == ZaAccount.A2_directMemberList)
 		nextOffset = currentOffset - ZaAccountMemberOfListView.SEARCH_LIMIT ;
-		this.setInstanceValue(nextOffset, listItemId + "_offset" );
-		this.setInstanceValue(1, listItemId + "_more");	
+		this.setInstanceValue(nextOffset, "/" + listItemId + "_offset" );
+		this.setInstanceValue(1, "/" + listItemId + "_more");	
+		this.getForm().refresh() ;
 	}
 };
 
 ZaAccountMemberOfListView.fwdButtonHndlr =
 function(event, listItemId){
 	var instance = this.getInstance();
-	var currentOffset = this.getInstanceValue(listItemId + "_offset") ;	
+	var currentOffset = this.getInstanceValue("/" + listItemId + "_offset") ;	
 	if (currentOffset == null) currentOffset = 0;
 	var nextOffset = 0;
 		
@@ -556,29 +444,25 @@ function(event, listItemId){
 		if ((nextOffset + ZaAccountMemberOfListView.SEARCH_LIMIT) 
 				< instance[ZaAccount.A2_memberOf][listItemId].length){
 			
-			this.setInstanceValue(1, listItemId + "_more");
+			this.setInstanceValue(1, "/" + listItemId + "_more");
 		}else{
-			this.setInstanceValue(0,  listItemId + "_more");
+			this.setInstanceValue(0, "/" + listItemId + "_more");
 		}
-		this.setInstanceValue(nextOffset,  listItemId + "_offset");
-        var directMemberOfList = instance [ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList] ;
-        var indirectMemberOfList = instance [ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList] ; 
-        this.setInstanceValue( directMemberOfList , ZaAccount.A2_directMemberList);
-        this.setInstanceValue( indirectMemberOfList , ZaAccount.A2_indirectMemberList);
+		this.setInstanceValue(nextOffset, "/" + listItemId + "_offset");
+		this.getForm().refresh();
 	}
 };
 
 /**
  * search for the dls or groups
  * 
- */                                       
+ */
 ZaAccountMemberOfListView.doSearch=
 function (item, offset){
 	var arr = [] ;
 	//the preassumption is that both memberOf is the name of the attr of the instance 
 	var xform = item.getForm() ; //item refers to a xform item
-    
-    if (xform){
+	if (xform){
 		var curInstance = xform.getInstance();
 		
 		if (! offset) offset = 0 ;
@@ -589,23 +473,24 @@ function (item, offset){
 			var searchByDomain = (memberOfObj [ZaAccount.A2_showSameDomain] && (memberOfObj [ZaAccount.A2_showSameDomain] == "TRUE")) ? true : false ;
 			var domainName = null;			
 			
-			if (searchByDomain){
-				try {
-					var emailChunks = curInstance[ZaAccount.A_name].split("@");
-					domainName = emailChunks[1];
-				//	var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
-				} catch (ex) {
-					domainName = ZaSettings.myDomainName;
+			if (ZaSettings.DOMAINS_ENABLED){
+				if (searchByDomain){
+					try {
+						var emailChunks = curInstance[ZaAccount.A_name].split("@");
+						domainName = emailChunks[1];
+					//	var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
+					} catch (ex) {
+						domainName = ZaSettings.myDomainName;
+					}
 				}
-			} else{
+			}else{
 				domainName = ZaSettings.myDomainName;
 			}
 			
 			var attrs = [ZaAccount.A_name, ZaItem.A_zimbraId];
 			//var attrs = [""];
 			var valStr = curInstance[ZaSearch.A_query];
-            var queryTypes = [ZaSearch.DLS] ;
-            var query = ZaSearch.getSearchByNameQuery(valStr, queryTypes);
+			var query = ZaSearch.getSearchByNameQuery(valStr);
 			var params = { 	query: query ,
 							sortBy: sortby,
 							limit : ZaAccountMemberOfListView.SEARCH_LIMIT,
@@ -613,13 +498,13 @@ function (item, offset){
 							domain: domainName,
 							applyCos: 0,
 							attrs: attrs,
-							types: queryTypes,
-							controller: ZaApp.getInstance().getCurrentController()
+							types: [ZaSearch.DLS],
+							controller: xform.parent._app.getCurrentController()
 						 } ;
 					
 			var result = ZaSearch.searchDirectory(params).Body.SearchDirectoryResponse;
-//			curInstance [ZaAccount.A2_nonMemberList + "_more"] = (result.more ? 1 : 0) ;
-            item.setInstanceValue ((result.more ? 1 : 0), ZaAccount.A2_nonMemberList + "_more")  ;
+			curInstance [ZaAccount.A2_nonMemberList + "_more"] = (result.more ? 1 : 0) ;
+			
 			var list = new ZaItemList(ZaDistributionList, null);
 			list.loadFromJS(result);
 			arr = list.getArray();		
@@ -631,15 +516,15 @@ function (item, offset){
 									});
 			}
 				
-//			memberOfObj[ZaAccount.A2_nonMemberList] = nonMemberList ;
-			item.setInstanceValue(nonMemberList, ZaAccount.A2_nonMemberList)  ;
+			memberOfObj[ZaAccount.A2_nonMemberList] = nonMemberList ;	
+			
 			//set the instance variable listItemId_offset & listItemId_more 
-//			curInstance [ZaAccount.A2_nonMemberList + "_offset"] = offset;
-			item.setInstanceValue (offset, ZaAccount.A2_nonMemberList + "_offset" )	;	
+			curInstance [ZaAccount.A2_nonMemberList + "_offset"] = offset;			
+					
 			//xform.setInstance(curInstance) ;
-//			xform.refresh();
+			xform.refresh();
 		}catch (ex){
-			ZaApp.getInstance().getCurrentController()._handleException(
+			xform.parent._app.getCurrentController()._handleException(
 				ex, "ZaAccountMemberOfListView.prototype.srchButtonHndlr");
 		}	
 	}
@@ -666,7 +551,7 @@ ZaAccountMemberOfListView.prototype._createItemHtml = function (group, now, isDr
 	this.associateItemWithElement(group, div, DwtListView.TYPE_LIST_ITEM);
 	
 	var idx = 0;
-	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
+	html[idx++] = "<table width='100%' cellspacing='2' cellpadding='0'>";
 
 	html[idx++] = "<tr>";
 	if(this._headerList) {
@@ -847,7 +732,7 @@ ZaAccountMemberOfsourceHeaderList = function(type) {
 	*/
 	if (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) { 																							
 		sourceHeaderList[1] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_via,   	ZaMsg.Group_via,   	
-	 											null, "auto",  null,  ZaAccountMemberOfListView.A_via, false, true);
+	 											null, null,  null,  ZaAccountMemberOfListView.A_via, false, true);
 	}
 	
 	return sourceHeaderList ;

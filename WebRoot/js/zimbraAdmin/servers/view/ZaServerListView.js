@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -62,7 +64,7 @@ function(server, now, isDragProxy) {
 	this.associateItemWithElement(server, div, DwtListView.TYPE_LIST_ITEM);
 	
 	var idx = 0;
-	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
+	html[idx++] = "<table width='100%' cellspacing='2' cellpadding='0'>";
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
@@ -75,8 +77,7 @@ function(server, now, isDragProxy) {
 		} else if(field == ZaServer.A_description) {	
 			// description
 			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
-			html[idx++] = AjxStringUtil.htmlEncode(
-                   ZaItem.getDescriptionValue(server.attrs[ZaServer.A_description]));
+			html[idx++] = AjxStringUtil.htmlEncode(server.attrs[ZaServer.A_description]);
 			html[idx++] = "</nobr></td>";
 		}
 	}
@@ -93,7 +94,7 @@ function() {
 	var sortable=1;
 	headerList[0] = new ZaListHeaderItem(ZaServer.A_ServiceHostname, ZaMsg.SLV_ServiceHName_col, null, 200, sortable++, ZaServer.A_ServiceHostname, true, true);
 
-	headerList[1] = new ZaListHeaderItem(ZaServer.A_description, ZaMsg.DLV_Description_col, null, "auto", null, ZaServer.A_description, true, true);
+	headerList[1] = new ZaListHeaderItem(ZaServer.A_description, ZaMsg.DLV_Description_col, null, null, null, ZaServer.A_description, true, true);
 		
 	return headerList;
 }

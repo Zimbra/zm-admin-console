@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -20,9 +22,9 @@
 * this class is a model for zimbra calendar resource account 
 * @author Charles Cao
 **/
-ZaResource = function() {
-	ZaItem.call(this, "ZaResource");
-	this._init();
+ZaResource = function(app) {
+	ZaItem.call(this, app,"ZaResource");
+	this._init(app);
 	this.type=ZaItem.RESOURCE;
 }
 
@@ -54,6 +56,7 @@ ZaResource.A_accountStatus = ZaAccount.A_accountStatus;
 ZaResource.A_notes = ZaAccount.A_notes;
 ZaResource.A_mailHost = ZaAccount.A_mailHost;
 ZaResource.A_COSId = ZaAccount.A_COSId;
+ZaResource.A_zimbraDomainName = ZaAccount.A_zimbraDomainName;
 ZaResource.A_zimbraMinPwdLength = ZaAccount.A_zimbraMinPwdLength;
 ZaResource.A_zimbraMaxPwdLength = ZaAccount.A_zimbraMaxPwdLength;
 
@@ -85,10 +88,9 @@ ZaResource.ACCOUNT_STATUS_CLOSED = "closed";
 ZaResource.RESOURCE_TYPE_LOCATION = "Location";
 ZaResource.RESOURCE_TYPE_EQUIPMENT = "Equipment";
 
-ZaResource.SCHEDULE_POLICY_TT = "scheduleTT";
-ZaResource.SCHEDULE_POLICY_FT = "scheduleFT";
-ZaResource.SCHEDULE_POLICY_TF = "scheduleTF";
-ZaResource.SCHEDULE_POLICY_FF = "scheduleFF";
+ZaResource.SCHEDULE_POLICY_ACCEPT_ALL = "acceptAll";
+ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY = "acceptUnlessBusy";
+ZaResource.SCHEDULE_POLICY_MANUAL = "acceptDeclineManual";
 
 //this attributes are not used in the XML object, but is used in the model
 ZaResource.A2_schedulePolicy = "schedulePolicy";
@@ -110,56 +112,81 @@ ZaResource.searchAttributes = AjxBuffer.concat(ZaResource.A_displayname,",",
 											   ZaResource.A_zimbraCalResType);
 
 ZaResource.checkValues = 
-function(tmpObj) {
+function(tmpObj, app) {
 	/**
 	* check values
 	**/
 
 	if(tmpObj.name == null || tmpObj.name.length < 1) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_REQUIRED);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_REQUIRED);
 		return false;
 	}
 	
 	/*if(!AjxUtil.EMAIL_SHORT_RE.test(tmpObj.name) ) {*/
-	if(!AjxUtil.isValidEmailNonReg(tmpObj.name)) {
+	if(tmpObj.name.lastIndexOf ("@")!=tmpObj.name.indexOf ("@")) {
 		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_RESOURCE_EMAIL_INVALID);
+		app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_INVALID);
 		return false;
 	}
 	
-
+	var myCos = null;
 	var maxPwdLen = Number.POSITIVE_INFINITY;
 	var minPwdLen = 1;	
 	
+	//find out what is this account's COS
+	if(ZaSettings.COSES_ENABLED) {
+		
+		if(tmpObj.attrs[ZaResource.A_COSId]) {
+			myCos = ZaCos.getCosById (tmpObj.attrs[ZaResource.A_COSId],app);
+		}
+		myCos = ZaCos.getCosById(tmpObj.attrs[ZaResource.A_COSId], app);
+		//myCos = cosList.getItemById(tmpObj.attrs[ZaResource.A_COSId]);
+		if(!myCos ) {
+			var cosList = app.getCosList();
+			if(cosList.size()>0) {
+				myCos = cosList.getArray()[0];
+				tmpObj.attrs[ZaResource.A_COSId] = cosList.getArray()[0].id;
+			}
+		}		
+	}
+	//if the account did not have a valid cos id - pick the first COS
 	//validate password length against this account's COS setting
 	if(tmpObj.attrs[ZaResource.A_zimbraMinPwdLength] != null) {
 		minPwdLen = tmpObj.attrs[ZaResource.A_zimbraMinPwdLength];
-	} else  {
-		minPwdLen = tmpObj._defaultValues.attrs[ZaResource.A_zimbraMinPwdLength];
+	} else if(ZaSettings.COSES_ENABLED) {
+		if(myCos) {
+			if(myCos.attrs[ZaCos.A_zimbraMinPwdLength] > 0) {
+				minPwdLen = myCos.attrs[ZaCos.A_zimbraMinPwdLength];
+			}
+		}
 	}
 	
 	if(tmpObj.attrs[ZaResource.A_zimbraMaxPwdLength] != null) {
 		maxPwdLen = tmpObj.attrs[ZaResource.A_zimbraMaxPwdLength];
-	} else  {
-		maxPwdLen = tmpObj._defaultValues.attrs[ZaResource.A_zimbraMaxPwdLength];
+	} else if(ZaSettings.COSES_ENABLED) {
+		if(myCos) {
+			if(myCos.attrs[ZaCos.A_zimbraMaxPwdLength] > 0) {
+				maxPwdLen = myCos.attrs[ZaCos.A_zimbraMaxPwdLength];
+			}		
+		}
 	}
 	//if there is a password - validate it
 	if(tmpObj.attrs[ZaResource.A_password]!=null || tmpObj[ZaResource.A2_confirmPassword]!=null) {
 		if(tmpObj.attrs[ZaResource.A_password] != tmpObj[ZaResource.A2_confirmPassword]) {
 			//show error msg
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
 			return false;
 		} 			
 		if(tmpObj.attrs[ZaResource.A_password].length < minPwdLen || AjxStringUtil.trim(tmpObj.attrs[ZaResource.A_password]).length < minPwdLen) { 
 			//show error msg
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen));
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen));
 			return false;		
 		}
 		
 		if(AjxStringUtil.trim(tmpObj.attrs[ZaResource.A_password]).length > maxPwdLen) { 
 			//show error msg
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
+			app.getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
 			return false;		
 		}
 	} 	
@@ -175,7 +202,7 @@ function(tmpObj) {
 * @param resource {ZaResource}
 **/
 ZaResource.createMethod = 
-function (tmpObj, resource) {
+function (tmpObj, resource, app) {
 	tmpObj.attrs[ZaResource.A_mail] = tmpObj.name;	
 	var resp;	
 	//create SOAP request
@@ -224,7 +251,7 @@ function (tmpObj, resource) {
 		var params = new Object();
 		params.soapDoc = soapDoc;
 		var reqMgrParams = {
-			controller : ZaApp.getInstance().getCurrentController(),
+			controller : app.getCurrentController(),
 			busyMsg : ZaMsg.BUSY_CREATE_RESOURCE
 		}	
 		resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.CreateCalendarResourceResponse;
@@ -272,7 +299,7 @@ function(mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_MODIFY_RESOURCE
 	}
 	resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyCalendarResourceResponse;
@@ -334,7 +361,7 @@ function (resource) {
 	this.attrs = new Object();			
 	this.name = resource.name;
 	this.id = resource.id;
-	var len = (resource.a ? resource.a.length : 0);
+	var len = resource.a.length;
 	for(var ix = 0; ix < len; ix++) {
 		if(!this.attrs[[resource.a[ix].n]]) {
 			this.attrs[[resource.a[ix].n]] = resource.a[ix]._content;
@@ -351,37 +378,49 @@ function (resource) {
 
 //set the ldap attributes according to the schedule policy values
 //the ldap attrs are "zimbraCalResAutoAcceptDecline" & "zimbraCalResAutoDeclineIfBusy";
+/*
+ZaResource.prototype.setSchedulePolicyFromLdapAttrs =
+function(){
+	if (this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] == "TRUE" ){
+		if (this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] == "TRUE") {
+			this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY ;
+		}else if (this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] == "FALSE"){
+			this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_ACCEPT_ALL
+		}else {
+			//invalid value
+		}
+	}else{
+		//delegation
+	}
+};*/
 
 ZaResource.prototype.setSchedulePolicyFromLdapAttrs =
 function () {
 	if (this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] == "TRUE" && this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] == "TRUE"){
-		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_TT ;
+		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY ;
 	} else if (this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] == "TRUE" && this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] == "FALSE") {
-		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_TF;
+		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_ACCEPT_ALL;
 	} else if (this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] == "FALSE" && this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] == "FALSE") {
-		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_FF;
-	}  else if (this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] == "FALSE" && this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] == "TRUE") {
-		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_FT;
+		this[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_MANUAL;
 	}
 	
 }
 
-
 ZaResource.prototype.setLdapAttrsFromSchedulePolicy =
 function (){
-	if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_TT ){
+	if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_ACCEPT_ALL ){
 		this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "TRUE";
-		this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] = "TRUE";		
-	} else if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_TF){
-		this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "TRUE";
-		this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] = "FALSE";
-	} else if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_FT) {
-		this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "FALSE";
-		this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] = "TRUE";		
-	} else if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_FF) {
-		this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "FALSE";
 		this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] = "FALSE";		
+	} else if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY){
+		this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "TRUE";
+		this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] = "TRUE";
+	} else if (this[ZaResource.A2_schedulePolicy] == ZaResource.SCHEDULE_POLICY_MANUAL) {
+		this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "FALSE";
+		this.attrs[ZaResource.A_zimbraCalResAutoDeclineIfBusy] = "FALSE";	
+		this.attrs[ZaResource.A_zimbraCalResAutoDeclineRecurring] = "FALSE";	
 	}
+	
+	//for delegation: this.attrs[ZaResource.A_zimbraCalResAutoAcceptDecline] = "FALSE";
 };
 
 /**
@@ -415,7 +454,7 @@ function() {
 		idx = this._addRow(ZaMsg.NAD_ResourceName, this.attrs[ZaResource.A_displayname], html, idx);
 		idx = this._addRow(ZaMsg.NAD_ResType, 
 						ZaResource.getResTypeLabel(this.attrs[ZaResource.A_zimbraCalResType]), html, idx);
-		if(this.getAttrs && this.getAttrs[ZaResource.A_mailHost]) {
+		if(ZaSettings.SERVERS_ENABLED) {
 			idx = this._addRow(ZaMsg.NAD_MailServer, this.attrs[ZaResource.A_mailHost], html, idx);
 		}
 		
@@ -433,9 +472,6 @@ function(by, val, withCos) {
 	} else {
 		soapDoc.getMethod().setAttribute("applyCos", "0");		
 	}
-	if(!this.getAttrs.all && !AjxUtil.isEmpty(this.attrsToGet)) {
-		soapDoc.setMethodAttribute("attrs", this.attrsToGet.join(","));
-	}	
 	var elBy = soapDoc.set("calresource", val);
 	elBy.setAttribute("by", by);
 
@@ -443,7 +479,7 @@ function(by, val, withCos) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_RESOURCE
 	}	
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetCalendarResourceResponse;
@@ -462,10 +498,6 @@ ZaItem.loadMethods["ZaResource"].push(ZaResource.loadMethod);
 
 ZaResource.loadInfoMethod = 
 function(by, val, withCos) {
-
-	if(!ZaItem.hasRight(ZaAccount.GET_ACCOUNT_INFO_RIGHT,this))
-		return;
-	
 	var soapDoc = AjxSoapDoc.create("GetAccountInfoRequest", ZaZimbraAdmin.URN, null);
 
 	var elBy = soapDoc.set("account", val);
@@ -475,7 +507,7 @@ function(by, val, withCos) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller: ZaApp.getInstance().getCurrentController()
+		controller: this._app.getCurrentController()
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAccountInfoResponse;
 	if(resp[ZaAccount.A2_publicMailURL] && resp[ZaAccount.A2_publicMailURL][0])
@@ -529,7 +561,7 @@ function (newName) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_RENAME_RESOURCE
 	}
 	ZaRequestMgr.invoke(params, reqMgrParams);
@@ -540,33 +572,9 @@ function (newName) {
 **/
 ZaResource.myXModel = { 
 	items: [
-		{id:ZaResource.A_name, type:_STRING_, ref:"name", required:true,
-			constraints: {type:"method", value:
-			   function (value, form, formItem, instance) {				   
-				   if (value){
-					  	if(AjxUtil.isValidEmailNonReg(value)) {
-						   return value;
-					   } else {
-						   throw ZaMsg.ErrorInvalidEmailAddress;
-					   }
-				   }
-			   }
-			}
-		},
+		{id:ZaResource.A_name, type:_STRING_, ref:"name", required:true},
 		{id:ZaItem.A_zimbraId, type:_STRING_, ref:"attrs/" + ZaItem.A_zimbraId}, 	
-		{id:ZaResource.A_mail, type:_STRING_, ref:"attrs/"+ZaResource.A_mail,
-			constraints: {type:"method", value:
-			   function (value, form, formItem, instance) {				   
-				   if (value){
-					  	if(AjxUtil.isValidEmailNonReg(value)) {
-						   return value;
-					   } else {
-						   throw ZaMsg.ErrorInvalidEmailAddress;
-					   }
-				   }
-			   }
-			}
-		}, //email address
+		{id:ZaResource.A_mail, type:_STRING_, ref:"attrs/"+ZaResource.A_mail}, //email address
 		{id:ZaResource.A2_schedulePolicy, type:_STRING_, ref:ZaResource.A2_schedulePolicy},
 		{id:ZaResource.A_password, type:_STRING_, ref:"attrs/"+ZaAccount.A_password},
 		{id:ZaResource.A2_confirmPassword, type:_STRING_},						 		
@@ -582,9 +590,8 @@ ZaResource.myXModel = {
 		{id:ZaResource.A_zimbraCalResAutoDeclineRecurring, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResAutoDeclineRecurring},
 		{id:ZaResource.A_zimbraCalResMaxNumConflictsAllowed, type:_NUMBER_, ref:"attrs/"+ZaResource.A_zimbraCalResMaxNumConflictsAllowed,defaultValue:0,minInclusive:0},
 		{id:ZaResource.A_zimbraCalResMaxPercentConflictsAllowed, type:_NUMBER_, ref:"attrs/"+ZaResource.A_zimbraCalResMaxPercentConflictsAllowed,minInclusive:0,maxInclusive:100,defaultValue:0},
-//		{id:ZaResource.A_description, type:_STRING_, ref:"attrs/"+ZaResource.A_description},
-		ZaItem.descriptionModelItem ,
-          {id:ZaResource.A_notes, type:_STRING_, ref:"attrs/"+ZaResource.A_notes},
+		{id:ZaResource.A_description, type:_STRING_, ref:"attrs/"+ZaResource.A_description},
+		{id:ZaResource.A_notes, type:_STRING_, ref:"attrs/"+ZaResource.A_notes}, 
 		
 		//Resource Location
 		{id:ZaResource.A_zimbraCalResSite, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResSite},
@@ -605,10 +612,10 @@ ZaResource.myXModel = {
 			constraints: {type:"method", value:
 			   function (value, form, formItem, instance) {				   
 				   if (value){
-					  	if(AjxUtil.isValidEmailNonReg(value)) {
+					  	if(value.lastIndexOf ("@")==value.indexOf ("@")) {
 						   return value;
 					   } else {
-						   throw ZaMsg.ErrorInvalidEmailAddress;
+						   throw ZaMsg.RES_ErrorInvalidContactEmail;
 					   }
 				   }
 			   }
@@ -643,7 +650,18 @@ ZaResource._RESOURCE_TYPE = new Object();
 ZaResource._RESOURCE_TYPE [ ZaResource.RESOURCE_TYPE_LOCATION] = ZaMsg.resType_location;
 ZaResource._RESOURCE_TYPE [ ZaResource.RESOURCE_TYPE_EQUIPMENT] = ZaMsg.resType_equipment;
 
-ZaResource.initMethod = function () {
+ZaResource.getSchedulePolicyLabel = 
+function(val) {
+	var desc = ZaResource._SCHEDULE_POLICY_LABEL [val];
+	return (desc == null) ? val : desc;
+}
+
+ZaResource._SCHEDULE_POLICY_LABEL = new Object();
+ZaResource._SCHEDULE_POLICY_LABEL[ ZaResource.SCHEDULE_POLICY_ACCEPT_ALL] = ZaMsg.resScheduleAcceptAll;
+ZaResource._SCHEDULE_POLICY_LABEL[ ZaResource.SCHEDULE_POLICY_MANUAL] = ZaMsg.resScheduleManual;
+ZaResource._SCHEDULE_POLICY_LABEL[ ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY] = ZaMsg.resScheduleAcceptUnlessBusy;
+
+ZaResource.initMethod = function (app) {
 	this.attrs = new Object();
 	this.id = "";
 	this.name="";
@@ -661,13 +679,12 @@ function (elementValue,instanceValue, event){
 	this.getForm().refresh();	
 }
 
-ZaResource.isLocation = function () {
-	return (this.getInstanceValue(ZaResource.A_zimbraCalResType).toLowerCase() ==  ZaResource.RESOURCE_TYPE_LOCATION.toLowerCase());
-}
-
-ZaResource.isAutoDeclineEnabled = function () {
-	return (this.getInstanceValue(ZaResource.A2_schedulePolicy) == ZaResource.SCHEDULE_POLICY_TT ||
-	 this.getInstanceValue(ZaResource.A2_schedulePolicy) == ZaResource.SCHEDULE_POLICY_FT);
+//generate the account name automatically
+ZaResource.setAutoAccountName =
+function (instance, newValue) {
+	var oldAccName = instance[ZaResource.A_name] ;
+	var regEx = /[^a-zA-Z0-9_\-\.]/g ;
+	instance[ZaResource.A_name] = newValue.replace(regEx, "") + oldAccName.substring(oldAccName.indexOf("@")) ;	
 }
 
 ZaResource.accountStatusChoices = [
@@ -678,14 +695,14 @@ ZaResource.accountStatusChoices = [
 	];	
 
 ZaResource.resTypeChoices = [
-		{value:ZaResource.RESOURCE_TYPE_LOCATION, label:ZaMsg.resType_location}, 
-		{value:ZaResource.RESOURCE_TYPE_EQUIPMENT, label:ZaMsg.resType_equipment}
+		{value:ZaResource.RESOURCE_TYPE_LOCATION, label:ZaResource.getResTypeLabel ( ZaResource.RESOURCE_TYPE_LOCATION)}, 
+		{value:ZaResource.RESOURCE_TYPE_EQUIPMENT, label:ZaResource.getResTypeLabel ( ZaResource.RESOURCE_TYPE_EQUIPMENT)}
 	];	
 	
 ZaResource.schedulePolicyChoices = [
-		{value:ZaResource.SCHEDULE_POLICY_TT, label:ZaMsg.resScheduleTT},
-		{value:ZaResource.SCHEDULE_POLICY_FT, label:ZaMsg.resScheduleFT},
-		{value:ZaResource.SCHEDULE_POLICY_TF, label:ZaMsg.resScheduleTF},
-		{value:ZaResource.SCHEDULE_POLICY_FF, label:ZaMsg.resScheduleFF}
+		{value:ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY, label:ZaResource.getSchedulePolicyLabel ( ZaResource.SCHEDULE_POLICY_ACCEPT_UNLESS_BUSY)},
+		{value:ZaResource.SCHEDULE_POLICY_ACCEPT_ALL, label:ZaResource.getSchedulePolicyLabel ( ZaResource.SCHEDULE_POLICY_ACCEPT_ALL)},
+		{value:ZaResource.SCHEDULE_POLICY_MANUAL, label:ZaResource.getSchedulePolicyLabel ( ZaResource.SCHEDULE_POLICY_MANUAL)}
+		
 	];
 

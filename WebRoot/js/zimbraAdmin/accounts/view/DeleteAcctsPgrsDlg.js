@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -22,13 +24,14 @@
 **/
 
 
-DeleteAcctsPgrsDlg = function(parent,  w, h) {
+DeleteAcctsPgrsDlg = function(parent,  app, w, h) {
 	if (arguments.length == 0) return;
+	this._app = app;
 	this._standardButtons = [DwtDialog.OK_BUTTON];
 	var helpButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.HELP_BUTTON, ZaMsg.TBB_Help, DwtDialog.ALIGN_LEFT, new AjxCallback(this, this._helpButtonListener));
 	var abortButton = new DwtDialog_ButtonDescriptor(DeleteAcctsPgrsDlg.ABORT_BUTTON, ZaMsg.NAD_AbortDeleting, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.abortDeletingAccounts));		
 	this._extraButtons = [helpButton, abortButton];
-	ZaXDialog.call(this, parent,  null, ZaMsg.NAD_DeletingAccTitle, w, h);
+	ZaXDialog.call(this, parent, app, null, ZaMsg.NAD_DeletingAccTitle, w, h);
 	this._containedObject = [];
 //	this._deletedAccounts = [];
 	this._currentIndex = 0;
@@ -95,14 +98,14 @@ function(evt) {
 		*/
 		this._button[DeleteAcctsPgrsDlg.ABORT_BUTTON].setEnabled(false);
 		var obj = this._localXForm.getInstance();
-//		ZaApp.getInstance().getAccountListController().fireRemovalEvent(obj[DeleteAcctsPgrsDlg._DELETED_ACCTS]);			
+//		this._app.getAccountListController().fireRemovalEvent(obj[DeleteAcctsPgrsDlg._DELETED_ACCTS]);			
 		AjxTimedAction.cancelAction(this._pollHandler);
 		this._pollHandler = null;
 		this._aborted = true;
 		this._localXForm.getInstance().status = ZaMsg.NAD_DeletingCancelled;
 		this._localXForm.refresh();
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "DeleteAcctsPgrsDlg.abortDeletingAccounts", null, false);
+		this._app.getCurrentController()._handleException(ex, "DeleteAcctsPgrsDlg.abortDeletingAccounts", null, false);
 	}
 }
 
@@ -118,7 +121,7 @@ function(evt) {
 		this._localXForm.setInstance(obj);
 		this._pollHandler = AjxTimedAction.scheduleAction(this.pollAction, "50");		
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "DeleteAcctsPgrsDlg.startDeletingAccounts", null, false);	
+		this._app.getCurrentController()._handleException(ex, "DeleteAcctsPgrsDlg.startDeletingAccounts", null, false);	
 	}
 }
 
@@ -143,7 +146,7 @@ function (result) {
 		this._pollHandler = null;	
 //		this._localXForm.setInstance(obj);	
 		this._localXForm.refresh();	
-		ZaApp.getInstance().getCurrentController()._handleException(ex, "DeleteAcctsPgrsDlg.prototype.deleteOneAccountCallback", null, false);		
+		this._app.getCurrentController()._handleException(ex, "DeleteAcctsPgrsDlg.prototype.deleteOneAccountCallback", null, false);		
 	} else {
 		obj[DeleteAcctsPgrsDlg._DELETED_ACCTS].push(this._containedObject[this._currentIndex]);
 		this._currentIndex++;
@@ -153,7 +156,7 @@ function (result) {
 		} else {
 			//done
 			this._button[DeleteAcctsPgrsDlg.ABORT_BUTTON].setEnabled(false);			
-			ZaApp.getInstance().getCurrentController().fireRemovalEvent(obj[DeleteAcctsPgrsDlg._DELETED_ACCTS]);						
+			this._app.getCurrentController().fireRemovalEvent(obj[DeleteAcctsPgrsDlg._DELETED_ACCTS]);						
 			AjxTimedAction.cancelAction(this._pollHandler);	
 			this._pollHandler = null;
 			if(!this._aborted) {
@@ -178,7 +181,7 @@ function() {
 	var sourceHeaderList = new Array();
 	var sortable = 1;
 	sourceHeaderList[0] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, 34, sortable++, "objectClass", true, true);
-	sourceHeaderList[1] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.ALV_NameAddress_col, null, "auto", sortable++, ZaAccount.A_name, true, true);
+	sourceHeaderList[1] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.ALV_NameAddress_col, null, null, sortable++, ZaAccount.A_name, true, true);
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
 //	sourceHeaderList[2] = new ZaListHeaderItem(ZaAccount.A_displayname, ZaMsg.ALV_DspName_col, null, 100, sortable++,ZaAccount.A_displayname, true, true);
 
@@ -190,16 +193,14 @@ function() {
 				  iconVisible: true, 
 				  content: null,
 				  ref:DeleteAcctsPgrsDlg._STATUS,align:_CENTER_, valign:_MIDDLE_,colSpan:"*",width:"90%",
-				  visibilityChecks:[[XForm.checkInstanceValueEmty,DeleteAcctsPgrsDlg._ERROR_MSG]],
-				  visibilityChangeEventSources:[DeleteAcctsPgrsDlg._ERROR_MSG]
+				  relevant:"instance[DeleteAcctsPgrsDlg._ERROR_MSG] == null",relevantBehavior:_HIDE_
 			},
 			{ type: _DWT_ALERT_,
 				  style: DwtAlert.CRITICAL,
 				  iconVisible: true, 
 				  content: null,
 				  ref:DeleteAcctsPgrsDlg._ERROR_MSG, align:_CENTER_, valign:_MIDDLE_,colSpan:"*", width:"90%",
-				  visibilityChecks:[[XForm.checkInstanceValueNotEmty,DeleteAcctsPgrsDlg._ERROR_MSG]],
-				  visibilityChangeEventSources:[DeleteAcctsPgrsDlg._ERROR_MSG]				  				  
+				  relevant:"instance[DeleteAcctsPgrsDlg._ERROR_MSG] != null",relevantBehavior:_HIDE_				  
 			},			
 			{type:_SPACER_, height:"5"},	
 			{type:_OUTPUT_,value:ZaMsg.NAD_DeletedAccounts,colSpan:"*", colSpan:"*",align:_LEFT_},

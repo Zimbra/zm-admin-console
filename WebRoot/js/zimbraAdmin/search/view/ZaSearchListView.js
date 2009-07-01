@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -20,8 +22,8 @@
 * @author Roland Schemers
 * @author Greg Solovyev
 **/
-ZaSearchListView = function(parent) {
-
+ZaSearchListView = function(parent, app) {
+	this._app = app;
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	
@@ -58,7 +60,7 @@ function () {
 
 ZaSearchListView.prototype.getTabToolTip =
 function () {
-	var controller = ZaApp.getInstance().getSearchListController () ;
+	var controller = this._app.getSearchListController () ;
 	if (controller) {
 		if (controller._isAdvancedSearch && controller._currentQuery) {
 			return ZaMsg.tt_tab_Search + controller._currentQuery ;
@@ -83,7 +85,7 @@ function(account, now, isDragProxy) {
 	this.associateItemWithElement(account, div, DwtListView.TYPE_LIST_ITEM);
 	
 	var idx = 0;
-	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
+	html[idx++] = "<table width='100%' cellspacing='2' cellpadding='0'>";
 
 	html[idx++] = "<tr>";
 	
@@ -97,30 +99,21 @@ function(account, now, isDragProxy) {
 			html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 			switch(account.type) {
 				case ZaItem.ACCOUNT:
-					if(account.attrs[ZaAccount.A_zimbraIsAdminAccount]=="TRUE" ) {
-						html[idx++] = AjxImg.getImageHtml("AdminUser");
-					} else if (account.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] == "TRUE") {
-						html[idx++] = AjxImg.getImageHtml("DomainAdminUser");
-					} else {
-						html[idx++] = AjxImg.getImageHtml("Account");
-					}
+					html[idx++] = AjxImg.getImageHtml("Account");
 				break;
 				case ZaItem.DL:
-					if (account.attrs[ZaDistributionList.A_isAdminGroup] == "TRUE") {
-					    html[idx++] = AjxImg.getImageHtml("Group");
-                    }else {
-                        html[idx++] = AjxImg.getImageHtml("DistributionList");
-                    }	
+					html[idx++] = AjxImg.getImageHtml("Group");				
 				break;
 				case ZaItem.ALIAS:
 					html[idx++] = AjxImg.getImageHtml("AccountAlias");				
 				break;	
 				case ZaItem.RESOURCE:
 					if (account.attrs[ZaResource.A_zimbraCalResType] == ZaResource.RESOURCE_TYPE_LOCATION){
-						html[idx++] = AjxImg.getImageHtml("Location");
+						html[idx++] = AjxImg.getImageHtml("Location");	
 					}else {//equipment or other resource types
-						html[idx++] = AjxImg.getImageHtml("Resource");
-					}						
+						html[idx++] = AjxImg.getImageHtml("Resource");	
+					}	
+					//html[idx++] = AjxImg.getImageHtml("Resource");				
 				break;	
 				case ZaItem.DOMAIN:
 					html[idx++] = AjxImg.getImageHtml("Domain");		
@@ -165,8 +158,7 @@ function(account, now, isDragProxy) {
 		} else if (field == ZaAccount.A_description) {		
 			// description
 			html[idx++] = "<td width=" + this._headerList[i]._width + "><nobr>";
-			html[idx++] = AjxStringUtil.htmlEncode(
-                    ZaItem.getDescriptionValue(account.attrs[ZaAccount.A_description]));
+			html[idx++] = AjxStringUtil.htmlEncode(account.attrs[ZaAccount.A_description]);
 			html[idx++] = "</nobr></td>";	
 		}
 	}
@@ -188,9 +180,9 @@ function() {
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible	
 	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_displayname, ZaMsg.ALV_DspName_col, null, "220px",  null, null, true, true);
 
-	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_accountStatus, ZaMsg.ALV_Status_col, null, "120px",  null, null, true, true);
-	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_zimbraLastLogonTimestamp, ZaMsg.ALV_Last_Login, null, Dwt_Button_XFormItem.estimateMyWidth(ZaMsg.ALV_Last_Login, false, 0), null, null, true, true);
-	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_description, ZaMsg.ALV_Description_col, null, "auto", null, null,true, true );
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_accountStatus, ZaMsg.ALV_Status_col, null, "80px",  null, null, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_zimbraLastLogonTimestamp, ZaMsg.ALV_Last_Login, null, "120px", null, null, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaAccount.A_description, ZaMsg.ALV_Description_col, null, "200px", null, null,true, true );
 	
 	return headerList;
 }
@@ -199,12 +191,12 @@ function() {
 ZaSearchListView.prototype._sortColumn = 
 function(columnItem, bSortAsc) {
 	try {
-		ZaApp.getInstance().getAccountListController().setSortOrder(bSortAsc);
-		ZaApp.getInstance().getAccountListController().setSortField(columnItem.getSortField());
-		ZaApp.getInstance().getAccountListController().show();
-		//ZaApp.getInstance().getAccountListController().show(searchResult);
+		this._app.getAccountListController().setSortOrder(bSortAsc);
+		this._app.getAccountListController().setSortField(columnItem.getSortField());
+		this._app.getAccountListController().show();
+		//this._app.getAccountListController().show(searchResult);
 	} catch (ex) {
-		ZaApp.getInstance().getCurrentController()._handleException(ex);
+		this._app.getCurrentController()._handleException(ex);
 	}
 }
 
