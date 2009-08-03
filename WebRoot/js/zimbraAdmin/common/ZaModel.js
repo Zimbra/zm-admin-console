@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -28,12 +30,6 @@ ZaModel.getBooleanChoices1 = function () {
     return [{value:true, label:ZaMsg.Yes}, {value:false, label:ZaMsg.No}, {value:null, label:ZaMsg.No}];    
 }
 ZaModel.BOOLEAN_CHOICES1= ZaModel.getBooleanChoices1 ;
-
-ZaModel.getBooleanChoices2 = function () {
-    return [{value:"1", label:ZaMsg.Yes}, {value:"0", label:ZaMsg.No}, {value:null, label:ZaMsg.No}];
-}
-ZaModel.BOOLEAN_CHOICES2= ZaModel.getBooleanChoices2 ;
-
 
 ZaModel.FONT_SIZE_CHOICES = [
 	{value:"8pt", label: "8pt"},
@@ -56,13 +52,6 @@ ZaModel.getComposeFormatChoices =   function () {
 }
 
 ZaModel.COMPOSE_FORMAT_CHOICES = ZaModel.getComposeFormatChoices ;
-
-ZaModel.SEND_READ_RECEIPT_ALWAYS = "always";
-ZaModel.SEND_READ_RECEIPT_NEVER = "never";
-ZaModel.SEND_READ_RECEIPT_PROMPT = "prompt";
-
-ZaModel.SEND_READ_RECEPIT_CHOICES = [{value:ZaModel.SEND_READ_RECEIPT_ALWAYS,label:ZaMsg.SEND_READ_RECEIPT_ALWAYS},
-{value:ZaModel.SEND_READ_RECEIPT_NEVER,label:ZaMsg.SEND_READ_RECEIPT_NEVER},{value:ZaModel.SEND_READ_RECEIPT_PROMPT,label:ZaMsg.SEND_READ_RECEIPT_PROMPT}];
 
 ZaModel.getGroupMailByChoices = function () {
     return [{value:"conversation", label:ZaMsg.Conversation}, {value:"message", label:ZaMsg.Message}];
@@ -114,7 +103,6 @@ ZaModel.prototype.removeChangeListener =
 function(listener) {
 	return this._evtMgr.removeListener(ZaEvent.L_MODIFY, listener);    	
 }
-
 
 ZaModel.setUnrecoganizedChoiceValue = function (v, choices) {
 	var new_v = ZaMsg.VALUE_UNRECOGNIZED;

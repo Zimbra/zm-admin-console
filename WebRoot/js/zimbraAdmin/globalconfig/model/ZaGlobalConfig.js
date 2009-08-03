@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,13 +11,13 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
-ZaGlobalConfig = function() {
-	ZaItem.call(this,"ZaGlobalConfig");
+ZaGlobalConfig = function(app) {
+	ZaItem.call(this, app, "ZaGlobalConfig");
 	this.attrs = new Object();
-	this.type = ZaItem.GLOBAL_CONFIG;
 //	this.attrsInternal = new Object();	
 	this.load();
 }
@@ -39,7 +40,7 @@ ZaGlobalConfig.A_zimbraMailPurgeSleepInterval = "zimbraMailPurgeSleepInterval" ;
 		
 // attachements
 ZaGlobalConfig.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
-ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient = "zimbraMtaBlockedExtensionWarnRecipient";
+
 ZaGlobalConfig.A_zimbraMtaBlockedExtension = "zimbraMtaBlockedExtension";
 ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension = "zimbraMtaCommonBlockedExtension";
 
@@ -150,32 +151,18 @@ ZaGlobalConfig.A_zimbraSkinSelectionColor  = "zimbraSkinSelectionColor" ;
 ZaGlobalConfig.A_zimbraSkinLogoURL ="zimbraSkinLogoURL" ;
 ZaGlobalConfig.A_zimbraSkinLogoLoginBanner = "zimbraSkinLogoLoginBanner" ;
 ZaGlobalConfig.A_zimbraSkinLogoAppBanner = "zimbraSkinLogoAppBanner" ;
-ZaGlobalConfig.A2_blocked_extension_selection = "blocked_extension_selection";
-ZaGlobalConfig.A2_common_extension_selection = "common_extension_selection";
 
-ZaGlobalConfig.__configInstance = null;
-ZaGlobalConfig.isDirty = true;
-
-ZaGlobalConfig.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT = "checkExchangeAuthConfig"
-ZaGlobalConfig.getInstance = function(refresh) {
-	if(refresh || ZaGlobalConfig.isDirty || !ZaGlobalConfig.__configInstance) {
-		ZaGlobalConfig.__configInstance = new ZaGlobalConfig();
-		ZaGlobalConfig.isDirty = false;
-	}
-	return ZaGlobalConfig.__configInstance;
-}
 
 ZaGlobalConfig.loadMethod = 
-function(by, val) {
+function(by, val, withConfig) {
+	if(!ZaSettings.GLOBAL_CONFIG_ENABLED)
+		return;
 	var soapDoc = AjxSoapDoc.create("GetAllConfigRequest", ZaZimbraAdmin.URN, null);
-	if(!this.getAttrs.all && !AjxUtil.isEmpty(this.attrsToGet)) {
-		soapDoc.setMethodAttribute("attrs", this.attrsToGet.join(","));
-	}	
 	//var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_CONFIG
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllConfigResponse;
@@ -185,14 +172,50 @@ ZaItem.loadMethods["ZaGlobalConfig"].push(ZaGlobalConfig.loadMethod);
 
 ZaGlobalConfig.prototype.initFromJS = function(obj) {
 	ZaItem.prototype.initFromJS.call(this, obj);
-	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension])) {
-		this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = [this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension]];
+
+	var blocked = this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension];
+	if (blocked == null) {
+		blocked = [];
+	}
+	else if (AjxUtil.isString(blocked)) {
+		blocked = [ blocked ];
 	}
 	
-	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension])) {
-		this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension] = [this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension]];
+	// convert blocked extension lists to arrays
+	var common = this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension];
+	if (common == null) {
+		common = [];
 	}
+	else if (AjxUtil.isString(common)) {
+		common = [ common ];
+	}
+	var commonMap = {};
+	var unaddedBlockExt = [];
+	for (var i = 0; i < common.length; i++) {
+		var ext = common[i];
+		common[i] = new String(ext);
+		common[i].id = "id_"+ext;
+		commonMap[ext] = common[i];
 		
+		if (ZaUtil.findValueInArray(blocked, ext) <= -1) {
+			DBG.println(AjxDebug.DBG1, ext + " was added to the blocked list.");
+			//common.splice(i,1) ;
+			unaddedBlockExt.push(common[i]);
+		}
+	}
+	this.attrs[ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension] = unaddedBlockExt;
+		
+	for (var i = 0; i < blocked.length; i++) {
+		var ext = blocked[i];
+		if (commonMap[ext]) {
+			blocked[i] = commonMap[ext];
+		}
+		else {
+			blocked[i] = new String(ext);
+			blocked[i].id = "id_"+ext;
+		}
+	}
+	this.attrs[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = blocked;
 
 	// convert available components to hidden fields for xform binding
 	var components = this.attrs[ZaGlobalConfig.A_zimbraComponentAvailable];
@@ -271,7 +294,12 @@ ZaGlobalConfig.modifyMethod = function (mods) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	command.invoke(params);
-	ZaGlobalConfig.isDirty = true;
+	/*var newConfig = this._app.getGlobalConfig(true);
+	if(newConfig.attrs) {
+		for (var aname in newConfig.attrs) {
+			this.attrs[aname] = newConfig.attrs[aname];
+		}
+	}*/
 }
 ZaItem.modifyMethods["ZaGlobalConfig"].push(ZaGlobalConfig.modifyMethod);
 
@@ -286,6 +314,32 @@ LifetimeNumber_XFormItem.prototype.validateType = function(value) {
 }
 
 ZaGlobalConfig.myXModel = {
+	/*getRelayHost: function (model, instance) {
+		if(instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost]) {
+			var parts = instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost].split(":");
+			if(parts && parts.length)
+				return parts[0];
+			else
+				return instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost];
+		} else return "";
+	},
+	getRelayPort: function (model, instance) {
+		if(instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost]) {
+			var parts = instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost].split(":");
+			if(parts && parts.length >1)
+				return parts[1];
+			else
+				return "";
+		} else return "";
+	},	
+	setRelayPort:function(value, instance, parentValue, ref) {
+		instance.attrsInternal[ZaGlobalConfig.A_zimbraMtaRelayPortInternal] = value;
+		instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost] = instance.attrsInternal[ZaGlobalConfig.A_zimbraMtaRelayHostInternal] + ":" + instance.attrsInternal[ZaGlobalConfig.A_zimbraMtaRelayPortInternal];
+	},
+	setRelayHost:function(value, instance, parentValue, ref) {
+		instance.attrsInternal[ZaGlobalConfig.A_zimbraMtaRelayHostInternal] = value;
+		instance.attrs[ZaGlobalConfig.A_zimbraMtaRelayHost] = instance.attrsInternal[ZaGlobalConfig.A_zimbraMtaRelayHostInternal] + ":" + instance.attrsInternal[ZaGlobalConfig.A_zimbraMtaRelayPortInternal];
+	},*/
 	items:[
 	  	// ...other...
 		{ id:ZaGlobalConfig.A_zimbraGalMaxResults, ref:"attrs/" + ZaGlobalConfig.A_zimbraGalMaxResults , type:_NUMBER_, minInclusive: 0 },
@@ -296,7 +350,7 @@ ZaGlobalConfig.myXModel = {
 		{ id:ZaGlobalConfig.A_currentMonitorHost, ref: "attrs/"+ZaGlobalConfig.A_currentMonitorHost, type: _STRING_ },
 		// attachments
 		{ id:ZaGlobalConfig.A_zimbraAttachmentsBlocked, ref:"attrs/" + ZaGlobalConfig.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{ id:ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
+
 		{ id:ZaGlobalConfig.A_zimbraMtaBlockedExtension, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaBlockedExtension, type: _LIST_, dataType: _STRING_ },
 		{ id:ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension, type: _LIST_, dataType: _STRING_ },
 		// MTA
@@ -307,8 +361,11 @@ ZaGlobalConfig.myXModel = {
 		{ id:ZaGlobalConfig.A_zimbraMtaMaxMessageSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaMaxMessageSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES, required: true },
 		{ id:ZaGlobalConfig.A_zimbraFileUploadMaxSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES },
 		{ id:ZaGlobalConfig.A_zimbraMtaRelayHost, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
+//		{ id:ZaGlobalConfig.A_zimbraMtaMyNetworks, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaMyNetworks, type: _STRING_, maxLength: 256 },
 		{ id:ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		
+//		{ id:ZaGlobalConfig.A_zimbraMtaRelayHostInternal, setterScope:_MODEL_,getterScope:_MODEL_, getter:"getRelayHost", setter:"setRelayHost", ref:"attrsInternal/" + ZaGlobalConfig.A_zimbraMtaRelayHostInternal, type: _HOSTNAME_OR_IP_, maxLength: 256 },		
+//		{ id:ZaGlobalConfig.A_zimbraMtaRelayPortInternal,setterScope:_MODEL_,getterScope:_MODEL_, getter:"getRelayPort", setter:"setRelayPort", ref:"attrsInternal/" + ZaGlobalConfig.A_zimbraMtaRelayPortInternal, type: _PORT_},				
 		{ id:ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		// -- protocol checks
 		{ id:ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname, type: _ENUM_, choices: [false,true] },
@@ -375,11 +432,9 @@ ZaGlobalConfig.myXModel = {
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthUsername, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthUsername, type: _STRING_ },
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthPassword, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthPassword, type: _STRING_ },
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme,
-            type: _ENUM_, choices: [{value: "basic", label: ZaMsg.choice_basic}, {value: "form", label: ZaMsg.choice_form}]},
+            type: _ENUM_, choices: ["basic", "form"]},
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ },
-        {id:ZaGlobalConfig.A2_blocked_extension_selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_common_extension_selection, type:_LIST_}
+        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ }
 
     ]
 }
