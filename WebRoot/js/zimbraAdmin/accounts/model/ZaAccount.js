@@ -1631,11 +1631,16 @@ function (value, event, form){
 	//form.parent.setDirty(true);
 	try {
 		var instance = form.getInstance();
+		if(!instance) {
+			return;
+		}
 		var p = form.parent ;
         var oldDomainName = this.getOldDomainPart ();
         var newDomainName = ZaAccount.getDomain(value) ;
         var domainObj =  ZaDomain.getDomainByName(newDomainName,form.parent._app) ;
-        
+        if(!domainObj) {
+        	return;
+        }	
         if ((ZaSettings.COSES_ENABLED) && (! form.parent._isCosChanged)
 			&& ((newDomainName != oldDomainName)
 				//set the right default cos at the account creation time
