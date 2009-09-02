@@ -239,7 +239,7 @@ ZaDomainNotebookXWizard.myXFormModifier = function(xFormObject) {
 				},
 				{type:_CASE_, relevant:"instance[ZaModel.currentStep] == 4", relevantBehavior:_HIDE_,
 					items: [
-						{type:_OUTPUT_, value:ZaMsg.Domain_Config_Complete}
+						{type:_OUTPUT_, value:ZaMsg.DocumentsConfigComplete}
 					]
 				}					
 			]
