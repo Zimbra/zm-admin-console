@@ -2,7 +2,7 @@
  * ***** BEGIN LICENSE BLOCK *****
  * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -480,5 +480,20 @@ ZaItem.checkFBSettings = function (oldSettingObj, currentSettingObj, controller)
         }
         ZaRequestMgr.invoke(params, reqMgrParams) ;
     }
+}
+
+ZaItem.clearInteropSettings = function () {
+     var currentSettingObj = this.getForm().getInstance() ;
+     var attrNames = [ZaDomain.A_zimbraFreebusyExchangeURL, ZaDomain.A_zimbraFreebusyExchangeAuthScheme,
+                     ZaDomain.A_zimbraFreebusyExchangeAuthUsername, ZaDomain.A_zimbraFreebusyExchangeAuthPassword,
+                     ZaDomain.A_zimbraFreebusyExchangeUserOrg ] ;
+
+    for (var i=0; i < attrNames.length; i ++ ) {
+        var n = attrNames [i] ;
+        this.setInstanceValue("", n) ;
+    }
+    var form = this.getForm();
+    form.parent.setDirty(true);
+    form.refresh () ;
 }
 
