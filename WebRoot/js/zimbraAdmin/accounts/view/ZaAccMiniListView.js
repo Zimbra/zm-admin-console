@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -18,8 +20,7 @@
  **/
 ZaAccMiniListView = function(parent, className, posStyle, headerList) {
 	if (arguments.length == 0) return;
-    if (posStyle == null) posStyle = DwtControl.RELATIVE_STYLE ;
-	ZaListView.call(this, parent, className, posStyle, headerList);           
+	ZaListView.call(this, parent, className, posStyle, headerList);
 	this.hideHeader = true;
 }
 
@@ -47,7 +48,7 @@ function(account, now, isDragProxy) {
 	this.associateItemWithElement(account, div, DwtListView.TYPE_LIST_ITEM);
 	
 	var idx = 0;
-	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
+	html[idx++] = "<table width='100%' cellspacing='2' cellpadding='0'>";
 
 	html[idx++] = "<tr>";
 	if(typeof(account)=="string") {
@@ -67,7 +68,7 @@ function(account, now, isDragProxy) {
 							html[idx++] = AjxImg.getImageHtml("Account");
 						break;
 						case ZaItem.DL:
-							html[idx++] = AjxImg.getImageHtml("DistributionList");				
+							html[idx++] = AjxImg.getImageHtml("Group");				
 						break;
 						case ZaItem.ALIAS:
 							html[idx++] = AjxImg.getImageHtml("AccountAlias");				

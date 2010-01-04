@@ -1,5 +1,6 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
  * Copyright (C) 2005, 2006, 2007 Zimbra, Inc.
  * 
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -47,3 +49,48 @@ function(title) {
 	this._currentAppLabel.setText(title);
 	//this._currentAppLabel.setImage(ZaZimbraAdmin.APP_ICON[appName]);
 }
+
+/*
+ZaCurrentAppToolBar.prototype.setCurrentView = 
+function(appName) {
+	this._currentAppLabel.setText(ZaMsg[ZaZimbraAdmin.MSG_KEY[appName]]);
+	//this._currentAppLabel.setImage(ZaZimbraAdmin.APP_ICON[appName]);
+}*/
+/*
+ZaCurrentAppToolBar.prototype.getViewButton = 
+function() {
+	return this._viewButton;
+}
+
+ZaCurrentAppToolBar.prototype.setViewTooltip = 
+function(view, tooltip) {
+	this._viewTooltip[view] = tooltip;
+}
+
+ZaCurrentAppToolBar.prototype.getViewMenu = 
+function(view) {
+	return this._viewMenu[view];
+}
+
+ZaCurrentAppToolBar.prototype.setViewMenu = 
+function(view, menu) {
+	this._viewMenu[view] = menu;
+	this.showViewMenu(view);
+}
+
+ZaCurrentAppToolBar.prototype.showViewMenu = 
+function(view) {
+	var viewMenu = this._viewMenu[view];
+	if (viewMenu) {
+		this._viewButton.setVisible(true);
+		this._viewButton.setToolTipContent(this._viewTooltip[view]);
+		this._viewButton.setMenu(viewMenu, false, DwtMenuItem.RADIO_STYLE);
+		var mi = viewMenu.getSelectedItem(DwtMenuItem.RADIO_STYLE);
+		var icon = mi ? mi.getImage() : null;
+		if (icon)
+			this._viewButton.setImage(icon);
+	} else {
+		this._viewButton.setVisible(false);
+	}
+}
+*/

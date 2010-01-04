@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
  
@@ -19,51 +21,30 @@
 * Class to create the advance search options toolbar view
 * @author Charles Cao
 **/
-ZaSearchBuilderToolbarView = function(parent){
+ZaSearchBuilderToolbarView = function(parent, app){
 	//toolbar operations
-	this._toolbarOperations = {} ;
-	this._toolbarOrder = [];
-	this._toolbarOperations[ZaOperation.SEARCH_BY_BASIC] = new ZaOperation(ZaOperation.SEARCH_BY_BASIC, ZaMsg.searchByBasic, ZaMsg.tt_searchByBasic, "SearchAll", "SearchAll", new AjxListener(this, this.basicTypeSelectHndlr));
-	this._toolbarOperations[ZaOperation.SEARCH_BY_ADDESS_TYPE] = new ZaOperation(ZaOperation.SEARCH_BY_ADDESS_TYPE, ZaMsg.searchByAddressType, ZaMsg.tt_searchByAddressType, "SearchAll", "SearchAll", new AjxListener(this, this.objTypeSelectHndlr));
-	//if (!ZaSettings.isDomainAdmin) { //hide domain and server feature for the domain admin
+	this._ops = [] ;
+	this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_BASIC, ZaMsg.searchByBasic, ZaMsg.tt_searchByBasic, "SearchAll", "SearchAll", new AjxListener(this, this.basicTypeSelectHndlr)));
+	this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_ADDESS_TYPE, ZaMsg.searchByAddressType, ZaMsg.tt_searchByAddressType, "SearchAll", "SearchAll", new AjxListener(this, this.objTypeSelectHndlr)));
+	if (!ZaSettings.isDomainAdmin) { //hide domain and server feature for the domain admin
 		DBG.println(AjxDebug.DBG1, "Domain Admin - No advanced cross domain or server search");
-		this._toolbarOperations [ZaOperation.SEARCH_BY_DOMAIN] = new ZaOperation(ZaOperation.SEARCH_BY_DOMAIN, ZaMsg.searchByDomain, ZaMsg.tt_searchByDomain, "Domain", "DomainDis", new AjxListener(this, this.domainSelectHndlr));
-		this._toolbarOperations [ZaOperation.SEARCH_BY_SERVER] = new ZaOperation(ZaOperation.SEARCH_BY_SERVER, ZaMsg.searchByServer, ZaMsg.tt_searchByServer, "Server", "ServerDis", new AjxListener(this, this.serverSelectHndlr));
-	//}
-	this._toolbarOperations [ZaOperation.SEARCH_BY_ADVANCED] = new ZaOperation(ZaOperation.SEARCH_BY_ADVANCED, ZaMsg.searchByAdvanced, ZaMsg.tt_searchByAdvanced, "SearchAll", "SearchAll", new AjxListener(this, this.advancedSelectHndlr));
-	this._toolbarOperations [ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
-	this._toolbarOperations [ZaOperation.SEARCH_BY_REMOVE_ALL] = new ZaOperation(ZaOperation.SEARCH_BY_REMOVE_ALL, ZaMsg.searchByRemoveAll, ZaMsg.tt_searchByRemoveAll, null, null, new AjxListener(this, this.removeSelectHndlr), null, null, "ZaSearchBuilderOptionRemoveAll");
-	this._toolbarOperations [ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
-	this._toolbarOperations [ZaOperation.CLOSE] = new ZaOperation (ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.tt_advanced_search_close, "Close", "CloseDis", new AjxListener(this, this.closeHndlr));
+		this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_DOMAIN, ZaMsg.searchByDomain, ZaMsg.tt_searchByDomain, "Domain", "DomainDis", new AjxListener(this, this.domainSelectHndlr)));
+		this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_SERVER, ZaMsg.searchByServer, ZaMsg.tt_searchByServer, "Server", "ServerDis", new AjxListener(this, this.serverSelectHndlr)));
+	}
+	this._ops.push(new ZaOperation(	ZaOperation.SEARCH_BY_ADVANCED, ZaMsg.searchByAdvanced, ZaMsg.tt_searchByAdvanced, "SearchAll", "SearchAll", new AjxListener(this, this.advancedSelectHndlr)));
+	this._ops.push(new ZaOperation(ZaOperation.SEP));
+	this._ops.push(new ZaOperation(ZaOperation.SEARCH_BY_REMOVE_ALL, ZaMsg.searchByRemoveAll, ZaMsg.tt_searchByRemoveAll, null, null, new AjxListener(this, this.removeSelectHndlr), null, null, "ZaSearchBuilderOptionRemoveAll"));
+	this._ops.push(new ZaOperation(ZaOperation.NONE));
+	this._ops.push(new ZaOperation (ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.tt_advanced_search_close, "Close", "CloseDis", new AjxListener(this, this.closeHndlr)));   
 	
-	this._toolbarOrder.push(ZaOperation.SEARCH_BY_BASIC);
-	
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI] 
-		|| ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNT_LIST_VIEW]
-		|| ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DL_LIST_VIEW]
-		|| ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ALIAS_LIST_VIEW]
-		|| ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.RESOURCE_LIST_VIEW])
-		this._toolbarOrder.push(ZaOperation.SEARCH_BY_ADDESS_TYPE);
-	
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI])
-		this._toolbarOrder.push(ZaOperation.SEARCH_BY_DOMAIN);
-	
-	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.SERVER_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI])
-		this._toolbarOrder.push(ZaOperation.SEARCH_BY_SERVER);
-		
-	this._toolbarOrder.push(ZaOperation.SEARCH_BY_ADVANCED);
-	this._toolbarOrder.push(ZaOperation.SEP);
-	this._toolbarOrder.push(ZaOperation.SEARCH_BY_REMOVE_ALL);
-	this._toolbarOrder.push(ZaOperation.NONE);
-	this._toolbarOrder.push(ZaOperation.CLOSE);	
-	ZaToolBar.call(this, parent, this._toolbarOperations, this._toolbarOrder, null, AjxEnv.isIE ? null : "ZaSearchBuilderToolBar" );
+	ZaToolBar.call(this, parent, this._ops, null, AjxEnv.isIE ? null : "ZaSearchBuilderToolBar" );
 	
 	
-	this._app = ZaApp.getInstance();
+	this._app = app;
 	this.zShow(false);
 	//this.setVisible (false);
-
-	this._controller = ZaApp.getInstance().getSearchBuilderController () ;
+	this._app = app;
+	this._controller = this._app.getSearchBuilderController () ;
 	//this._searchBuilder
 	this._view = {};
 }
@@ -128,11 +109,11 @@ function (event) {
 	DBG.println (AjxDebug.DBG3, "Close ... ");
 	
 	this._controller.toggleVisible ();
-	ZaApp.getInstance()._appViewMgr.showSearchBuilder (this._controller.isSBVisible());
+	this._app._appViewMgr.showSearchBuilder (this._controller.isSBVisible());
 	
 	//clear the search field
 	this._controller.setQuery ();
 	
 	//reset the advanced search button tooltip
-	ZaApp.getInstance().getSearchListController()._searchField.setTooltipForSearchBuildButton (ZaMsg.tt_advanced_search_open);
+	this._app.getSearchListController()._searchField.setTooltipForSearchBuildButton (ZaMsg.tt_advanced_search_open);
 }

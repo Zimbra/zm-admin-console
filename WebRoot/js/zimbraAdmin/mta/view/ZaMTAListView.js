@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -87,7 +89,7 @@ function(mta, now, isDragProxy) {
 	this.associateItemWithElement(mta, div, DwtListView.TYPE_LIST_ITEM);
 	var itemId = this._getItemId(mta);
 	var idx = 0;
-	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
+	html[idx++] = "<table width='100%' cellspacing='2' cellpadding='0'>";
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
@@ -137,17 +139,17 @@ function() {
 	var headerList = new Array();
 //idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
 
-	headerList[0] = new ZaListHeaderItem(ZaMTA.A_Servername, ZaMsg.SLV_ServiceHName_col, null, "auto", null, null, true, true);
+	headerList[0] = new ZaListHeaderItem(ZaMTA.A_Servername, ZaMsg.SLV_ServiceHName_col, null, 195, null, null, true, true);
 
-	headerList[1] = new ZaListHeaderItem(ZaMTA.A_DeferredQ, ZaMsg.PQV_DeferredQ_col, null, 100, null, null, true, true);
+	headerList[1] = new ZaListHeaderItem(ZaMTA.A_DeferredQ, ZaMsg.PQV_DeferredQ_col, null, 60, null, null, true, true);
 
-	headerList[2] = new ZaListHeaderItem(ZaMTA.A_IncomingQ, ZaMsg.PQV_IncomingQ_col, null, 100, null, null, true, true);		
+	headerList[2] = new ZaListHeaderItem(ZaMTA.A_IncomingQ, ZaMsg.PQV_IncomingQ_col, null, 60, null, null, true, true);		
 	
-	headerList[3] = new ZaListHeaderItem(ZaMTA.A_ActiveQ, ZaMsg.PQV_ActiveQ_col, null, 100, null, null, true, true);		
+	headerList[3] = new ZaListHeaderItem(ZaMTA.A_ActiveQ, ZaMsg.PQV_ActiveQ_col, null, 60, null, null, true, true);		
 	
-	headerList[4] = new ZaListHeaderItem(ZaMTA.A_CorruptQ, ZaMsg.PQV_CorruptQ_col, null, 100, null, null, true, true);			
+	headerList[4] = new ZaListHeaderItem(ZaMTA.A_CorruptQ, ZaMsg.PQV_CorruptQ_col, null, 60, null, null, true, true);			
 	
-	headerList[5] = new ZaListHeaderItem(ZaMTA.A_HoldQ, ZaMsg.PQV_HoldQ_col, null, 100, null, null, true, true);		
+	headerList[5] = new ZaListHeaderItem(ZaMTA.A_HoldQ, ZaMsg.PQV_HoldQ_col, null, 60, null, null, true, true);		
 		
 	return headerList;
 }

@@ -1,7 +1,8 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
+ * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008 Zimbra, Inc.
+ * Copyright (C) 2006, 2007 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Yahoo! Public License
  * Version 1.0 ("License"); you may not use this file except in
@@ -10,6 +11,7 @@
  * 
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * 
  * ***** END LICENSE BLOCK *****
  */
   
@@ -25,9 +27,9 @@
 * @author Charles Cao
 **/
 		
-ZaServerMBXStatsPage = function(parent) {
+ZaServerMBXStatsPage = function(parent, app) {
 	DwtTabViewPage.call(this, parent);
-
+	this._app = app;
 	this._rendered = false;
 	this._initialized = false ;
 	this._hide = true ; //indicate that the Mbx Quota Tab is hidden
@@ -117,7 +119,7 @@ ZaServerMBXStatsPage.prototype.getMbxes = function ( targetServer, offset, sortB
 	params.soapDoc = soapDoc ;
 	params.targetServer = targetServer ;
 	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
+		controller : this._app.getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_QUOTA
 	}
 	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetQuotaUsageResponse;
@@ -140,7 +142,7 @@ ZaServerMBXStatsPage.prototype.getMbxes = function ( targetServer, offset, sortB
 			diskUsed = ( accounts[i].used / _1MB ).toFixed(2) ;
 			
 			if (accounts[i].limit == 0 ){
-				quotaLimit = ZaMsg.Unlimited;
+				quotaLimit = "unlimited" ;
 				percentage = 0 ;	
 			}else{			
 				if (accounts[i].limit >= _1MB) {
@@ -272,7 +274,7 @@ function (curInstance, serverid, offset, sortBy, sortAscending) {
 
 ZaServerMBXStatsPage.prototype.updateToolbar = 
 function (curPage, totalPage, hide ){
-	var controller = ZaApp.getInstance().getCurrentController();
+	var controller = this._app.getCurrentController();
 	try {
 		//enable the page back/forward button
 		if ( controller instanceof ZaServerStatsController ){

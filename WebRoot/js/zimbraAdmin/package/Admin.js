@@ -1,23 +1,6 @@
-/*
- * ***** BEGIN LICENSE BLOCK *****
- * 
- * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2007, 2008, 2009 Zimbra, Inc.
- * 
- * The contents of this file are subject to the Yahoo! Public License
- * Version 1.0 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
- * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * 
- * ***** END LICENSE BLOCK *****
- */
 AjxPackage.require("zimbraAdmin.common.ZaUtil");
 AjxPackage.require("zimbraAdmin.common.ZaEvent");
 AjxPackage.require("zimbraAdmin.common.ZaModel");
-AjxPackage.require("zimbraAdmin.common.ZaItem");
 AjxPackage.require("zimbraAdmin.common.Lifetime_XFormItem");
 AjxPackage.require("zimbraAdmin.config.settings.ZaSettings");
 AjxPackage.require("zimbraAdmin.common.ZaAppCtxt");
@@ -28,6 +11,7 @@ AjxPackage.require("zimbraAdmin.common.ZaLoginDialog");
 AjxPackage.require("zimbraAdmin.common.ZaController");
 AjxPackage.require("zimbraAdmin.common.ZaXFormViewController");
 AjxPackage.require("zimbraAdmin.common.ZaListViewController");
+AjxPackage.require("zimbraAdmin.common.ZaItem");
 AjxPackage.require("zimbraAdmin.common.ZaItemVector");
 AjxPackage.require("zimbraAdmin.common.ZaItemList");
 AjxPackage.require("zimbraAdmin.common.ZaListView");
@@ -94,10 +78,8 @@ AjxPackage.require("zimbraAdmin.search.controller.ZaSearchListController");
 AjxPackage.require("zimbraAdmin.search.controller.ZaSearchBuilderController");
 
 // model
-AjxPackage.require("zimbraAdmin.accounts.model.ZaDataSource");
 AjxPackage.require("zimbraAdmin.accounts.model.ZaAccount");
 AjxPackage.require("zimbraAdmin.dl.model.ZaDistributionList");
-AjxPackage.require("zimbraAdmin.dl.model.ZaShare");
 AjxPackage.require("zimbraAdmin.resource.model.ZaResource");
 AjxPackage.require("zimbraAdmin.resource.model.ZaContactList");
 AjxPackage.require("zimbraAdmin.accounts.model.ZaAlias");
@@ -128,8 +110,6 @@ AjxPackage.require("zimbraAdmin.servers.view.ZaServerVolumesListView");
 AjxPackage.require("zimbraAdmin.servers.view.ZaEditVolumeXDialog");
 AjxPackage.require("zimbraAdmin.servers.view.ZaProxyPortWarningXDialog");
 AjxPackage.require("zimbraAdmin.servers.view.ZaServerListView");
-AjxPackage.require("zimbraAdmin.servers.view.ZaServerMiniListView");
-AjxPackage.require("zimbraAdmin.servers.view.ZaFlushCacheXDialog");
 AjxPackage.require("zimbraAdmin.servers.view.ZaServerXFormView");
 AjxPackage.require("zimbraAdmin.adminext.view.ZaAdminExtListView");
 AjxPackage.require("zimbraAdmin.zimlets.view.ZaZimletListView");
@@ -146,6 +126,7 @@ AjxPackage.require("zimbraAdmin.domains.view.ZaNotebookACLListView");
 AjxPackage.require("zimbraAdmin.domains.view.ZaEditDomainAclXDialog");
 AjxPackage.require("zimbraAdmin.domains.view.ZaAddDomainAclXDialog");
 AjxPackage.require("zimbraAdmin.domains.view.ZaGalObjMiniListView");
+AjxPackage.require("zimbraAdmin.cos.view.ZaCosServerPoolChooser");
 AjxPackage.require("zimbraAdmin.cos.view.ZaCosListView");
 AjxPackage.require("zimbraAdmin.cos.view.ZaCosXFormView");
 AjxPackage.require("zimbraAdmin.search.view.ZaSearchToolBar");
@@ -159,7 +140,6 @@ AjxPackage.require("zimbraAdmin.statistics.view.ZaGlobalStatsView");
 AjxPackage.require("zimbraAdmin.statistics.view.ZaGlobalMessageVolumePage");
 AjxPackage.require("zimbraAdmin.statistics.view.ZaGlobalMessageCountPage");
 AjxPackage.require("zimbraAdmin.statistics.view.ZaGlobalSpamActivityPage");
-AjxPackage.require("zimbraAdmin.statistics.view.ZaGlobalAdvancedStatsPage");
 
 AjxPackage.require("zimbraAdmin.statistics.view.ZaServerStatsView");
 AjxPackage.require("zimbraAdmin.statistics.view.ZaServerMessageVolumePage");
@@ -172,8 +152,6 @@ AjxPackage.require("zimbraAdmin.statistics.view.ZaServerSessionStatsPage");
 AjxPackage.require("zimbraAdmin.globalconfig.view.GlobalConfigXFormView");
 AjxPackage.require("zimbraAdmin.accounts.view.ZaAccMiniListView");
 AjxPackage.require("zimbraAdmin.dl.view.ZaDLXFormView");
-AjxPackage.require("zimbraAdmin.dl.view.ZaSharesListView");
-AjxPackage.require("zimbraAdmin.dl.view.ZaPublishShareXDialog");
 AjxPackage.require("zimbraAdmin.resource.view.ZaResourceXFormView");
 AjxPackage.require("zimbraAdmin.resource.view.ZaNewResourceXWizard");
 AjxPackage.require("zimbraAdmin.ZaZimbraAdmin");
