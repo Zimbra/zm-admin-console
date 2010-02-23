@@ -260,9 +260,10 @@ ZaDomain.putDomainToCache = function(domain) {
 		
 	if(!ZaDomain.staticDomainByNameCacheTable[domain.name] || !ZaDomain.staticDomainByIdCacheTable[domain.id]) {
 		ZaDomain.cacheCounter++;
-		ZaDomain.staticDomainByNameCacheTable[domain.name] = domain;
-		ZaDomain.staticDomainByIdCacheTable[domain.id] = domain;
 	}
+	ZaDomain.staticDomainByNameCacheTable[domain.name] = domain;
+	ZaDomain.staticDomainByIdCacheTable[domain.id] = domain;
+	
 }
 
 //Use ZaSearch.SearchDirectory
@@ -962,16 +963,16 @@ function(mods) {
 			if(cnt) {
 				for(var ix=0; ix <cnt; ix++) {
 					if(mods[aname][ix]) { //if there is an empty element in the array - don't send it
-						var attr = soapDoc.set("a", mods[aname][ix],modifyDomainRequest);
+						var attr = soapDoc.set("a", mods[aname][ix]);
 						attr.setAttribute("n", aname);
 					}
 				}
 			} else {
-				var attr = soapDoc.set("a", "",modifyDomainRequest);
+				var attr = soapDoc.set("a", "");
 				attr.setAttribute("n", aname);
 			}
 		} else {		
-			var attr = soapDoc.set("a", mods[aname],modifyDomainRequest);
+			var attr = soapDoc.set("a", mods[aname]);
 			attr.setAttribute("n", aname);
 		}
 	}

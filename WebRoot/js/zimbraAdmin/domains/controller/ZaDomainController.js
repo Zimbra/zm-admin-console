@@ -217,7 +217,35 @@ function () {
 		}                                       
 	}
     
- 
+
+	if(haveSmth) {
+		/*				var modifyDomainRequest = soapDoc.set("ModifyDomainRequest", null, null, ZaZimbraAdmin.URN);
+					
+						soapDoc.set("id", this._currentObject.id,modifyDomainRequest);
+						for (var aname in mods) {
+							//multy value attribute
+							if(mods[aname] instanceof Array) {
+								var cnt = mods[aname].length;
+								if(cnt) {
+									for(var ix=0; ix <cnt; ix++) {
+										if(mods[aname][ix]) { //if there is an empty element in the array - don't send it
+											var attr = soapDoc.set("a", mods[aname][ix],modifyDomainRequest);
+											attr.setAttribute("n", aname);
+										}
+									}
+								} else {
+									var attr = soapDoc.set("a", "",modifyDomainRequest);
+									attr.setAttribute("n", aname);
+								}
+							} else {		
+								var attr = soapDoc.set("a", mods[aname],modifyDomainRequest);
+								attr.setAttribute("n", aname);
+							}
+		}*/
+		this._currentObject.modify(mods);
+		
+	}
+	 
 	var writeACLs = false;	
 	//var changeStatus = false;	
 	var permsToRevoke = [];
@@ -244,8 +272,7 @@ function () {
 		
 		}
 	}
-
-	if(haveSmth || writeACLs || catchAllChanged) {
+	if(writeACLs || catchAllChanged) {
 		try { 
 			var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
 			soapDoc.setMethodAttribute("onerror", "stop");		
@@ -280,34 +307,6 @@ function () {
                 }
             }
 
-			if(haveSmth) {
-				var modifyDomainRequest = soapDoc.set("ModifyDomainRequest", null, null, ZaZimbraAdmin.URN);
-//				modifyDomainRequest.setAttribute("xmlns", ZaZimbraAdmin.URN);
-			
-				soapDoc.set("id", this._currentObject.id,modifyDomainRequest);
-				for (var aname in mods) {
-					//multy value attribute
-					if(mods[aname] instanceof Array) {
-						var cnt = mods[aname].length;
-						if(cnt) {
-							for(var ix=0; ix <cnt; ix++) {
-								if(mods[aname][ix]) { //if there is an empty element in the array - don't send it
-									var attr = soapDoc.set("a", mods[aname][ix],modifyDomainRequest);
-									attr.setAttribute("n", aname);
-								}
-							}
-						} else {
-							var attr = soapDoc.set("a", "",modifyDomainRequest);
-							attr.setAttribute("n", aname);
-						}
-					} else {		
-						var attr = soapDoc.set("a", mods[aname],modifyDomainRequest);
-						attr.setAttribute("n", aname);
-					}
-				}
-	
-			}
-	
 			var command = new ZmCsfeCommand();
 			var params = new Object();
 			
@@ -320,12 +319,7 @@ function () {
 				
 			}
 	
-			/*if(changeStatus) {
-				var modifyDomainStatusRequest = soapDoc.set("ModifyDomainStatusRequest", null, null, ZaZimbraAdmin.URN); 
-//				modifyDomainStatusRequest.setAttribute("xmlns", ZaZimbraAdmin.URN);
-				soapDoc.set("id", this._currentObject.id,modifyDomainStatusRequest);
-				soapDoc.set("status", tmpObj.attrs[ZaDomain.A_zimbraDomainStatus],modifyDomainStatusRequest);
-			}*/
+
 			params.soapDoc = soapDoc;	
 			var callback = new AjxCallback(this, this.saveChangesCallback);	
 			params.asyncMode = true;
@@ -505,7 +499,7 @@ function (resp) {
 		return;
 	} 
 }
-
+/*
 ZaDomainController.prototype.saveChangesCallback = 
 function (resp) {
 	if(!resp)
@@ -526,14 +520,12 @@ function (resp) {
 			this._handleException(ex, "ZaDomainController.prototype.saveChangesCallback", null, false);
 		}
 	}
-	/*if(response.ModifyDomainResponse && response.ModifyDomainResponse.domain && response.ModifyDomainResponse.domain[0]) {
-		this._currentObject.initFromJS(response.ModifyDomainResponse.domain[0]);
-	}*/
+
 
 	this._currentObject.refresh(false);	
 	this._view.setObject(this._currentObject);			
 	this.fireChangeEvent(this._currentObject);			
-}
+}*/
 
 ZaDomainController.prototype._finishDomainNotebookListener =
 function(ev) {

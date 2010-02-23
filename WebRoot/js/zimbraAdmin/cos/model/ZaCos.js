@@ -162,9 +162,10 @@ ZaCos.putCosToCache = function(cos) {
 		
 	if(!ZaCos.staticCosByNameCacheTable[cos.name] || !ZaCos.staticCosByIdCacheTable[cos.id]) {
 		ZaCos.cacheCounter++;
-		ZaCos.staticCosByNameCacheTable[cos.name] = cos;
-		ZaCos.staticCosByIdCacheTable[cos.id] = cos;
 	}
+	ZaCos.staticCosByNameCacheTable[cos.name] = cos;
+	ZaCos.staticCosByIdCacheTable[cos.id] = cos;
+	
 }
 
 ZaCos.MAJOR_FEATURES_CHOICES = [
