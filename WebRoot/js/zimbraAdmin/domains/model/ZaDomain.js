@@ -549,6 +549,7 @@ function(tmpObj, newDomain) {
 	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
+		showBusy:true
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_CREATE_DOMAIN
 	}
