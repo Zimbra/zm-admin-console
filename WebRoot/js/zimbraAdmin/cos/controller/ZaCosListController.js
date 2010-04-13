@@ -34,9 +34,10 @@ ZaController.changeActionsStateMethods["ZaCosListController"] = new Array();
 
 //ZaCosListController.COS_VIEW = "ZaCosListController.COS_VIEW";
 
-ZaCosListController.prototype.show = function (doPush) {
+ZaCosListController.prototype.show = function (doPush,openInNewTab) {
 	var busyId = Dwt.getNextId () ;
-	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,CONS:null,show:doPush,busyId:busyId});
+	openInNewTab = openInNewTab ? openInNewTab : false;
+	var callback = new AjxCallback(this, this.searchCallback, {openInNewTab:openInNewTab,limit:this.RESULTSPERPAGE,CONS:null,show:doPush,busyId:busyId});
 	
 	var searchParams = {
 			query:this._currentQuery ,
@@ -62,9 +63,12 @@ function (list, openInNewTab, openInSearchTab) {
 	ZaApp.getInstance().pushView(this.getContentViewId (), openInNewTab, openInSearchTab);
 	if (openInSearchTab) {
 		ZaApp.getInstance().updateSearchTab();
-	}else{
+	} else if(openInNewTab) {
+		var cTab = ZaApp.getInstance().getTabGroup().getTabById( this.getContentViewId());
+		ZaApp.getInstance().updateTab(cTab, ZaApp.getInstance()._currentViewId );
+	} else {
 		ZaApp.getInstance().updateTab(this.getMainTab(), ZaApp.getInstance()._currentViewId );
-	}
+	} 
 }
 
 
@@ -128,9 +132,9 @@ function (openInNewTab, openInSearchTab) {
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
 	//ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
 	var tabParams = {
-			openInNewTab: false,
+			openInNewTab: openInNewTab ? openInNewTab : false,
 			tabId: this.getContentViewId(),
-			tab: openInSearchTab ? this.getSearchTab() : this.getMainTab() 
+			tab: openInNewTab ? null : (openInSearchTab ? this.getSearchTab() : this.getMainTab()) 
 		}
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	
@@ -203,12 +207,9 @@ function(ev) {
 	var newCos = new ZaCos();
 	//load default COS
 	var defCos = ZaCos.getCosByName("default");
-	newCos.getAttrs = {all:true};
-	/*newCos.setAttrs = {all:true};
-	newCos.rights = {};
-	newCos._defaultValues = {attrs:{}};		
-	newCos.rights[ZaCos.RENAME_COS_RIGHT] = true;*/
 	newCos.loadNewObjectDefaults();
+	newCos.rights[ZaCos.RENAME_COS_RIGHT]=true;
+	newCos.rights[ZaCos.CREATE_COS_RIGHT]=true;
 	//copy values from default cos to the new cos
 	for(var aname in defCos.attrs) {
 		if( (aname == ZaItem.A_objectClass) || (aname == ZaItem.A_zimbraId) || (aname == ZaCos.A_name) || (aname == ZaCos.A_description) || (aname == ZaCos.A_notes) || (aname == ZaItem.A_zimbraCreateTimestamp))
