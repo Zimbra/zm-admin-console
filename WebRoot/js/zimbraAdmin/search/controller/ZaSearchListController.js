@@ -309,9 +309,11 @@ function(ev, noPopView, func, obj, params) {
 	}
 	
 	//reset the search text when the search list view/tab is closed
-	var searchFieldXForm = this._searchField._localXForm ;
-	var searchFieldItem = searchFieldXForm.getItemsById(ZaSearch.A_query)[0];
-	searchFieldItem.getElement().value = "" ;
+	if(this._searchField) {
+		var searchFieldXForm = this._searchField._localXForm ;
+		var searchFieldItem = searchFieldXForm.getItemsById(ZaSearch.A_query)[0];
+		searchFieldItem.getElement().value = "" ;
+	}
 }
 
 // new account button was pressed
@@ -549,6 +551,9 @@ function () {
 					}
 				}
 			} else if ((item.type == ZaItem.ALIAS) && (item.attrs[ZaAlias.A_targetType] == ZaItem.RESOURCE))  {
+			   	if(this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {	
+					this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
+				}				
 				if(!item.targetObj)
 					item.targetObj = item.getAliasTargetObj() ;
 					
@@ -584,6 +589,9 @@ function () {
 					}
 				}
 			} else if(item.type == ZaItem.RESOURCE) {
+			   	if(this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {	
+					this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
+				}
 				var enable = false;
 				if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 					enable = true;
