@@ -681,6 +681,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 							choices:this.cosChoices,
 							dataFetcherClass:ZaSearch,
 							emptyText:ZaMsg.enterSearchTerm,
+                            inputSize: 33,
 							editable:true,
 							getDisplayValue:function(newValue) {
 								// dereference through the choices array, if provided
