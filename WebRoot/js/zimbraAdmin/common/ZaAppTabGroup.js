@@ -302,7 +302,7 @@ function (ev) {
 	//DBG.println(AjxDebug.DBG1, "Mouse on arrow button is over ....") ;
 	var obj = DwtControl.getTargetControl(ev);
 	if (obj.getEnabled()) {
-		obj.setCursor("pointer") ;
+//		obj.setCursor("pointer") ;
 	}
 }
 
@@ -310,7 +310,7 @@ ZaAppTabGroup._arrowMouseOutHdlr =
 function (ev) {
 	//DBG.println(AjxDebug.DBG1, "Mouse on arrow button is out ....") ;
 	var obj = DwtControl.getTargetControl(ev);
-	obj.setCursor("default") ;
+//	obj.setCursor("default") ;
 }
 
 ZaAppTabGroup._leftArrowMouseDownHdlr =
@@ -339,7 +339,7 @@ function (ev) {
 	var obj = DwtControl.getTargetControl(ev); 
 	
 	if (obj.getEnabled()) {
-		obj.setCursor("pointer");
+		//obj.setCursor("pointer");
 		AjxImg.setImage(this, "LeftArrow");
 	}
 }
@@ -350,7 +350,7 @@ function (ev) {
 	var obj = DwtControl.getTargetControl(ev); 
 
 	if (obj.getEnabled()) {
-		obj.setCursor("pointer");
+		//obj.setCursor("pointer");
 		AjxImg.setImage(this, "RightArrow");
 	}
 }
