@@ -698,8 +698,7 @@ function() {
 		this._createApp();
 
     //recreate the error/msg dialogs
-    ZaApp.getInstance().initDialogs();
-   // if (ZaZimbraAdmin._LOCALE_MSG_RELOADED) this.initDialogs(true) ;
+    if (ZaZimbraAdmin._LOCALE_MSG_RELOADED) this.initDialogs(true) ;
 
     this._appCtxt.setClientCmdHdlr(new ZaClientCmdHandler());
     //draw stuff
@@ -745,11 +744,6 @@ function() {
 	if(ZaSettings.SEARCH_PANEL_ENABLED) {
 		elements[ZaAppViewMgr.C_SEARCH] = ZaApp.getInstance().getSearchListController().getSearchPanel();
 	}
-       
-       if(document.getElementById (ZaSettings.SKIN_SEARCH_BUILDER_APP_SASH_ID) != null){
-            elements[ZaAppViewMgr.C_SEARCH_BUILDER_SASH] = new DwtSash({parent:this._shell, style: DwtSash.VERTICAL_STYLE, className: "AppSash-vert", threshod:20, id:"z_sb_sash"});
-	}
-
 	elements[ZaAppViewMgr.C_LOGIN_MESSAGE]  = this._getLoginMsgPanel();
     //Use reparentHtmlelement to add the tabs. Reenable this line if it doesn't work well.
 	elements[ZaAppViewMgr.C_APP_TABS] = this._createAppTabs() ;
@@ -761,6 +755,9 @@ function() {
     ZaApp.getInstance().launch();
 
  	ZaZimbraAdmin._killSplash();
+ 	
+	
+ 	
 };
 
 ZaZimbraAdmin.noOpAction = null;

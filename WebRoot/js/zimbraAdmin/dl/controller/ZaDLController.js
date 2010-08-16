@@ -232,9 +232,9 @@ ZaDLController.prototype._saveChanges = function () {
 					this._currentObject.rename(newName);
 				} catch (ex) {
 					if(ex.code == ZmCsfeException.DISTRIBUTION_LIST_EXISTS) {
-						this.popupErrorDialog(ZaMsg.FAILED_RENAME_DL_1, ex);
+						this.popupErrorDialog(ZaMsg.FAILED_RENAME_DL_1, ex, true);
 					} else {
-						this.popupErrorDialog(ZaMsg.FAILED_RENAME_DL, ex);	
+						this.popupErrorDialog(ZaMsg.FAILED_RENAME_DL, ex, true);	
 					}
 					return retval;
 				}
@@ -247,7 +247,7 @@ ZaDLController.prototype._saveChanges = function () {
 		//save changed fields
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.ACCT_EXISTS || ex.code == ZmCsfeException.DISTRIBUTION_LIST_EXISTS) {
-			this.popupErrorDialog(ZaMsg.ERROR_dlWithThisNameExists, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_dlWithThisNameExists, ex, true);
 		} else {
 			this._handleException(ex, "ZaDLController.prototype._saveChanges", null, false);	
 		}
