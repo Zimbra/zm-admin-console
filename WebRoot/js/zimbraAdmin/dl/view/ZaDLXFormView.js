@@ -44,7 +44,13 @@ function () {
 
 ZaDLXFormView.prototype.getTabIcon =
 function () {
-	return "DistributionList" ;
+	if (this._containedObject && this._containedObject.attrs && this._containedObject.attrs[ZaDistributionList.A_isAdminGroup]=="TRUE" ) {
+                return "DistributionListGroup";
+             
+        } else {
+                return "DistributionList" ;
+        }
+
 }
 
 ZaDLXFormView.prototype.handleXFormChange = function (ev) {
@@ -383,7 +389,7 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
 			}
 			if(!AjxUtil.isValidEmailNonReg(tmpval)) {
 				//how error msg
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.WARNING_DL_INVALID_EMAIL,[values[i]]),null,null,DwtMessageDialog.WARNING_STYLE);
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.WARNING_DL_INVALID_EMAIL,[values[i]]),null,DwtMessageDialog.WARNING_STYLE);
 				return false;
 			}
 			members.push(new ZaDistributionListMember(tmpval));
@@ -465,6 +471,7 @@ function (entry) {
 		this._containedObject._defaultValues = entry._defaultValues;
 		
 	this._containedObject.name = entry.name;
+        if(entry.name == ""){this._containedObject.name = ZaMsg.TBB_New;}
 	this._containedObject.type = entry.type;
 	this._containedObject.id = entry.id;
 	
@@ -1043,7 +1050,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 										{type:_CELLSPACER_}
 									]
 								},
-								{type:_GROUP_, numCols:3, colSizes:[40, "auto",75], width:"98%", 
+								{type:_GROUP_, numCols:3, width:"98%", 
 								   items:[
 										{ref:"query", type:_TEXTFIELD_, width:"100%", cssClass:"admin_xform_name_input",  
 											nowrap:false,labelWrap:true,
