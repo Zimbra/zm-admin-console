@@ -361,7 +361,7 @@ function (openInNewTab, openInSearchTab) {
 	this._toolbarOperations[ZaOperation.PAGE_FORWARD] = new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
 	this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
 
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null,null,ZaId.VIEW_ACCTLIST);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
@@ -375,7 +375,7 @@ function (openInNewTab, openInSearchTab) {
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
 	
 	this._initPopupMenu();
-	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
+	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_ACCTLIST, ZaId.MENU_POP);
 	
 	//set a selection listener on the account list view
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
@@ -680,6 +680,7 @@ function(ev) {
 	this._haveAccounts = false;
 	this._haveDls = false;
 	this._haveDomains = false;	
+	this._haveCoses = false;
 	if(this._contentView.getSelectionCount()>0) {
 		var arrItems = this._contentView.getSelection();
 		var cnt = arrItems.length;
@@ -697,9 +698,13 @@ function(ev) {
 						this._haveAccounts = true;
 					} else if(!this._haveDls && item.type == ZaItem.DL) {
 						this._haveDls = true;
-					}  else if(!this._haveDomains && item.type == ZaItem.DOMAIN) {
+					} else if(!this._haveDomains && item.type == ZaItem.DOMAIN) {
 						this._haveDomains = true;
-					}
+					} else if(!this._haveCoses && item.type == ZaItem.COS) {
+                                                this._haveCoses = true;
+                                        }
+
+
 				}
 			}
 		}
@@ -750,14 +755,16 @@ function () {
 	}
 	if(this._removeList.length > 0) {
 		var dlgMsg;
-		if(this._haveDls && !(this._haveAccounts || this._haveAliases ||this._haveDomains)) {
+		if(this._haveDls && !(this._haveAccounts || this._haveAliases ||this._haveDomains || this._haveCoses)) {
 			dlgMsg = ZaMsg.Q_DELETE_DLS;
-		} else if(this._haveAccounts && !(this._haveDls || this._haveAliases || this._haveDomains)) {
+		} else if(this._haveAccounts && !(this._haveDls || this._haveAliases || this._haveDomains || this._haveCoses)) {
 			dlgMsg = ZaMsg.Q_DELETE_ACCOUNTS;
-		} else if(this._haveAliases && !(this._haveDls || this._haveAccounts || this._haveDomains)) {
+		} else if(this._haveAliases && !(this._haveDls || this._haveAccounts || this._haveDomains || this._haveCoses)) {
 			dlgMsg = ZaMsg.Q_DELETE_ALIASES;
-		} else if(this._haveDomains && !(this._haveAliases || this._haveAccounts || this._haveDomains)) {
+		} else if(this._haveDomains && !(this._haveAliases || this._haveAccounts || this._haveDls || this._haveCoses)) {
 			dlgMsg = ZaMsg.Q_DELETE_DOMAINS;
+                } else if(this._haveCoses && !(this._haveAliases || this._haveAccounts || this._haveDomains || this._haveDls)) {
+                        dlgMsg = ZaMsg.Q_DELETE_COSES;
 		} else {
 			dlgMsg = ZaMsg.Q_DELETE_OBJECTS;
 		}
@@ -771,10 +778,10 @@ function () {
 				break;
 			}
 		}
-		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].setMessage(dlgMsg,  DwtMessageDialog.INFO_STYLE);
-		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaAccountListController.prototype._deleteAccountsCallback, this);
-		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, ZaAccountListController.prototype._donotDeleteAccountsCallback, this);		
-		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popup();
+		ZaApp.getInstance().dialogs["confirmMessageDialog2"].setMessage(dlgMsg,  DwtMessageDialog.INFO_STYLE);
+		ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.YES_BUTTON, ZaAccountListController.prototype._deleteAccountsCallback, this);
+		ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.NO_BUTTON, ZaAccountListController.prototype._donotDeleteAccountsCallback, this);		
+		ZaApp.getInstance().dialogs["confirmMessageDialog2"].popup();
 	}
 }
 
@@ -820,11 +827,16 @@ function () {
 	if(!ZaApp.getInstance().dialogs["removeProgressDlg"]) {
 		ZaApp.getInstance().dialogs["removeProgressDlg"] = new DeleteAcctsPgrsDlg(this._container, "500px","300px");
 	}
-	ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popdown();
+	ZaApp.getInstance().dialogs["confirmMessageDialog2"].popdown();
 	ZaApp.getInstance().dialogs["removeProgressDlg"].popup();
 	ZaApp.getInstance().dialogs["removeProgressDlg"].setObject(this._removeList);
 	ZaApp.getInstance().dialogs["removeProgressDlg"].startDeletingAccounts();
 
+	//update cos list tree
+	if(this._haveCoses){
+		var overviewPanelCtrl = ZaApp.getInstance()._appCtxt.getAppController().getOverviewPanelController();
+		overviewPanelCtrl.removeCosTreeItems(this._removeList);
+	}
 }
 
 
@@ -832,7 +844,7 @@ function () {
 ZaAccountListController.prototype._donotDeleteAccountsCallback = 
 function () {
 	this._removeList = new Array();
-	ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popdown();
+	ZaApp.getInstance().dialogs["confirmMessageDialog2"].popdown();
 }
 
 
@@ -1220,6 +1232,41 @@ function () {
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
 		}	
 	}
+ 	for(var i=0;i<cnt;i++) {
+        var myitem = this._contentView.getSelection()[i];
+        if(myitem && myitem.type==ZaItem.ACCOUNT){
+                myitem = this._contentView.getSelection()[i].toString();
+                var mydomain = ZaAccount.getDomain(myitem);
+                var domainObj =  ZaDomain.getDomainByName(mydomain);
+                if (myitem == "admin@"+mydomain || myitem == "root@"+mydomain || myitem == "postmaster@"+mydomain || myitem == "domainadmin@"+mydomain) {
+                         this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+                }
+                if (domainObj.attrs[ZaDomain.A_zimbraGalAccountId]){
+                        if (myitem == domainObj.attrs[ZaDomain.A_zimbraGalAccountId]){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraSpamAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraSpamAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraHamAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraHamAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraAmavisQAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraAmavisQAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraWikiAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraWikiAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (this._contentView.getSelection()[i].attrs[ZaAccount.A_isCCAccount]){
+                        this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+                }
+
+        }
+        }
 }
 ZaController.changeActionsStateMethods["ZaAccountListController"].push(ZaAccountListController.changeActionsStateMethod);
 

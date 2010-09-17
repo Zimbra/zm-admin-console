@@ -132,7 +132,7 @@ function(entry) {
 		this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
 		this._toolbarOrder.push(ZaOperation.NONE);
 		this._toolbarOrder.push(ZaOperation.HELP);
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder);
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder, null, null, ZaId.VIEW_ACCT);
 		
 		if(!entry[ZaModel.currentTab])
 			entry[ZaModel.currentTab] = "1";
@@ -201,6 +201,38 @@ ZaAccountViewController.changeActionsStateMethod = function () {
 	if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 	}
+   	var tmpObj = this._view.getObject();
+        if(tmpObj.attrs != null && tmpObj.attrs[ZaAccount.A_mail] != null ) {
+                var myitem = tmpObj.attrs[ZaAccount.A_mail];
+                var mydomain = ZaAccount.getDomain(myitem);
+                var domainObj =  ZaDomain.getDomainByName(mydomain);
+                if (myitem == "admin@"+mydomain || myitem == "root@"+mydomain || myitem == "postmaster@"+mydomain || myitem == "domainadmin@"+mydomain) {
+                 this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+                }
+                if (domainObj.attrs[ZaDomain.A_zimbraGalAccountId]){
+                 if (myitem == domainObj.attrs[ZaDomain.A_zimbraGalAccountId]){
+                        this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraSpamAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraSpamAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraHamAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraHamAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraAmavisQAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraAmavisQAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraWikiAccount]){
+                        if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraWikiAccount].toString()){
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
+                }
+                if (tmpObj.attrs[ZaAccount.A_isCCAccount]){
+                        this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+                }
+        }
 
 	if(!ZaItem.hasRight(ZaAccount.REINDEX_MBX_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.REINDEX_MAILBOX].enabled = false;
@@ -272,7 +304,7 @@ function () {
 			try {
 				this._currentObject.changePassword(tmpObj.attrs[ZaAccount.A_password]);
 			} catch (ex) {
-				this.popupErrorDialog(ZaMsg.FAILED_SAVE_ACCOUNT, ex, true);
+				this.popupErrorDialog(ZaMsg.FAILED_SAVE_ACCOUNT, ex);
 				return false;	
 			}
 		}
@@ -355,9 +387,9 @@ function () {
 		this._currentObject.modify(mods, tmpObj);
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.ACCT_EXISTS) {
-			this.popupErrorDialog(ZaMsg.FAILED_CREATE_ACCOUNT_1, ex, true);
+			this.popupErrorDialog(ZaMsg.FAILED_CREATE_ACCOUNT_1, ex);
 		} else if(ex.code == ZmCsfeException.NO_SUCH_COS) {
-			this.popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[tmpObj.attrs[ZaAccount.A_COSId]]), ex, true);
+			this.popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[tmpObj.attrs[ZaAccount.A_COSId]]), ex);
         } else {
 			this._handleException(ex, "ZaAccountViewController.prototype._saveChanges", null, false);	
 		}
@@ -471,7 +503,7 @@ function () {
 				this._errorDialog.popup();			
 			}
 		} catch (ex) {
-			this.popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex, true);	
+			this.popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex);	
 			return false;
 		}
 	}
@@ -494,7 +526,7 @@ function () {
 			this._currentObject.rename(newName);
 		} catch (ex) {
 			if(ex.code == ZmCsfeException.ACCT_EXISTS) {
-				this.popupErrorDialog(ZaMsg.FAILED_RENAME_ACCOUNT_1, ex, true);
+				this.popupErrorDialog(ZaMsg.FAILED_RENAME_ACCOUNT_1, ex);
 			} else {
 				this._handleException(ex, "ZaAccountViewController.prototype._saveChanges", null, false);	
 			}
