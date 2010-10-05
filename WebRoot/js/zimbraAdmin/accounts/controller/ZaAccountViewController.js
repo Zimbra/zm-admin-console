@@ -132,7 +132,7 @@ function(entry) {
 		this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
 		this._toolbarOrder.push(ZaOperation.NONE);
 		this._toolbarOrder.push(ZaOperation.HELP);
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder);
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder, null, null, ZaId.VIEW_ACCT);
 		
 		if(!entry[ZaModel.currentTab])
 			entry[ZaModel.currentTab] = "1";
@@ -204,7 +204,8 @@ ZaAccountViewController.changeActionsStateMethod = function () {
    	var tmpObj = this._view.getObject();
         if(tmpObj.attrs != null && tmpObj.attrs[ZaAccount.A_mail] != null ) {
                 var myitem = tmpObj.attrs[ZaAccount.A_mail];
-                var mydomain = ZaAccount.getDomain(myitem);
+                var myaccount = tmpObj.name;
+                var mydomain = ZaAccount.getDomain(myaccount);
                 var domainObj =  ZaDomain.getDomainByName(mydomain);
                 if (myitem == "admin@"+mydomain || myitem == "root@"+mydomain || myitem == "postmaster@"+mydomain || myitem == "domainadmin@"+mydomain) {
                  this._toolbarOperations[ZaOperation.DELETE].enabled=false;

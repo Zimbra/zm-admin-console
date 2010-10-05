@@ -26,7 +26,7 @@ ZaSettings.HAVE_MORE_DOMAINS = false;
 * Look for admin name cookies and admin type cookies
 **/
 ZaSettings.postInit = function() {
-    //if (AjxEnv.hasFirebug) console.log("Finishing loading all the zimlets, and ready to initialize the application ...");
+    //if(window.console && window.console.log) console.log("Finishing loading all the zimlets, and ready to initialize the application ...");
         
 	//Instrumentation code end	
 	var shell = DwtShell.getShell(window);
@@ -169,7 +169,7 @@ ZaSettings.init = function () {
 				}
 			} catch (ex) {
 				//go on
-	            //if (AjxEnv.hasFirebug) console.log("Error Getting the Zimlets: " + ex.message);
+	            //if(window.console && window.console.log) console.log("Error Getting the Zimlets: " + ex.message);
 	        }
 			if(zimlets && zimlets.length > 0) {
 				var includes = new Array();	
@@ -179,7 +179,7 @@ ZaSettings.init = function () {
 					if(zimlets[ix] && zimlets[ix].zimlet && zimlets[ix].zimlet[0] && zimlets[ix].zimletContext && zimlets[ix].zimletContext[0]) {
 						var zimlet = zimlets[ix].zimlet[0];
 						var zimletContext = zimlets[ix].zimletContext[0];
-	                    //if (AjxEnv.hasFirebug) console.log("Adding zimlet: " + zimlet.name);
+	                    //if(window.console && window.console.log) console.log("Adding zimlet: " + zimlet.name);
 	                    //load message file first because consequent files may reference it
 	                    includes.push([appContextPath, "/res/", zimlet.name, ".js?v=",appVers,ZaZimbraAdmin.LOCALE_QS].join(""));
 						if(zimlet.include && zimlet.include.length>0) {
@@ -201,12 +201,12 @@ ZaSettings.init = function () {
 				try {
 		
 					if(cssIncludes.length > 0){
-					    //if (AjxEnv.hasFirebug) console.log ("Loading Zimlets CSS: " + cssIncludes.join(", ") );
+					    //if(window.console && window.console.log) console.log ("Loading Zimlets CSS: " + cssIncludes.join(", ") );
 	                    ZaSettings.loadStyles(cssIncludes);
 	                }
 	
 					if(includes.length > 0)   {
-	                    //if (AjxEnv.hasFirebug) console.log ("Loading Zimlets JS: " + includes.join(", ") );
+	                    //if(window.console && window.console.log) console.log ("Loading Zimlets JS: " + includes.join(", ") );
 	                   	AjxInclude(includes, null,new AjxCallback(ZaSettings.postInit ));
 	                }
 	
@@ -274,6 +274,7 @@ ZaSettings.SKIN_LOGO_ID					= ZaSettings.SKIN_IDX++;
 ZaSettings.SKIN_SASH_ID					= ZaSettings.SKIN_IDX++;
 ZaSettings.SKIN_SEARCH_BUILDER_ID		= ZaSettings.SKIN_IDX++;
 ZaSettings.SKIN_SEARCH_BUILDER_TOOLBAR_ID= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SEARCH_BUILDER_SASH_ID = ZaSettings.SKIN_IDX++;
 ZaSettings.SKIN_SEARCH_ID				= ZaSettings.SKIN_IDX++;
 ZaSettings.SKIN_SHELL_ID				= ZaSettings.SKIN_IDX++;
 ZaSettings.SKIN_STATUS_ID				= ZaSettings.SKIN_IDX++;
@@ -291,8 +292,9 @@ ZaSettings.SKIN_LOGIN_MSG_ID            = ZaSettings.SKIN_IDX++;
 //carte blanche - gives access to any UI element
 ZaSettings.CARTE_BLANCHE_UI = "cartBlancheUI";
 
+ZaSettings.initConst = function() {
+//*init List View *
 ZaSettings.ALL_UI_COMPONENTS = [] ;
-
 //List views
 ZaSettings.ACCOUNT_LIST_VIEW = "accountListView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.ACCOUNT_LIST_VIEW, label: ZaMsg.UI_Comp_AccountListView });
@@ -324,6 +326,57 @@ ZaSettings.MAILQ_VIEW = "mailQueue";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.MAILQ_VIEW, label: ZaMsg.UI_Comp_mailQueueView });
 ZaSettings.SERVER_STATS_VIEW = "perServerStatisticsView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.SERVER_STATS_VIEW, label: ZaMsg.UI_Comp_ServerStatsView });
+}
+ZaSettings.initConst();
+
+ZaSettings.getCalendarViewChoinces = function(){
+   return  [
+    {value:"day",label:ZaMsg.CalViewDay},
+    {value:"week",label:ZaMsg.CalViewWeek},
+    {value:"workWeek",label:ZaMsg.CalViewWorkWeek},
+    {value:"month",label:ZaMsg.CalViewMonth},
+    {value:"schedule",label:ZaMsg.CalViewSchedule},
+    {value:"list",label:ZaMsg.CalViewList}
+    ];
+}
+ZaSettings.calendarViewChoinces = ZaSettings.getCalendarViewChoinces; 
+
+ZaSettings.getDayOfWeekChoices = function(){
+   return [
+    {value:0,label:ZaMsg.Sunday},
+    {value:1,label:ZaMsg.Monday},
+    {value:2,label:ZaMsg.Tuesday},
+    {value:3,label:ZaMsg.Wednesday},
+    {value:4,label:ZaMsg.Thursday},
+    {value:5,label:ZaMsg.Friday},
+    {value:6,label:ZaMsg.Saturday}
+    ];
+}
+ZaSettings.dayOfWeekChoices = ZaSettings.getDayOfWeekChoices; 
+
+ZaSettings.getApptVisibilityChoices = function(){
+  return [
+    {value:"public",label:ZaMsg.AptVisibilityPublic},
+    {value:"private",label:ZaMsg.AptVisibilityPrivate}
+];
+}
+ZaSettings.apptVisibilityChoices = ZaSettings.getApptVisibilityChoices; 
+
+ZaSettings.getClientTypeChoices = function(){
+  return [
+    {value:"advanced", label:ZaMsg.clientAdvanced},
+    {value:"standard", label:ZaMsg.clientStandard}
+    ];
+}
+ZaSettings.clientTypeChoices = ZaSettings.getClientTypeChoices;
+
+ZaSettings.getAuthorizationScheme = function(){
+  return [
+    {value: "basic", label: ZaMsg.choice_basic},
+    {value: "form", label: ZaMsg.choice_form}
+    ];
+}
+ZaSettings.authorizationScheme  = ZaSettings.getAuthorizationScheme;
 
 
 //List view groups
@@ -418,6 +471,7 @@ ZaSettings.SKIN_LOGO_ID = "skin_container_logo";
 ZaSettings.SKIN_TREE_ID = "skin_container_tree";
 ZaSettings.SKIN_SEARCH_BUILDER_ID = "skin_container_search_builder";
 ZaSettings.SKIN_SEARCH_BUILDER_TB_ID = "skin_container_search_builder_toolbar";
+ZaSettings.SKIN_SEARCH_BUILDER_APP_SASH_ID = "skin_container_sb_app_sash";
 ZaSettings.SKIN_APP_SASH_ID = "skin_container_tree_app_sash";
 ZaSettings.SKIN_CURRENT_APP_ID = "skin_container_current_app";
 ZaSettings.SKIN_STATUS_ID = "skin_container_status";
@@ -433,6 +487,7 @@ ZaSettings.INIT[ZaSettings.SKIN_LOGO_ID]					= [null, ZaSettings.T_CONFIG, ZaSet
 ZaSettings.INIT[ZaSettings.SKIN_SASH_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_APP_SASH_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SEARCH_BUILDER_ID]		= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_BUILDER_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SEARCH_BUILDER_TOOLBAR_ID]= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_BUILDER_TB_ID];
+ZaSettings.INIT[ZaSettings.SKIN_SEARCH_BUILDER_SASH_ID] = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_BUILDER_APP_SASH_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SEARCH_ID]				= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_PANEL_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SHELL_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_outer"];
 ZaSettings.INIT[ZaSettings.SKIN_STATUS_ID]				= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_STATUS_ID];
@@ -458,38 +513,9 @@ ZaSettings.timeZoneChoices = ZaSettings.getTimeZoneChoices  ;
 
 ZaSettings.INIT[ZaSettings.SKIN_APP_TABS_ID] = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_app_tabs"];
 
-
 //ZaSettings.SKIN_TABS_DOM_ID = "skin_container_app_tabs" ;
 //ZaSettings.SKIN_LOGIN_MSG_ID = "skin_td_login_msg" ;
 
-ZaSettings.calendarViewChoinces = [
-	{value:"day",label:ZaMsg.CalViewDay},
-	{value:"week",label:ZaMsg.CalViewWeek},
-	{value:"workWeek",label:ZaMsg.CalViewWorkWeek},
-	{value:"month",label:ZaMsg.CalViewMonth},
-	{value:"schedule",label:ZaMsg.CalViewSchedule},
-	{value:"list",label:ZaMsg.CalViewList}
-];
-
-ZaSettings.dayOfWeekChoices = [
-	{value:0,label:ZaMsg.Sunday},
-	{value:1,label:ZaMsg.Monday},
-	{value:2,label:ZaMsg.Tuesday},
-	{value:3,label:ZaMsg.Wednesday},
-	{value:4,label:ZaMsg.Thursday},
-	{value:5,label:ZaMsg.Friday},
-	{value:6,label:ZaMsg.Saturday}
-];
-
-ZaSettings.apptVisibilityChoices = [
-	{value:"public",label:ZaMsg.AptVisibilityPublic},
-	{value:"private",label:ZaMsg.AptVisibilityPrivate}
-];
-
-ZaSettings.clientTypeChoices = [
-	{value:"advanced", label:ZaMsg.clientAdvanced},
-	{value:"standard", label:ZaMsg.clientStandard}
-];
 ZaSettings.mailCharsetChoices = [
 	{ value: "Big5" , label: "Big5" } ,
 	{ value: "Big5-HKSCS" , label: "Big5-HKSCS" } ,

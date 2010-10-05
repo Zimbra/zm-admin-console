@@ -21,7 +21,11 @@
 * @author Greg Solovyev
 **/
 ZaServerXFormView = function(parent, entry) {
-	ZaTabView.call(this, parent, "ZaServerXFormView");	
+	ZaTabView.call(this, {
+		parent:parent, 
+		iKeyName:"ZaServerXFormView",
+		contextId:ZaId.TAB_SERVER_EDIT
+	});	
 	this.TAB_INDEX = 0;
 	this.initForm(ZaServer.myXModel,this.getMyXForm(entry), null);
 	this._localXForm.setController(ZaApp.getInstance());
@@ -670,10 +674,11 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	    }
 				      	    ]
 						},
-				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","425px"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
+				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","490"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
 					      items: [
 					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraSmtpHostname, 
 					      		label:ZaMsg.LBL_zimbraSmtpHostname,
+					      colSizes:["305px"],
 								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
 								repeatInstance:"", 
 								showAddButton:true, 
@@ -681,7 +686,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								showAddOnNextRow:true,
 								addButtonLabel:ZaMsg.Add_zimbraSmtpHostname, 
 								removeButtonLabel:ZaMsg.Remove_zimbraSmtpHostname,
-								removeButtonCSSStyle: "margin-left: 50px",
+								removeButtonCSSStyle: "margin-left: 5px",
 								bnolsnr:true,
 					      		repeatItems:[
 								{ 
@@ -703,32 +708,17 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								  	{type:_SPACER_}
 								]
 						  	},
-					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraMtaRelayHost, 
-					      		label:ZaMsg.NAD_MTA_RelayMTA,
-								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-								repeatInstance:"", 
-								showAddButton:true, 
-								showRemoveButton:true, 
-								showAddOnNextRow:true,
-								addButtonLabel:ZaMsg.Add_zimbraSmtpHostname, 
-								removeButtonLabel:ZaMsg.Remove_zimbraSmtpHostname,
-								removeButtonCSSStyle: "margin-left: 50px",
-								bnolsnr:true,
-					      		repeatItems:[
-									{ 								
-										ref:".", type:_HOSTPORT_,
-									    onClick: "ZaController.showTooltip",
-										toolTipContent: ZaMsg.tt_MTA_RelayMTA,
-								  		enableDisableChecks:[],
-								  		visibilityChecks:[],										
-									    bmolsnr:true,
-									    elementChanged: function(elementValue,instanceValue, event) {
-											this.getForm().itemChanged(this, elementValue, event);
-											this.getForm().itemChanged(this.getParentItem(), elementValue, event);
-								  		}
-						      		}
-					      		]
-							},
+							{ 								
+								ref:ZaServer.A_zimbraMtaRelayHost, type:_SUPER_HOSTPORT_,
+								label:ZaMsg.NAD_MTA_RelayMTA,
+							    onClick: "ZaController.showTooltip",
+								toolTipContent: ZaMsg.tt_MTA_RelayMTA,resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+							    bmolsnr:true,
+							    elementChanged: function(elementValue,instanceValue, event) {
+									this.getForm().itemChanged(this, elementValue, event);
+										this.getForm().itemChanged(this.getParentItem(), elementValue, event);
+						  		}
+				      		},
 							{type:_GROUP_,numCols:3,colSpan:3,colSizes:["275px","275px","150px"],
 						  		items:[
 									{ref:ZaServer.A_SmtpTimeout, type:_TEXTFIELD_,
@@ -752,7 +742,45 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	  resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
 				      	    }
 						]
-				      }
+				      },
+				  
+				     	{type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.Global_MTA_MilterServer,
+                                              items: [
+                                                        { ref:ZaServer.A_zimbraMilterServerEnabled, type: _SUPER_CHECKBOX_,
+                                                          trueValue: "TRUE", falseValue: "FALSE",
+                                                          onChange: ZaServerXFormView.onFormFieldChanged,
+                                                          resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                                                          checkBoxLabel:ZaMsg.NAD_MTA_MilterServerEnabled 
+                                                    	},
+							
+							{type:_REPEAT_, ref:ZaServer.A_zimbraMilterBindAddress, 
+					      			label:ZaMsg.NAD_MTA_MilterBindAddress,
+								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+								repeatInstance:"", 
+								showAddButton:true, 
+								showRemoveButton:true, 
+								showAddOnNextRow:true,
+								addButtonLabel:ZaMsg.NAD_MTA_AddBindAddress , 
+								removeButtonLabel:ZaMsg.NAD_MTA_RemoveBindAddress ,
+								removeButtonCSSStyle: "margin-left: 50px",
+								bnolsnr:true,
+					      			items:[
+								{	 
+								   type:_TEXTFIELD_,ref:".",
+								   enableDisableChecks:[],
+								   visibilityChecks:[],
+								   bnolsnr:true,
+								   elementChanged: function(elementValue,instanceValue, event) {
+									this.getForm().itemChanged(this, elementValue, event);
+									this.getForm().itemChanged(this.getParentItem(), elementValue, event);
+								   }
+								}
+								]
+					      		},
+						
+							{ref:ZaServer.A_zimbraMilterBindPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_MilterBindPort}
+                                            	]
+                                     	}	
 				    ]
 				};
         switchItems.push (case3) ;

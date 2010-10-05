@@ -12,12 +12,17 @@
  * 		toolTip - the tooltip of the tab
 */
 
-//ZaAppTab = function(parent,ZaApp.getInstance().label, icon, width, height, closable, selected, id) {
 ZaAppTab = function(parent, params) {
 	if (arguments.length == 0) return ;
 	
 //	this._origClassName = "ImgAppTab" ;
-	DwtButton.call(this, parent, null, "ZaAppTabButton" , Dwt.ABSOLUTE_STYLE);	
+	
+	DwtButton.call(this,{
+		parent:parent, 
+		className:"ZaAppTabButton" , 
+		posStyle:Dwt.ABSOLUTE_STYLE,
+		id: params.mainId ? ZaId.getTabId(params.mainId,params.id):params.id
+	});
 	//clean the DwtButton event listeners
 	this.removeListener(DwtEvent.ONMOUSEOVER, this._mouseOverListenerObj);
 	
@@ -290,11 +295,11 @@ function() {
 		
 		//check whether the closing view is hidden or visible
 		if (tabViewId == ZaApp.getInstance()._currentViewId) { //visible
-			//if (AjxEnv.hasFirebug) console.debug("Close current tab " + this.getTitle() + " with ID " + tabViewId);
+			//if(window.console && window.console.log) console.debug("Close current tab " + this.getTitle() + " with ID " + tabViewId);
 			cc.closeButtonListener(); //Tab handling is in the view controller's close button listener
 		}else{ //hidden 
 			//TODO what if it is dirty?
-			//if (AjxEnv.hasFirebug) console.debug("Close hidden tab " + this.getTitle() + " with ID " + tabViewId );
+			//if(window.console && window.console.log) console.debug("Close hidden tab " + this.getTitle() + " with ID " + tabViewId );
 			cc.closeButtonListener(null, true, ZaAppTab.prototype.closeHiddenTab, this ) ;
 		}
 	}
@@ -359,7 +364,7 @@ function () {
 		}
 		
 		for (var j=0; j < closingTabs.length; j ++) {
-			//if (AjxEnv.hasFirebug) console.log("Closing tab " + closingTabs[j].getTabId()) ;
+			//if(window.console && window.console.log) console.log("Closing tab " + closingTabs[j].getTabId()) ;
 			closingTabs[j].closeTab();
 		}
 		

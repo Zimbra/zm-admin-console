@@ -20,17 +20,19 @@
 * @param parent parent object
 * @param opList array of ZaOperation objects
 **/
-ZaToolBar = function(parent, opList,btnOrder,posStyle,className) {
+ZaToolBar = function(parent, opList,btnOrder,posStyle,className, contextId) { 
 	if (arguments.length == 0) return;
 	className = className || "ZaToolBar";
 	posStyle = posStyle || DwtControl.ABSOLUTE_STYLE;
 
-	DwtToolBar.call(this, parent, className, posStyle);
+	this._barViewId = contextId;
+	DwtToolBar.call(this, {parent:parent, className:className, posStyle:posStyle, id: ZaId.getToolbarId(this._barViewId)});
 	this._opList = opList ;
-    this._btnOrder = btnOrder ;
-    this._buttons = new Object(); //all the buttons on the toolbar
-    this.addMoreActions() ;
-    this.init () ;
+    	this._btnOrder = btnOrder ;
+    	this._buttons = new Object(); //all the buttons on the toolbar
+    	this.addMoreActions() ;
+	this._btnList = new Array();
+    	this.init () ;
 }
 
 ZaToolBar.VIEW_DATA = "ZaToolBar.VIEW";
@@ -171,37 +173,45 @@ ZaToolBar.prototype._checkSize = function(width, height, hideText, showMoreActio
     
 	var offset = el.firstChild.offsetWidth;
 	if(offset > width) {
-        var totalVisibleButtonWidth = this.getAlwaysVisibleButtonWidths () ; 
+	        var totalVisibleButtonWidth = this.getAlwaysVisibleButtonWidths () ;
 		if (showMoreActions) {
-            moreActionsButton.setVisible(true) ;
-            totalVisibleButtonWidth += moreActionsButton.getW () ; //more actions button size
-        }
-        for (var i in this._buttons) {
-			var b = this._buttons[i];
-            if (!b || !b.getVisible()) { continue; }
-            var text = b.getText();
-			if(text && hideText) {
-				b._toggleText = text;
-				b.setText("");
-			}
+        	    moreActionsButton.setVisible(true) ;
+	            totalVisibleButtonWidth += moreActionsButton.getW () ; //more actions button size
+        	}
 
-            if (showMoreActions) {
-                var w = b.getW() ;
-                totalVisibleButtonWidth += w ;
+		var btnList = null;
+		if(!AjxUtil.isEmpty(this._btnOrder))
+			btnList = this._btnOrder;
+		else btnList = this._btnList;
 
-                if (totalVisibleButtonWidth >= width) { //width overflow
-                    if (b != moreActionsButton) {
-                        b.setVisible(false) ; // hide the overflow button
-                    } else {  //more actions button is visible now, we can break
-                        break ;
-                    }
-                }
-            }
-            
-			offset = el.firstChild.offsetWidth;
-			if(offset <= width) {
-				break;
-			}
+		var cnt = btnList.length;
+		for(var ix = 0; ix < cnt; ix++) {
+                        var b = this._buttons[btnList[ix]];
+                        if (!b || !b.getVisible()) { continue; }
+                        var text = b.getText();
+                        if(text && hideText) {
+                                b._toggleText = text;
+                                b.setText("");
+                        }
+
+                        if (showMoreActions) {
+                                var w = b.getW() ;
+                                totalVisibleButtonWidth += w ;
+
+                                if (totalVisibleButtonWidth >= width) { //width overflow
+                                        if (b != moreActionsButton) {
+                                                b.setVisible(false) ; // hide the overflow button
+                                        } else {  //more actions button is visible now, we can break
+                                                break ;
+                                        }
+                                }
+                        }
+
+                        offset = el.firstChild.offsetWidth;
+                        if(offset <= width) {
+                                break;
+                        }
+
 		}
 	}
 
@@ -213,7 +223,11 @@ ZaToolBar.prototype._createButton =
 function(buttonId, imageId, text, disImageId, toolTip, enabled, className, type, menuOpList) {
 	if (!className)
 		className = "DwtToolbarButton"
-	var b = this._buttons[buttonId] = new ZaToolBarButton(this, null, className);
+	var b = this._buttons[buttonId] = new ZaToolBarButton({
+			parent:this, 
+			className:className, 
+			id:ZaId.getButtonId(this._barViewId,ZaOperation.getStringName(buttonId))
+	});
 	if (imageId)
 		b.setImage(imageId);
 	if (text)
@@ -224,9 +238,10 @@ function(buttonId, imageId, text, disImageId, toolTip, enabled, className, type,
 	b.setData("_buttonId", buttonId);
 
 	if (type == ZaOperation.TYPE_MENU) {
-		var menu = new ZaPopupMenu(b, null,null, menuOpList);
+		var menu = new ZaPopupMenu(b, null,null, menuOpList, this._barViewId, ZaId.MENU_DROP);
 		b.setMenu(menu,true);
 	}
+	this._btnList.push(buttonId);
 	return b;
 }
 
@@ -287,7 +302,6 @@ function () {
             }
         }
     }
-
     this._opList[ZaOperation.MORE_ACTIONS] =
         new ZaOperation(ZaOperation.MORE_ACTIONS, ZaMsg.TBB_MoreActions, ZaMsg.TBB_MoreActions_tt,
                 "", "",

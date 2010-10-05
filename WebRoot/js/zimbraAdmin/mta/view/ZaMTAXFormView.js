@@ -21,7 +21,11 @@
 * @author Greg Solovyev
 **/
 ZaMTAXFormView = function(parent) {
-	ZaTabView.call(this, parent, "ZaMTAXFormView");	
+	ZaTabView.call(this, {
+		parent:parent, 
+		iKeyName:"ZaMTAXFormView",
+		contextId:ZaId.TAB_MTX_EDIT
+	});	
 
 	this.TAB_INDEX = 0;
 	ZaMTAXFormView._tab1 = ++this.TAB_INDEX;
@@ -195,7 +199,7 @@ ZaMTAXFormView.actionButtonListener = function (action) {
 		break;
 	}		
 	var view = form.parent;
-	view.selectActionDialog = ZaApp.getInstance().dialogs["selectActionDialog"] = new ZaMTAActionDialog(ZaApp.getInstance().getAppCtxt().getShell(),ZaApp.getInstance().dlgTitle);	
+	view.selectActionDialog = ZaApp.getInstance().dialogs["selectActionDialog"] = new ZaMTAActionDialog(ZaApp.getInstance().getAppCtxt().getShell(),dlgTitle);	
 	obj[ZaMTAActionDialog.MSG_IDS] = instance[qName][ZaMTA.MsgIDS];
 	obj[ZaMTAActionDialog.FLTR_ITEMS] = instance[qName][ZaMTA.A_selection_cache];	
 	obj[ZaMTAActionDialog.ANSWER] = ZaMTAActionDialog.SELECTED_MSGS; //default is selected messages
@@ -448,7 +452,7 @@ ZaMTAXFormView.createPopupMenu = function (listWidget) {
 	} else {
 		popupOperations.push(new ZaOperation(ZaOperation.HOLD, ZaMsg.TBB_Hold, ZaMsg.PQ_Hold_tt, null, null, new AjxListener(listWidget, ZaMTAXFormView.popupMenuListener,ZaMTA.ActionHold )));
 	}
-	listWidget.actionMenu = new ZaPopupMenu(listWidget, "ActionMenu", null, popupOperations);
+	listWidget.actionMenu = new ZaPopupMenu(listWidget, "ActionMenu", null, popupOperations, ZaId.VIEW_MTA, ZaId.MENU_POP);
 	listWidget.addActionListener(new AjxListener(listWidget, ZaMTAXFormView.listActionListener));		
 	listWidget.xFormItem = this;
 }
