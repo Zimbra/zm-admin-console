@@ -346,9 +346,6 @@ function (form, listArr){
         }
     }
 
-    if(!memberOf[ZaAccount.A2_directMemberList]){
-	memberOf[ZaAccount.A2_directMemberList] = [];
-    }
 
     memberOf[ZaAccount.A2_directMemberList] = memberOf[ZaAccount.A2_directMemberList].concat(nonDupArr);
     

@@ -22,11 +22,7 @@
 * @author Greg Solovyev
 **/
 ZaResourceXFormView = function(parent, entry) {
-	ZaTabView.call(this, {
-		parent:parent,
-		iKeyName:"ZaResourceXFormView",
-		contextId:ZaId.TAB_RES_EDIT
-	});	
+	ZaTabView.call(this, parent,"ZaResourceXFormView");	
 	this.TAB_INDEX = 0;		
 	if(!ZaResource.accountStatusChoices) {
 		ZaResource.accountStatusChoices = [
@@ -50,11 +46,7 @@ ZaResourceXFormView.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_ac
 
 ZaResourceXFormView.prototype.getTabIcon =
 function () {
-	if (this._containedObject && this._containedObject.attrs && this._containedObject.attrs[ZaResource.A_zimbraCalResType] == ZaResource.RESOURCE_TYPE_LOCATION){
-		return "Location" ;	
-	}else {
-		return "Resource" ;
-	}
+	return "Resource" ;
 }
 
 /**

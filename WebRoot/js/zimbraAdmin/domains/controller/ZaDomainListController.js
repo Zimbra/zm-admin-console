@@ -52,7 +52,7 @@ ZaDomainListController.prototype.show = function (doPush,openInNewTab) {
 			busyId:busyId,
 			busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
 			skipCallbackIfCancelled:false,
-			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]		
+			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraI]		
 	}
 	ZaSearch.searchDirectory(searchParams);
 }
@@ -133,10 +133,7 @@ ZaDomainListController.initToolbarMethod =
 function () {
 	// first button in the toolbar is a menu.
 	if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount)) {	
-	
-		this._toolbarOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.DTBB_New_tt, "Domain", "DomainDis", new AjxListener(this, ZaDomainListController.prototype._newButtonListener));
-		this._toolbarOperations[ZaOperation.ADD_DOMAIN_ALIAS]=new ZaOperation(ZaOperation.ADD_DOMAIN_ALIAS,ZaMsg.TBB_AddDomainAlias,
-                ZaMsg.DTBB_addDomainAlias_tt, "DomainAlias", "DomainAliasDis", new AjxListener(this, ZaDomainListController.prototype._addDomainAliasListener));
+		this._toolbarOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.DTBB_New_tt, "Domain", "DomainDis", new AjxListener(this, ZaDomainListController.prototype._newButtonListener));	
 	}
   	this._toolbarOperations[ZaOperation.EDIT]=new ZaOperation(ZaOperation.EDIT,ZaMsg.TBB_Edit, ZaMsg.DTBB_Edit_tt, "Properties", "PropertiesDis",  new AjxListener(this, ZaDomainListController.prototype._editButtonListener));    	
    	this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.DTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaDomainListController.prototype._deleteButtonListener));    	    	
@@ -149,7 +146,6 @@ function () {
 	}
 	this._toolbarOrder.push(ZaOperation.EDIT);
 	this._toolbarOrder.push(ZaOperation.DELETE);
-	this._toolbarOrder.push(ZaOperation.ADD_DOMAIN_ALIAS);
     this._toolbarOrder.push(ZaOperation.VIEW_DOMAIN_ACCOUNTS);
     this._toolbarOrder.push(ZaOperation.GAL_WIZARD);
 	this._toolbarOrder.push(ZaOperation.AUTH_WIZARD);
@@ -178,7 +174,7 @@ function (openInNewTab, openInSearchTab) {
 	this._toolbarOperations[ZaOperation.PAGE_FORWARD]=new ZaOperation(ZaOperation.PAGE_FORWARD,ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
 	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
 
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_DMLIST);    
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
@@ -192,7 +188,7 @@ function (openInNewTab, openInSearchTab) {
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	
 	this._initPopupMenu();
-	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_DMLIST, ZaId.MENU_POP);
+	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 	
 	//set a selection listener on the account list view
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
@@ -246,12 +242,7 @@ ZaDomainListController.prototype._listSelectionListener =
 function(ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		if(ev.item) {
-            var item = ev.item ;
-            if (item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.local) {
-                ZaApp.getInstance().getDomainController().show(item);
-            } else if ( item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.alias) {
-                ZaApp.getInstance().getDomainAliasWizard(true).editDomainAlias (item, true) ;
-            }
+			ZaApp.getInstance().getDomainController().show(ev.item);
 		}
 	} else {
 		this.changeActionsState();	
@@ -273,23 +264,8 @@ ZaDomainListController.prototype._editButtonListener =
 function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
-        if (item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.local) {
-		    ZaApp.getInstance().getDomainController().show(item);
-        } else if ( item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.alias) {
-            ZaApp.getInstance().getDomainAliasWizard(true).editDomainAlias (item, true) ;
-        }
+		ZaApp.getInstance().getDomainController().show(item);
 	}
-}
-
-ZaDomainListController.prototype._addDomainAliasListener =
-function (ev) {
-    var domain = new ZaDomain () ;
-    var domainAliasWizard = ZaApp.getInstance().getDomainAliasWizard () ;
-    domainAliasWizard.registerCallback(DwtDialog.OK_BUTTON,
-            ZaDomain.prototype.createDomainAlias, domain,
-            domainAliasWizard._localXForm);
-    domainAliasWizard.setObject(domain);
-    domainAliasWizard.popup();
 }
 
 // new button was pressed
@@ -302,7 +278,7 @@ function(ev) {
 		/*domain.setAttrs = {all:true};
 		domain.rights = {};
 		domain._defaultValues = {attrs:{}};*/
-		domain.loadNewObjectDefaults("name","domain.tld");
+		domain.loadNewObjectDefaults();
 		this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, domain);	
 		this._newDomainWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishNewButtonListener, this, null);			
 		this._newDomainWizard.setObject(domain);

@@ -24,12 +24,10 @@
 * This widget class extends DwtMenu. Similar to ZaToolBar, this class creates
 * buttons form an array of ZaOperation objects
 **/
-ZaPopupMenu = function(parent, className, dialog, opList, contextId, menuType) {
+ZaPopupMenu = function(parent, className, dialog, opList) {
 	if (arguments.length == 0) return;
 	className = className || "ActionMenu";
-        this._contextId = contextId;
-	this._menuType = menuType;
-	DwtMenu.call(this, parent, DwtMenu.POPUP_STYLE, className, null, dialog, ZaId.getMenuId(this._contextId,this._menuType));
+	DwtMenu.call(this, parent, DwtMenu.POPUP_STYLE, className, null, dialog);
 	this._menuItems = new Object();	
 	if(opList) {
 		//var cnt = opList.length;
@@ -107,12 +105,7 @@ function(menuItemId, menuItem) {
 
 ZaPopupMenu.prototype.createMenuItem =
 function(menuItemId, imageId, text, disImageId, enabled, style, radioGroupId) {
-	var mi = this._menuItems[menuItemId] = new DwtMenuItem({
-		parent:		this, 
-		style:		style, 
-		radioGroupId: 	radioGroupId, 
-		id: 		ZaId.getMenuItemId(this._contextId, ZaOperation.getStringName(menuItemId))
-	});
+	var mi = this._menuItems[menuItemId] = new DwtMenuItem(this, style, radioGroupId);
 	if (imageId)
 		mi.setImage(imageId);
 	if (text)

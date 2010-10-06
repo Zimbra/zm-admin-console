@@ -23,11 +23,10 @@
 * @param title {String} dialog title
 * @param w {Number} content area width
 * @param h {Number} content area height
-* @param contextId (String) prefix id
 * This class represents a reusable wizard dialog. 
 * After calling the constructor, define metadata for and call initForm to draw the contents of the dialog
 */
-ZaXWizardDialog = function(parent,className, title, w, h,iKeyName, extraButtons, contextId) {
+ZaXWizardDialog = function(parent,className, title, w, h,iKeyName, extraButtons) {
 	if (arguments.length == 0) return;
 
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON];
@@ -41,8 +40,7 @@ ZaXWizardDialog = function(parent,className, title, w, h,iKeyName, extraButtons,
 		var finishButton = new DwtDialog_ButtonDescriptor(ZaXWizardDialog.FINISH_BUTTON, AjxMsg._finish, DwtDialog.ALIGN_RIGHT, new AjxCallback(this, this.finishWizard));
 		this._extraButtons = [helpButton,prevButton,nextButton,finishButton];
 	}
-	this._contextId = contextId? contextId:ZaId.DLG_UNDEF;
-	ZaXDialog.call(this, parent,className,title, w, h,iKeyName, this._contextId);
+	ZaXDialog.call(this, parent,className,title, w, h,iKeyName);
 	this._pageIx = 1;
 	this._currentPage = 1;
 }
@@ -158,7 +156,7 @@ function (xModelMetaData, xFormMetaData,entry) {
 		throw new AjxException(ZaMsg.ERROR_METADATA_NOT_DEFINED, AjxException.INVALID_PARAM, "ZaXWizardDialog.prototype.initForm");
 		
 	this._localXModel = new XModel(xModelMetaData);
-	this._localXForm = new XForm(xFormMetaData, this._localXModel, entry, this, ZaId.getDialogViewId(this._contextId)); 
+	this._localXForm = new XForm(xFormMetaData, this._localXModel, entry, this);
 	this._localXForm.setController(ZaApp.getInstance());
 	this._localXForm.draw(this._pageDiv);
 	this._drawn = true;
