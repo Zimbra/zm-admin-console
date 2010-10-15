@@ -22,7 +22,7 @@
 * @author Charles Cao
 **/
 ZaNewResourceXWizard = function(parent) {
-	ZaXWizardDialog.call(this, parent,null, ZaMsg.NCD_NewResTitle, "700px", "300px","ZaNewResourceXWizard", null, ZaId.DLG_NEW_RES);
+	ZaXWizardDialog.call(this, parent,null, ZaMsg.NCD_NewResTitle, "700px", "300px","ZaNewResourceXWizard");
 	
 
 
@@ -116,13 +116,13 @@ function() {
 				ZaApp.getInstance().getAppCtxt().getErrorDialog().showDetail(true);
 			break;
 			case ZmCsfeException.NO_SUCH_COS:
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[this._containedObject.attrs[ZaAccount.A_COSId]]), ex);
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[this._containedObject.attrs[ZaAccount.A_COSId]]), ex, true);
 		    break;			
 			case ZmCsfeException.NO_SUCH_DOMAIN:
-				ZaApp.getInstance().dialogs["confirmMessageDialog2"].setMessage(AjxMessageFormat.format(ZaMsg.CreateDomain_q,[ZaAccount.getDomain(this._containedObject.name)]), DwtMessageDialog.WARNING_STYLE);
-				ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.YES_BUTTON, this.createDomainAndAccount, this, [ZaAccount.getDomain(this._containedObject.name)]);		
-				ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.NO_BUTTON, ZaController.prototype.closeCnfrmDelDlg, ZaApp.getInstance().getCurrentController(), null);				
-				ZaApp.getInstance().dialogs["confirmMessageDialog2"].popup();  				
+				ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].setMessage(AjxMessageFormat.format(ZaMsg.CreateDomain_q,[ZaAccount.getDomain(this._containedObject.name)]), DwtMessageDialog.WARNING_STYLE);
+				ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.createDomainAndAccount, this, [ZaAccount.getDomain(this._containedObject.name)]);		
+				ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, ZaController.prototype.closeCnfrmDelDlg, ZaApp.getInstance().getCurrentController(), null);				
+				ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popup();  				
 			break;
 			default:
 				ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaNewResourceXWizard.prototype.finishWizard", null, false);
@@ -265,8 +265,6 @@ function(value, event, form) {
     return value;
 }
 
-ZaNewResourceXWizard.isAutoDisplayname = ZaResourceXFormView.isAutoDisplayname;
-
 ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 	ZaResource.resTypeChoices = [
 		{value:ZaResource.RESOURCE_TYPE_LOCATION, label:ZaMsg.resType_location}, 
@@ -390,7 +388,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 	setupGroup.items.push({ref:ZaResource.A2_schedulePolicy, type:_OSELECT1_, msgName:ZaMsg.NAD_ResType,
 						visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_zimbraCalResAutoAcceptDecline],[ZaItem.hasWritePermission,ZaResource.A_zimbraCalResAutoDeclineIfBusy]],
 						enableDisableChecks:[],
-						label:ZaMsg.NAD_SchedulePolicy, labelLocation:_LEFT_, width: "400px", 
+						label:ZaMsg.NAD_SchedulePolicy, labelLocation:_LEFT_, width: "300px", 
 						choices:ZaResource.schedulePolicyChoices});	
 						
 	setupGroup.items.push({ref:ZaResource.A_zimbraCalResMaxNumConflictsAllowed, type:_TEXTFIELD_,
@@ -477,8 +475,8 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 								{type:_GROUP_, numCols:3, nowrap:true, width:200, msgName:ZaMsg.NAD_LocationDisplayName,label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_, 
 									items: [
 										{ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, 
-											label:null,	width:defaultWidth,
-											enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname],
+											label:null,	width:defaultWidth,  
+										 	enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname],
                                                                                         enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
 										},
 										{ref:ZaResource.A2_autoLocationName, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,trueValue:"TRUE", falseValue:"FALSE",

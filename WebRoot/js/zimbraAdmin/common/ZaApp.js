@@ -87,25 +87,6 @@ ZaApp.checkMyRight = function(targetType,targetBy,targetVal,right,attrs) {
 	
 }
 
-ZaApp.prototype.initDialogs = function () {
-	this.dialogs["errorDialog"] = this._appCtxt.getErrorDialog(true);
-	this.dialogs["msgDialog"] = this._appCtxt.getMsgDialog(true);
-	this.dialogs["confirmMessageDialog"] = this._appCtxt.getConfirmMsgDialog(true);
-	this.dialogs["confirmMessageDialog2"] = this._appCtxt.getConfirmMsgDialog2(true);
-}
-
-ZaApp.prototype.getDomainAliasWizard = function (isEdit) {
-    var dialog ;
-    if (isEdit) {
-        dialog = this.dialogs["editDomainAliasWizard"]
-            = new ZaDomainAliasEditWizard(this._container, "400px", "80px", ZaMsg.Title_Edit_domain_alias);
-    }else{
-        dialog = this.dialogs["newDomainAliasWizard"]
-            = new ZaDomainAliasWizard(this._container, "400px", "80px", ZaMsg.Title_Create_domain_alias);
-    }
-    return dialog;
-}
-
 ZaApp.prototype.launch =
 function(appCtxt) {
 	if(ZaSettings.DASHBOARD_VIEW && ZaApp.prototype.getDashBoardController) {
@@ -369,8 +350,7 @@ function(viewId, newController) {
 	}else if (viewId || newController) {
 		var c = this._controllers[viewId] = new ZaDomainListController(this._appCtxt, this._container, this);
 		c.addCreationListener(new AjxListener(this, ZaApp.prototype.handleDomainCreation));					
-		c.addRemovalListener(new AjxListener(this, ZaApp.prototype.handleDomainRemoval));
-        c.addChangeListener(new AjxListener(this.getDomainListController(), ZaDomainListController.prototype.handleDomainChange));
+		c.addRemovalListener(new AjxListener(this, ZaApp.prototype.handleDomainRemoval));							
 		return c ;
 	}
 }
@@ -511,7 +491,7 @@ ZaApp.prototype.searchDomains = function(query) {
 			busyId:busyId,
 			busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
 			skipCallbackIfCancelled:false,
-			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]			
+			attrs:[ZaDomain.A_domainName, ZaItem.A_zimbraId]			
 	}
 	ZaSearch.searchDirectory(searchParams);
 }
@@ -814,11 +794,7 @@ function(refresh) {
 ZaApp.prototype.handleDomainCreation = 
 function (ev) {
 	if(ev) {
-		//update the overpanel
-        this.searchDomains();
-        //update the domain list. We separate two search domains because domain list view only need the first page
-        // result, but the overpanel will show more results. It could potentially be combined into one search.
-        this.getDomainListController().show ();
+		this.searchDomains();
 	}
 }
 

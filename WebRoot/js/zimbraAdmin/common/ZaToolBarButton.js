@@ -12,16 +12,10 @@
  * 		toolTip - the tooltip of the tab
 */
 
-
-
-ZaToolBarButton = function(params) {
-        if (arguments.length == 0) return ;
-        params = Dwt.getParams(arguments, ZaToolBarButton.PARAMS);
-        params.className = params.className || "ZaToolBarButton";
-        DwtButton.call(this, params);
+ZaToolBarButton = function(parent, style, className, posStyle, actionTiming, id, index) {
+	if (arguments.length == 0) return ;
+	DwtButton.call(this,parent, style, className, posStyle, actionTiming, id, index);
 }
-
-ZaToolBarButton.PARAMS = ["parent", "style", "className", "posStyle", "actionTiming", "id", "index"];
 
 ZaToolBarButton.prototype = new DwtButton;
 ZaToolBarButton.prototype.constructor = DwtButton;

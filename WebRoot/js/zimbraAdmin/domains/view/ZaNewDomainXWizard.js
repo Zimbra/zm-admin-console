@@ -21,7 +21,7 @@
 * @author Greg Solovyev
 **/
 ZaNewDomainXWizard = function(parent, entry) {
-	ZaXWizardDialog.call(this, parent, null, ZaMsg.NDD_Title, "700px", "350px","ZaNewDomainXWizard", null, ZaId.DLG_NEW_DOMAIN);
+	ZaXWizardDialog.call(this, parent, null, ZaMsg.NDD_Title, "700px", "350px","ZaNewDomainXWizard");
 	
 	this.TAB_INDEX = 0;
 	
@@ -95,7 +95,6 @@ ZaNewDomainXWizard = function(parent, entry) {
 	this.initForm(ZaDomain.myXModel,this.getMyXForm(entry), null);		
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaNewDomainXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaNewDomainXWizard.prototype.handleXFormChange));	
-	 this._localXForm.addListener(DwtEvent.XFORMS_VALUE_CHANGED, new AjxListener(this, ZaNewDomainXWizard.prototype.handleXFormChange));
 	this.lastErrorStep=0;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_domains/creating_a_domain.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 }
@@ -130,7 +129,6 @@ function(stepNum) {
 		} else if (stepNum == ZaNewDomainXWizard.GALMODE_STEP) {
 			this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
 			this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
-			this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
 		} else if(stepNum == ZaNewDomainXWizard.GAL_CONFIG_SUM_STEP) {
 			//change next button to "test"
 			//this._button[DwtWizardDialog.NEXT_BUTTON].setText(ZaMsg.Domain_GALTestSettings);
@@ -162,18 +160,15 @@ function(entry) {
 	for (var a in entry.attrs) {
 		this._containedObject.attrs[a] = entry.attrs[a];
 	}
-	this._containedObject.attrs[ZaDomain.A_zimbraDomainStatus] = ZaDomain.DOMAIN_STATUS_ACTIVE;
-	
 	this._containedObject[ZaDomain.A2_isTestingGAL] = 0;
 	this._containedObject[ZaDomain.A2_isTestingSync] = 0;
 	this._containedObject[ZaDomain.A2_isTestingAuth] = 0;
+	
 	this._containedObject[ZaDomain.A_NotebookTemplateFolder]=entry[ZaDomain.A_NotebookTemplateFolder];
 	this._containedObject[ZaDomain.A_NotebookTemplateDir]=entry[ZaDomain.A_NotebookTemplateDir];	
 	this._containedObject[ZaDomain.A2_new_gal_sync_account_name]=entry[ZaDomain.A2_new_gal_sync_account_name];
 	this._containedObject[ZaDomain.A2_new_internal_gal_ds_name]=entry[ZaDomain.A2_new_internal_gal_ds_name];
 	this._containedObject[ZaDomain.A2_new_external_gal_ds_name]=entry[ZaDomain.A2_new_external_gal_ds_name];
-	this._containedObject[ZaDomain.A2_new_internal_gal_polling_interval] = "1d";
-	this._containedObject[ZaDomain.A2_new_external_gal_polling_interval] = "1d";
 	this._containedObject[ZaDomain.A2_create_gal_acc] = "TRUE";
 	this._containedObject.notebookAcls = {};
 
@@ -670,7 +665,6 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 					items: [
 						{ref:ZaDomain.A_domainName, type:_TEXTFIELD_, label:ZaMsg.Domain_DomainName,labelLocation:_LEFT_, width:200},
 						{ref:ZaDomain.A_zimbraPublicServiceHostname, type:_TEXTFIELD_, label:ZaMsg.Domain_zimbraPublicServiceHostname,labelLocation:_LEFT_, width:200},						
-						{ref: ZaDomain.A_zimbraBasicAuthRealm, type:_SUPERWIZ_TEXTFIELD_, textFieldWidth:200, labelLocation:_LEFT_, txtBoxLabel:ZaMsg.Domain_zimbraBasicAuthRealm, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal},
 						{ type: _DWT_ALERT_,containerCssStyle: "padding-bottom:0px",style: DwtAlert.INFO,
 								iconVisible: true,content: ZaMsg.Domain_InboundSMTPNote,colSpan:"*"},
 						{type:_GROUP_,colSpan:"2", colSizes:["200px","250px", "150px"],numCols:2,id:"dns_check_group",items:[

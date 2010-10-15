@@ -132,7 +132,7 @@ function(entry) {
 		this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
 		this._toolbarOrder.push(ZaOperation.NONE);
 		this._toolbarOrder.push(ZaOperation.HELP);
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder, null, null, ZaId.VIEW_ACCT);
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder);
 		
 		if(!entry[ZaModel.currentTab])
 			entry[ZaModel.currentTab] = "1";
@@ -204,8 +204,7 @@ ZaAccountViewController.changeActionsStateMethod = function () {
    	var tmpObj = this._view.getObject();
         if(tmpObj.attrs != null && tmpObj.attrs[ZaAccount.A_mail] != null ) {
                 var myitem = tmpObj.attrs[ZaAccount.A_mail];
-                var myaccount = tmpObj.name;
-                var mydomain = ZaAccount.getDomain(myaccount);
+                var mydomain = ZaAccount.getDomain(myitem);
                 var domainObj =  ZaDomain.getDomainByName(mydomain);
                 if (myitem == "admin@"+mydomain || myitem == "root@"+mydomain || myitem == "postmaster@"+mydomain || myitem == "domainadmin@"+mydomain) {
                  this._toolbarOperations[ZaOperation.DELETE].enabled=false;
@@ -295,18 +294,7 @@ function () {
 	}
 		
 	var mods = new Object();
-    
-	if(!AjxUtil.isEmpty(tmpObj.attrs[ZaAccount.A_COSId]) && !ZaItem.ID_PATTERN.test(tmpObj.attrs[ZaAccount.A_COSId]))  {
-    	var cos = ZaCos.getCosByName(tmpObj.attrs[ZaAccount.A_COSId]);
-    	if(cos) {
-    		tmpObj.attrs[ZaAccount.A_COSId] = cos.id;
-    		tmpObj._defaultValues = cos;
-    	} else {
-    		this.popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[tmpObj.attrs[ZaAccount.A_COSId]]));
-    		return false;
-    	}
-    } 
-	
+
 	if(!ZaAccount.checkValues(tmpObj))
 		return false;
 	
@@ -332,7 +320,7 @@ function () {
 		if(a == ZaAccount.A_password || a==ZaAccount.A_zimbraMailAlias || a == ZaItem.A_objectClass
                 || a==ZaAccount.A2_mbxsize || a==ZaAccount.A_mail || a == ZaItem.A_zimbraId
                 || a == ZaAccount.A_zimbraAvailableSkin || a == ZaAccount.A_zimbraZimletAvailableZimlets
-                || a == ZaItem.A_zimbraACE || a == ZaAccount.A_uid) {
+                || a == ZaItem.A_zimbraACE) {
 			continue;
 		}	
 		if(!ZaItem.hasWritePermission(a,tmpObj)) {
@@ -340,6 +328,9 @@ function () {
 		}		
 		//check if the value has been modified
 		if ((this._currentObject.attrs[a] != tmpObj.attrs[a]) && !(this._currentObject.attrs[a] == undefined && tmpObj.attrs[a] === "")) {
+			if(a==ZaAccount.A_uid) {
+				continue; //skip uid, it is changed throw a separate request
+			}
 			if(tmpObj.attrs[a] instanceof Array) {
                 if (!this._currentObject.attrs[a]) this._currentObject.attrs[a] = [] ;
                 if(!this._currentObject.attrs[a] instanceof Array) {

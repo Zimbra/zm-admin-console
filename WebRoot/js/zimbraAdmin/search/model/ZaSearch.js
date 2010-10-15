@@ -27,7 +27,6 @@ ZaSearch = function() {
 	this[ZaSearch.A_fdistributionlists] = "TRUE";
 	this[ZaSearch.A_fResources] = "TRUE";
 	this[ZaSearch.A_fDomains] = "TRUE";
-	this[ZaSearch.A_fCoses] = "TRUE";
 	this[ZaSearch.A_pagenum]=1;	
 }
 ZaSearch.ALIASES = "aliases";
@@ -52,7 +51,6 @@ ZaSearch.A_pagenum = "pagenum";
 ZaSearch.A_fAliases = "f_aliases";
 ZaSearch.A_fAccounts = "f_accounts";
 ZaSearch.A_fDomains = "f_domains";
-ZaSearch.A_fCoses = "f_coses";
 ZaSearch.A_fdistributionlists = "f_distributionlists";
 ZaSearch.A_fResources = "f_resources";
 ZaSearch.A_ResultMsg = "resultMsg";
@@ -84,7 +82,7 @@ ZaSearch.getPredefinedSavedSearches =  function () {
 
 ZaSearch.getAll =
 function() {
-	return ZaSearch.search("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES,ZaSearch.DOMAINS, ZaSearch.COSES], 1, ZaAccount.A_uid, true);
+	return ZaSearch.search("", [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES,ZaSearch.DOMAINS], 1, ZaAccount.A_uid, true);
 }
 
 
@@ -157,7 +155,7 @@ function (params) {
 		soapDoc.getMethod().setAttribute("applyConfig", params.applyConfig);
 	else
 		soapDoc.getMethod().setAttribute("applyConfig", "false");
-	
+		
 	if(params.domain)  {
 		soapDoc.getMethod().setAttribute("domain", params.domain);
         ZaSearch._domain = params.domain;
@@ -175,8 +173,9 @@ function (params) {
 	//params.maxResults = 2;
 	if(params.maxResults) {
 		soapDoc.getMethod().setAttribute("maxResults", params.maxResults.toString());
-	}
-
+	}	
+	
+	//var command = new ZmCsfeCommand();
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	if(params.callback) {
@@ -204,7 +203,7 @@ ZaSearch.TOO_MANY_RESULTS_FLAG = false ; //control the no result text of the lis
 ZaSearch.handleTooManyResultsException = function (ex, from) {
 	if (ex.code == ZmCsfeException.TOO_MANY_SEARCH_RESULTS) {
 		//supress the result
-		/*if(window.console && window.console.log) {
+		/*if (AjxEnv.hasFirebug) {
 			console.log("Suppressed Exception: " + ex.msg + " from: " + from );
 		}*/
 		ZaSearch.TOO_MANY_RESULTS_FLAG = true ;
@@ -360,8 +359,7 @@ ZaSearch.prototype.dynSelectSearchDomains = function (callArgs) {
 		params.showBusy = true;
 		params.busyId = busyId;
 		params.busyMsg = ZaMsg.BUSY_SEARCHING_DOMAINS;
-		params.skipCallbackIfCancelled = false;
-        params.attrs = [ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType];
+		params.skipCallbackIfCancelled = false; 		
 		ZaSearch.searchDirectory(params);
 	} catch (ex) {
 		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchDomains");		
@@ -518,19 +516,14 @@ function(n, types,excludeClosed) {
 	if (!AjxUtil.isEmpty(n)) {
 		query.push("(|");
 		n = String(n).replace(/([\\\\\\*\\(\\)])/g, "\\$1");
-        if (!types) types = [ZaSearch.ALIASES, ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.RESOURCES, ZaSearch.DOMAINS, ZaSearch.COSES] ;
+        if (!types) types = [ZaSearch.ALIASES, ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.RESOURCES, ZaSearch.DOMAINS] ;
         var addedAddrFields = false;
         var addedAccResFields = false;
         var addedDLAliasFields = false;
         for (var i = 0 ; i < types.length; i ++) {
             if (types[i] == "domains") {
                 query.push ("(zimbraDomainName=*"+n+"*)") ;
-            } else if(types[i] == ZaSearch.COSES) {
-		query.push("(cn=*" + n + "*)");
-	    } else if(types[i] == ZaSearch.ALIASES) {
-		query.push("(zimbraDomainName=*" + n + "*)(uid=*"+n+"*)");
-
-	    }else {
+            } else {
             	if(!addedAddrFields) {
             		query.push("(mail=*"+n+"*)(cn=*"+n+"*)(sn=*"+n+"*)(gn=*"+n+"*)(displayName=*"+n+"*)") ;
             		addedAddrFields = true;
@@ -586,7 +579,6 @@ ZaSearch.getSearchFromQuery = function (query) {
 	searchObj[ZaSearch.A_fdistributionlists] = "FALSE";
 	searchObj[ZaSearch.A_fResources] = "FALSE";
 	searchObj[ZaSearch.A_fDomains] = "FALSE" ;
-	searchObj[ZaSearch.A_fCoses] = "FALSE" ;
 	
 	if (query.types != null) {
 		for (var i = 0; i < query.types.length; ++i) {
@@ -605,9 +597,6 @@ ZaSearch.getSearchFromQuery = function (query) {
 			if(query.types[i]==ZaSearch.DOMAINS) {
 				searchObj[ZaSearch.A_fDomains] = "TRUE";
 			}
-                        if(query.types[i]==ZaSearch.COSES) {
-                                searchObj[ZaSearch.A_fCoses] = "TRUE";
-                        }
 		}
 	}
 	return searchObj;
@@ -765,7 +754,7 @@ function (searchNameArr, callback) {
 ZaSearch.updateSavedSearch =
 function (resp) {
 
-	//if(window.console && window.console.log) console.debug("Update Saved Search ... ");
+	//if (AjxEnv.hasFirebug) console.debug("Update Saved Search ... ");
 	ZaSearch.SAVED_SEARCHES = [] ;
 	if (resp != null) {
         var respObj = resp._data || resp ;
@@ -815,7 +804,7 @@ function () {
         }
         
         if ((! currentSavedSearches) && (ZaSearchField.canSaveSearch())){//load the predefined searches
-            //if(window.console && window.console.log) console.log("Load the predefined saved searches ...") ;
+            //if (AjxEnv.hasFirebug) console.log("Load the predefined saved searches ...") ;
             var savedSearchArr = [] ;
             //if (!ZaSettings.isDomainAdmin) { //admin only searches
                 for (var m=0; m < ZaSearch.getPredefinedSavedSearchesForAdminOnly().length; m++){
@@ -850,7 +839,7 @@ function () {
 ZaSearch.parseSavedSearchQuery =
 function (query) {
 	if (query == null || query.length <= 0) return ;
-	//if(window.console && window.console.log) console.log("Original Saved Search query: " + query) ;
+	//if (AjxEnv.hasFirebug) console.log("Original Saved Search query: " + query) ;
 	var regEx = /^(.+)#{3}JSON:(.+)#{3}(.+)$/ ;
 	var results = query.match(regEx) ;
 	if (results != null) {
@@ -860,7 +849,7 @@ function (query) {
 		query += jsonObj.func(jsonObj.args) ;
 		query += results[3];
 	}
-	//if(window.console && window.console.log) console.log("Parsed Saved Search query: " + query) ;
+	//if (AjxEnv.hasFirebug) console.log("Parsed Saved Search query: " + query) ;
 	return query ;
 }
 
@@ -870,7 +859,7 @@ function (query) {
  */
 ZaSearch.getTimestampByDays =
 function (days) {
-	//if(window.console && window.console.log) console.log("Get the timestamp of " + days + " days.");	
+	//if (AjxEnv.hasFirebug) console.log("Get the timestamp of " + days + " days.");	
 	var d = parseInt(days)	;
 	var dateObj = new Date();
 	var now = dateObj.getTime();
