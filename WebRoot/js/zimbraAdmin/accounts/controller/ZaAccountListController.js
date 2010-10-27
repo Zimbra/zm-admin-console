@@ -361,7 +361,7 @@ function (openInNewTab, openInSearchTab) {
 	this._toolbarOperations[ZaOperation.PAGE_FORWARD] = new ZaOperation(ZaOperation.PAGE_FORWARD, ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
 	this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
 
-	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null,null,ZaId.VIEW_ACCTLIST);    
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
@@ -375,7 +375,7 @@ function (openInNewTab, openInSearchTab) {
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
 	
 	this._initPopupMenu();
-	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_ACCTLIST, ZaId.MENU_POP);
+	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 	
 	//set a selection listener on the account list view
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
@@ -977,9 +977,6 @@ function () {
             }
 			if (item.type == ZaItem.ACCOUNT) {
 				var enable = false;
-                                var domainName = ZaAccount.getDomain(item.toString());
-                                var isAuthInternal = ZaAccountXFormView.isAuthfromInternal(domainName);
-
 				if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 					enable = true;
 				} else if (AjxUtil.isEmpty(item.rights)) {
@@ -1001,8 +998,8 @@ function () {
 						 
 						 if(this._toolbarOperations[ZaOperation.DELETE])
 						 	this._toolbarOperations[ZaOperation.DELETE].enabled = false;   
-					}
-					if(!ZaItem.hasRight(ZaAccount.SET_PASSWORD_RIGHT, item) && isAuthInternal) {
+					}	
+					if(!ZaItem.hasRight(ZaAccount.SET_PASSWORD_RIGHT, item)) {
 						 if(this._popupOperations[ZaOperation.CHNG_PWD])
 						 	this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
 						 
@@ -1017,15 +1014,6 @@ function () {
 							this._popupOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
 						}						
 					}									
-				} else {
-					if(!isAuthInternal) {
-                                                 if(this._popupOperations[ZaOperation.CHNG_PWD])
-                                                        this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
-
-                                                 if(this._toolbarOperations[ZaOperation.CHNG_PWD])
-                                                        this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
-
-					} 
 				}
 			} else if ((item.type == ZaItem.ALIAS) && (item.attrs[ZaAlias.A_targetType] == ZaItem.ACCOUNT))  {
 				if(!item.targetObj)
@@ -1252,41 +1240,29 @@ function () {
                 var domainObj =  ZaDomain.getDomainByName(mydomain);
                 if (myitem == "admin@"+mydomain || myitem == "root@"+mydomain || myitem == "postmaster@"+mydomain || myitem == "domainadmin@"+mydomain) {
                          this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-			 this._popupOperations[ZaOperation.DELETE].enabled = false;
                 }
                 if (domainObj.attrs[ZaDomain.A_zimbraGalAccountId]){
                         if (myitem == domainObj.attrs[ZaDomain.A_zimbraGalAccountId]){
-                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				this._popupOperations[ZaOperation.DELETE].enabled = false;
-			}
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
                 }
                 if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraSpamAccount]){
                         if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraSpamAccount].toString()){
-                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				this._popupOperations[ZaOperation.DELETE].enabled = false;
-			}
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
                 }
                 if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraHamAccount]){
                         if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraHamAccount].toString()){
-                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				this._popupOperations[ZaOperation.DELETE].enabled = false;
-				}
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
                 }
                 if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraAmavisQAccount]){
                         if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraAmavisQAccount].toString()){
-                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				this._popupOperations[ZaOperation.DELETE].enabled = false;
-			}
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
                 }
                 if (ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraWikiAccount]){
                         if (myitem == ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraWikiAccount].toString()){
-                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				this._popupOperations[ZaOperation.DELETE].enabled = false;
-			}
+                                this._toolbarOperations[ZaOperation.DELETE].enabled=false;}
                 }
                 if (this._contentView.getSelection()[i].attrs[ZaAccount.A_isCCAccount]){
                         this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-			this._popupOperations[ZaOperation.DELETE].enabled = false;	
                 }
 
         }

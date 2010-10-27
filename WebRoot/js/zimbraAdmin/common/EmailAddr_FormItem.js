@@ -30,7 +30,7 @@ DynSelectDomainPart_XFormItem.prototype.handleKeyPressDelay = function (event,va
 	if(!this.dataFetcherObject)
 		return;
 		
-	var callback = new AjxCallback(this, this.changeDomainChoicesCallback);
+	var callback = new AjxCallback(this, this.changeChoicesCallback);
 	this.dataFetcherMethod.call(this.dataFetcherObject, {value:value, event:event, callback:callback});
 	var val = "";
 	if(this.getParentItem()._namePart) {
@@ -40,23 +40,6 @@ DynSelectDomainPart_XFormItem.prototype.handleKeyPressDelay = function (event,va
 	val +=value;
 	this.getForm().itemChanged(this, val, event);	
 }
-
-// But 51430 should be fixed in server side to support domain alias. 
-// Now, temporary fix it by disable the domain alias in drop-down menu.
-DynSelectDomainPart_XFormItem.prototype.changeDomainChoicesCallback =
-function(data, more, total) {
-	// filter the domain alias
-	var withoutAlias = [];
-	for(var i = 0; data && i < data.length; i++) {
-		var targetObj = ZaDomain.getTargetDomainByName(data[i]) ;
-		if (targetObj.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.local){
-			withoutAlias.push(data[i]);
-		}
-	}
-	// call the default callback
-	this.changeChoicesCallback(withoutAlias, more, total);
-}
-
 
 /**
 * XFormItem class: "emailaddr (composite item)
@@ -127,7 +110,7 @@ EmailAddr_XFormItem.prototype.items = [
 				val += this.getParentItem()._domainPart;
             
             this.getForm().itemChanged(this.getParentItem(), val, event);
-			//if(window.console && window.console.log) console.log("EmailAddr_XFormItem setting value to "+val);
+			//if (AjxEnv.hasFirebug) console.log("EmailAddr_XFormItem setting value to "+val);
 		}
 	},
 	{type:_OUTPUT_, value:"@"},

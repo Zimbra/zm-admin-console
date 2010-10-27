@@ -78,11 +78,11 @@ ZaServerListController.prototype._createUI = function () {
 		var elements = new Object();
 		this._contentView = new ZaServerListView(this._container);
 		this._initToolbar();
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_SERLIST); 
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder); 
 		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 
 		this._initPopupMenu();
-		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_SERLIST, ZaId.MENU_POP);
+		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations);
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._SERVERS_LIST_VIEW, elements);
 		var tabParams = {

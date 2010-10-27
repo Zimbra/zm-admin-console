@@ -301,15 +301,12 @@ function(arr, value, foundArr){
 	if (!foundArr) {
 		foundArr = new Array();
 	}
-	
-	if (arr) { 
 	for(var i=0; i<arr.length; i++) {
 		if (arr[i][ZaAccountMemberOfListView.A_via] == value) {		
 			//j = ZaAccountMemberOfListView._find(arr, value, ZaAccountMemberOfListView.A_via) ;
 			foundArr.push (arr[i][ZaAccountMemberOfListView.A_name]) ;
 			foundArr = ZaAccountMemberOfListView._findIndirect(arr, arr[i][ZaAccountMemberOfListView.A_name], foundArr);
 		}
-	}
 	}
 	return foundArr;			
 }
@@ -349,9 +346,6 @@ function (form, listArr){
         }
     }
 
-    if(!memberOf[ZaAccount.A2_directMemberList]){
-	memberOf[ZaAccount.A2_directMemberList] = [];
-    }
 
     memberOf[ZaAccount.A2_directMemberList] = memberOf[ZaAccount.A2_directMemberList].concat(nonDupArr);
     

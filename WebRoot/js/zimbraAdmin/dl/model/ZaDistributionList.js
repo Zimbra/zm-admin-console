@@ -429,7 +429,7 @@ ZaDistributionList.addRemoveAliases = function (mods, obj) {
 					ZaApp.getInstance().getCurrentController()._errorDialog.popup();			
 				}
 			} catch (ex) {
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex);	
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex, true);	
 				return false;
 			}
 		}
@@ -509,12 +509,62 @@ ZaDistributionList.addAliases = function (obj, dl) {
 				ZaApp.getInstance().getCurrentController()._errorDialog.popup();			
 			}
 		} catch (ex) {
-			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex);	
+			ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.FAILED_ADD_ALIASES, ex, true);	
 			return false;
 		}
 	}
 }
 ZaItem.createMethods["ZaDistributionList"].push(ZaDistributionList.addAliases);
+/*
+ZaDistributionList.prototype.modify =
+function(tmpObj, callback) {
+	//update the object
+	var soapDoc = AjxSoapDoc.create("ModifyDistributionListRequest", ZaZimbraAdmin.URN, null);
+	soapDoc.set("id", this.id);
+
+	for (var aname in tmpObj.attrs) {
+		if(aname == ZaItem.A_objectClass || aname==ZaAccount.A_mail || aname == ZaItem.A_cn
+			|| aname == ZaItem.A_zimbraId || aname == ZaAccount.A_uid
+			|| aname == ZaDistributionList.A_zimbraGroupId || aname == ZaAccount.A_zimbraMailAlias
+            || aname == ZaDistributionList.A_zimbraCreateTimestamp) {
+			continue;
+		}		
+		//multi-value attribute
+		if(tmpObj.attrs[aname] instanceof Array) {
+			var cnt = tmpObj.attrs[aname].length;
+			if(cnt) {
+				for(var ix=0; ix <cnt; ix++) {
+					if(tmpObj.attrs[aname][ix]) { //if there is an empty element in the array - don't send it
+						var attr = soapDoc.set("a", tmpObj.attrs[aname][ix]);
+						attr.setAttribute("n", aname);
+					}
+				}
+			} else {
+				var attr = soapDoc.set("a", "");
+				attr.setAttribute("n", aname);
+			}
+		} else {
+			var attr = soapDoc.set("a", tmpObj.attrs[aname]);
+			attr.setAttribute("n", aname);
+		}
+	}
+	var command = new ZmCsfeCommand();
+	var params = new Object();
+	params.soapDoc = soapDoc;	
+	if(callback) {
+		params.asyncMode = true;
+		params.callback = callback;
+		command.invoke(params);
+	} else {
+		var reqMgrParams = {
+			controller : ZaApp.getInstance().getCurrentController(),
+			busyMsg : ZaMsg.BUSY_MODIFY_DL
+		}
+		var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifyDistributionListResponse;	
+		this.initFromJS(resp.dl[0]);		
+	}
+	return true;
+}*/
 
 
 ZaDistributionList.checkValues = function(tmpObj) {
@@ -780,14 +830,7 @@ ZaDistributionList.removeDeletedMembers = function (mods, obj, dl, finishedCallb
 		params.asyncMode = true;
 		params.callback = finishedCallback;
 	}
-
-	//store the removelist to be used in modify the account's memberof
-	//we only set the memberof after the server side is set. 
-	//user a var to store removelist to avoid the removelist can't be cleared when some exception is throwed in command.invoke
-	var removeList = obj[ZaDistributionList.A2_removeList];
-	obj[ZaDistributionList.A2_removeList] = new Array();
 	command.invoke(params);
-	ZaDistributionList.modifyAccountDL(obj, removeList, false);
 };
 ZaItem.modifyMethods["ZaDistributionList"].push(ZaDistributionList.removeDeletedMembers);
 
@@ -816,81 +859,10 @@ ZaDistributionList.addNewMembers = function (mods, obj, dl, finishedCallback) {
 		params.asyncMode = true;
 		params.callback = finishedCallback;
 	}
-	var addList = obj[ZaDistributionList.A2_addList];
 	obj[ZaDistributionList.A2_addList] = new Array();
 	command.invoke(params);
-	ZaDistributionList.modifyAccountDL(obj, addList, true);
 };
 ZaItem.modifyMethods["ZaDistributionList"].push(ZaDistributionList.addNewMembers);
-
-ZaDistributionList.modifyAccountDL = function (dl, modifyList, isAdd){
-	var tabGroup = ZaApp.getInstance().getTabGroup();
-	var currentDl =  { name: dl.name, id: dl.id } ;
-	for(var i = 0; i < modifyList.length; i++){	
-		var currentItem = modifyList[i];
-		var accountName = null;
-		
-		accountName = currentItem.name;
-		
-		//when the item is added by search result item, it reduces the match time.
-		if(currentItem.type == ZaItem.ALIAS && currentItem.attrs){
-			accountName = currentItem.attrs[ZaAlias.A_targetAccount];
-		}
-		
-		if(!accountName)
-			continue;
-		
-		var currentView = null;
-		for (var iTab=0; iTab < ZaAppTabGroup._TABS.size(); iTab++) {
-			var tab = ZaAppTabGroup._TABS.get(iTab) ;
-			var v = tab.getAppView() ;
-			//Only update the data for account item opened on the tab. 
-			//For the items haven't been opened, it will fetch newest data from server when it is opened.
-			if (v && v._containedObject && v._containedObject.name && v.constructor && (v.constructor==ZaAccountXFormView)) {
-				if (accountName == v._containedObject.name ) {//firstly check for account
-					currentView = v;
-					break;
-				}else if(v._containedObject.attrs && v._containedObject.attrs[ZaAccount.A_zimbraMailAlias]){
-					//secondly match the name for account's alias name
-					var aliasList = v._containedObject.attrs[ZaAccount.A_zimbraMailAlias];
-					var isAliasMatch = false;
-					for(var iAlias = 0; iAlias < aliasList.length; iAlias++){
-						if(accountName == aliasList[iAlias]){
-							isAliasMatch = true;
-							break;
-						}
-					}
-					if(isAliasMatch){
-						currentView = v;
-						break;
-					}
-				}
-			}
-		}	
-		
-		if(!currentView)
-			continue;
-		
-		var isFind = false;
-		var currentInDL = currentView._containedObject[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
-		for(var j = 0; j < currentInDL.length; j++){
-			if(currentInDL[j].name == currentDl.name){
-				isFind = true;
-				break;
-			}
-		}	
-		
-		if(!isFind && isAdd){
-			currentInDL.push(currentDl);
-		}else if(isFind && !isAdd){
-			currentInDL.splice(j, 1);
-		}else{
-			continue;
-		}
-		
-		currentView._localXForm.setInstanceValue(currentInDL, ZaAccount.A2_directMemberList);
-	}
-}
 
 ZaDistributionList.addNewMembersCreateMethod = function (obj, dl, finishedCallback) {
     ZaDistributionList.addNewMembers.call (this, null, obj, dl, finishedCallback) ;  
