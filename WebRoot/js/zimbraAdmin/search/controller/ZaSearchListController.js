@@ -30,6 +30,7 @@ ZaSearchListController = function(appCtxt, container) {
    	
 	this._currentPageNum = 1;
 	this._currentQuery = null;
+	this._currentDomain = null;
 	this._currentSortField = ZaAccount.A_uid;
 	this._currentSortOrder = "1";
 	this.searchTypes = [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES, ZaSearch.DOMAINS];
@@ -73,6 +74,7 @@ ZaSearchListController.prototype.show = function (doPush) {
 			busyMsg:ZaMsg.BUSY_SEARCHING,
 			skipCallbackIfCancelled:false			
 	}
+	if(this._currentDomain) searchParams.domain = this._currentDomain;
 	ZaSearch.searchDirectory(searchParams);
 }
 
