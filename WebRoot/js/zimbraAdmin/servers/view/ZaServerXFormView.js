@@ -21,11 +21,7 @@
 * @author Greg Solovyev
 **/
 ZaServerXFormView = function(parent, entry) {
-	ZaTabView.call(this, {
-		parent:parent, 
-		iKeyName:"ZaServerXFormView",
-		contextId:ZaId.TAB_SERVER_EDIT
-	});	
+	ZaTabView.call(this, parent, "ZaServerXFormView");	
 	this.TAB_INDEX = 0;
 	this.initForm(ZaServer.myXModel,this.getMyXForm(entry), null);
 	this._localXForm.setController(ZaApp.getInstance());
@@ -566,12 +562,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-			//bug fix 33189
-			//super_lifetime_ has 4 cols, super_checkbox has 3 cols.
-			//this table only set two cols in width by _ZA_PLAIN_GROUPER_.
-			//It works well in FF or Chrome, each row can extend its cell's width
-			//But in IE, the checkbox will be cutoff for only 75%(3/4) of the table's width.
-			conSpan: 4,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         trueValue:"TRUE", falseValue:"FALSE", onChange:ZaServerXFormView.onReverseLookupTargetFieldChanged},
@@ -615,7 +605,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						  	  enableDisableChecks:[[XForm.checkInstanceValue,ZaServer.A_zimbraMtaServiceInstalled,true],
 						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
 						  	  label: ZaMsg.NAD_Service_MTA,
-					  	      onChange: ZaServerXFormView.onMtaServiceChanged
+					  	      onChange: ZaServerXFormView.onFormFieldChanged
 						  	},
 						  	{ ref: ZaServer.A_zimbraSnmpServiceEnabled, type: _CHECKBOX_,
 						  	  enableDisableChangeEventSources:[ZaServer.A_zimbraSnmpServiceInstalled],
@@ -680,11 +670,10 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	    }
 				      	    ]
 						},
-				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","520px"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
+				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","425px"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
 					      items: [
 					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraSmtpHostname, 
 					      		label:ZaMsg.LBL_zimbraSmtpHostname,
-					      colSizes:["305px"],
 								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
 								repeatInstance:"", 
 								showAddButton:true, 
@@ -692,7 +681,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								showAddOnNextRow:true,
 								addButtonLabel:ZaMsg.Add_zimbraSmtpHostname, 
 								removeButtonLabel:ZaMsg.Remove_zimbraSmtpHostname,
-								removeButtonCSSStyle: "margin-left: 5px",
+								removeButtonCSSStyle: "margin-left: 50px",
 								bnolsnr:true,
 					      		repeatItems:[
 								{ 
@@ -714,17 +703,32 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								  	{type:_SPACER_}
 								]
 						  	},
-							{ 								
-								ref:ZaServer.A_zimbraMtaRelayHost, type:_SUPER_HOSTPORT_,
-								label:ZaMsg.NAD_MTA_RelayMTA,
-							    onClick: "ZaController.showTooltip",
-								toolTipContent: ZaMsg.tt_MTA_RelayMTA,resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-							    bmolsnr:true,
-							    elementChanged: function(elementValue,instanceValue, event) {
-									this.getForm().itemChanged(this, elementValue, event);
-										this.getForm().itemChanged(this.getParentItem(), elementValue, event);
-						  		}
-				      		},
+					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraMtaRelayHost, 
+					      		label:ZaMsg.NAD_MTA_RelayMTA,
+								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+								repeatInstance:"", 
+								showAddButton:true, 
+								showRemoveButton:true, 
+								showAddOnNextRow:true,
+								addButtonLabel:ZaMsg.Add_zimbraSmtpHostname, 
+								removeButtonLabel:ZaMsg.Remove_zimbraSmtpHostname,
+								removeButtonCSSStyle: "margin-left: 50px",
+								bnolsnr:true,
+					      		repeatItems:[
+									{ 								
+										ref:".", type:_HOSTPORT_,
+									    onClick: "ZaController.showTooltip",
+										toolTipContent: ZaMsg.tt_MTA_RelayMTA,
+								  		enableDisableChecks:[],
+								  		visibilityChecks:[],										
+									    bmolsnr:true,
+									    elementChanged: function(elementValue,instanceValue, event) {
+											this.getForm().itemChanged(this, elementValue, event);
+											this.getForm().itemChanged(this.getParentItem(), elementValue, event);
+								  		}
+						      		}
+					      		]
+							},
 							{type:_GROUP_,numCols:3,colSpan:3,colSizes:["275px","275px","150px"],
 						  		items:[
 									{ref:ZaServer.A_SmtpTimeout, type:_TEXTFIELD_,
@@ -748,45 +752,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	  resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
 				      	    }
 						]
-				      },
-				  
-				     	{type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.Global_MTA_MilterServer,
-                                              items: [
-                                                        { ref:ZaServer.A_zimbraMilterServerEnabled, type: _SUPER_CHECKBOX_,
-                                                          trueValue: "TRUE", falseValue: "FALSE",
-                                                          onChange: ZaServerXFormView.onFormFieldChanged,
-                                                          resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-                                                          checkBoxLabel:ZaMsg.NAD_MTA_MilterServerEnabled 
-                                                    	},
-							
-							{type:_REPEAT_, ref:ZaServer.A_zimbraMilterBindAddress, 
-					      			label:ZaMsg.NAD_MTA_MilterBindAddress,
-								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-								repeatInstance:"", 
-								showAddButton:true, 
-								showRemoveButton:true, 
-								showAddOnNextRow:true,
-								addButtonLabel:ZaMsg.NAD_MTA_AddBindAddress , 
-								removeButtonLabel:ZaMsg.NAD_MTA_RemoveBindAddress ,
-								removeButtonCSSStyle: "margin-left: 50px",
-								bnolsnr:true,
-					      			items:[
-								{	 
-								   type:_TEXTFIELD_,ref:".",
-								   enableDisableChecks:[],
-								   visibilityChecks:[],
-								   bnolsnr:true,
-								   elementChanged: function(elementValue,instanceValue, event) {
-									this.getForm().itemChanged(this, elementValue, event);
-									this.getForm().itemChanged(this.getParentItem(), elementValue, event);
-								   }
-								}
-								]
-					      		},
-						
-							{ref:ZaServer.A_zimbraMilterBindPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_MilterBindPort}
-                                            	]
-                                     	}	
+				      }
 				    ]
 				};
         switchItems.push (case3) ;
@@ -1104,37 +1070,3 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
     ];
 };
 ZaTabView.XFormModifiers["ZaServerXFormView"].push(ZaServerXFormView.myXFormModifier);
-
-ZaServerXFormView.showMtaServiceEnableRelatedNotice = function( isMtaEnable ){
-	
-	var notice;
-	var style;
-	if( isMtaEnable ){	
-		notice = ZaMsg.NAD_MTA_notice_related_statistics_tabs_enable;
-		style  = DwtMessageDialog.WARNING_STYLE;
-	}
-	else {
-		notice = ZaMsg.NAD_MTA_notice_related_statistics_tabs_disable;	
-		style  = DwtMessageDialog.INFO_STYLE
-	}
-	
-	//ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON]);
-		
-	ZaApp.getInstance().dialogs["msgDialog"].setMessage( notice, style );
-	////ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaServer.FlushMtaServiceData, this);		
-	ZaApp.getInstance().dialogs["msgDialog"].popup();
-	
-	//var msgDialog = appCtxt.getMsgDialog();
-	//msgDialog.setMessage(notice, DwtMessageDialog.INFO_STYLE);
-	//msgDialog.popup();
-}
-
-ZaServerXFormView.onMtaServiceChanged = function (value, event, form) {
-	
-	ZaServerXFormView.showMtaServiceEnableRelatedNotice( value );
-	
-	form.parent.setDirty(true);
-	this.setInstanceValue(value);
-	return value;
-	//return ZaServerXFormView.onFormFieldChanged( value, event, form );
-}

@@ -27,24 +27,7 @@ ZaAccountListView = function(parent,listType) {
 	this._listType = listType ;
 	var headerList = this._getHeaderList();
 	
-	var listViewId;
-	if(!this._listType || this._listType == ZaItem.ACCOUNT)
-		listViewId = ZaId.TAB_ACCT_MANAGE;
-	else if(this._listType == ZaItem.ALIAS)
-		listViewId = ZaId.TAB_ALIAS_MANAGE;
-	else if(this._listType == ZaItem.DL)
-		listViewId = ZaId.TAB_DL_MANAGE;
-	else if(this._listType == ZaItem.RESOURCE)
-		listViewId = ZaId.TAB_RES_MANAGE;
-	else listViewId = ZaId.TAB_UNDEF;
-
-	ZaListView.call(this, {
-		parent:parent, 
-		className:className, 
-		posStyle:posStyle, 
-		headerList:headerList, 
-		id:listViewId
-	});
+	ZaListView.call(this, parent, className, posStyle, headerList);
 
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	
@@ -129,11 +112,7 @@ function(account, now, isDragProxy) {
 					} else if (account.attrs[ZaAccount.A_zimbraIsSystemResource] == "TRUE") {
 						html[idx++] = AjxImg.getImageHtml("SystemResource");
 					} else {
-						if(account.isExternal) {
-							html[idx++] = AjxImg.getImageHtml("AccountIMAP");	
-						} else {
-							html[idx++] = AjxImg.getImageHtml("Account");
-						}
+						html[idx++] = AjxImg.getImageHtml("Account");
 					}
 				break;
 				case ZaItem.DL:
@@ -175,7 +154,7 @@ function(account, now, isDragProxy) {
 			if (account.type == ZaItem.ACCOUNT) {
 				status = ZaAccount._accountStatus(account.attrs[ZaAccount.A_accountStatus]);
 			} else if (account.type == ZaItem.DL) {
-				status = ZaDistributionList.getDLStatus (account.attrs.zimbraMailStatus);
+				status = ZaDistributionList._dlStatus[account.attrs.zimbraMailStatus];
 			}else if ( account.type == ZaItem.RESOURCE) {
 				status = ZaResource.getAccountStatusLabel(account.attrs[ZaAccount.A_accountStatus]);
 			} 

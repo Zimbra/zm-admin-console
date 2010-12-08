@@ -22,11 +22,7 @@
 * @author Greg Solovyev
 **/
 ZaZimletXFormView = function(parent) {
-	ZaTabView.call(this, {
-		parent:parent,
-		iKeyName:"ZaZimletXFormView",
-		contextId:ZaId.TAB_ZIM_EDIT
-	});	
+	ZaTabView.call(this, parent,"ZaZimletXFormView");	
 	this.TAB_INDEX = 0;	
 	this.initForm(ZaZimlet.myXModel,this.getMyXForm());
 }

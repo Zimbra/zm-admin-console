@@ -30,7 +30,7 @@ DynSelectDomainPart_XFormItem.prototype.handleKeyPressDelay = function (event,va
 	if(!this.dataFetcherObject)
 		return;
 		
-	var callback = new AjxCallback(this, this.changeDomainChoicesCallback);
+	var callback = new AjxCallback(this, this.changeChoicesCallback);
 	this.dataFetcherMethod.call(this.dataFetcherObject, {value:value, event:event, callback:callback});
 	var val = "";
 	if(this.getParentItem()._namePart) {
@@ -40,23 +40,6 @@ DynSelectDomainPart_XFormItem.prototype.handleKeyPressDelay = function (event,va
 	val +=value;
 	this.getForm().itemChanged(this, val, event);	
 }
-
-// But 51430 should be fixed in server side to support domain alias. 
-// Now, temporary fix it by disable the domain alias in drop-down menu.
-DynSelectDomainPart_XFormItem.prototype.changeDomainChoicesCallback =
-function(data, more, total) {
-	// filter the domain alias
-	var withoutAlias = [];
-	for(var i = 0; data && i < data.length; i++) {
-		var targetObj = ZaDomain.getTargetDomainByName(data[i]) ;
-		if (targetObj.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.local){
-			withoutAlias.push(data[i]);
-		}
-	}
-	// call the default callback
-	this.changeChoicesCallback(withoutAlias, more, total);
-}
-
 
 /**
 * XFormItem class: "emailaddr (composite item)
@@ -97,7 +80,6 @@ function () {
 		}
 	}
     this._oldDomainPart = this._domainPart ; //initialization time, old domain and current domain are the same ;		
-	this._inputDomainPart = "";
 };
 
 EmailAddr_XFormItem.prototype.items = [
@@ -122,17 +104,13 @@ EmailAddr_XFormItem.prototype.items = [
 			return val;	
 		},
 		elementChanged:function(namePart, instanceValue, event) {
-			if(namePart && this.getParentItem()._inputDomainPart) {
-				this.getParentItem()._oldDomainPart = this.getParentItem()._domainPart;
-				this.getParentItem()._domainPart = this.getParentItem()._inputDomainPart;
-				this.getParentItem()._inputDomainPart = "";
-			}
             this.getParentItem()._namePart = namePart;
             var val = namePart + "@";
 			if(this.getParentItem()._domainPart)
 				val += this.getParentItem()._domainPart;
+            
             this.getForm().itemChanged(this.getParentItem(), val, event);
-			//if(window.console && window.console.log) console.log("EmailAddr_XFormItem setting value to "+val);
+			//if (AjxEnv.hasFirebug) console.log("EmailAddr_XFormItem setting value to "+val);
 		}
 	},
 	{type:_OUTPUT_, value:"@"},
@@ -190,10 +168,8 @@ EmailAddr_XFormItem.prototype.items = [
 					}
 				}	
 			}
-			if(this.getParentItem()._namePart) {
 			this.getParentItem()._domainPart = domainPart;
-			this.getParentItem()._oldDomainPart = oldDomainPart ;
-			}else this.getParentItem()._inputDomainPart = domainPart;
+            this.getParentItem()._oldDomainPart = oldDomainPart ;
             //bug: 14250, change the instance value here also even if the whole email address is invalid
 			//this.getParentItem().setInstanceValue (val) ;
 			this.getForm().itemChanged(this.getParentItem(), val, event);

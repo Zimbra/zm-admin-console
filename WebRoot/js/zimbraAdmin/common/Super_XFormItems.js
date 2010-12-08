@@ -135,9 +135,6 @@ Cos_List_XModelItem.prototype.getSuperValue = function(ins) {
 	var lst = eval("ins._defaultValues." + _ref);
 	var retval = [];
 	if(lst) {
-		if(!(lst instanceof Array))
-			lst = [lst];
-
 		var cnt = lst.length
 		for(var i=0;i<cnt;i++) {
 			retval.push(lst[i]);
@@ -325,7 +322,7 @@ Super_AnchorHelper_XFormItem.prototype.constructWidget = function () {
 	var widget = this.widget = new DwtButton(this.getForm(), this.getCssClass());
 	var height = this.getHeight();
 	var width = this.getWidth();
-	if(!width) width = "100%";
+	if(!width) width = "120px";
 	var el = null;
 	if (width != null || height != null){
 		el = widget.getHtmlElement();
@@ -502,9 +499,8 @@ SuperWiz_Checkbox_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePerm
 
 Super_Checkbox_XFormItem.prototype.useParentTable = false;
 Super_Checkbox_XFormItem.prototype.numCols = 3;
-Super_Checkbox_XFormItem.prototype.colSizes = ["275px","275px","*"];
-Super_Checkbox_XFormItem.prototype.nowrap = false;
-Super_Checkbox_XFormItem.prototype.labelWrap = true;
+Super_Checkbox_XFormItem.prototype.colSizes = ["275px","275px","150px"];
+
 
 Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
@@ -547,7 +543,7 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 		chkBox.label = checkBoxLabel;
 		chkBox.labelWrap = this.getInheritedProperty("labelWrap");
 		this.numCols = 3;
-		this.colSpan= this.getInheritedProperty("conSpan") || 3;
+		this.colSpan=3;
 	}
 	
 	var checkBoxLabelLocation = this.getInheritedProperty("checkBoxLabelLocation");
@@ -1144,7 +1140,7 @@ Super_Lifetime_XFormItem.prototype.nowrap = false;
 Super_Lifetime_XFormItem.prototype.labelWrap = true;
 Super_Lifetime_XFormItem.prototype.numCols = 4;
 Super_Lifetime_XFormItem.prototype.colSpan = 4;
-Super_Lifetime_XFormItem.prototype.colSizes =["275px","80px","120px","*"];
+Super_Lifetime_XFormItem.prototype.colSizes =["275px","80px","120px","150px"];
 Super_Lifetime_XFormItem.prototype.useParenttable = false;
 Super_Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Super_Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];

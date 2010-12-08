@@ -22,11 +22,7 @@
 * @author Greg Solovyev
 **/
 ZaResourceXFormView = function(parent, entry) {
-	ZaTabView.call(this, {
-		parent:parent,
-		iKeyName:"ZaResourceXFormView",
-		contextId:ZaId.TAB_RES_EDIT
-	});	
+	ZaTabView.call(this, parent,"ZaResourceXFormView");	
 	this.TAB_INDEX = 0;		
 	if(!ZaResource.accountStatusChoices) {
 		ZaResource.accountStatusChoices = [
@@ -50,11 +46,7 @@ ZaResourceXFormView.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_ac
 
 ZaResourceXFormView.prototype.getTabIcon =
 function () {
-	if (this._containedObject && this._containedObject.attrs && this._containedObject.attrs[ZaResource.A_zimbraCalResType] == ZaResource.RESOURCE_TYPE_LOCATION){
-		return "Location" ;	
-	}else {
-		return "Resource" ;
-	}
+	return "Resource" ;
 }
 
 /**
@@ -240,10 +232,6 @@ ZaResourceXFormView.isEditCalFwdAddrEnabled = function () {
 
 ZaResourceXFormView.isDeleteCalFwdAddrEnabled = function () {
 	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_calFwdAddr_selection_cache)));
-}
-
-ZaResourceXFormView.isAutoDisplayname = function () {
-    return(this.getInstanceValue(ZaResource.A2_autoLocationName)=="FALSE");
 }
 
 ZaResourceXFormView.CONTACT_TAB_ATTRS = [ZaResource.A_zimbraCalResContactName,
@@ -523,8 +511,9 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                     {type:_GROUP_, numCols:3, nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, width:200, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
                         items: [
                             {ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, label:null, cssClass:"admin_xform_name_input", width:defaultWidth,
-				enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname],
-                                enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
+				 enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname],
+                                 enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
+	
                             },
                             {ref:ZaResource.A2_autoLocationName, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,
                                 label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
@@ -557,8 +546,13 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                         visibilityChangeEventSources:[ZaResource.A_zimbraCalResType]
                     }
                 ]},
-                {type:_ZAGROUP_, items:ZaAccountXFormView.getAddressFormItem()
-                 }
+                {type:_ZAGROUP_, items:[
+                    {ref:ZaResource.A_street, type:_TEXTFIELD_, msgName:ZaMsg.NAD_Street,label:ZaMsg.NAD_Street, labelLocation:_LEFT_, width:defaultWidth},
+                    {ref:ZaResource.A_city, type:_TEXTFIELD_, msgName:ZaMsg.NAD_city ,label:ZaMsg.NAD_city, labelLocation:_LEFT_, width:defaultWidth},
+                    {ref:ZaResource.A_state, type:_TEXTFIELD_, msgName:ZaMsg.NAD_state ,label:ZaMsg.NAD_state, labelLocation:_LEFT_, width:defaultWidth},
+                    {ref:ZaResource.A_country, type:_TEXTFIELD_, msgName:ZaMsg.country ,label:ZaMsg.NAD_country, labelLocation:_LEFT_, width:defaultWidth},
+                    {ref:ZaResource.A_zip, type:_TEXTFIELD_, msgName:ZaMsg.zip ,label:ZaMsg.NAD_zip, labelLocation:_LEFT_, width:defaultWidth}
+                ]}
             ]
         };
         cases.push(case2);
@@ -577,3 +571,6 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	];
 };
 ZaTabView.XFormModifiers["ZaResourceXFormView"].push(ZaResourceXFormView.myXFormModifier);
+ZaNewResourceXWizard.isAutoDisplayname = function () {
+        return(this.getInstanceValue(ZaResource.A2_autoLocationName)=="FALSE");
+}

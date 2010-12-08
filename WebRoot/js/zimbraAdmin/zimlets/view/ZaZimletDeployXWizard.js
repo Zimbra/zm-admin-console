@@ -21,7 +21,7 @@
 * @author Greg Solovyev
 **/
 ZaZimletDeployXWizard = function(parent) {
-	ZaXWizardDialog.call(this, parent,null, ZaMsg.ZMLT_DeployZimletWizardTitle, "550px", "300px","ZaZimletDeployXWizard", null, ZaId.DLG_ZIM_DEPLOY);
+	ZaXWizardDialog.call(this, parent,null, ZaMsg.ZMLT_DeployZimletWizardTitle, "550px", "300px","ZaZimletDeployXWizard");
 	this._app = ZaApp.getInstance();
 	this.stepChoices = [
 		{label:ZaMsg.ZMLT_UploadFileStep_Title, value:1},
@@ -227,7 +227,7 @@ ZaZimletDeployXWizard.prototype.deployZimletClbck = function (resp) {
 						msgLines.push(AjxMessageFormat.format(ZaMsg.ZMLT_DeployProgres,[progress[i].server,ZaMsg.ZMLT_StatusPending]))						
 					} else if (progress[i].status == ZaZimlet.STATUS_FAILED) {
 						hasErrors = true;
-						msgLines.push(AjxMessageFormat.format(ZaMsg.ZMLT_DeployProgresFail, [progress[i].server,progress[i].error]))						
+						msgLines.push(AjxMessageFormat.format(ZaMsg.ZMLT_DeployProgres, [progress[i].server,ZaMsg.ZMLT_StatusFailed]))						
 					} else if (progress[i].status == ZaZimlet.STATUS_SUCCEEDED) {
 						msgLines.push(AjxMessageFormat.format(ZaMsg.ZMLT_DeployProgres, [progress[i].server,ZaMsg.ZMLT_StatusSuccess]))						
 					}

@@ -26,13 +26,8 @@ ZaCosListView = function(parent) {
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
 	
 	var headerList = this._getHeaderList();
-	ZaListView.call(this, {
-		parent:parent, 
-		className:className, 
-		posStyle:posStyle, 
-		headerList:headerList,
-		id: ZaId.TAB_COS_MANAGE
-	});
+	
+	ZaListView.call(this, parent, className, posStyle, headerList);
 
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 }

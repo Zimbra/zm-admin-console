@@ -27,13 +27,7 @@ ZaMTAListView = function(parent) {
 	
 	var headerList = this._getHeaderList();
 	
-	ZaListView.call(this, {
-		parent:parent, 
-		className:className, 
-		posStyle:posStyle, 
-		headerList:headerList,
-		id:ZaId.TAB_MTX_MANAGE
-	});
+	ZaListView.call(this, parent, className, posStyle, headerList);
 
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	

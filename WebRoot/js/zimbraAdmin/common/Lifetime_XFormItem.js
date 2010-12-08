@@ -53,8 +53,7 @@ Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 Lifetime_XFormItem.prototype.nowrap = false;
 Lifetime_XFormItem.prototype.labelWrap = true;
-Lifetime_XFormItem.prototype.initializeItems = function(){
-	this.items = [
+Lifetime_XFormItem.prototype.items = [
 	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_, cssClass:"admin_xform_number_input", 
 	 	visibilityChecks:[],
 	 	enableDisableChecks:[],		
@@ -102,9 +101,6 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 		}
 	}
 ];
-	Composite_XFormItem.prototype.initializeItems.call(this);
-}
-Lifetime_XFormItem.prototype.items = [];
 
 Lifetime1_XFormItem = function() {}
 XFormItemFactory.createItemType("_LIFETIME1_", "lifetime1", Lifetime1_XFormItem, Composite_XFormItem);
@@ -112,8 +108,7 @@ Lifetime1_XFormItem.prototype.nowrap = false;
 Lifetime1_XFormItem.prototype.labelWrap = true;
 Lifetime1_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Lifetime1_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
-Lifetime1_XFormItem.prototype.initializeItems  = function() {
-	this.items = [
+Lifetime1_XFormItem.prototype.items = [
 	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_number_input", 
 		visibilityChecks:[],
 	 	enableDisableChecks:[],
@@ -159,9 +154,6 @@ Lifetime1_XFormItem.prototype.initializeItems  = function() {
 		}
 	}
 ];
-Composite_XFormItem.prototype.initializeItems.call(this);
-}
-Lifetime1_XFormItem.prototype.items = [];
 
 Lifetime2_XFormItem = function() {}
 Lifetime2_XFormItem.prototype.nowrap = false;

@@ -22,7 +22,7 @@
 **/
 ZaAuthConfigXWizard = function(parent) {
 
-	ZaXWizardDialog.call(this, parent, null, ZaMsg.NCD_AuthConfigTitle,"700px", "350px","ZaAuthConfigXWizard", null, ZaId.DLG_AUTH_CONFIG);
+	ZaXWizardDialog.call(this, parent, null, ZaMsg.NCD_AuthConfigTitle,"700px", "350px","ZaAuthConfigXWizard");
 	
 	this.AuthMechs = [
 		{label:ZaMsg.AuthMech_zimbra, value:ZaDomain.AuthMech_zimbra},
@@ -441,7 +441,7 @@ ZaAuthConfigXWizard.myXFormModifier = function(xFormObject) {
 								visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_AuthTestResultCode,ZaDomain.Check_OK]],
 								visibilityChangeEventSources:[ZaDomain.A_AuthTestResultCode]	
 							},
-							{type:_GROUP_, isTabGroup:false, deferred:false, colSpan:2, 
+							{type:_GROUP_, isTabGroup:false, deferred:false, 
 								visibilityChangeEventSources:[ZaDomain.A_AuthTestResultCode],
 								visibilityChecks:[
 									function () {

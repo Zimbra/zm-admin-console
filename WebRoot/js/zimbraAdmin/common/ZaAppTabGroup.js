@@ -8,12 +8,7 @@
 
 ZaAppTabGroup = function(parent,parentElId) {
 	if (arguments.length == 0) return;
-	DwtComposite.call(this,{
-		parent:parent, 
-		className:"ZaAppTabGroup", 
-		posStyle:Dwt.ABSOLUTE_STYLE, 
-		id:ZaId.getTabId(ZaId.TAB_GROUP,parentElId)
-	});
+	DwtComposite.call(this, parent, "ZaAppTabGroup", Dwt.ABSOLUTE_STYLE);	
 	this._created = false ;
 
 	this._mainTab = null;
@@ -68,7 +63,6 @@ function (parentElId) {
 		//create the main tab
 		var tabParams = {
 			closable: false,
-			mainId: ZaId.TAB_MAIN,
 			selected: true
 		}
 		//this._mainTab = new ZaAppTab (this,  null, null,	null, null, false, true);
@@ -395,7 +389,7 @@ function () {
 				var numTabsVisible = this._numberOfVisibleTabs = Math.floor(groupWidth / tabMinWidth) ;
 				
 				tabWidth = Math.floor(groupWidth / numTabsVisible) ; 
-				/*if(window.console && window.console.log) console.debug(   "groupWidth = " + groupWidth 
+				/*if (AjxEnv.hasFirebug) console.debug(   "groupWidth = " + groupWidth 
 											+ " and number of tabs visible = " + numTabsVisible
 											+ " tab width = " + tabWidth );*/
 				//need to show the navigation arrows, so resize the tab width is required
@@ -452,9 +446,7 @@ function (tab, resize) {
 	if (tab == this._searchTab) {
 		this._searchTab = null ;
 		//need to reset the search list controller
-		var slc = ZaApp.getInstance().getSearchListController();
-		if(slc)
-			slc.reset() ;
+		ZaApp.getInstance().getSearchListController().reset() ;
 	}
 	ZaAppTabGroup._TABS.remove (tab) ;
 	
@@ -554,7 +546,7 @@ function (itemId, tabConstructor) {
 		var tab = ZaAppTabGroup._TABS.get(i) ;
 		var v = tab.getAppView() ;
 		if (v && v._containedObject && v._containedObject.id && v.constructor) {
-			if (itemId == v._containedObject.id && (v.constructor==tabConstructor || !tabConstructor)) {
+			if (itemId == v._containedObject.id && v.constructor==tabConstructor) {
 				return tab ;
 			}
 		}

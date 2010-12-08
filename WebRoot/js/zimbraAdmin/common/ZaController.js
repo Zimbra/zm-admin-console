@@ -50,14 +50,20 @@ ZaController = function(appCtxt, container,iKeyName) {
 }
 ZaController.CLICK_DELAY = 150;
 ZaController.prototype.initDialogs = function (refresh) {
+
 	if(ZaApp.getInstance()) {
-		this._msgDialog = ZaApp.getInstance().dialogs["msgDialog"];
-		this._errorDialog = ZaApp.getInstance().dialogs["errorDialog"];
+		this._msgDialog = ZaApp.getInstance().dialogs["msgDialog"] = this._appCtxt.getMsgDialog(refresh);
+
+		this._errorDialog = ZaApp.getInstance().dialogs["errorDialog"] = this._appCtxt.getErrorDialog(refresh);
+		ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON]);
+		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"] = new ZaMsgDialog(this._shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);
 	    this._errorDialog.registerCallback(DwtDialog.OK_BUTTON, this._errorDialogCallback, this);
     	this._msgDialog.registerCallback(DwtDialog.OK_BUTTON, this._msgDialogCallback, this);
 	}
 	this._loginDialog = this._appCtxt.getLoginDialog();
+
 	this._loginDialog.registerCallback(this.loginCallback, this);
+	
 }
 
 /**
@@ -124,9 +130,10 @@ function(enable) {
 }
 
 ZaController.prototype.popupErrorDialog = 
-function(msg, ex, style)  {
+function(msg, ex, noExecReset,style)  {
 	style = style ? style : DwtMessageDialog.CRITICAL_STYLE;
-	this._execFrame = {func: null, args: null, restartOnError: false};
+	if (!noExecReset)
+		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	var detailStr = "";
 	if(ex != null) {
@@ -165,11 +172,6 @@ function(msg, ex, style)  {
 		}
 	}
 	// popup alert
-
-    if (!this._errorDialog) {
-        this._errorDialog = ZaApp.getInstance().dialogs["errorDialog"];
-    }
-
 	if (this._errorDialog) {
         this._errorDialog.setMessage(msg, detailStr, style, ZaMsg.zimbraAdminTitle);
 
@@ -323,16 +325,21 @@ function() {
 * @private
 **/
 ZaController.prototype._showLoginDialog =
-function() {
+function(bReloginMode) {
 	ZaZimbraAdmin._killSplash();
 	this._authenticating = true;
-	this._loginDialog.setVisible(true, false);
+	this._loginDialog.setVisible(true, false,bReloginMode);
 	/*if(!AjxEnv.isFirefox1up && !AjxEnv.isFirefox3up && !AjxEnv.isFirefox2_0up && !AjxEnv.isNav7 && !AjxEnv.isIE6up && !AjxEnv.isIE7up)
 		this._loginDialog.setError(AjxMessageFormat.format(ZaMsg.ERROR_BROWSER_UNSUPORTED, [navigator.userAgent]));
 	*/	
 	try {
-		var uname = "";
-		this._loginDialog.setFocus(uname);
+		if(bReloginMode && ZLoginFactory.get(ZLoginFactory.USER_ID) && ZLoginFactory.get(ZLoginFactory.USER_ID).value=="")
+			bReloginMode = false; //lost login name, enable the user name field
+			
+		if(!bReloginMode) {
+			var uname = "";
+			this._loginDialog.setFocus(uname);
+		} 
 	} catch (ex) {
 		// something is out of whack... just make the user relogin
 		ZaZimbraAdmin.logOff();
@@ -345,15 +352,13 @@ function(ex, method, params, restartOnError, obj) {
 	if (ex.code && 
 			(ex.code == ZmCsfeException.SVC_AUTH_EXPIRED || 
 				ex.code == ZmCsfeException.SVC_AUTH_REQUIRED || 
-				ex.code == ZmCsfeException.NO_AUTH_TOKEN ||
-				ex.code == ZmCsfeException.AUTH_TOKEN_CHANGED
+				ex.code == ZmCsfeException.NO_AUTH_TOKEN
 			 )
 		) 
 	{
 		try {
-			if (ZaApp.getInstance() != null && (ex.code == ZmCsfeException.SVC_AUTH_EXPIRED ||
-							    ex.code == ZmCsfeException.AUTH_TOKEN_CHANGED
-							   )) 
+			var bReloginMode = true;
+			if (ZaApp.getInstance() != null && ex.code == ZmCsfeException.SVC_AUTH_EXPIRED) 
 			{
 				ZmCsfeCommand._curAuthToken = null;
 
@@ -368,8 +373,10 @@ function(ex, method, params, restartOnError, obj) {
 				this._loginDialog.clearPassword();
 			} else {
 				this._loginDialog.setError(null);
+				bReloginMode = false;
 			}
-			this._showLoginDialog();
+			this._loginDialog.setReloginMode(bReloginMode);
+			this._showLoginDialog(bReloginMode);
 		} catch (ex2) {
 			console.log(ex2.code);
 		}
@@ -383,62 +390,58 @@ function(ex, method, params, restartOnError, obj) {
         if (this._errorDialog)
             this._errorDialog.registerCallback(DwtDialog.OK_BUTTON, this._errorDialogCallback, this);
         if(!ex.code) {
-			this.popupErrorDialog(ZaMsg.JAVASCRIPT_ERROR + " in method " + method, ex);
+			this.popupErrorDialog(ZaMsg.JAVASCRIPT_ERROR + " in method " + method, ex, true);
 		
 		} else if(ex.code == ZmCsfeException.EMPTY_RESPONSE) {
-			this.popupErrorDialog(ZaMsg.ERROR_ZCS_NOT_RUNNING, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_ZCS_NOT_RUNNING, ex, true);
 		} else if (ex.code == ZmCsfeException.SOAP_ERROR) {
-			this.popupErrorDialog(ZaMsg.SOAP_ERROR, ex);
+			this.popupErrorDialog(ZaMsg.SOAP_ERROR, ex, true);
 		} else if (ex.code == ZmCsfeException.NETWORK_ERROR) {
-			this.popupErrorDialog(ZaMsg.NETWORK_ERROR, ex);
+			this.popupErrorDialog(ZaMsg.NETWORK_ERROR, ex, true);
 		} else if (ex.code ==  ZmCsfeException.SVC_PARSE_ERROR) {
-			this.popupErrorDialog(ZaMsg.PARSE_ERROR, ex);
+			this.popupErrorDialog(ZaMsg.PARSE_ERROR, ex, true);
 		} else if (ex.code ==  ZmCsfeException.SVC_PERM_DENIED) {
-			this.popupErrorDialog(ZaMsg.PERMISSION_DENIED, ex);
+			this.popupErrorDialog(ZaMsg.PERMISSION_DENIED, ex, true);
 		} else if (ex.code == ZmCsfeException.ACCT_NO_SUCH_ACCOUNT) {
-			this.popupErrorDialog(ZaMsg.ERROR_NO_SUCH_ACCOUNT, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_NO_SUCH_ACCOUNT, ex, true);
 		} else if (ex.code == ZmCsfeException.NO_SUCH_DISTRIBUTION_LIST) {
-			this.popupErrorDialog(ZaMsg.NO_SUCH_DISTRIBUTION_LIST, ex);
+			this.popupErrorDialog(ZaMsg.NO_SUCH_DISTRIBUTION_LIST, ex, true);
 		} else if(ex.code == ZmCsfeException.ACCT_EXISTS) {
-			this.popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_ACCOUNT_EXISTS, ex, true);
         } else if(ex.code == ZmCsfeException.ACCT_TOO_MANY_ACCOUNTS) {
 			this.popupErrorDialog(ZaMsg.ERROR_TOO_MANY_ACCOUNTS,
                     ex, true);
         } else if(ex.code == ZmCsfeException.VOLUME_NO_SUCH_PATH) {
-			this.popupErrorDialog(ZaMsg.ERROR_INVALID_VOLUME_PATH, ex);
-		} else if(ex.code == ZmCsfeException.NO_SUCH_VOLUME) {
-			this.popupErrorDialog(ZaMsg.ERROR_NO_SUCH_VOLUME, ex);
-		} else if(ex.code == ZmCsfeException.ALREADY_EXISTS) {
-			this.popupErrorDialog(ZaMsg.ERROR_VOLUME_ALREADY_EXISTS, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_INVALID_VOLUME_PATH, ex, true);
 		} else if(ex.code == ZmCsfeException.LICENSE_ERROR) {
-			this.popupErrorDialog(ZaMsg.ERROR_LICENSE, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_LICENSE, ex, true);
 		} else if (ex.code == ZmCsfeException.SVC_INVALID_REQUEST) {
-			this.popupErrorDialog(ZaMsg.ERROR_INVALID_REQUEST, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_INVALID_REQUEST, ex, true);
 		} else if (ex.code == ZmCsfeException.TOO_MANY_SEARCH_RESULTS) {
-			this.popupErrorDialog(ZaMsg.ERROR_TOO_MANY_SEARCH_RESULTS, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_TOO_MANY_SEARCH_RESULTS, ex, true);
 		} else if (ex.code == ZmCsfeException.NO_SUCH_DOMAIN) {
-			this.popupErrorDialog(ZaMsg.ERROR_NO_SUCH_DOMAIN, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_NO_SUCH_DOMAIN, ex, true);
 		}else if (ex.code == ZmCsfeException.CSFE_SVC_ERROR || 
 					ex.code == ZmCsfeException.SVC_FAILURE || 
 						(typeof(ex.code) == 'string' && ex.code && ex.code.match(/^(service|account|mail)\./))
 
 				   ) {
-			this.popupErrorDialog(ZaMsg.SERVER_ERROR, ex);
+			this.popupErrorDialog(ZaMsg.SERVER_ERROR, ex, true);
 		} else if (ex.code == AjxException.INVALID_PARAM){
-			this.popupErrorDialog(ZaMsg.ERROR_INVALID_VALUE, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_INVALID_VALUE, ex, true);
 			this._errorDialog._showDetail();
 		} else {
 			//search for error code
 			var gotit = false;
 			for(var ix in ZmCsfeException) {
 				if(ZmCsfeException[ix] == ex.code) {
-					this.popupErrorDialog(ZaMsg.SERVER_ERROR, ex);
+					this.popupErrorDialog(ZaMsg.SERVER_ERROR, ex, true);
 					gotit = true;
 					break;
 				}
 			}
 			if(!gotit)	
-				this.popupErrorDialog(ZaMsg.ERROR_UNKNOWN, ex);		
+				this.popupErrorDialog(ZaMsg.ERROR_UNKNOWN, ex, true);		
 		}
 	}
 }
@@ -532,17 +535,7 @@ function (resp) {
 			this._loginDialog.setError(ZaMsg.ERROR_ACC_IN_MAINTENANCE_MODE);
 			this._loginDialog.clearPassword();
 		} else {
-			if(this._msgDialog) {
-				this.popupMsgDialog(ZaMsg.SERVER_ERROR, ex);
-			} else {
-				this._showLoginDialog(true);
-				//check for a more informative message
-				if(ex && ex.msg) {
-					this._loginDialog.setError(ex.msg);
-				} else {
-					this._loginDialog.setError(ZaMsg.SERVER_ERROR);
-				}
-			}
+			this.popupMsgDialog(ZaMsg.SERVER_ERROR, ex); 
 		}
 	} else {
 		//if login succesful hide splash screen, start application
@@ -708,8 +701,8 @@ function () {
 
 ZaController.prototype.closeCnfrmDelDlg = 
 function () {
-	if(ZaApp.getInstance().dialogs["confirmMessageDialog2"])
-		ZaApp.getInstance().dialogs["confirmMessageDialog2"].popdown();	
+	if(ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"])
+		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popdown();	
 }
 /**
 * public getToolBar
@@ -938,7 +931,6 @@ function (){
 		//add the item to the _removeList
 		this._removeList.push(item);
 	}
-	tabGroup.resetTabSizes(true);
 }
 
 
