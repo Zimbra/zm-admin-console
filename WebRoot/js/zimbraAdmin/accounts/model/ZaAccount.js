@@ -2408,11 +2408,6 @@ ZaAccount.getAccountTypeOutput = function (isNewAccount) {
             var usedAccounts = domainObj.getUsedAccounts(cos.name);
             var availableAccounts = domainObj.getAvailableAccounts(cos.name);
 
-            var isNewAccount = false;
-            if(form &&form.parent && form.parent instanceof ZaNewAccountXWizard)
-                  isNewAccount = true;
-
-
 	    if(availableAccounts > 0) isFullUsed = false;
             else if (currentType == acctTypes[i]) isFullUsed = false;
 	    if (currentType == acctTypes[i]) {
@@ -2421,20 +2416,19 @@ ZaAccount.getAccountTypeOutput = function (isNewAccount) {
 		 if (currentType != instance.attrs[ZaAccount.A_COSId]) {
         		instance.autoCos = "FALSE" ;
         		instance.attrs[ZaAccount.A_COSId] = currentType;
-			if(isNewAccount)
-			      form.parent.updateCosGrouper();
+			form.parent.updateCosGrouper();
 		 }
 	    }
 
             out.push("<div>" +
                      "<label style='font-weight: bold;"
-                    + ((availableAccounts > 0 || (currentType == acctTypes[i] && !isNewAccount) ) ? "" : "color: #686357;")
+                    + ((availableAccounts > 0 || currentType == acctTypes[i] ) ? "" : "color: #686357;")
                     + "'>") ;
             //account type is disable when no accounts available
             out.push("<input type=radio name=" + radioGroupName + " value=" + acctTypes[i]
-                    + ((availableAccounts > 0 || (currentType == acctTypes[i] && !isNewAccount)) ?  (" onclick=\"ZaAccount.setAccountType.call("
+                    + ((availableAccounts > 0 || currentType == acctTypes[i] ) ?  (" onclick=\"ZaAccount.setAccountType.call("
                                     + this.getGlobalRef() + ", '" + acctTypes[i] +  "', event );\" ") : (" disabled "))
-                    + (/*(currentType == acctTypes[i])*/(isCheck && (availableAccounts > 0 || !isNewAccount)) ? " checked " : "" )
+                    + (/*(currentType == acctTypes[i])*/isCheck ? " checked " : "" )
                     + " />") ;
             out.push(accountTypeDisplayValue + "</label></div>") ;
 
