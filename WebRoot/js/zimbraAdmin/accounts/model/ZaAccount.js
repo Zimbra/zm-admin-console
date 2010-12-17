@@ -105,7 +105,7 @@ ZaAccount.A_zimbraMailIdleSessionTimeout = "zimbraMailIdleSessionTimeout";
 ZaAccount.A_zimbraAvailableSkin = "zimbraAvailableSkin";
 ZaAccount.A_zimbraZimletAvailableZimlets = "zimbraZimletAvailableZimlets";
 
-ZaAccount.A_zimbraDataSourcePollingInterval = "zimbraDataSourcePollingInterval";
+ZaAccount.A_zimbraDataSourceMinPollingInterval = "zimbraDataSourceMinPollingInterval";
 ZaAccount.A_zimbraProxyAllowedDomains = "zimbraProxyAllowedDomains";
 ZaAccount.A_zimbraIsCCAccount = "zimbraIsCustomerCareAccount";
 //prefs
@@ -470,15 +470,13 @@ function(tmpObj) {
 			return false;
 		}
 	}	
-
-        if(ZaItem.hasWritePermission(ZaAccount.A_zimbraDataSourcePollingInterval,tmpObj)) {
-                var p_dataPollingInterval = tmpObj.attrs[ZaAccount.A_zimbraDataSourcePollingInterval] ;
-                if( p_dataPollingInterval != "" && p_dataPollingInterval !=null && !AjxUtil.isLifeTime(p_dataPollingInterval)) {
-                        ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourcePollingInterval])) ;
+        if(ZaItem.hasWritePermission(ZaAccount.A_zimbraDataSourceMinPollingInterval,tmpObj)) {
+                var p_dataInterval = tmpObj.attrs[ZaAccount.A_zimbraDataSourceMinPollingInterval] ;
+                if( p_dataInterval != "" && p_dataInterval !=null && !AjxUtil.isLifeTime(p_dataInterval)) {
+                        ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceMinPollingInterval])) ;
                         return false;
                 }
         }
-
         if(ZaItem.hasWritePermission(ZaAccount.A_zimbraPrefAutoSaveDraftInterval,tmpObj)) {
                 var p_autoSaveInterval = tmpObj.attrs[ZaAccount.A_zimbraPrefAutoSaveDraftInterval] ;
                 if( p_autoSaveInterval != "" && p_autoSaveInterval !=null && !AjxUtil.isLifeTime(p_autoSaveInterval)) {
@@ -1611,7 +1609,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPasswordLocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordLocked, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraContactMaxNumEntries, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraContactMaxNumEntries, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxLength, maxInclusive:2147483647, minInclusive:0},
-	{id:ZaAccount.A_zimbraDataSourcePollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDataSourcePollingInterval},
+	{id:ZaAccount.A_zimbraDataSourceMinPollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDataSourceMinPollingInterval},
         {id:ZaAccount.A_zimbraPrefAutoSaveDraftInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraPrefAutoSaveDraftInterval},
         {id:ZaAccount.A_zimbraProxyAllowedDomains, type: _LIST_, ref:"attrs/"+ZaAccount.A_zimbraProxyAllowedDomains, listItem:{ type: _STRING_}},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, maxInclusive:2147483647, minInclusive:0},

@@ -2738,16 +2738,15 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 						{type:_ZA_TOP_GROUPER_, id:"account_datasourcepolling_settings",colSizes:["auto"],numCols:1,
 							label:ZaMsg.NAD_DataSourcePolling,
 							visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                        			[ZaAccount.A_zimbraDataSourcePollingInterval]]],
+                        			[ZaAccount.A_zimbraDataSourceMinPollingInterval]]],
 							items: [
-                                                                {ref:ZaAccount.A_zimbraDataSourcePollingInterval, type:_SUPER_LIFETIME_,
+                                                                {ref:ZaAccount.A_zimbraDataSourceMinPollingInterval, type:_SUPER_LIFETIME_,
                                                                         colSizes:["195px","80px","295px","190px"],
-                                                                        msgName:ZaMsg.MSG_zimbraDataSourcePollingInterval,
-                                                                        txtBoxLabel:ZaMsg.LBL_zimbraDataSourcePollingInterval,
+                                                                        msgName:ZaMsg.MSG_zimbraDataSourceMinPollingInterval,
+                                                                        txtBoxLabel:ZaMsg.LBL_zimbraDataSourceMinPollingInterval,
                                                                         resetToSuperLabel:ZaMsg.NAD_ResetToCOS,colSpan:2,
                                                                         nowrap:false,labelWrap:true
                                                                 }
-
 							]
 						},
 						{type:_ZA_TOP_GROUPER_,id:"account_password_settings",colSizes:["auto"],numCols:1,

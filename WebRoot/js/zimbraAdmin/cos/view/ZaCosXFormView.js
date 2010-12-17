@@ -291,6 +291,7 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
 	ZaCos.A_zimbraMailMessageLifetime,
 	ZaCos.A_zimbraMailTrashLifetime,
 	ZaCos.A_zimbraMailSpamLifetime,
+	ZaCos.A_zimbraDataSourceMinPollingInterval,
 	ZaCos.A_zimbraFreebusyExchangeUserOrg];
 ZaCosXFormView.ADVANCED_TAB_RIGHTS = [];
 
@@ -1071,12 +1072,12 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             {type:_ZA_TOP_GROUPER_, id:"cos_datasourcepolling_settings",
                 label:ZaMsg.NAD_DataSourcePolling,
                 items: [
-                    {ref:ZaCos.A_zimbraDataSourcePollingInterval, type:_LIFETIME_,
-                        msgName:ZaMsg.MSG_zimbraDataSourcePollingInterval,
-                        label:ZaMsg.LBL_zimbraDataSourcePollingInterval, labelLocation:_LEFT_,
+                    {ref:ZaCos.A_zimbraDataSourceMinPollingInterval, type:_LIFETIME_,
+                        msgName:ZaMsg.MSG_zimbraDataSourceMinPollingInterval,
+                        label:ZaMsg.LBL_zimbraDataSourceMinPollingInterval, labelLocation:_LEFT_,
                         onChange:ZaCosXFormView.validatePollingInterval,
                         labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
-                    },
+                    }
                 ]
             },
 

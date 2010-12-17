@@ -1544,26 +1544,17 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 						});
 		}
 
-		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraDataSourcePollingInterval],[])) {						
+		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraDataSourceMinPollingInterval],[])) {				
 			advancedCaseItems.push({type:_ZAWIZ_TOP_GROUPER_, id:"account_datasourcepolling_settings",colSizes:["260px","190px","150px"],numCols:3,
 							label:ZaMsg.NAD_DataSourcePolling,						
 							items: [
-/*
-                                                                {ref:ZaAccount.A_zimbraDataSourcePollingInterval, type:_LIFETIME_,
-                                                                    msgName:ZaMsg.MSG_zimbraDataSourcePollingInterval,
-                                                                    label:ZaMsg.LBL_zimbraDataSourcePollingInterval, labelLocation:_LEFT_,
-                                                                    onChange:ZaCosXFormView.validatePollingInterval,
-                                                                    labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
-                                                                }
-*/
-                                                                {ref:ZaAccount.A_zimbraDataSourcePollingInterval, type:_SUPER_LIFETIME_,
+                                                                {ref:ZaAccount.A_zimbraDataSourceMinPollingInterval, type:_SUPER_LIFETIME_,
                                                                         colSizes:["195px","80px","295px","190px"],
-                                                                        msgName:ZaMsg.MSG_zimbraDataSourcePollingInterval,
-                                                                        txtBoxLabel:ZaMsg.LBL_zimbraDataSourcePollingInterval,
+                                                                        msgName:ZaMsg.MSG_zimbraDataSourceMinPollingInterval,
+                                                                        txtBoxLabel:ZaMsg.LBL_zimbraDataSourceMinPollingInterval,
                                                                         resetToSuperLabel:ZaMsg.NAD_ResetToCOS,colSpan:2,
                                                                         nowrap:false,labelWrap:true
                                                                 }
-
 							]
 						});
 		}
