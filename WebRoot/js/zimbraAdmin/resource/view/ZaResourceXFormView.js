@@ -234,6 +234,10 @@ ZaResourceXFormView.isDeleteCalFwdAddrEnabled = function () {
 	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_calFwdAddr_selection_cache)));
 }
 
+ZaResourceXFormView.isAutoDisplayname = function () {
+    return(this.getInstanceValue(ZaResource.A2_autoLocationName)=="FALSE");
+}
+
 ZaResourceXFormView.CONTACT_TAB_ATTRS = [ZaResource.A_zimbraCalResContactName,
 		ZaResource.A_zimbraCalResContactEmail, 
 		ZaResource.A_zimbraCalResContactPhone, 
@@ -511,7 +515,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                     {type:_GROUP_, numCols:3, nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, width:200, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
                         items: [
                             {ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, label:null, cssClass:"admin_xform_name_input", width:defaultWidth,
-				 enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname],
+				 enableDisableChecks:[ZaResourceXWizard.isAutoDisplayname],
                                  enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
 	
                             },
@@ -571,6 +575,3 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	];
 };
 ZaTabView.XFormModifiers["ZaResourceXFormView"].push(ZaResourceXFormView.myXFormModifier);
-ZaNewResourceXWizard.isAutoDisplayname = function () {
-        return(this.getInstanceValue(ZaResource.A2_autoLocationName)=="FALSE");
-}
