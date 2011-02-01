@@ -65,7 +65,8 @@ ZaSettings.initRights = function () {
 		//if this is a system admin account - enable access to all UI elements
 		if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 			ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI] = true;
-		}			
+		}	
+                //to add domainAdmin check and set ZIMLETV_UI,DOMAINLV_UI, COSLV_UI,APPLIANCESV_UI, CERTV_UI,BULKV_UI, MAILQV_UI 		
 	} else {
 		if(typeof(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])=="string") {
 			ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]];
@@ -291,6 +292,13 @@ ZaSettings.SKIN_LOGIN_MSG_ID            = ZaSettings.SKIN_IDX++;
  */
 //carte blanche - gives access to any UI element
 ZaSettings.CARTE_BLANCHE_UI = "cartBlancheUI";
+ZaSettings.ZIMLETLV_UI = "zimletListView";
+ZaSettings.DOMAINLV_UI = "domainListView";
+ZaSettings.COSLV_UI = "cosListView";
+ZaSettings.APPLIANCESV_UI = "applianceSettingsView";
+ZaSettings.CERTV_UI = "certsView";
+ZaSettings.MAILQV_UI = "mailQView";
+ZaSettings.BULKV_UI = "bulkView";
 
 ZaSettings.initConst = function() {
 //*init List View *
