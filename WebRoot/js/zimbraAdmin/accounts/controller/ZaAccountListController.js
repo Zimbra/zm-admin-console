@@ -873,7 +873,7 @@ function () {
 	if(!ZaApp.getInstance().dialogs["removeProgressDlg"]) {
 		ZaApp.getInstance().dialogs["removeProgressDlg"] = new DeleteAcctsPgrsDlg(this._container, "500px","300px");
 	}
-	ZaApp.getInstance().dialogs["confirmMessageDialog2"].popdown();
+	ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popdown();
 	ZaApp.getInstance().dialogs["removeProgressDlg"].popup();
 	ZaApp.getInstance().dialogs["removeProgressDlg"].setObject(this._removeList);
 	ZaApp.getInstance().dialogs["removeProgressDlg"].startDeletingAccounts();
