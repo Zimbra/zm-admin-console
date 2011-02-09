@@ -726,7 +726,7 @@ function(ev) {
 	this._haveAccounts = false;
 	this._haveDls = false;
 	this._haveDomains = false;	
-	this._haveCoses = false;
+	//this._haveCoses = false;
 	if(this._contentView.getSelectionCount()>0) {
 		var arrItems = this._contentView.getSelection();
 		var cnt = arrItems.length;
@@ -746,8 +746,8 @@ function(ev) {
 						this._haveDls = true;
 					} else if(!this._haveDomains && item.type == ZaItem.DOMAIN) {
 						this._haveDomains = true;
-					} else if(!this._haveCoses && item.type == ZaItem.COS) {
-                                                this._haveCoses = true;
+					//} else if(!this._haveCoses && item.type == ZaItem.COS) {
+                                          //      this._haveCoses = true;
                                         }
 
 
@@ -801,16 +801,16 @@ function () {
 	}
 	if(this._removeList.length > 0) {
 		var dlgMsg;
-		if(this._haveDls && !(this._haveAccounts || this._haveAliases ||this._haveDomains || this._haveCoses)) {
+		if(this._haveDls && !(this._haveAccounts || this._haveAliases ||this._haveDomains)) {
 			dlgMsg = ZaMsg.Q_DELETE_DLS;
-		} else if(this._haveAccounts && !(this._haveDls || this._haveAliases || this._haveDomains || this._haveCoses)) {
+		} else if(this._haveAccounts && !(this._haveDls || this._haveAliases || this._haveDomains)) {
 			dlgMsg = ZaMsg.Q_DELETE_ACCOUNTS;
-		} else if(this._haveAliases && !(this._haveDls || this._haveAccounts || this._haveDomains || this._haveCoses)) {
+		} else if(this._haveAliases && !(this._haveDls || this._haveAccounts || this._haveDomains)) {
 			dlgMsg = ZaMsg.Q_DELETE_ALIASES;
-		} else if(this._haveDomains && !(this._haveAliases || this._haveAccounts || this._haveDls || this._haveCoses)) {
+		} else if(this._haveDomains && !(this._haveAliases || this._haveAccounts || this._haveDls)) {
 			dlgMsg = ZaMsg.Q_DELETE_DOMAINS;
-                } else if(this._haveCoses && !(this._haveAliases || this._haveAccounts || this._haveDomains || this._haveDls)) {
-                        dlgMsg = ZaMsg.Q_DELETE_COSES;
+                //} else if(this._haveCoses && !(this._haveAliases || this._haveAccounts || this._haveDomains || this._haveDls)) {
+                  //      dlgMsg = ZaMsg.Q_DELETE_COSES;
 		} else {
 			dlgMsg = ZaMsg.Q_DELETE_OBJECTS;
 		}
@@ -824,10 +824,10 @@ function () {
 				break;
 			}
 		}
-		ZaApp.getInstance().dialogs["confirmMessageDialog2"].setMessage(dlgMsg,  DwtMessageDialog.INFO_STYLE);
-		ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.YES_BUTTON, ZaAccountListController.prototype._deleteAccountsCallback, this);
-		ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.NO_BUTTON, ZaAccountListController.prototype._donotDeleteAccountsCallback, this);		
-		ZaApp.getInstance().dialogs["confirmMessageDialog2"].popup();
+		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].setMessage(dlgMsg,  DwtMessageDialog.INFO_STYLE);
+		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaAccountListController.prototype._deleteAccountsCallback, this);
+		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, ZaAccountListController.prototype._donotDeleteAccountsCallback, this);		
+		ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popup();
 	}
 }
 
@@ -879,10 +879,10 @@ function () {
 	ZaApp.getInstance().dialogs["removeProgressDlg"].startDeletingAccounts();
 
 	//update cos list tree
-	if(this._haveCoses){
-		var overviewPanelCtrl = ZaApp.getInstance()._appCtxt.getAppController().getOverviewPanelController();
-		overviewPanelCtrl.removeCosTreeItems(this._removeList);
-	}
+	//if(this._haveCoses){
+		//var overviewPanelCtrl = ZaApp.getInstance()._appCtxt.getAppController().getOverviewPanelController();
+		//overviewPanelCtrl.removeCosTreeItems(this._removeList);
+	//}
 }
 
 
@@ -890,7 +890,7 @@ function () {
 ZaAccountListController.prototype._donotDeleteAccountsCallback = 
 function () {
 	this._removeList = new Array();
-	ZaApp.getInstance().dialogs["confirmMessageDialog2"].popdown();
+	ZaApp.getInstance().dialogs["confirmDeleteMessageDialog"].popdown();
 }
 
 
