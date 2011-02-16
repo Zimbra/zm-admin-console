@@ -515,7 +515,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                     {type:_GROUP_, numCols:3, nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, width:200, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
                         items: [
                             {ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, label:null, cssClass:"admin_xform_name_input", width:defaultWidth,
-				 enableDisableChecks:[ZaResourceXWizard.isAutoDisplayname],
+				 enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname],
                                  enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
 	
                             },
