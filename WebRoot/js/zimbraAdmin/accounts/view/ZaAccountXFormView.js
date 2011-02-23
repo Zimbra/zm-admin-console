@@ -956,8 +956,7 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
 	ZaAccount.A_zimbraFeatureSavedSearchesEnabled,
 	ZaAccount.A_zimbraFeatureInitialSearchPreferenceEnabled,
 	ZaAccount.A_zimbraFeatureImportExportFolderEnabled,
-	ZaAccount.A_zimbraDumpsterEnabled,
-	ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled
+	ZaAccount.A_zimbraDumpsterEnabled
 ];
 
 ZaAccountXFormView.FEATURE_TAB_RIGHTS = [];
@@ -1959,19 +1958,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 							{ref:ZaAccount.A_zimbraFeatureInitialSearchPreferenceEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureInitialSearchPreferenceEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureInitialSearchPreferenceEnabled, trueValue:"TRUE", falseValue:"FALSE"},
 						  {ref:ZaAccount.A_zimbraFeaturePeopleSearchEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeaturePeopleSearchEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeaturePeopleSearchEnabled, trueValue:"TRUE", falseValue:"FALSE"}
 						]
-					},
-                                        {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraSMIMEFeature, id:"account_form_features_smime", colSizes:["auto"],numCols:1,
-                                                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,             
-                                      		[ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled]]],
-                                                items:[
-                                                 {ref:ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, 
-							type:_SUPER_CHECKBOX_, 
-							resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-							msgName:ZaMsg.LBL_zimbraFeatureManageSMIMECertificateEnabled,
-							checkBoxLabel:ZaMsg.LBL_zimbraFeatureManageSMIMECertificateEnabled, 
-							trueValue:"TRUE", falseValue:"FALSE"}
-                                                ]
-                                        }
+					}
 				]
 			});
 	}
