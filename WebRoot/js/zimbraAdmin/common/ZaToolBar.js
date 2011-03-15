@@ -297,7 +297,7 @@ function () {
             break ;
         } else { //duplicate the operation.
             var op =  this._opList [this._btnOrder [i]] ;
-            if (op != null  && op.className != undefined) {
+            if (op != null) {
                 this._moreActionsMenuList.push (ZaOperation.duplicate(op)) ;
             }
         }
@@ -370,11 +370,9 @@ ZaToolBar.prototype.enableMoreActionsMenuItems = function () {
             if (!toolbarButton) { continue ;} ;
             var visiblity = toolbarButton.getVisible() ;
             var menuItem = moreActionMenu.getMenuItem (opId) ; //menu item operation id is the same as the toolbar button id
-            if (menuItem !=null && menuItem != undefined) {
-		menuItem.setVisible(!visiblity) ;
-            	menuItem.setEnabled (toolbarButton.getEnabled()) ;
-        	}
-	}
+            menuItem.setVisible(!visiblity) ;
+            menuItem.setEnabled (toolbarButton.getEnabled()) ;
+        }
     }
 }
 
