@@ -27,7 +27,6 @@ ZaSearch = function() {
 	this[ZaSearch.A_fdistributionlists] = "TRUE";
 	this[ZaSearch.A_fResources] = "TRUE";
 	this[ZaSearch.A_fDomains] = "TRUE";
-	this[ZaSearch.A_fCoses] = "TRUE";
 	this[ZaSearch.A_pagenum]=1;	
 }
 ZaSearch.ALIASES = "aliases";
@@ -52,7 +51,6 @@ ZaSearch.A_pagenum = "pagenum";
 ZaSearch.A_fAliases = "f_aliases";
 ZaSearch.A_fAccounts = "f_accounts";
 ZaSearch.A_fDomains = "f_domains";
-ZaSearch.A_fCoses = "f_coses";
 ZaSearch.A_fdistributionlists = "f_distributionlists";
 ZaSearch.A_fResources = "f_resources";
 ZaSearch.A_ResultMsg = "resultMsg";
@@ -157,7 +155,7 @@ function (params) {
 		soapDoc.getMethod().setAttribute("applyConfig", params.applyConfig);
 	else
 		soapDoc.getMethod().setAttribute("applyConfig", "false");
-	
+		
 	if(params.domain)  {
 		soapDoc.getMethod().setAttribute("domain", params.domain);
         ZaSearch._domain = params.domain;
@@ -175,8 +173,9 @@ function (params) {
 	//params.maxResults = 2;
 	if(params.maxResults) {
 		soapDoc.getMethod().setAttribute("maxResults", params.maxResults.toString());
-	}
-
+	}	
+	
+	//var command = new ZmCsfeCommand();
 	var cmdParams = new Object();
 	cmdParams.soapDoc = soapDoc;	
 	if(params.callback) {
@@ -524,15 +523,6 @@ function(n, types,excludeClosed) {
         for (var i = 0 ; i < types.length; i ++) {
             if (types[i] == "domains") {
                 query.push ("(zimbraDomainName=*"+n+"*)") ;
-            } else if(types[i] == ZaSearch.COSES) {
-		query.push("(cn=*" + n + "*)");
-	    }else {
-            } else if(types[i] == ZaSearch.COSES) {
-		query.push("(cn=*" + n + "*)");
-	    } else if(types[i] == ZaSearch.ALIASES) {
-		query.push("(zimbraDomainName=*" + n + "*)(uid=*"+n+"*)");
-
-	    }else {
             } else {
             	if(!addedAddrFields) {
             		query.push("(mail=*"+n+"*)(cn=*"+n+"*)(sn=*"+n+"*)(gn=*"+n+"*)(displayName=*"+n+"*)") ;
