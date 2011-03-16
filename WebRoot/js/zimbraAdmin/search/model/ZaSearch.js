@@ -523,6 +523,8 @@ function(n, types,excludeClosed) {
         for (var i = 0 ; i < types.length; i ++) {
             if (types[i] == "domains") {
                 query.push ("(zimbraDomainName=*"+n+"*)") ;
+	    } else if(types[i] == ZaSearch.ALIASES) {
+		query.push("(zimbraDomainName=*" + n + "*)(uid=*"+n+"*)");
             } else {
             	if(!addedAddrFields) {
             		query.push("(mail=*"+n+"*)(cn=*"+n+"*)(sn=*"+n+"*)(gn=*"+n+"*)(displayName=*"+n+"*)") ;
