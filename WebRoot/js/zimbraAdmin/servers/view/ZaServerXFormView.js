@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -98,27 +98,6 @@ function (entry) {
         }
 	}
 
-	if(ZaItem.modelExtensions["ZaServer"]) {
-		for(var i = 0; i< ZaItem.modelExtensions["ZaServer"].length;i++) {
-			var ext = ZaItem.modelExtensions["ZaServer"][i];
-			if(entry[ext]) {
-				this._containedObject[ext] = {};
-		        for (var a in entry[ext]) {
-		            var modelItem = this._localXForm.getModel().getItem(a) ;
-		            if ((modelItem != null && modelItem.type == _LIST_)
-		               || (entry[ext][a] != null && entry[ext][a] instanceof Array))
-		            {  //need deep clone
-		                this._containedObject[ext][a] =
-		                        ZaItem.deepCloneListItem (entry[ext][a]);
-		            } else {
-		                this._containedObject[ext][a] = entry[ext][a];
-		            }
-		        }
-			}
-			
-		}
-	}
-	
 	if(entry[ZaServer.A_Volumes]) {
 		for(var a in entry[ZaServer.A_Volumes]) {
 			this._containedObject[ZaServer.A_Volumes][a] = {};
@@ -263,31 +242,8 @@ ZaServerXFormView.isDeleteVolumeEnabled = function () {
 
 ZaServerXFormView.updateVolume = function () {
 	if(this.parent.editVolumeDlg) {
-		this.parent.editVolumeDlg.popdown();		
+		this.parent.editVolumeDlg.popdown();
 		var obj = this.parent.editVolumeDlg.getObject();
-		var soapDoc = AjxSoapDoc.create("ModifyVolumeRequest", ZaZimbraAdmin.URN, null);		
-		soapDoc.getMethod().setAttribute(ZaServer.A_VolumeId, obj[ZaServer.A_VolumeId]);	
-		var elVolume = soapDoc.set("volume", null);
-		elVolume.setAttribute("type", obj[ZaServer.A_VolumeType]);
-		elVolume.setAttribute("name", obj[ZaServer.A_VolumeName]);	
-		elVolume.setAttribute("rootpath", obj[ZaServer.A_VolumeRootPath]);		
-		elVolume.setAttribute("compressBlobs", obj[ZaServer.A_VolumeCompressBlobs]);		
-		elVolume.setAttribute("compressionThreshold", obj[ZaServer.A_VolumeCompressionThreshold]);
-		var callback = new AjxCallback(this,ZaServerXFormView.prototype.modifyVolumeCallback);
-		var params = {
-			soapDoc: soapDoc,
-			targetServer: this.getInstanceValue(ZaItem.A_zimbraId),
-			asyncMode: true,
-			callback:callback
-		}
-		
-		var reqMgrParams = {
-			controller : ZaApp.getInstance().getCurrentController(),
-			busyMsg : ZaMsg.BUSY_CREATE_VOL
-		}
-		ZaRequestMgr.invoke(params, reqMgrParams) ;		
-
-		/*
 		var instance = this.getInstance();
 		var volumes = [];
 		var cnt = instance[ZaServer.A_Volumes].length;
@@ -340,71 +296,15 @@ ZaServerXFormView.updateVolume = function () {
 			this.getModel().setInstanceValue(this.getInstance(), ZaServer.A_Volumes, volumes);
 			this.getModel().setInstanceValue(this.getInstance(), ZaServer.A2_volume_selection_cache, new Array());
 			this.parent.setDirty(dirty);	
-		}	*/	
+		}		
 	}
-}
-
-ZaServerXFormView.prototype.modifyVolumeCallback = function(resp) {
-	if(resp && resp.isException()) {
-		ZaApp.getInstance().getCurrentController()._handleException(resp.getException(), "ZaServerXFormView.createVolumeCallback");
-	} else {
-		ZaApp.getInstance().getCurrentController().popupMsgDialog(ZaMsg.UPDATE_VOLUME_CONFIRMATION);
-		var callback = new AjxCallback(this,ZaServerXFormView.loadVolumesCallback);
-		ZaServer.prototype.loadVolumes.call(this.parent.getObject(),callback);
-	}
-}
-
-ZaServerXFormView.prototype.createVolumeCallback = function(resp) {
-	if(resp && resp.isException()) {
-		ZaApp.getInstance().getCurrentController()._handleException(resp.getException(), "ZaServerXFormView.createVolumeCallback");
-	} else {
-		this.addVolumeDlg.popdown();
-		var response = resp.getResponse().Body.CreateVolumeResponse;
-		var volumes = this._localXForm.getInstanceValue(ZaServer.A_Volumes);
-		
-		var newVolumes = [];
-		for(var i=0;i<volumes.length;i++) {
-			newVolumes.push(volumes[i]);
-		}
-		newVolumes.push(response.volume[0]);
-		this._localXForm.setInstanceValue(newVolumes,ZaServer.A_Volumes);
-		ZaApp.getInstance().getCurrentController().popupMsgDialog(AjxMessageFormat.format(ZaMsg.VolumeCreated,[response.volume[0][ZaServer.A_VolumeRootPath]]));
-	}
-}
-
-ZaServerXFormView.prototype.doAddVolume = function(obj) {
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
-	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);		
-	var elVolume = soapDoc.set("volume", null);
-	elVolume.setAttribute("type", obj[ZaServer.A_VolumeType]);
-	elVolume.setAttribute("name", obj[ZaServer.A_VolumeName]);	
-	elVolume.setAttribute("rootpath", obj[ZaServer.A_VolumeRootPath]);		
-	elVolume.setAttribute("compressBlobs", obj[ZaServer.A_VolumeCompressBlobs]);		
-	elVolume.setAttribute("compressionThreshold", obj[ZaServer.A_VolumeCompressionThreshold]);
-	var callback = new AjxCallback(this,ZaServerXFormView.prototype.createVolumeCallback);
-	var params = {
-		soapDoc: soapDoc,
-		targetServer: this._containedObject.id,
-		asyncMode: true,
-		callback:callback
-	}
-	
-	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
-		busyMsg : ZaMsg.BUSY_CREATE_VOL
-	}
-	ZaRequestMgr.invoke(params, reqMgrParams) ;		
 }
 
 ZaServerXFormView.addVolume  = function () {
 	if(this.parent.addVolumeDlg) {
+		this.parent.addVolumeDlg.popdown();
 		var obj = this.parent.addVolumeDlg.getObject();
-		ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(AjxMessageFormat.format(ZaMsg.Q_CREATE_VOLUME,[obj[ZaServer.A_VolumeRootPath]]),DwtMessageDialog.INFO_STYLE );
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaServerXFormView.prototype.doAddVolume, this.parent, [obj]);
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();		
-		
-		/*var instance = this.getInstance();
+		var instance = this.getInstance();
 		var volArr = [];
 		var oldArr = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_Volumes);
 		var cnt = oldArr.length;
@@ -435,7 +335,7 @@ ZaServerXFormView.addVolume  = function () {
 		ZaServerXFormView.messageVolChoices.dirtyChoices();
 	
 		this.getModel().setInstanceValue(this.getInstance(),ZaServer.A_Volumes,volArr);
-		this.parent.setDirty(true);*/
+		this.parent.setDirty(true);
 	}
 }
 
@@ -475,42 +375,6 @@ function () {
 	}
 }
 
-ZaServerXFormView.loadVolumesCallback = function(resp) {
-	if(resp && resp.isException()) {
-		ZaApp.getInstance().getCurrentController()._handleException(resp.getException(), "ZaServerXFormView.loadVolumesCallback");
-	} else {
-		var response = resp.getResponse().Body.GetAllVolumesResponse;
-		var newVolumes = [];
-		var volumes = response.volume;
-		if(volumes) {
-			var cnt = volumes.length;
-			for (var i=0; i< cnt;  i++) {
-				newVolumes.push(volumes[i]);	
-			}
-		}
-		this.setInstanceValue(newVolumes,ZaServer.A_Volumes);
-	}	
-}
-
-ZaServerXFormView.doDeleteVolume = function(selArr, deletedVolumes) {
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
-	if(AjxUtil.isEmpty(selArr)) {
-		if(!AjxUtil.isEmpty(deletedVolumes)) {
-			ZaApp.getInstance().getCurrentController().popupMsgDialog(ZaMsg.DELETED_VOLUMES_CONFIRMATION);
-			var callback = new AjxCallback(this,ZaServerXFormView.loadVolumesCallback);
-			ZaServer.prototype.loadVolumes.call(this.getForm().parent.getObject(),callback);
-		}
-		return;
-	}
-	var nextVolume = selArr.shift();
-	if(!deletedVolumes) {
-		deletedVolumes = [];
-	}
-	deletedVolumes.push(nextVolume);
-	var callback = new AjxCallback(this,ZaServerXFormView.doDeleteVolume,[selArr,deletedVolumes]);
-	ZaServer.prototype.deleteVolume.call(this.getForm().parent.getObject(),nextVolume[ZaServer.A_VolumeId],callback);
-}
-
 ZaServerXFormView.deleteButtonListener = function () {
 	var instance = this.getInstance();
 	var volArr = [];
@@ -518,14 +382,8 @@ ZaServerXFormView.deleteButtonListener = function () {
 		return;
 	}
 	var selArr = this.getInstanceValue(ZaServer.A2_volume_selection_cache);
-	
-	ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]);
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_DELETE_VOLUMES,  DwtMessageDialog.WARNING_STYLE);
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaServerXFormView.doDeleteVolume, this, [selArr,[]]);
-	ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();		
-	
-	
-	/*var oldArr = this.getInstanceValue(ZaServer.A_Volumes);
+
+	var oldArr = this.getInstanceValue(ZaServer.A_Volumes);
 	var cnt2 = oldArr.length;
 	for (var i=0; i< cnt2; i++) {
 		volArr[i] = oldArr[i];
@@ -573,7 +431,7 @@ ZaServerXFormView.deleteButtonListener = function () {
 	this.setInstanceValue(volArr,ZaServer.A_Volumes);
 	this.setInstanceValue([],ZaServer.A2_volume_selection_cache);
 	this.setInstanceValue(removedArr,ZaServer.A_RemovedVolumes);
-	this.getForm().parent.setDirty(true);*/
+	this.getForm().parent.setDirty(true);
 }
 
 ZaServerXFormView.addButtonListener =
@@ -708,6 +566,12 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+			//bug fix 33189
+			//super_lifetime_ has 4 cols, super_checkbox has 3 cols.
+			//this table only set two cols in width by _ZA_PLAIN_GROUPER_.
+			//It works well in FF or Chrome, each row can extend its cell's width
+			//But in IE, the checkbox will be cutoff for only 75%(3/4) of the table's width.
+			conSpan: 4,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         trueValue:"TRUE", falseValue:"FALSE", onChange:ZaServerXFormView.onReverseLookupTargetFieldChanged},
@@ -816,7 +680,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	    }
 				      	    ]
 						},
-				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","490"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
+				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","520px"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
 					      items: [
 					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraSmtpHostname, 
 					      		label:ZaMsg.LBL_zimbraSmtpHostname,
