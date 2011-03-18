@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -708,6 +708,12 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+			//bug fix 33189
+			//super_lifetime_ has 4 cols, super_checkbox has 3 cols.
+			//this table only set two cols in width by _ZA_PLAIN_GROUPER_.
+			//It works well in FF or Chrome, each row can extend its cell's width
+			//But in IE, the checkbox will be cutoff for only 75%(3/4) of the table's width.
+			conSpan: 4,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         trueValue:"TRUE", falseValue:"FALSE", onChange:ZaServerXFormView.onReverseLookupTargetFieldChanged},
@@ -816,7 +822,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	    }
 				      	    ]
 						},
-				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","490"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
+				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","520px"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
 					      items: [
 					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraSmtpHostname, 
 					      		label:ZaMsg.LBL_zimbraSmtpHostname,
