@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -260,6 +260,7 @@ ZaAccount.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg" ;
 ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled = "zimbraFeatureManageSMIMECertificateEnabled";
 ZaAccount.A_zimbraFeatureSMIMEEnabled = "zimbraFeatureSMIMEEnabled";
 
+ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled = "zimbraFeatureCalendarReminderDeviceEmailEnabled";
 
 //readonly
 ZaAccount.A_zimbraLastLogonTimestamp = "zimbraLastLogonTimestamp";
@@ -1867,6 +1868,7 @@ ZaAccount.myXModel = {
 
         {id:ZaAccount.A_zimbraFeatureSMIMEEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureSMIMEEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep},
         {id:ZaAccount.A2_newAlias, type:_STRING_},
         {id:ZaAccount.A2_aliases, type:_LIST_,listItem:{type:_STRING_}},

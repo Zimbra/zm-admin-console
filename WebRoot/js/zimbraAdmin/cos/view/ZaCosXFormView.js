@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -209,6 +209,7 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	ZaCos.A_zimbraDumpsterEnabled,
 	ZaCos.A_zimbraFeatureMailSendLaterEnabled,
 	ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
+    ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
 	ZaCos.A_zimbraFeatureSMIMEEnabled,
 	ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled
 ];
@@ -488,12 +489,14 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 				visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 					[
 						ZaCos.A_zimbraFeatureGroupCalendarEnabled,
-						ZaCos.A_zimbraFeatureFreeBusyViewEnabled
+						ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
+                        ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
 					]]
 				],
                 items:[
                     {ref:ZaCos.A_zimbraFeatureGroupCalendarEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled,label:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled, trueValue:"TRUE", falseValue:"FALSE"},
-		    {ref:ZaCos.A_zimbraFeatureFreeBusyViewEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, label:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, trueValue:"TRUE", falseValue:"FALSE"}
+		    {ref:ZaCos.A_zimbraFeatureFreeBusyViewEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, label:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
             },
             //{type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraIMFeature, id:"cos_form_features_im",
