@@ -284,7 +284,6 @@ ZaDomain.RIGHT_CREATE_DL = "createDistributionList";
 ZaDomain.RIGHT_CREATE_ALIAS = "createAlias";
 ZaDomain.RIGHT_ADMIN_LOGIN_AS = "adminLoginAs";
 ZaDomain.RIGHT_CHECK_MX_RECORD = "checkDomainMXRecord";
-ZaDomain.CHECK_GAL_CONFIG = "checkExternalGALConfig";
 ZaDomain.CHECK_AUTH_CONFIG = "checkExchangeAuthConfig";
 ZaDomain.cacheCounter = 0;
 ZaDomain.staticDomainByNameCacheTable = {};
@@ -682,8 +681,7 @@ ZaDomain.canConfigureAuth = function (obj) {
 		&& ZaItem.hasWritePermission(ZaDomain.A_AuthLdapSearchBindPassword,obj));
 }
 ZaDomain.canConfigureGal = function (obj) {
-	return (ZaItem.hasRight(ZaDomain.CHECK_GAL_CONFIG,obj) 
-		&& ZaItem.hasWritePermission(ZaDomain.A_zimbraGalAccountId,obj)
+	return (ZaItem.hasWritePermission(ZaDomain.A_zimbraGalAccountId,obj)
 		&& ZaItem.hasWritePermission(ZaDomain.A_zimbraGalMode,obj) 
 		&& ZaItem.hasWritePermission(ZaDomain.A_GalLdapURL,obj)
 		&& ZaItem.hasWritePermission(ZaDomain.A_GalLdapSearchBase,obj)
