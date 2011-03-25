@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -958,7 +958,8 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
 	ZaAccount.A_zimbraFeatureImportExportFolderEnabled,
 	ZaAccount.A_zimbraDumpsterEnabled,
 	ZaAccount.A_zimbraFeatureSMIMEEnabled,
-	ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled
+	ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled,
+    ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
 ];
 
 ZaAccountXFormView.FEATURE_TAB_RIGHTS = [];
@@ -1919,14 +1920,16 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 					{type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraCalendarFeature, id:"account_form_features_calendar",colSizes:["auto"],numCols:1,
 						visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 							[ZaAccount.A_zimbraFeatureGroupCalendarEnabled,
-							 ZaAccount.A_zimbraFeatureFreeBusyViewEnabled
+							 ZaAccount.A_zimbraFeatureFreeBusyViewEnabled,
+                             ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
 							 ]]
 						],						
 						enableDisableChecks:[[XForm.checkInstanceValue,ZaAccount.A_zimbraFeatureCalendarEnabled,"TRUE"]],
 						enableDisableChangeEventSources:[ZaAccount.A_zimbraFeatureCalendarEnabled,ZaAccount.A_COSId],
 						items:[						
 							{ref:ZaAccount.A_zimbraFeatureGroupCalendarEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled, trueValue:"TRUE", falseValue:"FALSE"},
-							{ref:ZaAccount.A_zimbraFeatureFreeBusyViewEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled,  trueValue:"TRUE", falseValue:"FALSE"}	
+							{ref:ZaAccount.A_zimbraFeatureFreeBusyViewEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
+                            {ref:ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,  trueValue:"TRUE", falseValue:"FALSE"}
 						]
 					},
 				//	{type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraIMFeature, id:"account_form_features_im", colSizes:["auto"],numCols:1,
@@ -2101,7 +2104,8 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 									ZaAccount.A_zimbraPrefDisplayExternalImages,
 									ZaAccount.A_zimbraPrefGroupMailBy,
 									ZaAccount.A_zimbraPrefMailDefaultCharset,
-									ZaAccount.A_zimbraPrefMailToasterEnabled
+									ZaAccount.A_zimbraPrefMailToasterEnabled,
+                                    ZaAccount.A_zimbraPrefMessageIdDedupingEnabled
 								]]
 							],
 							items: [
@@ -2143,7 +2147,14 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                                                         resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                                                         msgName:ZaMsg.MSG_zimbraPrefMailToasterEnabled,
                                                                         checkBoxLabel:ZaMsg.LBL_zimbraPrefMailToasterEnabled,
-                                                                        trueValue:"TRUE", falseValue:"FALSE"}
+                                                                        trueValue:"TRUE", falseValue:"FALSE"},
+                                {ref:ZaAccount.A_zimbraPrefMessageIdDedupingEnabled,
+                                    type:_SUPER_CHECKBOX_,  colSpan:2,
+                                    colSizes:["195px","375px","190px"],
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.MSG_zimbraPrefMessageIdDedupingEnabled,
+                                    checkBoxLabel:ZaMsg.LBL_zimbraPrefMessageIdDedupingEnabled,
+                                    trueValue:"TRUE", falseValue:"FALSE"}
 							]
 						},
 						{type:_ZA_TOP_GROUPER_,colSizes:["195px","auto"], id:"account_prefs_mail_receiving", numCols: 2,
