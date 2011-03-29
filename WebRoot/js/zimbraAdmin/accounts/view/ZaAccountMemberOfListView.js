@@ -436,6 +436,7 @@ function (tmpObj, item) {
 	}
 }
 ZaItem.createMethods["ZaAccount"].push (ZaAccountMemberOfListView.addMemberList) ;
+ZaItem.createMethods["ZaDistributionList"].push (ZaAccountMemberOfListView.addMemberList) ;
 
 ZaAccountMemberOfListView.modifyMemberList =
 function (mods, tmpObj) {
