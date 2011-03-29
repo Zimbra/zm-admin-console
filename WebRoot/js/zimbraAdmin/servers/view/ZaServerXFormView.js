@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -708,6 +708,12 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+			//bug fix 33189
+			//super_lifetime_ has 4 cols, super_checkbox has 3 cols.
+			//this table only set two cols in width by _ZA_PLAIN_GROUPER_.
+			//It works well in FF or Chrome, each row can extend its cell's width
+			//But in IE, the checkbox will be cutoff for only 75%(3/4) of the table's width.
+			conSpan: 4,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         trueValue:"TRUE", falseValue:"FALSE", onChange:ZaServerXFormView.onReverseLookupTargetFieldChanged},
@@ -787,6 +793,13 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
 						  	  label: ZaMsg.NAD_Service_Logger,
 					  	      onChange: ZaServerXFormView.onFormFieldChanged
+						  	},
+                            				{ ref: ZaServer.A_zimbraVmwareHAServiceEnabled, type: _CHECKBOX_,
+						  	  enableDisableChangeEventSources:[ZaServer.A_zimbraVmwareHAServiceInstalled],
+						  	  enableDisableChecks:[[XForm.checkInstanceValue,ZaServer.A_zimbraVmwareHAServiceInstalled,true],
+						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
+						  	  label: ZaMsg.NAD_Service_VmwareHA,
+					  	      onChange: ZaServerXFormView.onFormFieldChanged
 						  	}
 						]}
 					]
@@ -816,11 +829,11 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      	    }
 				      	    ]
 						},
-				      {type:_ZA_TOP_GROUPER_, colSizes:["275px","490"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
+				      {type:_ZA_TOP_GROUPER_, colSizes:["275", "*"], numCols:2,label:ZaMsg.Global_MTA_NetworkGrp,
 					      items: [
 					      	{type:_SUPER_REPEAT_, ref:ZaServer.A_zimbraSmtpHostname, 
 					      		label:ZaMsg.LBL_zimbraSmtpHostname,
-					      colSizes:["305px"],
+					            colSizes:["305px"],
 								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
 								repeatInstance:"", 
 								showAddButton:true, 
@@ -844,42 +857,40 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								  }
 								}]
 					      	},
-							{type:_GROUP_,numCols:3,colSpan:3,colSizes:["275px","275px","150px"],
-						  		items:[
-									{ref:ZaServer.A_SmtpPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_WebMailPort, width:"4em"},
-								  	{type:_SPACER_}
-								]
-						  	},
-							{ 								
+
+							{ref:ZaServer.A_SmtpPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_WebMailPort, width:"4em"},
+
+							{
 								ref:ZaServer.A_zimbraMtaRelayHost, type:_SUPER_HOSTPORT_,
 								label:ZaMsg.NAD_MTA_RelayMTA,
+                                colSpan: 1,
 							    onClick: "ZaController.showTooltip",
 								toolTipContent: ZaMsg.tt_MTA_RelayMTA,resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
 							    bmolsnr:true,
 							    elementChanged: function(elementValue,instanceValue, event) {
 									this.getForm().itemChanged(this, elementValue, event);
-										this.getForm().itemChanged(this.getParentItem(), elementValue, event);
+									this.getForm().itemChanged(this.getParentItem(), elementValue, event);
 						  		}
 				      		},
-							{type:_GROUP_,numCols:3,colSpan:3,colSizes:["275px","275px","150px"],
-						  		items:[
-									{ref:ZaServer.A_SmtpTimeout, type:_TEXTFIELD_,
-									  label:ZaMsg.NAD_MTA_WebMailTimeout, width: "4em",
-									  onChange: ZaServerXFormView.onFormFieldChanged
-									},
-								  	{type:_SPACER_},
-									{ref:ZaServer.A_zimbraMtaMyNetworks,
-										txtBoxLabel:ZaMsg.NAD_MTA_MyNetworks,
-										msgName:ZaMsg.NAD_MTA_MyNetworks,
-										type:_SUPER_TEXTAREA_,
-										resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-										onChange: ZaServerXFormView.onFormFieldChanged,
-										textAreaWidth:"250px"
-									},
-							  		{type:_SPACER_}
-								]
-						  	},
-					        { ref: ZaServer.A_zimbraMtaDnsLookupsEnabled, type:_SUPER_CHECKBOX_,
+
+                            {ref:ZaServer.A_SmtpTimeout, type:_TEXTFIELD_,
+                              label:ZaMsg.NAD_MTA_WebMailTimeout, width: "4em",
+                              onChange: ZaServerXFormView.onFormFieldChanged
+                            },
+
+                           {ref:ZaServer.A_zimbraMtaMyNetworks,
+                                txtBoxLabel:ZaMsg.NAD_MTA_MyNetworks,
+                                msgName:ZaMsg.NAD_MTA_MyNetworks,
+                                type:_SUPER_TEXTAREA_,
+                                colSpan: 2,
+                                resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                                onChange: ZaServerXFormView.onFormFieldChanged,
+                                textAreaWidth:"250px"
+                            },
+
+					        { ref: ZaServer.A_zimbraMtaDnsLookupsEnabled,
+                              type:_SUPER_CHECKBOX_,
+                              colSpan: 2,
 					      	  checkBoxLabel:ZaMsg.NAD_MTA_DnsLookups,
 					      	  trueValue: "TRUE", falseValue: "FALSE",
 					      	  onChange: ZaServerXFormView.onFormFieldChanged,
