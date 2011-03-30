@@ -679,7 +679,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
         type:_ZATABCASE_, colSizes:["auto"],numCols:1, caseKey:_tab1,
             id:"server_general_tab",
             items:[
-                {type:_ZA_PLAIN_GROUPER_/*_ZAGROUP_*/, items:[
+                {type:_ZA_PLAIN_GROUPER_/*_ZAGROUP_*/, width:"100%", items:[
                     {ref:ZaServer.A_name, type:_OUTPUT_, label:ZaMsg.NAD_DisplayName, labelLocation:_LEFT_},
                     ZaItem.descriptionXFormItem,
                     { ref: ZaServer.A_ServiceHostname, type:_OUTPUT_,
@@ -704,15 +704,18 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                             resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                             msgName:ZaMsg.MSG_zimbraMailPurgeSleepInterval,
                             txtBoxLabel:ZaMsg.LBL_zimbraMailPurgeSleepInterval,
+			    colSpan: 2, colSizes: ["275px","80px","195px","*"],
                             onChange:ZaServerXFormView.onFormFieldChanged
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
+			colSpan: 2, colSizes: ["275px","275px","*"],
                         trueValue:"TRUE", falseValue:"FALSE", onChange:ZaServerXFormView.onReverseLookupTargetFieldChanged},
                     { ref: ZaServer.A_notes, type:_TEXTAREA_,
-                      label: ZaMsg.NAD_Notes, labelCssStyle: "vertical-align:top", width: "30em",
+                      label: ZaMsg.NAD_Notes, labelCssStyle: "vertical-align:top", 
+		      width: "30em", 
                       onChange:ZaServerXFormView.onFormFieldChanged
                     }
                 ]}
