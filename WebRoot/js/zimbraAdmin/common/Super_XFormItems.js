@@ -503,7 +503,7 @@ SuperWiz_Checkbox_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePerm
 Super_Checkbox_XFormItem.prototype.useParentTable = false;
 Super_Checkbox_XFormItem.prototype.numCols = 3;
 Super_Checkbox_XFormItem.prototype.colSizes = ["275px","275px","150px"];
-
+Super_Checkbox_XFormItem.prototype.labelWrap = true;
 
 Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
