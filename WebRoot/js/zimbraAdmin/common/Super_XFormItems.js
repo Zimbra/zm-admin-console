@@ -325,7 +325,7 @@ Super_AnchorHelper_XFormItem.prototype.constructWidget = function () {
 	var widget = this.widget = new DwtButton(this.getForm(), this.getCssClass());
 	var height = this.getHeight();
 	var width = this.getWidth();
-	if(!width) width = "120px";
+	if(!width) width = "100%";
 	var el = null;
 	if (width != null || height != null){
 		el = widget.getHtmlElement();
@@ -1066,7 +1066,7 @@ SuperWiz_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPERWIZ_SELECT1_", "superwiz_select1", SuperWiz_Select1_XFormItem, Super_Select1_XFormItem);
 SuperWiz_Select1_XFormItem.prototype.labelCssClass = "xform_label_left ZaWizLabel";
 SuperWiz_Select1_XFormItem.prototype.labelCssStyle = "width:200px" ;
-SuperWiz_Select1_XFormItem.prototype.colSizes=["250px","150px"];
+SuperWiz_Select1_XFormItem.prototype.colSizes=["250px","*"];
 SuperWiz_Select1_XFormItem.prototype.nowrap = false;
 SuperWiz_Select1_XFormItem.prototype.labelWrap = true;
 SuperWiz_Select1_XFormItem.prototype.visibilityChecks = [ZaItem.hasWritePermission];
