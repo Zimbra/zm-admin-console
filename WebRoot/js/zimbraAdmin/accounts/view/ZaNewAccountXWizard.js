@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -931,7 +931,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 					});
 			
 		};
-		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureGroupCalendarEnabled, ZaAccount.A_zimbraFeatureFreeBusyViewEnabled],[])) {
+		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureGroupCalendarEnabled, ZaAccount.A_zimbraFeatureFreeBusyViewEnabled, ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled],[])) {
 			featuresCase.items.push(
 				{type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraCalendarFeature, id:"account_wiz_features_calendar",
 				 	colSizes:["auto"],numCols:1,
@@ -940,7 +940,8 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 					items:[		
 						{ref:ZaAccount.A_zimbraFeatureGroupCalendarEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled, trueValue:"TRUE", falseValue:"FALSE"},
 						{ref:ZaAccount.A_zimbraFeatureFreeBusyViewEnabled, type:_SUPER_WIZ_CHECKBOX_,
- resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, checkBoxLabel:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled,  trueValue:"TRUE", falseValue:"FALSE"}		
+ resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, checkBoxLabel:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, trueValue:"TRUE", falseValue:"FALSE"}
 					]
 				}
 			);
@@ -1072,6 +1073,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 			prefItems.push({type: _SPACER_ , height: "10px" });
 		}			
 		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraPrefMessageViewHtmlPreferred,ZaAccount.A_zimbraPrefDisplayExternalImages,ZaAccount.A_zimbraPrefMailToasterEnabled,
+            ZaAccount.A_zimbraPrefMessageIdDedupingEnabled,
 			ZaAccount.A_zimbraPrefGroupMailBy,ZaAccount.A_zimbraPrefMailDefaultCharset],[])) {				
 			prefItems.push({type:_GROUP_, cssClass:"ZaHeader2", colSpan: "*", id:"account_form_prefs_mail_header",
 							items: [
@@ -1106,6 +1108,12 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                                                         resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                                                         msgName:ZaMsg.MSG_zimbraPrefMailToasterEnabled,
                                                                         checkBoxLabel:ZaMsg.LBL_zimbraPrefMailToasterEnabled,
+                                                                        trueValue:"TRUE", falseValue:"FALSE"},
+								{ref:ZaAccount.A_zimbraPrefMessageIdDedupingEnabled,
+                                                                        type:_SUPER_WIZ_CHECKBOX_, colSpan:2,
+                                                                        resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                                                        msgName:ZaMsg.MSG_zimbraPrefMessageIdDedupingEnabled,
+                                                                        checkBoxLabel:ZaMsg.LBL_zimbraPrefMessageIdDedupingEnabled,
                                                                         trueValue:"TRUE", falseValue:"FALSE"}
 							]
 						});
