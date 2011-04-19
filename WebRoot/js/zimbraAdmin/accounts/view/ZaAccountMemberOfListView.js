@@ -854,15 +854,12 @@ S_Dwt_List_XFormItem.prototype.setItems = function (itemArray){
 * @contructor ZaAccountMemberOfListView
 * @author Charles Cao
 **/
-ZaAccountMemberOfsourceHeaderList = function(type, nameDefaultWidth) {
+ZaAccountMemberOfsourceHeaderList = function(type) {
 	var sourceHeaderList = new Array();
 	var sortable = 0;
 	
 //	defaultColumnSortable = sortable ;
-    if (!nameDefaultWidth) {
-        nameDefaultWidth = 230;
-    }
-	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? nameDefaultWidth : null ;
+	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? 230 : null ;
 	sourceHeaderList[0] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_name, 	ZaMsg.CLV_Name_col, 	
 												null, nameWidth, null, ZaAccountMemberOfListView.A_name, false, true);
 	
