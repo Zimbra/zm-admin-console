@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -70,6 +70,10 @@ function (ev) {
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_membersSelected, null);
 	}
+
+    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
+		ZaDLXFormView.removeMembers.call(this, ev);
+	}
 }
 
 ZaDLXFormView.nonmemberSelectionListener =    
@@ -80,6 +84,10 @@ function (ev) {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_nonmembersSelected, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_nonmembersSelected, null);
+	}
+
+    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
+		ZaAccountMemberOfListView._addSelectedLists(this.getForm(), arr);
 	}
 }
 
@@ -92,6 +100,10 @@ function (ev) {
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_memberPoolSelected, null);
 	}
+
+    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
+		ZaDLXFormView.addAddressesToMembers.call(this, ev);
+	}
 }
 
 ZaDLXFormView.directMemberSelectionListener =    
@@ -102,6 +114,10 @@ function (ev) {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_directMemberSelected, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_directMemberSelected, null);
+	}
+
+    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
+		ZaAccountMemberOfListView._removeSelectedLists(this.getForm(), arr);
 	}
 }
 
@@ -151,6 +167,7 @@ ZaDLXFormView.removeMembers = function(event) {
 	var tmpCurrentAddList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_addList);
 	var tmpSelectedList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_membersSelected);
 	var tmpCurrentRemoveList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_removeList);
+	var tmpOrigList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_origList);
 	
 	var newMemberList = AjxUtil.arraySubstract(tmpCurrentMemberList, form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_membersSelected));
 	newMemberList._version = tmpCurrentMemberList._version + 1;
@@ -164,8 +181,10 @@ ZaDLXFormView.removeMembers = function(event) {
         var removeExistedList = [];
         for(var i = 0; i < tmpSelectedList.length; i++) {
                 var removedItem = tmpSelectedList[i];
-                if(!tmpCurrentAddList || tmpCurrentAddList.length == 0 ||AjxUtil.indexOf(tmpCurrentAddList,removedItem,false) < 0)
-                        removeExistedList.push(removedItem);
+                if(!tmpCurrentAddList || tmpCurrentAddList.length == 0 ||AjxUtil.indexOf(tmpCurrentAddList,removedItem,false) < 0) {
+			if(tmpOrigList && tmpOrigList.length > 0 && AjxUtil.indexOf(tmpOrigList, removedItem, false) >= 0)
+				removeExistedList.push(removedItem);
+		}
         }	
 	
 	var newRemoveList = AjxUtil.mergeArrays(tmpCurrentRemoveList,removeExistedList);	
@@ -417,7 +436,7 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
 			if ((result = stdEmailRegEx.exec(tmpval)) != null) {
 				tmpval = result[2];
 			}
-			if(!AjxUtil.isValidEmailNonReg(tmpval)) {
+			if(!AjxEmailAddress.isValid(tmpval)) {
 				//how error msg
 				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.WARNING_DL_INVALID_EMAIL,[values[i]]),null,DwtMessageDialog.WARNING_STYLE);
 				return false;
@@ -478,7 +497,9 @@ function (entry) {
 	this._containedObject[ZaDistributionList.A2_query] = "";
 	//membership related instance variables
 	this._containedObject[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.cloneMemberOf(entry);
-
+	// the origList is inited when we load the object, it won't be modified unless the first time
+	// So there is no need for me to do deep clone
+	this._containedObject[ZaDistributionList.A2_origList] = entry [ZaDistributionList.A2_origList];
 	this._containedObject[ZaAccount.A2_directMemberList + "_more"] = entry[ZaAccount.A2_directMemberList + "_more"];
 	this._containedObject[ZaAccount.A2_directMemberList + "_offset"] = entry[ZaAccount.A2_directMemberList + "_offset"];
 	this._containedObject[ZaAccount.A2_indirectMemberList + "_more"] = entry[ZaAccount.A2_indirectMemberList + "_more"];
