@@ -74,8 +74,20 @@ ZaSearchListController.prototype.show = function (doPush) {
 			busyMsg:ZaMsg.BUSY_SEARCHING,
 			skipCallbackIfCancelled:false			
 	}
-	if(this._currentDomain) searchParams.domain = this._currentDomain;
-	ZaSearch.searchDirectory(searchParams);
+	var searchQueryList = new Array();
+	var isAliasSpec = false;
+	for(var i = 0; this.searchTypes && i < this.searchTypes.length; i++) {
+		if(this.searchTypes[i] == ZaSearch.ALIASES)
+		isAliasSpec = true;
+	}
+	if(isAliasSpec && !this._currentDomain) {
+		searchQueryList.push(searchParams);
+		var keyword = ZaSearchListController._getSearchKeyWord(this._currentQuery);
+		ZaSearchListController.searchAliasDomain(keyword,this,searchQueryList);
+	}else {
+		if(this._currentDomain) searchParams.domain = this._currentDomain;
+		ZaSearch.searchDirectory(searchParams);
+	}
 }
 
 ZaSearchListController.prototype._show = 
@@ -180,13 +192,10 @@ function (domainArr, searchQueryList) {
         var searchTypes = ZaSearch.ALIASES;
         var searchQuery = "(uid=*)";
         var controller = ZaApp.getInstance().getSearchListController();
-        if(controller.setSearchTypes)
-                controller.setSearchTypes(searchTypes);
 
 	if(searchQueryList && searchQueryList instanceof Array)
 		paramsArr = searchQueryList;
 	else paramsArr = new Array();
-        controller._currentQuery = searchQuery;
         var busyId = Dwt.getNextId();
 	var inParams = {limit:controller.RESULTSPERPAGE,show:true, openInSearchTab: true,busyId:busyId};
         var callback = new AjxCallback(controller, controller.searchCallback, inParams);
