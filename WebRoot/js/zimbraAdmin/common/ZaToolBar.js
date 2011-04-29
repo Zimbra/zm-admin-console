@@ -280,9 +280,11 @@ function () {
         if (this._btnOrder [i] == ZaOperation.NONE ) {
             index = i ;
             break ;
+	} else if (this._btnOrder [i] == ZaOperation.SEP) {
+            continue; 
         } else { //duplicate the operation.
             var op =  this._opList [this._btnOrder [i]] ;
-	    if (op != null  && op.className != undefined) {
+	    if (op != null) {
                 this._moreActionsMenuList.push (ZaOperation.duplicate(op)) ;
             }
         }
