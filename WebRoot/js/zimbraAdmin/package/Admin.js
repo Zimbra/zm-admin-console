@@ -62,7 +62,6 @@ AjxPackage.require("zimbraAdmin.common.ZaXProgressDialog");
 AjxPackage.require("zimbraAdmin.common.ZaAppTabGroup");
 AjxPackage.require("zimbraAdmin.common.ZaAppTab");
 AjxPackage.require("zimbraAdmin.common.ZaRequestMgr");
-AjxPackage.require("zimbraAdmin.common.ZaActionStatusView");
 
 //
 // Admin UI Specific components
