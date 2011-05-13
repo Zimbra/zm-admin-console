@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -709,12 +709,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-			//bug fix 33189
-			//super_lifetime_ has 4 cols, super_checkbox has 3 cols.
-			//this table only set two cols in width by _ZA_PLAIN_GROUPER_.
-			//It works well in FF or Chrome, each row can extend its cell's width
-			//But in IE, the checkbox will be cutoff for only 75%(3/4) of the table's width.
-			conSpan: 4,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
 			colSpan: 2, colSizes: ["275px","275px","*"],
@@ -795,13 +789,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						  	  enableDisableChecks:[[XForm.checkInstanceValue,ZaServer.A_zimbraLoggerServiceInstalled,true],
 						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
 						  	  label: ZaMsg.NAD_Service_Logger,
-					  	      onChange: ZaServerXFormView.onFormFieldChanged
-						  	},
-                            				{ ref: ZaServer.A_zimbraVmwareHAServiceEnabled, type: _CHECKBOX_,
-						  	  enableDisableChangeEventSources:[ZaServer.A_zimbraVmwareHAServiceInstalled],
-						  	  enableDisableChecks:[[XForm.checkInstanceValue,ZaServer.A_zimbraVmwareHAServiceInstalled,true],
-						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
-						  	  label: ZaMsg.NAD_Service_VmwareHA,
 					  	      onChange: ZaServerXFormView.onFormFieldChanged
 						  	}
 						]}
@@ -903,16 +890,16 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 				      },
 				  
 				     	{type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.Global_MTA_MilterServer,
-                           items: [
-                            { ref:ZaServer.A_zimbraMilterServerEnabled, type: _SUPER_CHECKBOX_,
-                              trueValue: "TRUE", falseValue: "FALSE",
-                              onChange: ZaServerXFormView.onFormFieldChanged,
-                              resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-                              checkBoxLabel:ZaMsg.NAD_MTA_MilterServerEnabled
-                            },
+                                              items: [
+                                                        { ref:ZaServer.A_zimbraMilterServerEnabled, type: _SUPER_CHECKBOX_,
+                                                          trueValue: "TRUE", falseValue: "FALSE",
+                                                          onChange: ZaServerXFormView.onFormFieldChanged,
+                                                          resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                                                          checkBoxLabel:ZaMsg.NAD_MTA_MilterServerEnabled 
+                                                    	},
 							
 							{type:_REPEAT_, ref:ZaServer.A_zimbraMilterBindAddress, 
-					      		label:ZaMsg.NAD_MTA_MilterBindAddress,
+					      			label:ZaMsg.NAD_MTA_MilterBindAddress,
 								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
 								repeatInstance:"", 
 								showAddButton:true, 
@@ -922,8 +909,9 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								removeButtonLabel:ZaMsg.NAD_MTA_RemoveBindAddress ,
 								removeButtonCSSStyle: "margin-left: 50px",
 								bnolsnr:true,
-					      	    items:[
-								{ type:_TEXTFIELD_,ref:".",
+					      			items:[
+								{	 
+								   type:_TEXTFIELD_,ref:".",
 								   enableDisableChecks:[],
 								   visibilityChecks:[],
 								   bnolsnr:true,
@@ -936,20 +924,8 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      		},
 						
 							{ref:ZaServer.A_zimbraMilterBindPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_MilterBindPort}
-                           ]
-                        },
-                        {type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.NAD_SPNEGO_Configure,
-                            items:[
-                              {ref:ZaServer.A_zimbraSpnegoAuthPrincipal, type:_TEXTFIELD_,
-                               label:ZaMsg.NAD_MTA_SpnegoAuthPrincipal, width: "20em",
-                               onChange: ZaServerXFormView.onFormFieldChanged
-                              },
-                              {ref:ZaServer.A_zimbraSpnegoAuthTargetName, type:_TEXTFIELD_,
-                               label:ZaMsg.NAD_MTA_SpnegoAuthTargetName, width: "20em",
-                               onChange: ZaServerXFormView.onFormFieldChanged
-                              }
-                            ]
-                        }
+                                            	]
+                                     	}	
 				    ]
 				};
         switchItems.push (case3) ;
