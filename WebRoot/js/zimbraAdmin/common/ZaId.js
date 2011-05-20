@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2010 Zimbra, Inc.
+ * Copyright (C) 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -586,6 +586,7 @@ ZaId.TAB_SEARCH_EDIT            = "SEARCH_EDIT";
 ZaId.TAB_GSET_EDIT              = "GSET_EDIT";
 
 ZaId.TAB_DOWNLOADS		= "DOWNLOADS";
+ZaId.TAB_VIEWRIGHTS		= "VIEW_RIGHTS";
 
 ZaId.TAB_UNDEF			= "UNDEFINE";
 
