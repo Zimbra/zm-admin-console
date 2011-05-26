@@ -105,7 +105,6 @@ function() {
 		if(resource != null) {
 			ZaApp.getInstance().getResourceController().fireCreationEvent(resource);
 			this.popdown();
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.ResourceCreated,[resource.name]));
 		}
 	} catch (ex) {
 		switch(ex.code) {		

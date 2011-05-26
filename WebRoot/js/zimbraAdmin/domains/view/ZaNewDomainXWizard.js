@@ -39,7 +39,6 @@ ZaNewDomainXWizard = function(parent, entry) {
 	ZaNewDomainXWizard.AUTH_CONFIG_SUM_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.AUTH_TEST_RESULT_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.VHOST_STEP = ++this.TAB_INDEX;
-    ZaNewDomainXWizard.FEATURE_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.BRIEFCASE_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.NOTEBOOK_ACL_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.CONFIG_COMPLETE_STEP = ++this.TAB_INDEX;
@@ -59,7 +58,6 @@ ZaNewDomainXWizard = function(parent, entry) {
 		{label:ZaMsg.AuthSettingsSummary, value:ZaNewDomainXWizard.AUTH_CONFIG_SUM_STEP},												
 		{label:ZaMsg.AuthTestResult, value:ZaNewDomainXWizard.AUTH_TEST_RESULT_STEP},
 		{label:ZaMsg.Domain_Tab_VirtualHost, value:ZaNewDomainXWizard.VHOST_STEP},
-        {label:ZaMsg.TABT_Feature, value:ZaNewDomainXWizard.FEATURE_STEP},
 		{label:ZaMsg.Domain_Tab_Briefcase, value:ZaNewDomainXWizard.BRIEFCASE_STEP},		
 		{label:ZaMsg.Notebook_Access_Control, value:ZaNewDomainXWizard.NOTEBOOK_ACL_STEP},			
 		{label:ZaMsg.DomainConfigComplete, value:ZaNewDomainXWizard.CONFIG_COMPLETE_STEP}		
@@ -925,7 +923,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 							visibilityChecks:[ZaNewDomainXWizard.isDomainModeNotInternal,[XForm.checkInstanceValue,ZaDomain.A2_isTestingGAL,0]],
 							visibilityChangeEventSources:[ZaDomain.A_zimbraGalMode,ZaDomain.A2_isTestingGAL],
 							useParentTable:false,
-							numCols:2,colSpan:2, width:"100%", colSizes:["220px","430px"],
+							numCols:2,colSpan:2,
 							items: [
 								{ref:ZaDomain.A_zimbraGalMode, type:_OUTPUT_, label:ZaMsg.Domain_GalMode, choices:this.GALModes,
 									visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A2_isTestingGAL,0]],
@@ -981,8 +979,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 						{type:_GROUP_, 
 							visibilityChecks:[[XForm.checkInstanceValue,ZaDomain.A_GALSearchTestResultCode,ZaDomain.Check_OK]] ,
 							visibilityChangeEventSources:[ZaDomain.A_GALSearchTestResultCode],							
-							numCols:2,  width: "100%",
-                            colSpan:"2",
+							numCols:2,
 							items: [
 								{type:_DWT_ALERT_,content:ZaMsg.Domain_GALSearchTestSuccessful,
 									ref:null,
@@ -1007,8 +1004,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 							visibilityChecks:[[XForm.checkInstanceValueNot,ZaDomain.A_GALSearchTestResultCode,ZaDomain.Check_OK],
 							                  [XForm.checkInstanceValueNot,ZaDomain.A_GALSearchTestResultCode,ZaDomain.Check_SKIPPED]],							
 							visibilityChangeEventSources:[ZaDomain.A_GALSearchTestResultCode],						
-							numCols:2,  width: "100%",
-                            colSpan:"2",
+							numCols:2,					
 							items: [
 							   {type:_DWT_ALERT_,content:ZaMsg.Domain_GALSearchTestFailed,
 									ref:null,
@@ -1354,22 +1350,6 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 									{ref:".", type:_TEXTFIELD_, label:null,width:250}
 								]
 						}
-					]
-				},
-				{type:_CASE_, caseKey:ZaNewDomainXWizard.FEATURE_STEP,
-					items: [
-						{ type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_zimbraCalendarFeature,
-                                  		  items :[
-                                                  {ref:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      type:_SUPER_CHECKBOX_,
-                                                      msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      checkBoxLabel:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-                                                      trueValue:"TRUE", falseValue:"FALSE"
-                                                  }
-                                         	 ]
-                                		}
-
 					]
 				},
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.BRIEFCASE_STEP, 
