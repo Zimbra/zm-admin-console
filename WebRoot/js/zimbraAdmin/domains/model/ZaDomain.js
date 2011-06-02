@@ -325,8 +325,25 @@ ZaDomain.compareACLs = function (val1, val2) {
 //In order to keep the domain list synchronized with server, we use synchronous call here.
 ZaDomain.getAll =
 function() {
+	var query = "";
+	if(!ZaZimbraAdmin.isGlobalAdmin()) {
+        	var domainNameList = ZaApp.getInstance()._domainNameList;
+        	if(!domainNameList || !(domainNameList instanceof Array) || domainNameList.length == 0) {
+            		return  new ZaItemList(ZaDomain);
+        	}
+        	if(domainNameList && domainNameList instanceof Array) {
+            		for(var i = 0; i < domainNameList.length; i++) {
+                		if(!target || domainNameList[i].indexOf(target) != -1)
+                		query += "(" + ZaDomain.A_domainName + "=" + domainNameList[i] + ")";
+            		}
+            		if(domainNameList.length > 1)
+            			query = "(|" + query + ")";
+        	}	
+    	} else
+	    query = ZaDomain.LOCAL_DOMAIN_QUERY;
+
 	var params = {
-		query: ZaDomain.LOCAL_DOMAIN_QUERY, 
+		query: query,//ZaDomain.LOCAL_DOMAIN_QUERY, 
 		types:[ZaSearch.DOMAINS],
 		sortBy:ZaDomain.A_domainName,
 		offset:"0",
@@ -2090,3 +2107,39 @@ function (domainName) {
     }
 }
 
+ZaDomain.getEffectiveDomainList = function(adminId) {
+    var soapDoc = AjxSoapDoc.create("GetAllEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
+    var elGrantee = soapDoc.set("grantee", adminId);
+    elGrantee.setAttribute("type", "usr");
+    elGrantee.setAttribute("by", "id");
+
+    var params = {};
+    params.soapDoc = soapDoc;
+    params.asyncMode = false;
+    var reqMgrParams = {
+        controller : ZaApp.getInstance().getCurrentController(),
+        busyMsg : ZaMsg.BUSY_GET_EFFICIENT_DOMAIN_LIST
+    }
+
+    var domainNameList = [];
+    try {
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams);
+        if(!resp || resp.Body.GetAllEffectiveRightsResponse.Fault)
+            return domainNameList;
+        var targets = resp.Body.GetAllEffectiveRightsResponse.target;
+        for(var i = 0; i < targets.length; i++) {
+            if(targets[i].type != ZaItem.DOMAIN)
+                continue;
+            if(!targets[i].entries) continue;
+            for(var j = 0; j < targets[i].entries.length; j++) {
+                var entry = targets[i].entries[j].entry;
+                for(var k = 0; k < entry.length; k++)
+                    domainNameList.push(entry[k].name);
+            }
+            break;
+        }
+        return domainNameList;
+    } catch(ex) {
+        return domainNameList;
+    }
+}
