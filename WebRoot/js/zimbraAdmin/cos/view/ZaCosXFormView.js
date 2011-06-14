@@ -222,7 +222,6 @@ ZaCosXFormView.PREFERENCES_TAB_ATTRS = [
 	ZaCos.A_zimbraPrefCalendarAlwaysShowMiniCal,
 	ZaCos.A_zimbraPrefCalendarApptReminderWarningTime,
 	ZaCos.A_zimbraPrefTimeZoneId,
-	ZaCos.A_zimbraPrefContactsPerPage,
 	ZaCos.A_zimbraPrefGalAutoCompleteEnabled,
 	ZaCos.A_zimbraPrefAutoAddAddressEnabled,
 	ZaCos.A_zimbraMailSignatureMaxLength,
@@ -807,8 +806,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             	visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 					[
 						ZaCos.A_zimbraPrefAutoAddAddressEnabled,
-						ZaCos.A_zimbraPrefGalAutoCompleteEnabled,
-						ZaCos.A_zimbraPrefContactsPerPage
+						ZaCos.A_zimbraPrefGalAutoCompleteEnabled
 					]]
 				],  
                 items: [
@@ -824,9 +822,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 {ref:ZaCos.A_zimbraPrefGalAutoCompleteEnabled, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled,
                     label:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE"
-                },
-                {ref:ZaCos.A_zimbraPrefContactsPerPage, type:_OSELECT1_, msgName:ZaMsg.MSG_zimbraPrefContactsPerPage,
-                    label:ZaMsg.LBL_zimbraPrefContactsPerPage, labelLocation:_LEFT_
                 }
             ]},
             {type:_GROUP_, cssClass:"ZaHeader2", colSpan: "*", id:"cos_form_prefs_calendar_header",

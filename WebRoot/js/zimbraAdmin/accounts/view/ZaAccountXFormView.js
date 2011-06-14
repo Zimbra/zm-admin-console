@@ -970,7 +970,6 @@ ZaAccountXFormView.PREFERENCES_TAB_ATTRS = [
 	ZaAccount.A_zimbraPrefCalendarAlwaysShowMiniCal,
 	ZaAccount.A_zimbraPrefCalendarApptReminderWarningTime,
 	ZaAccount.A_zimbraPrefTimeZoneId,
-	ZaAccount.A_zimbraPrefContactsPerPage,
 	ZaAccount.A_zimbraPrefGalAutoCompleteEnabled,
 	ZaAccount.A_zimbraPrefAutoAddAddressEnabled,
 	ZaAccount.A_zimbraPrefMailSignature,
@@ -2425,8 +2424,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 							visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
                         		[
 									ZaAccount.A_zimbraPrefAutoAddAddressEnabled,
-									ZaAccount.A_zimbraPrefGalAutoCompleteEnabled,
-									ZaAccount.A_zimbraPrefContactsPerPage
+									ZaAccount.A_zimbraPrefGalAutoCompleteEnabled
                         		]]
                         	],						
 							items: [
@@ -2434,7 +2432,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 							],
 							cssStyle:"padding-top:5px; padding-bottom:5px"
 						},				
-						{type:_ZA_PLAIN_GROUPER_, id:"account_prefs_contacts_general",colSizes:["195px","auto"],
+						{type:_ZA_PLAIN_GROUPER_, id:"account_prefs_contacts_general",colSizes:["195px","auto"], width:"100%",
 							//label:ZaMsg.NAD_ContactsOptions,
 							items :[
 								{ref:ZaAccount.A_zimbraPrefAutoAddAddressEnabled, type:_SUPER_CHECKBOX_, 
@@ -2446,10 +2444,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 								},							
 								{ref:ZaAccount.A_zimbraPrefGalAutoCompleteEnabled,colSpan:2,
 									colSizes:["195px","375px","190px"], 
-									type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled,checkBoxLabel:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE"},	
-								{ref:ZaAccount.A_zimbraPrefContactsPerPage, type:_SUPER_SELECT1_,
-									labelCssStyle:"width:195px", colSizes:["375px","190px"],
-									msgName:ZaMsg.MSG_zimbraPrefContactsPerPage,label:ZaMsg.LBL_zimbraPrefContactsPerPage, labelLocation:_LEFT_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, valueLabel:null}		
+									type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled,checkBoxLabel:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE"}	
 							]
 						},
 
