@@ -39,11 +39,7 @@ ZaSettings.postInit = function() {
 		var cnt = ZaSettings.initMethods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(ZaSettings.initMethods[i]) == "function") {
-				try {
-					ZaSettings.initMethods[i].call(this);
-				} catch (ex) {
-				//	
-				}
+				ZaSettings.initMethods[i].call(this);
 			}
 		}
 	}	
@@ -69,7 +65,7 @@ ZaSettings.initRights = function () {
 		//if this is a system admin account - enable access to all UI elements
 		if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 			ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI] = true;
-		}			
+		}	
 	} else {
 		if(typeof(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])=="string") {
 			ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]];
@@ -627,7 +623,7 @@ ZaSettings.mailCharsetChoices = [
 	{ value: "windows-1256" , label: "windows-1256" } ,
 	{ value: "windows-1257" , label: "windows-1257" } ,
 	{ value: "windows-1258" , label: "windows-1258" } ,
-	{ value: "windows-31j" , label: "windows-31j" }/* ,
+	{ value: "windows-31j" , label: "windows-31j" } ,
 	{ value: "x-Big5-Solaris" , label: "x-Big5-Solaris" } ,
 	{ value: "x-euc-jp-linux" , label: "x-euc-jp-linux" } ,
 	{ value: "x-EUC-TW" , label: "x-EUC-TW" } ,
@@ -695,7 +691,7 @@ ZaSettings.mailCharsetChoices = [
 	{ value: "x-windows-874" , label: "x-windows-874" } ,
 	{ value: "x-windows-949" , label: "x-windows-949" } ,
 	{ value: "x-windows-950" , label: "x-windows-950" } ,                                   
-	{ value: "x-windows-iso2022jp" , label: "x-windows-iso2022jp" }*/
+	{ value: "x-windows-iso2022jp" , label: "x-windows-iso2022jp" } 
 ] ;
 
 ZaSettings.getLocaleChoices = function () {
