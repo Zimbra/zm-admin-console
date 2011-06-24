@@ -174,6 +174,10 @@ function () {
     this._toolbarOrder.push(ZaOperation.VIEW_DOMAIN_ACCOUNTS);
     this._toolbarOrder.push(ZaOperation.GAL_WIZARD);
 	this._toolbarOrder.push(ZaOperation.AUTH_WIZARD);
+	this._toolbarOrder.push(ZaOperation.NONE);	
+	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
+	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
+	this._toolbarOrder.push(ZaOperation.HELP);		   		   		
 	
 }
 ZaController.initToolbarMethods["ZaDomainListController"].push(ZaDomainListController.initToolbarMethod);
@@ -188,12 +192,7 @@ function (openInNewTab, openInSearchTab) {
 	//always add Help and navigation buttons at the end of the toolbar    
 	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);	
 	this._toolbarOperations[ZaOperation.PAGE_BACK]=new ZaOperation(ZaOperation.PAGE_BACK,ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener));
-
-	this._toolbarOrder.push(ZaOperation.NONE);
-	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
-	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
-	this._toolbarOrder.push(ZaOperation.HELP);
-
+	
 	//add the acount number counts
 	ZaSearch.searchResultCountsView(this._toolbarOperations, this._toolbarOrder);
 	
@@ -666,7 +665,6 @@ function(ev) {
 			evt.set(ZaEvent.E_CREATE, this);
 			evt.setDetails(domain);
 			this.handleCreation(evt);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DomainCreated,[domain.name]));
 		}
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.DOMAIN_EXISTS) {
