@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -607,9 +607,6 @@ ZaServerXFormView.MTA_TAB_ATTRS = [ZaServer.A_zimbraMtaAuthEnabled, ZaServer.A_z
 	ZaServer.A_SmtpPort, ZaServer.A_zimbraMtaRelayHost, ZaServer.A_SmtpTimeout, ZaServer.A_zimbraMtaMyNetworks, ZaServer.A_zimbraMtaDnsLookupsEnabled];
 ZaServerXFormView.MTA_TAB_RIGHTS = [];
 
-ZaServerXFormView.AUTH_TAB_ATTRS = [ZaServer.A_zimbraSpnegoAuthPrincipal, ZaServer.A_zimbraSpnegoAuthTargetName];
-ZaServerXFormView.AUTH_TAB_RIGHTS = [];
-
 ZaServerXFormView.IMAP_TAB_ATTRS = [ZaServer.A_ImapServerEnabled, ZaServer.A_ImapSSLServerEnabled, ZaServer.A_ImapCleartextLoginEnabled,
 	ZaServer.A_zimbraImapNumThreads, ZaServer.A_zimbraImapBindPort, ZaServer.A_ImapSSLBindPort, ZaServer.A_zimbraImapProxyBindPort,
 	ZaServer.A_zimbraImapSSLProxyBindPort];
@@ -644,7 +641,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 	headerList[4] = new ZaListHeaderItem(ZaServer.A_VolumeCompressionThreshold, ZaMsg.VM_VolumeCompressThreshold, null, "120px", null, null, false, true);									
 	headerList[5] = new ZaListHeaderItem(ZaServer.A_isCurrentVolume, ZaMsg.VM_CurrentVolume, null, "auto", null, null, false, true);										
 
-	var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7;
+	var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6;
 
     var tabBarChoices = [] ;
     
@@ -661,25 +658,20 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
          tabBarChoices.push ({value:_tab3, label:ZaMsg.NAD_Tab_MTA});
     }
 
-    if(ZaTabView.isTAB_ENABLED(entry,ZaServerXFormView.AUTH_TAB_ATTRS, ZaServerXFormView.AUTH_TAB_RIGHTS)) {
-    	_tab4 = ++this.TAB_INDEX;
-         tabBarChoices.push ({value:_tab4, label:ZaMsg.NAD_Tab_AUTH});
-    }
-
     if(ZaTabView.isTAB_ENABLED(entry,ZaServerXFormView.IMAP_TAB_ATTRS, ZaServerXFormView.IMAP_TAB_RIGHTS)) {
-        _tab5 = ++this.TAB_INDEX;
-        tabBarChoices.push ({value:_tab5, label:ZaMsg.NAD_Tab_IMAP});
+        _tab4 = ++this.TAB_INDEX;
+        tabBarChoices.push ({value:_tab4, label:ZaMsg.NAD_Tab_IMAP});
     }
 
     if(ZaTabView.isTAB_ENABLED(entry,ZaServerXFormView.POP_TAB_ATTRS, ZaServerXFormView.POP_TAB_RIGHTS)) {
-        _tab6 = ++this.TAB_INDEX;
-        tabBarChoices.push ({value:_tab6, label:ZaMsg.NAD_Tab_POP});
+        _tab5 = ++this.TAB_INDEX;
+        tabBarChoices.push ({value:_tab5, label:ZaMsg.NAD_Tab_POP});
     }    
         
 
     if(ZaTabView.isTAB_ENABLED(entry,ZaServerXFormView.VOLUMES_TAB_ATTRS, ZaServerXFormView.VOLUMES_TAB_RIGHTS)) {
-    	_tab7 = ++this.TAB_INDEX;
-        tabBarChoices.push ({value:_tab7, label:ZaMsg.NAD_Tab_VolumeMgt});
+    	_tab6 = ++this.TAB_INDEX;
+        tabBarChoices.push ({value:_tab6, label:ZaMsg.NAD_Tab_VolumeMgt});
     }
     var switchItems = [];
 
@@ -717,12 +709,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                     },
                     {ref:ZaServer.A_zimbraReverseProxyLookupTarget,
                         type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-			//bug fix 33189
-			//super_lifetime_ has 4 cols, super_checkbox has 3 cols.
-			//this table only set two cols in width by _ZA_PLAIN_GROUPER_.
-			//It works well in FF or Chrome, each row can extend its cell's width
-			//But in IE, the checkbox will be cutoff for only 75%(3/4) of the table's width.
-			conSpan: 4,
                         msgName:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
                         checkBoxLabel:ZaMsg.NAD_zimbraReverseProxyLookupTarget,
 			colSpan: 2, colSizes: ["275px","275px","*"],
@@ -803,13 +789,6 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						  	  enableDisableChecks:[[XForm.checkInstanceValue,ZaServer.A_zimbraLoggerServiceInstalled,true],
 						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
 						  	  label: ZaMsg.NAD_Service_Logger,
-					  	      onChange: ZaServerXFormView.onFormFieldChanged
-						  	},
-                            				{ ref: ZaServer.A_zimbraVmwareHAServiceEnabled, type: _CHECKBOX_,
-						  	  enableDisableChangeEventSources:[ZaServer.A_zimbraVmwareHAServiceInstalled],
-						  	  enableDisableChecks:[[XForm.checkInstanceValue,ZaServer.A_zimbraVmwareHAServiceInstalled,true],
-						  	  [ZaItem.hasWritePermission,ZaServer.A_zimbraServiceEnabled]],
-						  	  label: ZaMsg.NAD_Service_VmwareHA,
 					  	      onChange: ZaServerXFormView.onFormFieldChanged
 						  	}
 						]}
@@ -911,16 +890,16 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 				      },
 				  
 				     	{type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.Global_MTA_MilterServer,
-                           items: [
-                            { ref:ZaServer.A_zimbraMilterServerEnabled, type: _SUPER_CHECKBOX_,
-                              trueValue: "TRUE", falseValue: "FALSE",
-                              onChange: ZaServerXFormView.onFormFieldChanged,
-                              resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
-                              checkBoxLabel:ZaMsg.NAD_MTA_MilterServerEnabled
-                            },
+                                              items: [
+                                                        { ref:ZaServer.A_zimbraMilterServerEnabled, type: _SUPER_CHECKBOX_,
+                                                          trueValue: "TRUE", falseValue: "FALSE",
+                                                          onChange: ZaServerXFormView.onFormFieldChanged,
+                                                          resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+                                                          checkBoxLabel:ZaMsg.NAD_MTA_MilterServerEnabled 
+                                                    	},
 							
 							{type:_REPEAT_, ref:ZaServer.A_zimbraMilterBindAddress, 
-					      		label:ZaMsg.NAD_MTA_MilterBindAddress,
+					      			label:ZaMsg.NAD_MTA_MilterBindAddress,
 								resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
 								repeatInstance:"", 
 								showAddButton:true, 
@@ -930,8 +909,9 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								removeButtonLabel:ZaMsg.NAD_MTA_RemoveBindAddress ,
 								removeButtonCSSStyle: "margin-left: 50px",
 								bnolsnr:true,
-					      	    items:[
-								{ type:_TEXTFIELD_,ref:".",
+					      			items:[
+								{	 
+								   type:_TEXTFIELD_,ref:".",
 								   enableDisableChecks:[],
 								   visibilityChecks:[],
 								   bnolsnr:true,
@@ -944,48 +924,15 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					      		},
 						
 							{ref:ZaServer.A_zimbraMilterBindPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_MilterBindPort}
-                           ]
-                        },
-                        {type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.NAD_SPNEGO_Configure,
-                            items:[
-                              {ref:ZaServer.A_zimbraSpnegoAuthPrincipal, type:_TEXTFIELD_,
-                               label:ZaMsg.NAD_MTA_SpnegoAuthPrincipal, width: "20em",
-                               onChange: ZaServerXFormView.onFormFieldChanged
-                              },
-                              {ref:ZaServer.A_zimbraSpnegoAuthTargetName, type:_TEXTFIELD_,
-                               label:ZaMsg.NAD_MTA_SpnegoAuthTargetName, width: "20em",
-                               onChange: ZaServerXFormView.onFormFieldChanged
-                              }
-                            ]
-                        }
+                                            	]
+                                     	}	
 				    ]
 				};
         switchItems.push (case3) ;
     }
 
-    if(_tab4) {
-     var case4 = { type: _ZATABCASE_, id:"server_auth_tab", caseKey:_tab4,
-					colSizes:["auto"],numCols:1,
-					items: [
-                        {type:_ZA_TOP_GROUPER_, colSizes:["275px","*"], numCols:2, label:ZaMsg.NAD_SPNEGO_Configure,
-                            items:[
-                              {ref:ZaServer.A_zimbraSpnegoAuthPrincipal, type:_TEXTFIELD_,
-                               label:ZaMsg.NAD_MTA_SpnegoAuthPrincipal, width: "20em",
-                               onChange: ZaServerXFormView.onFormFieldChanged
-                              },
-                              {ref:ZaServer.A_zimbraSpnegoAuthTargetName, type:_TEXTFIELD_,
-                               label:ZaMsg.NAD_MTA_SpnegoAuthTargetName, width: "20em",
-                               onChange: ZaServerXFormView.onFormFieldChanged
-                              }
-                            ]
-                        }
-				    ]
-				};
-        switchItems.push (case4) ;
-    }
-
-	if(_tab5) {
-		var case5 = {type:_ZATABCASE_, colSizes:["auto"],numCols:1, caseKey:_tab5,
+	if(_tab4) {
+		var case4 = {type:_ZATABCASE_, colSizes:["auto"],numCols:1, caseKey:_tab4,
 					id:"server_imap_tab",
 					items:[
 						{ type: _DWT_ALERT_,
@@ -997,7 +944,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					]
      	};
      	if(ZAGroup_XFormItem.isGroupVisible(entry,ZaServerXFormView.MTA_SERVICE_GROUP_ATTRS,[])) {
-			case5.items.push({type:_ZA_TOP_GROUPER_, colSizes:["auto"],numCols:1,label:ZaMsg.Global_IMAP_ServiceGrp,
+			case4.items.push({type:_ZA_TOP_GROUPER_, colSizes:["auto"],numCols:1,label:ZaMsg.Global_IMAP_ServiceGrp,
 					      items: [
 						      	{ ref: ZaServer.A_ImapServerEnabled, type: _SUPER_CHECKBOX_,
 						      	  checkBoxLabel:ZaMsg.IMAP_Service,
@@ -1034,7 +981,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						});
      	}
      	if(ZAGroup_XFormItem.isGroupVisible(entry,ZaServerXFormView.MTA_NETWORK_GROUP_ATTRS,[])) {
-			case5.items.push({type:_ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAP_NetworkGrp,
+			case4.items.push({type:_ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAP_NetworkGrp,
 						      items: [
 								{ ref: ZaServer.A_zimbraImapBindPort, type:_TEXTFIELD_,
 								  enableDisableChecks:[ZaServerXFormView.getIMAPEnabled,ZaItem.hasReadPermission],
@@ -1065,11 +1012,11 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 							});
    		}
    	
-   		switchItems.push (case5) ;
+   		switchItems.push (case4) ;             
    }
 
-   if(_tab6) {
-       var case6 = 	{type:_ZATABCASE_, caseKey:_tab6,
+   if(_tab5) {
+       var case5 = 	{type:_ZATABCASE_, caseKey:_tab5,
 					id:"server_pop_tab", colSizes:["auto"],numCols:1,
 					items:[
 						{ type: _DWT_ALERT_,
@@ -1115,7 +1062,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						},
 						{type:_ZA_TOP_GROUPER_, label:ZaMsg.Global_POP_NetworkGrp,
 						  items: [
-						  	{type:_GROUP_,numCols:2,colSpan:2,colSizes:["275px","*"],//["275px","275px","150px"],
+						  	{type:_GROUP_,numCols:3,colSpan:3,colSizes:["275px","275px","150px"],
 						      	enableDisableChangeEventSources:[ZaServer.A_Pop3ServerEnabled],
 						      	enableDisableChecks:[ZaServerXFormView.getPOP3Enabled],
 						  		items:[
@@ -1126,7 +1073,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								  	{type:_SPACER_}
 								]
 						  	},
-							{type:_GROUP_,numCols:2,colSpan:2,colSizes:["275px","*"],
+							{type:_GROUP_,numCols:3,colSpan:3,colSizes:["275px","275px","150px"],
 						      	enableDisableChangeEventSources:[ZaServer.A_Pop3ServerEnabled],
 						      	enableDisableChecks:[ZaServerXFormView.getPOP3Enabled],
 						  		items:[
@@ -1135,7 +1082,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 									 	label:ZaMsg.NAD_POP_Address,
 									  	onChange:ZaServerXFormView.onFormFieldChanged
 								  	},
-									{type:_OUTPUT_,ref:".",label:"", labelLocation:_LEFT_, value: ZaMsg.NAD_POP_Address_NOTE}
+								  	{type:_SPACER_}
 							  ]
 						  	},
 							{ ref: ZaServer.A_zimbraPop3BindPort, type:_TEXTFIELD_,
@@ -1175,11 +1122,11 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						}
 					]
 				};
-       switchItems.push(case6);
+       switchItems.push(case5);
    }
 
-   if(_tab7) {
-       var case7 = 	{type:_ZATABCASE_,width:"100%", id:"server_form_volumes_tab", caseKey:_tab7,
+   if(_tab6) {
+       var case6 = 	{type:_ZATABCASE_,width:"100%", id:"server_form_volumes_tab", caseKey:_tab6,
 					visibilityChangeEventSources:[ZaModel.currentTab],
 					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaServerXFormView.getMailboxEnabled],
 
@@ -1238,9 +1185,9 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					]
 				};
 
-       switchItems.push (case7) ;
+       switchItems.push (case6) ;
 
-       var case7_2 = 	{type:_ZATABCASE_, caseKey:_tab7,
+       var case6_2 = 	{type:_ZATABCASE_, caseKey:_tab6,
 					visibilityChangeEventSources:[ZaModel.currentTab],
 					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,[XForm.checkInstanceValue,ZaServer.A_showVolumes,false]],
 
@@ -1256,7 +1203,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 					]
 
 				};
-       switchItems.push (case7_2) ;
+       switchItems.push (case6_2) ;
    }
     xFormObject.tableCssStyle="width:100%;position:static;overflow:auto;";
 
