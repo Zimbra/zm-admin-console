@@ -355,13 +355,11 @@ function () {
             	}
            	
             }
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DomainModified,[this._currentObject.name]));
 			return true;
 		} catch (ex) {
 			this._handleException(ex,"ZaDomainController.prototype._saveChanges");
 		}
 	} else {
-        ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DomainModified,[this._currentObject.name]));
 		return true;
 	}
 }
@@ -402,9 +400,7 @@ function () {
 ZaDomainController.prototype._showNewDomainWizard = 
 function () {
 	try {
-        if(!ZaApp.getInstance().dialogs["newDomainWizard"])
-		    ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, this._currentObject);
-        this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"];
+		this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, this._currentObject);	
 		this._newDomainWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainController.prototype._finishNewButtonListener, this, null);			
 		this._newDomainWizard.setObject(this._currentObject);
 		this._newDomainWizard.popup();

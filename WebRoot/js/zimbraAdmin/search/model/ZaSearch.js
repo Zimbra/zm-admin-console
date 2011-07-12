@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -99,7 +99,6 @@ ZaSearch.standardAttributes = [ZaAccount.A_displayname,
 							ZaAccount.A_accountStatus,
 							ZaAccount.A_zimbraLastLogonTimestamp,
 							ZaAccount.A_description,
-							ZaAccount.A_zimbraIsSystemAccount,
                             ZaAccount.A_zimbraIsDelegatedAdminAccount,
                             ZaAccount.A_zimbraIsAdminAccount,
                             ZaAccount.A_zimbraIsSystemResource,
@@ -846,8 +845,8 @@ function (resp) {
 ZaSearch.loadPredefinedSearch =
 function () {
     if (ZaSearchField.canViewSavedSearch()) {
-        //var currentSavedSearches = ZaSearch.getSavedSearches().Body.GetAdminSavedSearchesResponse.search;
-        var currentSavedSearches = ZaApp.getInstance().getSavedSearchList();
+        var currentSavedSearches = ZaSearch.getSavedSearches().Body.GetAdminSavedSearchesResponse.search;
+       
         /*
          * If we get saved search from server and have write-permission, we will         * replace all the "zimbraIsDomainAdminAccount" with "zimbraIsDelegatedA         * dminAccount" to update the query string for version update      
          */ 
@@ -856,9 +855,9 @@ function () {
  
             for (var i = 0; i < currentSavedSearches.length; i++ ){
                var currentName = currentSavedSearches[i].name;
-               var currentContent = currentSavedSearches[i].query;
+               var currentContent = currentSavedSearches[i]._content;
     
-               if (currentContent && currentContent.search(/zimbraIsDomainAdminAccount/) != -1){
+               if (currentContent.search(/zimbraIsDomainAdminAccount/) != -1){
              
                   currentContent = currentContent.replace(/zimbraIsDomainAdminAccount/g , "zimbraIsDelegatedAdminAccount"); //'g' is used for global replace
                   modifiedSearches.push ({
