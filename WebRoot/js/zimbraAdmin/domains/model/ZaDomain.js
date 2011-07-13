@@ -324,7 +324,7 @@ ZaDomain.compareACLs = function (val1, val2) {
 //Use ZaSearch.SearchDirectory
 //In order to keep the domain list synchronized with server, we use synchronous call here.
 ZaDomain.getAll =
-function() {
+function(target) {
 	var query = "";
 	if(!ZaZimbraAdmin.isGlobalAdmin()) {
         	var domainNameList = ZaApp.getInstance()._domainNameList;
