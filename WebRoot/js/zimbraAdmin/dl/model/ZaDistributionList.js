@@ -1074,7 +1074,7 @@ ZaDistributionList.myXModel = {
 		{id:ZaDistributionList.A2_publishedShares, type:_LIST_},
 		{id:ZaDistributionList.A_zimbraDistributionListSendShareMessageToNewMembers, ref:"attrs/"+ZaDistributionList.A_zimbraDistributionListSendShareMessageToNewMembers, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},	
 		{id:ZaDistributionList.A_zimbraDistributionListSendShareMessageFromAddress, ref:"attrs/"+ZaDistributionList.A_zimbraDistributionListSendShareMessageFromAddress, type:_STRING_},
-		{id:ZaDistributionList.A2_sharesOwner, type:_STRING_},
+		{id:ZaDistributionList.A2_sharesOwner, type:_EMAIL_ADDRESS_},
 		{id:ZaDistributionList.A2_sharesPool, type:_LIST_},
 		{id:ZaDistributionList.A2_newSharePath, type:_STRING_},
 		{id:ZaDistributionList.A2_share_selection_cache, type:_LIST_},
