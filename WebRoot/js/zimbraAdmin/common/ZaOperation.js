@@ -94,7 +94,6 @@ ZaOperation.PAGE_BACK = ++ZA_OP_INDEX;
 ZaOperation.DUPLICATE = ++ZA_OP_INDEX;
 ZaOperation.GAL_WIZARD = ++ZA_OP_INDEX;
 ZaOperation.AUTH_WIZARD =++ZA_OP_INDEX;
-ZaOperation.AUTOPROV_WIZARD =++ZA_OP_INDEX;
 ZaOperation.VIEW_MAIL =++ZA_OP_INDEX;
 ZaOperation.MOVE_ALIAS = ++ZA_OP_INDEX;
 ZaOperation.NEW_MENU = ++ZA_OP_INDEX;
@@ -164,7 +163,6 @@ var ZaOpList = [
 	"DUPLICATE",
 	"GAL_WIZARD",
 	"AUTH_WIZARD",
-    "AUTOPROV_WIZARD",
 	"VIEW_MAIL",
 	"MOVE_ALIAS",
 	"NEW_MENU",
