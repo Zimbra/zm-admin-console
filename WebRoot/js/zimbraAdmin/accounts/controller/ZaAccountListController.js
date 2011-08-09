@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -53,9 +53,7 @@ ZaController.changeActionsStateMethods["ZaAccountListController"] = new Array();
 ZaAccountListController.prototype.show = function (doPush) {
 	var busyId = Dwt.getNextId();
 	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,CONS:null,show:doPush,busyId:busyId});
-
-	// hide the system account
-	this._currentQuery = "(&" + this._currentQuery + "(!("+ ZaAccount.A_zimbraIsSystemAccount +"=TRUE)))"	
+	
 	var searchParams = {
 			query:this._currentQuery ,
 			types:this.searchTypes,
@@ -689,7 +687,7 @@ function(acct) {
 	try {
 		ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
 		mods = {};
-		mods[ZaAccount.A_zimbraAuthTokenValidityValue] = (!acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue] ? 1 : ((parseInt(acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue])+1) % 9));
+		mods[ZaAccount.A_zimbraAuthTokenValidityValue] = (!acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue] ? 1 : ((parseInt(acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue])+1) % 9)); 
 		acct.modify(mods,acct);
 		//if we find we invalidate self account, we will throw an simulative exception of AUTH_EXPIRED 
 		//this exception will be handled in _handleException to redirect admin to login page  
@@ -704,8 +702,6 @@ function(acct) {
 			};
 			throw new ZmCsfeException(exParams);
 		}
-
-        ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.SessionInvalid,[acct.name]));
 	}catch(ex){
 		this._handleException(ex, "ZaAccountListController.expireSessions", null, false);
 	}
@@ -990,33 +986,19 @@ function (item) {
 				if(szPwd.length < minPwdLen || AjxStringUtil.trim(szPwd).length < minPwdLen) { 
 					//show error msg
 					//this._chngPwdDlg.popdown();
-                    var minpassMsg;
-                    if (minPwdLen > 1) {
-                        minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                    } else {
-                        minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                    }
 					ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");									
-					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + minpassMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen), null, DwtMessageDialog.CRITICAL_STYLE, null);
 					ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
 				} else if(AjxStringUtil.trim(szPwd).length > maxPwdLen) { 
 					//show error msg
 					//this._chngPwdDlg.popdown();
-					ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");
-                    var maxpassMsg;
-                    if (maxPwdLen > 1) {
-                        maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                    } else {
-                        maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                    }
-					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + maxpassMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");									
+					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen), null, DwtMessageDialog.CRITICAL_STYLE, null);
 					ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
 				} else {		
 					item.changePassword(szPwd);
 					this._chngPwdDlg.popdown();	//close the dialog
-                    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.PasswordModified,[item.name]));
 				}
-
 			}
 			if (this._chngPwdDlg.getMustChangePassword()) {
 				//item.attrs[ZaAccount.A_zimbraPasswordMustChange] = "TRUE";
@@ -1371,9 +1353,8 @@ function () {
 		}	
 	}
  	for(var i=0;i<cnt;i++) {
-        var itemObj = this._contentView.getSelection()[i];
-        if(itemObj && itemObj.type==ZaItem.ACCOUNT){
-		/*
+        var myitem = this._contentView.getSelection()[i];
+        if(myitem && myitem.type==ZaItem.ACCOUNT){
                 myitem = this._contentView.getSelection()[i].toString();
                 var mydomain = ZaAccount.getDomain(myitem);
                 var domainObj =  ZaDomain.getDomainByName(mydomain);
@@ -1415,12 +1396,7 @@ function () {
                         this._toolbarOperations[ZaOperation.DELETE].enabled=false;
 			this._popupOperations[ZaOperation.DELETE].enabled = false;	
                 }
-		*/
-		// Use zimbraIsSystemAccount to determine enabled/disabled status for delete button
-		if (itemObj.attrs[ZaAccount.A_zimbraIsSystemAccount] == "TRUE") {
-                        this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-                        this._popupOperations[ZaOperation.DELETE].enabled = false;
-		}
+
         }
         }
 }
