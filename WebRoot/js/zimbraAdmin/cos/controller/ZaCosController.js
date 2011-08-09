@@ -711,9 +711,11 @@ function () {
 			this._currentObject.create(tmpObj.name, mods);
 			//if creation took place - fire a CreationEvent
 			this.fireCreationEvent(this._currentObject);
-			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);	
+			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);
+            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.CosCreated,[tmpObj.name]));
 		} else {
 			this._currentObject.modify(mods);
+            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.CosModified,[this._currentObject.name]));
 			//if modification took place - fire a ChangeEvent
 			//changeDetails["obj"] = this._currentObject;
 			//changeDetails["mods"] = mods;
