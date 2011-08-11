@@ -38,7 +38,7 @@ ZaController.changeActionsStateMethods["ZaDomainListController"] = new Array();
 
 ZaDomainListController.prototype.show = function (doPush,openInNewTab) {
 
-    if(!ZaZimbraAdmin.hasGlobalDomainListAccess() && this._currentQuery == "") {
+    if(!ZaZimbraAdmin.isGlobalAdmin() && this._currentQuery == "") {
         var domainNameList = ZaApp.getInstance()._domainNameList;
         if(domainNameList && (domainNameList instanceof Array) && domainNameList.length > 0) {
             for(var i = 0; i < domainNameList.length; i++)
@@ -123,9 +123,7 @@ function (ev) {
 			if (this._contentView) this._contentView.setUI();
 			if(ZaApp.getInstance().getCurrentController() == this) {
 				this.show();			
-			} else if(this.objType && ev.type==this.objType && this._UICreated) {
-                this.show(false);
-            }
+			}
 			this.changeActionsState();			
 		}
 	}
@@ -144,8 +142,7 @@ function () {
 	}
 	this._popupOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS]=new ZaOperation(ZaOperation.VIEW_DOMAIN_ACCOUNTS,ZaMsg.Domain_view_accounts, ZaMsg.Domain_view_accounts_tt, "Search", "SearchDis", new AjxListener(this, this.viewAccountsButtonListener));
 	this._popupOperations[ZaOperation.GAL_WIZARD]=new ZaOperation(ZaOperation.GAL_WIZARD,ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainListController.prototype._galWizButtonListener));   		
-	this._popupOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainListController.prototype._authWizButtonListener));
-    this._popupOperations[ZaOperation.AUTOPROV_WIZARD]=new ZaOperation(ZaOperation.AUTOPROV_WIZARD,ZaMsg.DTBB_AutoPovConfigWiz, ZaMsg.DTBB_AutoProvConfigWiz_tt, "Backup", "BackupDis", new AjxListener(this, ZaDomainListController.prototype._autoProvWizButtonListener));
+	this._popupOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainListController.prototype._authWizButtonListener));   		   		
 
 }
 ZaController.initPopupMenuMethods["ZaDomainListController"].push(ZaDomainListController.initPopupMenuMethod);
@@ -167,7 +164,6 @@ function () {
     this._toolbarOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS]=new ZaOperation(ZaOperation.VIEW_DOMAIN_ACCOUNTS,ZaMsg.Domain_view_accounts, ZaMsg.Domain_view_accounts_tt, "Search", "SearchDis", new AjxListener(this, this.viewAccountsButtonListener));
 	this._toolbarOperations[ZaOperation.GAL_WIZARD]=new ZaOperation(ZaOperation.GAL_WIZARD,ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainListController.prototype._galWizButtonListener));   		
 	this._toolbarOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainListController.prototype._authWizButtonListener));
-    this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD]=new ZaOperation(ZaOperation.AUTOPROV_WIZARD,ZaMsg.DTBB_AutoProvConfigWiz, ZaMsg.DTBB_AutoProvConfigWiz_tt, "Backup", "BackupDis", new AjxListener(this, ZaDomainListController.prototype._autoProvWizButtonListener));
 	
 	if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount)) {
 		this._toolbarOrder.push(ZaOperation.NEW);
@@ -178,7 +174,10 @@ function () {
     this._toolbarOrder.push(ZaOperation.VIEW_DOMAIN_ACCOUNTS);
     this._toolbarOrder.push(ZaOperation.GAL_WIZARD);
 	this._toolbarOrder.push(ZaOperation.AUTH_WIZARD);
-    this._toolbarOrder.push(ZaOperation.AUTOPROV_WIZARD);
+	this._toolbarOrder.push(ZaOperation.NONE);	
+	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
+	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
+	this._toolbarOrder.push(ZaOperation.HELP);		   		   		
 	
 }
 ZaController.initToolbarMethods["ZaDomainListController"].push(ZaDomainListController.initToolbarMethod);
@@ -193,12 +192,7 @@ function (openInNewTab, openInSearchTab) {
 	//always add Help and navigation buttons at the end of the toolbar    
 	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);	
 	this._toolbarOperations[ZaOperation.PAGE_BACK]=new ZaOperation(ZaOperation.PAGE_BACK,ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener));
-
-	this._toolbarOrder.push(ZaOperation.NONE);
-	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
-	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
-	this._toolbarOrder.push(ZaOperation.HELP);
-
+	
 	//add the acount number counts
 	ZaSearch.searchResultCountsView(this._toolbarOperations, this._toolbarOrder);
 	
@@ -334,9 +328,7 @@ function(ev) {
 		domain.rights = {};
 		domain._defaultValues = {attrs:{}};*/
 		domain.loadNewObjectDefaults("name","domain.tld");
-        if(!ZaApp.getInstance().dialogs["newDomainWizard"])
-		    ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, domain);
-        this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"];
+		this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, domain);	
 		this._newDomainWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishNewButtonListener, this, null);			
 		this._newDomainWizard.setObject(domain);
 		this._newDomainWizard.popup();
@@ -380,24 +372,6 @@ function(ev) {
 		this._handleException(ex, "ZaDomainListController.prototype._showAuthWizard", null, false);
 	}
 }
-
-ZaDomainListController.prototype._autoProvWizButtonListener =
-function(ev) {
-	try {
-		if(this._contentView.getSelectionCount() == 1) {
-			var item = this._contentView.getSelection()[0];
-			this._currentObject = item;
-			item.load("name", item.attrs[ZaDomain.A_domainName],false,true);
-			this._autoProvWizard = ZaApp.getInstance().dialogs["authWizard"] = new ZaAutoProvConfigXWizard(this._container);
-			this._autoProvWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishAutoProvButtonListener, this, null);
-			this._autoProvWizard.setObject(item);
-			this._autoProvWizard.popup();
-		}
-	} catch (ex) {
-		this._handleException(ex, "ZaDomainListController.prototype._autoProvWizButtonListener", null, false);
-	}
-}
-
 /**
 * This listener is called when the Delete button is clicked. 
 **/
@@ -562,10 +536,7 @@ function () {
 			
 				if(this._toolbarOperations[ZaOperation.AUTH_WIZARD])
 					this._toolbarOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-				if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-					this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 				if(this._toolbarOperations[ZaOperation.GAL_WIZARD])
 					this._toolbarOperations[ZaOperation.GAL_WIZARD].enabled=false;
 					
@@ -574,10 +545,7 @@ function () {
 			
 				if(this._popupOperations[ZaOperation.AUTH_WIZARD])
 					this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-				if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-					this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 				if(this._popupOperations[ZaOperation.GAL_WIZARD])
 					this._popupOperations[ZaOperation.GAL_WIZARD].enabled=false;
 
@@ -607,14 +575,6 @@ function () {
 						this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
 				}
 
-				if(!(ZaDomain.canConfigureAutoProv(item))) {
-					if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-						this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled = false;
-
-					if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-						this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-				}
-
 				if(!item.rights[ZaDomain.RIGHT_DELETE_DOMAIN]) {
 					if(this._toolbarOperations[ZaOperation.DELETE]) {
 						this._toolbarOperations[ZaOperation.DELETE].enabled=false;
@@ -629,10 +589,7 @@ function () {
 	} else if (cnt > 1){
 		if(this._toolbarOperations[ZaOperation.AUTH_WIZARD])
 			this._toolbarOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 		if(this._toolbarOperations[ZaOperation.GAL_WIZARD])
 			this._toolbarOperations[ZaOperation.GAL_WIZARD].enabled=false;
 		
@@ -641,10 +598,7 @@ function () {
 
 		if(this._popupOperations[ZaOperation.AUTH_WIZARD])
 			this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._popupOperations[ZaOperation.AUTORPOV_WIZARD])
-			this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 		if(this._popupOperations[ZaOperation.GAL_WIZARD])
 			this._popupOperations[ZaOperation.GAL_WIZARD].enabled=false;
 		
@@ -665,10 +619,7 @@ function () {
 		
 		if(this._toolbarOperations[ZaOperation.AUTH_WIZARD])
 			this._toolbarOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+					
 		if(this._toolbarOperations[ZaOperation.GAL_WIZARD])
 			this._toolbarOperations[ZaOperation.GAL_WIZARD].enabled=false;
 			
@@ -681,9 +632,6 @@ function () {
 		
 		if(this._popupOperations[ZaOperation.AUTH_WIZARD])
 			this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
 					
 		if(this._popupOperations[ZaOperation.GAL_WIZARD])
 			this._popupOperations[ZaOperation.GAL_WIZARD].enabled=false;
@@ -717,7 +665,6 @@ function(ev) {
 			evt.set(ZaEvent.E_CREATE, this);
 			evt.setDetails(domain);
 			this.handleCreation(evt);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DomainCreated,[domain.name]));
 		}
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.DOMAIN_EXISTS) {
@@ -767,19 +714,6 @@ function(ev) {
 		this._notifyAllOpenTabs();
 	} catch (ex) {
 		this._handleException(ex, "ZaDomainListController.prototype._finishAuthButtonListener", null, false);
-	}
-	return;
-}
-
-ZaDomainListController.prototype._finishAutoProvButtonListener =
-function(ev) {
-	try {
-		ZaDomain.modifyAutoPovSettings.call(this._currentObject,this._autoProvWizard.getObject());
-		this._fireDomainChangeEvent(this._currentObject);
-		this._autoProvWizard.popdown();
-		this._notifyAllOpenTabs();
-	} catch (ex) {
-		this._handleException(ex, "ZaDomainListController.prototype._finishAutoProvButtonListener", null, false);
 	}
 	return;
 }
