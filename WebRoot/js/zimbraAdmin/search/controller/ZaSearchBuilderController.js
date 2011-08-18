@@ -99,10 +99,15 @@ function (value, event, form){
 		}
 
         var ref = this.getRef () ; 
-        //can't both be set
+        //can't each both be set
 		if (invertValue == "FALSE" && ref == ZaSearchOption.A_objTypeAccountDomainAdmin) {
 			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeAccountAdmin) ;
+			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeSystemAccount);
 		}else if (invertValue == "FALSE" && ref == ZaSearchOption.A_objTypeAccountAdmin) {
+			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeAccountDomainAdmin) ;
+			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeSystemAccount);
+		} else if (invertValue == "FALSE" && ref == ZaSearchOption.A_objTypeSystemAccount) {
+			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeAccountAdmin) ;
 			this.setInstanceValue (invertValue, ZaSearchOption.A_objTypeAccountDomainAdmin) ;
 		}
 
@@ -327,6 +332,7 @@ ZaSearchBuilderController.prototype.handleSpecialQueries =
 function () {
 	var optionViews = this.getOptionViews () ;
 	this._includeNeverLoggedInAccts = false ; //by default
+    this._includeObjectWithoutCosId = false;  // by default
 	for (var i =0 ; i < optionViews.length; i++) {
 		var optionId = optionViews[i]._optionId ;
 		var instance = optionViews[i]._localXForm.getInstance () ;
@@ -336,6 +342,11 @@ function () {
 				&& instance[ZaSearchOption.A_includeNeverLoginedAccounts] == "TRUE" ) 
 		{
 			this._includeNeverLoggedInAccts = true ;	
+		}
+		if (this._includeObjectWithoutCosId == false && instance[ZaSearchOption.A2_cosNotSet]
+				&& instance[ZaSearchOption.A2_cosNotSet] == "TRUE" )
+		{
+			this._includeObjectWithoutCosId = true ;
 		}
 	}
 }
@@ -367,6 +378,11 @@ function () {
 		
 		var options = instance ["options"] ;
 		var filter = [];
+
+        if(optionId == ZaSearchOption.COS_ID && this._includeObjectWithoutCosId
+                && (!options[ZaSearchOption.A_cosListChecked] || options[ZaSearchOption.A_cosListChecked].size() == 0))
+             filter.push("(!(" + ZaAccount.A_COSId + "=*))");
+
 		for (var key in options) {
 			var value = options[key] ;
 			if (value != null){
@@ -399,7 +415,6 @@ function () {
 				}
 			}
 		}
-		
 		this._filterObj[optionId].push(filter);
 	}
 	this._query = this.getQueryFromFilters () ;
@@ -446,6 +461,8 @@ function (filter, key, value, op) {
 		if (value == "TRUE" && (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.RESOURCE_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) )  filter.push(ZaSearch.RESOURCES);
 	/*}else if (key == ZaSearchOption.A_objTypeDomain) {
 		if (value == "TRUE")  filter.push(ZaSearch.DOMAINS);*/
+        }else if (key == ZaSearchOption.A_objTypeSystemAccount) {
+                if (value == "TRUE")  entry = "(" + key + "=" + value + ")" ;
 	}else if (key == ZaSearchOption.A_objTypeAccountAdmin) {
 		if (value == "TRUE")  entry = "(" + key + "=" + value + ")" ; //no * for the TRUE or FALSE value
 	}else if (ZaSearchOption.A_objTypeAccountDomainAdmin && key == ZaSearchOption.A_objTypeAccountDomainAdmin){
@@ -468,7 +485,7 @@ function (filter, key, value, op) {
 		if (value.size () > 0) {
 			entry = ZaSearchBuilderController.getCosFilter4ListArray(value.getArray());
 		}
-        }else if (key == ZaAccount.A_zimbraLastLogonTimestamp){
+    }else if (key == ZaAccount.A_zimbraLastLogonTimestamp){
 		entry = "("	+ key + op + value + ")";
 	}else if (key == ZaSearchOption.A_zimbraMailForwardingAddress ){
 		entry = "(" + key + "=*" + value + "*)" ;
@@ -614,12 +631,15 @@ function (arr) {
 	var controller = ZaApp.getInstance().getSearchBuilderController();
 	var cosids = controller._cosids;
 
+    if(controller._includeObjectWithoutCosId) {
+        query += "(!(" + ZaAccount.A_COSId + "=*))";
+    }
 	if(cosids && cosids.length  > 0) {
 		for(var i = 0; i < arr.length && i < cosids.length; i++) {
 			query += "(" + ZaAccount.A_COSId  + "=" + cosids[arr[i]] + ")";
 		}
 	}
-        if (cosids.length > 1) {
+        if (cosids.length > 1 || (cosids.length == 1 && controller._includeObjectWithoutCosId)) {
                 query = "(|" + query + ")";
         }
 	return query;
