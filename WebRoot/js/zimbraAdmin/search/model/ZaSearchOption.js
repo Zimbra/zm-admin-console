@@ -43,6 +43,7 @@ ZaSearchOption.A_basic_status = ZaAccount.A_accountStatus ;
 
 ZaSearchOption.A_objTypeAccount = "option_" + ZaSearch.ACCOUNTS ;
 ZaSearchOption.A_objTypeAccountAdmin = ZaAccount.A_zimbraIsAdminAccount ;
+ZaSearchOption.A_objTypeSystemAccount = ZaAccount.A_zimbraIsSystemAccount;
 ZaSearchOption.A_enableAccountLastLoginTime_From = "enable_" + ZaAccount.A_zimbraLastLogonTimestamp + "_From" ;
 ZaSearchOption.A_enableAccountLastLoginTime_To = "enable_" + ZaAccount.A_zimbraLastLogonTimestamp + "_To" ;
 ZaSearchOption.A_includeNeverLoginedAccounts = "include_never_login_accounts" ;
@@ -71,7 +72,7 @@ ZaSearchOption.A_serverListChecked = "option_server_list_checked";
 ZaSearchOption.A_cosFilter = "option_cos_filter";
 ZaSearchOption.A_cosList = "option_cos_list" ;
 ZaSearchOption.A_cosListChecked = "option_cos_list_checked";
-
+ZaSearchOption.A2_cosNotSet = "option_not_set_cosid";
 	
 ZaSearchOption.getObjectTypeXModel = 
 function (optionId){
@@ -83,6 +84,7 @@ function (optionId){
 			//{id: ZaSearchOption.A_basic_query, ref: "options/" + ZaSearchOption.A_basic_query, type: _STRING_},
 			{id: ZaSearchOption.A_basic_uid, ref: "options/" + ZaSearchOption.A_basic_uid, type: _STRING_},
 			{id: ZaSearchOption.A_objTypeAccountAdmin, ref: "options/" + ZaSearchOption.A_objTypeAccountAdmin, type: _STRING_},
+			{id: ZaSearchOption.A_objTypeSystemAccount, ref: "options/" + ZaSearchOption.A_objTypeSystemAccount, type: _STRING_},
 			//{id: ZaSearchOption.A_basic_cn, ref: "options/" + ZaSearchOption.A_basic_cn, type: _STRING_},
 			{id: ZaSearchOption.A_basic_sn, ref: "options/" + ZaSearchOption.A_basic_sn, type: _STRING_},
 			{id: ZaSearchOption.A_basic_displayName, ref: "options/" + ZaSearchOption.A_basic_displayName, type: _STRING_},
@@ -139,6 +141,7 @@ function (optionId){
         var cosItems = [
                         {id: ZaSearchOption.A_cosFilter, ref: "options/" + ZaSearchOption.A_cosFilter, type: _STRING_},
                         {id: ZaSearchOption.A_cosListChecked, ref: "options/" + ZaSearchOption.A_cosListChecked, type:_LIST_},
+                        {id: ZaSearchOption.A2_cosNotSet, ref: ZaSearchOption.A2_cosNotSet, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
                         {id: ZaSearchOption.A_cosList, ref: "options/" + ZaSearchOption.A_cosList, type:_LIST_}
         ];
 
@@ -232,7 +235,7 @@ function (optionId, height){
 				 
 		basicItems[i-1].items.push (adminOnlyItem) ;
 	//}
-	
+
 	if (ZaSearchOption.A_objTypeAccountDomainAdmin) {
 			var domainAdminObjTypeItem = { 
 					type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAccountDomainAdmin,
@@ -244,6 +247,16 @@ function (optionId, height){
 				 } ;
 			basicItems[i-1].items.push( domainAdminObjTypeItem ) ;
 		}
+	var systemAccountOnlyItem =
+                                { type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeSystemAccount,
+                                        trueValue:"TRUE", falseValue:"FALSE",
+                                        label: ZaMsg.SearchFilter_System_Accounts,
+                                        align: _LEFT_, labelLocation:_RIGHT_,
+                                        onChange: ZaSearchBuilderController.handleOptions,
+                                        bmolsnr:true, enableDisableChecks:[],visibilityChecks:[]
+                                 };
+
+        basicItems[i-1].items.push (systemAccountOnlyItem) ;
 	
 	var objTypeItems = [
 		{ type: _CHECKBOX_, ref:  ZaSearchOption.A_objTypeAccount,
@@ -347,7 +360,15 @@ function (optionId, height){
                         onChange: ZaSearchBuilderController.filterCOSES,
                         enableDisableChecks:[],visibilityChecks:[]
                  },
-
+                {type: _GROUP_, colSpan: "2", numCols:2, width: 150, items: [
+                    {ref:ZaSearchOption.A2_cosNotSet, type:_CHECKBOX_, msgName:ZaMsg.search_includeObjectWithoutCosId,
+			label:ZaMsg.search_includeObjectWithoutCosId,
+                        labelLocation:_RIGHT_,trueValue:"TRUE", falseValue:"FALSE", align: _LEFT_,
+                        onChange: ZaSearchBuilderController.handleOptions,
+                        enableDisableChecks:[],
+                        visibilityChecks:[]
+                    }
+                ]},
                  {type: _OUTPUT_, value: ZaMsg.no_cos_found_msg, colSpan: "*",
                         visibilityChecks:[[XForm.checkInstanceValueEmty,ZaSearchOption.A_cosList]]
                  },
@@ -464,7 +485,7 @@ function (optionId) {
 	}else if (optionId == ZaSearchOption.BASIC_TYPE_ID) {
 		//no default value
 	}else if (optionId == ZaSearchOption.COS_ID) {
-		// no default value
+		optionInstance[ZaSearchOption.A2_cosNotSet] = "FALSE" ;
 	}else if (optionId == ZaSearchOption.ADVANCED_ID) {
 		optionInstance[ZaSearchOption.A_enableAccountLastLoginTime_From] = "FALSE" ;
 		optionInstance[ZaSearchOption.A_enableAccountLastLoginTime_To] = "FALSE" ;
