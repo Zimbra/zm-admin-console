@@ -550,7 +550,6 @@ function () {
 		}
 	}
 
-    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.AccountModified,[this._currentObject.name]));
     //TODO: may need to check if the account type update is needed. update the domain account limits object
     return true;
 }
