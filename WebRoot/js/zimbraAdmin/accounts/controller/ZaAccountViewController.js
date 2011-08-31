@@ -147,16 +147,14 @@ function(entry) {
 	  		this._contentView = this._view = new this.tabConstructor(this._container,entry);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-            if(!appNewUI) {
-                elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
+				
+			var tabParams = {
+				openInNewTab: true,
+				tabId: this.getContentViewId()
+			}
+    		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
 
-                var tabParams = {
-                    openInNewTab: true,
-                    tabId: this.getContentViewId()
-                }
-                ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
-            } else
-                ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
 	    	//associate the controller with the view by viewId
 		    ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 			//ZaApp.getInstance().pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
@@ -552,7 +550,6 @@ function () {
 		}
 	}
 
-    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.AccountModified,[this._currentObject.name]));
     //TODO: may need to check if the account type update is needed. update the domain account limits object
     return true;
 }

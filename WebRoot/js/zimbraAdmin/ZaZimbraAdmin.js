@@ -84,18 +84,6 @@ ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._RESOURCE_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._ZIMLET_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 
-// new UI
-ZaZimbraAdmin._HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._MONITOR_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._MANAGE_ACCOUNT_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._ADMINISTRATION_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._MIGRATION_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._SEARCH_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._SERVER_STATUS_VIEW =  ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._XFORM_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._XFORM_TAB_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-
 // do not change the name of the cookie! SoapServlet looks for it
 ZaZimbraAdmin._COOKIE_NAME = "ZM_ADMIN_AUTH_TOKEN";
 ZaZimbraAdmin.TEST_COOKIE_NAME = "ZA_TEST";
@@ -171,9 +159,9 @@ function(domain) {
 	 * CURRENTLY use $set: kbnav. 
 	 */
 	this._kbMgr = shell.getKeyboardMgr();
-	this._kbMgr.enable(true);
-	this._kbMgr.registerKeyMap(new ZaKeyMap());
-	this._kbMgr.pushDefaultHandler(this);
+	this._kbMgr.enable(false);
+	/*this._kbMgr.registerKeyMap(new ZaKeyMap());
+	this._kbMgr.pushDefaultHandler(this);*/
     // Go!
     var lm = new ZaZimbraAdmin(appCtxt);
 }
@@ -488,64 +476,6 @@ function () {
 	return appTabGroup ;
 }
 
-ZaZimbraAdmin.prototype._createRefreshLink =
-function() {
-	var refreshContainer = document.getElementById(ZaSettings.SKIN_REFRESH_DOM_ID);
-	if(!refreshContainer) {
-		return;
-	}
-    var refreshLabel = new DwtComposite (this._shell, "RefreshContainer", Dwt.RELATIVE_STYLE);
-    var refreshEl = refreshLabel.getHtmlElement();
-    refreshLabel.setCursor ("pointer");
-    refreshEl.onclick = function () { ZaZimbraAdmin.prototype._refreshListener.call(this);};
-    refreshEl.innerHTML = this._getAppLink(null, "Refresh");
-    refreshLabel.reparentHtmlElement (ZaSettings.SKIN_REFRESH_DOM_ID) ;
-}
-
-
-ZaZimbraAdmin.prototype._createPreviousLink =
-function() {
-	var previousContainer = document.getElementById(ZaSettings.SKIN_PREVIOUS_DOM_ID);
-	if(!previousContainer) {
-		return;
-	}
-    var previousLabel = new DwtComposite (this._shell, "PreviousContainer", Dwt.RELATIVE_STYLE);
-    var previousEl = previousLabel.getHtmlElement();
-    previousLabel.setCursor ("pointer");
-    previousEl.onclick = function () { ZaZimbraAdmin.prototype._refreshListener.call(this);};
-    previousEl.innerHTML = this._getAppLink(null, "LeftArrow");
-    previousLabel.reparentHtmlElement (ZaSettings.SKIN_PREVIOUS_DOM_ID) ;
-}
-
-ZaZimbraAdmin.prototype._createNextLink =
-function() {
-	var nextContainer = document.getElementById(ZaSettings.SKIN_NEXT_DOM_ID);
-	if(!nextContainer) {
-		return;
-	}
-    var nextLabel = new DwtComposite (this._shell, "NextContainer", Dwt.RELATIVE_STYLE);
-    var nextEl = nextLabel.getHtmlElement();
-    nextLabel.setCursor ("pointer");
-    nextEl.onclick = function () { ZaZimbraAdmin.prototype._refreshListener.call(this);};
-    nextEl.innerHTML = this._getAppLink(null, "RightArrow");
-    nextLabel.reparentHtmlElement (ZaSettings.SKIN_NEXT_DOM_ID) ;
-}
-
-ZaZimbraAdmin.prototype._refreshListener =
-function(ev) {
-	window.onbeforeunload = null;
-
-	// NOTE: Mozilla sometimes handles UI events while the page is
-	//       unloading which references classes and objects that no
-	//       longer exist. So we put up the busy veil and reload
-	//       after a short delay.
-	var shell = DwtShell.getShell(window);
-	shell.setBusy(true);
-
-    var act = new AjxTimedAction(null, ZaZimbraAdmin.redir, window.location);
-	AjxTimedAction.scheduleAction(act, 100);
-}
-
 ZaZimbraAdmin.prototype._createHelpLink =
 function() {
 	var helpSkinContainer = document.getElementById(ZaSettings.SKIN_HELP_DOM_ID);
@@ -626,50 +556,6 @@ function () {
 	dwLabel.reparentHtmlElement (ZaSettings.SKIN_USER_NAME_ID) ;
 }
 
-ZaZimbraAdmin.prototype._createUserName =
-function () {
-	var userNameContainer = document.getElementById(ZaSettings.SKIN_USERNAME_DOM_ID) ;
-	if(!userNameContainer) {
-		return;
-	}
-
-	if(!ZaZimbraAdmin.currentUserName) {
-		return;
-	}
-
-	var dwButton = new DwtBorderlessButton(this._shell, "", "", Dwt.RELATIVE_STYLE);
-	var containerWidth = Dwt.getSize(userNameContainer).x;
-	var innerContent = null;
-	if(containerWidth <= 40) {
-		// if there are not enough space, just follow skin's setting
-		innerContent = ( String(ZaZimbraAdmin.currentUserName).length>(skin.maxAdminName+1)) ? String(ZaZimbraAdmin.currentUserName).substr(0,skin.maxAdminName) : ZaZimbraAdmin.currentUserName;
-	}
-	else {
-		// reserve 10px for estimation error.
-		// here we assume 5.5px for one word, just follow the apptab.
-		var maxNumberOfLetters = Math.floor((containerWidth - 10)/5.5);
-		innerContent = ZaZimbraAdmin.currentUserName;
-		if (maxNumberOfLetters < innerContent.length) {
-			innerContent = innerContent.substring(0, (maxNumberOfLetters - 3)) + "..."
-		}
-	}
-
-	dwButton.setText(innerContent);
-	if(innerContent != ZaZimbraAdmin.currentUserName){
-		dwButton.setToolTipContent( ZaZimbraAdmin.currentUserName );
-	}
-	userNameContainer.innerHTML = "";
-	dwButton.reparentHtmlElement (ZaSettings.SKIN_USERNAME_DOM_ID);
-
-    // Add LogOff Menu
-    var userNameMenuOpList = new Array();
-	userNameMenuOpList.push(new ZaOperation(ZaOperation.LOGOFF, ZaMsg.logOff, ZaMsg.logOff,  "Logoff", "LogoffDis", new AjxListener(window,ZaZimbraAdmin.logOff)));
-
-    var menu = new ZaPopupMenu(dwButton, null,null, userNameMenuOpList, "ZA_LOGOFF");
-    dwButton.setMenu(menu,true);
-
-}
-
 ZaZimbraAdmin.prototype._helpListener =
 function(ev) {
 	//DBG.println(AjxDebug.DBG1, "Help is clicked ...") ;
@@ -715,7 +601,7 @@ function (ev) {
 
 ZaZimbraAdmin.prototype._createBanner =
 function() {
-	var logoContainer = document.getElementById(ZaSettings.SKIN_LOGO_DOM_ID);
+	var logoContainer = document.getElementById(ZaSettings.SKIN_LOGO_ID);
 	if(!logoContainer) {
 		return;
 	}
@@ -839,32 +725,6 @@ function(staticFunc, icon, lbl, max_lbl_length) {
 	return html.join("");
 }
 
-/**
-* Creates an action status view
-**/
-ZaZimbraAdmin.prototype._createActionStatus =
-function() {
-	this.actionStatusView = new ZaActionStatusView(this._shell, "ZaStatus", Dwt.ABSOLUTE_STYLE);
-}
-
-/**
- * Displays a status message.
- *
- * @param	{Hash}	params		a hash of parameters
- * @param {String}	params.msg		the message
- * @param {constant}	[params.level] ZaActionStatusView.LEVEL_INFO, ZaActionStatusView.LEVEL_WARNING, or ZaActionStatusView.LEVEL_CRITICAL
- * @param {constant}	[params.detail] 	the details
- * @param {constant}	[params.transitions]		the transitions
- * @param {constant}	[params.toast]		the toast control
- * @param {boolean}     [force]        force any displayed toasts out of the way (dismiss them and run their dismissCallback). Enqueued messages that are not yet displayed will not be displayed
- * @param {AjxCallback}    [dismissCallback]    callback to run when the toast is dismissed (by another message using [force], or explicitly calling ZmStatusView.prototype.dismiss())
- * @param {AjxCallback}    [finishCallback]     callback to run when the toast finishes its transitions by itself (not when dismissed)
- */
-ZaZimbraAdmin.prototype.setActionStatusMsg =
-function(params) {
-	params = Dwt.getParams(arguments, ZaActionStatusView.MSG_PARAMS);
-	this.actionStatusView.setStatusMsg(params);
-};
 // Private methods
 
 ZaZimbraAdmin._killSplash =
@@ -905,7 +765,7 @@ ZaZimbraAdmin.prototype._launchApp =
 function() {
 	ZaSettings.TREE_ENABLED = (document.getElementById(ZaSettings.SKIN_TREE_ID)!=null);
 	ZaSettings.CURRENT_APP_ENABLED = (document.getElementById(ZaSettings.SKIN_CURRENT_APP_ID)!=null);
-	ZaSettings.BANNER_ENABLED = (document.getElementById(ZaSettings.SKIN_LOGO_DOM_ID)!=null);
+	ZaSettings.BANNER_ENABLED = (document.getElementById(ZaSettings.SKIN_LOGO_ID)!=null);
 	ZaSettings.STATUS_ENABLED = (document.getElementById(ZaSettings.SKIN_STATUS_ID)!=null);
 	ZaSettings.SEARCH_PANEL_ENABLED = (document.getElementById(ZaSettings.SKIN_SEARCH_PANEL_ID)!=null);
 	
@@ -949,7 +809,6 @@ function() {
 	}
 
 	if(ZaSettings.SEARCH_PANEL_ENABLED) {
-        this._createActionStatus();
 		elements[ZaAppViewMgr.C_SEARCH_BUILDER_TOOLBAR] = ZaApp.getInstance().getSearchBuilderToolbarController ().getSearchBuilderTBPanel();
 		elements[ZaAppViewMgr.C_SEARCH_BUILDER] = ZaApp.getInstance().getSearchBuilderController().getSearchBuilderPanel();
 	}
@@ -975,67 +834,6 @@ function() {
 	}
 	this._appViewMgr.addComponents(elements, true);
 	
-    ZaApp.getInstance().launch();
-
- 	ZaZimbraAdmin._killSplash();
-};
-
-ZaZimbraAdmin.prototype.updateHistory =
-function(historyObject, isAddHistory) {
-    if(isAddHistory)
-        this._header.addHistory(historyObject);
-    this._header.setText(historyObject.displayName);
-    this._currentAppBar.setText(historyObject.path);
-
-}
-
-ZaZimbraAdmin.prototype._lauchNewApp =
-function() {
-	ZaSettings.TREE_ENABLED = (document.getElementById(ZaSettings.SKIN_TREE_DOM_ID)!=null);
-	ZaSettings.BANNER_ENABLED = (document.getElementById(ZaSettings.SKIN_LOGO_DOM_ID)!=null);
-
-    //console.log("Launching ZimbraAdmin Application ....") ;
-    if (!this._app)
-		this._createApp();
-
-    //recreate the error/msg dialogs
-    ZaApp.getInstance().initDialogs();
-   // if (ZaZimbraAdmin._LOCALE_MSG_RELOADED) this.initDialogs(true) ;
-
-    this._appCtxt.setClientCmdHdlr(new ZaClientCmdHandler());
-    //draw stuff
-	var elements = new Object();
-
-    // the outer element of the entire skin is hidden until this point
-	// so that the skin won't flash (become briefly visible) during app loading
-	if (skin && skin.show){
-		skin.show(true);
-	}
-
-	//add logoff
-    /*
-	this._createLogOff();
-	this._createHelpLink();
-	this._createDownloadLink() ;
-	this._setUserName();
-    */
-    this._createRefreshLink();
-    this._createPreviousLink();
-    this._createNextLink();
-    this._createUserName();
-	this._createHelpLink();
-
-	if(ZaSettings.BANNER_ENABLED) {
-		elements[ZaAppViewMgr.C_BANNER] = this._createBanner();
-	}
-
-    this._header = elements[ZaAppViewMgr.C_TREE_TOP] = new ZaCrtAppTreeHeader(this._shell);
-	if(ZaSettings.TREE_ENABLED) {
-		elements[ZaAppViewMgr.C_TREE] = this.getOverviewPanelController().getOverviewPanel();
-	}
-
-    this._currentAppBar = elements[ZaAppViewMgr.C_APP_HEADER] = new ZaCurrentAppBar(this._shell);
-	this._appViewMgr.addComponents(elements, true);
     ZaApp.getInstance().launch();
 
  	ZaZimbraAdmin._killSplash();
@@ -1128,13 +926,6 @@ ZaZimbraAdmin.isGlobalAdmin = function () {
             && (ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE'));
 }
 
-ZaZimbraAdmin.hasGlobalDomainListAccess = function () {
-    return (ZaZimbraAdmin.isGlobalAdmin() || ZaDomain.globalRights[ZaDomain.RIGHT_LIST_DOMAIN]);
-}
-
-ZaZimbraAdmin.hasGlobalCOSSListAccess = function () {
-	return (ZaZimbraAdmin.isGlobalAdmin() || ZaCos.globalRights[ZaCos.RIGHT_LIST_COS]);
-}
 
 ZaAboutDialog = function(parent, className, title, w, h) {
 	if (arguments.length == 0) return;

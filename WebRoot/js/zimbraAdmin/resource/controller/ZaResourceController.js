@@ -60,6 +60,9 @@ function(entry, openInNewTab, skipRefresh) {
 }
 
 ZaResourceController.changeActionsStateMethod = function () {
+	if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,this._currentObject))	{
+		this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
+	}
 	if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 	}	
@@ -123,6 +126,8 @@ function () {
    	}
    	this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.RESTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
    	this._toolbarOrder.push(ZaOperation.DELETE);
+   	this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener));		
+	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	
 }
 ZaController.initToolbarMethods["ZaResourceController"].push(ZaResourceController.initToolbarMethod);
@@ -341,6 +346,6 @@ function () {
 		}
 		return false;
 	}
-    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.ResourceModified,[this._currentObject.name]));
+	
 	return true;
 };
