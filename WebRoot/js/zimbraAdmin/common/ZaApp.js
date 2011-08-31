@@ -115,7 +115,12 @@ function(appCtxt) {
 		} else {					
 			dashBoardController.show(true);
 		}
-	} else {
+	} else if(appNewUI) {
+        var ctl = this._appCtxt.getAppController().getOverviewPanelController();
+		ctl.getOverviewPanel().getFolderTree().setSelectionByPath("Home", true);
+
+    }
+    else {
 		if(ZaSettings.TREE_ENABLED) {	
 			if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_STATUS_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
 				var ctl = this._appCtxt.getAppController().getOverviewPanelController();
@@ -805,6 +810,14 @@ function(refresh) {
 	return this._accountList;	
 }*/
 
+ZaApp.prototype.getAccountStats =
+function(refresh) {
+    if (refresh || this._accountStats == null) {
+        this._accountStats = ZaSearch.getAccountStats();
+    }
+    return this._accountStats;
+}
+
 ZaApp.prototype.getGlobalConfig =
 function(refresh) {
 	if (refresh || this._globalConfig == null) {
@@ -1032,6 +1045,7 @@ function(name, openInNewTab, openInSearchTab) {
 	tabGroup.selectTab (tabGroup.getTabById(this._currentViewId)) ;
 	*/
 	//check if there is a tab associated with the view
+    if (!appNewUI) {
 	var tabGroup = this.getTabGroup () ;
 	var cTab = tabGroup.getTabById(this._currentViewId);
 	if (cTab) {
@@ -1043,13 +1057,16 @@ function(name, openInNewTab, openInSearchTab) {
 	}else {
 		this.updateTab (tabGroup.getMainTab(), this._currentViewId) ; 
 	}
+    }
 }
 
 ZaApp.prototype.popView =
 function() {
 	var oldCurrentViewId = this._currentViewId ;
 	this._currentViewId = this._appViewMgr.popView();
+    if (!appNewUI) {
 	this.getTabGroup().removeCurrentTab(true) ;
+    }
 	//dispose the view and remove the controller
 	this.disposeView (oldCurrentViewId);
 	
