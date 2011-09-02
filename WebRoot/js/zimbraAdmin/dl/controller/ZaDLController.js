@@ -158,6 +158,7 @@ function (entry) {
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
+    if(!appNewUI) {
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
 	//ZaApp.getInstance().createView(ZaZimbraAdmin._DL_VIEW, elements);
 	var tabParams = {
@@ -165,7 +166,8 @@ function (entry) {
 			tabId: this.getContentViewId()
 		}
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-	
+    } else
+        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
 	this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
 	null, ZaId.CTR_PREFIX + ZaId.VIEW_DL + "_removeConfirm");			
 	this._UICreated = true;
@@ -239,9 +241,11 @@ ZaDLController.prototype._saveChanges = function () {
 					}
 					return retval;
 				}
-			}				
+			}
+            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DLModified,[this._currentObject.name]));
 		} else {
 			this._currentObject = ZaItem.create(obj,ZaDistributionList,"ZaDistributionList");
+            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DLCreated,[this._currentObject.name]));
 			//this._currentObject.id = dl.id;
 		}
 				

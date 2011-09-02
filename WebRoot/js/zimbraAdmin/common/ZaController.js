@@ -864,6 +864,7 @@ function (event) {
 
 ZaController.prototype.selectExistingTabByItemId =
 function (itemId, tabConstructor) {
+    if(appNewUI) return false;
 	var tabGroup = ZaApp.getInstance().getTabGroup ();
 	var tab = tabGroup.getTabByItemId (itemId, tabConstructor ? tabConstructor : this.tabConstructor) ;
 	if (tab) {
@@ -971,10 +972,10 @@ ZaController.prototype._showAccountsView = function (defaultType, ev) {
 		//var domainList = [];
 		var cnt = domainList.length;
 		if(cnt>0) {
-			queryChunks.push("(");	
+			queryChunks.push("(|");
 		}
+		
 		for(var i = 0; i < cnt; i++) {
-			queryChunks.push("|");
 			queryChunks.push("(zimbraMailDeliveryAddress=*@");
 			queryChunks.push(domainList[i].name);
 			queryChunks.push(")");
