@@ -127,7 +127,7 @@ ZaOverviewPanelController.prototype.searchDomains = function() {
 	
 //	domainListController._currentQuery = ZaDomain.LOCAL_DOMAIN_QUERY;
     domainListController._currentQuery = "";
-    if(!ZaZimbraAdmin.hasGlobalDomainListAccess()) {
+    if(!ZaZimbraAdmin.isGlobalAdmin()) {
         var domainNameList = ZaApp.getInstance()._domainNameList;
         if(!domainNameList || !(domainNameList instanceof Array) || domainNameList.length == 0) {
             ZaApp.getInstance()._domainList =  new ZaItemList(ZaDomain);
@@ -307,10 +307,7 @@ function() {
 
 	this._overviewPanel.setScrollStyle(DwtControl.SCROLL);
     ZaSearch.loadPredefinedSearch() ;
-    if (!appNewUI)
-        this._buildFolderTree();
-    else
-        this._buildNewFolderTree();
+    this._buildFolderTree();
 	//this._overviewPanel.getFolderTree().setSelection(this._inboxTreeItem);
 	this._overviewPanel.zShow(true);
 }
@@ -409,7 +406,7 @@ function() {
         }
     }
 
-        if(!ZaZimbraAdmin.hasGlobalCOSSListAccess()) {
+        if(!ZaZimbraAdmin.isGlobalAdmin()) {
                var domainNamelist = ZaDomain.getEffectiveDomainList(ZaZimbraAdmin.currentAdminAccount.id);
                ZaApp.getInstance()._domainNameList = domainNamelist;
 
@@ -686,127 +683,12 @@ function() {
     }
 }
 
-ZaId.PANEL_HOME = "Home";
-
-ZaOverviewPanelController.prototype._buildNewFolderTree =
-function() {
-	var tree = this._overviewPanel.getFolderTree();
-	var l = new AjxListener(this, this._overviewTreeListener);
-	tree.addSelectionListener(l);
-    // Home is always added;
-    var home = new ZaTreeItemData({parent:"",
-                                   id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME, true),
-                                   mappingId:ZaZimbraAdmin._HOME_VIEW,
-                                   text:"Home"});
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._HOME_VIEW] = ZaOverviewPanelController.homeTreeListener;
-    tree.setRootData(home);
-
-    var  ti = new ZaTreeItemData({
-                                    parent:"Home",
-                                    id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "monHV"),
-                                    text: "Monitor",
-                                    mappingId: ZaZimbraAdmin._MONITOR_HOME_VIEW});
-    tree.addTreeItemData(ti);
-
-    var  ti = new ZaTreeItemData({
-                                    parent:"Home/Monitor",
-                                    id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "serverstatusHV"),
-                                    text: "Server Status",
-                                    mappingId: ZaZimbraAdmin._SERVER_STATUS_VIEW});
-    tree.addTreeItemData(ti);
-
-    var accountMgr = new ZaTreeItemData({
-                                    parent:"Home",
-                                    id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "manActHV"),
-                                    text: "Manage Accounts",
-                                    mappingId: ZaZimbraAdmin._MANAGE_ACCOUNT_HOME_VIEW});
-    tree.addTreeItemData(accountMgr);
-
-    ti = new ZaTreeItemData({
-                                    parent:"Home",
-                                    id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "adminHV"),
-                                    text: "Administrator",
-                                    mappingId: ZaZimbraAdmin._ADMINISTRATION_HOME_VIEW});
-    tree.addTreeItemData(ti);
-
-    ti = new ZaTreeItemData({
-                                    parent:"Home",
-                                    id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "magHV"),
-                                    text: "Magration and Set-up",
-                                    mappingId: ZaZimbraAdmin._MIGRATION_HOME_VIEW});
-    tree.addTreeItemData(ti);
-
-    ti = new ZaTreeItemData({
-                                    parent:"Home",
-                                    id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "searchHV"),
-                                    text: "Search",
-                                    mappingId: ZaZimbraAdmin._SEARCH_HOME_VIEW});
-    tree.addTreeItemData(ti);
-
-    /*
-	//Instrumentation code start
-	if(ZaOverviewPanelController.treeModifiers) {
-		var methods = ZaOverviewPanelController.treeModifiers;
-		var cnt = methods.length;
-		for(var i = 0; i < cnt; i++) {
-			if(typeof(methods[i]) == "function") {
-				methods[i].call(this,tree);
-			}
-		}
-	} */
-
-
-    if(accountMgr) {
-        var refpath = accountMgr.parent? accountMgr.parent + "/" + accountMgr.text:"Home";
-        var acctitem =  new ZaTreeItemData({
-                                parent:refpath,
-                                id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "actLstHV"),
-                                text: ZaMsg.OVP_accounts,
-                                count: 0,
-                                mappingId: ZaZimbraAdmin._ACCOUNTS_LIST_VIEW});     //ZaZimbraAdmin._ACCOUNT_LIST_VIEW
-        acctitem.setData("TreeItemType", ZaItem.ACCOUNT);
-        tree.addTreeItemData(acctitem);
-
-        var aliaitem =  new ZaTreeItemData({
-                                parent:refpath,
-                                id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "aliaLstHV"),
-                                text: ZaMsg.OVP_aliases,
-                                count: 0,
-                                mappingId: ZaZimbraAdmin._ALIASES_LIST_VIEW});
-        aliaitem.setData("TreeItemType", ZaItem.ALIAS);
-        tree.addTreeItemData(aliaitem);
-
-        var dlitem =  new ZaTreeItemData({
-                                parent:refpath,
-                                id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "aliaLstHV"),
-                                text: ZaMsg.OVP_distributionLists,
-                                count: 0,
-                                mappingId: ZaZimbraAdmin._DISTRIBUTION_LISTS_LIST_VIEW});
-        dlitem.setData("TreeItemType", ZaItem.DL);
-        tree.addTreeItemData(dlitem);
-
-        var resourceitem =  new ZaTreeItemData({
-                                parent:refpath,
-                                id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,null, "aliaLstHV"),
-                                text: ZaMsg.OVP_resources,
-                                count: 0,
-                                mappingId: ZaZimbraAdmin._RESOURCE_VIEW});
-        resourceitem.setData("TreeItemType", ZaItem.RESOURCE);
-        tree.addTreeItemData(resourceitem);
-    }
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._ACCOUNTS_LIST_VIEW] = ZaOverviewPanelController.accountListTreeListener;
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._ALIASES_LIST_VIEW] = ZaOverviewPanelController.aliasListTreeListener;
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._DISTRIBUTION_LISTS_LIST_VIEW] = ZaOverviewPanelController.dlListTreeListener;
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._RESOURCE_VIEW] = ZaOverviewPanelController.resourceListTreeListener;
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._MANAGE_ACCOUNT_HOME_VIEW] = ZaOverviewPanelController.manageAccountTreeListener;
-}
 
 
 ZaOverviewPanelController.prototype._overviewTreeListener =
 function(ev) {
 	try {
-		var eventHandler = null;
-
+		var eventHandler = null ;
 		var treeItemType = ev.item.getData(ZaOverviewPanelController._TID);
 		if (treeItemType != null && 
 			ZaOverviewPanelController.overviewTreeListeners[treeItemType] &&
@@ -833,13 +715,6 @@ function(ev) {
 }
 
 /* default tree listeners */
-ZaOverviewPanelController.homeTreeListener = function (ev) {
-	if(ZaApp.getInstance().getCurrentController()) {
-		ZaApp.getInstance().getCurrentController().switchToNextView(ZaApp.getInstance().getHomeViewController(),ZaHomeController.prototype.show, null);
-	} else {
-		ZaApp.getInstance().getHomeViewController().show();
-	}
-}
 
 ZaOverviewPanelController.cosTreeListener = function (ev) {
 	if(ZaApp.getInstance().getCurrentController()) {
@@ -1048,20 +923,6 @@ ZaOverviewPanelController.postqByServerTreeListener = function (ev) {
 	}
 }
 
-ZaOverviewPanelController.manageAccountTreeListener = function (ev) {
-    var accountStat =  ZaApp.getInstance().getAccountStats();
-    var tree = this._overviewPanel.getFolderTree();
-    var childitems = ev.item.getChildren();
-//    var absPath = tree.getABPath(ev.item.getData("dataItem")) ;//+ "/" +;
-//    var childitem = tree.getTreeItemDataByPath(absPath + "/Accounts");
-//    childitem.setCount();
-
-    for(var i = 0; i < childitems.length; i++) {
-        var child = childitems[i];
-        var attr = child.getData("dataItem").getData("TreeItemType");
-        child.setCount(accountStat[attr]);
-    }
-}
 
 ZaOverviewPanelController.prototype._modifySearchMenuButton = 
 function (itemType) {
@@ -1085,98 +946,4 @@ function (itemType) {
                                 searchListController._searchField.cosFilterSelected(); break ;
 		}
 	}
-}
-
-// Temporary hard code  here
-// It will be rmoved in futher
-ZaOverviewPanelController.basePath = "Home/Manage Accounts/";
-ZaOverviewPanelController.prototype.addAccountItem =
-function(item, currentView) {
-    if (!currentView) {
-        currentView = ZaApp.getInstance().getAppViewMgr().getCurrentViewContent();
-        if (!currentView)
-            return;
-        if (!currentView.getTabChoices)
-            return;
-        if (!currentView.getTabChoices())
-            return;
-    }
-
-    var tabChoices = currentView.getTabChoices();
-	var type = item.type;
-    var relativePath = ZaMsg.OVP_accounts;
-	if (type == ZaItem.ACCOUNT) {
-        relativePath = ZaMsg.OVP_accounts;
-	} else if (type == ZaItem.DL) {
-        relativePath = ZaMsg.OVP_distributionLists;
-	} else if (type == ZaItem.RESOURCE ){
-        relativePath = ZaMsg.OVP_resources;
-	} else if (type == ZaItem.ALIAS) {
-		if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_ACCOUNT) {
-            relativePath = ZaMsg.OVP_accounts;
-		}else if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_DL){
-            relativePath =  ZaMsg.OVP_distributionLists;
-		}else if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_RESOURCE) {
-            relativePath = ZaMsg.OVP_resources;
-        }
-	}
-
-    var tree = this.getOverviewPanel().getFolderTree();
-    var parentPath = ZaOverviewPanelController.basePath + relativePath;
-    var name = item.name;
-    var namePath = parentPath + ZaTree.SEPERATOR + name;
-    var currentPath = tree.getTreeItemDataByPath (namePath);
-    // Add already
-    if (currentPath)
-        return;
-
-    var parentDataItem = tree.getTreeItemDataByPath (parentPath);
-    var index = parentDataItem.getChildrenNum();
-    var currentViewId = ZaApp.getInstance().getAppViewMgr().getCurrentView();
-    var nameId = ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_HOME,"actLstHV",index);
-    var nameDataItem =   new ZaTreeItemData({
-                            parent:parentPath,
-                            mappingId: ZaZimbraAdmin._XFORM_VIEW,
-                            id:nameId,
-                            text: name});
-
-    nameDataItem.setData("viewId", currentViewId);
-    tree.addTreeItemData(nameDataItem);
-    var currentTabItem;
-    var currentTabInfo;
-    for (var i = 0; i <  tabChoices.length; i++) {
-        currentTabInfo = tabChoices[i];
-        currentTabItem =   new ZaTreeItemData({
-                            parent:namePath,
-                            id:DwtId._makeId(nameId, i+1),
-                            mappingId: ZaZimbraAdmin._XFORM_TAB_VIEW,
-                            text: currentTabInfo.label});
-        currentTabItem.setData("tabValue", currentTabInfo.value);
-        tree.addTreeItemData(currentTabItem);
-        if (i == 0) {
-            nameDataItem.setData("firstTab", currentTabInfo.value);
-        }
-    }
-
-    if (! ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._XFORM_VIEW])
-        ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._XFORM_VIEW] = ZaOverviewPanelController.xformTreeListener;
-    if (! ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._XFORM_TAB_VIEW])
-        ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._XFORM_TAB_VIEW] = ZaOverviewPanelController.xformTabTreeListener;
-    tree.setSelectionByPath(namePath, true);
-}
-
-ZaOverviewPanelController.xformTabTreeListener = function(ev) {
-    var viewId = ev.item.parent.getData("dataItem").getData("viewId");
-    var stepValue = ev.item.getData("dataItem").getData("tabValue");
-    var currentView = ZaApp.getInstance().getAppViewMgr().getViewContentById(viewId);
-    currentView._localXForm.setInstanceValue(stepValue, ZaModel.currentTab);
-    currentView._localXForm.refresh() ;
-}
-
-ZaOverviewPanelController.xformTreeListener = function(ev) {
-    var viewId = ev.item.getData("dataItem").getData("viewId");
-    var stepValue = ev.item.getData("dataItem").getData("firstTab");
-    var currentView = ZaApp.getInstance().getAppViewMgr().getViewContentById(viewId);
-    currentView._localXForm.setInstanceValue(stepValue, ZaModel.currentTab);
-    currentView._localXForm.refresh() ;
-}
+} 
