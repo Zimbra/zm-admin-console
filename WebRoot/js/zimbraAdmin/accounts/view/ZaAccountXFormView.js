@@ -480,7 +480,7 @@ ZaAccountXFormView.addAlias  = function () {
 
 ZaAccountXFormView.isAuthfromInternal =
 function(acctName) {
-
+	var res = true;
 	var domainName = null
 	var acct = acctName.split("@");
 	if (acct.length == 2) domainName = acct[1];
@@ -489,11 +489,12 @@ function(acctName) {
 	if(domainName) {
 		var domainObj = ZaDomain.getDomainByName(domainName);
 		if(domainObj.attrs[ZaDomain.A_AuthMech] != ZaDomain.AuthMech_zimbra){
-			return false;
+			res = false;;
 		}
+		if(!res && domainObj.attrs[ZaDomain.A_zimbraAuthFallbackToLocal] == "TRUE")
+			res = true;
 	}
-
-	return true;
+	return res;
 }
 
 ZaAccountXFormView.isAuthfromInternalSync =
