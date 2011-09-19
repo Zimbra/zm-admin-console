@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -36,7 +36,6 @@ ZaItem.initMethods["ZaAccount"] = new Array();
 ZaItem.modifyMethods["ZaAccount"] = new Array();
 ZaItem.createMethods["ZaAccount"] = new Array();
 ZaItem.ObjectModifiers["ZaAccount"] = [];
-ZaItem.modelExtensions["ZaAccount"] = new Array();
 ZaAccount.renameMethods = new Array();
 ZaAccount.changePasswordMethods = new Array();
 
@@ -80,8 +79,6 @@ ZaAccount.A_zimbraPhoneticCompany = "zimbraPhoneticCompany";
 
 ZaAccount.A_zimbraIsAdminAccount = "zimbraIsAdminAccount";
 ZaAccount.A_zimbraIsDelegatedAdminAccount = "zimbraIsDelegatedAdminAccount" ;
-// system account
-ZaAccount.A_zimbraIsSystemAccount = "zimbraIsSystemAccount";
 
 ZaAccount.A_zimbraMinPwdLength="zimbraPasswordMinLength";
 ZaAccount.A_zimbraMaxPwdLength="zimbraPasswordMaxLength";
@@ -200,7 +197,6 @@ ZaAccount.A_zimbraPrefMailSendReadReceipts = "zimbraPrefMailSendReadReceipts";
 ZaAccount.A_zimbraPrefReadReceiptsToAddress = "zimbraPrefReadReceiptsToAddress";
 ZaAccount.A_zimbraPrefAdminConsoleWarnOnExit = "zimbraPrefAdminConsoleWarnOnExit" ;
 ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled = "zimbraPrefMandatorySpellCheckEnabled";
-ZaAccount.A_zimbraPrefMessageIdDedupingEnabled = "zimbraPrefMessageIdDedupingEnabled";
 
 //features
 ZaAccount.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
@@ -266,7 +262,6 @@ ZaAccount.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg" ;
 ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled = "zimbraFeatureManageSMIMECertificateEnabled";
 ZaAccount.A_zimbraFeatureSMIMEEnabled = "zimbraFeatureSMIMEEnabled";
 
-ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled = "zimbraFeatureCalendarReminderDeviceEmailEnabled";
 
 //readonly
 ZaAccount.A_zimbraLastLogonTimestamp = "zimbraLastLogonTimestamp";
@@ -346,12 +341,6 @@ function(tmpObj) {
 	if(ZaItem.hasWritePermission(ZaAccount.A_name,tmpObj) && (tmpObj.name == null || tmpObj.name.length < 1)) {
 		//show error msg
 		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_REQUIRED);
-		return false;
-	}
-
-    if(ZaItem.hasWritePermission(ZaAccount.A_name,tmpObj) && ( tmpObj.name.length > 255)) {
-		//show error msg
-		ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_ACCOUNT_NAME_TOOLONG);
 		return false;
 	}
 	
@@ -471,26 +460,13 @@ function(tmpObj) {
 			} 			
 			if(tmpObj.attrs[ZaAccount.A_password].length < minPwdLen || AjxStringUtil.trim(tmpObj.attrs[ZaAccount.A_password]).length < minPwdLen) { 
 				//show error msg
-                var minpassMsg;
-                if (minPwdLen > 1) {
-                    minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                } else {
-                    minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                }
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + minpassMsg);
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen));
 				return false;		
 			}
 			
 			if(AjxStringUtil.trim(tmpObj.attrs[ZaAccount.A_password]).length > maxPwdLen) { 
 				//show error msg
-				//show error msg
-                var maxpassMsg;
-                if (maxPwdLen > 1) {
-                    maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                } else {
-                    maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                }
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + maxpassMsg);
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
 				return false;		
 			}
 		}
@@ -1731,8 +1707,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_COSId, type:_STRING_, ref:"attrs/" + ZaAccount.A_COSId},
         {id:ZaAccount.A_zimbraIsAdminAccount, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraIsAdminAccount},
         {id:ZaAccount.A_zimbraIsSystemResource, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraIsSystemResource},
-        {id:ZaAccount.A_zimbraIsSystemAccount, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraIsSystemAccount},
- 
+        
         {id:ZaAccount.A_zimbraLastLogonTimestamp, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraLastLogonTimestamp},
         {id:ZaAccount.A_zimbraMaxPwdLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMaxPwdLength, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraMinPwdLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMinPwdLength, maxInclusive:2147483647, minInclusive:0},
@@ -1796,8 +1771,6 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefTimeZoneId,type:_COS_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefTimeZoneId, choices:ZaSettings.timeZoneChoices},
         {id:ZaAccount.A_zimbraPrefMailDefaultCharset,type:_COS_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefMailDefaultCharset, choices:ZaSettings.mailCharsetChoices},
         {id:ZaAccount.A_zimbraPrefMailToasterEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefMailToasterEnabled, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraPrefMessageIdDedupingEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefMessageIdDedupingEnabled, choices:ZaModel.BOOLEAN_CHOICES},
-
 	{id:ZaAccount.A_zimbraPrefLocale,type:_COS_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefLocale},
         {id:ZaAccount.A_zimbraPrefSentMailFolder, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefSentMailFolder},
         {id:ZaAccount.A_zimbraPrefIncludeSpamInSearch, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefIncludeSpamInSearch, choices:ZaModel.BOOLEAN_CHOICES},
@@ -1938,7 +1911,6 @@ ZaAccount.myXModel = {
 
         {id:ZaAccount.A_zimbraFeatureSMIMEEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureSMIMEEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep},
         {id:ZaAccount.A2_newAlias, type:_STRING_},
         {id:ZaAccount.A2_aliases, type:_LIST_,listItem:{type:_STRING_}},
@@ -2014,10 +1986,7 @@ ZaAccount.initMethod = function () {
 	this.id = "";
 	this.name="";
 	this.attrs[ZaAccount.A_zimbraMailAlias] = new Array();
-    this.attrs[ZaAccount.A_zimbraForeignPrincipal] = new Array ();
-    this[ZaAccount.A2_memberOf] = {directMemberList: [],indirectMemberList: [],nonMemberList: []};
-    this[ZaAccount.A2_directMemberList + "_more"] = 0;
-    this[ZaAccount.A2_indirectMemberList + "_more"] = 0;
+    this.attrs[ZaAccount.A_zimbraForeignPrincipal] = new Array (); ;
 }
 ZaItem.initMethods["ZaAccount"].push(ZaAccount.initMethod);
 
@@ -2205,13 +2174,8 @@ function (value, event, form){
                     var usedAccounts = domainObj.getUsedDomainAccounts(newDomainName );
                     if (maxDomainAccounts < usedAccounts && (!cosMaxAccounts || cosMaxAccounts.length <= 0)) {
 			form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_accountTypes,null);
-                        var msg;
-                        if (usedAccounts - maxDomainAccounts > 1) {
-                            msg = AjxMessageFormat.format (ZaMsg.NAD_DomainAccountLimits_p, [newDomainName, usedAccounts - maxDomainAccounts]);
-                        } else {
-                            msg = AjxMessageFormat.format (ZaMsg.NAD_DomainAccountLimits_s, [newDomainName, usedAccounts - maxDomainAccounts]);
-                        }
-                        form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts, msg);
+                        form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts,
+                        AjxMessageFormat.format (ZaMsg.NAD_DomainAccountLimits, [newDomainName, usedAccounts - maxDomainAccounts]));
 		    }else {
 			form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts,null);
 		    }

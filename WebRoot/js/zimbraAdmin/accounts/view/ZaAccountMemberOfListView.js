@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -854,15 +854,12 @@ S_Dwt_List_XFormItem.prototype.setItems = function (itemArray){
 * @contructor ZaAccountMemberOfListView
 * @author Charles Cao
 **/
-ZaAccountMemberOfsourceHeaderList = function(type, nameDefaultWidth) {
+ZaAccountMemberOfsourceHeaderList = function(type) {
 	var sourceHeaderList = new Array();
 	var sortable = 0;
 	
 //	defaultColumnSortable = sortable ;
-    if (!nameDefaultWidth) {
-        nameDefaultWidth = 230;
-    }
-	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? nameDefaultWidth : null ;
+	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? 230 : null ;
 	sourceHeaderList[0] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_name, 	ZaMsg.CLV_Name_col, 	
 												null, nameWidth, null, ZaAccountMemberOfListView.A_name, false, true);
 	

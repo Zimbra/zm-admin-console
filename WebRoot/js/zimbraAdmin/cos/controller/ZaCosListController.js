@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -36,7 +36,7 @@ ZaController.changeActionsStateMethods["ZaCosListController"] = new Array();
 
 ZaCosListController.prototype.show = function (doPush,openInNewTab) {
 
-    if(!ZaZimbraAdmin.hasGlobalCOSSListAccess() && this._currentQuery == "") {
+    if(!ZaZimbraAdmin.isGlobalAdmin() && this._currentQuery == "") {
         var cosNameList = ZaApp.getInstance()._cosNameList;
         if(!cosNameList || !(cosNameList instanceof Array) || cosNameList.length == 0) {
             this._list = new ZaItemList(ZaCos);
@@ -78,8 +78,6 @@ ZaCosListController.prototype._show =
 function (list, openInNewTab, openInSearchTab) {
 	this._updateUI(list, openInNewTab, openInSearchTab);
 	ZaApp.getInstance().pushView(this.getContentViewId (), openInNewTab, openInSearchTab);
-    if (appNewUI)
-        return;
 	if (openInSearchTab) {
 		ZaApp.getInstance().updateSearchTab();
 	} else if(openInNewTab) {
@@ -148,19 +146,15 @@ function (openInNewTab, openInSearchTab) {
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-    if (!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        //ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
-        var tabParams = {
-                openInNewTab: openInNewTab ? openInNewTab : false,
-                tabId: this.getContentViewId(),
-                tab: openInNewTab ? null : (openInSearchTab ? this.getSearchTab() : this.getMainTab())
-            }
-        ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    }
-    else
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+	//ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
+	var tabParams = {
+			openInNewTab: openInNewTab ? openInNewTab : false,
+			tabId: this.getContentViewId(),
+			tab: openInNewTab ? null : (openInSearchTab ? this.getSearchTab() : this.getMainTab()) 
+		}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_COSLIST, ZaId.MENU_POP);
 	
@@ -252,10 +246,6 @@ function(ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		if(ev.item) {
 			ZaApp.getInstance().getCosController().show(ev.item);
-            if (appNewUI) {
-                var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_cos]);
-                ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, ev.item.name, null, false, false, ev.item);
-            }
 		}
 	} else {
 		this.changeActionsState();	
@@ -279,10 +269,6 @@ function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
 		ZaApp.getInstance().getCosController().show(item);
-        if (appNewUI) {
-            var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_cos]);
-            ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, item.name, null, false, false, item);
-        }
 	}
 }
 
@@ -490,7 +476,7 @@ function (enableArray,disableArray) {
 			this._toolbarOperations[ZaOperation.EDIT].enabled=false;
 		}
 		
-		if(this._popupOperations[ZaOperation.DUPLICATE] && this._popupOperations[ZaOperation.DUPLICATE].enabled) {
+		if(this._popupOperations[ZaOperation.DUPLICATE] && this._toolbarOperations[ZaOperation.DUPLICATE].enabled) {
 			this._popupOperations[ZaOperation.DUPLICATE].enabled=false;
 		}		
 		if(this._popupOperations[ZaOperation.EDIT]) {
@@ -513,7 +499,7 @@ function (enableArray,disableArray) {
 		if(this._popupOperations[ZaOperation.DELETE]) {
 			this._popupOperations[ZaOperation.DELETE].enabled=false;
 		}	
-		if(this._popupOperations[ZaOperation.DUPLICATE] && this._popupOperations[ZaOperation.DUPLICATE].enabled) {
+		if(this._popupOperations[ZaOperation.DUPLICATE] && this._toolbarOperations[ZaOperation.DUPLICATE].enabled) {
 			this._popupOperations[ZaOperation.DUPLICATE].enabled=false;
 		}		
 	}

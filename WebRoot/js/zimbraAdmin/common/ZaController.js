@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -46,8 +46,7 @@ ZaController = function(appCtxt, container,iKeyName) {
     this._helpURL = ZaController.helpURL;
    	this._toolbarOperations = new Array();
    	this._toolbarOrder = new Array();
-   	this._popupOperations = new Array();
-    this._popupOrder = new Array();
+   	this._popupOperations = new Array();	    
 }
 ZaController.CLICK_DELAY = 150;
 ZaController.prototype.initDialogs = function (refresh) {
@@ -865,7 +864,6 @@ function (event) {
 
 ZaController.prototype.selectExistingTabByItemId =
 function (itemId, tabConstructor) {
-    if(appNewUI) return false;
 	var tabGroup = ZaApp.getInstance().getTabGroup ();
 	var tab = tabGroup.getTabByItemId (itemId, tabConstructor ? tabConstructor : this.tabConstructor) ;
 	if (tab) {
@@ -973,10 +971,10 @@ ZaController.prototype._showAccountsView = function (defaultType, ev) {
 		//var domainList = [];
 		var cnt = domainList.length;
 		if(cnt>0) {
-			queryChunks.push("(|");
+			queryChunks.push("(");	
 		}
-		
 		for(var i = 0; i < cnt; i++) {
+			queryChunks.push("|");
 			queryChunks.push("(zimbraMailDeliveryAddress=*@");
 			queryChunks.push(domainList[i].name);
 			queryChunks.push(")");
@@ -1021,12 +1019,4 @@ function (params) {
 		this._currentRequest.cancel() ;
 	}
 	ZaApp.getInstance().getAppCtxt().getShell().setBusy(false, params.busyId);	
-}
-
-ZaController.prototype.getPopUpOperation =
-function() {
-    if (this._popupOperations && this._popupOperations.length > 0)
-        return  this._popupOperations;
-    else
-        return "";
 }

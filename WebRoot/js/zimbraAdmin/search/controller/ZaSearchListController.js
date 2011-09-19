@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -190,16 +190,11 @@ function () {
 }
 
 ZaSearchListController.prototype._batchSearchforDomain =
-function (domainArr, searchQueryList, childQueries) {
+function (domainArr, searchQueryList) {
 	var paramsArr;
-    var searchTypes = ZaSearch.ALIASES;
-    var searchQuery = "(uid=*";
-    if(!childQueries) searchQuery += ")";
-    else if(childQueries && !(childQueries instanceof Array)) searchQuery += childQueries + "*)";
-    else if(childQueries instanceof Array && childQueries.length == 1) searchQuery += childQueries[0] + "*)";
-    else if(childQueries instanceof Array && childQueries.length > 1)  searchQuery += childQueries[1] + ")";
-
-    var controller = ZaApp.getInstance().getSearchListController();
+        var searchTypes = ZaSearch.ALIASES;
+        var searchQuery = "(uid=*)";
+        var controller = ZaApp.getInstance().getSearchListController();
 
 	if(searchQueryList && searchQueryList instanceof Array)
 		paramsArr = searchQueryList;
@@ -249,7 +244,7 @@ function(params,resp) {
                                 }
 				
                         }
-			ZaSearchListController.prototype._batchSearchforDomain(domainArr,params.searchQueryList, params.childQueries);
+			ZaSearchListController.prototype._batchSearchforDomain(domainArr,params.searchQueryList);
                 }
         } catch (ex) {
 		this._handleException(ex, "ZaSearchListController.searchAliasDomainCallback", null, false); 
@@ -260,17 +255,11 @@ function(params,resp) {
 ZaSearchListController.searchAliasDomain =
 function (value, searchCtl,searchQueryList) {
         var busyId = Dwt.getNextId();
-        var controller = searchCtl? searchCtl:this;
-
-        var query = "(" + ZaDomain.A_domainName;
-        if(value.length > 1) query += "=" + value[0] + "*)";
-        else query += "=*" + value[0] + "*)";
-
-        var callback = new AjxCallback(controller, ZaSearchListController.searchAliasDomainCallback,
-            {busyId:busyId, searchQueryList:searchQueryList, childQueries:value});
+	var controller = searchCtl? searchCtl:this;
+        var callback = new AjxCallback(controller, ZaSearchListController.searchAliasDomainCallback, {busyId:busyId, searchQueryList:searchQueryList});
         var searchParams = {
 
-                        query: query,
+                        query: "(" + ZaDomain.A_domainName + "=*" + value + "*)",
                         types: [ZaSearch.DOMAINS],
                         sortBy: ZaDomain.A_domainName,
                         attrs: [ZaDomain.A_domainName],
@@ -289,21 +278,16 @@ ZaSearchListController._getSearchKeyWord =
 function(query) {
 	var keyword = "";
 	var sw = "zimbraDomainName=*";
-        var domflag = "@";
 	var ew = "*";
 	if(!query) return keyword;
 	var start = query.indexOf(sw);
 	if(start < 0 || start > query.length-1)
-	    return [];
+		return keyword;
 	var end = query.indexOf(ew,start+sw.length);
 	if(end > query.length-1)
-	    return [];
-	keyword = query.substr(start+sw.length,end-start-sw.length);
-        // handle the case of "str@str"
-        start = keyword.indexOf(domflag);
-	if(start < 0 || start > query.length-1)
-	    return [keyword];
-	return [keyword.substr(start+1,keyword.length),keyword.substr(0,start)];
+		return keyword;
+	return query.substr(start+sw.length,end-start-sw.length);
+	
 }
 
 /*********** Search Field Callback */
@@ -355,7 +339,8 @@ function () {
 	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaSearchListController.prototype._deleteButtonListener));
 	this._popupOperations[ZaOperation.CHNG_PWD]=new ZaOperation(ZaOperation.CHNG_PWD,ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener));
 	this._popupOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
-	this._popupOperations[ZaOperation.MOVE_ALIAS]=new ZaOperation(ZaOperation.MOVE_ALIAS,ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));
+	this._popupOperations[ZaOperation.VIEW_MAIL]=new ZaOperation(ZaOperation.VIEW_MAIL,ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailbox", new AjxListener(this, ZaAccountListController.prototype._viewMailListener));		
+	this._popupOperations[ZaOperation.MOVE_ALIAS]=new ZaOperation(ZaOperation.MOVE_ALIAS,ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));		    	
 	
 }
 ZaController.initPopupMenuMethods["ZaSearchListController"].push(ZaSearchListController.initPopupMenuMethod);
@@ -370,14 +355,21 @@ function () {
 	this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaSearchListController.prototype._deleteButtonListener));
 	this._toolbarOperations[ZaOperation.CHNG_PWD]=new ZaOperation(ZaOperation.CHNG_PWD,ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener));
 	this._toolbarOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
-	this._toolbarOperations[ZaOperation.MOVE_ALIAS]=new ZaOperation(ZaOperation.MOVE_ALIAS,ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));
+	this._toolbarOperations[ZaOperation.VIEW_MAIL]=new ZaOperation(ZaOperation.VIEW_MAIL,ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailbox", new AjxListener(this, ZaAccountListController.prototype._viewMailListener));		
+	this._toolbarOperations[ZaOperation.MOVE_ALIAS]=new ZaOperation(ZaOperation.MOVE_ALIAS,ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));		    	
 	
 	
 	this._toolbarOrder.push(ZaOperation.EDIT);
 	this._toolbarOrder.push(ZaOperation.DELETE);
 	this._toolbarOrder.push(ZaOperation.CHNG_PWD);
 	this._toolbarOrder.push(ZaOperation.EXPIRE_SESSION);
+	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	this._toolbarOrder.push(ZaOperation.MOVE_ALIAS);
+	
+	this._toolbarOrder.push(ZaOperation.NONE);
+    this._toolbarOrder.push(ZaOperation.PAGE_BACK);
+	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
+    this._toolbarOrder.push(ZaOperation.HELP);
 }
 ZaController.initToolbarMethods["ZaSearchListController"].push(ZaSearchListController.initToolbarMethod);
 
@@ -415,27 +407,21 @@ function () {
 	ZaSearch.searchResultCountsView(this._toolbarOperations, this._toolbarOrder);
 	this._toolbarOperations[ZaOperation.PAGE_FORWARD]=new ZaOperation(ZaOperation.PAGE_FORWARD,ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
 	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
-	this._toolbarOrder.push(ZaOperation.NONE);
-    this._toolbarOrder.push(ZaOperation.PAGE_BACK);
-	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
-    this._toolbarOrder.push(ZaOperation.HELP);
 
 	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_SCHLIST);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-    if (!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        //ZaApp.getInstance().createView(ZaZimbraAdmin._SEARCH_LIST_VIEW, elements);
-        //always open the search list view in the search tab
-        var tabParams = {
-            openInNewTab: false,
-            tabId: this.getContentViewId(),
-            tab: ZaApp.getInstance().getTabGroup().getSearchTab ()
-        }
-        ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    } else
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+	//ZaApp.getInstance().createView(ZaZimbraAdmin._SEARCH_LIST_VIEW, elements);
+	//always open the search list view in the search tab
+	var tabParams = {
+		openInNewTab: false,
+		tabId: this.getContentViewId(),
+		tab: ZaApp.getInstance().getTabGroup().getSearchTab ()
+	}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_SCHLIST, ZaId.MENU_POP);
 	
@@ -574,10 +560,6 @@ ZaSearchListController.prototype._editItem = function (item) {
 	}else if (type==ZaItem.COS) {
                 ZaApp.getInstance().getCosController().show(item);
         }
-    if (appNewUI) {
-        ZaZimbraAdmin.getInstance().getOverviewPanelController().addAccountItem(item);
-
-    }
 };
 
 
@@ -608,6 +590,14 @@ function () {
 
             if (((item.type == ZaItem.ALIAS) && (item.attrs[ZaAlias.A_targetType] == ZaItem.DL))
                 || (item.type == ZaItem.DL)) {
+                if (this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+                    this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;                                        
+                }
+
+                if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+                    this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+                }
+
 		if(this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {
                     this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
                 }
@@ -620,6 +610,12 @@ function () {
                 if(this._popupOperations[ZaOperation.MOVE_ALIAS])	{
                     this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
                 }
+                if(this._popupOperations[ZaOperation.VIEW_MAIL])
+				 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+					 
+				if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+				 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+                	    
             } else if (item.type == ZaItem.ACCOUNT) {
 				var enable = false;
 				if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
@@ -630,6 +626,13 @@ function () {
 					//console.log("loaded rights for a list item");
 				}
 				if(!enable) {
+					if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,item)) {
+						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+						 
+						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+					}
 					if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,item)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -664,6 +667,13 @@ function () {
 					item.targetObj.loadEffectiveRights("id", item.id, false);
 				}
 				if(!enable) {
+					if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,item.targetObj)) {
+						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+						 
+						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+					}	
 					if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,item.targetObj)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -702,6 +712,13 @@ function () {
 				}
 				if(!enable) {
 					if(!enable) {
+						if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,item.targetObj)) {
+							 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+							 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+							 
+							 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+							 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+						}
 						if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,item.targetObj)) {
 							 if(this._popupOperations[ZaOperation.DELETE])
 							 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -729,6 +746,13 @@ function () {
 					item.loadEffectiveRights("id", item.id, false);
 				}
 				if(!enable) {
+					if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,item)) {
+						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+						 
+						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+					}
 					if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,item)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -751,19 +775,28 @@ function () {
 					}		
 					if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 						this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
-					}
+					}		
+					if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+						this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
+					}	
 					
 					if(this._popupOperations[ZaOperation.EXPIRE_SESSION]) {	
 						this._popupOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
 					}		
 					if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 						this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
-					}
+					}		
+					if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+						this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+					}	
 					
       }
         } else {
 			if(this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {	
 				this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
+			}	        	
+			if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+				this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
 			}
 			if(this._toolbarOperations[ZaOperation.EDIT]) {	
 				this._toolbarOperations[ZaOperation.EDIT].enabled = false;
@@ -780,6 +813,9 @@ function () {
 			
 			if(this._popupOperations[ZaOperation.EXPIRE_SESSION]) {	
 				this._popupOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
+			}				
+			if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+				this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
 			}
 			if(this._popupOperations[ZaOperation.EDIT]) {	
 				this._popupOperations[ZaOperation.EDIT].enabled = false;
@@ -803,7 +839,10 @@ function () {
 		}		
 		if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 			this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
-		}
+		}		
+		if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+			this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
+		}	
 		if(this._toolbarOperations[ZaOperation.MOVE_ALIAS]) {
 			this._toolbarOperations[ZaOperation.MOVE_ALIAS].enabled = false;		
 		}
@@ -813,7 +852,10 @@ function () {
 		}		
 		if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 			this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
-		}
+		}		
+		if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+			this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+		}	
 		if(this._popupOperations[ZaOperation.MOVE_ALIAS]) {
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;		
 		}
@@ -832,6 +874,9 @@ function () {
 		}		
 		if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 			this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
+		}	
+		if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+			this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
 		}
 		if(this._toolbarOperations[ZaOperation.MOVE_ALIAS])	{
 			this._toolbarOperations[ZaOperation.MOVE_ALIAS].enabled = false;
@@ -848,21 +893,13 @@ function () {
 		}		
 		if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 			this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
+		}	
+		if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+			this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
 		}
 		if(this._popupOperations[ZaOperation.MOVE_ALIAS])	{
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
 		}	
-	}
-        for(var i=0;i<cnt;i++) {
-        	var itemObj = this._contentView.getSelection()[i];
-        	if(itemObj && itemObj.type==ZaItem.ACCOUNT){
-                	if (itemObj.attrs[ZaAccount.A_zimbraIsSystemAccount] == "TRUE") {
-				if(this._toolbarOperations[ZaOperation.DELETE])
-                        		this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-				if(this._popupOperations[ZaOperation.DELETE])
-                        		this._popupOperations[ZaOperation.DELETE].enabled = false;
-                	}
-		}
 	}
 }
 ZaController.changeActionsStateMethods["ZaSearchListController"].push(ZaSearchListController.changeActionsStateMethod);
