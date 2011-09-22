@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -570,11 +570,6 @@ ZaSearchField.prototype._getMyXForm = function() {
 			colSizes.push("110");
 		}
 	}
-
-    if (appNewUI) {
-        numCols = 3;
-        colSizes = ["59", "*", "80"];
-    }
 	var xFormObject = {
 		tableCssStyle:"width:100%;padding:2px;",numCols:numCols,width:"100%",
 		colSizes:colSizes,
@@ -611,7 +606,7 @@ ZaSearchField.prototype._getMyXForm = function() {
 				}	
 			]},
 					
-			{type:_DWT_BUTTON_, label: ZaMsg.search, toolTipContent:ZaMsg.searchForAll, icon:"Search", name: "searchButton",
+			{type:_DWT_BUTTON_, label:ZaMsg.search, toolTipContent:ZaMsg.searchForAll, icon:"Search", name: "searchButton",
 				onActivate:ZaSearchField.srchButtonHndlr, 
 				cssStyle: AjxEnv.isIE ? "marginLeft: 2px;" : "marginLeft: 5px;",
 				cssClass:"DwtToolbarButton"
@@ -620,7 +615,6 @@ ZaSearchField.prototype._getMyXForm = function() {
 	};
 
 	//Help search button
-    if (!appNewUI) {
 	if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.HELP_SEARCH] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
 		xFormObject.items.push(
 			{type:_DWT_BUTTON_, label: ZaMsg.help_search , toolTipContent:ZaMsg.tt_help_search, icon:"Help", name: "helpSearchButton",
@@ -645,7 +639,6 @@ ZaSearchField.prototype._getMyXForm = function() {
 				cssClass: "DwtToolbarButton ZaAdvancedSearchButton" 
 			});
 	}
-    }
 	// set the last button's width to 98 percents of its container
 	// to reserve some place between last button and its panel. 
 	xFormObject.items[numCols - 1].width = "98%";
