@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -101,9 +101,9 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 					},
 					{type:_SPACER_, colSpan:"*"},					
 					{type:_OUTPUT_, cssStyle:"font-size:12px;", label:null, value:ZaMsg.HELP_PAGE_3, 
-					 cssStyle:"padding-right:10px;padding-left:10px;",containerCssStyle: "width:50%;"},
+					 cssStyle:"padding-right:10px;padding-left:10px;"},
 					{type:_OUTPUT_, cssStyle:"font-size:12px;", label:null, value:ZaMsg.HELP_PAGE_5,
-					 cssStyle:"padding-right:10px;padding-left:10px;",containerCssStyle: "width:50%;"},
+					 cssStyle:"padding-right:10px;padding-left:10px;"},
 					{type:_SEPARATOR_, colSpan:1, cssClass:"helpSeparator"},
 					{type:_SEPARATOR_, colSpan:1, cssClass:"helpSeparator"},
 

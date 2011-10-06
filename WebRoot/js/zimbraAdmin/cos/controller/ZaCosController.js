@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -33,7 +33,6 @@ ZaCosController.helpURL = "cos/creating_classes_of_service.htm";
 ZaCosController.prototype = new ZaXFormViewController();
 ZaCosController.prototype.constructor = ZaCosController;
 ZaController.initToolbarMethods["ZaCosController"] = new Array();
-ZaController.initPopupMenuMethods["ZaCosController"] = new Array();
 ZaController.setViewMethods["ZaCosController"] = new Array();
 ZaController.changeActionsStateMethods["ZaCosController"] = new Array();
 /**
@@ -63,17 +62,6 @@ ZaCosController.changeActionsStateMethod = function () {
 }
 ZaController.changeActionsStateMethods["ZaCosController"].push(ZaCosController.changeActionsStateMethod);
 
-ZaCosController.initPopupMenuMethod =
-function () {
-	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.COSTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-
-	if(ZaItem.hasRight(ZaCos.CREATE_COS_RIGHT, ZaZimbraAdmin.currentAdminAccount)) {
-		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosController.prototype._newButtonListener, [true]));
-	}
-	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
-}
-ZaController.initPopupMenuMethods["ZaCosController"].push(ZaCosController.initPopupMenuMethod);
-
 /**
 *	@method setViewMethod 
 *	@param entry - isntance of ZaCos class
@@ -89,7 +77,6 @@ function(entry) {
 		
          //create toolbar
 		this._initToolbar();
-        this._initPopupMenu();
 		//always add Help button at the end of the toolbar		
 		this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
 		this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
@@ -100,17 +87,13 @@ function(entry) {
 	  	this._contentView = this._view = new this.tabConstructor(this._container,  entry);
 		var elements = new Object();
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-        if (!appNewUI) {
-            elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;			  	
 
-            var tabParams = {
-                openInNewTab: true,
-                tabId: this.getContentViewId()
-            }
-            ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-        }
-        else
-            ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	    var tabParams = {
+			openInNewTab: true,
+			tabId: this.getContentViewId()
+		}  	
+	    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 
 		ZaApp.getInstance().pushView(this.getContentViewId());
@@ -703,11 +686,6 @@ function () {
 	//check if need to rename
 	if(!isNew) {
 		if(tmpObj.name != this._currentObject.name) {
-            if(this._currentObject.name=="default"||this._currentObject.name=="defaultExternal"){
-                this._errorDialog.setMessage( AjxMessageFormat.format(ZaMsg.FAILED_RENAME_COS_DEFAULT,this._currentObject.name), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
-				this._errorDialog.popup();
-                return false;
-            }
 			newName=tmpObj.name;
 			//changeDetails["newName"] = newName;
 			try {
@@ -733,11 +711,9 @@ function () {
 			this._currentObject.create(tmpObj.name, mods);
 			//if creation took place - fire a CreationEvent
 			this.fireCreationEvent(this._currentObject);
-			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.CosCreated,[tmpObj.name]));
+			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);	
 		} else {
 			this._currentObject.modify(mods);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.CosModified,[this._currentObject.name]));
 			//if modification took place - fire a ChangeEvent
 			//changeDetails["obj"] = this._currentObject;
 			//changeDetails["mods"] = mods;

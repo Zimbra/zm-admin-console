@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -164,31 +164,7 @@ function (xModelMetaData, xFormMetaData,entry) {
 	this._drawn = true;
 }
 
-if (appNewUI) {
-ZaXWizardDialog.prototype.initForm =
-function (xModelMetaData, xFormMetaData,entry) {
-	if(xModelMetaData == null || xFormMetaData == null)
-		throw new AjxException(ZaMsg.ERROR_METADATA_NOT_DEFINED, AjxException.INVALID_PARAM, "ZaXWizardDialog.prototype.initForm");
-	// Hook here. Replace the _OUTPUT_ items
-    var newXFormMetaData = {items:[]};
-    var stepChoices = xFormMetaData.items[0];
-    stepChoices.type = _STEPCHOICE_;
-    stepChoices.colSpan = 1;
-    var content = xFormMetaData.items[3];
-    newXFormMetaData.numCols = 2;
-    newXFormMetaData.colSizes = ["100px", "*"];
-    newXFormMetaData.items =[
-                stepChoices,
-                content
-            ];
-	this._localXModel = new XModel(xModelMetaData);
-	this._localXForm = new XForm(newXFormMetaData, this._localXModel, entry, this, ZaId.getDialogViewId(this._contextId));
-	this._localXForm.setController(ZaApp.getInstance());
-	this._localXForm.draw(this._pageDiv);
-	this._drawn = true;
-}
-ZaXWizardDialog.prototype.supportMinimize = true;
-}
+
 /**
 * member of  ZaXWizardDialog
 * @return the object contained in the view

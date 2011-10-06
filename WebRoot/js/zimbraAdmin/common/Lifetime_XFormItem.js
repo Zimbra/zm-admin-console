@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -21,19 +21,19 @@ MLifetime_XModelItem = function () {}
 XModelItemFactory.createItemType("_MLIFETIME_", "mlifetime", MLifetime_XModelItem);
 MLifetime_XModelItem.prototype.validateType = function (value) {
 	var val = "";
-	if(value == ZaMsg.Unlimited) {
-		val = "0";
-	} else if(value != null && value.length >0) {
+	if(value != null && value.length >0) {
 		if(value.length > 1) {
 			val = value.substr(0, value.length-1);				
 		} else {
-			val = "0";
+			if(value == "0") {
+				val = "0";
+			} else {
+				val = "";
+			}
 		}
 	}
 	
-	if(val)
-		val =  XModelItem.prototype.validateNumber.call(this, val);
-	
+	val =  XModelItem.prototype.validateNumber.call(this, val);
 	return value;
 }
 /**
@@ -72,7 +72,7 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 				}
 			}
 			this.getParentItem()._numericPart = val;
-			return ((!val || val=="0") ? ZaMsg.Unlimited : val);	
+			return val;	
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
 			var val = numericPart + this.getParentItem()._stringPart;
@@ -105,9 +105,6 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 	Composite_XFormItem.prototype.initializeItems.call(this);
 }
 Lifetime_XFormItem.prototype.items = [];
-Lifetime_XFormItem.prototype.getDisplayElement = function () {
-	return this.getElement(this.getId() + "_display");
-}
 
 Lifetime1_XFormItem = function() {}
 XFormItemFactory.createItemType("_LIFETIME1_", "lifetime1", Lifetime1_XFormItem, Composite_XFormItem);
