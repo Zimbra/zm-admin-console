@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -33,7 +33,6 @@ ZaCosController.helpURL = "cos/creating_classes_of_service.htm";
 ZaCosController.prototype = new ZaXFormViewController();
 ZaCosController.prototype.constructor = ZaCosController;
 ZaController.initToolbarMethods["ZaCosController"] = new Array();
-ZaController.initPopupMenuMethods["ZaCosController"] = new Array();
 ZaController.setViewMethods["ZaCosController"] = new Array();
 ZaController.changeActionsStateMethods["ZaCosController"] = new Array();
 /**
@@ -52,10 +51,8 @@ function(entry) {
 ZaCosController.changeActionsStateMethod = function () {
 	if(this._currentObject.name == "default") {
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
-        this._popupOperations[ZaOperation.DELETE].enabled = false;
 	} else if(!ZaItem.hasRight(ZaCos.DELETE_COS_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
-        this._popupOperations[ZaOperation.DELETE].enabled = false;
 	}
 	
 
@@ -64,17 +61,6 @@ ZaCosController.changeActionsStateMethod = function () {
 		
 }
 ZaController.changeActionsStateMethods["ZaCosController"].push(ZaCosController.changeActionsStateMethod);
-
-ZaCosController.initPopupMenuMethod =
-function () {
-	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.COSTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-
-	if(ZaItem.hasRight(ZaCos.CREATE_COS_RIGHT, ZaZimbraAdmin.currentAdminAccount)) {
-		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosController.prototype._newButtonListener, [true]));
-	}
-	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
-}
-ZaController.initPopupMenuMethods["ZaCosController"].push(ZaCosController.initPopupMenuMethod);
 
 /**
 *	@method setViewMethod 
@@ -91,7 +77,6 @@ function(entry) {
 		
          //create toolbar
 		this._initToolbar();
-        this._initPopupMenu();
 		//always add Help button at the end of the toolbar		
 		this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
 		this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
@@ -102,17 +87,13 @@ function(entry) {
 	  	this._contentView = this._view = new this.tabConstructor(this._container,  entry);
 		var elements = new Object();
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-        if (!appNewUI) {
-            elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;			  	
 
-            var tabParams = {
-                openInNewTab: true,
-                tabId: this.getContentViewId()
-            }
-            ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-        }
-        else
-            ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	    var tabParams = {
+			openInNewTab: true,
+			tabId: this.getContentViewId()
+		}  	
+	    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 
 		ZaApp.getInstance().pushView(this.getContentViewId());
@@ -207,7 +188,7 @@ function () {
 	//Check the data
 	if(tmpObj.attrs == null) {
 		//show error msg
-		this._errorDialog.setMessage(ZaMsg.ERROR_UNKNOWN, null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+		this._errorDialog.setMessage(ZaMsg.ERROR_UNKNOWN, null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 		this._errorDialog.popup();		
 		return false;	
 	}
@@ -216,7 +197,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_name,tmpObj)) {
 		 if((tmpObj.attrs[ZaCos.A_name] == null || tmpObj.attrs[ZaCos.A_name].length < 1 )) {
 			//show error msg
-			this._errorDialog.setMessage(ZaMsg.ERROR_NAME_REQUIRED, null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(ZaMsg.ERROR_NAME_REQUIRED, null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		} else {
@@ -225,7 +206,7 @@ function () {
 	
 		if(tmpObj.name.length > 256 || tmpObj.attrs[ZaCos.A_name].length > 256) {
 			//show error msg
-			this._errorDialog.setMessage(ZaMsg.ERROR_COS_NAME_TOOLONG, null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(ZaMsg.ERROR_COS_NAME_TOOLONG, null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}
@@ -289,7 +270,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMinPwdLength,tmpObj)) {	
 		if(tmpObj.attrs[ZaCos.A_zimbraMinPwdLength] != null && tmpObj.attrs[ZaCos.A_zimbraMinPwdLength] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMinPwdLength])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMinPwdLength]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMinPwdLength]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}
@@ -298,7 +279,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMaxPwdLength,tmpObj)) {	
 		if(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength] != null && tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength] && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMaxPwdLength]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMaxPwdLength]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}	
@@ -308,7 +289,7 @@ function () {
 		if (tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength] != null &&  tmpObj.attrs[ZaCos.A_zimbraMinPwdLength] != null) {
 			if(parseInt(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength]) < parseInt(tmpObj.attrs[ZaCos.A_zimbraMinPwdLength]) && parseInt(tmpObj.attrs[ZaCos.A_zimbraMaxPwdLength]) > 0) {
 				//show error msg
-				this._errorDialog.setMessage(ZaMsg.ERROR_MAX_MIN_PWDLENGTH, null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+				this._errorDialog.setMessage(ZaMsg.ERROR_MAX_MIN_PWDLENGTH, null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 				this._errorDialog.popup();		
 				return false;
 			}	
@@ -317,7 +298,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMinPwdAge,tmpObj)) {
 		if(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge] != null && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_passMinAge]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_passMinAge]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}		
@@ -326,7 +307,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMaxPwdAge,tmpObj)) {
 		if(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge] != null && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_passMaxAge]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_passMaxAge]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}		
@@ -335,7 +316,7 @@ function () {
 		if(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge] != null && tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge] != null ){
 			if(parseInt(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge]) < parseInt(tmpObj.attrs[ZaCos.A_zimbraMinPwdAge]) && parseInt(tmpObj.attrs[ZaCos.A_zimbraMaxPwdAge]) > 0) {
 				//show error msg
-				this._errorDialog.setMessage(ZaMsg.ERROR_MAX_MIN_PWDAGE, null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+				this._errorDialog.setMessage(ZaMsg.ERROR_MAX_MIN_PWDAGE, null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 				this._errorDialog.popup();		
 				return false;
 			}
@@ -345,7 +326,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraAuthTokenLifetime,tmpObj)) {	
 		if(tmpObj.attrs[ZaCos.A_zimbraAuthTokenLifetime] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraAuthTokenLifetime])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraAuthTokenLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraAuthTokenLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}
@@ -354,7 +335,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraPrefOutOfOfficeCacheDuration,tmpObj)) {
 		if(tmpObj.attrs[ZaCos.A_zimbraPrefOutOfOfficeCacheDuration] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPrefOutOfOfficeCacheDuration])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPrefOutOfOfficeCacheDuration]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPrefOutOfOfficeCacheDuration]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}
@@ -363,7 +344,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMailIdleSessionTimeout,tmpObj)) {		
 		if(tmpObj.attrs[ZaCos.A_zimbraMailIdleSessionTimeout] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraMailIdleSessionTimeout])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailIdleSessionTimeout]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailIdleSessionTimeout]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}			
@@ -371,7 +352,7 @@ function () {
 
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraPrefAutoSaveDraftInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraPrefAutoSaveDraftInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPrefAutoSaveDraftInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPrefAutoSaveDraftInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPrefAutoSaveDraftInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
@@ -379,14 +360,14 @@ function () {
 
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceMinPollingInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceMinPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceMinPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourcePop3PollingInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraDataSourcePop3PollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourcePop3PollingInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourcePop3PollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourcePop3PollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
@@ -402,7 +383,7 @@ function () {
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceImapPollingInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraDataSourceImapPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceImapPollingInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceImapPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceImapPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
@@ -417,7 +398,7 @@ function () {
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceCalendarPollingInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraDataSourceCalendarPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceCalendarPollingInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceCalendarPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceCalendarPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
@@ -432,7 +413,7 @@ function () {
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceRssPollingInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraDataSourceRssPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceRssPollingInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceRssPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceRssPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
@@ -446,7 +427,7 @@ function () {
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceCaldavPollingInterval,tmpObj)) {
                 if(tmpObj.attrs[ZaCos.A_zimbraDataSourceCaldavPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceCaldavPollingInterval])) {
-                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zzimbraDataSourceCaldavPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                        this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zzimbraDataSourceCaldavPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return false;
                 }
@@ -463,7 +444,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraPrefMailPollingInterval,tmpObj)) {		
 		if(tmpObj.attrs[ZaCos.A_zimbraPrefMailPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPrefMailPollingInterval])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPrefMailPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPrefMailPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}	
@@ -474,7 +455,7 @@ function () {
 		
 		if(n_minPollingInterval != null && !AjxUtil.isLifeTime(n_minPollingInterval)) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailMinPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailMinPollingInterval]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}
@@ -492,7 +473,7 @@ function () {
 	
 			if(!AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraMailMessageLifetime])) {
 				//show error msg
-				this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailMessageLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+				this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailMessageLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 				this._errorDialog.popup();		
 				return false;
 			}
@@ -508,7 +489,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMailTrashLifetime,tmpObj)) {	
 		if(tmpObj.attrs[ZaCos.A_zimbraMailTrashLifetime] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraMailTrashLifetime])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailTrashLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailTrashLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 			this._errorDialog.popup();		
 			return false;
 		}	
@@ -517,7 +498,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraMailSpamLifetime,tmpObj)) {		
 		if(tmpObj.attrs[ZaCos.A_zimbraMailSpamLifetime] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraMailSpamLifetime])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailSpamLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraMailSpamLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}		
@@ -526,7 +507,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraPasswordLockoutDuration,tmpObj)) {
 		if(tmpObj.attrs[ZaCos.A_zimbraPasswordLockoutDuration] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPasswordLockoutDuration])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPasswordLockoutDuration]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPasswordLockoutDuration]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}	
@@ -535,7 +516,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraPasswordLockoutFailureLifetime,tmpObj)) {	
 		if(tmpObj.attrs[ZaCos.A_zimbraPasswordLockoutFailureLifetime] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraPasswordLockoutFailureLifetime])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPasswordLockoutFailureLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraPasswordLockoutFailureLifetime]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}	
@@ -544,7 +525,7 @@ function () {
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraEnforcePwdHistory,tmpObj)) {	
 		if(tmpObj.attrs[ZaCos.A_zimbraEnforcePwdHistory] != null && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaCos.A_zimbraEnforcePwdHistory])) {
 			//show error msg
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraEnforcePwdHistory]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraEnforcePwdHistory]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;
 		}	
@@ -567,7 +548,7 @@ function () {
 		
 		if(maxItemsPerPage < prefItemsPerPage) {
 			//show error msg
-			this._errorDialog.setMessage(ZaMsg.ERROR_ITEMS_PER_PAGE_OVER_MAX, null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);		
+			this._errorDialog.setMessage(ZaMsg.ERROR_ITEMS_PER_PAGE_OVER_MAX, null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);		
 			this._errorDialog.popup();		
 			return false;		
 		}	
@@ -587,7 +568,7 @@ function () {
 			}
 			if(!found) {
 				//show error msg
-				this._errorDialog.setMessage(AjxMessageFormat.format (ZaMsg.COS_WarningCurrentThemeNotAvail, [tmpObj.attrs[ZaCos.A_zimbraPrefSkin], tmpObj.attrs[ZaCos.A_zimbraPrefSkin]]), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+				this._errorDialog.setMessage(AjxMessageFormat.format (ZaMsg.COS_WarningCurrentThemeNotAvail, [tmpObj.attrs[ZaCos.A_zimbraPrefSkin], tmpObj.attrs[ZaCos.A_zimbraPrefSkin]]), null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 				this._errorDialog.popup();		
 				return false;			
 			}
@@ -705,11 +686,6 @@ function () {
 	//check if need to rename
 	if(!isNew) {
 		if(tmpObj.name != this._currentObject.name) {
-            if(this._currentObject.name=="default"||this._currentObject.name=="defaultExternal"){
-                this._errorDialog.setMessage( AjxMessageFormat.format(ZaMsg.FAILED_RENAME_COS_DEFAULT,this._currentObject.name), null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
-				this._errorDialog.popup();
-                return false;
-            }
 			newName=tmpObj.name;
 			//changeDetails["newName"] = newName;
 			try {
@@ -720,7 +696,7 @@ function () {
 					detailStr = detailStr + prop + " - " + ex[prop] + "\n";				
 				}
 				if(ex.code == ZmCsfeException.COS_EXISTS) {
-					this._errorDialog.setMessage(ZaMsg.FAILED_RENAME_COS_1, detailStr, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+					this._errorDialog.setMessage(ZaMsg.FAILED_RENAME_COS_1, detailStr, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
 					this._errorDialog.popup();
 				} else {
 					this._handleException(ex, "ZaCosController.prototype._saveChanges", null, false);	
@@ -735,11 +711,9 @@ function () {
 			this._currentObject.create(tmpObj.name, mods);
 			//if creation took place - fire a CreationEvent
 			this.fireCreationEvent(this._currentObject);
-			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.CosCreated,[tmpObj.name]));
+			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);	
 		} else {
 			this._currentObject.modify(mods);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.CosModified,[this._currentObject.name]));
 			//if modification took place - fire a ChangeEvent
 			//changeDetails["obj"] = this._currentObject;
 			//changeDetails["mods"] = mods;
@@ -754,7 +728,7 @@ function () {
 			detailStr = detailStr + prop + " - " + ex[prop] + "\n";				
 		}
 		if(ex.code == ZmCsfeException.COS_EXISTS) {
-			this._errorDialog.setMessage(ZaMsg.FAILED_CREATE_COS_1, detailStr, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);				
+			this._errorDialog.setMessage(ZaMsg.FAILED_CREATE_COS_1, detailStr, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);				
 			this._errorDialog.popup();
 		} else {
 			this._handleException(ex, "ZaCosController.prototype._saveChanges", null, false);	

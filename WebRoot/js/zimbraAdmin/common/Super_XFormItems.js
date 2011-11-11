@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -120,11 +120,9 @@ Cos_List_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_LIST_", "list_enum", Cos_List_XModelItem, Cos_String_XModelItem);
 Cos_List_XModelItem.prototype.outputType = _LIST_;
 Cos_List_XModelItem.prototype.itemDelimiter = List_XModelItem.prototype.itemDelimiter;
-Cos_List_XModelItem.prototype.inputDelimiter = List_XModelItem.prototype.inputDelimiter;
 Cos_List_XModelItem.prototype.listItem = List_XModelItem.prototype.listItem;
 Cos_List_XModelItem.prototype.getOutputType  = List_XModelItem.prototype.getOutputType;
 Cos_List_XModelItem.prototype.getItemDelimiter = List_XModelItem.prototype.getItemDelimiter;
-Cos_List_XModelItem.prototype.getInputDelimiter = List_XModelItem.prototype.getInputDelimiter;
 Cos_List_XModelItem.prototype.getListItem  = List_XModelItem.prototype.getListItem;
 Cos_List_XModelItem.prototype.initializeItems = List_XModelItem.prototype.initializeItems;
 Cos_List_XModelItem.prototype.validateType = List_XModelItem.prototype.validateType;
@@ -135,50 +133,17 @@ Cos_List_XModelItem.prototype.getSuperValue = function(ins) {
 		return null;
 	var _ref = this.ref.replace("/", ".");
 	var lst = eval("ins._defaultValues." + _ref);
-	
+	var retval = [];
 	if(lst) {
-		if(this.getOutputType() == _STRING_) {
-			if(lst instanceof Array) {
-				return lst.join(this.getItemDelimiter());
-			}
-		} else {
-			var retval = [];
-			if(!(lst instanceof Array))
-				lst = [lst];
-	
-			var cnt = lst.length
-			for(var i=0;i<cnt;i++) {
-				retval.push(lst[i]);
-			}
-			return retval;		
+		if(!(lst instanceof Array))
+			lst = [lst];
+
+		var cnt = lst.length
+		for(var i=0;i<cnt;i++) {
+			retval.push(lst[i]);
 		}
 	}
-	
-}
-
-Cos_List_XModelItem.prototype.setLocalValue = function(val, ins, current, ref) {
-	if(val && this.getOutputType() == _STRING_ && !(val instanceof Array)) {
-		var value = val.split(this.getInputDelimiter());
-		eval("ins."+ref+" = value");
-		this.setValueAt(ins, value, ref);
-	} else {
-        var value = eval("ins."+ref+" = val");
-        this.setValueAt(ins, value, ref);
-	}
-	
-}
-
-Cos_List_XModelItem.prototype.getLocalValue = function(ins, refPath) {
-	if(!ins)
-		return null;
-	
-	var _ref = this.ref.replace("/", ".");	
-	var value =  eval("ins." + _ref);
-	if(value && this.getOutputType() ==_STRING_ && value instanceof Array) {
-		return value.join(this.getItemDelimiter());
-	} else {
-		return value;
-	}
+	return retval;
 }
 //	methods
 
@@ -360,7 +325,7 @@ Super_AnchorHelper_XFormItem.prototype.constructWidget = function () {
 	var widget = this.widget = new DwtButton(this.getForm(), this.getCssClass());
 	var height = this.getHeight();
 	var width = this.getWidth();
-	//if(!width) width = "100%";
+	if(!width) width = "100%";
 	var el = null;
 	if (width != null || height != null){
 		el = widget.getHtmlElement();
@@ -408,7 +373,6 @@ SuperWiz_Textfield_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePer
 
 Super_Textfield_XFormItem.prototype.initializeItems = function() {
 	var txtBoxLabel = this.getInheritedProperty("txtBoxLabel");
-    var labelCssStyle = this.getInheritedProperty("labelCssStyle");
 	var textFieldCssClass = this.getInheritedProperty("textFieldCssClass");
 	var textFieldCssStyle = this.getInheritedProperty("textFieldCssStyle");
 	var textFieldWidth = this.getInheritedProperty("textFieldWidth");
@@ -427,8 +391,7 @@ Super_Textfield_XFormItem.prototype.initializeItems = function() {
 			Super_XFormItem.updateCss.call(this,5);
 			Textfield_XFormItem.prototype.updateElement.call(this, value);
 		},
-		label:txtBoxLabel,
-        labelCssStyle:labelCssStyle,
+		label:txtBoxLabel,	
 		labelLocation:(txtBoxLabel ? _LEFT_ : _NONE_),
 		cssClass:textFieldCssClass,
 		cssStyle:textFieldCssStyle,
@@ -482,7 +445,6 @@ SuperWiz_Textarea_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePerm
 
 Super_Textarea_XFormItem.prototype.initializeItems = function() {
 	var txtBoxLabel = this.getInheritedProperty("txtBoxLabel");
-    var txtBoxLabelCssStyle = this.getInheritedProperty("txtBoxLabelCssStyle");
 	var textAreaCssClass = this.getInheritedProperty("textAreaCssClass");
 	var textAreaCssStyle = this.getInheritedProperty("textAreaCssStyle");
 	var textAreaWidth = this.getInheritedProperty("textAreaWidth");
@@ -500,7 +462,7 @@ Super_Textarea_XFormItem.prototype.initializeItems = function() {
 			Super_XFormItem.updateCss.call(this,5);
 			Textarea_XFormItem.prototype.updateElement.call(this, value);
 		},
-		label:txtBoxLabel,
+		label:txtBoxLabel,	
 		labelLocation:(txtBoxLabel ? _LEFT_ : _NONE_),
 		labelCssStyle: labelCssStyle,
 		cssClass:textAreaCssClass,
@@ -540,16 +502,14 @@ SuperWiz_Checkbox_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePerm
 
 Super_Checkbox_XFormItem.prototype.useParentTable = false;
 Super_Checkbox_XFormItem.prototype.numCols = 3;
-Super_Checkbox_XFormItem.prototype.colSizes = ["275px","275px","*"];
-Super_Checkbox_XFormItem.prototype.nowrap = false;
+Super_Checkbox_XFormItem.prototype.colSizes = ["275px","275px","150px"];
 Super_Checkbox_XFormItem.prototype.labelWrap = true;
-Super_Checkbox_XFormItem.prototype.checkboxSubLabel = null;
 
 Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
-	var checkboxSubLabel = this.getInheritedProperty("checkboxSubLabel");
-	var chkBox = {
-		type:_CHECKBOX_, ref:".",  labelCssClass:"gridGroupBodyLabel", subLabel:checkboxSubLabel,
+	
+	var chkBox = {	
+		type:_CHECKBOX_, ref:".", 
 		onChange:Composite_XFormItem.onFieldChange,
 		updateElement:function(value) {
 			Super_XFormItem.updateCss.call(this,5);
@@ -586,7 +546,7 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 		chkBox.label = checkBoxLabel;
 		chkBox.labelWrap = this.getInheritedProperty("labelWrap");
 		this.numCols = 3;
-		this.colSpan= this.getInheritedProperty("conSpan") || 3;
+		this.colSpan=3;
 	}
 	
 	var checkBoxLabelLocation = this.getInheritedProperty("checkBoxLabelLocation");
@@ -1044,7 +1004,7 @@ SuperWiz_Zimlet_Select_XFormItem.prototype.labelWidth = "50px";
 Super_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPER_SELECT1_", "super_select1", Super_Select1_XFormItem, Super_XFormItem);
 Super_Select1_XFormItem.prototype.labelCssClass = "xform_label_left";
-Super_Select1_XFormItem.prototype.labelCssStyle = "width:269px" ; // 6px for padding
+Super_Select1_XFormItem.prototype.labelCssStyle = "width:275px" ;
 Super_Select1_XFormItem.prototype.colSizes=["275px","150px"];
 Super_Select1_XFormItem.prototype.nowrap = false;
 Super_Select1_XFormItem.prototype.labelWrap = true;
@@ -1085,9 +1045,7 @@ Super_Select1_XFormItem.prototype.initializeItems = function() {
 	var inputSize = this.getInheritedProperty("inputSize");
 	if(inputSize)
 		slct.inputSize = inputSize;
-    var valueWidth = this.getInheritedProperty("valueWidth");
-    if(valueWidth)
-        slct.width =  valueWidth;
+
 	this.items = [slct,anchorHlpr];
 	Composite_XFormItem.prototype.initializeItems.call(this);
 	
@@ -1107,9 +1065,8 @@ Super_Select1_XFormItem.prototype.items = [];
 SuperWiz_Select1_XFormItem = function () {}
 XFormItemFactory.createItemType("_SUPERWIZ_SELECT1_", "superwiz_select1", SuperWiz_Select1_XFormItem, Super_Select1_XFormItem);
 SuperWiz_Select1_XFormItem.prototype.labelCssClass = "xform_label_left ZaWizLabel";
-SuperWiz_Select1_XFormItem.prototype.labelCssStyle = "width:194px" ; // for it has 6px padding
+SuperWiz_Select1_XFormItem.prototype.labelCssStyle = "width:200px" ;
 SuperWiz_Select1_XFormItem.prototype.colSizes=["250px","*"];
-SuperWiz_Select1_XFormItem.prototype.valueWidth = "auto";
 SuperWiz_Select1_XFormItem.prototype.nowrap = false;
 SuperWiz_Select1_XFormItem.prototype.labelWrap = true;
 SuperWiz_Select1_XFormItem.prototype.visibilityChecks = [ZaItem.hasWritePermission];
@@ -1186,7 +1143,7 @@ Super_Lifetime_XFormItem.prototype.nowrap = false;
 Super_Lifetime_XFormItem.prototype.labelWrap = true;
 Super_Lifetime_XFormItem.prototype.numCols = 4;
 Super_Lifetime_XFormItem.prototype.colSpan = 4;
-Super_Lifetime_XFormItem.prototype.colSizes =["275px","80px","120px","*"];
+Super_Lifetime_XFormItem.prototype.colSizes =["275px","80px","120px","150px"];
 Super_Lifetime_XFormItem.prototype.useParenttable = false;
 Super_Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Super_Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
@@ -1311,7 +1268,6 @@ SuperWiz_Lifetime1_XFormItem.prototype.colSizes =["200px","80px","120px","150px"
 
 Super_Lifetime1_XFormItem.prototype.initializeItems = function() {
 	var txtBoxLabel = this.getInheritedProperty("txtBoxLabel");
-    var labelCssStyle = this.getInheritedProperty("labelCssStyle");
 	var toolTip = this.getInheritedProperty("toolTipContent");
 	
 	var txtField =	{
@@ -1320,7 +1276,7 @@ Super_Lifetime1_XFormItem.prototype.initializeItems = function() {
 		toolTipContent: toolTip,
 		nowrap:this.getInheritedProperty("nowrap"),
 		labelWrap:this.getInheritedProperty("labelWrap"),		
-		labelCssStyle:labelCssStyle || this.getLabelCssStyle(),
+		labelCssStyle:this.getLabelCssStyle(),
 		labelLocation:(txtBoxLabel ? _LEFT_ : _NONE_),
 		cssClass:"admin_xform_number_input", 
 		getDisplayValue:function (itemVal) {
@@ -1415,7 +1371,6 @@ SuperWiz_Lifetime2_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePer
 
 Super_Lifetime2_XFormItem.prototype.initializeItems = function() {
 	var txtBoxLabel = this.getInheritedProperty("txtBoxLabel");
-    var labelCssStyle = this.getInheritedProperty("labelCssStyle");
 	var toolTip = this.getInheritedProperty("toolTipContent");
 	
 	var txtField =	{
@@ -1424,7 +1379,7 @@ Super_Lifetime2_XFormItem.prototype.initializeItems = function() {
 		toolTipContent: toolTip,
 		nowrap:this.getInheritedProperty("nowrap"),
 		labelWrap:this.getInheritedProperty("labelWrap"),		
-		labelCssStyle:labelCssStyle || this.getLabelCssStyle(),
+		labelCssStyle:this.getLabelCssStyle(),
 		labelLocation:(txtBoxLabel ? _LEFT_ : _NONE_),
 		cssClass:"admin_xform_number_input", 
 		getDisplayValue:function (itemVal) {
@@ -1485,8 +1440,8 @@ TopGrouper_XFormItem.prototype.numCols = 2;
 
 ZACheckbox_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZA_CHECKBOX_", "za_checkbox", ZACheckbox_XFormItem, Checkbox_XFormItem);
-//ZACheckbox_XFormItem.prototype.labelLocation = _RIGHT_;
-//ZACheckbox_XFormItem.prototype.align = _RIGHT_;
+ZACheckbox_XFormItem.prototype.labelLocation = _RIGHT_;
+ZACheckbox_XFormItem.prototype.align = _RIGHT_;
 
 ZATopGrouper_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZA_TOP_GROUPER_", "za_top_grouper", ZATopGrouper_XFormItem, TopGrouper_XFormItem);
@@ -1530,43 +1485,12 @@ ZATopGrouper_XFormItem.isGroupVisible = function(attrsArray, rightsArray,entry) 
 }
 ZAPlainGrouper_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZA_PLAIN_GROUPER_", "za_plain_grouper", ZAPlainGrouper_XFormItem, Group_XFormItem);
-if (!appNewUI) {
 ZAPlainGrouper_XFormItem.prototype.numCols = 2;
 ZAPlainGrouper_XFormItem.prototype.colSizes = ["275px","auto"];
 ZAPlainGrouper_XFormItem.prototype.cssClass = "PlainGrouperBorder";
 ZAPlainGrouper_XFormItem.isGroupVisible = ZATopGrouper_XFormItem.isGroupVisible;
-} else {
-ZAPlainGrouper_XFormItem.prototype.colSizes = "100%";
-ZAPlainGrouper_XFormItem.prototype.numCols = 1;
-ZAPlainGrouper_XFormItem.prototype.width = "100%";
-ZAPlainGrouper_XFormItem.prototype.displayGrid = true;
-ZAPlainGrouper_XFormItem.prototype.gridLabelCss = "gridGroupBodyLabel";
-ZAPlainGrouper_XFormItem.prototype.initializeItems = function () {
-    var gridLabelCss = this.getInheritedProperty("gridLabelCss");
-    var oldItems = this.getItems();
-    var subitems;
-    if(oldItems.length == 1 && oldItems[0].type == "group")  {
-        oldItems[0].displayGrid = this.getInheritedProperty("displayGrid");
-        if(oldItems[0].colSizes.length > 1)
-           oldItems[0].colSizes[oldItems[0].colSizes.length -1] = "100%";
-        //oldItems[0].colSizes = ["275px","100%"];
-        subitems = oldItems[0].items;
-    } else  subitems = oldItems;
-    for(var i = 0; i < subitems.length; i++) {
-        subitems[i].displayGrid = false;
-        if(subitems[i].label || subitems[i].txtBoxLabel)
-            //subitems[i].labelCssStyle = "text-align:left;background-color:#BBB;";
-            subitems[i].labelCssClass = gridLabelCss;
-    }
-    Group_XFormItem.prototype.initializeItems.call(this);
-}
-
-}
 
 ZAWizTopGrouper_XFormItem = function() {}
-if (appNewUI) {
-XFormItemFactory.createItemType("_ZAWIZ_TOP_GROUPER_", "zawiz_top_grouper", ZAWizTopGrouper_XFormItem, BaseTopGrouper_XFormItem);
-} else
 XFormItemFactory.createItemType("_ZAWIZ_TOP_GROUPER_", "zawiz_top_grouper", ZAWizTopGrouper_XFormItem, TopGrouper_XFormItem);
 ZAWizTopGrouper_XFormItem.prototype.numCols = 2;
 ZAWizTopGrouper_XFormItem.prototype.colSizes = ["200px","auto"];
@@ -1634,27 +1558,6 @@ ZAGroup_XFormItem.isGroupVisible = function(entry, attrsArray, rightsArray) {
 	return false; 
 }
 
-ZAGroup_XFormItem.prototype.initializeItems = function () {
-    if(appNewUI) {
-        var gridLabelCss = this.getInheritedProperty("gridLabelCss") || "gridGroupBodyLabel";
-        this.displayGrid = this.getInheritedProperty("displayGrid") || true;
-        this.width = this.width || "100%";
-        var oldItems = this.getItems();
-        if(oldItems) {
-            for(var i = 0; i < oldItems.length; i++) {
-                oldItems[i].displayGrid = oldItems[i].displayGrid || false;
-                if(oldItems[i].type == "radio")
-                    continue;  // don't deal with _RADIO_
-                if(oldItems[i].label || oldItems[i].txtBoxLabel)
-                    //oldItems[i].labelCssStyle = "text-align:left; background-color:#BBB;";
-                    oldItems[i].labelCssClass = gridLabelCss;
-            }
-        }
-    }
-
-    Group_XFormItem.prototype.initializeItems.call(this);
-}
-
 ZAWizGroup_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZAWIZGROUP_", "zawizgroup", ZAWizGroup_XFormItem, Group_XFormItem);
 ZAWizGroup_XFormItem.prototype.numCols = 2;
@@ -1700,10 +1603,6 @@ ZATabCase_XFormItem.prototype.getHeaderLevel = function () {
 
 ZATabCase_XFormItem.prototype.getHMargin = function () {
     return this.getInheritedProperty("hMargin") || 0;
-}
-
-ZATabCase_XFormItem.prototype.getCustomPaddingStyle = function () {
-    return this.getInheritedProperty("paddingStyle");
 }
 
 ZATabCase_XFormItem.prototype.getCustomHeight = function () {
@@ -1770,9 +1669,7 @@ ZATabCase_XFormItem.prototype.getCustomWidth = function () {
 		if(totalWidth<=0)
 			return "100%";
 		else {
-            var res = totalWidth - this.getHMargin();
-            if(appNewUI) res = res - 15;       // 15px is pandding width
-			return res;
+			return totalWidth - this.getHMargin();
 		}
 	} catch (ex) {
         

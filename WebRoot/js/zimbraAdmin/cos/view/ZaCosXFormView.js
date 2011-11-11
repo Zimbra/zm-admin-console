@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -139,8 +139,7 @@ function(entry) {
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
 
 	this._localXForm.setInstance(this._containedObject);
-    if (!appNewUI)
-	    this.updateTab();
+	this.updateTab();
 }
 
 ZaCosXFormView.gotSkins = function () {
@@ -213,7 +212,6 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	ZaCos.A_zimbraDumpsterEnabled,
 	ZaCos.A_zimbraFeatureMailSendLaterEnabled,
 	ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
-    ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
 	ZaCos.A_zimbraFeatureSMIMEEnabled,
 	ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled
 ];
@@ -368,14 +366,11 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
         this.tabChoices.push({value:_tab7, label:ZaMsg.TABT_Advanced});
     }
     
-    
-    var cases = [];
-	var case1 = {type:_ZATABCASE_,caseKey:_tab1,numCols:1,
-        paddingStyle:(appNewUI? "padding-left:15px;":null), width:(appNewUI? "98%":"100%"), cellpadding:(appNewUI?2:0)
-    };
+	var cases = [];
+	var case1 = {type:_ZATABCASE_,caseKey:_tab1,numCols:1,colSizes:["auto"]};
 
     var case1Items = [
-		{type:_ZAGROUP_, numCols:2,colSizes: ["275px","auto"],
+		{type:_ZAGROUP_,
 			items:[
 				{ref:ZaCos.A_name, type:_INPUT_,
 					enableDisableChecks:[[ZaItem.hasRight,ZaCos.RENAME_COS_RIGHT]],
@@ -390,9 +385,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 	cases.push(case1);
 
     if(_tab2) {
-        var case2 = {type:_ZATABCASE_,caseKey:_tab2,numCols:1,colSizes:["auto"],
-            paddingStyle:(appNewUI? "padding-left:15px;":null), width:(appNewUI? "98%":"100%"), cellpadding:(appNewUI?2:0),
-            id:"cos_form_features_tab"};
+        var case2 = {type:_ZATABCASE_,caseKey:_tab2,numCols:1,colSizes:["auto"],id:"cos_form_features_tab"};
 
         var case2Items = [
             {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraMajorFeature, id:"cos_form_features_major",
@@ -402,7 +395,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 						ZaCos.A_zimbraFeatureContactsEnabled,
 						ZaCos.A_zimbraFeatureCalendarEnabled,
 						ZaCos.A_zimbraFeatureTasksEnabled,
-						ZaCos.A_zimbraFeatureBriefcasesEnabled,
+						//ZaCos.A_zimbraFeatureNotebookEnabled,
+						//ZaCos.A_zimbraFeatureIMEnabled,
 						ZaCos.A_zimbraFeatureOptionsEnabled
 					]]
 				],
@@ -498,14 +492,12 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 				visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 					[
 						ZaCos.A_zimbraFeatureGroupCalendarEnabled,
-						ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
-                        ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
+						ZaCos.A_zimbraFeatureFreeBusyViewEnabled
 					]]
 				],
                 items:[
                     {ref:ZaCos.A_zimbraFeatureGroupCalendarEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled,label:ZaMsg.LBL_zimbraFeatureGroupCalendarEnabled, trueValue:"TRUE", falseValue:"FALSE"},
-		    {ref:ZaCos.A_zimbraFeatureFreeBusyViewEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, label:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, trueValue:"TRUE", falseValue:"FALSE"},
-                    {ref:ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, trueValue:"TRUE", falseValue:"FALSE"}
+		    {ref:ZaCos.A_zimbraFeatureFreeBusyViewEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, label:ZaMsg.LBL_zimbraFeatureFreeBusyViewEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
             },
             //{type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraIMFeature, id:"cos_form_features_im",
@@ -563,9 +555,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
     }
 
     if(_tab3) {
-        var case3 = {type:_ZATABCASE_,caseKey:_tab3, id:"cos_for_prefs_tab",
-            paddingStyle:(appNewUI? "padding-left:15px;":null), width:(appNewUI? "98%":"100%"), cellpadding:(appNewUI?2:0),
-            numCols:1};
+        var case3 = {type:_ZATABCASE_,caseKey:_tab3, id:"cos_for_prefs_tab",numCols:1};
         var case3Items = [
         {type:_SPACER_,height:"10px", colSpan: "*" },
             {type:_GROUP_, cssClass:"ZaHeader2", colSpan: "*", id:"cos_form_prefs_general_header",
@@ -589,8 +579,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 ],
                 cssStyle:"padding-top:5px; padding-bottom:5px"
             },
-            {type:_ZA_PLAIN_GROUPER_, id:"account_prefs_general", colSizes:["auto"],numCols:1, items :[
-                { type:_GROUP_, numCols: 2, colSizes:["275px", "auto"], width:"100%", colSpan: "*", items:[
+            {type:_ZA_PLAIN_GROUPER_, id:"account_prefs_general", items :[
                 {ref:ZaCos.A_zimbraPrefClientType, type:_OSELECT1_, msgName:ZaMsg.MSG_zimbraPrefClientType,
                     label:ZaMsg.LBL_zimbraPrefClientType, labelLocation:_LEFT_
                 },
@@ -615,7 +604,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     trueValue:"TRUE", falseValue:"FALSE"
                 },
                 {ref:ZaCos.A_zimbraPrefAdminConsoleWarnOnExit, type:_CHECKBOX_,
-                    msgName:ZabMsg.LBL_zimbraPrefAdminConsoleWarnOnExit,label:ZabMsg.LBL_zimbraPrefAdminConsoleWarnOnExit,
+                    msgName:ZaMsg.LBL_zimbraPrefAdminConsoleWarnOnExit,label:ZaMsg.LBL_zimbraPrefAdminConsoleWarnOnExit,
                     trueValue:"TRUE", falseValue:"FALSE"
                 },  
                 {ref:ZaCos.A_zimbraPrefShowSelectionCheckbox, type:_CHECKBOX_,
@@ -637,7 +626,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                      labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true,
                      choices: ZaSettings.getLocaleChoices()
                 }
-            ]}]},
+            ]},
             {type:_ZA_TOP_GROUPER_, id:"cos_prefs_standard_client",label:ZaMsg.NAD_MailOptionsStandardClient,
             	visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 					[
@@ -671,8 +660,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 ],
                 cssStyle:"padding-top:5px; padding-bottom:5px"
             },
-            {type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_mail_general", colSizes:["auto"],numCols:1, items :[
-                { type:_GROUP_, numCols: 2, colSizes:["275px", "auto"], width:"100%", colSpan: "*", items:[
+            {type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_mail_general",items :[
                 {ref:ZaCos.A_zimbraPrefMessageViewHtmlPreferred, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraPrefMessageViewHtmlPreferred,
                     label:ZaMsg.LBL_zimbraPrefMessageViewHtmlPreferred,
@@ -695,14 +683,9 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     msgName:ZaMsg.LBL_zimbraPrefMailToasterEnabled,
                     label:ZaMsg.LBL_zimbraPrefMailToasterEnabled,
                     trueValue:"TRUE", falseValue:"FALSE"
-                },
-		        {ref:ZaCos.A_zimbraPrefMessageIdDedupingEnabled, type:_CHECKBOX_,
-                    msgName:ZaMsg.LBL_zimbraPrefMessageIdDedupingEnabled,
-                    label:ZaMsg.LBL_zimbraPrefMessageIdDedupingEnabled,
-                    trueValue:"TRUE", falseValue:"FALSE"
                 }
 
-            ]}]},
+            ]},
             {type:_ZA_TOP_GROUPER_, id:"cos_prefs_mail_receiving",label:ZaMsg.NAD_MailOptionsReceiving,
             	visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 					[
@@ -836,8 +819,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 ],
                 cssStyle:"padding-top:5px; padding-bottom:5px"
             },
-            {type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_contacts_general", colSizes:["auto"],numCols:1, items :[
-                { type:_GROUP_, numCols: 2, colSizes:["275px", "auto"], width:"100%", colSpan: "*", items:[
+            {type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_contacts_general", items :[
                 {ref:ZaCos.A_zimbraPrefAutoAddAddressEnabled, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraPrefAutoAddAddressEnabled,
                     label:ZaMsg.LBL_zimbraPrefAutoAddAddressEnabled, trueValue:"TRUE", falseValue:"FALSE"
@@ -846,7 +828,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     msgName:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled,
                     label:ZaMsg.LBL_zimbraPrefGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE"
                 }
-            ]}]},
+            ]},
             {type:_GROUP_, cssClass:"ZaHeader2", colSpan: "*", id:"cos_form_prefs_calendar_header",
 				visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, 
 					[
@@ -877,8 +859,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 cssStyle:"padding-top:5px; padding-bottom:5px"
             },
 
-            {type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_calendar_general",colSizes:["auto"],numCols:1, items :[
-                { type:_GROUP_, numCols: 2, colSizes:["275px", "auto"], width:"100%", colSpan: "*", items:[
+            {type:_ZA_PLAIN_GROUPER_, id:"cos_prefs_calendar_general",items :[
                 {ref:ZaCos.A_zimbraPrefTimeZoneId, type:_OSELECT1_,
                      msgName:ZaMsg.MSG_zimbraPrefTimeZoneId,label:ZaMsg.LBL_zimbraPrefTimeZoneId,
                      labelLocation:_LEFT_,
@@ -996,7 +977,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     msgName:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,
                     label:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar, trueValue:"TRUE", falseValue:"FALSE"
                 }
-            ]}]}
+            ]}
         ];
 
         case3.items = case3Items;
@@ -1034,7 +1015,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
     if(_tab5) {
         var case5 = {type:_ZATABCASE_, caseKey:_tab5};
         var case5Items = [
-            {type:_ZAGROUP_, numCols:1,colSizes:["auto"], displayGrid:false,
+            {type:_ZAGROUP_, numCols:1,colSizes:["auto"],
                 items: [
                     {type: _OUTPUT_, value: ZaMsg.COS_LimitZimletsTo,cssStyle:"margin-left: 275px;" },
                     {type:_ZA_ZIMLET_SELECT_COMBO_,
@@ -1057,7 +1038,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
     if(_tab6) {
         var case6 = {type:_ZATABCASE_, numCols:1,caseKey:_tab6};
         var case6Items = [
-            {type:_ZAGROUP_, numCols:1,colSizes:["auto"], displayGrid:false,
+            {type:_ZAGROUP_, numCols:1,colSizes:["auto"],
                 items: [
                     {type:_ZASELECT_RADIO_,
                         selectRef:ZaCos.A_zimbraMailHostPool,
@@ -1076,11 +1057,9 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
         case6.items = case6Items;
         cases.push(case6);
     }
-    
+
     if(_tab7) {
-        var case7 = {type:_ZATABCASE_, numCols:1, colSizes:["auto"], caseKey:_tab7,
-            paddingStyle:(appNewUI? "padding-left:15px;":null), width:(appNewUI? "98%":"100%"), cellpadding:(appNewUI?2:0),
-            id:"cos_form_advanced_tab"};
+        var case7 = {type:_ZATABCASE_, numCols:1, colSizes:["auto"], caseKey:_tab7, id:"cos_form_advanced_tab"};
         var case7Items = [
             { type: _DWT_ALERT_,
               style: DwtAlert.WARNING,
@@ -1218,33 +1197,33 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraMinPwdLength, 
 			type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraMinPwdLength,
 			label:ZaMsg.LBL_zimbraMinPwdLength, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
-			visibilityChecks:[ZaItem.hasWritePermission],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+			visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
 		    },
                     {ref:ZaCos.A_zimbraMaxPwdLength, 
 			type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraMaxPwdLength,
 			label:ZaMsg.LBL_zimbraMaxPwdLength, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
-			visibilityChecks:[ZaItem.hasWritePermission],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+			visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
 		    },
 
                     {ref:ZaCos.A_zimbraPasswordMinUpperCaseChars, 
 			type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraPasswordMinUpperCaseChars,
 			label:ZaMsg.LBL_zimbraPasswordMinUpperCaseChars, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
-			visibilityChecks:[ZaItem.hasWritePermission],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+			visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
 		    },
                     {ref:ZaCos.A_zimbraPasswordMinLowerCaseChars, 
 			type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraPasswordMinLowerCaseChars,
 			label:ZaMsg.LBL_zimbraPasswordMinLowerCaseChars, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
-			visibilityChecks:[ZaItem.hasWritePermission],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+			visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
 		    },
                     {ref:ZaCos.A_zimbraPasswordMinPunctuationChars, 
 			type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraPasswordMinPunctuationChars,
 			label:ZaMsg.LBL_zimbraPasswordMinPunctuationChars, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
-			visibilityChecks:[ZaItem.hasWritePermission],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+			visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
 	 	    },
                     {ref:ZaCos.A_zimbraPasswordMinNumericChars, 
 			type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraPasswordMinNumericChars,
 			label:ZaMsg.LBL_zimbraPasswordMinNumericChars, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
-			visibilityChecks:[ZaItem.hasWritePermission],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+			visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
 		    },
 
                     {ref:ZaCos.A_zimbraMinPwdAge, 
@@ -1304,7 +1283,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     }
                 ]
             },
-            {type:_ZA_TOP_GROUPER_, id:"cos_timeout_settings",
+            {type:_ZA_TOP_GROUPER_,
                 label:ZaMsg.NAD_TimeoutGrouper,
                 items: [
                     {ref:ZaCos.A_zimbraAdminAuthTokenLifetime, type:_LIFETIME_, msgName:ZaMsg.MSG_zimbraAdminAuthTokenLifetime,label:ZaMsg.LBL_zimbraAdminAuthTokenLifetime,labelLocation:_LEFT_},
@@ -1312,7 +1291,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraMailIdleSessionTimeout, type:_LIFETIME_, msgName:ZaMsg.MSG_zimbraMailIdleSessionTimeout,label:ZaMsg.LBL_zimbraMailIdleSessionTimeout,labelLocation:_LEFT_}
                 ]
             },
-            {type:_ZA_TOP_GROUPER_, id:"cos_mail_retention_settings",
+            {type:_ZA_TOP_GROUPER_,
                 label:ZaMsg.NAD_MailRetentionGrouper,
                 items: [
                     { type: _DWT_ALERT_,
@@ -1351,16 +1330,11 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 				],
 				cssStyle:"padding-top:5px; padding-bottom:5px"
 			},
-			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", id:"xform_tabbar", cssStyle: (appNewUI? "display:none;":"")},
+			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", id:"xform_tabbar"},
 			{type:_SWITCH_, align:_LEFT_, valign:_TOP_, items:cases}
 	];		
 };
 ZaTabView.XFormModifiers["ZaCosXFormView"].push(ZaCosXFormView.myXFormModifier);
-
-ZaCosXFormView.prototype.getTabChoices =
-function() {
-    return this.tabChoices;
-}
 
 ZaCosXFormView.isAllAuthfromInternal =
 function() {

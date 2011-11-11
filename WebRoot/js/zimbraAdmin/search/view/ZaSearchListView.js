@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -32,8 +32,7 @@ ZaSearchListView = function(parent) {
 		className:className, 
 		posStyle:posStyle, 
 		headerList:headerList,
-		id:ZaId.TAB_SEARCH_MANAGE,
-        scrollLoading:true
+		id:ZaId.TAB_SEARCH_MANAGE
 	});
 
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
@@ -111,13 +110,9 @@ function(account, now, isDragProxy) {
 						html[idx++] = AjxImg.getImageHtml("AdminUser");
 					} else if (account.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] == "TRUE") {
 						html[idx++] = AjxImg.getImageHtml("DomainAdminUser");
-					} else if (account.attrs[ZaAccount.A_zimbraIsSystemAccount] == "TRUE") {
-						html[idx++] = AjxImg.getImageHtml("SpecialAccount");
 					} else if (account.attrs[ZaAccount.A_zimbraIsSystemResource] == "TRUE") {
 						html[idx++] = AjxImg.getImageHtml("SystemResource");
-                    } else if (account.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] == "TRUE") {
-						html[idx++] = AjxImg.getImageHtml("AccountExternalVirtual");
-					} else {
+                    } else {
 						html[idx++] = AjxImg.getImageHtml("Account");
 					}                          
 				break;
@@ -233,152 +228,3 @@ function(columnItem, bSortAsc) {
 	}
 }
 
-/**
-* @class ZaSearchXFormView
-* @contructor
-* @param parent
-* @author Ming Zhang
-**/
-function ZaSearchXFormView (parent) {
-	ZaTabView.call(this, parent,"ZaSearchXFormView", "DwtTabView ZaXFormListView");
-	this.initForm(ZaSearchEdit.myXModel,this.getMyXForm());
-	this._localXForm.removeListener(DwtEvent.XFORMS_VALUE_CHANGED, this.formChangeListener);
-//	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaBackupsXFormView.prototype.handleXFormChange));
-	this._localXForm.setController(ZaApp.getInstance());
-    this._localXForm.setInstance({});
-   // this.widget = this.getItemsById("searchReusltList").getWidget();
-}
-
-ZaSearchXFormView.prototype = new ZaTabView();
-ZaSearchXFormView.prototype.constructor = ZaSearchXFormView;
-ZaTabView.XFormModifiers["ZaSearchXFormView"] = new Array();
-
-ZaSearchXFormView.labelSelectionListener = function (ev) {
-	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
-		if(ev.item) {
-			this._selectedItem = ev.item;
-			ZaApp.getInstance().getAccountViewController().show(ev.item);
-		}
-	}
-}
-
-ZaSearchXFormView.prototype.getQueryField = function () {
-    return this._localXForm.getInstanceValue(ZaSearchEdit.A2_currentQuery);
-}
-
-ZaSearchXFormView.prototype.setQueryField = function (query) {
-    this._localXForm.setInstanceValue(query, ZaSearchEdit.A2_currentQuery);
-}
-
-ZaSearchXFormView.createPopupMenu = function (listWidget) {
-	/*ZaApp.getInstance().getCurrentController()._actionMenu = listWidget.actionMenu = new ZaPopupMenu(listWidget, "ActionMenu", null, ZaApp.getInstance().getCurrentController()._popupOperations);
-	listWidget.addActionListener(new AjxListener(ZaApp.getInstance().getCurrentController(), ZaApp.getInstance().getCurrentController().listActionListener));
-	listWidget.xFormItem = this;*/
-    this.getForm().parent.widget = listWidget;
-}
-
-ZaSearchXFormView.getCustomHeight = function () {
-	try {
-		var form = this.getForm();
-		var formParentElement = this.getForm().parent.getHtmlElement();
-		var totalHeight = parseInt(formParentElement.style.height);
-		if(isNaN(totalHeight)) {
-			totalHeight = formParentElement.clientHeight ? formParentElement.clientHeight : formParentElement.offsetHeight;
-		}
-		var formHeaders = form.getItemsById("xform_header");
-		var headerHeight = 0;
-		if(formHeaders) {
-			var formHeader = formHeaders[0];
-			if(formHeader) {
-				headerHeight = formHeader.getElement().clientHeight ? formHeader.getElement().clientHeight : formHeader.getElement().offsetHeight;
-			}
-		}
-		if(totalHeight<=0)
-			return "100%";
-		else
-			return totalHeight - headerHeight - 2;
-	} catch (ex) {
-
-	}
-	return "100%";
-};
-
-ZaSearchXFormView.getCustomWidth = function () {
-	try {
-
-		var formParentElement = this.getForm().parent.getHtmlElement();
-		var totalWidth = parseInt(formParentElement.style.width);
-		if(isNaN(totalWidth)) {
-			totalWidth = formParentElement.clientWidth ? formParentElement.clientWidth : formParentElement.offsetWidth;
-		}
-		//var tabBarHeight = this.getForm().getItemsById("xform_tabbar")[0].getElement().offsetHeight;
-		if(totalWidth<=0)
-			return "100%";
-		else
-			return totalWidth;
-	} catch (ex) {
-
-	}
-	return "100%";
-};
-
-ZaSearchXFormView.doQuickSearch = function () {
-    var form = this.getForm();
-    var currentQueryValue = form.parent.getQueryField();
-    currentQueryValue = currentQueryValue ? currentQueryValue: "";
-    var searchField = ZaApp.getInstance().getSearchListController()._searchField;
-    searchField.startSearch(currentQueryValue);
-}
-
-ZaSearchXFormView.doSaveSearch = function () {
-    var form = this.getForm();
-    var currentQueryValue = form.parent.getQueryField();
-    currentQueryValue = currentQueryValue ? currentQueryValue: "";
-    var searchField = ZaApp.getInstance().getSearchListController()._searchField;
-    searchField.doSaveSearch(currentQueryValue);
-}
-
-ZaSearchXFormView.myXFormModifier = function(xFormObject) {
-	xFormObject.tableCssStyle="width:100%;overflow:auto;";
-
-
-	var headerList = ZaSearchListView.prototype._getHeaderList();
-	xFormObject.items = [
-		{type:_GROUP_, visibilityChecks:[], colSizes:["*","70px","90px"], colSpan:2, numCols:3, width:"100%", id:"xform_header",
-			items:[
-				{type:_TEXTFIELD_, width:"100%", ref:ZaSearchEdit.A2_currentQuery,
-					containerCssClass:"search_field_container", bmolsnr: true,
-					cssClass:"search_input", visibilityChecks:[],
-                    enableDisableChecks:false
-				},
-				{type:_DWT_BUTTON_, label:ZaMsg.LBL_QuickSearch, name: "SearchButton", autoPadding: false,
-						onActivate:ZaSearchXFormView.doQuickSearch, visibilityChecks:[], enableDisableChecks:[]},
-				{type:_DWT_BUTTON_, label:ZaMsg.LBL_SaveSearch, name: "saveSearchButton",  autoPadding: false,
-						onActivate:ZaSearchXFormView.doSaveSearch, visibilityChecks:[],
-                        visibilityChecks:["(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.SAVE_SEARCH] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI])"],
-                        enableDisableChangeEventSources:[ZaSearchEdit.A2_currentQuery],enableDisableChecks:[[XForm.checkInstanceValueNotEmty,ZaSearchEdit.A2_currentQuery]]}
-			]
-		},
-
-	    {ref:ZaSearchEdit.A2_searchResult, colSpan:2,cssClass: "ZaFullPageXFormListView", id:"searchReusltList",
-	    	type:_DWT_LIST_,
-            createPopupMenu: ZaSearchXFormView.createPopupMenu,
-	   		multiselect:true, widgetClass:ZaSearchListView,headerList:headerList,getCustomHeight:ZaSearchXFormView.getCustomHeight,
-	   		getCustomWidth:ZaSearchXFormView.getCustomWidth, visibilityChecks:[], enableDisableChecks:[]
-	   	}
-	];
-};
-ZaTabView.XFormModifiers["ZaSearchXFormView"].push(ZaSearchXFormView.myXFormModifier);
-
-ZaSearchEdit = function () {
-}
-
-ZaSearchEdit.A2_currentQuery = "currentQuery";
-ZaSearchEdit.A2_searchResult = "searchResult";
-
-ZaSearchEdit.myXModel = {
-    items: [
-        {id: ZaSearchEdit.A2_currentQuery, type:_STRING_},
-        {id: ZaSearchEdit.A2_searchResult, type:_LIST_}
-    ]
-}
