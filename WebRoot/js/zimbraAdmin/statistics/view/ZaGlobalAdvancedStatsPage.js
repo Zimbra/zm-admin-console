@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -453,16 +453,14 @@ ZaGlobalAdvancedStatsPage._getCounters = function(hostname, group, counterSelect
     var cb = function(response) {
         var soapResponse = response.getResponse().Body.GetLoggerStatsResponse;
         var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
-        if (statCounters) {
-            for (var i = 0, j = statCounters.length; i < j; i++) {
-                var option = document.createElement("option");
-                option.value = statCounters[i].name;
-                ZaGlobalAdvancedStatsPage.setText(option, statCounters[i].name);
-                if (statCounters[i].type) {
-                    option.columnUnit = statCounters[i].type;
-                }
-                counterSelect.appendChild(option);
+        for (var i = 0, j = statCounters.length; i < j; i++) {
+            var option = document.createElement("option");
+            option.value = statCounters[i].name;
+            ZaGlobalAdvancedStatsPage.setText(option, statCounters[i].name);
+            if (statCounters[i].type) {
+                option.columnUnit = statCounters[i].type;
             }
+            counterSelect.appendChild(option);
         }
     };
     
@@ -540,10 +538,8 @@ ZaGlobalAdvancedStatsPage.getCounters = function(hostname, group) {
     var soapResponse = ZaRequestMgr.invoke(csfeParams, reqMgrParams).Body.GetLoggerStatsResponse;
     var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
     var counters = [];
-    if ( statCounters ) {
-        for (var i = 0, j = statCounters.length; i < j; i++) {
-             counters.push(statCounters[i].name);
-        }
+    for (var i = 0, j = statCounters.length; i < j; i++) {
+        counters.push(statCounters[i].name);
     }
     return counters;
 }

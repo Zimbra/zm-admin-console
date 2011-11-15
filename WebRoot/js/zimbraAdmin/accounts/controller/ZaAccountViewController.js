@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -38,7 +38,6 @@ ZaAccountViewController.helpURL = "managing_accounts/editing_accounts.htm";
 ZaController.changeActionsStateMethods["ZaAccountViewController"] = new Array();
 ZaController.setViewMethods["ZaAccountViewController"] = new Array();
 ZaController.initToolbarMethods["ZaAccountViewController"] = new Array();
-ZaController.initPopupMenuMethods["ZaAccountViewController"] = new Array();
 ZaXFormViewController.preSaveValidationMethods["ZaAccountViewController"] = new Array();
 //public methods
 
@@ -88,48 +87,13 @@ function () {
 	}   			    	
 	this._toolbarOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));    	    	
 	
-	//this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener));
-	//this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
+	this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener));		
+	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	this._toolbarOperations[ZaOperation.REINDEX_MAILBOX] = new ZaOperation(ZaOperation.REINDEX_MAILBOX, ZaMsg.ACTBB_ReindexMbx, ZaMsg.ACTBB_ReindexMbx_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaAccountViewController.prototype._reindexMbxListener));
 	this._toolbarOrder.push(ZaOperation.REINDEX_MAILBOX);
 					
 }
 ZaController.initToolbarMethods["ZaAccountViewController"].push(ZaAccountViewController.initToolbarMethod);
-
-ZaAccountViewController.initPopupMenuMethod =
-function () {
-	var showNewAccount = false;
-	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
-		showNewAccount = true;
-	} else {
-		var domainList = ZaApp.getInstance().getDomainList().getArray();
-		var cnt = domainList.length;
-		for(var i = 0; i < cnt; i++) {
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ACCOUNT,domainList[i])) {
-				showNewAccount = true;
-				break;
-			}
-		}
-	}
-
-    this._popupOperations[ZaOperation.SAVE]= new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-    this._popupOperations[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));
-
-	if(showNewAccount) {
-        this._popupOperations[ZaOperation.NEW_WIZARD] = new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", new AjxListener(this, ZaAccountViewController.prototype._newButtonListener));
-
-	}
-    this._popupOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
-    this._popupOperations[ZaOperation.REINDEX_MAILBOX] = new ZaOperation(ZaOperation.REINDEX_MAILBOX, ZaMsg.ACTBB_ReindexMbx, ZaMsg.ACTBB_ReindexMbx_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaAccountViewController.prototype._reindexMbxListener));
-
-    this._popupOrder.push(ZaOperation.NEW_WIZARD);
-    this._popupOrder.push(ZaOperation.SAVE);
-    this._popupOrder.push(ZaOperation.CLOSE);
-    this._popupOrder.push(ZaOperation.DELETE);
-    this._popupOrder.push(ZaOperation.REINDEX_MAILBOX);
-
-}
-ZaController.initPopupMenuMethods["ZaAccountViewController"].push(ZaAccountViewController.initPopupMenuMethod);
 
 /**
 * This listener is called when the Delete button is clicked. 
@@ -163,14 +127,13 @@ ZaAccountViewController.setViewMethod =
 function(entry) {
 	try {
 		this._initToolbar();
-        this._initPopupMenu();
 		//make sure these are last
 		this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
 		this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
 		this._toolbarOrder.push(ZaOperation.NONE);
 		this._toolbarOrder.push(ZaOperation.HELP);
 		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder, null, null, ZaId.VIEW_ACCT);
-
+		
 		if(!entry[ZaModel.currentTab])
 			entry[ZaModel.currentTab] = "1";
 	
@@ -184,16 +147,14 @@ function(entry) {
 	  		this._contentView = this._view = new this.tabConstructor(this._container,entry);
 			var elements = new Object();
 			elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-            if(!appNewUI) {
-                elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;	
+				
+			var tabParams = {
+				openInNewTab: true,
+				tabId: this.getContentViewId()
+			}
+    		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
 
-                var tabParams = {
-                    openInNewTab: true,
-                    tabId: this.getContentViewId()
-                }
-                ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
-            } else
-                ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
 	    	//associate the controller with the view by viewId
 		    ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 			//ZaApp.getInstance().pushView(ZaZimbraAdmin._ACCOUNT_VIEW);
@@ -210,13 +171,13 @@ function(entry) {
 				
 			}
 		}
-
+		
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
 		if(!entry.id) {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(false);  			
 		} else {
 			this._toolbar.getButton(ZaOperation.DELETE).setEnabled(true);  				
-		}
+		}	
 		this._view.setDirty(false);
 		entry.attrs[ZaAccount.A_password] = null; //get rid of VALUE-BLOCKED
 		entry[ZaModel.currentTab] = "1";
@@ -233,6 +194,10 @@ ZaController.setViewMethods["ZaAccountViewController"].push(ZaAccountViewControl
 ZaAccountViewController.changeActionsStateMethod = function () {
 	if(!this._currentObject)
 		return;
+		
+	if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,this._currentObject))	{
+		this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
+	}
 
 	if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
@@ -547,10 +512,10 @@ function () {
 			}
 	
 			if(failedAliasesCnt == 1) {
-				this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.WARNING_ALIAS_EXISTS, [failedAliases]), "", DwtMessageDialog.WARNING_STYLE, ZabMsg.zimbraAdminTitle);
+				this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.WARNING_ALIAS_EXISTS, [failedAliases]), "", DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
 				this._errorDialog.popup();			
 			} else if(failedAliasesCnt > 1) {
-				this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.WARNING_ALIASES_EXIST, [failedAliases]), "", DwtMessageDialog.WARNING_STYLE, ZabMsg.zimbraAdminTitle);
+				this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.WARNING_ALIASES_EXIST, [failedAliases]), "", DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
 				this._errorDialog.popup();			
 			}
 		} catch (ex) {
@@ -585,14 +550,8 @@ function () {
 		}
 	}
 
-    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.AccountModified,[this._currentObject.name]));
     //TODO: may need to check if the account type update is needed. update the domain account limits object
     return true;
-}
-
-ZaAccountViewController.prototype.getPopUpOperation =
-function() {
-    return this._popupOperations;
 }
 
 // new button was pressed

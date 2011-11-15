@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -54,9 +54,6 @@ ZaServerStatsView = function(parent) {
         this._mbxPage = new ZaServerMBXStatsPage (this);
         ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
    // }
-    if(appNewUI){
-        this._tabBar.setVisible(false); //new UI doesn't need to show the inner tabbar
-    }
 }
 
 ZaServerStatsView.prototype = new DwtTabView;
@@ -235,9 +232,7 @@ function(entry) {
 		szTitle = szTitle + entry.name;
 	}
 	this.titleCell.innerHTML = szTitle;
-    if (!appNewUI){
-		this.updateTab (); //new UI doesn't have the top level tab
-	}
+	this.updateTab ();
 }
 
 ZaServerStatsView.prototype._resetTabSizes = 
@@ -289,29 +284,7 @@ function() {
 }
 
 
-ZaServerStatsView.prototype.getTabChoices =
-function() {
-    //var innerTabs = this._tab;
-    var innerTabs = [ZaMsg.TABT_Disk, ZaMsg.TABT_Session, ZaMsg.TABT_MBX];
 
-    var entry = this._containedObject;
-    if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
-        innerTabs.push(ZaMsg.TABT_InMsgs);
-        innerTabs.push(ZaMsg.TABT_InData);
-        innerTabs.push(ZaMsg.TABT_Spam_Activity);
-    }
-
-    var tabChoices = [];
-    //index of _tabs is based on 1 rather than 0
-    for (var i = 1; i <= innerTabs.length; i++){
-        tabChoices.push({ value: i,
-                            label: innerTabs[i-1]
-                            //label: innerTabs[i].title
-                        });
-    }
-
-    return tabChoices;
-}
 
 
 

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -70,10 +70,6 @@ function (ev) {
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_membersSelected, null);
 	}
-
-    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
-		ZaDLXFormView.removeMembers.call(this, ev);
-	}
 }
 
 ZaDLXFormView.nonmemberSelectionListener =    
@@ -84,10 +80,6 @@ function (ev) {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_nonmembersSelected, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_nonmembersSelected, null);
-	}
-
-    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
-		ZaAccountMemberOfListView._addSelectedLists(this.getForm(), arr);
 	}
 }
 
@@ -100,10 +92,6 @@ function (ev) {
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_memberPoolSelected, null);
 	}
-
-    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
-		ZaDLXFormView.addAddressesToMembers.call(this, ev);
-	}
 }
 
 ZaDLXFormView.directMemberSelectionListener =    
@@ -114,10 +102,6 @@ function (ev) {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_directMemberSelected, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_directMemberSelected, null);
-	}
-
-    if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
-		ZaAccountMemberOfListView._removeSelectedLists(this.getForm(), arr);
 	}
 }
 
@@ -167,7 +151,6 @@ ZaDLXFormView.removeMembers = function(event) {
 	var tmpCurrentAddList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_addList);
 	var tmpSelectedList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_membersSelected);
 	var tmpCurrentRemoveList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_removeList);
-	var tmpOrigList = form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_origList);
 	
 	var newMemberList = AjxUtil.arraySubstract(tmpCurrentMemberList, form.getModel().getInstanceValue(form.getInstance(),ZaDistributionList.A2_membersSelected));
 	newMemberList._version = tmpCurrentMemberList._version + 1;
@@ -181,10 +164,8 @@ ZaDLXFormView.removeMembers = function(event) {
         var removeExistedList = [];
         for(var i = 0; i < tmpSelectedList.length; i++) {
                 var removedItem = tmpSelectedList[i];
-                if(!tmpCurrentAddList || tmpCurrentAddList.length == 0 ||AjxUtil.indexOf(tmpCurrentAddList,removedItem,false) < 0) {
-			if(tmpOrigList && tmpOrigList.length > 0 && AjxUtil.indexOf(tmpOrigList, removedItem, false) >= 0)
-				removeExistedList.push(removedItem);
-		}
+                if(!tmpCurrentAddList || tmpCurrentAddList.length == 0 ||AjxUtil.indexOf(tmpCurrentAddList,removedItem,false) < 0)
+                        removeExistedList.push(removedItem);
         }	
 	
 	var newRemoveList = AjxUtil.mergeArrays(tmpCurrentRemoveList,removeExistedList);	
@@ -437,7 +418,7 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
 			if ((result = stdEmailRegEx.exec(tmpval)) != null) {
 				tmpval = result[2];
 			}
-			if(!AjxEmailAddress.isValid(tmpval)) {
+			if(!AjxUtil.isValidEmailNonReg(tmpval)) {
 				//how error msg
 				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.WARNING_DL_INVALID_EMAIL,[values[i]]),null,DwtMessageDialog.WARNING_STYLE);
 				return false;
@@ -498,9 +479,7 @@ function (entry) {
 	this._containedObject[ZaDistributionList.A2_query] = "";
 	//membership related instance variables
 	this._containedObject[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.cloneMemberOf(entry);
-	// the origList is inited when we load the object, it won't be modified unless the first time
-	// So there is no need for me to do deep clone
-	this._containedObject[ZaDistributionList.A2_origList] = entry [ZaDistributionList.A2_origList];
+
 	this._containedObject[ZaAccount.A2_directMemberList + "_more"] = entry[ZaAccount.A2_directMemberList + "_more"];
 	this._containedObject[ZaAccount.A2_directMemberList + "_offset"] = entry[ZaAccount.A2_directMemberList + "_offset"];
 	this._containedObject[ZaAccount.A2_indirectMemberList + "_more"] = entry[ZaAccount.A2_indirectMemberList + "_more"];
@@ -531,7 +510,14 @@ function (entry) {
 		this._containedObject[ZaModel.currentTab] = "1";
 	else
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
-
+	
+	this._containedObject[ZaDistributionList.A2_publishedShares] = [];
+	if(!AjxUtil.isEmpty(entry[ZaDistributionList.A2_publishedShares]) && !AjxUtil.isEmpty(entry[ZaDistributionList.A2_publishedShares].getArray())) {
+		for(var i=0;i<entry[ZaDistributionList.A2_publishedShares].getArray().length;i++) {
+			this._containedObject[ZaDistributionList.A2_publishedShares][i] = entry[ZaDistributionList.A2_publishedShares].getArray()[i];
+		}
+		this._containedObject[ZaDistributionList.A2_publishedShares]._version = 1;
+	}
 	if(!entry.id) {
 		if(ZaItem.hasWritePermission(ZaAccount.A_zimbraIsDelegatedAdminAccount,entry)) {
 			this._containedObject.attrs[ZaDistributionList.A_mailStatus] = "enabled";
@@ -539,8 +525,8 @@ function (entry) {
 	}
         this.modifyContainedObject () ;
 	this._localXForm.setInstance(this._containedObject);	
-	if(!appNewUI)
-	    this.updateTab();
+	
+	this.updateTab();
 }
 
 ZaDLXFormView.prototype.srchResWithoutSelf =
@@ -595,6 +581,97 @@ function (ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		ZaDLXFormView.editAliasButtonListener.call(this);
 	}	
+}
+
+ZaDLXFormView.shareSelectionListener = 
+function (ev) {
+	var arr = this.widget.getSelection();	
+	if(arr && arr.length) {
+		arr.sort();
+		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_published_share_selection_cache, arr);
+	} else {
+		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_published_share_selection_cache, null);
+	}		
+}
+
+ZaDLXFormView.publishShareCallback = function () {
+	var tmp = new ZaDistributionList(this.getModel().getInstanceValue(this.getInstance(), "id"),this.getModel().getInstanceValue(this.getInstance(), ZaAccount.A_name));
+	tmp.getPublishedShareInfo();
+	var tmpArr = tmp[ZaDistributionList.A2_publishedShares] ? tmp[ZaDistributionList.A2_publishedShares].getArray() : [];
+	var oldArr = this.getModel().getInstanceValue(this.getInstance(),ZaDistributionList.A2_publishedShares);
+	if(!AjxUtil.isEmpty(oldArr)) {
+		tmpArr._version = oldArr._version + 1;
+	} else {
+		tmpArr._version = 1;
+	}
+	this.getModel().setInstanceValue(this.getInstance(),ZaDistributionList.A2_publishedShares,tmpArr);	
+	if(this.parent.publishShareDlg)
+		this.parent.publishShareDlg.popdown();
+}
+
+ZaDLXFormView.publishNewShareButtonListener = function () {
+	var instance = this.getInstance();
+	var formPage = this.getForm().parent;
+	if(!formPage.publishShareDlg) {
+		formPage.publishShareDlg = new ZaPublishShareXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "300px",ZaMsg.Share_PublishNewTitle);
+		formPage.publishShareDlg.registerCallback(DwtDialog.OK_BUTTON, ZaDLXFormView.publishShareCallback, this.getForm(), null);						
+	}
+	
+	formPage.publishShareDlg.setObject(instance);
+	formPage.publishShareDlg.popup();	
+}
+
+ZaDLXFormView.upublishShareButtonListener = function () {
+	var form = this.getForm();
+	var dl = this.getInstance();
+	var shares = this.getInstanceValue(ZaDistributionList.A2_published_share_selection_cache);
+	var shareGroupByOwnId = {};
+	for(var i = 0; i < shares.length; i++){
+		if(!shareGroupByOwnId[shares[i][ZaShare.A_ownerId]]){
+			shareGroupByOwnId[shares[i][ZaShare.A_ownerId]] = new Array();
+		}
+		shareGroupByOwnId[shares[i][ZaShare.A_ownerId]].push(shares[i]);
+	}
+
+	for(var i in shareGroupByOwnId){
+		ZaDistributionList.publishShare.call(dl,shareGroupByOwnId[i],true, new AjxCallback(form,ZaDLXFormView.unpublishShareCallback));		
+	}	
+}
+
+ZaDLXFormView.unpublishShareCallback = function (respObj) {
+	
+	if(respObj.isException && respObj.isException()) {
+		ZaApp.getInstance().getCurrentController()._handleException(respObj.getException(),"ZaDLXFormView.unpublishShareCallback", null, false);
+	} else if(respObj.getResponse().Body.BatchResponse.Fault) {
+		var fault = respObj.getResponse().Body.BatchResponse.Fault;
+		if(fault instanceof Array)
+			fault = fault[0];
+			
+		if (fault) {
+			// JS response with fault
+			var ex = ZmCsfeCommand.faultToEx(fault);
+			ZaApp.getInstance().getCurrentController()._handleException(ex,"ZaDLXFormView.unpublishShareCallback", null, false);
+		}
+	}
+	
+	var dl = this.getInstance();
+	var oldList = this.getModel().getInstanceValue(dl,ZaDistributionList.A2_publishedShares);
+	ZaDistributionList.prototype.getPublishedShareInfo.call(dl);
+	var list = this.getModel().getInstanceValue(dl,ZaDistributionList.A2_publishedShares);
+	if(!list) {
+		list = new Array();
+	} else {
+		list = list.getArray();
+	}
+	list._version = oldList ? oldList._version+1 : 2;
+	this.getModel().setInstanceValue(dl,ZaDistributionList.A2_publishedShares,list);
+	
+	var newSelectionCache = new Array();
+	var oldSelectionCache = this.getModel().getInstanceValue(dl,ZaDistributionList.A2_published_share_selection_cache);
+	if(oldSelectionCache)
+		newSelectionCache._version = oldSelectionCache._version+1;
+	this.getModel().setInstanceValue(dl,ZaDistributionList.A2_published_share_selection_cache,newSelectionCache);
+	
 }
 
 ZaDLXFormView.deleteAliasButtonListener = function () {
@@ -706,9 +783,9 @@ ZaDLXFormView.MEMBEROF_TAB_RIGHTS = [ZaDistributionList.GET_DL_MEMBERSHIP_RIGHT]
 ZaDLXFormView.ALIASES_TAB_ATTRS = [ZaAccount.A_zimbraMailAlias];
 ZaDLXFormView.ALIASES_TAB_RIGHTS = [ZaDistributionList.ADD_DL_ALIAS_RIGHT,ZaDistributionList.REMOVE_DL_ALIAS_RIGHT];
 
-ZaDLXFormView.PREF_TAB_ATTRS = [ZaDistributionList.A_zimbraPrefReplyToEnabled, ZaDistributionList.A_zimbraPrefReplyToDisplay,
-    ZaDistributionList.A_zimbraPrefReplyToAddress];
-ZaDLXFormView.PREF_TAB_RIGHTS = [];
+ZaDLXFormView.SHARES_TAB_ATTRS = [];
+ZaDLXFormView.SHARES_TAB_RIGHTS = [ZaDistributionList.GET_DL_SHARE_INFO_RIGHT,ZaDistributionList.PUBLISH_SHARE_RIGHT];
+
 
 ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {	
 	var sourceHeaderList = new Array();
@@ -746,11 +823,11 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 		this.tabChoices.push({value:_tab4, label:ZaMsg.TABT_Aliases});	
 	}
 
-	if(ZaTabView.isTAB_ENABLED(entry,ZaDLXFormView.PREF_TAB_ATTRS, ZaDLXFormView.PREF_TAB_RIGHTS)) {
+	if(ZaTabView.isTAB_ENABLED(entry,ZaDLXFormView.SHARES_TAB_ATTRS, ZaDLXFormView.SHARES_TAB_RIGHTS)) {
 		_tab5 = ++this.TAB_INDEX;
-		this.tabChoices.push({value:_tab5, label:ZaMsg.TABT_Preferences});
+		this.tabChoices.push({value:_tab5, label:ZaMsg.Share_TabTitle});	
 	}
-
+    	
 	xFormObject.tableCssStyle = "width:100%;overflow:auto;";
 	xFormObject.numCols=5;
 	xFormObject.colSizes = [10,"auto", 20, "auto", 10];
@@ -775,7 +852,6 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 {ref:ZaAccount.A_name, type:_EMAILADDR_, msgName:ZaMsg.MSG_LabelListName, label: ZaMsg.LBL_LabelListName,
                                                         forceUpdate:true, tableCssStyle: "width:100%", inputWidth:"100", domainPartWidth:"100%", 
                                                                 id:"dl_name_field", nameContainerCss: "width:100px", domainContainerWidth: "100%",
-								midContainerCss: "width:20px",
                                                                 visibilityChecks:[],
                                                                 enableDisableChecks:[[XFormItem.prototype.hasRight,ZaDistributionList.RENAME_DL_RIGHT]]
                                                         },
@@ -804,7 +880,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 ]
                                         },
                                 {type:_SPACER_, height:spaceHeight},
-                                  {type:_GROUPER_, borderCssClass:"LeftGrouperBorder",
+                                  {type:_ZA_TOP_GROUPER_, borderCssClass:"LeftGrouperBorder",
                                          width:"100%", numCols:1,colSizes:["auto"],
                                         label:ZaMsg.DLXV_LabelListMembers,
 
@@ -844,7 +920,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
                                                                 },
                                                                 {type:_CELLSPACER_}
                                                         ]
-                                                }
+                                                },
                                         ]
                                 },
                                                 {type:_SPACER_, height:"5"}
@@ -948,7 +1024,6 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 				    		{ref:ZaAccount.A_name, type:_EMAILADDR_, msgName:ZaMsg.MSG_LabelListName, label: ZaMsg.LBL_LabelListName, 
 				    			forceUpdate:true, tableCssStyle: "width:100%", inputWidth:"100",domainPartWidth:"100%",
 								id:"dl_name_field", nameContainerCss: "width:100px", domainContainerWidth:"100%",
-							midContainerCss: "width:20px",
 								                                                                                                                              visibilityChecks:[],
 								enableDisableChecks:[[XFormItem.prototype.hasRight,ZaDistributionList.RENAME_DL_RIGHT]]
 							},
@@ -978,7 +1053,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 						]
 					},
 			        {type:_SPACER_, height:"7"},
-                            	  {type:_GROUPER_, borderCssClass:"LeftGrouperBorder",
+                            	  {type:_ZA_TOP_GROUPER_, borderCssClass:"LeftGrouperBorder",
                                          width:"100%", numCols:1,colSizes:["auto"],
                                         label:ZaMsg.DLXV_LabelListMembers,
 
@@ -1018,7 +1093,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 						    		},								       
 								{type:_CELLSPACER_}									
 							]
-						}
+						},
 					]
 				},	
 						{type:_SPACER_, height:"5"}
@@ -1324,7 +1399,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 		var case4 = {type:_ZATABCASE_, width:"100%", numCols:1, colSizes:["auto"],caseKey:_tab4,
 		items: [
 				{type:_SPACER_, height:"9"},
-				{type:_GROUPER_, borderCssClass:"LeftGrouperBorder",
+				{type:_ZA_TOP_GROUPER_, borderCssClass:"LeftGrouperBorder",
 					 width:"100%", numCols:1,colSizes:["auto"],
 					label:ZaMsg.NAD_EditDLAliasesGroup,
 					items :[
@@ -1348,64 +1423,60 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 		};
 		cases.push(case4);
 	}
-
+	
 	if(_tab5) {
-		var case5 =
-		{type:_ZATABCASE_, caseKey:_tab5, colSpan:"*",
-			items:[
-			    {type:_SPACER_, height:5},
-			    {type:_SPACER_, height:5},
-			    {type:_CELLSPACER_, width:10 },
-                {type:_GROUPER_, label:ZaMsg.NAD_MailOptionsReceiving, id:"dl_pref_replyto_group",
-                    colSpan: "*", numCols: 2, colSizes:[275, "*"],
-                    visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,[
-                            ZaDistributionList.A_zimbraPrefReplyToEnabled,
-                            ZaDistributionList.A_zimbraPrefReplyToDisplay,
-                            ZaDistributionList.A_zimbraPrefReplyToAddress
-                    ]]],
-                    visibilityChangeEventSources:[],
-                    items: [
-                        {ref:ZaDistributionList.A_zimbraPrefReplyToEnabled, type:_CHECKBOX_,
-                            visibilityChecks:[[ZaItem.hasReadPermission, ZaDistributionList.A_zimbraPrefReplyToEnabled]],
-                            label:ZaMsg.DLXV_ReplayToEnabled, trueValue:"TRUE", falseValue:"FALSE"
-                        },
-                        {ref:ZaDistributionList.A_zimbraPrefReplyToDisplay, type:_TEXTFIELD_,
-                            label:ZaMsg.DLXV_ReplayToAddrDisplay, labelLocation:_LEFT_, containerCssStyle:"padding-left:3px;",
-                            emptyText: ZaMsg.DLXV_ReplayToAddrEmptyText,
-                            visibilityChecks:[[ZaItem.hasReadPermission, ZaDistributionList.A_zimbraPrefReplyToDisplay]],
-                            enableDisableChecks:[[XForm.checkInstanceValue,ZaDistributionList.A_zimbraPrefReplyToEnabled,"TRUE"],
-                            [ZaItem.hasWritePermission,ZaDistributionList.A_zimbraPrefReplyToAddress]],
-                            enableDisableChangeEventSources:[ZaDistributionList.A_zimbraPrefReplyToEnabled],width:"15em"
-                        },
-                        {type:_DYNSELECT_, ref:ZaDistributionList.A_zimbraPrefReplyToAddress, dataFetcherClass:ZaSearch,
-                            dataFetcherMethod:ZaSearch.prototype.dynSelectSearch,
-                            dataFetcherTypes:[ZaSearch.ACCOUNTS, ZaSearch.RESOURCES, ZaSearch.DLS],
-                            dataFetcherAttrs:[ZaItem.A_zimbraId, ZaItem.A_cn, ZaAccount.A_name, ZaAccount.A_displayname, ZaAccount.A_mail],
-                            label:ZaMsg.DLXV_ReplayToAddr,labelLocation:_LEFT_,
-                            emptyText: ZaMsg.DLXV_ReplayToAddrEmptyText,
-                            width:"35em", inputWidth:"35em", editable:true, forceUpdate:true,
-                            choices:new XFormChoices([], XFormChoices.OBJECT_LIST, "name", "name"),
-                            visibilityChecks:[[ZaItem.hasReadPermission, ZaDistributionList.A_zimbraPrefReplyToAddress]],
-                            enableDisableChangeEventSources:[ZaDistributionList.A_zimbraPrefReplyToEnabled],
-                            enableDisableChecks:[[XForm.checkInstanceValue,ZaDistributionList.A_zimbraPrefReplyToEnabled,"TRUE"],
-                            [ZaItem.hasWritePermission,ZaDistributionList.A_zimbraPrefReplyToAddress]],
-                            onChange: function(value, event, form){
-                                if (value instanceof ZaItem ) {
-                                    this.setInstanceValue(value.name);
-                                } else {
-                                    this.setInstanceValue(value);
-                                }
-                            }
-                        }
-                   ]
-                }
-			]
-		};
+		var shareHeaderList = new Array();
+		shareHeaderList[0] = new ZaListHeaderItem(ZaShare.A_folderPath, ZaMsg.Shares_FolderPath, null, "100px", null, null, false, true);
+		shareHeaderList[1] = new ZaListHeaderItem(ZaShare.A_ownerName, ZaMsg.Shares_OwnerName, null, "106px", null, null, false, true);
+		shareHeaderList[2] = new ZaListHeaderItem(ZaShare.A_granteeName, ZaMsg.Shares_GranteeName, null, "106px", null, null, false, true);
+		
+				
+		var case5 = {type:_ZATABCASE_, numCols:1, colSpan:"*", caseKey:_tab5, colSizes: ["100%"],
+		items:[
+			{type:_SPACER_, height:"5"},
+			{type: _GROUP_, width: "98%", id: "dl_shares_options_grp", numCols: 2, colSizes:["275px","*"],
+				items: [
+					{ref:ZaDistributionList.A_zimbraDistributionListSendShareMessageToNewMembers, type:_CHECKBOX_,
+					  msgName:ZaMsg.DL_zimbraDistributionListSendShareMessageToNewMembers,
+					  label:ZaMsg.DL_zimbraDistributionListSendShareMessageToNewMembers, trueValue:"TRUE", falseValue:"FALSE"
+					},
+					{ref:ZaDistributionList.A_zimbraDistributionListSendShareMessageFromAddress, type:_TEXTFIELD_,width:250,
+						msgName:ZaMsg.DL_zimbraDistributionListSendShareMessageFromAddress,label:ZaMsg.DL_zimbraDistributionListSendShareMessageFromAddress, labelLocation:_LEFT_, align:_LEFT_
+					}
+				]
+			},
+			
+			{type:_SPACER_, height:"15"},
+			{type:_ZAALLSCREEN_GROUPER_, numCols:1, width:"98%", label:ZaMsg.Shares_ListTitle,  
+			items: [
+		    	{ref:ZaDistributionList.A2_publishedShares, bmolsnr:true,
+		    		type:_DWT_LIST_, height:"200", width:"99%", cssClass: "DLSource",onSelection:ZaDLXFormView.shareSelectionListener,
+				   	multiselect:true, widgetClass:ZaSharesListView, headerList:shareHeaderList
+				},
+				{type:_GROUP_, numCols:3, width:"350px", colSizes:["150px","150px","auto"], 
+					cssStyle:"margin-bottom:10px;padding-bottom:0px;margin-top:10px;pxmargin-left:10px;margin-right:10px;",
+					items: [
+						{type:_DWT_BUTTON_, label:ZaMsg.Shares_PublishNew,width:"100px",
+							id:"deleteShareButton",onActivate:"ZaDLXFormView.publishNewShareButtonListener.call(this,event)",
+							enableDisableChecks:[[XFormItem.prototype.hasRight,ZaDistributionList.PUBLISH_SHARE_RIGHT]]
+						},
+						//{type:_CELLSPACER_},
+						{type:_DWT_BUTTON_, label:ZaMsg.Shares_UnPublish,width:"120px",
+							id:"deleteShareButton",onActivate:"ZaDLXFormView.upublishShareButtonListener.call(this,event)",
+							enableDisableChangeEventSources:[ZaDistributionList.A2_published_share_selection_cache],
+							enableDisableChecks:[[XFormItem.prototype.hasRight,ZaDistributionList.PUBLISH_SHARE_RIGHT],[XForm.checkInstanceValueNotEmty,ZaDistributionList.A2_published_share_selection_cache]]
+						},
+						{type:_CELLSPACER_}							
+					]
+				}
+			]}
+		]};		
 		cases.push(case5);
 	}
 
+
     var headerItems = [{type:_AJX_IMAGE_, src:"Group_32", label:null, rowSpan:3},
-						{type:_OUTPUT_, ref:"name", label:null,cssClass:"AdminTitle", height:"auto", width:350, rowSpan:3, cssStyle:"word-wrap:break-word;overflow:hidden"}
+						{type:_OUTPUT_, ref:"name", label:null,cssClass:"AdminTitle", height: 32, rowSpan:3}
 						] ;
 
     if (ZaItem.hasReadPermission (ZaItem.A_zimbraId, entry)) 
@@ -1439,7 +1510,6 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 			cssStyle:"padding-top:5px; padding-bottom:5px"
 		},
 		{type:_TAB_BAR_, choices:this.tabChoices,
-            cssStyle:(appNewUI?"display:none;":""),
 			ref: ZaModel.currentTab, colSpan:"*",cssClass:"ZaTabBar", id:"xform_tabbar"
 		},
 		{type:_SWITCH_,items:cases}
@@ -1447,8 +1517,3 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 };
 
 ZaTabView.XFormModifiers["ZaDLXFormView"].push(ZaDLXFormView.myXFormModifier);
-
-ZaDLXFormView.prototype.getTabChoices =
-function() {
-    return this.tabChoices;
-}

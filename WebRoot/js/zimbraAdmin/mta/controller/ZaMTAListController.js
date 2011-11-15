@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -104,24 +104,21 @@ ZaMTAListController.prototype._createUI = function () {
 		var elements = new Object();
 		this._contentView = new ZaMTAListView(this._container);
 		this._initToolbar();
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_MTALIST);
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_MTALIST); 
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 
 		this._initPopupMenu();
 		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_MTALIST, ZaId.MENU_POP);
 
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-        if (!appNewUI) {
-		    elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-            var tabParams = {
-                openInNewTab: false,
-                tabId: this.getContentViewId(),
-                tab: this.getMainTab()
-            }
-            //ZaApp.getInstance().createView(ZaZimbraAdmin._POSTQ_VIEW, elements);
-            ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-        } else {
-            ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-        }
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab() 
+		}
+		//ZaApp.getInstance().createView(ZaZimbraAdmin._POSTQ_VIEW, elements);		
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+		
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 		this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_MTALIST + "_removeConfirm");					
