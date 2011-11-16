@@ -111,7 +111,9 @@ ZaServerMBXStatsPage.prototype.getMbxes = function ( targetServer, offset, sortB
 	}
 	soapDoc.getMethod().setAttribute("offset", offset);
 	soapDoc.getMethod().setAttribute("limit", ZaServerMBXStatsPage.MBX_DISPLAY_LIMIT);
-	
+	soapDoc.getMethod().setAttribute("refresh", "1");
+	//use refresh="1" to force server side re-calculating quota and ignore cached data.
+
 	//var getQuotaUsageCmd = new ZmCsfeCommand ();
 	var params = new Object ();
 	params.soapDoc = soapDoc ;
