@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -268,7 +268,7 @@ ZaZimletDeployXWizard.myXFormModifier = function(xFormObject) {
 			{ type:_OUTPUT_, value: ZaMsg.ZMLT_uploadTitle, align: _LEFT_,colSpan:2},
 			{ type:_OUTPUT_, value: this.getUploadFormHtml() ,colSpan:2,width:"480px"},
 			{type:_SPACER_, colSpan:2},
-			{ ref:ZaZimlet.A_flushCache, type:_CHECKBOX_,align:_RIGHT_,subLabel:"",label:ZaMsg.ZMLT_flushCache,labelLocation:_RIGHT_,visibilityChecks:[], enableDisableChecks:[]},
+			{ type:_CHECKBOX_,ref:ZaZimlet.A_flushCache,label:ZaMsg.ZMLT_flushCache,visibilityChecks:[], enableDisableChecks:[]},
 			{type:_SPACER_, colSpan:2}
 		]
 	};

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -60,15 +60,6 @@ DeleteAcctsPgrsDlg.myXModel = {
 }
 DeleteAcctsPgrsDlg.prototype = new ZaXDialog;
 DeleteAcctsPgrsDlg.prototype.constructor = DeleteAcctsPgrsDlg;
-DeleteAcctsPgrsDlg.prototype.miniType= 2;
-DeleteAcctsPgrsDlg.prototype.supportMinimize = true;
-DeleteAcctsPgrsDlg.prototype.toString = function() {
-    return "DeleteAcctsPgrsDlg";
-}
-
-DeleteAcctsPgrsDlg.prototype.getCacheName = function() {
-    return "removeProgressDlg";
-}
 DeleteAcctsPgrsDlg.ABORT_BUTTON = ++DwtDialog.LAST_BUTTON;
 
 /**
@@ -78,21 +69,12 @@ DeleteAcctsPgrsDlg.prototype.setObject =
 function(entry) {
 	this._containedObject = entry;
 	var obj = new Object();
-    obj._uuid = entry._uuid || ZaUtil.getItemUUid();
-	obj[DeleteAcctsPgrsDlg._DELETED_ACCTS] = entry[DeleteAcctsPgrsDlg._DELETED_ACCTS] || [];
-	obj[DeleteAcctsPgrsDlg._STATUS] = entry[DeleteAcctsPgrsDlg._STATUS] ||  "";
-	obj[DeleteAcctsPgrsDlg._ERROR_MSG] = entry[DeleteAcctsPgrsDlg._ERROR_MSG] || null;
+	obj[DeleteAcctsPgrsDlg._DELETED_ACCTS] = [];
+	obj[DeleteAcctsPgrsDlg._STATUS] = "";
+	obj[DeleteAcctsPgrsDlg._ERROR_MSG] = null;
 	this._localXForm.setInstance(obj);
 	this._button[DeleteAcctsPgrsDlg.ABORT_BUTTON].setEnabled(false);		
 	this._button[DwtDialog.OK_BUTTON].setEnabled(true);	
-}
-
-DeleteAcctsPgrsDlg.prototype.getObject =
-function () {
-    if (this._localXForm)
-        return this._localXForm.getInstance();
-    else
-        return this._containedObject;
 }
 
 
@@ -131,7 +113,6 @@ function(evt) {
 		this.pollAction = new AjxTimedAction(this, this.deleteOneAccount);		
 		this._currentIndex=0;
 		var obj = new Object();
-        obj._uuid = ZaUtil.getItemUUid();
 		obj[DeleteAcctsPgrsDlg._STATUS] = AjxMessageFormat.format(ZaMsg.NAD_DeleteAccStatus, [this._containedObject[this._currentIndex][ZaAccount.A_name]]);
 		obj[DeleteAcctsPgrsDlg._DELETED_ACCTS] = new Array();
 		this._localXForm.setInstance(obj);
