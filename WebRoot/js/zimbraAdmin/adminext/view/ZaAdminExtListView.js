@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -74,14 +74,15 @@ function(zimlet, now, isDragProxy) {
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
 		var field = this._headerList[i]._field;
+		var cellWidth = this._getCellWidth(i, {});
 		if(field == ZaZimlet.A_name) {	
 			// name
-			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(zimlet.getLabel());
 			html[idx++] = "</nobr></td>";
 		} else if(field == ZaZimlet.A_zimbraZimletDescription) {	
 			// description
-			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(zimlet.getDescription() );
 			html[idx++] = "</nobr></td>";
 		}

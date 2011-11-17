@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -31,6 +31,7 @@ ZaResourceController.prototype = new ZaXFormViewController();
 ZaResourceController.prototype.constructor = ZaResourceController;
 
 ZaController.initToolbarMethods["ZaResourceController"] = new Array();
+ZaController.initPopupMenuMethods["ZaResourceController"] = new Array();
 ZaController.setViewMethods["ZaResourceController"] = [];
 ZaController.changeActionsStateMethods["ZaResourceController"] = new Array();
 
@@ -60,9 +61,6 @@ function(entry, openInNewTab, skipRefresh) {
 }
 
 ZaResourceController.changeActionsStateMethod = function () {
-	if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,this._currentObject))	{
-		this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
-	}
 	if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 	}	
@@ -126,11 +124,44 @@ function () {
    	}
    	this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.RESTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
    	this._toolbarOrder.push(ZaOperation.DELETE);
-   	this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener));		
-	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	
 }
 ZaController.initToolbarMethods["ZaResourceController"].push(ZaResourceController.initToolbarMethod);
+
+ZaResourceController.initPopupMenuMethod =
+function () {
+	var showNewCalRes = false;
+	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
+		showNewCalRes = true;
+	} else {
+		var domainList = ZaApp.getInstance().getDomainList().getArray();
+		var cnt = domainList.length;
+		for(var i = 0; i < cnt; i++) {
+			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_CALRES,domainList[i])) {
+				showNewCalRes = true;
+				break;
+			}
+		}
+	}
+
+   	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
+   	this._popupOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));
+   	if(showNewCalRes) {
+		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.RESTBB_New_tt, "Resource", "ResourceDis", new AjxListener(this, this.newButtonListener));
+   	}
+   	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.RESTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
+
+    this._popupOrder.push(ZaOperation.NEW);
+    this._popupOrder.push(ZaOperation.SAVE);
+    this._popupOrder.push(ZaOperation.CLOSE);
+    this._popupOrder.push(ZaOperation.DELETE);
+}
+ZaController.initPopupMenuMethods["ZaResourceController"].push(ZaResourceController.initPopupMenuMethod);
+
+ZaResourceController.prototype.getPopUpOperation =
+function() {
+    return this._popupOperations;
+}
 
 ZaResourceController.prototype.newResource = function () {
 	try {
@@ -177,6 +208,7 @@ function (entry) {
 	this._contentView = this._view = new this.tabConstructor(this._container, entry);
 
     this._initToolbar();
+    this._initPopupMenu();
 	//always add Help button at the end of the toolbar    
 	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
 	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
@@ -186,6 +218,7 @@ function (entry) {
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
+    if(!appNewUI) {
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
 	//ZaApp.getInstance().createView(ZaZimbraAdmin._RESOURCE_VIEW, elements);
 	var tabParams = {
@@ -193,7 +226,8 @@ function (entry) {
 			tabId: this.getContentViewId()
 		}
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-	
+    } else
+         ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
 	this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null, ZaId.VIEW_RES + "_removeConfirm");			
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
@@ -332,7 +366,8 @@ function () {
 			}				
 		}
 	}
-
+      if (this._currentObject[ZaModel.currentTab]!= tmpObj[ZaModel.currentTab])
+             this._currentObject[ZaModel.currentTab] = tmpObj[ZaModel.currentTab];
 	//save changed fields
 	try {	
 		this._currentObject.modify(mods);
@@ -346,6 +381,6 @@ function () {
 		}
 		return false;
 	}
-	
+    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.ResourceModified,[this._currentObject.name]));
 	return true;
 };

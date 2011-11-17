@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -34,6 +34,7 @@ ZaGlobalConfigViewController.prototype.constructor = ZaGlobalConfigViewControlle
 
 //ZaGlobalConfigViewController.STATUS_VIEW = "ZaGlobalConfigViewController.STATUS_VIEW";
 ZaController.initToolbarMethods["ZaGlobalConfigViewController"] = new Array();
+ZaController.initPopupMenuMethods["ZaGlobalConfigViewController"] = new Array();
 ZaController.setViewMethods["ZaGlobalConfigViewController"] = [];
 ZaController.changeActionsStateMethods["ZaGlobalConfigViewController"] = [];
 ZaXFormViewController.preSaveValidationMethods["ZaGlobalConfigViewController"] = new Array();
@@ -63,11 +64,21 @@ function () {
 }
 ZaController.initToolbarMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.initToolbarMethod);
 
+ZaGlobalConfigViewController.initPopupMenuMethod =
+function () {
+    for (var key in this._toolbarOperations) {
+        // For zimlet issue.
+
+        this._popupOperations[key] = ZaOperation.duplicate(this._toolbarOperations[key]);
+    }
+}
+ZaController.initPopupMenuMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.initPopupMenuMethod);
 
 ZaGlobalConfigViewController.setViewMethod = function (item) {
     try {
 	    if ( !this._UICreated || (this._view == null) || (this._toolbar == null)) {
             this._initToolbar();
+            this._initPopupMenu();
             this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
             this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
             this._toolbarOrder.push(ZaOperation.NONE);
@@ -76,14 +87,16 @@ ZaGlobalConfigViewController.setViewMethod = function (item) {
             this._contentView = this._view = new this.tabConstructor(this._container,item);
             var elements = new Object();
             elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-            elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-            var tabParams = {
-                openInNewTab: false,
-                tabId: this.getContentViewId(),
-                tab: this.getMainTab()
-            }
-            //ZaApp.getInstance().createView(ZaZimbraAdmin._GLOBAL_SETTINGS,elements);
-            ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+            if (!appNewUI) {
+                elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+                var tabParams = {
+                    openInNewTab: false,
+                    tabId: this.getContentViewId(),
+                    tab: this.getMainTab()
+                }
+                ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+            } else
+                ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
             this._UICreated = true;
             ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
         }
@@ -250,7 +263,7 @@ function () {
                 }
                 if(!islegal) {
                         this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_MSG_EmailValidReg, regval),
-                                null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
+                                null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return islegal;
                 }
@@ -310,6 +323,8 @@ function () {
 		}		
 	}
 	//save the model
+    if (this._currentObject[ZaModel.currentTab]!= tmpObj[ZaModel.currentTab])
+             this._currentObject[ZaModel.currentTab] = tmpObj[ZaModel.currentTab];
 	//var changeDetails = new Object();
 	this._currentObject.modify(mods,tmpObj);
 
@@ -345,6 +360,7 @@ function () {
             	}
 
     }
+    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(ZaMsg.GlobalConfigModified);
 	return true;
 }
 

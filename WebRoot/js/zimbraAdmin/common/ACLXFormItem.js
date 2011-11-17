@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -32,7 +32,7 @@ function () {
 	if(visibleBoxes.r)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_R, 
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_R, subLabel:"", align:_RIGHT_,
 				visibilityChecks:[],enableDisableChecks:[],
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["r"]==1);
@@ -58,7 +58,7 @@ function () {
 	if(visibleBoxes.w)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_W,
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_W, subLabel:"",  align:_RIGHT_,
 				visibilityChecks:[],enableDisableChecks:[],
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["w"]==1);
@@ -83,7 +83,7 @@ function () {
 	if(visibleBoxes.d)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_D,
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_D, subLabel:"",  align:_RIGHT_,
 				visibilityChecks:[],enableDisableChecks:[],
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["d"]==1);
@@ -109,7 +109,7 @@ function () {
 	if(visibleBoxes.i)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_I,
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_I, subLabel:"",  align:_RIGHT_,
 				visibilityChecks:[],enableDisableChecks:[],
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["i"]==1);
@@ -135,7 +135,7 @@ function () {
 	if(visibleBoxes.x)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_X, 
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_X, subLabel:"",align:_RIGHT_,
 				visibilityChecks:[],enableDisableChecks:[],
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["x"]==1);
@@ -160,7 +160,7 @@ function () {
 	if(visibleBoxes.a)
 		this.items.push(	
 			{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", 
-				labelLocation:_RIGHT_, label:ZaMsg.ACL_A, 
+				labelLocation:_RIGHT_, label:ZaMsg.ACL_A, subLabel:"", align:_RIGHT_,
 				visibilityChecks:[],enableDisableChecks:[],
 				getDisplayValue:function (itemval) {
 					return (itemval && itemval["a"]==1);
