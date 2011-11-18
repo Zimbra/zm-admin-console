@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -82,7 +82,6 @@ ZaStatusViewController.prototype._createUI = function (openInNewTab) {
 		this._initToolbar();
 		if(this._toolbarOperations && this._toolbarOperations.length) {
 			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_STATUSLIST); 
-			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 		}
 		this._initPopupMenu();
 		if(this._popupOperations && this._popupOperations.length) {
@@ -90,12 +89,17 @@ ZaStatusViewController.prototype._createUI = function (openInNewTab) {
 		}
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._STATUS, elements);
-		var tabParams = {
-			openInNewTab: false,
-			tabId: this.getContentViewId(),
-			tab: this.getMainTab()
+		if (!appNewUI) {
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+			var tabParams = {
+				openInNewTab: false,
+				tabId: this.getContentViewId(),
+				tab: this.getMainTab()
+			}
+			ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
+		} else {
+			ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
 		}
-		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		this._UICreated = true;
 		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 	} catch (ex) {

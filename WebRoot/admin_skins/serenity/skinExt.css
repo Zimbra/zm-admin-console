@@ -1,0 +1,318 @@
+.XFormCase, .SmallRadioGrouperLabel, .GrouperLabel, .RadioGrouperLabel {
+    background: @viewC@;
+}
+
+.homeGroupHeader {
+    background-color:@AppC@;
+}
+
+.homeGroupBody {
+    border: 1px solid #dcdcdc;
+}
+
+.DwtTreeItemLevel1ChildDiv {
+    background-color:@PanelColor@;
+}
+
+/*  -- Navigator -- */
+/*
+.ZaCtrAppTreeHeader .DwtLinkButtonTable {
+    height:12px;
+    margin-top:5px;
+}
+
+.ZaCtrAppTreeHeader  .DwtLinkButtonTable .ZWidgetTitle {
+    background-color:white;
+    height:12px;
+    text-align:center;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.ZaCtrAppTreeHeader  .DwtLinkButtonTable .ZDropDown {
+    border: 1px solid;
+    background-color:white;
+    height:12px;
+    @trRadius@:5px;
+    @brRadius@:5px;
+}
+ */
+
+.ZaCtrAppTreeHeader {
+    padding: 5px 0px 0px 5px;
+}
+
+.AdminTreeItem {
+    padding-left:18px;
+}
+
+.AdminTreeItem-selected, .AdminTreeItem-selected-focused  {
+    padding-left:18px;
+    background-color:#87cefa !important;
+}
+
+.rootOverviewHeader {
+    padding-left:5px;
+    padding-top:5px;
+    background-color: #265480;
+}
+
+.AdminTreeItem-Count {
+    background-color:#708090;
+    width:20px;
+    text-align:right;
+    color:white;
+    padding-right:3px;
+    @tlRadius@:4px;
+    @trRadius@:4px;
+    @blRadius@:4px;
+    @brRadius@:4px;
+}
+
+.rootOverviewHeader-Text {
+    padding-left:5px;
+}
+
+.AdminTreeItem-Text {
+    padding-left:5px;
+}
+
+/* -- view xform -- */
+
+/*  view xform - header */
+div.ZmSelectedHeaderBg {
+    background-color: #ffffff !important;
+}
+
+/* veiw xform - body */
+
+
+.gridGroupHeader {
+    background-color:#d3d3d3;
+    height:24px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.gridGroupBodyLabel {
+    text-align:left;
+    background-color:#DEE5F1 !important;     /* transprant color*/
+    padding-left:10px;
+}
+
+/* -- Task panel -- */
+
+.TaskHeaderPanel {
+    direction: rtl;
+    padding-right:5px;
+    padding-top:10px;
+}
+
+.ZaTaskTabView .DwtListView-ColHeader td{
+    font-weight: bold;
+}
+
+.ZaTaskTabView .XFormCase {
+    background-color: #DDDDDD;
+}
+/* -- Search panel -- */
+
+.SearchPanel {
+    background-color:@viewC@;
+    @tlRadius@:5px;
+    @trRadius@:5px;
+    @blRadius@:5px;
+    @brRadius@:5px;
+}
+
+.SearchToolBar {
+    top: 0px;
+    border: white solid 1px;
+    background-color:@viewC@;
+    @tlRadius@:5px;
+    @trRadius@:5px;
+    @blRadius@:5px;
+    @brRadius@:5px;
+}
+
+.SearchTBSearchField .oselect, .oselect_check {
+    border:none;
+    background-color:white;
+}
+
+.SearchTBSearchField .dynselect_display {
+    border-color:white;
+}
+
+
+.SearchTBSearchField .ZButtonBorder  {
+    border:none;
+}
+/*
+.ZaSearchFieldButton ZWidgetTable ZButtonTable ZButtonBorder .zwidget, .ZaSearchFieldButton ZWidgetTable ZButtonTable ZButtonBorder .zwidget * {
+    background-color:white;
+}
+*/
+
+.SearchTBSearchField .zwidget,.SearchTBSearchField  .zwidget * {
+    background-color:white;
+}
+
+/* -- Dialog -- */
+
+/* new account dialog */
+.AdminOutputTabSelect {
+    background-color:#4682b4;
+    color: white;
+    @tlRadius@:4px;
+    @trRadius@:4px;
+    @blRadius@:4px;
+    @brRadius@:4px;
+}
+
+.ZaNewAccountSwitch {
+    padding-left:5px;
+}
+
+.WindowOuterContainer {
+    background-color: #EAEAEA;
+    @tlRadius@:5px;
+    @trRadius@:5px;
+    @blRadius@:5px;
+    @brRadius@:5px;
+    border: 1px solid;
+    padding: 1px;
+}
+
+.WindowInnerContainer {
+    background-color: #DADADA;
+    border: 0px;
+    padding: 0px;
+}
+
+.step_container {
+    font: Arial bold 16pt;
+    color: #666666;
+    background-color: #e4eff6;
+    border: 0px;
+    padding: 5px;
+}
+
+.DwtDialogHeader {
+    background-color: #dfe1e5;
+}
+
+.DwtDialogTitle {
+    vertical-align: middle;
+    font-family: Arial;
+    font-size: 12pt;
+    font-weight: bold;
+    height: 27px;
+    color: #333333;
+}
+
+.DwtDialogMinIcon {
+
+}
+
+.DwtDialogBody {
+    background-color: #FCFCFC;
+}
+
+.DwtDialogButtonBar {
+    height: 40px;
+    background-color: #dadfe5;
+    @opacity(50)@;
+}
+
+.DwtDialogButtonBar .ZButtonBorder {
+    border: 1px solid #949494;
+    @borderRadius@:3px;
+    background-color: #fefefe;
+}
+
+.DwtDialogButtonBar .ZDisabled .ZButtonTable .ZWidgetTitle{
+    border: 1px solid #949494;
+    @borderRadius@:3px;
+    font: Arial 12px normal;
+    color: #999999;
+}
+
+.DwtDialogButtonBar .ZHover .ZButtonBorder{
+    border: 1px solid #949494;
+    @borderRadius@:3px;
+    font: Arial 12px normal;
+    background-color: #C7E9FF;
+}
+
+.horizSep {
+    border-bottom: 1px solid #E0E0E0;
+    margin: 0px;
+}
+
+.VeilOverlay {
+    background-color: black;
+    @opacity(35)@;
+}
+
+.ZaToolBar {
+    display:none;
+}
+
+.ZaHomeWarningPanel {
+    padding: 12px;
+    background-color: #ffffcc;
+}
+
+.ZaHomeWarnginItem {
+    padding: 1px 0px 2px;
+}
+
+.ZaLinkedItem {
+    cursor: pointer;
+    color:  #336699;
+}
+
+.ZaHomeInfoTitle {
+    color: #86a1b6;
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+.ZaHomeInfoPanel {
+    padding: 12px;
+}
+
+.ZaHomeTabView .xform_label {
+    text-align: left;
+}
+
+.ZaHomeSetupPanelContainer {
+    padding: 12px;
+}
+
+.ZaHomeSetupPanel{
+    @borderRadius@:10px;
+    background-color: #f3f7fb;
+    border: 1px solid #e7ecf2;
+}
+
+.ZaHomeSetupPanelContent {
+    padding: 12px;
+}
+
+.ZaHomeSetupTitle {
+    color: #86a1b6;
+    font-size: 16pt;
+    font-weight: bold;
+    padding-bottom: 8px;
+}
+
+.ZaHomeLinkItemLabel {
+    color: #86a1b6;
+}
+
+.NoResults {
+    @FontFamily-default@
+}
