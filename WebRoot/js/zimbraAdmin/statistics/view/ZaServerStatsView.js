@@ -41,18 +41,18 @@ ZaServerStatsView = function(parent) {
 //    }
 
   //  if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.SERVER_STATS_DISK_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-        this._diskPage = new ZaServerDiskStatsPage(this);
-        this.addTab(ZaMsg.TABT_Disk, this._diskPage);
+        //this._diskPage = new ZaServerDiskStatsPage(this);
+        //this.addTab(ZaMsg.TABT_Disk, this._diskPage);
 //    }
 
   //  if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.SERVER_STATS_SESSION_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-        this._sessionPage = new ZaServerSessionStatsPage(this);
-        this.addTab(ZaMsg.TABT_Session, this._sessionPage);
+        //this._sessionPage = new ZaServerSessionStatsPage(this);
+        //this.addTab(ZaMsg.TABT_Session, this._sessionPage);
 //    }
 
   //  if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.SERVER_STATS_QUOTA_TAB] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-        this._mbxPage = new ZaServerMBXStatsPage (this);
-        ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
+        //this._mbxPage = new ZaServerMBXStatsPage (this);
+        //ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
    // }
 }
 
@@ -97,22 +97,22 @@ ZaServerStatsView.prototype.getOneServersMtaServiceStatus = function( by, val ){
 	
 	}catch(ex) {
 			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaServerStatsView.getOneServersMtaServiceStatus", null, false);
-	
 	}
 
 	
-	if ( !resp ){
-	
+	if ( !resp ){	
 		return false;	
 	}
-	
-	var j = 0;
+
+	var oneServerDetailInfo = resp.a;
+	if ( !oneServerDetailInfo ){
+		return false;
+	}
+
+	var oneService = null;
 	var isEnabled = false;
 	var isInstalled = false;
-	
-	var oneServerDetailInfo = resp.a;
-	var oneService;
-	
+	var j = 0;
  	for ( ; j < oneServerDetailInfo.length; j++){
 			oneService = oneServerDetailInfo[j];
 			if( "mta" == oneService._content){
@@ -198,35 +198,52 @@ function () {
 **/
 ZaServerStatsView.prototype.setObject =
 function(entry) {
-	
-	this._containedObject = entry ;
+    if ( !entry || !entry.id ){
+        return;
+    }
+    this._containedObject = entry ;
+    this.serverId = entry.id;
 
-	
-	if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
-    
     if( this._msgCountPage == null ){
-        this._msgCountPage = new ZaServerMessageCountPage(this);
-        this.addTab(ZaMsg.TABT_InMsgs, this._msgCountPage);
+        this._diskPage = new ZaServerDiskStatsPage(this);
+        this.addTab(ZaMsg.TABT_Disk, this._diskPage);
     }
- 		this._msgCountPage.setObject(entry);
-    
-    if( this._msgsVolumePage == null ){
-        this._msgsVolumePage = new ZaServerMessageVolumePage(this);
-        this.addTab(ZaMsg.TABT_InData, this._msgsVolumePage);
+    this._diskPage.setObject(entry);
+
+    if( this._sessionPage == null ){
+        this._sessionPage = new ZaServerSessionStatsPage(this);
+        this.addTab(ZaMsg.TABT_Session, this._sessionPage);
     }
-    this._msgsVolumePage.setObject(entry);	
-     
+    this._sessionPage.setObject(entry);
+
+    if( this._mbxPage == null ){
+        this._mbxPage = new ZaServerMBXStatsPage (this);
+        ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
+    }
+    this._mbxPage.setObject(entry);
+
+
+	if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
+
+	    if( this._msgCountPage == null ){
+	        this._msgCountPage = new ZaServerMessageCountPage(this);
+	        this.addTab(ZaMsg.TABT_InMsgs, this._msgCountPage);
+	    }
+		this._msgCountPage.setObject(entry);
+
+	    if( this._msgsVolumePage == null ){
+	        this._msgsVolumePage = new ZaServerMessageVolumePage(this);
+	        this.addTab(ZaMsg.TABT_InData, this._msgsVolumePage);
+	    }
+	    this._msgsVolumePage.setObject(entry);
+
 		if( this._spamPage == null ){
-			  this._spamPage = new ZaServerSpamActivityPage(this);
-        this.addTab(ZaMsg.TABT_Spam_Activity, this._spamPage);
+			this._spamPage = new ZaServerSpamActivityPage(this);
+			this.addTab(ZaMsg.TABT_Spam_Activity, this._spamPage);
 		}
-	  this._spamPage.setObject(entry);	
-		
+		this._spamPage.setObject(entry);	
 	}
 
-  this._diskPage.setObject(entry);	
-	this._mbxPage.setObject(entry);
-	this._sessionPage.setObject(entry) ;
 	var szTitle = AjxStringUtil.htmlEncode(ZaMsg.NAD_ServerStatistics);
 	if(entry.name) {
 		szTitle = szTitle + entry.name;
