@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -46,8 +46,7 @@ ZaController = function(appCtxt, container,iKeyName) {
     this._helpURL = ZaController.helpURL;
    	this._toolbarOperations = new Array();
    	this._toolbarOrder = new Array();
-   	this._popupOperations = new Array();
-    this._popupOrder = new Array();
+   	this._popupOperations = new Array();	    
 }
 ZaController.CLICK_DELAY = 150;
 ZaController.prototype.initDialogs = function (refresh) {
@@ -176,7 +175,7 @@ function(msg, ex, style)  {
     }
 
 	if (this._errorDialog) {
-        this._errorDialog.setMessage(msg, detailStr, style, ZabMsg.zimbraAdminTitle);
+        this._errorDialog.setMessage(msg, detailStr, style, ZaMsg.zimbraAdminTitle);
 
 	
         if (!this._errorDialog.isPoppedUp()) {
@@ -192,7 +191,7 @@ function(msg, noExecReset)  {
 		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	// popup alert
-	this._msgDialog.setMessage(msg, DwtMessageDialog.INFO_STYLE, ZabMsg.zimbraAdminTitle);
+	this._msgDialog.setMessage(msg, DwtMessageDialog.INFO_STYLE, ZaMsg.zimbraAdminTitle);
 	if (!this._msgDialog.isPoppedUp()) {
 		this._msgDialog.popup();
 	}
@@ -205,7 +204,7 @@ function(msg, noExecReset)  {
 		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	// popup alert
-	this._msgDialog.setMessage(msg, DwtMessageDialog.WARNING_STYLE, ZabMsg.zimbraAdminTitle);
+	this._msgDialog.setMessage(msg, DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
 	if (!this._msgDialog.isPoppedUp()) {
 		this._msgDialog.popup();
 	}
@@ -332,6 +331,9 @@ function() {
 	ZaZimbraAdmin._killSplash();
 	this._authenticating = true;
 	this._loginDialog.setVisible(true, false);
+	/*if(!AjxEnv.isFirefox1up && !AjxEnv.isFirefox3up && !AjxEnv.isFirefox2_0up && !AjxEnv.isNav7 && !AjxEnv.isIE6up && !AjxEnv.isIE7up)
+		this._loginDialog.setError(AjxMessageFormat.format(ZaMsg.ERROR_BROWSER_UNSUPORTED, [navigator.userAgent]));
+	*/	
 	try {
 		var uname = "";
 		this._loginDialog.setFocus(uname);
@@ -390,7 +392,7 @@ function(ex, method, params, restartOnError, obj) {
 			this.popupErrorDialog(ZaMsg.JAVASCRIPT_ERROR + " in method " + method, ex);
 		
 		} else if(ex.code == ZmCsfeException.EMPTY_RESPONSE) {
-			this.popupErrorDialog(ZabMsg.ERROR_ZCS_NOT_RUNNING, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_ZCS_NOT_RUNNING, ex);
 		} else if (ex.code == ZmCsfeException.SOAP_ERROR) {
 			this.popupErrorDialog(ZaMsg.SOAP_ERROR, ex);
 		} else if (ex.code == ZmCsfeException.NETWORK_ERROR ||
@@ -865,7 +867,6 @@ function (event) {
 
 ZaController.prototype.selectExistingTabByItemId =
 function (itemId, tabConstructor) {
-    if(appNewUI) return false;
 	var tabGroup = ZaApp.getInstance().getTabGroup ();
 	var tab = tabGroup.getTabByItemId (itemId, tabConstructor ? tabConstructor : this.tabConstructor) ;
 	if (tab) {
@@ -935,18 +936,6 @@ function () {
     if(this._toolbar) {
     	this._toolbar.enableMoreActionsMenuItems () ;
     }
-
-    // For New UI
-    if (appNewUI) {
-        var settingMenu = ZaZimbraAdmin.getInstance().getSettingMenu();
-        if (this._popupOperations && settingMenu) {
-            for(var i in this._popupOperations) {
-                if(this._popupOperations[i] instanceof ZaOperation && !AjxUtil.isEmpty(settingMenu.getMenuItem(this._popupOperations[i].id))) {
-                    settingMenu.getMenuItem(this._popupOperations[i].id).setEnabled(this._popupOperations[i].enabled);
-                }
-            }
-        }
-    }
 }
 
 ZaController.prototype.closeTabsInRemoveList =
@@ -962,7 +951,7 @@ function (){
 }
 
 
-ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuery) {
+ZaController.prototype._showAccountsView = function (defaultType, ev) {
 
 	var viewId = null;  
 	if(defaultType == ZaItem.DL) {
@@ -985,10 +974,10 @@ ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuer
 		//var domainList = [];
 		var cnt = domainList.length;
 		if(cnt>0) {
-			queryChunks.push("(|");
+			queryChunks.push("(");	
 		}
-		
 		for(var i = 0; i < cnt; i++) {
+			queryChunks.push("|");
 			queryChunks.push("(zimbraMailDeliveryAddress=*@");
 			queryChunks.push(domainList[i].name);
 			queryChunks.push(")");
@@ -999,13 +988,10 @@ ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuer
 		if(cnt>0) {
 			queryChunks.push(")");
 			query=queryChunks.join("");
-		}
+		}		
 	}
     }
 
-    if(appNewUI && filterQuery) {
-        query = query + filterQuery;
-    }
 
 	acctListController.setPageNum(1);	
 	acctListController.setQuery(query);
@@ -1036,12 +1022,4 @@ function (params) {
 		this._currentRequest.cancel() ;
 	}
 	ZaApp.getInstance().getAppCtxt().getShell().setBusy(false, params.busyId);	
-}
-
-ZaController.prototype.getPopUpOperation =
-function() {
-    if (this._popupOperations && this._popupOperations.length > 0)
-        return  this._popupOperations;
-    else
-        return "";
 }
