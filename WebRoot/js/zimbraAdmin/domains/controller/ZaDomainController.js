@@ -351,6 +351,9 @@ function () {
 			if(haveSmth) {
 				try {	
 					this._currentObject.modify(mods, tmpObj);
+					if(mods["zimbraSSLCertificate"] || mods["zimbraSSLPrivateKey"]) {
+						ZaApp.getInstance().getCurrentController().popupMsgDialog(ZaMsg.MSG_DOMAIN_CERT_UPLOADED);
+					}
 				} catch (ex) {
 					this._handleException(ex, "ZaAccountViewController.prototype._saveChanges", null, false);	
 					return false;
