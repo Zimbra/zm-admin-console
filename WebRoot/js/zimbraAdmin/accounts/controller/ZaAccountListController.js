@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -53,9 +53,7 @@ ZaController.changeActionsStateMethods["ZaAccountListController"] = new Array();
 ZaAccountListController.prototype.show = function (doPush) {
 	var busyId = Dwt.getNextId();
 	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,CONS:null,show:doPush,busyId:busyId});
-
-	// hide the system account
-	this._currentQuery = "(&" + this._currentQuery + "(!("+ ZaAccount.A_zimbraIsSystemAccount +"=TRUE)))"	
+	
 	var searchParams = {
 			query:this._currentQuery ,
 			types:this.searchTypes,
@@ -63,7 +61,7 @@ ZaAccountListController.prototype.show = function (doPush) {
 			offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
 			sortAscending:this._currentSortOrder,
 			limit:this.RESULTSPERPAGE,
-            attrs: [this.fetchAttrs, ZaAccount.A_zimbraIsDelegatedAdminAccount, ZaAccount.A_zimbraIsAdminAccount, ZaAccount.A_zimbraIsSystemResource, ZaAccount.A_zimbraIsSystemAccount, ZaAccount.A_zimbraIsExternalVirtualAccount].join(),
+            attrs: [this.fetchAttrs, ZaAccount.A_zimbraIsDelegatedAdminAccount, ZaAccount.A_zimbraIsAdminAccount, ZaAccount.A_zimbraIsSystemResource].join(),
 			callback:callback,
 			controller: this,
 			showBusy:true,
@@ -71,28 +69,16 @@ ZaAccountListController.prototype.show = function (doPush) {
 			busyMsg:ZaMsg.BUSY_SEARCHING,
 			skipCallbackIfCancelled:false
 	}
-	this.scrollSearchParams={
-            query:this._currentQuery ,
-			types:this.searchTypes,
-			sortBy:this._currentSortField,
-			sortAscending:this._currentSortOrder,
-            attrs: [this.fetchAttrs, ZaAccount.A_zimbraIsDelegatedAdminAccount, ZaAccount.A_zimbraIsAdminAccount, ZaAccount.A_zimbraIsSystemResource, ZaAccount.A_zimbraIsSystemAccount, ZaAccount.A_zimbraIsExternalVirtualAccount].join(),
-			controller: this,
-			showBusy:true,
-			busyMsg:ZaMsg.BUSY_SEARCHING,
-			skipCallbackIfCancelled:false
-    };
+	
 	ZaSearch.searchDirectory(searchParams);
 }
 
 ZaAccountListController.prototype._show = 
-function (list, openInNewTab, openInSearchTab, hasMore) {
-	this._updateUI(list, openInNewTab, openInSearchTab, hasMore);
+function (list, openInNewTab, openInSearchTab) {
+	this._updateUI(list, openInNewTab, openInSearchTab);
 //	ZaApp.getInstance().pushView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW);
-    this.updatePopupMenu();
 	ZaApp.getInstance().pushView(this.getContentViewId (), openInNewTab, openInSearchTab);
 	this.updateToolbar();
-    if(appNewUI) return;
 	//TODO: need to standardize the way to handle the tab.
 	//hacking: currently, dllistview, aliasListView, accountListView and resourceListView share the same controller instance. It is BAD!
 	//It should be changed when we allow the list view to be open in a new tab
@@ -102,10 +88,6 @@ function (list, openInNewTab, openInSearchTab, hasMore) {
 		ZaApp.getInstance().updateTab(this.getMainTab(), ZaApp.getInstance()._currentViewId );
 	}
 }
-
-
-
-
 
 ZaAccountListController.prototype.setDefaultType = function (type) {
 	// set the default type,
@@ -164,34 +146,6 @@ function () {
 	}
 }
 
-ZaAccountListController.prototype.updatePopupMenu =
-function () {
-
-	var type = this._defaultType ;
-    if (type == ZaItem.ACCOUNT && this.showNewAccount) {
-        this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "NewAccount", "AccountDis",new AjxListener(this, ZaAccountListController.prototype._newAccountListener));
-    } else if (type == ZaItem.ALIAS && this.showNewAlias) {
-        this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "AccountAlias", "AccountDis",new AjxListener(this, ZaAccountListController.prototype._newAliasListener));
-    } else if (type == ZaItem.DL && this.showNewDL) {
-        this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "DistributionList", "DistributionListDis",new AjxListener(this, ZaAccountListController.prototype._newDistributionListListener));
-    } else if (type == ZaItem.RESOURCE && this.showNewCalRes){
-        this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "Resource", "ResourceDis",new AjxListener(this, ZaAccountListController.prototype._newResourceListener));
-    }
-}
-
-ZaAccountListController.prototype.handleRemoval =
-function(ev) {
-    if(appNewUI)
-        ZaZimbraAdmin.getInstance().getOverviewPanelController().refreshAccountTree();
-    ZaListViewController.prototype.handleRemoval.call(this,ev);
-}
-
-ZaAccountListController.prototype.handleCreation =
-function(ev) {
-    if(appNewUI)
-        ZaZimbraAdmin.getInstance().getOverviewPanelController().refreshAccountTree();
-    ZaListViewController.prototype.handleCreation.call(this,ev);
-}
 
 ZaAccountListController.prototype.set = 
 function(accountList) {
@@ -272,12 +226,6 @@ function () {
 
 ZaAccountListController.initPopupMenuMethod =
 function () {
-    if(appNewUI) {
-        //push it firstly to make it as the first one
-        this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "NewAccount", "AccountDis",new AjxListener(this, ZaAccountListController.prototype._newAccountListener));;
-        this._popupOrder.push(ZaOperation.NEW_MENU);
-    }
-
     this._popupOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Edit", "EditDis", new AjxListener(this, ZaAccountListController.prototype._editButtonListener));
 	this._popupOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaAccountListController.prototype._deleteButtonListener));
 	
@@ -286,10 +234,12 @@ function () {
 		this._popupOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
 	}
 
+	this._popupOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailbox", new AjxListener(this, ZaAccountListController.prototype._viewMailListener));		
+
 	if(this._defaultType == ZaItem.ALIAS) {	
 		this._popupOperations[ZaOperation.MOVE_ALIAS] = new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));
 		this._popupOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
-	}
+	}		    	
 }
 ZaController.initPopupMenuMethods["ZaAccountListController"].push(ZaAccountListController.initPopupMenuMethod);
 
@@ -300,60 +250,60 @@ ZaAccountListController.initToolbarMethod =
 function () {
 	// first button in the toolbar is a menu.
 	var newMenuOpList = new Array();
-	this.showNewAccount = false;
-	this.showNewDL = false;
-	this.showNewCalRes = false;
-	this.showNewAlias = false;
+	var showNewAccount = false;
+	var showNewDL = false;
+	var showNewCalRes = false;
+	var showNewAlias = false;
 	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
-		this.showNewAccount = true;
-		this.showNewDL = true;
-		this.showNewCalRes = true;
-		this.showNewAlias = true;
+		showNewAccount = true;
+		showNewDL = true;
+		showNewCalRes = true;
+		showNewAlias = true;
 	} else {
 		var domainList = ZaApp.getInstance().getDomainList().getArray();
 		var cnt = domainList.length;
 		for(var i = 0; i < cnt; i++) {
 			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ACCOUNT,domainList[i])) {
-				this.showNewAccount = true;
+				showNewAccount = true;
 			}	
 			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_CALRES,domainList[i])) {
-				this.showNewCalRes = true;
+				showNewCalRes = true;
 			}
 			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_DL,domainList[i])) {
-				this.showNewDL = true;
+				showNewDL = true;
 			}				
 			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ALIAS,domainList[i])) {
-				this.showNewAlias = true;
+				showNewAlias = true;
 			}
-			if(this.showNewAlias && this.showNewDL && this.showNewCalRes && this.showNewAccount) {
+			if(showNewAlias && showNewDL && showNewCalRes && showNewAccount) {
 				break;
 			}
 		}
 	}
 	
-	if(this.showNewAccount) {
-		newMenuOpList.push(new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.ACTBB_New_menuItem, ZaMsg.ACTBB_New_tt, "NewAccount", "AccountDis", this._newAcctListener));
+	if(showNewAccount) {
+		newMenuOpList.push(new ZaOperation(ZaOperation.NEW_WIZARD, ZaMsg.ACTBB_New_menuItem, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", this._newAcctListener));
 	}
-	if(this.showNewAlias) {
+	if(showNewAlias) {
 		newMenuOpList.push(new ZaOperation(ZaOperation.NEW_ALIAS, ZaMsg.ALTBB_New_menuItem, ZaMsg.ALTBB_New_tt, "AccountAlias", "AccountAliasDis", this._newALListener));
 	}
-	if(this.showNewDL) {
+	if(showNewDL) {
 		newMenuOpList.push(new ZaOperation(ZaOperation.NEW_DL, ZaMsg.DLTBB_New_menuItem, ZaMsg.DLTBB_New_tt, "DistributionList", "DistributionListDis", this._newDLListener));
 	}
-	if(this.showNewCalRes) {
+	if(showNewCalRes) {
 		newMenuOpList.push(new ZaOperation(ZaOperation.NEW_RESOURCE, ZaMsg.RESTBB_New_menuItem, ZaMsg.RESTBB_New_tt, "Resource", "ResourceDis", this._newResListener));
 	}	
 		
-	if(this.showNewAccount && this._defaultType == ZaItem.ACCOUNT) {
-		this._toolbarOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "NewAccount", "AccountDis", this._newAcctListener, 
+	if(showNewAccount && this._defaultType == ZaItem.ACCOUNT) {
+		this._toolbarOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "Account", "AccountDis", this._newAcctListener, 
 								   ZaOperation.TYPE_MENU, newMenuOpList);
-    } else if (this.showNewAlias && this._defaultType == ZaItem.ALIAS) {
+    } else if (showNewAlias && this._defaultType == ZaItem.ALIAS) {
 		this._toolbarOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "AccountAlias", "AccountAliasDis", this._newALListener, 
 								   ZaOperation.TYPE_MENU, newMenuOpList);
-    }else if(this.showNewCalRes && this._defaultType == ZaItem.RESOURCE) {
+    }else if(showNewCalRes && this._defaultType == ZaItem.RESOURCE) {
 		this._toolbarOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.RESTBB_New_tt, "Resource", "ResourceDis", this._newResListener, 
 									   ZaOperation.TYPE_MENU, newMenuOpList);
-    } else if(this.showNewDL && this._defaultType == ZaItem.DL) {
+    } else if(showNewDL && this._defaultType == ZaItem.DL) {    	
 		this._toolbarOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "DistributionList", "DistributionListDis", this._newDLListener, 
 									   ZaOperation.TYPE_MENU, newMenuOpList);
     } 
@@ -365,6 +315,7 @@ function () {
 		this._toolbarOperations[ZaOperation.CHNG_PWD] = new ZaOperation(ZaOperation.CHNG_PWD, ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener));
 		this._toolbarOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
 	}
+	this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailbox", new AjxListener(this, ZaAccountListController.prototype._viewMailListener));		
 
 	if(this._defaultType == ZaItem.ALIAS) {	
 		this._toolbarOperations[ZaOperation.MOVE_ALIAS] = new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));		    	
@@ -380,6 +331,7 @@ function () {
 		this._toolbarOrder.push(ZaOperation.CHNG_PWD);
 		this._toolbarOrder.push(ZaOperation.EXPIRE_SESSION);
 	}
+	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	if(this._defaultType == ZaItem.ALIAS) {
 		this._toolbarOrder.push(ZaOperation.EXPIRE_SESSION);
 		this._toolbarOrder.push(ZaOperation.MOVE_ALIAS);
@@ -419,18 +371,14 @@ function (openInNewTab, openInSearchTab) {
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-    if (!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        //ZaApp.getInstance().createView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW, elements);
-        var tabParams = {
-            openInNewTab: false,
-            tabId: this.getContentViewId(),
-            tab: openInSearchTab ? this.getSearchTab() : this.getMainTab()
-        }
-	    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
-    }
-    else
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+	//ZaApp.getInstance().createView(ZaZimbraAdmin._ACCOUNTS_LIST_VIEW, elements);
+	var tabParams = {
+		openInNewTab: false,
+		tabId: this.getContentViewId(),
+		tab: openInSearchTab ? this.getSearchTab() : this.getMainTab() 
+	}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
 	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_ACCTLIST, ZaId.MENU_POP);
@@ -462,7 +410,6 @@ function(ev) {
 		EmailAddr_XFormItem.resetDomainLists.call(this) ;
 		var newAccount = new ZaAccount();
 		newAccount.loadNewObjectDefaults("name", ZaSettings.myDomainName);
-        newAccount.rights[ZaAccount.GET_ACCOUNT_MEMBERSHIP_RIGHT]= true;
 		
 		if(!ZaApp.getInstance().dialogs["newAccountWizard"])
 			ZaApp.getInstance().dialogs["newAccountWizard"] = new ZaNewAccountXWizard(this._container,newAccount);	
@@ -517,17 +464,7 @@ function(ev) {
 		newDL.rights[ZaDistributionList.RENAME_DL_RIGHT]=true;
 		newDL.rights[ZaDistributionList.REMOVE_DL_MEMBER_RIGHT]=true;
 		newDL.rights[ZaDistributionList.ADD_DL_MEMBER_RIGHT]=true;
-        newDL.rights[ZaDistributionList.GET_DL_MEMBERSHIP_RIGHT] = true;
-        if(!appNewUI)
-		    ZaApp.getInstance().getDistributionListController().show(newDL,true,true);
-        else{
-            if(!ZaApp.getInstance().dialogs["newDLWizard"])
-			    ZaApp.getInstance().dialogs["newDLWizard"] = new ZaNewDLXWizard(this._container,newDL);
-
-		    ZaApp.getInstance().dialogs["newDLWizard"].setObject(newDL);
-		    ZaApp.getInstance().dialogs["newDLWizard"].popup();
-        }
-
+		ZaApp.getInstance().getDistributionListController().show(newDL,true,true);
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountListController.prototype._newDistributionListListener", null, false);
 	}
@@ -593,7 +530,6 @@ function(ev) {
 	}
 }
 
-
 ZaAccountListController.prototype._editItem = function (item) {
 	if(this.changeAcStateAcId) {
 		AjxTimedAction.cancelAction(this.changeAcStateAcId);
@@ -607,24 +543,21 @@ ZaAccountListController.prototype._editItem = function (item) {
 	var type = item.type;
 	var viewContstructor = ZaAccountXFormView;
 	if (type == ZaItem.ACCOUNT) {
-		viewContstructor = ZaAccountXFormView;
+		viewContstructor = ZaAccountXFormView;	
 	} else if (type == ZaItem.DL) {
-		viewContstructor = ZaDLXFormView;
+		viewContstructor = ZaDLXFormView;	
 	} else if (type == ZaItem.RESOURCE ){
 		viewContstructor = ZaResourceXFormView;
 	} else if (type == ZaItem.ALIAS) {
-		if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_ACCOUNT) {
-			viewContstructor = ZaAccountXFormView;
+		if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_ACCOUNT) {	
+			viewController = ZaAccountXFormView;
 		}else if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_DL){
-		    viewContstructor = ZaDLXFormView;
-		}else if (item.attrs[ZaAlias.A_targetType] == ZaAlias.TARGET_TYPE_RESOURCE) {
-            viewContstructor = ZaResourceXFormView;
-        }
+		    viewController = ZaDLXFormView;
+		}
 	}
 	
 	try {	
 	   if (! this.selectExistingTabByItemId(itemId,viewContstructor)){
-
 //		DBG.println("TYPE == ", item.type);
 		if (type == ZaItem.ACCOUNT) {
 			//this._selectedItem = ev.item;
@@ -644,11 +577,6 @@ ZaAccountListController.prototype._editItem = function (item) {
 		} else if (type == ZaItem.RESOURCE ){
 			ZaApp.getInstance().getResourceController(itemId).show(item, true);
 		}
-
-        if (appNewUI) {
-            ZaZimbraAdmin.getInstance().getOverviewPanelController().addAccountItem(item);
-
-        }
 	   }
 	} catch(ex) {
 		if(ex.msg) {
@@ -759,7 +687,7 @@ function(acct) {
 	try {
 		ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
 		mods = {};
-		mods[ZaAccount.A_zimbraAuthTokenValidityValue] = (!acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue] ? 1 : ((parseInt(acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue])+1) % 9));
+		mods[ZaAccount.A_zimbraAuthTokenValidityValue] = (!acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue] ? 1 : ((parseInt(acct.attrs[ZaAccount.A_zimbraAuthTokenValidityValue])+1) % 9)); 
 		acct.modify(mods,acct);
 		//if we find we invalidate self account, we will throw an simulative exception of AUTH_EXPIRED 
 		//this exception will be handled in _handleException to redirect admin to login page  
@@ -774,14 +702,12 @@ function(acct) {
 			};
 			throw new ZmCsfeException(exParams);
 		}
-
-        ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.SessionInvalid,[acct.name]));
 	}catch(ex){
 		this._handleException(ex, "ZaAccountListController.expireSessions", null, false);
 	}
 }  
 
-ZaAccountListController._viewMailListenerLauncher =
+ZaAccountListController._viewMailListenerLauncher = 
 function(account) {
 	try {
 		var obj;
@@ -809,9 +735,30 @@ function(account) {
 		mServer = AjxStringUtil.trim(mServer,true);
 		var win = window.open(mServer, "_blank");
 	} catch (ex) {
-		this._handleException(ex, "ZaAccountListController._viewMailListenerLauncher", null, false);
+		this._handleException(ex, "ZaAccountListController._viewMailListenerLauncher", null, false);			
+	}	
+}
+
+ZaAccountListController.prototype._viewMailListener =
+function(ev) {
+	try {
+//		var el = this._contentView.getSelectedItems().getLast();
+	//	if(el) {
+			//var account = DwtListView.prototype.getItemFromElement.call(this, el); {
+		var accounts = this._contentView.getSelection();
+		if(accounts && accounts.length) {
+			var account = accounts[0];
+			if(account) {
+				ZaAccountListController._viewMailListenerLauncher.call(this, account);
+			}
+		}	
+			
+		//}
+	} catch (ex) {
+		this._handleException(ex, "ZaAccountListController.prototype._viewMailListener", null, false);			
 	}
 }
+
 /**
 * This listener is called when the Delete button is clicked. 
 **/
@@ -831,7 +778,7 @@ function(ev) {
 			var item = arrItems[key];
 			if (item) {
 				//detect whether the deleting item is open in a tab
-				if (ZaApp.getInstance().getTabGroup() && ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
+				if (ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
 					this._itemsInTabList.push (item) ;
 				}else{
 					this._removeList.push(item);			
@@ -1039,33 +986,19 @@ function (item) {
 				if(szPwd.length < minPwdLen || AjxStringUtil.trim(szPwd).length < minPwdLen) { 
 					//show error msg
 					//this._chngPwdDlg.popdown();
-                    var minpassMsg;
-                    if (minPwdLen > 1) {
-                        minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                    } else {
-                        minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                    }
 					ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");									
-					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + minpassMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen), null, DwtMessageDialog.CRITICAL_STYLE, null);
 					ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
 				} else if(AjxStringUtil.trim(szPwd).length > maxPwdLen) { 
 					//show error msg
 					//this._chngPwdDlg.popdown();
-					ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");
-                    var maxpassMsg;
-                    if (maxPwdLen > 1) {
-                        maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                    } else {
-                        maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                    }
-					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + maxpassMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");									
+					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen), null, DwtMessageDialog.CRITICAL_STYLE, null);
 					ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
 				} else {		
 					item.changePassword(szPwd);
 					this._chngPwdDlg.popdown();	//close the dialog
-                    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.PasswordModified,[item.name]));
 				}
-
 			}
 			if (this._chngPwdDlg.getMustChangePassword()) {
 				//item.attrs[ZaAccount.A_zimbraPasswordMustChange] = "TRUE";
@@ -1091,11 +1024,6 @@ function (item) {
 	}
 }
 
-ZaAccountListController.prototype.getPopUpOperation =
-function() {
-    return this._popupOperations;
-}
-
 ZaAccountListController.changeActionsStateMethod = 
 function () {
 	var cnt = this._contentView.getSelectionCount();
@@ -1115,6 +1043,13 @@ function () {
 
             if (((item.type == ZaItem.ALIAS) && (item.attrs[ZaAlias.A_targetType] == ZaItem.DL))
                 || (item.type == ZaItem.DL)) {
+                if (this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+                    this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;                                        
+                }
+
+                if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+                    this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+                }
 
 		if (this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {
                     this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
@@ -1141,6 +1076,12 @@ function () {
                 if(this._popupOperations[ZaOperation.MOVE_ALIAS])	{
                     this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
                 }
+                if(this._popupOperations[ZaOperation.VIEW_MAIL])
+				 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+					 
+				if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+				 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+                	    
             }
 			if (item.type == ZaItem.ACCOUNT) {
 				var enable = false;
@@ -1155,6 +1096,13 @@ function () {
 					//console.log("loaded rights for a list item");
 				}
 				if(!enable) {
+					if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,item)) {
+						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+						 
+						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+					}
 					if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,item)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1198,6 +1146,13 @@ function () {
 					item.targetObj.loadEffectiveRights("id", item.id, false);
 				}
 				if(!enable) {
+					if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,item.targetObj)) {
+						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+						 
+						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+					}	
 					if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,item.targetObj)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1233,6 +1188,13 @@ function () {
 				}
 				if(!enable) {
 					if(!enable) {
+						if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,item.targetObj)) {
+							 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+							 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+							 
+							 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+							 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+						}
 						if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,item.targetObj)) {
 							 if(this._popupOperations[ZaOperation.DELETE])
 							 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1257,6 +1219,13 @@ function () {
 					item.loadEffectiveRights("id", item.id, false);
 				}
 				if(!enable) {
+					if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,item)) {
+						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
+						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+						 
+						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
+						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
+					}
 					if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,item)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1276,6 +1245,9 @@ function () {
         } else {
 			if(this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {	
 				this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
+			}        	
+			if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+				this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
 			}
 			if(this._toolbarOperations[ZaOperation.EDIT]) {	
 				this._toolbarOperations[ZaOperation.EDIT].enabled = false;
@@ -1292,6 +1264,9 @@ function () {
 			
 			if(this._popupOperations[ZaOperation.EXPIRE_SESSION]) {	
 				this._popupOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
+			}    			
+			if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+				this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
 			}
 			if(this._popupOperations[ZaOperation.EDIT]) {	
 				this._popupOperations[ZaOperation.EDIT].enabled = false;
@@ -1315,7 +1290,10 @@ function () {
 		}		
 		if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 			this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
-		}
+		}		
+		if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+			this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
+		}	
 		if(this._toolbarOperations[ZaOperation.MOVE_ALIAS]) {
 			this._toolbarOperations[ZaOperation.MOVE_ALIAS].enabled = false;		
 		}
@@ -1328,7 +1306,10 @@ function () {
 		}		
 		if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 			this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
-		}
+		}		
+		if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+			this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
+		}	
 		if(this._popupOperations[ZaOperation.MOVE_ALIAS]) {
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;		
 		}
@@ -1344,6 +1325,9 @@ function () {
 		}		
 		if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 			this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
+		}	
+		if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
+			this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
 		}
 		if(this._toolbarOperations[ZaOperation.MOVE_ALIAS])	{
 			this._toolbarOperations[ZaOperation.MOVE_ALIAS].enabled = false;
@@ -1360,15 +1344,17 @@ function () {
 		}		
 		if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 			this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
+		}	
+		if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
+			this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
 		}
 		if(this._popupOperations[ZaOperation.MOVE_ALIAS])	{
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
 		}	
 	}
  	for(var i=0;i<cnt;i++) {
-        var itemObj = this._contentView.getSelection()[i];
-        if(itemObj && itemObj.type==ZaItem.ACCOUNT){
-		/*
+        var myitem = this._contentView.getSelection()[i];
+        if(myitem && myitem.type==ZaItem.ACCOUNT){
                 myitem = this._contentView.getSelection()[i].toString();
                 var mydomain = ZaAccount.getDomain(myitem);
                 var domainObj =  ZaDomain.getDomainByName(mydomain);
@@ -1410,12 +1396,7 @@ function () {
                         this._toolbarOperations[ZaOperation.DELETE].enabled=false;
 			this._popupOperations[ZaOperation.DELETE].enabled = false;	
                 }
-		*/
-		// Use zimbraIsSystemAccount to determine enabled/disabled status for delete button
-		if (itemObj.attrs[ZaAccount.A_zimbraIsSystemAccount] == "TRUE") {
-                        this._toolbarOperations[ZaOperation.DELETE].enabled=false;
-                        this._popupOperations[ZaOperation.DELETE].enabled = false;
-		}
+
         }
         }
 }

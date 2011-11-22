@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -87,17 +87,13 @@ function () {
 
     var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-    if(!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        //ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_VIEW, elements);
-        var tabParams = {
-            openInNewTab: true,
-            tabId: this.getContentViewId()
-        }
-        ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    } else {
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-    }
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+    //ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_VIEW, elements);
+	var tabParams = {
+		openInNewTab: true,
+		tabId: this.getContentViewId()
+	}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }

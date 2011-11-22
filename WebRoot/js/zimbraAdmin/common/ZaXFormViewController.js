@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -112,18 +112,6 @@ function(ev, noPopView, func, obj, params) {
 		//this._app.getTabGroup().removeCurrentTab(true) ;
 		ZaApp.getInstance().popView();
 		//ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;
-        if(appNewUI) {
-            var tree = ZaZimbraAdmin.getInstance().getOverviewPanelController().getOverviewPanel().getFolderTree();
-            var rootItem = tree.getCurrentRootItem();
-            var rootPath = tree.getABPath(rootItem.getData("dataItem"));
-            var topPath = "";
-            var lastLoc = rootPath.lastIndexOf(ZaTree.SEPERATOR);
-            if(lastLoc > 0) {
-                topPath = rootPath.substring(0,lastLoc);
-            }
-            tree.setSelectionByPath(topPath);
-        }
-
 	}
 }
 
@@ -192,35 +180,10 @@ function () {
 		if(this._currentObject.id) {
 			this._currentObject.remove();
 			this.fireRemovalEvent(this._currentObject);
-            var msgName = "";
-            switch(this._currentObject.type){
-		        case ZaItem.ACCOUNT: msgName = ZaMsg.AccountDeleted ; break ;
-                case ZaItem.DOMAIN: msgName = ZaMsg.DomainDeleted ; break ;
-		        case ZaItem.RESOURCE: msgName = ZaMsg.ResourceDeleted ; break ;
-		        case ZaItem.DL: msgName= ZaMsg.DLDeleted ; break ;
-                case ZaItem.COS: msgName = ZaMsg.CosDeleted ; break ;
-		        default: msgName = ""; break ;
-	        }
-
-            if(msgName) {
-                ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(msgName,[this._currentObject.name]));
-            }
-
 		}
 		this.closeCnfrmDlg();	
 		ZaApp.getInstance().popView();		
-		//ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;
-        if(appNewUI) {
-            var tree = ZaZimbraAdmin.getInstance().getOverviewPanelController().getOverviewPanel().getFolderTree();
-            var rootItem = tree.getCurrentRootItem();
-            var rootPath = tree.getABPath(rootItem.getData("dataItem"));
-            var topPath = "";
-            var lastLoc = rootPath.lastIndexOf(ZaTree.SEPERATOR);
-            if(lastLoc > 0) {
-                topPath = rootPath.substring(0,lastLoc);
-            }
-            tree.setSelectionByPath(topPath);
-        }
+		//ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;	
 	} catch (ex) {
 		this.closeCnfrmDlg();	
 		this._handleException(ex, "ZaXFormViewController.prototype.deleteAndGoAway", null, false);				
@@ -315,37 +278,13 @@ function (params) {
 **/
 ZaXFormViewController.prototype.setDirty = 
 function (isD) {
-    if (!appNewUI) {
-        if(!this._toolbar || !this._toolbar.getButton(ZaOperation.SAVE))
-            return;
-
-        if(isD)
-            this._toolbar.getButton(ZaOperation.SAVE).setEnabled(true);
-        else
-            this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
-    } else {
-        var settingMenu = ZaZimbraAdmin.getInstance().getSettingMenu();
-        if (!settingMenu ||
-            !this._popupOperations ||
-            !this._popupOperations[ZaOperation.SAVE] ||
-            !this._popupOperations[ZaOperation.SAVE].id)
-            return;
-
-        if (!this._popupOperations)
-            return;
-
-        if (!this._popupOperations[ZaOperation.SAVE])
-            return;
-
-        var saveItem = settingMenu.getMenuItem(this._popupOperations[ZaOperation.SAVE].id)
-        if (AjxUtil.isEmpty(saveItem))
-            return;
-
-        if(isD)
-            saveItem.setEnabled(true);
-        else
-            saveItem.setEnabled(false);
-    }
+	if(!this._toolbar || !this._toolbar.getButton(ZaOperation.SAVE))
+		return;
+		
+	if(isD)
+		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(true);
+	else
+		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
 }
 
 /**
@@ -383,19 +322,12 @@ function () {
 	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-
-
-
-    if(!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        var tabParams = {
-		        openInNewTab: true,
-		        tabId: this.getContentViewId()
-	        }
-	    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    } else
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+    var tabParams = {
+		openInNewTab: true,
+		tabId: this.getContentViewId()
+	}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }
