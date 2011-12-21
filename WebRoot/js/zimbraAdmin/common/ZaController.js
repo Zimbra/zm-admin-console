@@ -335,7 +335,7 @@ function() {
 		this._loginDialog.setError(AjxMessageFormat.format(ZaMsg.ERROR_BROWSER_UNSUPORTED, [navigator.userAgent]));
 	*/	
 	try {
-		var uname = "";
+		var uname = null; // don't change current display username
 		this._loginDialog.setFocus(uname);
 	} catch (ex) {
 		// something is out of whack... just make the user relogin
