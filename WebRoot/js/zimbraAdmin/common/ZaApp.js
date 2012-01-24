@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -115,7 +115,14 @@ function(appCtxt) {
 		} else {					
 			dashBoardController.show(true);
 		}
-	} else {
+	} else if(appNewUI) {
+        var ctl = this._appCtxt.getAppController().getOverviewPanelController();
+        var homePath = ZaTree.getPathByArray([ZaMsg.OVP_home]);
+		ctl.getOverviewPanel().getFolderTree().setSelectionByPath(homePath);
+        var historyObject = new ZaHistory(homePath, ZaMsg.OVP_home);
+        ZaZimbraAdmin.getInstance().updateHistory(historyObject, true);
+    }
+    else {
 		if(ZaSettings.TREE_ENABLED) {	
 			if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_STATUS_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
 				var ctl = this._appCtxt.getAppController().getOverviewPanelController();
@@ -226,6 +233,19 @@ function(viewId) {
 		return this._controllers[viewId];
 	}else{
 		var c = this._controllers[viewId] = new ZaGlobalStatsController(this._appCtxt, this._container, this);
+		return c ;
+	}
+}
+
+ZaApp.prototype.getServerStatsListController =
+function(viewId) {
+	if(!viewId)
+		viewId = ZaZimbraAdmin._SERVER_LIST_FOR_STATISTICS_VIEW;
+
+	if (viewId && this._controllers[viewId] != null) {
+		return this._controllers[viewId];
+	}else{
+		var c = this._controllers[viewId] = new ZaServerStatsListController(this._appCtxt, this._container, this);
 		return c ;
 	}
 }
@@ -741,7 +761,7 @@ function(refresh) {
 		if(!ZaZimbraAdmin.isGlobalAdmin()) {
 			var cosNameList = ZaApp.getInstance()._cosNameList;
 			if(!cosNameList || !(cosNameList instanceof Array)) {
-				ZaApp.getInstance()._cosNameList = cosNamelist = ZaCos.getEffectiveCosList(ZaZimbraAdmin.currentAdminAccount.id);	
+				ZaApp.getInstance()._cosNameList = cosNameList = ZaCos.getEffectiveCosList(ZaZimbraAdmin.currentAdminAccount.id);
 			}
 			if(cosNameList.length == 0) {
 				this._cosList = new ZaItemList(ZaCos);
@@ -806,6 +826,14 @@ function(refresh) {
 	return this._accountList;	
 }*/
 
+ZaApp.prototype.getAccountStats =
+function(refresh) {
+    if (refresh || this._accountStats == null) {
+        this._accountStats = ZaSearch.getAccountStats();
+    }
+    return this._accountStats;
+}
+
 ZaApp.prototype.getGlobalConfig =
 function(refresh) {
 	if (refresh || this._globalConfig == null) {
@@ -835,6 +863,9 @@ function (ev) {
         //update the domain list. We separate two search domains because domain list view only need the first page
         // result, but the overpanel will show more results. It could potentially be combined into one search.
         this.getDomainListController().show ();
+
+        if(appNewUI)
+            ZaZimbraAdmin.getInstance().getOverviewPanelController().refreshRelatedTree (ev.getDetails());
 	}
 }
 
@@ -857,6 +888,9 @@ function (ev) {
 			} else if(detls && (detls instanceof ZaCos)) {
 				this._cosList.remove(ev.getDetails());
 			}
+
+            if(appNewUI)
+                ZaZimbraAdmin.getInstance().refreshHistoryTreeByDelete(ev.getDetails());
 		}
 		if(this._cosListChoices == null) {
 			this._cosListChoices = new XFormChoices(this._cosList.getArray(), XFormChoices.OBJECT_LIST, "id", "name");	
@@ -1033,6 +1067,7 @@ function(name, openInNewTab, openInSearchTab) {
 	tabGroup.selectTab (tabGroup.getTabById(this._currentViewId)) ;
 	*/
 	//check if there is a tab associated with the view
+    if (!appNewUI) {
 	var tabGroup = this.getTabGroup () ;
 	var cTab = tabGroup.getTabById(this._currentViewId);
 	if (cTab) {
@@ -1044,13 +1079,16 @@ function(name, openInNewTab, openInSearchTab) {
 	}else {
 		this.updateTab (tabGroup.getMainTab(), this._currentViewId) ; 
 	}
+    }
 }
 
 ZaApp.prototype.popView =
 function() {
 	var oldCurrentViewId = this._currentViewId ;
 	this._currentViewId = this._appViewMgr.popView();
+    if (!appNewUI) {
 	this.getTabGroup().removeCurrentTab(true) ;
+    }
 	//dispose the view and remove the controller
 	this.disposeView (oldCurrentViewId);
 	

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -48,7 +48,8 @@ ZaGlobalAdvancedStatsPage.prototype.showMe =  function(refresh) {
 	}
 
     var controller = ZaApp.getInstance().getCurrentController();
-    controller._helpURL = location.pathname + ZaUtil.HELP_URL + "Monitoring/Creating_Advanced_Server_Statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
+    controller._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/creating_advanced_server_statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
+    controller._helpButtonText = ZaMsg.helpCreateAdvServerStat;
 }
 
 ZaGlobalAdvancedStatsPage.prototype.hideMe =
@@ -56,6 +57,7 @@ function (){
 	DwtTabViewPage.prototype.hideMe.call(this);
 	var controller = ZaApp.getInstance().getCurrentController();
     controller._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/checking_usage_statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
+    controller._helpButtonText = ZaMsg.helpCheckStatistics;
 };
 
 
@@ -453,14 +455,16 @@ ZaGlobalAdvancedStatsPage._getCounters = function(hostname, group, counterSelect
     var cb = function(response) {
         var soapResponse = response.getResponse().Body.GetLoggerStatsResponse;
         var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
-        for (var i = 0, j = statCounters.length; i < j; i++) {
-            var option = document.createElement("option");
-            option.value = statCounters[i].name;
-            ZaGlobalAdvancedStatsPage.setText(option, statCounters[i].name);
-            if (statCounters[i].type) {
-                option.columnUnit = statCounters[i].type;
+        if (statCounters) {
+            for (var i = 0, j = statCounters.length; i < j; i++) {
+                var option = document.createElement("option");
+                option.value = statCounters[i].name;
+                ZaGlobalAdvancedStatsPage.setText(option, statCounters[i].name);
+                if (statCounters[i].type) {
+                    option.columnUnit = statCounters[i].type;
+                }
+                counterSelect.appendChild(option);
             }
-            counterSelect.appendChild(option);
         }
     };
     
@@ -538,8 +542,10 @@ ZaGlobalAdvancedStatsPage.getCounters = function(hostname, group) {
     var soapResponse = ZaRequestMgr.invoke(csfeParams, reqMgrParams).Body.GetLoggerStatsResponse;
     var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
     var counters = [];
-    for (var i = 0, j = statCounters.length; i < j; i++) {
-        counters.push(statCounters[i].name);
+    if ( statCounters ) {
+        for (var i = 0, j = statCounters.length; i < j; i++) {
+             counters.push(statCounters[i].name);
+        }
     }
     return counters;
 }
@@ -551,8 +557,16 @@ ZaGlobalAdvancedStatsPage.counterSelected = function(evt, id) {
     ZaGlobalAdvancedStatsPage.setText(chartdiv, ZaMsg.NAD_AdvStatsLoadingDataLabel);
     
     var serverSelect = document.getElementById("select-servers" + id);
+    if (!serverSelect[serverSelect.selectedIndex] ||
+        !serverSelect[serverSelect.selectedIndex].value)
+        return;
     var hostname = serverSelect[serverSelect.selectedIndex].value;
+
     var groupSelect = document.getElementById("select-group" + id);
+
+    if (!groupSelect[groupSelect.selectedIndex] ||
+        !groupSelect[groupSelect.selectedIndex].value)
+        return;
     var group = groupSelect[groupSelect.selectedIndex].value;
     
     var selected = [];

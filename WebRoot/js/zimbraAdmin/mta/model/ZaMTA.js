@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -336,7 +336,7 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	serverEl.appendChild(qEl);
 	
 	var queryEl = soapDoc.getDoc().createElement("query");
-	if(query != null) {
+	if( !AjxUtil.isEmpty(query) ) {
 		for (var key in query) {
 			var arr = query[key];
 			if(arr) {

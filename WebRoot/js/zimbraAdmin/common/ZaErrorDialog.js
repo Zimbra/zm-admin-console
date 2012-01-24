@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -32,6 +32,7 @@ ZaErrorDialog = function(parent, contextId) {
 	var detailBtn = this._button[ZaErrorDialog.DETAIL_BUTTON];
 	detailBtn.setImage("SelectPullDownArrow");
 	this.registerCallback(ZaErrorDialog.DETAIL_BUTTON, this._showDetail, this);
+    this._setAllowSelection();
 }
 
 ZaErrorDialog.prototype = new DwtMessageDialog;

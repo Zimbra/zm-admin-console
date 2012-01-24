@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -47,7 +47,10 @@ ZaZimlet.A_zimbraZimletScript = "zimbraZimletScript";
 ZaZimlet.A_zimbraZimletServerIndexRegex = "zimbraZimletServerIndexRegex";
 ZaZimlet.A_zimbraAdminExtDisableUIUndeploy = "zimbraAdminExtDisableUIUndeploy";
 ZaZimlet.A_attachmentId = "attId";
+ZaZimlet.A_uploadStatus = "uploadStatus";
 ZaZimlet.A_deployStatus = "deployStatus";
+ZaZimlet.A_uploadStatusMsg = "uploadStatusMsg";
+ZaZimlet.A_deployStatusMsg = "deployStatusMsg";
 ZaZimlet.A_statusMsg = "statusMsg";
 ZaZimlet.EXCLUDE_MAIL = "mail";
 ZaZimlet.EXCLUDE_EXTENSIONS = "extension";
