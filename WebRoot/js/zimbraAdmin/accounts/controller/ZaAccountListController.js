@@ -745,10 +745,12 @@ function(account) {
 						}
 					}	
 					if(found) {
-						mailPort = servers[i].attrs[ZaServer.A_zimbraMailPort];
+						
 						if(servers[i].attrs[ZaServer.A_zimbraMailMode] == "http") {
+							mailPort = servers[i].attrs[ZaServer.A_zimbraMailPort];
 							proto = "http";
 						} else {
+							mailPort = servers[i].attrs[ZaServer.A_zimbraMailSSLPort];
 							proto = "https";
 						}						
 						break;
@@ -762,10 +764,11 @@ function(account) {
 							for(var j=0;j<servers[i].nifs.length;j++) {
 								if(location.hostname == servers[i].nifs[j].attrs.addr) {
 									found = true;
-									mailPort = servers[i].attrs[ZaServer.A_zimbraMailPort];
 									if(servers[i].attrs[ZaServer.A_zimbraMailMode] == "http") {
+										mailPort = servers[i].attrs[ZaServer.A_zimbraMailPort];
 										proto = "http";
 									} else {
+										mailPort = servers[i].attrs[ZaServer.A_zimbraMailSSLPort];
 										proto = "https";
 									}								
 									break;
@@ -777,10 +780,13 @@ function(account) {
 			}
 			if(!found && servers.length > 0) {
 				//we may not find a match if we are accessing the UI by IP, assume ports are the same system-wide
-				mailPort = servers[0].attrs[ZaServer.A_zimbraMailPort];
 				if(servers[0].attrs[ZaServer.A_zimbraMailMode] == "http") {
+					mailPort = servers[0].attrs[ZaServer.A_zimbraMailPort];
 					proto = "http";
-				} 	
+				} else {
+					mailPort = servers[0].attrs[ZaServer.A_zimbraMailSSLPort];
+					proto = "https";					
+				}
 			}
 		} catch (ex1) {
 			
