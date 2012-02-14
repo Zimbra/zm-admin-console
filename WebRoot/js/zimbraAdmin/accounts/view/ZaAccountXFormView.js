@@ -1265,19 +1265,24 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 					label:ZaMsg.LBL_quota,
 					getDisplayValue:function() {
 						var usedVal = this.getInstanceValue();
-						if(!usedVal) 
+						var formatter = AjxNumberFormat.getNumberInstance();
+						if(!usedVal)
 							usedVal = "0";
 						else {
 							usedVal = Number(usedVal / 1048576).toFixed(3);
-						}		
-						
+							usedVal = formatter.format(usedVal);
+						}
+
 						var quotaLimit = this.getInstanceValue(ZaAccount.A_zimbraMailQuota);
-						if(!quotaLimit || quotaLimit == "0")
+						if(!quotaLimit || quotaLimit == "0") {
 							quotaLimit = ZaMsg.Unlimited;
-							
+						} else {
+							quotaLimit = formatter.format(quotaLimit);
+						}
+
 						if(quotaLimit == ZaMsg.Unlimited) {
 							return AjxMessageFormat.format (ZaMsg.unlimitedQuotaValueTemplate,[usedVal,quotaLimit]);
-						} else {							
+						} else {
 							return AjxMessageFormat.format (ZaMsg.quotaValueTemplate,[usedVal,quotaLimit]);
 						}
 					},
