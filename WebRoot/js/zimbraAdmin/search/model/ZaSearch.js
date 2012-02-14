@@ -358,7 +358,7 @@ ZaSearch.prototype.dynSelectSearchDomains = function (callArgs) {
 		params.callback = dataCallback;
 		params.sortBy = ZaDomain.A_domainName;
         	params.query = "";
-        	if(!ZaZimbraAdmin.isGlobalAdmin()) {
+        	if(!ZaZimbraAdmin.hasGlobalDomainListAccess()) {
             		var domainNameList = ZaApp.getInstance()._domainNameList;
             		if(domainNameList && domainNameList instanceof Array) {
                 		for(var i = 0; i < domainNameList.length; i++) {
@@ -424,7 +424,7 @@ ZaSearch.prototype.dynSelectSearchCoses = function (callArgs) {
 		params.callback = dataCallback;
 		params.sortBy = ZaCos.A_name;
                 params.query = "";
-                if(!ZaZimbraAdmin.isGlobalAdmin()) {
+                if(!ZaZimbraAdmin.hasGlobalCOSSListAccess()) {
                         var cosNameList = ZaApp.getInstance()._cosNameList;
                         if(cosNameList && (cosNameList instanceof Array) && cosNameList.length == 0) {
                             for(var i = 0; i < cosNameList.length; i++)

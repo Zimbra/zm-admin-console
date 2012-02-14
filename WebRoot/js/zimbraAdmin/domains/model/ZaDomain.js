@@ -282,6 +282,7 @@ ZaDomain.AUTH_MECH_CHOICES = [ZaDomain.AuthMech_ad,ZaDomain.AuthMech_ldap,ZaDoma
 ZaDomain.LOCAL_DOMAIN_QUERY = "(zimbraDomainType=local)";
 
 //constants for rights
+ZaDomain.RIGHT_LIST_DOMAIN = "listDomain";
 ZaDomain.RIGHT_CREATE_TOP_DOMAIN = "createTopDomain";
 ZaDomain.RIGHT_DELETE_DOMAIN = "deleteDomain";
 ZaDomain.RIGHT_RENAME_DOMAIN = "renameDomain";
@@ -352,7 +353,7 @@ ZaDomain.compareACLs = function (val1, val2) {
 ZaDomain.getAll =
 function(target) {
 	var query = "";
-        if(!ZaZimbraAdmin.isGlobalAdmin()) {
+        if(!ZaZimbraAdmin.hasGlobalDomainListAccess()) {
             var domainNameList = ZaApp.getInstance()._domainNameList;
             if(!domainNameList || !(domainNameList instanceof Array) || domainNameList.length == 0) {
                 return  new ZaItemList(ZaDomain);
@@ -2340,7 +2341,7 @@ ZaDomain.getTargetDomainByName = function (targetName) {
     }
     return null ;
 }
-
+ZaDomain.globalRights = {};
 ZaDomain.getEffectiveDomainList = function(adminId) {
     var soapDoc = AjxSoapDoc.create("GetAllEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
     var elGrantee = soapDoc.set("grantee", adminId);
@@ -2364,11 +2365,25 @@ ZaDomain.getEffectiveDomainList = function(adminId) {
         for(var i = 0; i < targets.length; i++) {
             if(targets[i].type != ZaItem.DOMAIN)
                 continue;
-            if(!targets[i].entries) continue;
-            for(var j = 0; j < targets[i].entries.length; j++) {
-                var entry = targets[i].entries[j].entry;
-                for(var k = 0; k < entry.length; k++)
-                    domainNameList.push(entry[k].name);
+            
+            if(!targets[i].entries && !targets[i].all)
+            	continue;
+            
+            if(targets[i].entries) { 
+	            for(var j = 0; j < targets[i].entries.length; j++) {
+	                var entry = targets[i].entries[j].entry;
+	                for(var k = 0; k < entry.length; k++)
+	                    domainNameList.push(entry[k].name);
+	            }
+            }
+            
+            if(targets[i].all) { 
+            	//we have global access to domains
+            	if(targets[i].all.length && targets[i].all[0] && targets[i].all[0].right && targets[i].all[0].right.length) {
+            		for(var j=0;j<targets[i].all[0].right.length;j++) {
+        				ZaDomain.globalRights[targets[i].all[0].right[j].n] = true;
+            		}
+            	}
             }
             break;
         }
