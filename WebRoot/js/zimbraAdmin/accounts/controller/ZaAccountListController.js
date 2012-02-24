@@ -798,6 +798,9 @@ function(account) {
 		AjxCookie.setCookie(document, "ZM_AUTH_TOKEN", obj.authToken, null, "/");
 		
 		mServer = AjxStringUtil.trim(mServer,true);
+		mServer = (mServer.indexOf("?") < 0)?(mServer + "?") : (mServer + "&");
+		mServer += ("adminPreAuth=1");
+
 		var win = window.open(mServer, "_blank");
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountListController._viewMailListenerLauncher", null, false);			
