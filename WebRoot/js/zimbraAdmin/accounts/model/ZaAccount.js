@@ -1096,7 +1096,8 @@ function(callback) {
 	
 	this.deleteCommand = new ZmCsfeCommand();
 	var params = new Object();
-	params.soapDoc = soapDoc;	
+	params.soapDoc = soapDoc;
+	params.noAuthToken = true;	
 	if(callback) {
 		params.asyncMode = true;
 		params.callback = callback;
@@ -1114,7 +1115,8 @@ function (mbxId, callback) {
 	try {
 		var command = new ZmCsfeCommand();
 		var params = new Object();
-		params.soapDoc = soapDoc;	
+		params.soapDoc = soapDoc;
+		params.noAuthToken = true;	
 		if(callback) {
 			params.asyncMode = true;
 			params.callback = callback;
@@ -1144,7 +1146,8 @@ function (mbxId, callback) {
 	try {
 		var command = new ZmCsfeCommand();
 		var params = new Object();
-		params.soapDoc = soapDoc;	
+		params.soapDoc = soapDoc;
+		params.noAuthToken = true;	
 		if(callback) {
 			params.asyncMode = true;
 			params.callback = callback;
@@ -1169,7 +1172,8 @@ function (mbxId, callback) {
 	try {
 		var command = new ZmCsfeCommand();
 		var params = new Object();
-		params.soapDoc = soapDoc;	
+		params.soapDoc = soapDoc;
+		params.noAuthToken = true;	
 		if(callback) {
 			params.asyncMode = true;
 			params.callback = callback;
@@ -1595,7 +1599,8 @@ function (newName) {
 	soapDoc.set("newName", newName);	
 	var command = new ZmCsfeCommand();
 	var params = new Object();
-	params.soapDoc = soapDoc;	
+	params.soapDoc = soapDoc;
+	params.noAuthToken = true;	
 	command.invoke(params);
 }
 ZaAccount.renameMethods.push(ZaAccount.renameMethod);
@@ -1611,7 +1616,8 @@ function (newPassword) {
 	soapDoc.set("newPassword", newPassword);	
 	var command = new ZmCsfeCommand();
 	var params = new Object();
-	params.soapDoc = soapDoc;	
+	params.soapDoc = soapDoc;
+	params.noAuthToken = true;	
 	command.invoke(params);	
 }
 /**
@@ -2581,5 +2587,6 @@ function (accountId, domainName) {
     var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;
+	params.noAuthToken = true;
 	command.invoke(params);
 }

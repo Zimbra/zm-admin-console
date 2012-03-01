@@ -214,6 +214,7 @@ function () {
 	var dumpSessCmd = new ZmCsfeCommand ();
 	var params = {} ;
 	params.soapDoc = soapDoc ;
+	params.noAuthToken = true;
 	params.targetServer = this._server.id ;
 	params.asyncMode = true ;
 	params.callback = new AjxCallback (this, this.dumpSessionCallback) ;
@@ -250,6 +251,7 @@ function (params) {
 	
 	var getSessCmd = new ZmCsfeCommand ();
 	params.soapDoc = soapDoc ;
+	params.noAuthToken = true;
 	params.targetServer = this._server.id ;
 	params.asyncMode = true ;
 	params.callback = new AjxCallback (this, this.getSessionsCallback, [params]) ;

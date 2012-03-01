@@ -286,7 +286,7 @@ function(appName) {
 
 ZaZimbraAdmin.logOff =
 function() {
-	ZmCsfeCommand.clearAuthToken();
+	ZmCsfeCommand.noAuth = true;
 	window.onbeforeunload = null;
 	
 	// NOTE: Mozilla sometimes handles UI events while the page is
@@ -301,6 +301,11 @@ function() {
             + location.pathname
             //we want to add the query string as well
             + location.search;
+	if (location.search) {
+		locationStr = locationStr + "&logoff=1";
+	} else {
+		locationStr = locationStr + "?logoff=1";
+	}
 
     var act = new AjxTimedAction(null, ZaZimbraAdmin.redir, [locationStr]);
 	AjxTimedAction.scheduleAction(act, 100);
@@ -337,6 +342,7 @@ function() {
 		var params = new Object();
 		params.soapDoc = soapDoc;	
 		params.noSession = true;
+		params.noAuthToken = true;
 		ZaZimbraAdmin.isFirstRequest = true;
 		var resp = command.invoke(params);
 		ZaZimbraAdmin.isFirstRequest = false;
@@ -882,6 +888,7 @@ ZaZimbraAdmin.prototype.sendNoOp = function () {
 		var params = new Object();
 		params.soapDoc = soapDoc;	
 		params.asyncMode = false;
+		params.noAuthToken = true;
 		noOpCommand.invoke(params);
 		this.scheduleNoOp();
 	} catch (ex) {

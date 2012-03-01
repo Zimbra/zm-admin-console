@@ -221,7 +221,8 @@ ZaSearch.findAccount = function(by, val) {
 	soapDoc.set("query", query);
 	var command = new ZmCsfeCommand();
 	var cmdParams = new Object();
-	cmdParams.soapDoc = soapDoc;	
+	cmdParams.soapDoc = soapDoc;
+	cmdParams.noAuthToken = true;	
 	var resp = command.invoke(cmdParams).Body.SearchDirectoryResponse;	
 	var list = new ZaItemList(ZaAccount);	
 	list.loadFromJS(resp);	
@@ -790,6 +791,7 @@ function (savedSearchArray, callback) {
         var command = new ZmCsfeCommand();
         var cmdParams = new Object();
         cmdParams.soapDoc = soapDoc;
+		cmdParams.noAuthToken = true;
         if (callback) {
             cmdParams.asyncMode = true;
             cmdParams.callback = callback;
@@ -814,6 +816,7 @@ function (searchNameArr, callback) {
         var command = new ZmCsfeCommand();
         var cmdParams = new Object();
         cmdParams.soapDoc = soapDoc;
+		cmdParams.noAuthToken = true;
         if (callback) {
             cmdParams.asyncMode = true;
             cmdParams.callback = callback;
