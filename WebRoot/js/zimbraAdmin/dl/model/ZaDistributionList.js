@@ -121,7 +121,8 @@ function(callback) {
 	soapDoc.set("id", this.id);
 	this.deleteCommand = new ZmCsfeCommand();
 	var params = new Object();
-	params.soapDoc = soapDoc;	
+	params.soapDoc = soapDoc;
+	params.noAuthToken = true;	
 	if(callback) {
 		params.asyncMode = true;
 		params.callback = callback;
@@ -813,6 +814,7 @@ ZaDistributionList.removeDeletedMembers = function (mods, obj, dl, finishedCallb
 
 	var params = new Object();
 	params.soapDoc = removeMemberSoapDoc;
+	params.noAuthToken = true;
 	if(finishedCallback && finishedCallback instanceof AjxCallback) {
 		params.asyncMode = true;
 		params.callback = finishedCallback;
@@ -853,6 +855,7 @@ ZaDistributionList.addNewMembers = function (mods, obj, dl, finishedCallback) {
 		params.asyncMode = true;
 		params.callback = finishedCallback;
 	}
+	params.noAuthToken = true;
 	var addList = obj[ZaDistributionList.A2_addList];
 	obj[ZaDistributionList.A2_addList] = new Array();
 	command.invoke(params);
