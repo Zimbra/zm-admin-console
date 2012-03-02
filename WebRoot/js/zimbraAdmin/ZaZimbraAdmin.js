@@ -493,7 +493,8 @@ ZaZimbraAdmin.prototype._setUserName =
 function () {
 	var e = document.getElementById(ZaSettings.SKIN_USER_NAME_ID) ;
 	if(e) {
-		e.innerHTML = (ZaZimbraAdmin.currentUserName!=null && String(ZaZimbraAdmin.currentUserName).length>(skin.maxAdminName+1)) ? String(ZaZimbraAdmin.currentUserName).substr(0,skin.maxAdminName) : ZaZimbraAdmin.currentUserName;
+		var tmpName = (ZaZimbraAdmin.currentUserName!=null) ? AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName): "";
+		e.innerHTML = (ZaZimbraAdmin.currentUserName!=null && String(tmpName).length>(skin.maxAdminName+1)) ? String(tmpName).substr(0,skin.maxAdminName) : tmpName;
 	}
 }
 
