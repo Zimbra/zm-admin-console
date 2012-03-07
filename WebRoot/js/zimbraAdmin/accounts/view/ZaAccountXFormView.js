@@ -1205,8 +1205,14 @@ ZaAccountXFormView.getAccountNameInfoItem = function(){
 ZaAccountXFormView.validatePollingInterval = function(value, event, form) {
     var instance = form.getInstance ();
 	this.setInstanceValue(value);
-	var prefPollingInterval = instance.attrs[ZaAccount.A_zimbraPrefMailPollingInterval] ;
-	var minPollingInterval = instance.attrs[ZaAccount.A_zimbraMailMinPollingInterval] ;
+    var prefPollingInterval = instance.attrs[ZaAccount.A_zimbraPrefMailPollingInterval];
+	if (!prefPollingInterval) {
+		prefPollingInterval = instance._defaultValues.attrs[ZaAccount.A_zimbraPrefMailPollingInterval];
+	}
+	var minPollingInterval = instance.attrs[ZaAccount.A_zimbraMailMinPollingInterval];
+	if (!minPollingInterval) {
+		minPollingInterval = instance._defaultValues.attrs[ZaAccount.A_zimbraMailMinPollingInterval];
+	}
 	var prefPollingIntervalItem = form.getItemsById (ZaAccount.A_zimbraPrefMailPollingInterval)[0];
 	try {
 		if (ZaUtil.getLifeTimeInSeconds(prefPollingInterval) < ZaUtil.getLifeTimeInSeconds(minPollingInterval)){
