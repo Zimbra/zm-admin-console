@@ -1202,6 +1202,26 @@ ZaAccountXFormView.getAccountNameInfoItem = function(){
         return accountNameFormItems;
 }
 
+ZaAccountXFormView.validatePollingInterval = function(value, event, form) {
+    var instance = form.getInstance ();
+	this.setInstanceValue(value);
+	var prefPollingInterval = instance.attrs[ZaAccount.A_zimbraPrefMailPollingInterval] ;
+	var minPollingInterval = instance.attrs[ZaAccount.A_zimbraMailMinPollingInterval] ;
+	var prefPollingIntervalItem = form.getItemsById (ZaAccount.A_zimbraPrefMailPollingInterval)[0];
+	try {
+		if (ZaUtil.getLifeTimeInSeconds(prefPollingInterval) < ZaUtil.getLifeTimeInSeconds(minPollingInterval)){
+			prefPollingIntervalItem.setError (ZaMsg.tt_mailPollingIntervalError + minPollingInterval) ;
+			form.parent.setDirty(false);	
+		}else{
+			prefPollingIntervalItem.clearError();	
+			form.parent.setDirty(true);	
+		}
+	}catch (e){
+		prefPollingIntervalItem.setError (e.message);
+		form.parent.setDirty(false);
+	}
+}
+
 /**
 * This method is added to the map {@link ZaTabView#XFormModifiers}
 * @param xFormObject {Object} a definition of the form. This method adds/removes/modifies xFormObject to construct
@@ -2177,18 +2197,21 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 								ZaAccount.A_zimbraPrefReadReceiptsToAddress]]
 							],							
 							items :[
-								{ref:ZaAccount.A_zimbraPrefMailPollingInterval, type:_SUPER_LIFETIME_, 
-									colSizes:["195px","80px","295px","190px"],
+								{ref:ZaAccount.A_zimbraPrefMailPollingInterval, type:_SUPER_SELECT1_, 
+                                    labelCssStyle:"width:195px",
+									colSizes:["375px", "190px"],
 									msgName:ZaMsg.MSG_zimbraPrefMailPollingInterval,
-									txtBoxLabel:ZaMsg.LBL_zimbraPrefMailPollingInterval, 
-									resetToSuperLabel:ZaMsg.NAD_ResetToCOS,colSpan:2,
+									label:ZaMsg.LBL_zimbraPrefMailPollingInterval, 
+									resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    onChange:ZaAccountXFormView.validatePollingInterval,
 									nowrap:false,labelWrap:true									
 								},							
 								{ref:ZaAccount.A_zimbraMailMinPollingInterval, 
 									type:_SUPER_LIFETIME_, 
 									colSizes:["195px","80px","295px","190px"],
 									msgName:ZaMsg.MSG_zimbraMailMinPollingInterval,
-									txtBoxLabel:ZaMsg.LBL_zimbraMailMinPollingInterval, 
+									txtBoxLabel:ZaMsg.LBL_zimbraMailMinPollingInterval,
+                                    onChange:ZaCosXFormView.validatePollingInterval,
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
 									colSpan:2
 								},
