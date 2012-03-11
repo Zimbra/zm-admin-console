@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -34,8 +34,10 @@ ZaXDialog = function(parent,className, title, w, h,iKeyName, contextId) {
 		this._extraButtons = [helpButton];
 	}
 	
-	this._contextId = contextId? contextId:ZaId.DLG_UNDEF
-	
+	this._contextId = contextId || Dwt.getNextId(ZaId.DLG_UNDEF);
+	if (appNewUI && this.supportMinimize) {
+        this._supportMinimize = true;
+    }
 	DwtDialog.call(this, {
 		parent:parent, 
 		className:clsName, 
@@ -44,6 +46,10 @@ ZaXDialog = function(parent,className, title, w, h,iKeyName, contextId) {
 		extraButtons:this._extraButtons,
 		id:ZaId.getDialogId(this._contextId)
 	});
+    if (this._supportMinimize) {
+        this.addMiniIcon();
+        this.addPopdownListener(new AjxListener(this, this.popdownHookListner));
+    }
 	this._app = ZaApp.getInstance();
 	this._localXForm = null;
 	this._localXModel = null;
@@ -76,6 +82,105 @@ ZaXDialog = function(parent,className, title, w, h,iKeyName, contextId) {
 ZaXDialog.helpURL = location.pathname + ZaUtil.HELP_URL + "administration_console_help.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 ZaXDialog.prototype = new DwtDialog;
 ZaXDialog.prototype.constructor = ZaXDialog;
+
+if (appNewUI) {
+ZaXDialog.TEMPLATE = "admin.Widgets#ZaBaseDialog";
+ZaXDialog.prototype.supportMinimize = false;
+ZaXDialog.prototype.registerFinishMethod = false;
+ZaXDialog.prototype.miniType = 1; // default is working in process
+ZaXDialog.prototype.cacheDialog = true;
+ZaXDialog.prototype._createHtmlFromTemplate =
+function(templateId, data) {
+    if (this._supportMinimize) {
+        templateId = ZaXDialog.TEMPLATE;
+    }
+	DwtDialog.prototype._createHtmlFromTemplate.call(this, templateId, data);
+    this._minEl =  document.getElementById(data.id+"_minimize");
+};
+
+ZaXDialog.prototype.addMiniIcon =
+function () {
+    if (this._minEl) {
+        this._minEl.innerHTML = AjxImg.getImageHtml("CollapseRight");
+	    this._minEl.onclick = AjxCallback.simpleClosure(ZaXDialog.prototype.__handleMinClick, this);
+    }
+}
+ZaXDialog.prototype.setTitleWidthForIE =
+function () {
+    var titleWidth = (this._contentW || "500px" ).replace("px","");
+    titleWidth -= (24+5*2);    //24px is width for mini icon, 5*2px for two padding
+
+    if (titleWidth > 0) {
+    //TODO: can extract this part as a function named setTitleWidth(), if we need to set FF/Chrome 's width in the future.
+        titleWidth = Dwt.__checkPxVal(titleWidth);
+        var titleId = this._htmlElId + "_title";
+        var titleElement = document.getElementById(titleId);
+        if (titleElement) {
+            titleElement.style.width = titleWidth;
+        }
+    }
+}
+
+ZaXDialog.prototype.getTaskItem = function() {
+    var cacheName = this.getCacheName? this.getCacheName() : "";
+    if (!cacheName) {
+        cacheName = this._iKeyName ? this._iKeyName : this.toString();
+    }
+
+    var title = this.getTitle();
+    if (!title) {
+        title = this.toString();
+    }
+    var taskItem = new ZaTaskItem(this.constructor, cacheName, title, this.getObject(), this.getBounds(), this.miniType, undefined, this.getFinishBtnCallback(),this.cacheDialog);
+    return taskItem;
+}
+
+ZaXDialog.prototype.getFinishBtnCallback = function (finishBtnId) {
+    if (!this.registerFinishMethod)
+        return;
+
+    if (!finishBtnId)
+        finishBtnId = DwtWizardDialog.FINISH_BUTTON;
+
+    var button;
+    button = this._buttonDesc[finishBtnId];
+    if (!button) {
+        finishBtnId = DwtDialog.OK_BUTTON;
+        button = this._buttonDesc[finishBtnId];
+    }
+
+    if (!button)
+        return;
+
+    if (!button.callback)
+        return;
+
+    return {id: finishBtnId, callback: button.callback};
+}
+ZaXDialog.prototype.popdownHookListner =
+function() {
+    if (!this._inMin) {
+	    var task = this.getTaskItem();
+        ZaZimbraAdmin.getInstance().getTaskController().removeTask(task);
+    }
+}
+
+ZaXDialog.prototype.__handleMinClick =
+function () {
+    var task = this.getTaskItem();
+    ZaZimbraAdmin.getInstance().getTaskController().addTask(task);
+    this._inMin = true;
+    this.popdown();
+    this._inMin = false;
+}
+
+ZaXDialog.prototype.getTitle =
+function () {
+    return this._title;
+}
+
+
+}
 /**
 * A map of funciton references. Functions in this map are called one after another from 
 * {@link #getMyXForm} method.
@@ -95,6 +200,18 @@ ZaXDialog.HELP_BUTTON = ++DwtDialog.LAST_BUTTON;
 ZaXDialog.prototype.popup = 
 function (loc) {
 	DwtDialog.prototype.popup.call(this, loc);
+
+        var kbMgr = this._shell.getKeyboardMgr();
+        if (kbMgr.isEnabled()){
+                kbMgr.popTabGroup(this._tabGroup);
+                kbMgr.grabFocus(this._tabGroup.getFocusMember());
+        }
+
+        if(appNewUI && AjxEnv.isIE && this._supportMinimize) {
+            //reset title width in IE, when the dialog has the minimize icon
+            this.setTitleWidthForIE();
+        }
+
 	if(this._localXForm) {
 		this._localXForm.focusFirst();
 	}
@@ -166,7 +283,8 @@ function () {
 
 	this._table = document.createElement("table");
 	this._table.border = 0;
-	this._table.width=this._contentW;
+    if (this._contentW)
+	    this._table.width=this._contentW;
 	this._table.cellPadding = 0;
 	this._table.cellSpacing = 0;
 	Dwt.associateElementWithObject(this._table, this);
@@ -181,8 +299,9 @@ function () {
 	col2 = row2.insertCell(row2.cells.length);
 	col2.align = "left";
 	col2.vAlign = "middle";
-	col2.noWrap = true;	
-	col2.width = this._contentW;
+	col2.noWrap = true;
+    if (this._contentW)
+	    col2.width = this._contentW;
 	col2.appendChild(this._pageDiv);
 
 	this._getContentDiv().appendChild(this._table);

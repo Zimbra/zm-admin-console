@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -25,10 +25,12 @@ ZaServerListController = function(appCtxt, container) {
    	this._popupOperations = new Array();			
 	
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_servers/managing_servers.htm?locid="+AjxEnv.DEFAULT_LOCALE;
+	this._helpButtonText = ZaServerListController.helpButtonText;
 }
 
 ZaServerListController.prototype = new ZaListViewController();
 ZaServerListController.prototype.constructor = ZaServerListController;
+ZaServerListController.helpButtonText = ZaMsg.helpManageServers;
 
 ZaController.initToolbarMethods["ZaServerListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaServerListController"] = new Array();
@@ -78,20 +80,23 @@ ZaServerListController.prototype._createUI = function () {
 		var elements = new Object();
 		this._contentView = new ZaServerListView(this._container);
 		this._initToolbar();
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_SERLIST); 
-		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_SERLIST);
 
 		this._initPopupMenu();
 		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_SERLIST, ZaId.MENU_POP);
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._SERVERS_LIST_VIEW, elements);
-		var tabParams = {
-			openInNewTab: false,
-			tabId: this.getContentViewId(),
-			tab: this.getMainTab() 
-		}
-		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-
+        if (!appNewUI) {
+            elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+		    var tabParams = {
+			    openInNewTab: false,
+			    tabId: this.getContentViewId(),
+			    tab: this.getMainTab()
+		    }
+		    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+        } else {
+            ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+        }
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));								
 			
@@ -174,6 +179,10 @@ function(ev) {
 		if(ev.item) {
 			this._selectedItem = ev.item;
 			ZaApp.getInstance().getServerController().show(ev.item);
+            if (appNewUI) {
+                var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_servers]);
+                ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, ev.item.name, null, false, false, ev.item);
+            }
 		}
 	} else {
 		this.changeActionsState();	
@@ -195,7 +204,16 @@ function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
 		ZaApp.getInstance().getServerController().show(item);
+        if (appNewUI) {
+            var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_servers]);
+            ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, item.name, null, false, false, item);
+        }
 	}
+}
+
+ZaServerListController.prototype.getPopUpOperation =
+function () {
+    return this._popupOperations;
 }
 
 ZaServerListController.changeActionsStateMethod = 

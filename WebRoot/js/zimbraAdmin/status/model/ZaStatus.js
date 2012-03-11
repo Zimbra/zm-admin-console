@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -43,7 +43,7 @@ ZaStatus.SVC_LDAP = "ldap";
 ZaStatus.SVC_MEMCACHED = "memcached";
 ZaStatus.SVC_MAILBOX = "mailbox";
 ZaStatus.SVC_CONVERTD = "convertd";
-ZaStatus.SVC_IMAPPROXY = "imapproxy";
+ZaStatus.SVC_IMAPPROXY = "proxy";
 ZaStatus.SVC_STATS = "stats";
 ZaStatus.SVC_SNMP = "snmp";
 ZaStatus.SVC_AS = "antispam";
