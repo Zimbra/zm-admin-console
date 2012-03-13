@@ -216,8 +216,7 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	ZaCos.A_zimbraDumpsterEnabled,
 	ZaCos.A_zimbraFeatureMailSendLaterEnabled,
 	ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
-	ZaCos.A_zimbraFeatureSMIMEEnabled,
-	ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled
+	ZaCos.A_zimbraFeatureSMIMEEnabled
 ];
 
 ZaCosXFormView.FEATURE_TAB_RIGHTS = [];
@@ -541,13 +540,11 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraSMIMEFeature, id:"cos_form_features_smime",
                 visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
 					[
-						ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled,
 						ZaCos.A_zimbraFeatureSMIMEEnabled
 					]]
 				],
                 items:[
-                    {ref:ZaCos.A_zimbraFeatureSMIMEEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,label:ZaMsg.LBL_zimbraFeatureSMIMEEnabled, trueValue:"TRUE", falseValue:"FALSE"},
-                    {ref:ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureManageSMIMECertificateEnabled,label:ZaMsg.LBL_zimbraFeatureManageSMIMECertificateEnabled, trueValue:"TRUE", falseValue:"FALSE"}
+                    {ref:ZaCos.A_zimbraFeatureSMIMEEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,label:ZaMsg.LBL_zimbraFeatureSMIMEEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
             }
 

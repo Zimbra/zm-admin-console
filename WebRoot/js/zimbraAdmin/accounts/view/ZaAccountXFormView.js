@@ -960,8 +960,7 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
 	ZaAccount.A_zimbraFeatureImportFolderEnabled,
     ZaAccount.A_zimbraFeatureExportFolderEnabled,
 	ZaAccount.A_zimbraDumpsterEnabled,
-	ZaAccount.A_zimbraFeatureSMIMEEnabled,
-	ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled
+	ZaAccount.A_zimbraFeatureSMIMEEnabled
 ];
 
 ZaAccountXFormView.FEATURE_TAB_RIGHTS = [];
@@ -2003,21 +2002,14 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 					},
                                         {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraSMIMEFeature, id:"account_form_features_smime", colSizes:["auto"],numCols:1,
                                                 visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,             
-                                      		[ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, ZaAccount.A_zimbraFeatureSMIMEEnabled]]],
+                                      		[ ZaAccount.A_zimbraFeatureSMIMEEnabled]]],
                                                 items:[
                                                  {ref:ZaAccount.A_zimbraFeatureSMIMEEnabled,
                                                         type:_SUPER_CHECKBOX_,
                                                         resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                                         msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
                                                         checkBoxLabel:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
-                                                        trueValue:"TRUE", falseValue:"FALSE"},
-
-                                                 {ref:ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, 
-							type:_SUPER_CHECKBOX_, 
-							resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-							msgName:ZaMsg.LBL_zimbraFeatureManageSMIMECertificateEnabled,
-							checkBoxLabel:ZaMsg.LBL_zimbraFeatureManageSMIMECertificateEnabled, 
-							trueValue:"TRUE", falseValue:"FALSE"}
+                                                        trueValue:"TRUE", falseValue:"FALSE"}
                                                 ]
                                         }
 				]
