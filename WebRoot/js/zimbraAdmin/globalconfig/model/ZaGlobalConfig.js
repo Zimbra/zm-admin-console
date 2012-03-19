@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -166,6 +166,35 @@ ZaGlobalConfig.A_zimbraFreebusyExchangeServerType  = "zimbraFreebusyExchangeServ
 ZaGlobalConfig.A_zimbraFreebusyExchangeURL ="zimbraFreebusyExchangeURL";
 ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg"  ;
 
+//spnego
+ZaGlobalConfig.A_zimbraSpnegoAuthEnabled = "zimbraSpnegoAuthEnabled";
+ZaGlobalConfig.A_zimbraSpnegoAuthRealm = "zimbraSpnegoAuthRealm";
+ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL = "zimbraSpnegoAuthErrorURL";
+
+//sso
+ZaGlobalConfig.A_zimbraWebClientLoginURL = "zimbraWebClientLoginURL";
+ZaGlobalConfig.A_zimbraWebClientLogoutURL = "zimbraWebClientLogoutURL";
+ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA = "zimbraWebClientLoginURLAllowedUA";
+ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA = "zimbraWebClientLogoutURLAllowedUA";
+ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP = "zimbraWebClientLoginURLAllowedIP";
+ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP = "zimbraWebClientLogoutURLAllowedIP";
+
+// Auto provision
+ZaGlobalConfig.A_zimbraAutoProvBatchSize = "zimbraAutoProvBatchSize";
+ZaGlobalConfig.A_zimbraAutoProvPollingInterval = "zimbraAutoProvPollingInterval";
+
+// web client authentication
+ZaGlobalConfig.A_zimbraMailSSLClientCertMode = "zimbraMailSSLClientCertMode";
+ZaGlobalConfig.A_zimbraMailSSLClientCertPort = "zimbraMailSSLClientCertPort";
+ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap = "zimbraMailSSLClientCertPrincipalMap";
+ZaGlobalConfig.A_zimbraReverseProxyClientCertMode = "zimbraReverseProxyClientCertMode";
+ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort = "zimbraMailSSLProxyClientCertPort";
+ZaGlobalConfig.A_zimbraReverseProxyMailMode = "zimbraReverseProxyMailMode";
+ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress = "zimbraReverseProxyAdminIPAddress";
+ZaGlobalConfig.A_zimbraReverseProxyClientCertCA = "zimbraReverseProxyClientCertCA";
+ZaGlobalConfig.A_zimbraAutoProvNotificationSubject = "zimbraAutoProvNotificationSubject";
+ZaGlobalConfig.A_zimbraAutoProvNotificationBody = "zimbraAutoProvNotificationBody";
+
 //Skin Properties
 ZaGlobalConfig.A_zimbraSkinForegroundColor = "zimbraSkinForegroundColor" ;
 ZaGlobalConfig.A_zimbraSkinBackgroundColor = "zimbraSkinBackgroundColor" ;
@@ -230,6 +259,25 @@ ZaGlobalConfig.prototype.initFromJS = function(obj) {
         if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraMailAddressValidationRegex])) {
                 this.attrs[ZaGlobalConfig.A_zimbraMailAddressValidationRegex] = [this.attrs[ZaGlobalConfig.A_zimbraMailAddressValidationRegex]];
         }	
+    if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress])) {
+		this.attrs[ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress] = [this.attrs[ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress]];
+	}
+
+	if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA])) {
+		this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA]];
+	}
+
+    if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA])) {
+		this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA]];
+	}
+
+    if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP])) {
+        this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP]];
+    }
+
+    if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP])) {
+        this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP]];
+    }
 	// convert available components to hidden fields for xform binding
 	var components = this.attrs[ZaGlobalConfig.A_zimbraComponentAvailable];
 	if (components) {
@@ -429,7 +477,26 @@ ZaGlobalConfig.myXModel = {
 		{ id:ZaGlobalConfig.A_zimbraLmtpBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraLmtpBindPort, type:_PORT_ },
 		{ id:ZaGlobalConfig.A_zimbraPop3NumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3NumThreads, type:_INT_, minInclusive: 0, maxInclusive:2147483647 },		
 		{ id:ZaGlobalConfig.A_zimbraInstalledSkin, ref:"attrs/" + ZaGlobalConfig.A_zimbraInstalledSkin, type:_LIST_, listItem:{type:_STRING_}},
-
+        //spnego
+        { id:ZaGlobalConfig.A_zimbraSpnegoAuthEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id:ZaGlobalConfig.A_zimbraSpnegoAuthRealm, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthRealm, type: _STRING_ },
+        { id:ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL, type: _STRING_ },
+        //web client
+        { id:ZaGlobalConfig.A_zimbraWebClientLoginURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURL, type:_STRING_, maxLength:255 },
+        { id:ZaGlobalConfig.A_zimbraWebClientLogoutURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURL, type:_STRING_, maxLength:255 },
+		{ id:ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, type:_LIST_, listItem:{type:_STRING_}},
+		{ id:ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA, type:_LIST_, listItem:{type:_STRING_}},
+		{ id:ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, type:_LIST_, listItem:{type:_STRING_}},
+        { id:ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP, type:_LIST_, listItem:{type:_STRING_}},
+        // web client authentication
+        { id:ZaGlobalConfig.A_zimbraMailSSLClientCertMode, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMailSSLClientCertMode, type:_STRING_, choices:["Disabled","NeedClientAuth","WantClientAuth"]},
+        { id:ZaGlobalConfig.A_zimbraMailSSLClientCertPort, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMailSSLClientCertPort, type:_PORT_},
+        { id:ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort, type:_PORT_},
+        { id:ZaGlobalConfig.A_zimbraReverseProxyMailMode, ref:"attrs/" +  ZaGlobalConfig.A_zimbraReverseProxyMailMode, type:_STRING_, choices:["http","https","both","mixed","redirect"]},
+        { id:ZaGlobalConfig.A_zimbraReverseProxyClientCertMode, ref:"attrs/" +  ZaGlobalConfig.A_zimbraReverseProxyClientCertMode, type:_STRING_, choices:["on","off","optional"]},
+        { id:ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap, ref:"attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap, type:_STRING_ },
+        { id:ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress, ref:"attrs/" + ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress, type:_LIST_, listItem:{type:_STRING_}},
+        { id:ZaGlobalConfig.A_zimbraReverseProxyClientCertCA, ref:"attrs/" + ZaGlobalConfig.A_zimbraReverseProxyClientCertCA, type:_STRING_},
         //skin properties
         { id:ZaGlobalConfig.A_zimbraSkinForegroundColor, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinForegroundColor, type: _STRING_ },
         { id:ZaGlobalConfig.A_zimbraSkinBackgroundColor, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinBackgroundColor, type: _STRING_ },
@@ -439,6 +506,12 @@ ZaGlobalConfig.myXModel = {
         { id:ZaGlobalConfig.A_zimbraSkinLogoURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinLogoURL, type:_STRING_ },
         { id:ZaGlobalConfig.A_zimbraSkinLogoLoginBanner, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinLogoLoginBanner, type:_STRING_ },
         { id:ZaGlobalConfig.A_zimbraSkinLogoAppBanner, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinLogoAppBanner, type:_STRING_ },
+
+        // auto provision
+        { id:ZaGlobalConfig.A_zimbraAutoProvBatchSize, type:_NUMBER_, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvBatchSize, maxInclusive:2147483647, minInclusive:0},
+        { id:ZaGlobalConfig.A_zimbraAutoProvPollingInterval, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvPollingInterval, type: _LIFETIME_NUMBER_, minInclusive: 0, fractionDigits: 0 },
+        { id:ZaGlobalConfig.A_zimbraAutoProvNotificationSubject, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvNotificationSubject, type:_STRING_ },
+        { id:ZaGlobalConfig.A_zimbraAutoProvNotificationBody, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvNotificationBody, type:_STRING_ },
 
 	// help URL
         { id:ZaGlobalConfig.A_zimbraHelpAdminURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraHelpAdminURL, type:_STRING_ },

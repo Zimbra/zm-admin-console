@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -29,6 +29,7 @@ ZaNewResourceXWizard = function(parent) {
 	this.TAB_INDEX = 0;
 	ZaNewResourceXWizard.step1 = ++this.TAB_INDEX;
 	ZaNewResourceXWizard.step2 = ++this.TAB_INDEX;
+    ZaNewResourceXWizard.step3 = ++this.TAB_INDEX;
 	if(!ZaResource.accountStatusChoices) {
 		ZaResource.accountStatusChoices = [
 			{value:ZaResource.ACCOUNT_STATUS_ACTIVE, label:ZaResource.getAccountStatusLabel(ZaResource.ACCOUNT_STATUS_ACTIVE)}, 
@@ -39,11 +40,13 @@ ZaNewResourceXWizard = function(parent) {
 	}
 	this.stepChoices = [
 		{label:ZaMsg.TABT_ResourceProperties, value:ZaNewResourceXWizard.step1},
-		{label:ZaMsg.TABT_ResLocationContact, value:ZaNewResourceXWizard.step2}
+		{label:ZaMsg.TABT_ResLocationContact, value:ZaNewResourceXWizard.step2},
+		{label:ZaMsg.TABT_SignatureProperties, value:ZaNewResourceXWizard.step3}
 	];
+    this.signatureChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
 	this._lastStep = this.stepChoices.length;	
 	this.initForm(ZaResource.myXModel,this.getMyXForm());	
-   
+
 	this._localXForm.setController(ZaApp.getInstance());	
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, new AjxListener(this, ZaNewResourceXWizard.prototype.handleXFormChange));
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, ZaNewResourceXWizard.prototype.handleXFormChange));	
@@ -64,8 +67,16 @@ function () {
 	if(this._localXForm.hasErrors()) {
 		this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
 	} else {
-		if(this._containedObject.attrs[ZaResource.A_displayname] && this._containedObject[ZaResource.A_name].indexOf("@") > 0)
-			this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
+		if(this._containedObject.attrs[ZaResource.A_displayname] && this._containedObject[ZaResource.A_name].indexOf("@") > 0){
+           this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
+           if (this._containedObject[ZaModel.currentStep] != this._lastStep) {
+                 this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
+            }
+           if (this._containedObject[ZaModel.currentStep] != 1) {
+                 this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
+            }
+        }
+
 	}
 }
 
@@ -75,7 +86,7 @@ function () {
 ZaNewResourceXWizard.prototype.popup = 
 function (loc) {
 	ZaXWizardDialog.prototype.popup.call(this, loc);
-	this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
+	this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
 	this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
 	this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);	
 }
@@ -105,6 +116,7 @@ function() {
 		if(resource != null) {
 			ZaApp.getInstance().getResourceController().fireCreationEvent(resource);
 			this.popdown();
+            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.ResourceCreated,[resource.name]));
 		}
 	} catch (ex) {
 		switch(ex.code) {		
@@ -117,7 +129,11 @@ function() {
 			break;
 			case ZmCsfeException.NO_SUCH_COS:
 				ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[this._containedObject.attrs[ZaAccount.A_COSId]]), ex);
-		    break;			
+		    break;
+            case ZmCsfeException.SIGNATURE_EXISTS:
+                this.popdown();
+                ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaNewResourceXWizard.prototype.finishWizard", null, false);
+            break;
 			case ZmCsfeException.NO_SUCH_DOMAIN:
 				ZaApp.getInstance().dialogs["confirmMessageDialog2"].setMessage(AjxMessageFormat.format(ZaMsg.CreateDomain_q,[ZaAccount.getDomain(this._containedObject.name)]), DwtMessageDialog.WARNING_STYLE);
 				ZaApp.getInstance().dialogs["confirmMessageDialog2"].registerCallback(DwtDialog.YES_BUTTON, this.createDomainAndAccount, this, [ZaAccount.getDomain(this._containedObject.name)]);		
@@ -193,13 +209,15 @@ function() {
 **/
 ZaNewResourceXWizard.prototype.setObject =
 function(entry) {
-	this._containedObject = new Object();
+	this._containedObject = new ZaResource();
 	this._containedObject.attrs = new Object();
 
 	for (var a in entry.attrs) {
 		this._containedObject.attrs[a] = entry.attrs[a];
 	}
-	this._containedObject.name = "";
+
+    if (entry.name)
+	    this._containedObject.name = entry.name;
 	if(entry.rights)
 		this._containedObject.rights = entry.rights;
 
@@ -212,18 +230,24 @@ function(entry) {
 	if(entry._defaultValues)
 		this._containedObject._defaultValues = entry._defaultValues;
 
-	this._containedObject.id = null;
-
+	this._containedObject.id = entry.id || null;
+    if(entry._uuid) {
+        this._containedObject._uuid = entry._uuid;
+    }
 	//set the default value of resource type and schedule policy
-	this._containedObject.attrs[ZaResource.A_zimbraCalResType] = ZaResource.RESOURCE_TYPE_LOCATION;
-	this._containedObject[ZaResource.A2_schedulePolicy] = ZaResource.SCHEDULE_POLICY_TT;
-	this._containedObject.attrs[ZaResource.A_accountStatus] = ZaResource.ACCOUNT_STATUS_ACTIVE;
-	this._containedObject[ZaResource.A2_autodisplayname] = "TRUE";
-	this._containedObject[ZaResource.A2_autoMailServer] = "TRUE";
-	this._containedObject[ZaResource.A2_autoCos] = "TRUE";
-	this._containedObject[ZaResource.A2_autoLocationName] = "TRUE";	
-	this._containedObject[ZaResource.A2_confirmPassword] = null;
-	this._containedObject[ZaModel.currentStep] = 1;
+	this._containedObject.attrs[ZaResource.A_zimbraCalResType] = entry.attrs[ZaResource.A_zimbraCalResType] || ZaResource.RESOURCE_TYPE_LOCATION;
+	this._containedObject[ZaResource.A2_schedulePolicy] = entry[ZaResource.A2_schedulePolicy] || ZaResource.SCHEDULE_POLICY_TT;
+	this._containedObject.attrs[ZaResource.A_accountStatus] = entry.attrs[ZaResource.A_accountStatus] || ZaResource.ACCOUNT_STATUS_ACTIVE;
+	this._containedObject[ZaResource.A2_autodisplayname] = entry[ZaResource.A2_autodisplayname] || "TRUE";
+	this._containedObject[ZaResource.A2_autoMailServer] = entry[ZaResource.A2_autoMailServer] || "TRUE";
+	this._containedObject[ZaResource.A2_autoCos] = entry[ZaResource.A2_autoCos] || "TRUE";
+	this._containedObject[ZaResource.A2_autoLocationName] = entry[ZaResource.A2_autoLocationName] || "TRUE";
+	this._containedObject[ZaResource.A2_confirmPassword] = entry[ZaResource.A2_confirmPassword] || null;
+	this._containedObject[ZaModel.currentStep] = entry[ZaModel.currentStep] || 1;
+    this._containedObject[ZaResource.A2_signatureList] = entry[ZaResource.A2_signatureList] || [];
+    this.signatureChoices.setChoices(ZaSignature.getNewSignatureChoices(this._containedObject[ZaResource.A2_signatureList]));
+    this.signatureChoices.dirtyChoices();
+
 	var domainName;
 	
 	if(!domainName) {
@@ -241,7 +265,11 @@ function(entry) {
 	if(!domainName) {
 		domainName =  ZaSettings.myDomainName;
 	}
-	this._containedObject[ZaResource.A_name] = "@" + domainName;
+
+    if (entry[ZaResource.A_name])
+	    this._containedObject[ZaResource.A_name] = entry[ZaResource.A_name];
+    else
+	    this._containedObject[ZaResource.A_name] = "@" + domainName;
 	this._localXForm.setInstance(this._containedObject);
 }
 
@@ -361,7 +389,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 							return newValue;
 						}
 				},
-				{ref:ZaResource.A2_autoCos, type:_CHECKBOX_, 
+				{ref:ZaResource.A2_autoCos, type:_WIZ_CHECKBOX_,
 					msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
 					trueValue:"TRUE", falseValue:"FALSE" ,
 					elementChanged: function(elementValue,instanceValue, event) {
@@ -383,7 +411,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 					  enableDisableChecks:[]
 					  });
 		
-	setupGroup.items.push({ref:ZaResource.A_zimbraCalResAutoDeclineRecurring, type:_CHECKBOX_, 
+	setupGroup.items.push({ref:ZaResource.A_zimbraCalResAutoDeclineRecurring, type:_WIZ_CHECKBOX_,
 						msgName:ZaMsg.NAD_DeclineRecurring,label:ZaMsg.NAD_DeclineRecurring, 
 						labelCssClass:"xform_label", align:_LEFT_,labelLocation:_LEFT_,trueValue:"TRUE", falseValue:"FALSE"});
 
@@ -414,7 +442,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 								enableDisableChecks:[ZaAccount.isAutoMailServer],
 								enableDisableChangeEventSources:[ZaResource.A2_autoMailServer]									
 						  	},
-							{ref:ZaResource.A2_autoMailServer, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,
+							{ref:ZaResource.A2_autoMailServer, type:_WIZ_CHECKBOX_, msgName:ZaMsg.NAD_Auto,
 								visibilityChecks:[],enableDisableChecks:[],
 								label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,trueValue:"TRUE", falseValue:"FALSE"}
 						]
@@ -454,7 +482,6 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 		items:[nameGroup,setupGroup,passwordGroup,notesGroup]
 	
 	};	
-	
 
 	cases.push(case1);
 
@@ -462,7 +489,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 	var defaultWidth = 250;	
 	var case2={type:_CASE_, numCols:1,  caseKey:ZaNewResourceXWizard.step2,
 					items: [
-					   {type:_ZAWIZGROUP_, 
+					   {type:_ZAWIZGROUP_,  colSizes:["200px","275px"],
 							items:[
 								{ref:ZaResource.A_zimbraCalResContactName, type:_TEXTFIELD_, msgName:ZaMsg.NAD_ContactName,
 									label:ZaMsg.NAD_ContactName, labelLocation:_LEFT_, width:defaultWidth},
@@ -487,7 +514,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 											enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname],
                                                                                         enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
 										},
-										{ref:ZaResource.A2_autoLocationName, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,trueValue:"TRUE", falseValue:"FALSE",
+										{ref:ZaResource.A2_autoLocationName, type:_WIZ_CHECKBOX_, msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,trueValue:"TRUE", falseValue:"FALSE",
 											elementChanged: ZaResource.setAutoLocationName
 										}
 									]
@@ -506,13 +533,72 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 									visibilityChangeEventSources:[ZaResource.A_zimbraCalResType]
 								}
 							]
-						},											
-						{type:_ZAWIZGROUP_, 
-							items:ZaAccountXFormView.getAddressFormItem()
+						},
+						{type:_ZAWIZGROUP_, colSizes:["200px","275px"],
+							items:ZaAccountXFormView.getAddressFormItemForDialog()
 						}
 					]
 				};
 	cases.push(case2);
+
+	var signatureGroup = {type:_ZAWIZGROUP_, id:"account_wiz_signature_group",
+		numCols:2, colSpan:2, width:"100%", colSizes:["200px", "auto"],
+	 	items:[
+			{ref:ZaResource.A2_signatureList, type:_REPEAT_, msgName:"", colSpan:2,
+				label:"", labelLocation:_NONE_,
+                addButtonLabel:ZaMsg.NAD_AddSignature, removeButtonLabel: ZaMsg.NAD_RemoveSignature,  showAddOnNextRow:true,
+                addButtonCSSStyle:"margin-left:200px",
+				showAddButton:true, showRemoveButton:true,
+                items: [
+                    {
+                        ref:".", type:_SIGNATURE_, width:"100%"
+                    }
+                ],
+                getDisplayValue: function(value){
+                    var form = this.getForm().parent;
+                    var instance = this.getInstance();
+                    var tempChoice = ZaSignature.getNewSignatureChoices(instance[ZaResource.A2_signatureList]);
+                    form.signatureChoices.setChoices(tempChoice);
+                    form.signatureChoices.dirtyChoices();
+                    return value;
+                }
+            },
+            {ref:ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId, type:_OSELECT1_,
+                msgName:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
+                width: "280px",
+                label:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId, labelLocation:_LEFT_,
+                visibilityChecks:[],
+                enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
+                enableDisableChangeEventSources:[ZaResource.A2_signatureList],
+                valueChangeEventSources:[ZaResource.A2_signatureList],
+                choices:this.signatureChoices
+            },
+            {ref:ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId, type:_OSELECT1_,
+                msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
+                width: "280px",
+                label:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId, labelLocation:_LEFT_,
+                visibilityChecks:[],
+                enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
+                enableDisableChangeEventSources:[ZaResource.A2_signatureList],
+                valueChangeEventSources:[ZaResource.A2_signatureList],
+                choices:this.signatureChoices
+            },
+            {ref:ZaResource.A_zimbraPrefCalendarAutoDenySignatureId, type:_OSELECT1_,
+                msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
+                width: "280px",
+                label:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId, labelLocation:_LEFT_,
+                visibilityChecks:[],
+                enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
+                enableDisableChangeEventSources:[ZaResource.A2_signatureList],
+                valueChangeEventSources:[ZaResource.A2_signatureList],
+                choices:this.signatureChoices
+            }
+		]
+	};
+    var case3 = {type:_CASE_, numCols:1, caseKey:ZaNewResourceXWizard.step3, align:_LEFT_, valign:_TOP_,
+		items:[signatureGroup]
+	};
+    cases.push(case3);
 
 	xFormObject.items = [
 			{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices,valueChangeEventSources:[ZaModel.currentStep]},
