@@ -2209,7 +2209,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 									colSizes:["195px","80px","295px","190px"],
 									msgName:ZaMsg.MSG_zimbraMailMinPollingInterval,
 									txtBoxLabel:ZaMsg.LBL_zimbraMailMinPollingInterval,
-                                    onChange:ZaCosXFormView.validatePollingInterval,
+                                    onChange:ZaAccountXFormView.validatePollingInterval,
 									resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
 									colSpan:2
 								},
