@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -55,6 +55,8 @@ function(entry) {
 ZaXFormViewController.prototype.handleXFormChange = function (ev) {
 	if(ev && ev.form.hasErrors() && this._toolbar && this._toolbar.getButton(ZaOperation.SAVE)) { 
 		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
+        if (appNewUI)
+            ZaZimbraAdmin.getInstance().getCurrentAppBar().enableButton(ZaOperation.SAVE, false);
 	}
 }
 /**
@@ -84,34 +86,72 @@ function(details) {
 **/ 
 ZaXFormViewController.prototype.closeButtonListener =
 function(ev, noPopView, func, obj, params) {
-	//prompt if the user wants to save the changes
-	if(this._view.isDirty()) {
-		//parameters for the confirmation dialog's callback 
-		var args = new Object();
-		if (noPopView) {
-			args["obj"] = obj ;
-			args["func"] = func ;
-			args["params"] = params ;
-		}else{
-			args["obj"] = ZaApp.getInstance();		
-			args["params"] = null;
-			args["func"] = ZaApp.prototype.popView;
+    //prompt if the user wants to save the changes
+    if(this._view.isDirty()) {
+        //parameters for the confirmation dialog's callback 
+        var args = new Object();
+        if (noPopView) {
+            args["obj"] = obj ;
+            args["params"] = [params, this];
+            args["func"] = function(paramList){
+                var realParams = paramList[0];
+                func.call(this, realParams);
+                //use closure to pass 'func', and this == obj, when being called in saveAndGoAway() or discardAndGoAway()
+                var xFormViewController = paramList[1];
+                //paramList[1] is ZaXFormViewController or its sub class
+                xFormViewController._emptyUI();
+            };
+
+        }else{
+            args["obj"] = ZaApp.getInstance();
+            args["params"] = [null, this];
+            args["func"] = function(paramList){
+                var realParams = paramList[0];
+                ZaApp.prototype.popView.call(this, realParams);
+                //this == ZaApp.getInstance(), when being called in saveAndGoAway() or discardAndGoAway()
+                var xFormViewController = paramList[1];
+                //paramList[1] is ZaXFormViewController or its sub class
+                xFormViewController._emptyUI();
+                xFormViewController._setSelectionAfterCloseView();
+            };
+
+        }
+        //ask if the user wants to save changes
+        ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
+        ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);        
+        ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);        
+        ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();
+
+    } else if (noPopView){
+        func.call(obj, params) ;
+        this._emptyUI();
+
+    }else{
+        if(this._view._localXForm && this._view.formDirtyLsnr) {
+            this._view._localXForm.removeListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE,this._view.formDirtyLsnr);
+            this._view._localXForm.removeListener(DwtEvent.XFORMS_VALUE_ERROR,this._view.formDirtyLsnr);
+        }
+        //this._app.getTabGroup().removeCurrentTab(true) ;
+        ZaApp.getInstance().popView();
+        //ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;
+
+        this._emptyUI();
+        this._setSelectionAfterCloseView();
+    }
+}
+
+ZaXFormViewController.prototype._setSelectionAfterCloseView =
+function() {
+	if(appNewUI) { //only work in new UI
+		var tree = ZaZimbraAdmin.getInstance().getOverviewPanelController().getOverviewPanel().getFolderTree();
+		var rootItem = tree.getCurrentRootItem();
+		var rootPath = tree.getABPath(rootItem.getData("dataItem"));
+		var topPath = "";
+		var lastLoc = rootPath.lastIndexOf(ZaTree.SEPERATOR);
+		if(lastLoc > 0) {
+			topPath = rootPath.substring(0,lastLoc);
 		}
-		//ask if the user wants to save changes		
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.saveAndGoAway, this, args);		
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
-		ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();
-	} else if (noPopView){
-		func.call(obj, params) ;
-	}else{
-		if(this._view._localXForm && this._view.formDirtyLsnr) {
-			this._view._localXForm.removeListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE,this._view.formDirtyLsnr);
-			this._view._localXForm.removeListener(DwtEvent.XFORMS_VALUE_ERROR,this._view.formDirtyLsnr);
-		}
-		//this._app.getTabGroup().removeCurrentTab(true) ;
-		ZaApp.getInstance().popView();
-		//ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;
+		tree.setSelectionByPath(topPath);
 	}
 }
 
@@ -180,10 +220,35 @@ function () {
 		if(this._currentObject.id) {
 			this._currentObject.remove();
 			this.fireRemovalEvent(this._currentObject);
+            var msgName = "";
+            switch(this._currentObject.type){
+		        case ZaItem.ACCOUNT: msgName = ZaMsg.AccountDeleted ; break ;
+                case ZaItem.DOMAIN: msgName = ZaMsg.DomainDeleted ; break ;
+		        case ZaItem.RESOURCE: msgName = ZaMsg.ResourceDeleted ; break ;
+		        case ZaItem.DL: msgName= ZaMsg.DLDeleted ; break ;
+                case ZaItem.COS: msgName = ZaMsg.CosDeleted ; break ;
+		        default: msgName = ""; break ;
+	        }
+
+            if(msgName) {
+                ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(msgName,[this._currentObject.name]));
+            }
+
 		}
 		this.closeCnfrmDlg();	
 		ZaApp.getInstance().popView();		
-		//ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;	
+		//ZaApp.getInstance().getTabGroup().removeCurrentTab(true) ;
+        if(appNewUI) {
+            var tree = ZaZimbraAdmin.getInstance().getOverviewPanelController().getOverviewPanel().getFolderTree();
+            var rootItem = tree.getCurrentRootItem();
+            var rootPath = tree.getABPath(rootItem.getData("dataItem"));
+            var topPath = "";
+            var lastLoc = rootPath.lastIndexOf(ZaTree.SEPERATOR);
+            if(lastLoc > 0) {
+                topPath = rootPath.substring(0,lastLoc);
+            }
+            tree.setSelectionByPath(topPath);
+        }
 	} catch (ex) {
 		this.closeCnfrmDlg();	
 		this._handleException(ex, "ZaXFormViewController.prototype.deleteAndGoAway", null, false);				
@@ -247,7 +312,10 @@ function (params) {
 		if(this._saveChanges()) {
 			this._view.setDirty(false);
 			if(this._toolbar)
-				this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);		
+				this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
+
+            if (appNewUI)
+                ZaZimbraAdmin.getInstance().getCurrentAppBar().enableButton(ZaOperation.SAVE, false);
 		
 			this.closeCnfrmDlg();
 
@@ -278,13 +346,44 @@ function (params) {
 **/
 ZaXFormViewController.prototype.setDirty = 
 function (isD) {
-	if(!this._toolbar || !this._toolbar.getButton(ZaOperation.SAVE))
-		return;
-		
-	if(isD)
-		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(true);
-	else
-		this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
+    if (!appNewUI) {
+        if(!this._toolbar || !this._toolbar.getButton(ZaOperation.SAVE))
+            return;
+
+        if(isD)
+            this._toolbar.getButton(ZaOperation.SAVE).setEnabled(true);
+        else
+            this._toolbar.getButton(ZaOperation.SAVE).setEnabled(false);
+    } else {
+        var settingMenu = ZaZimbraAdmin.getInstance().getSettingMenu();
+        if (!settingMenu ||
+            !this._popupOperations ||
+            !this._popupOperations[ZaOperation.SAVE] ||
+            !this._popupOperations[ZaOperation.SAVE].id)
+            return;
+
+        if (!this._popupOperations)
+            return;
+
+        if (!this._popupOperations[ZaOperation.SAVE])
+            return;
+
+        var saveItem = settingMenu.getMenuItem(this._popupOperations[ZaOperation.SAVE].id)
+        if (AjxUtil.isEmpty(saveItem))
+            return;
+
+        if(isD)
+            saveItem.setEnabled(true);
+        else
+            saveItem.setEnabled(false);
+
+        if (appNewUI) {
+            if(isD)
+                ZaZimbraAdmin.getInstance().getCurrentAppBar().enableButton(ZaOperation.SAVE, true);
+            else
+                ZaZimbraAdmin.getInstance().getCurrentAppBar().enableButton(ZaOperation.SAVE, false);
+        }
+    }
 }
 
 /**
@@ -322,15 +421,31 @@ function () {
 	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
-    var tabParams = {
-		openInNewTab: true,
-		tabId: this.getContentViewId()
-	}
-	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+
+
+
+    if(!appNewUI) {
+        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+        var tabParams = {
+		        openInNewTab: true,
+		        tabId: this.getContentViewId()
+	        }
+	    ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+    } else
+        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }
+
+
+ZaXFormViewController.prototype._emptyUI =
+function () {
+    this._view = null;
+    this._contentView = null;
+    this._UICreated = false;
+}
+
 
 ZaXFormViewController.prototype._findAlias = function (alias) {
     var types = [ZaSearch.ALIASES,ZaSearch.DLS,ZaSearch.ACCOUNTS, ZaSearch.RESOURCES] ; 

@@ -54,6 +54,9 @@ ZaServerStatsView = function(parent) {
         //this._mbxPage = new ZaServerMBXStatsPage (this);
         //ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
    // }
+    if(appNewUI){
+        this._tabBar.setVisible(false); //new UI doesn't need to show the inner tabbar
+    }
 }
 
 ZaServerStatsView.prototype = new DwtTabView;
@@ -249,7 +252,9 @@ function(entry) {
 		szTitle = szTitle + entry.name;
 	}
 	this.titleCell.innerHTML = szTitle;
-	this.updateTab ();
+    if (!appNewUI){
+		this.updateTab (); //new UI doesn't have the top level tab
+	}
 }
 
 ZaServerStatsView.prototype._resetTabSizes = 
@@ -301,7 +306,29 @@ function() {
 }
 
 
+ZaServerStatsView.prototype.getTabChoices =
+function() {
+    //var innerTabs = this._tab;
+    var innerTabs = [ZaMsg.TABT_Disk, ZaMsg.TABT_Session, ZaMsg.TABT_MBX];
 
+    var entry = this._containedObject;
+    if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
+        innerTabs.push(ZaMsg.TABT_InMsgs);
+        innerTabs.push(ZaMsg.TABT_InData);
+        innerTabs.push(ZaMsg.TABT_Spam_Activity);
+    }
+
+    var tabChoices = [];
+    //index of _tabs is based on 1 rather than 0
+    for (var i = 1; i <= innerTabs.length; i++){
+        tabChoices.push({ value: i,
+                            label: innerTabs[i-1]
+                            //label: innerTabs[i].title
+                        });
+    }
+
+    return tabChoices;
+}
 
 
 

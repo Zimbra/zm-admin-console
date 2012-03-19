@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -32,6 +32,7 @@ ZaErrorDialog = function(parent, contextId) {
 	var detailBtn = this._button[ZaErrorDialog.DETAIL_BUTTON];
 	detailBtn.setImage("SelectPullDownArrow");
 	this.registerCallback(ZaErrorDialog.DETAIL_BUTTON, this._showDetail, this);
+    this._setAllowSelection();
 }
 
 ZaErrorDialog.prototype = new DwtMessageDialog;
@@ -127,8 +128,9 @@ ZaErrorDialog.prototype._showDetail = function() {
 
     var msg = this._msgStr;
     if (this._detailsVisible) {
-        msg += "<hr> " + this._detailStr.substr(0,300);
-        if (this._detailStr.length > 300) msg += "...";
+    	msg += "<div style='overflow:auto;height:100px'>";
+        msg += "<hr> " + this._detailStr;
+        msg += "</div>";
     }
     DwtMessageDialog.prototype.setMessage.call(this, msg, this._msgStyle, this._msgTitle);
     this._button[ZaErrorDialog.DETAIL_BUTTON].setImage(this._detailsVisible ? "SelectPullUpArrow" : "SelectPullDownArrow");

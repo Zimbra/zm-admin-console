@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -89,9 +89,10 @@ LDAPURL_XFormItem.prototype.items = [
 			if(itemVal) {
 				var URLChunks = itemVal.split(/[:\/]/);
 				if(AjxEnv.isIE) {
-					if(URLChunks.length >= 3) {
-						val = URLChunks[1];
-					} 
+				    // bug 68747, IE's split's result length is not fixed, don't use it
+				    var urlPortPair = itemVal.substring(7); //trim the prefix "ldap://"
+				    var chunks = urlPortPair.split(":");
+				    val = chunks[0];
 				} else {
 					if(URLChunks.length >= 4) {
 						val = URLChunks[3];
@@ -118,9 +119,10 @@ LDAPURL_XFormItem.prototype.items = [
 				var URLChunks = itemVal.split(/[:\/]/);
 				
 				if(AjxEnv.isIE) {
-					var tmp = parseInt(URLChunks[URLChunks.length-1]);
-					if(tmp != NaN)
-						val = tmp;
+				    // bug 68747, IE's split's result length is not fixed, don't use it
+				    var urlPortPair = itemVal.substring(7); //trim the prefix "ldap://"
+				    var chunks = urlPortPair.split(":");
+				    val = chunks[1];
 				} else {
 					if(URLChunks.length >= 5) {
 						val = URLChunks[4];
@@ -141,7 +143,7 @@ LDAPURL_XFormItem.prototype.items = [
 		}
 	},
 	{type:_CHECKBOX_,width:"40px",containerCssStyle:"width:40px", forceUpdate:true, ref:".", labelLocation:_NONE_, label:null, 
-		visibilityChecks:[],
+		visibilityChecks:[], subLabel:"", align:_RIGHT_,
 	 	enableDisableChecks:[],
 		getDisplayValue:function (itemVal) {
             var instance = this.getForm().getInstance () ;
