@@ -102,6 +102,7 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 				    {type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.GENERAL_MIG_WIZ_DOWNLOAD_TEXT},
 
 					//Exchange Mig Wiz
+					/*Disable it for bug 71962 in 7.2
 					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("Migration")},
@@ -112,6 +113,7 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 						]
 					},
 					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.MIG_WIZ_DOWNLOAD_TEXT},
+					*/
 
 					//Groupwise Mig Wiz
 					/*Disable it for bug 19041
