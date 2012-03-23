@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -621,10 +621,8 @@ function (item, offset){
 					domainName = emailChunks[1];
 				//	var domainName = xform.getItemById(xform.getId()+"_case").__xform.getItemById(xform.getId()+"_dl_name_field")._domainPart;
 				} catch (ex) {
-					domainName = ZaSettings.myDomainName;
+					//keep the domainName null
 				}
-			} else{
-				domainName = ZaSettings.myDomainName;
 			}
 			
 			var attrs = [ZaAccount.A_name, ZaItem.A_zimbraId];
@@ -734,14 +732,20 @@ ZaAccountMemberOfListView.prototype._setNoResultsHtml = function() {
 	var msg = "";
 	if (this.getCurrentListId().indexOf(ZaAccount.A2_indirectMemberList) >= 0) {
 		msg = ZaMsg.Account_Group_NoInDirectMember;
+
 	}else if (this.getCurrentListId().indexOf(ZaAccount.A2_directMemberList) >= 0){
 		msg = ZaMsg.Account_Group_NoDirectMember;
 	}
 	
-	buffer.append("<table width='100%' cellspacing='0' cellpadding='1'>",
-				  "<tr><td class='NoResults'>",
+	buffer.append(
+				  "<table width='99%' cellspacing='0' cellpadding='1' style='table-layout:fixed'>",
+				  "<tr>",
+				  "<td class='NoResults' style='white-space:normal; word-wrap:break-word; word-break:break-all;' >",
 				  AjxStringUtil.htmlEncode(msg),
-				  "</td></tr></table>");
+				  "</td>",
+				  "</tr>",
+				  "</table>"
+	);
 	
 	div.innerHTML = buffer.toString();
 	this._addRow(div);
@@ -857,12 +861,15 @@ S_Dwt_List_XFormItem.prototype.setItems = function (itemArray){
 * @contructor ZaAccountMemberOfListView
 * @author Charles Cao
 **/
-ZaAccountMemberOfsourceHeaderList = function(type) {
+ZaAccountMemberOfsourceHeaderList = function(type, nameDefaultWidth) {
 	var sourceHeaderList = new Array();
 	var sortable = 0;
 	
 //	defaultColumnSortable = sortable ;
-	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? 230 : null ;
+    if (!nameDefaultWidth) {
+        nameDefaultWidth = 230;
+    }
+	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? nameDefaultWidth : null ;
 	sourceHeaderList[0] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_name, 	ZaMsg.CLV_Name_col, 	
 												null, nameWidth, null, ZaAccountMemberOfListView.A_name, false, true);
 	

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -82,9 +82,9 @@ function () {
 	this.items[0].width = this._inputWidth;
 
 	this.items[0].containerCssStyle = this.getInheritedProperty("nameContainerCss"); 
-	
-	this.items[1].containerCssStyle = this.getInheritedProperty("midContainerCss");
 
+	this.items[1].containerCssStyle = this.getInheritedProperty("midContainerCss");
+	
 	this.items[2].inputWidth =  this.getInheritedProperty("domainPartWidth");
 
 	this.items[2].width  =  this.getInheritedProperty("domainContainerWidth");

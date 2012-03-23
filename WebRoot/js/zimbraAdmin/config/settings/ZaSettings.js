@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -19,8 +19,8 @@ ZaSettings = function() {
 ZaSettings.initialized = false;
 ZaSettings.initializing = false
 ZaSettings.initMethods = new Array();
-ZaSettings.RESULTSPERPAGE = 25;
-ZaSettings.MAXSEARCHRESULTS = 50;
+ZaSettings.RESULTSPERPAGE = 50;
+ZaSettings.MAXSEARCHRESULTS = 100;
 ZaSettings.HAVE_MORE_DOMAINS = false;
 /**
 * Look for admin name cookies and admin type cookies
@@ -39,12 +39,20 @@ ZaSettings.postInit = function() {
 		var cnt = ZaSettings.initMethods.length;
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(ZaSettings.initMethods[i]) == "function") {
-				ZaSettings.initMethods[i].call(this);
+				try {
+					ZaSettings.initMethods[i].call(this);
+				} catch (ex) {
+				//	
+				}
 			}
 		}
 	}	
 
-	appController._launchApp();
+    if (!appNewUI)
+	    appController._launchApp();
+    else
+        appController._lauchNewApp();
+
     if (ZaZimbraAdmin.isWarnOnExit) {
 	    ZaZimbraAdmin.setOnbeforeunload(ZaZimbraAdmin._confirmExitMethod);
     }
@@ -55,10 +63,14 @@ ZaSettings.postInit = function() {
 ZaSettings.initRights = function () {
 	ZaSettings.ENABLED_UI_COMPONENTS=[];
 	ZaZimbraAdmin.currentAdminAccount = new ZaAccount();
-	if(ZaZimbraAdmin.currentAdminId) {
-		ZaZimbraAdmin.currentAdminAccount.load("id", ZaZimbraAdmin.currentAdminId,false,true);
-	} else {
-		ZaZimbraAdmin.currentAdminAccount.load("name", ZaZimbraAdmin.currentUserLogin,false,true);
+	try {
+		if(ZaZimbraAdmin.currentAdminId) {
+			ZaZimbraAdmin.currentAdminAccount.load("id", ZaZimbraAdmin.currentAdminId,false,true);
+		} else {
+			ZaZimbraAdmin.currentAdminAccount.load("name", ZaZimbraAdmin.currentUserLogin,false,true);
+		}
+	} catch (ex) {
+		//account may fail to load due to failing admin extensions 
 	}
 	//if this is a system admin account - enable access to all UI elements
 	if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
@@ -66,7 +78,6 @@ ZaSettings.initRights = function () {
 	}	
 	if(AjxUtil.isEmpty(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])) {
 		ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [];
-
 	} else {
 		if(typeof(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])=="string") {
 			ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]];
@@ -277,27 +288,8 @@ ZaSettings.CSFE_MSG_FETCHER_URI = (location.port == "80") ? "/service/content/ge
 ZaSettings.CONFIG_PATH = location.pathname + "js/zimbraAdmin/config";
 //ZaSettings.ADMIN_NAME_COOKIE = "ZA_ADMIN_NAME_COOKIE";
 ZaSettings.myDomainName = null;
-
-ZaSettings.SKIN_IDX = 1;
-// IDs FOR HTML COMPONENTS IN THE SKIN
-ZaSettings.SKIN_APP_BOTTOM_TOOLBAR_ID	= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_APP_MAIN_ID				= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_APP_TOP_TOOLBAR_ID		= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_CURRENT_APP_ID			= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_LOGO_ID					= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_SASH_ID					= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_SEARCH_BUILDER_ID		= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_SEARCH_BUILDER_TOOLBAR_ID= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_SEARCH_BUILDER_SASH_ID = ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_SEARCH_ID				= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_SHELL_ID				= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_STATUS_ID				= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_TREE_ID					= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_USER_INFO_ID			= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_APP_TABS_ID				= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_HELP_ID					= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_DW_ID					= ZaSettings.SKIN_IDX++;
-ZaSettings.SKIN_LOGIN_MSG_ID            = ZaSettings.SKIN_IDX++;
+ZaSettings.ZIMBRA_SUPPORT_URL = "http://support.zimbra.com/help/index.php";
+ZaSettings.ZIMBRA_SUPPORT_URL_QUERY = ZaSettings.ZIMBRA_SUPPORT_URL + "?query=";
 
 //CONSTANTS FOR ROLE-BASED ACCESS
 /**
@@ -342,6 +334,8 @@ ZaSettings.MAILQ_VIEW = "mailQueue";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.MAILQ_VIEW, label: ZaMsg.UI_Comp_mailQueueView });
 ZaSettings.SERVER_STATS_VIEW = "perServerStatisticsView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.SERVER_STATS_VIEW, label: ZaMsg.UI_Comp_ServerStatsView });
+ZaSettings.DOWNLOADS_VIEW = "downloadsView";
+ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.DOWNLOADS_VIEW, label: ZaMsg.UI_Comp_DownloadsView });
 }
 ZaSettings.initConst();
 
@@ -406,9 +400,16 @@ ZaSettings.exchangeServerType = ZaSettings.getExchangeServerType;
 ZaSettings.OVERVIEW_CONFIG_ITEMS = [ZaSettings.COS_LIST_VIEW,ZaSettings.ZIMLET_LIST_VIEW,ZaSettings.SERVER_LIST_VIEW,ZaSettings.ADMIN_ZIMLET_LIST_VIEW,
     ZaSettings.DOMAIN_LIST_VIEW,ZaSettings.GLOBAL_CONFIG_VIEW];
 ZaSettings.OVERVIEW_ADDRESSES_ITEMS = [ZaSettings.ACCOUNT_LIST_VIEW,ZaSettings.ALIAS_LIST_VIEW,ZaSettings.DL_LIST_VIEW,ZaSettings.RESOURCE_LIST_VIEW];
-ZaSettings.OVERVIEW_TOOLS_ITEMS = [ZaSettings.MAILQ_VIEW];
+ZaSettings.OVERVIEW_TOOLS_ITEMS = [ZaSettings.MAILQ_VIEW,ZaSettings.DOWNLOADS_VIEW];
 ZaSettings.OVERVIEW_MONITORING_ITEMS = [ZaSettings.GLOBAL_STATS_VIEW,ZaSettings.GLOBAL_STATUS_VIEW,ZaSettings.SERVER_STATS_VIEW];
 
+if (appNewUI) {
+ZaSettings.OVERVIEW_MANAGER_ACCOUNT_ITEMS = [ZaSettings.ACCOUNT_LIST_VIEW,ZaSettings.ALIAS_LIST_VIEW,ZaSettings.DL_LIST_VIEW,ZaSettings.RESOURCE_LIST_VIEW];
+ZaSettings.OVERVIEW_ADMIN_ITEMS = [ZaSettings.COS_LIST_VIEW,ZaSettings.ZIMLET_LIST_VIEW,ZaSettings.SERVER_LIST_VIEW,ZaSettings.ADMIN_ZIMLET_LIST_VIEW,
+    ZaSettings.DOMAIN_LIST_VIEW,ZaSettings.GLOBAL_CONFIG_VIEW];
+ZaSettings.OVERVIEW_TOOLS_ITEMS = [ZaSettings.MAILQ_VIEW,ZaSettings.DOWNLOADS_VIEW];
+ZaSettings.OVERVIEW_MONITORING_ITEMS = [ZaSettings.MAILQ_VIEW, ZaSettings.GLOBAL_STATUS_VIEW,ZaSettings.SERVER_STATS_VIEW];
+}
 //Domain operations  - it might be duplicated to domain view tabs
 ZaSettings.DOMAIN_GAL_WIZ = "domainGALWizard";
 ZaSettings.DOMAIN_AUTH_WIZ = "domainAuthWizard";
@@ -486,11 +487,33 @@ ZaSettings.BANNER_ENABLED = true;
 ZaSettings.STATUS_ENABLED = true;
 ZaSettings.SEARCH_PANEL_ENABLED = true;
 
+
+ZaSettings.SKIN_IDX = 1;
+// IDs FOR HTML COMPONENTS IN THE SKIN
+ZaSettings.SKIN_APP_BOTTOM_TOOLBAR_ID	= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_APP_MAIN_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_APP_TOP_TOOLBAR_ID		= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_CURRENT_APP_ID			= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_LOGO_ID					= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SASH_ID					= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SEARCH_BUILDER_ID		= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SEARCH_BUILDER_TOOLBAR_ID= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SEARCH_BUILDER_SASH_ID = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SEARCH_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SHELL_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_STATUS_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_TREE_ID					= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_USER_INFO_ID			= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_APP_TABS_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_HELP_ID					= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_DW_ID					= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_LOGIN_MSG_ID            = ZaSettings.SKIN_IDX++;
+
 ZaSettings.SKIN_LOGOFF_DOM_ID = "skin_container_logoff" ;
 ZaSettings.SKIN_HELP_DOM_ID = "skin_container_help" ;
 ZaSettings.SKIN_DW_DOM_ID = "skin_container_dw" ;
 ZaSettings.SKIN_USER_NAME_ID = "skin_container_username";
-ZaSettings.SKIN_LOGO_ID = "skin_container_logo";
+ZaSettings.SKIN_LOGO_DOM_ID = "skin_container_logo";
 ZaSettings.SKIN_TREE_ID = "skin_container_tree";
 ZaSettings.SKIN_SEARCH_BUILDER_ID = "skin_container_search_builder";
 ZaSettings.SKIN_SEARCH_BUILDER_TB_ID = "skin_container_search_builder_toolbar";
@@ -506,7 +529,7 @@ ZaSettings.INIT = new Object();
 ZaSettings.INIT[ZaSettings.SKIN_APP_MAIN_ID]				= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_app_main"];
 ZaSettings.INIT[ZaSettings.SKIN_APP_TOP_TOOLBAR_ID]		= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_top_toolbar"];
 ZaSettings.INIT[ZaSettings.SKIN_CURRENT_APP_ID]			= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_CURRENT_APP_ID];
-ZaSettings.INIT[ZaSettings.SKIN_LOGO_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_LOGO_ID];
+ZaSettings.INIT[ZaSettings.SKIN_LOGO_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_LOGO_DOM_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SASH_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_APP_SASH_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SEARCH_BUILDER_ID]		= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_BUILDER_ID];
 ZaSettings.INIT[ZaSettings.SKIN_SEARCH_BUILDER_TOOLBAR_ID]= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_BUILDER_TB_ID];
@@ -517,6 +540,86 @@ ZaSettings.INIT[ZaSettings.SKIN_STATUS_ID]				= [null, ZaSettings.T_CONFIG, ZaSe
 ZaSettings.INIT[ZaSettings.SKIN_TREE_ID]					= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TREE_ID];
 //ZaSettings.INIT[ZaSettings.SKIN_TREE_FOOTER_ID]			= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_tree_footer"];
 ZaSettings.INIT[ZaSettings.SKIN_LOGIN_MSG_ID]           = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_login_msg"];
+ZaSettings.INIT[ZaSettings.SKIN_APP_TABS_ID]            = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_app_tabs"];
+
+if (appNewUI) {
+// here new skin start.....
+
+ZaSettings.LICENSE_ENABLED = true;
+ZaSettings.ADMIN_ZIMLETS_ENABLED = true;
+ZaSettings.SAVE_SEARCH_ENABLED = true ;
+ZaSettings.TREE_ENABLED = true;
+ZaSettings.CURRENT_APP_ENABLED = false;
+ZaSettings.BANNER_ENABLED = true;
+ZaSettings.STATUS_ENABLED = false;
+ZaSettings.SEARCH_PANEL_ENABLED = false;
+
+ZaSettings.SKIN_IDX = 1;
+ZaSettings.SKIN_SHELL_ID				= ZaSettings.SKIN_IDX++;
+// IDs FOR HTML COMPONENTS IN THE SKIN
+ZaSettings.SKIN_LOGO_ID             	= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_SEARCH_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_REFRESH_ID		        = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_PREVIOUS_ID			    = ZaSettings.SKIN_IDX
+ZaSettings.SKIN_NEXT_ID			    = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_USERNAME_ID				= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_HELP_ID					= ZaSettings.SKIN_IDX++;
+
+ZaSettings.SKIN_TREE_TOP_ID		        = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_TREE_ID                 = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_TREE_FOOTER_ID          = ZaSettings.SKIN_IDX++;
+
+ZaSettings.SKIN_APP_HEADER_ID		    = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_APP_MAIN_ID             = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_APP_MAIN_FOOTER_ID      = ZaSettings.SKIN_IDX++;
+
+ZaSettings.SKIN_TOOL_HEADER_ID			= ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_TOOL_ID                 = ZaSettings.SKIN_IDX++;
+ZaSettings.SKIN_TOOL_FOOTER_ID          = ZaSettings.SKIN_IDX++;
+// Dom Items
+ZaSettings.SKIN_SHELL_DOM_ID            = "skin_outer";
+
+ZaSettings.SKIN_LOGO_DOM_ID             = "skin_container_logo" ;
+ZaSettings.SKIN_TOASTER_DOM_ID          = "skin_container_toaster";
+ZaSettings.SKIN_SEARCH_DOM_ID           = "skin_container_search" ;
+ZaSettings.SKIN_REFRESH_DOM_ID          = "skin_container_refresh" ;
+ZaSettings.SKIN_PREVIOUS_DOM_ID         = "skin_container_previous";
+ZaSettings.SKIN_NEXT_DOM_ID             = "skin_container_next";
+ZaSettings.SKIN_USERNAME_DOM_ID         = "skin_container_username";
+ZaSettings.SKIN_HELP_DOM_ID             = "skin_container_help";
+
+ZaSettings.SKIN_TREE_TOP_DOM_ID         = "skin_container_tree_top";
+ZaSettings.SKIN_TREE_DOM_ID             = "skin_container_tree";
+ZaSettings.SKIN_TREE_FOOTER_DOM_ID      = "skin_container_tree_footer";
+
+ZaSettings.SKIN_APP_HEADER_DOM_ID          = "skin_container_app_tabs";
+ZaSettings.SKIN_APP_MAIN_DOM_ID          = "skin_container_app_main";
+ZaSettings.SKIN_APP_MAIN_FOOTER_DOM_ID   = "skin_container_main_footer";
+
+ZaSettings.SKIN_TOOL_HEADER_DOM_ID       = "skin_container_tool_header";
+ZaSettings.SKIN_TOOL_DOM_ID              = "skin_container_tool";
+ZaSettings.SKIN_TOOL_FOOTER_DOM_ID       = "skin_container_tool_footer";
+
+// initialization for settings: [name, type, data type, default value]
+// IDs FOR HTML COMPONENTS IN THE SKIN
+ZaSettings.INIT[ZaSettings.SKIN_SHELL_ID]		    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SHELL_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_LOGO_ID]		    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_LOGO_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_SEARCH_ID]		    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_SEARCH_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_REFRESH_ID]		    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_REFRESH_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_PREVIOUS_ID ]	    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_PREVIOUS_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_NEXT_ID ]	        = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_NEXT_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_USERNAME_ID]	    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_USERNAME_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_HELP_ID]            = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_HELP_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_TREE_TOP_ID	]       = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TREE_TOP_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_TREE_ID]		    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TREE_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_TREE_FOOTER_ID ]    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TREE_FOOTER_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_APP_HEADER_ID]	    = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_APP_HEADER_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_APP_MAIN_ID ]		= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_APP_MAIN_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_APP_MAIN_FOOTER_ID]	= [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_APP_MAIN_FOOTER_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_TOOL_HEADER_ID]     = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TOOL_HEADER_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_TOOL_ID]            = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TOOL_DOM_ID];
+ZaSettings.INIT[ZaSettings.SKIN_TOOL_FOOTER_ID]     = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, ZaSettings.SKIN_TOOL_FOOTER_DOM_ID];
+}
 //ZaSettings.timeZoneChoices = new XFormChoices(AjxTimezoneData.TIMEZONE_RULES, XFormChoices.OBJECT_LIST, "serverId", "serverId");
 //in order to add the "Not Set" label to the timezone choices, we need to normalize it to label value pair
 ZaSettings.getTimeZoneChoices = function () {
@@ -534,7 +637,7 @@ ZaSettings.getTimeZoneChoices = function () {
 
 ZaSettings.timeZoneChoices = ZaSettings.getTimeZoneChoices  ;
 
-ZaSettings.INIT[ZaSettings.SKIN_APP_TABS_ID] = [null, ZaSettings.T_CONFIG, ZaSettings.D_STRING, "skin_container_app_tabs"];
+
 
 //ZaSettings.SKIN_TABS_DOM_ID = "skin_container_app_tabs" ;
 //ZaSettings.SKIN_LOGIN_MSG_ID = "skin_td_login_msg" ;
@@ -627,7 +730,7 @@ ZaSettings.mailCharsetChoices = [
 	{ value: "windows-1256" , label: "windows-1256" } ,
 	{ value: "windows-1257" , label: "windows-1257" } ,
 	{ value: "windows-1258" , label: "windows-1258" } ,
-	{ value: "windows-31j" , label: "windows-31j" } ,
+	{ value: "windows-31j" , label: "windows-31j" }/* ,
 	{ value: "x-Big5-Solaris" , label: "x-Big5-Solaris" } ,
 	{ value: "x-euc-jp-linux" , label: "x-euc-jp-linux" } ,
 	{ value: "x-EUC-TW" , label: "x-EUC-TW" } ,
@@ -695,7 +798,7 @@ ZaSettings.mailCharsetChoices = [
 	{ value: "x-windows-874" , label: "x-windows-874" } ,
 	{ value: "x-windows-949" , label: "x-windows-949" } ,
 	{ value: "x-windows-950" , label: "x-windows-950" } ,                                   
-	{ value: "x-windows-iso2022jp" , label: "x-windows-iso2022jp" } 
+	{ value: "x-windows-iso2022jp" , label: "x-windows-iso2022jp" }*/
 ] ;
 
 ZaSettings.getLocaleChoices = function () {
@@ -745,3 +848,6 @@ ZaSettings.mailPollingIntervalChoices = [
     {value: "31536000s", label: ZaMsg.LBL_manual} /* one year */
 ];
 
+ZaSettings.isOctopus = function () {
+    return (ZaSettings.IS_OCTOPUS || false);
+}

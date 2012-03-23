@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -75,7 +75,8 @@ function (entry) {
 	ZaMTAXFormView.tabChoices.dirtyChoices();
 	this._localXForm.setInstance(this._containedObject);	
 	ZaMTAXFormView.prototype.handleXFormChange.call(this);
-	this.updateTab();
+    if (!appNewUI)
+	    this.updateTab();
 }
 ZaMTAXFormView.prototype.handleXFormChange = function () {
 	if(this._containedObject[ZaModel.currentTab] == "1" && (this._containedObject[ZaMTA.A_DeferredQ][ZaMTA.A_Status]==ZaMTA.STATUS_IDLE)) {
@@ -477,20 +478,31 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 	
 	
 	var headerList = new Array();
-	headerList[0] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_text_col, ZaMsg.PQV_name_col, null, "38px", false, null, false, true);
-	headerList[1] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_count_col, ZaMsg.PQV_count_col, null, "auto", false, null, false, true);
+    if(ZaZimbraAdmin.LOCALE=="en"||ZaZimbraAdmin.LOCALE=="en_AU"||ZaZimbraAdmin.LOCALE=="en_GB")
+        headerList[0] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_text_col, ZaMsg.PQV_name_col, null, "55px", false, null, true, true);
+    else
+	    headerList[0] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_text_col, ZaMsg.PQV_name_col, null, "38px", false, null, true, true);
+
+	headerList[1] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_count_col, ZaMsg.PQV_count_col, null, "auto", false, null, true, true);
 	//headerList[2] = new ZaListHeaderItem(null, null, null, null, null, null, false, true);							
 		
 	var msgHeaderList = new Array();
-	msgHeaderList[0] = new ZaListHeaderItem(ZaMTAQMsgItem.A_id, ZaMsg.PQV_qid_col, null, "100px", null, null, false, true);
-	msgHeaderList[1] = new ZaListHeaderItem(ZaMTAQMsgItem.A_recipients, ZaMsg.PQV_recipients_col, null, "106px", null, null, false, true);
-	msgHeaderList[2] = new ZaListHeaderItem(ZaMTAQMsgItem.A_sender, ZaMsg.PQV_sender_col, null, "106px", null, null, false, true);		
-	msgHeaderList[3] = new ZaListHeaderItem(ZaMTAQMsgItem.A_origin_ip, ZaMsg.PQV_origin_ip_col, null, "97px", null, null, false, true);	
-	msgHeaderList[4] = new ZaListHeaderItem(ZaMTAQMsgItem.A_origin_host, ZaMsg.PQV_origin_host_col, null, "103px", null, null, false, true);			
-	msgHeaderList[5] = new ZaListHeaderItem(ZaMTAQMsgItem.A_fromdomain, ZaMsg.PQV_origin_domain_col, null, "106px", null, null, false, true);		
-	msgHeaderList[6] = new ZaListHeaderItem(ZaMTAQMsgItem.A_content_filter, ZaMsg.PQV_content_filter_col, "103px", null, null, null, false, true);				
-	msgHeaderList[7] = new ZaListHeaderItem(ZaMTAQMsgItem.A_time, ZaMsg.PQV_time_col, null, "78px", null, null, false, true);					
-	msgHeaderList[8] = new ZaListHeaderItem(null, null, null, "auto", null, null, false, true);						
+	msgHeaderList[0] = new ZaListHeaderItem(ZaMTAQMsgItem.A_id, ZaMsg.PQV_qid_col, null, "100px", null, null, true, true);
+
+    if(ZaZimbraAdmin.LOCALE=="en"||ZaZimbraAdmin.LOCALE=="en_AU"||ZaZimbraAdmin.LOCALE=="en_GB"){
+        msgHeaderList[1] = new ZaListHeaderItem(ZaMTAQMsgItem.A_recipients, ZaMsg.PQV_recipients_col, null, "136px", null, null, true, true);
+        msgHeaderList[2] = new ZaListHeaderItem(ZaMTAQMsgItem.A_sender, ZaMsg.PQV_sender_col, null, "136px", null, null, true, true);
+    }
+     else{
+         msgHeaderList[1] = new ZaListHeaderItem(ZaMTAQMsgItem.A_recipients, ZaMsg.PQV_recipients_col, null, "106px", null, null, true, true);
+	     msgHeaderList[2] = new ZaListHeaderItem(ZaMTAQMsgItem.A_sender, ZaMsg.PQV_sender_col, null, "106px", null, null, true, true);
+    }
+	msgHeaderList[3] = new ZaListHeaderItem(ZaMTAQMsgItem.A_origin_ip, ZaMsg.PQV_origin_ip_col, null, "97px", null, null, true, true);
+	msgHeaderList[4] = new ZaListHeaderItem(ZaMTAQMsgItem.A_origin_host, ZaMsg.PQV_origin_host_col, null, "103px", null, null, true, true);
+	msgHeaderList[5] = new ZaListHeaderItem(ZaMTAQMsgItem.A_fromdomain, ZaMsg.PQV_origin_domain_col, null, "106px", null, null, true, true);
+	msgHeaderList[6] = new ZaListHeaderItem(ZaMTAQMsgItem.A_content_filter, ZaMsg.PQV_content_filter_col, "103px", null, null, null, true, true);
+	msgHeaderList[7] = new ZaListHeaderItem(ZaMTAQMsgItem.A_time, ZaMsg.PQV_time_col, null, "78px", null, null, true, true);
+	msgHeaderList[8] = new ZaListHeaderItem(null, null, null, "auto", null, null, true, true);
 
 	xFormObject.items = [
 		{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", id:"xform_header", 
@@ -514,7 +526,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 				{type:_ZATABCASE_, numCols:1, caseKey:ZaMTAXFormView._tab1, 
 					items:[	
 						{type:_SPACER_, height:"15"},
-						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "15%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
+						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "17%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_refreshTime},
 							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},
 							{type:_DWT_PROGRESS_BAR_,label:ZaMsg.PQ_ParsingProgress,
@@ -650,14 +662,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								{type:_DWT_BUTTON_, label:ZaMsg.PQ_showAllMsgs, ref:ZaMTA.A_IncomingQ, onActivate:ZaMTAXFormView.showAllMsgs},
 								{type:_CELLSPACER_},
 								{type:_GROUP_, numCols:3, items:[
-									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:86, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_IncomingQ,
 										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)", 
 										enableDisableChangeEventSources:[ZaMTA.A_IncomingQ + "/" + ZaMTA.A_pageNum],
 										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_IncomingQ]]										
 								    },								       
 									{type:_CELLSPACER_},
-									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:86, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_IncomingQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 										enableDisableChangeEventSources:[ZaMTA.A_IncomingQ + "/" + ZaMTA.A_more],
@@ -727,14 +739,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								{type:_DWT_BUTTON_, label:ZaMsg.PQ_showAllMsgs, ref:ZaMTA.A_ActiveQ, onActivate:ZaMTAXFormView.showAllMsgs},
 								{type:_CELLSPACER_},
 								{type:_GROUP_, numCols:3, items:[					
-									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:86, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_ActiveQ,
 										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)",
 										enableDisableChangeEventSources:[ZaMTA.A_ActiveQ + "/" + ZaMTA.A_pageNum],
 										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_ActiveQ]]	
 								    },								       
 									{type:_CELLSPACER_},
-									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:86, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_ActiveQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)",
 										enableDisableChangeEventSources:[ZaMTA.A_ActiveQ + "/" + ZaMTA.A_more],
@@ -804,14 +816,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 								{type:_DWT_BUTTON_, label:ZaMsg.PQ_showAllMsgs, ref:ZaMTA.A_HoldQ, onActivate:ZaMTAXFormView.showAllMsgs},
 								{type:_CELLSPACER_},
 								{type:_GROUP_, numCols:3, items:[								
-									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+									{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:86, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 										ref:ZaMTA.A_HoldQ,
 										onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)",
 										enableDisableChangeEventSources:[ZaMTA.A_HoldQ + "/" + ZaMTA.A_pageNum],
 										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_HoldQ]]										 
 								    },								       
 									{type:_CELLSPACER_},
-									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:86, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 										ref:ZaMTA.A_HoldQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)",
 										enableDisableChangeEventSources:[ZaMTA.A_HoldQ + "/" + ZaMTA.A_more],
@@ -884,14 +896,14 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 							{type:_DWT_BUTTON_, label:ZaMsg.PQ_showAllMsgs, ref:ZaMTA.A_CorruptQ, onActivate:ZaMTAXFormView.showAllMsgs},
 							{type:_CELLSPACER_},
 							{type:_GROUP_, numCols:3, items:[
-								{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:75, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
+								{type:_DWT_BUTTON_, label:ZaMsg.Previous,toolTipContent:ZaMsg.PrevPage_tt, width:86, id:"backButton", icon:"LeftArrow", disIcon:"LeftArrowDis", 	
 									ref:ZaMTA.A_CorruptQ,
 									onActivate:"ZaMTAXFormView.backMsgsButtonHndlr.call(this,event)",
 									enableDisableChangeEventSources:[ZaMTA.A_CorruptQ + "/" + ZaMTA.A_pageNum],
 									enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsBackButton,ZaMTA.A_CorruptQ]]									 
 							    },								       
 								{type:_CELLSPACER_},
-								{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:75, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
+								{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:86, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",	
 									ref:ZaMTA.A_CorruptQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 									onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)",
 									enableDisableChangeEventSources:[ZaMTA.A_CorruptQ + "/" + ZaMTA.A_more],
