@@ -83,6 +83,8 @@ function () {
 
 	this.items[0].containerCssStyle = this.getInheritedProperty("nameContainerCss"); 
 	
+	this.items[1].containerCssStyle = this.getInheritedProperty("midContainerCss");
+
 	this.items[2].inputWidth =  this.getInheritedProperty("domainPartWidth");
 
 	this.items[2].width  =  this.getInheritedProperty("domainContainerWidth");
