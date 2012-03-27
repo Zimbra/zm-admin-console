@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -25,12 +25,10 @@ ZaZimletListController = function(appCtxt, container) {
    	this._popupOperations = new Array();			
 	this.objType = ZaEvent.S_ZIMLET;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "zimlets/about_zimlets.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaZimletListController.helpButtonText;
 }
 
 ZaZimletListController.prototype = new ZaListViewController();
 ZaZimletListController.prototype.constructor = ZaZimletListController;
-ZaZimletListController.helpButtonText = ZaMsg.helpManageZimlets;
 
 ZaController.initToolbarMethods["ZaZimletListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaZimletListController"] = new Array();
@@ -82,9 +80,6 @@ ZaController.initToolbarMethods["ZaZimletListController"].push(ZaZimletListContr
 
 ZaZimletListController.initPopupMenuMethod =
 function () {
-    if (appNewUI) {
-	    this._popupOperations[ZaOperation.DEPLOY_ZIMLET]=new ZaOperation(ZaOperation.DEPLOY_ZIMLET,ZaMsg.TBB_DeployNew, ZaMsg.TBB_DeployNew_tt, "Deploy", "Deploy", new AjxListener(this, this.deployZimletListener));
-    }
    	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Undeploy, ZaMsg.DTBB_Undeploy_tt, "Undeploy", "Undeploy", new AjxListener(this, this._undeployButtonListener));    	    		
    	this._popupOperations[ZaOperation.TOGGLE]=new ZaOperation(ZaOperation.TOGGLE,ZaMsg.TBB_Toggle, ZaMsg.TBB_Toggle_tt, "ToggleStatus", "ToggleStatus", new AjxListener(this, this._toggleButtonListener));    	    		
    
@@ -161,7 +156,8 @@ ZaZimletListController.prototype._createUI = function () {
 		var elements = new Object();
 		this._contentView = new ZaZimletListView(this._container);
 		this._initToolbar();
-		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_ZIMLIST);
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_ZIMLIST); 
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 
 		this._initPopupMenu();
 		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_ZIMLIST, ZaId.MENU_POP);
@@ -169,17 +165,13 @@ ZaZimletListController.prototype._createUI = function () {
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_LIST_VIEW, elements);
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._ADMIN_ZIMLET_LIST_VIEW, elements);
-        if(!appNewUI) {
-            elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-            var tabParams = {
-                openInNewTab: false,
-                tabId: this.getContentViewId(),
-                tab: this.getMainTab()
-            }
-            ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-        } else {
-            ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-        }
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab() 
+		}
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+		
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 		this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ZIMLIST + "_removeConfirm");					
@@ -207,11 +199,6 @@ function(ev) {
 		if(ev.item) {
 			this._selectedItem = ev.item;
 			ZaApp.getInstance().getZimletController().show(ev.item);
-
-            if (appNewUI) {
-                var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_zimlets]);
-                ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, ev.item.name, null, false, false, ev.item);
-            }
 		}
 	} else {
 		this.changeActionsState();	

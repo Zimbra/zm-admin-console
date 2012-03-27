@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -102,6 +102,7 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 				    {type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.GENERAL_MIG_WIZ_DOWNLOAD_TEXT},
 
 					//Exchange Mig Wiz
+					/*Disable it for bug 71962 in 7.2
 					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("Migration")},
@@ -112,6 +113,7 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 						]
 					},
 					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.MIG_WIZ_DOWNLOAD_TEXT},
+					*/
 
 					//Groupwise Mig Wiz
 					/*Disable it for bug 19041

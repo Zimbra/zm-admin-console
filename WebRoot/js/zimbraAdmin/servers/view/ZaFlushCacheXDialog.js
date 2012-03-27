@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -166,15 +166,15 @@ function() {
 						visibilityChecks:[],enableDisableChecks:[],widgetClass:ZaServerMiniListView,valueChangeEventSources:["serverList"]
 					},
 					{ref:"flushZimlet",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_zimlet_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_zimlet_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{ref:"flushSkin",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_theme_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_theme_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{ref:"flushLocale",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_locale_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_locale_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},					
 					{type:_CELLSPACER_},

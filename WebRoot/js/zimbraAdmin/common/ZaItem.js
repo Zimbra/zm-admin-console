@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -20,7 +20,6 @@
 ZaItem = function(iKeyName) {
 	if (arguments.length == 0) return;
 	this._iKeyName = iKeyName;
-    this._uuid = ZaUtil.getItemUUid();
 	ZaModel.call(this, true);
 
 }
@@ -50,7 +49,6 @@ ZaItem.SERVER = "server";
 ZaItem.ZIMLET = "zimlet";
 ZaItem.MAILQ_ITEM = "message";
 ZaItem.MAILQ = "mailque";
-ZaItem.HOME = "home";
 ZaItem.A_objectClass = "objectClass";
 ZaItem.A_zimbraId = "zimbraId";
 ZaItem.A_cn = "cn" ;
@@ -334,72 +332,38 @@ ZaItem.prototype.initEffectiveRightsFromJS = function(resp) {
 ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults) {
 	if(!this.type)
 		return;
-
+		
+	var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
+	if(expandDefaults) {
+		soapDoc.setMethodAttribute("expandAllAttrs","getAttrs");
+	}
+	
 	if(AjxUtil.isUndefined(val) || AjxUtil.isNull(val))
 		val = "";
+		
+	var elTarget = soapDoc.set("target", val);
+	
+	if(!AjxUtil.isEmpty(by))
+		elTarget.setAttribute("by",by);
+		
+	elTarget.setAttribute("type",this.type);
 
+
+	var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
+	elGrantee.setAttribute("by","id");
+	
+	var csfeParams = new Object();
+	csfeParams.soapDoc = soapDoc;	
+	var reqMgrParams = {} ;
+	reqMgrParams.controller = (ZaApp.getInstance() && ZaApp.getInstance().getCurrentController()) ? ZaApp.getInstance().getCurrentController() : null;
+	reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
+	
 	try {
-		var resp = this._getEffectiveRights(by, val, expandDefaults)
+		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
 		this.initEffectiveRightsFromJS(resp);
 	} catch (ex) {
 		throw (ex);
 	}
-}
-
-ZaItem.RightCache = [];
-ZaItem.getCacheName = function (by, val, type, expandDefaults) {
-    var cacheName = by + val + " " + type;
-    if (expandDefaults)
-        cacheName = cacheName + "TRUE";
-    else
-        cacheName = cacheName + "FALSE";
-    return cacheName;
-}
-
-ZaItem.inCacheProcess = function (val) {
-    if (!val)
-        return false;
-
-    return ZaSettings.initializing;
-}
-
-ZaItem.prototype._getEffectiveRights = function (by, val, expandDefaults) {
-	var cacheName = ZaItem.getCacheName(by, val, this.type, expandDefaults);
-    var inCacheProcess =  ZaItem.inCacheProcess(val);
-    var resp;
-    if (((!ZaItem.RightCache[cacheName])&&inCacheProcess) || !inCacheProcess) {
-        var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
-        if(expandDefaults) {
-            soapDoc.setMethodAttribute("expandAllAttrs","getAttrs");
-        }
-
-        var elTarget = soapDoc.set("target", val);
-
-        if(!AjxUtil.isEmpty(by))
-            elTarget.setAttribute("by",by);
-
-        elTarget.setAttribute("type",this.type);
-
-        var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
-        elGrantee.setAttribute("by","id");
-
-        var csfeParams = new Object();
-        csfeParams.soapDoc = soapDoc;
-        var reqMgrParams = {} ;
-        reqMgrParams.controller = (ZaApp.getInstance() && ZaApp.getInstance().getCurrentController()) ? ZaApp.getInstance().getCurrentController() : null;
-        reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
-
-        try {
-            resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
-        } catch (ex) {
-            throw (ex);
-        }
-        if (inCacheProcess)
-            ZaItem.RightCache[cacheName]= resp;
-    } else {
-        resp = ZaItem.RightCache[cacheName];
-    }
-    return resp;
 }
 
 ZaItem.prototype.loadNewObjectDefaults = function (domainBy, domain, cosBy, cos) {
@@ -473,14 +437,11 @@ ZaItem.prototype.modify = function (mods, tmpObj) {
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
 				methods[i].call(this, mods, tmpObj);
-
 			}
 		}
 	}	
 	//Instrumentation code end
 }
-
-
 
 /**
 * Factory method
@@ -1007,14 +968,4 @@ ZaItem.getZeroIsUnlimitedItem = function () {
               content: ZaMsg.NAD_ZERO_UNLIMETED
             } ;
     return item ;
-}
-
-ZaItem.getSplashScreenCopyright = function() {
-	if ( AjxUtil.isEmpty(ZaItem._splashScreenCopyright) ){
-		var date = new Date();
-		var curYear = date.getFullYear() + "";
-		ZaItem._splashScreenCopyright = AjxMessageFormat.format(ZabMsg.splashScreenCopyright, [curYear]);
-	}
-
-	return ZaItem._splashScreenCopyright;
 }
