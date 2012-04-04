@@ -234,8 +234,6 @@ function () {
 		this._popupOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
 	}
 
-	this._popupOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailbox", new AjxListener(this, ZaAccountListController.prototype._viewMailListener));		
-
 	if(this._defaultType == ZaItem.ALIAS) {	
 		this._popupOperations[ZaOperation.MOVE_ALIAS] = new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));
 		this._popupOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
@@ -315,7 +313,6 @@ function () {
 		this._toolbarOperations[ZaOperation.CHNG_PWD] = new ZaOperation(ZaOperation.CHNG_PWD, ZaMsg.ACTBB_ChngPwd, ZaMsg.ACTBB_ChngPwd_tt, "Padlock", "PadlockDis", new AjxListener(this, ZaAccountListController.prototype._chngPwdListener));
 		this._toolbarOperations[ZaOperation.EXPIRE_SESSION] = new ZaOperation(ZaOperation.EXPIRE_SESSION, ZaMsg.ACTBB_ExpireSessions, ZaMsg.ACTBB_ExpireSessions_tt, "ExpireSession", "ExpireSessionDis", new AjxListener(this, ZaAccountListController.prototype._expireSessionListener));
 	}
-	this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailbox", new AjxListener(this, ZaAccountListController.prototype._viewMailListener));		
 
 	if(this._defaultType == ZaItem.ALIAS) {	
 		this._toolbarOperations[ZaOperation.MOVE_ALIAS] = new ZaOperation(ZaOperation.MOVE_ALIAS, ZaMsg.ACTBB_MoveAlias, ZaMsg.ACTBB_MoveAlias_tt, "MoveAlias", "MoveAlias", new AjxListener(this, ZaAccountListController.prototype._moveAliasListener));		    	
@@ -331,7 +328,6 @@ function () {
 		this._toolbarOrder.push(ZaOperation.CHNG_PWD);
 		this._toolbarOrder.push(ZaOperation.EXPIRE_SESSION);
 	}
-	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	if(this._defaultType == ZaItem.ALIAS) {
 		this._toolbarOrder.push(ZaOperation.EXPIRE_SESSION);
 		this._toolbarOrder.push(ZaOperation.MOVE_ALIAS);
@@ -726,7 +722,11 @@ function(account) {
 		if(!account[ZaAccount.A2_publicMailURL]) {
 			account.load("id", accId);
 		}
-		
+	
+		if(!account[ZaAccount.A2_publicMailURL]) {
+			account[ZaAccount.A2_publicMailURL] = ["http://",ZaAccount.getDomain(account[ZaAccount.A_name]),":7070"].join("");
+		}
+	
 		var publicMailURL = account[ZaAccount.A2_publicMailURL];
 	    if (AjxUtil.IP_ADDRESS_RE.test(location.hostname) && publicMailURL) {
 			// Here we guess user prefer to use IP, if possible, I will replace FQDN with IP
@@ -798,40 +798,16 @@ function(account) {
 			
 			}
 		}
-		var mServer = publicMailURL;
 		if(!obj.authToken || !obj.lifetime)
 			throw new AjxException(ZaMsg.ERROR_FAILED_TO_GET_CREDENTIALS, AjxException.UNKNOWN, "ZaAccountListController.prototype._viewMailListener");
-
-		AjxCookie.setCookie(document, "ZM_AUTH_TOKEN", obj.authToken, null, "/");
 		
+		var mServer = [publicMailURL, "/service/preauth?authtoken=",obj.authToken,"&isredirect=1&adminPreAuth=1"].join("");
 		mServer = AjxStringUtil.trim(mServer,true);
-		mServer = (mServer.indexOf("?") < 0)?(mServer + "?") : (mServer + "&");
-		mServer += ("adminPreAuth=1");
 
 		var win = window.open(mServer, "_blank");
 	} catch (ex) {
 		this._handleException(ex, "ZaAccountListController._viewMailListenerLauncher", null, false);			
 	}	
-}
-
-ZaAccountListController.prototype._viewMailListener =
-function(ev) {
-	try {
-//		var el = this._contentView.getSelectedItems().getLast();
-	//	if(el) {
-			//var account = DwtListView.prototype.getItemFromElement.call(this, el); {
-		var accounts = this._contentView.getSelection();
-		if(accounts && accounts.length) {
-			var account = accounts[0];
-			if(account) {
-				ZaAccountListController._viewMailListenerLauncher.call(this, account);
-			}
-		}	
-			
-		//}
-	} catch (ex) {
-		this._handleException(ex, "ZaAccountListController.prototype._viewMailListener", null, false);			
-	}
 }
 
 /**
@@ -1118,13 +1094,7 @@ function () {
 
             if (((item.type == ZaItem.ALIAS) && (item.attrs[ZaAlias.A_targetType] == ZaItem.DL))
                 || (item.type == ZaItem.DL)) {
-                if (this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
-                    this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;                                        
-                }
 
-                if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
-                    this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-                }
 
 		if (this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {
                     this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
@@ -1150,13 +1120,7 @@ function () {
             if (item.type == ZaItem.DL) {
                 if(this._popupOperations[ZaOperation.MOVE_ALIAS])	{
                     this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
-                }
-                if(this._popupOperations[ZaOperation.VIEW_MAIL])
-				 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-					 
-				if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
-				 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
-                	    
+                }	    
             }
 			if (item.type == ZaItem.ACCOUNT) {
 				var enable = false;
@@ -1171,13 +1135,6 @@ function () {
 					//console.log("loaded rights for a list item");
 				}
 				if(!enable) {
-					if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,item)) {
-						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
-						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-						 
-						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
-						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
-					}
 					if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,item)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1221,13 +1178,6 @@ function () {
 					item.targetObj.loadEffectiveRights("id", item.id, false);
 				}
 				if(!enable) {
-					if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,item.targetObj)) {
-						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
-						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-						 
-						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
-						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
-					}	
 					if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,item.targetObj)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1263,13 +1213,6 @@ function () {
 				}
 				if(!enable) {
 					if(!enable) {
-						if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,item.targetObj)) {
-							 if(this._popupOperations[ZaOperation.VIEW_MAIL])
-							 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-							 
-							 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
-							 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
-						}
 						if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,item.targetObj)) {
 							 if(this._popupOperations[ZaOperation.DELETE])
 							 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1294,13 +1237,6 @@ function () {
 					item.loadEffectiveRights("id", item.id, false);
 				}
 				if(!enable) {
-					if(!ZaItem.hasRight(ZaResource.VIEW_RESOURCE_MAIL_RIGHT,item)) {
-						 if(this._popupOperations[ZaOperation.VIEW_MAIL])
-						 	this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-						 
-						 if(this._toolbarOperations[ZaOperation.VIEW_MAIL])
-						 	this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;   
-					}
 					if(!ZaItem.hasRight(ZaResource.DELETE_CALRES_RIGHT,item)) {
 						 if(this._popupOperations[ZaOperation.DELETE])
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
@@ -1321,9 +1257,6 @@ function () {
 			if(this._toolbarOperations[ZaOperation.EXPIRE_SESSION]) {	
 				this._toolbarOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
 			}        	
-			if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
-				this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
-			}
 			if(this._toolbarOperations[ZaOperation.EDIT]) {	
 				this._toolbarOperations[ZaOperation.EDIT].enabled = false;
 			}	
@@ -1337,12 +1270,9 @@ function () {
 				this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 			}
 			
-			if(this._popupOperations[ZaOperation.EXPIRE_SESSION]) {	
-				this._popupOperations[ZaOperation.EXPIRE_SESSION].enabled = false;
-			}    			
-			if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
-				this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-			}
+			if(this._popupOperations[ZaOperation.EXPIRE_SESSION]) {		
+				this._popupOperations[ZaOperation.EXPIRE_SESSION].enabled = false;	
+			}		
 			if(this._popupOperations[ZaOperation.EDIT]) {	
 				this._popupOperations[ZaOperation.EDIT].enabled = false;
 			}	
@@ -1366,9 +1296,6 @@ function () {
 		if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 			this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
 		}		
-		if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
-			this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
-		}	
 		if(this._toolbarOperations[ZaOperation.MOVE_ALIAS]) {
 			this._toolbarOperations[ZaOperation.MOVE_ALIAS].enabled = false;		
 		}
@@ -1382,9 +1309,6 @@ function () {
 		if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 			this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
 		}		
-		if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
-			this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-		}	
 		if(this._popupOperations[ZaOperation.MOVE_ALIAS]) {
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;		
 		}
@@ -1401,9 +1325,6 @@ function () {
 		if(this._toolbarOperations[ZaOperation.CHNG_PWD]) {
 			this._toolbarOperations[ZaOperation.CHNG_PWD].enabled = false;
 		}	
-		if(this._toolbarOperations[ZaOperation.VIEW_MAIL]) {
-			this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
-		}
 		if(this._toolbarOperations[ZaOperation.MOVE_ALIAS])	{
 			this._toolbarOperations[ZaOperation.MOVE_ALIAS].enabled = false;
 		}	
@@ -1420,9 +1341,6 @@ function () {
 		if(this._popupOperations[ZaOperation.CHNG_PWD]) {
 			this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
 		}	
-		if(this._popupOperations[ZaOperation.VIEW_MAIL]) {
-			this._popupOperations[ZaOperation.VIEW_MAIL].enabled = false;
-		}
 		if(this._popupOperations[ZaOperation.MOVE_ALIAS])	{
 			this._popupOperations[ZaOperation.MOVE_ALIAS].enabled = false;
 		}	
