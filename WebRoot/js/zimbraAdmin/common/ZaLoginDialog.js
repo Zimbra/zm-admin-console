@@ -88,8 +88,16 @@ ZaLoginDialog.prototype.hideNewPasswordFields = function () {
 	ZLoginFactory.hideNewPasswordFields();
 }
 
+ZaLoginDialog.prototype.enableUnameField = function () {
+    ZLoginFactory.get(ZLoginFactory.USER_ID).disabled = false;
+}
+
 ZaLoginDialog.prototype.disableUnameField = function () {
 	ZLoginFactory.get(ZLoginFactory.USER_ID).disabled = true;
+}
+
+ZaLoginDialog.prototype.enablePasswordField = function () {
+    ZLoginFactory.get(ZLoginFactory.PASSWORD_ID).disabled = false;
 }
 
 ZaLoginDialog.prototype.disablePasswordField = function () {
@@ -100,6 +108,11 @@ ZaLoginDialog.prototype.setError =
 function(errorStr) {
 	if(errorStr)
 		ZLoginFactory.showErrorMsg(errorStr);
+}
+
+ZaLoginDialog.prototype.clearError = 
+function () {
+	ZLoginFactory.hideErrorMsg();
 }
 
 ZaLoginDialog.prototype.setFocus =
