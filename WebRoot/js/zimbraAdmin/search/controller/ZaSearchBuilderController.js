@@ -663,6 +663,10 @@ function (optionId) {
 		}else{
 			this._serverOptionViewPosition = position;
 		}
+	} else if (optionId == ZaSearchOption.DOMAIN_ID) {
+		width = ZaSearchOptionView.DOMAIN_OPTION_WIDTH;    
+	} else if (optionId == ZaSearchOption.COS_ID) {
+        width = ZaSearchOptionView.COS_OPTION_WIDTH;
 	}
 	/*
 	else if (optionId == ZaSearchOption.DOMAIN_ID){

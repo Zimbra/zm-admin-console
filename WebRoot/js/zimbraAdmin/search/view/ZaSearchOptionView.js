@@ -73,6 +73,8 @@ ZaSearchOptionView.HEADER_HEIGHT = 28 ;
 ZaSearchOptionView.WIDTH = 200 ;
 ZaSearchOptionView.BASIC_OPTION_WIDTH = 200 ;
 ZaSearchOptionView.ADVANCED_OPTION_WIDTH = 290 ;
+ZaSearchOptionView.DOMAIN_OPTION_WIDTH = 250;
+ZaSearchOptionView.COS_OPTION_WIDTH = 250;
 ZaSearchOptionView.MARGIN = 0 ;
 ZaSearchOptionView.HEIGHT = 225 ;
 
