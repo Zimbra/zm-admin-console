@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -20,8 +20,7 @@
 **/
 ZaDomainListController = function(appCtxt, container) {
 	ZaListViewController.call(this, appCtxt, container, "ZaDomainListController");
-	this._helpURL = ZaDomainListController.helpURL;
-	this._helpButtonText = ZaDomainListController.helpButtonText;
+	this._helpURL = ZaDomainListController.helpURL;	
 	this._currentQuery = ""
 	this._currentPageNum = 1;
 	this._currentSortField = ZaDomain.A_domainName;
@@ -33,7 +32,6 @@ ZaDomainListController = function(appCtxt, container) {
 ZaDomainListController.prototype = new ZaListViewController();
 ZaDomainListController.prototype.constructor = ZaDomainListController;
 ZaDomainListController.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_domains/managing_domains.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-ZaDomainListController.helpButtonText = ZaMsg.helpManageDomains;
 ZaController.initToolbarMethods["ZaDomainListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaDomainListController"] = new Array();
 ZaController.changeActionsStateMethods["ZaDomainListController"] = new Array(); 
@@ -74,27 +72,15 @@ ZaDomainListController.prototype.show = function (doPush,openInNewTab) {
 			skipCallbackIfCancelled:false,
 			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]		
 	}
-    this.scrollSearchParams={
-        query:this._currentQuery,
-			types:[ZaSearch.DOMAINS],
-			sortBy:ZaDomain.A_domainName,
-			sortAscending:"1",
-			controller: this,
-			showBusy:true,
-			busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
-			skipCallbackIfCancelled:false,
-			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]
-    };
 	ZaSearch.searchDirectory(searchParams);
 }
 
 ZaDomainListController.prototype._show = 
-function (list,  openInNewTab, openInSearchTab, hasMore) {
-	this._updateUI(list, openInNewTab, openInSearchTab, hasMore);
+function (list,  openInNewTab, openInSearchTab) {
+	this._updateUI(list, openInNewTab, openInSearchTab);
 	//ZaApp.getInstance().pushView(ZaZimbraAdmin._DOMAINS_LIST_VIEW);
 	ZaApp.getInstance().pushView(this.getContentViewId(), openInNewTab, openInSearchTab);
-	if (appNewUI)
-        return;
+	
 	if (openInSearchTab) {
 		ZaApp.getInstance().updateSearchTab();
 	} else if(openInNewTab) {
@@ -137,12 +123,8 @@ function (ev) {
 			if (this._contentView) this._contentView.setUI();
 			if(ZaApp.getInstance().getCurrentController() == this) {
 				this.show();			
-			} else if(this.objType && ev.type==this.objType && this._UICreated) {
-                this.show(false);
-            }
-			this.changeActionsState();
-            if(appNewUI)
-                 ZaZimbraAdmin.getInstance().getOverviewPanelController().refreshRelatedTreeByEdit (ev.getDetails());
+			}
+			this.changeActionsState();			
 		}
 	}
 }
@@ -160,10 +142,8 @@ function () {
 	}
 	this._popupOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS]=new ZaOperation(ZaOperation.VIEW_DOMAIN_ACCOUNTS,ZaMsg.Domain_view_accounts, ZaMsg.Domain_view_accounts_tt, "Search", "SearchDis", new AjxListener(this, this.viewAccountsButtonListener));
 	this._popupOperations[ZaOperation.GAL_WIZARD]=new ZaOperation(ZaOperation.GAL_WIZARD,ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainListController.prototype._galWizButtonListener));   		
-	this._popupOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainListController.prototype._authWizButtonListener));
-    /* bug 71235, remove auto provisioning
-     this._popupOperations[ZaOperation.AUTOPROV_WIZARD]=new ZaOperation(ZaOperation.AUTOPROV_WIZARD,ZaMsg.DTBB_AutoProvConfigWiz, ZaMsg.DTBB_AutoProvConfigWiz_tt, "Backup", "BackupDis", new AjxListener(this, ZaDomainListController.prototype._autoProvWizButtonListener));
-    */
+	this._popupOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainListController.prototype._authWizButtonListener));   		   		
+
 }
 ZaController.initPopupMenuMethods["ZaDomainListController"].push(ZaDomainListController.initPopupMenuMethod);
 
@@ -184,9 +164,7 @@ function () {
     this._toolbarOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS]=new ZaOperation(ZaOperation.VIEW_DOMAIN_ACCOUNTS,ZaMsg.Domain_view_accounts, ZaMsg.Domain_view_accounts_tt, "Search", "SearchDis", new AjxListener(this, this.viewAccountsButtonListener));
 	this._toolbarOperations[ZaOperation.GAL_WIZARD]=new ZaOperation(ZaOperation.GAL_WIZARD,ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainListController.prototype._galWizButtonListener));   		
 	this._toolbarOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainListController.prototype._authWizButtonListener));
-   /* bug 71235, remove auto provisioning
-	this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD]=new ZaOperation(ZaOperation.AUTOPROV_WIZARD,ZaMsg.DTBB_AutoProvConfigWiz, ZaMsg.DTBB_AutoProvConfigWiz_tt, "Backup", "BackupDis", new AjxListener(this, ZaDomainListController.prototype._autoProvWizButtonListener));
-	*/
+	
 	if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount)) {
 		this._toolbarOrder.push(ZaOperation.NEW);
 	}
@@ -196,7 +174,10 @@ function () {
     this._toolbarOrder.push(ZaOperation.VIEW_DOMAIN_ACCOUNTS);
     this._toolbarOrder.push(ZaOperation.GAL_WIZARD);
 	this._toolbarOrder.push(ZaOperation.AUTH_WIZARD);
-    /* bug 71235 removew auto privisioning this._toolbarOrder.push(ZaOperation.AUTOPROV_WIZARD); */
+	this._toolbarOrder.push(ZaOperation.NONE);	
+	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
+	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
+	this._toolbarOrder.push(ZaOperation.HELP);		   		   		
 	
 }
 ZaController.initToolbarMethods["ZaDomainListController"].push(ZaDomainListController.initToolbarMethod);
@@ -211,12 +192,7 @@ function (openInNewTab, openInSearchTab) {
 	//always add Help and navigation buttons at the end of the toolbar    
 	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);	
 	this._toolbarOperations[ZaOperation.PAGE_BACK]=new ZaOperation(ZaOperation.PAGE_BACK,ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener));
-
-	this._toolbarOrder.push(ZaOperation.NONE);
-	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
-	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
-	this._toolbarOrder.push(ZaOperation.HELP);
-
+	
 	//add the acount number counts
 	ZaSearch.searchResultCountsView(this._toolbarOperations, this._toolbarOrder);
 	
@@ -227,18 +203,15 @@ function (openInNewTab, openInSearchTab) {
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-    if (!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        //ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
-        var tabParams = {
-                openInNewTab: openInNewTab ? openInNewTab : false,
-                tabId: this.getContentViewId(),
-                tab: openInNewTab ? null : (openInSearchTab ? this.getSearchTab() : this.getMainTab())
-            }
-        ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    } else {
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-    }
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+	//ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
+	var tabParams = {
+			openInNewTab: openInNewTab ? openInNewTab : false,
+			tabId: this.getContentViewId(),
+			tab: openInNewTab ? null : (openInSearchTab ? this.getSearchTab() : this.getMainTab()) 
+		}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_DMLIST, ZaId.MENU_POP);
 	
@@ -246,11 +219,7 @@ function (openInNewTab, openInSearchTab) {
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 	this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 	this._removeConfirmMessageDialog = ZaApp.getInstance().dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_DMLIST + "_removeConfirm");			
-	this._forceRemoveMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_DMLIST + "_forceRemoveConfirm");
-    this._forceRemoveMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaDomainListController.prototype._forceDeleteDomainCallback, this);
-    this._forceRemoveMessageDialog.registerCallback(DwtDialog.NO_BUTTON, ZaDomainListController.prototype._donotForceDeleteDomainsCallback, this);
-    this._forceRemoveMessageDialog._button[DwtDialog.YES_BUTTON].setText(ZaMsg.FORCE_DELETE_BUTTON);
-
+		
 	this._UICreated = true;
 }
 
@@ -304,10 +273,6 @@ function(ev) {
             } else if ( item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.alias) {
                 ZaApp.getInstance().getDomainAliasWizard(true).editDomainAlias (item, true) ;
             }
-            if (appNewUI) {
-                var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_domains]);
-                ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, item.name, null, false, false, item, undefined, true);
-            }
 		}
 	} else {
 		this.changeActionsState();	
@@ -329,21 +294,12 @@ ZaDomainListController.prototype._editButtonListener =
 function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
-        this._editItem(item);
+        if (item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.local) {
+		    ZaApp.getInstance().getDomainController().show(item);
+        } else if ( item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.alias) {
+            ZaApp.getInstance().getDomainAliasWizard(true).editDomainAlias (item, true) ;
+        }
 	}
-}
-
-ZaDomainListController.prototype._editItem =
-function(item) {
-    if (item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.local) {
-        ZaApp.getInstance().getDomainController().show(item);
-    } else if ( item.attrs [ZaDomain.A_domainType] == ZaDomain.domainTypes.alias) {
-        ZaApp.getInstance().getDomainAliasWizard(true).editDomainAlias (item, true) ;
-    }
-    if (appNewUI) {
-        var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_domains]);
-        ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, item.name, null, false, false, item, undefined, true);
-    }
 }
 
 ZaDomainListController.prototype._addDomainAliasListener =
@@ -372,9 +328,7 @@ function(ev) {
 		domain.rights = {};
 		domain._defaultValues = {attrs:{}};*/
 		domain.loadNewObjectDefaults("name","domain.tld");
-        if(!ZaApp.getInstance().dialogs["ZaNewDomainXWizard"])
-		    ZaApp.getInstance().dialogs["ZaNewDomainXWizard"] = new ZaNewDomainXWizard(this._container, domain);
-        this._newDomainWizard = ZaApp.getInstance().dialogs["ZaNewDomainXWizard"];
+		this._newDomainWizard = ZaApp.getInstance().dialogs["newDomainWizard"] = new ZaNewDomainXWizard(this._container, domain);	
 		this._newDomainWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishNewButtonListener, this, null);			
 		this._newDomainWizard.setObject(domain);
 		this._newDomainWizard.popup();
@@ -389,88 +343,35 @@ function(ev) {
 	try {
 		if(this._contentView.getSelectionCount() == 1) {
 			var item = this._contentView.getSelection()[0];
-			this._openConfigGAL(item);
+			this._currentObject = item;
+			item.load("name", item.attrs[ZaDomain.A_domainName],false,true);
+			this._galWizard = ZaApp.getInstance().dialogs["galWizard"] = new ZaGALConfigXWizard(this._container,item);	
+			this._galWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishGalButtonListener, this, null);			
+			this._galWizard.setObject(item);
+			this._galWizard.popup();
 		}
 	} catch (ex) {
 		this._handleException(ex, "ZaDomainListController.prototype._showGalWizard", null, false);
 	}
 }
 
-ZaDomainListController.prototype._openConfigGAL =
-function(item) {
-	this._currentObject = item;
-    item.load("name", item.attrs[ZaDomain.A_domainName],false,true);
-
-    ZaApp.getInstance().dialogs["ZaGALConfigXWizard"] = new ZaGALConfigXWizard(this._container,item)
-    this._galWizard = ZaApp.getInstance().dialogs["ZaGALConfigXWizard"];
-    if(appNewUI){
-        item._extid=ZaUtil.getItemUUid();
-        item._editObject = item;
-    }else{
-        this._galWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishGalButtonListener, this, null);
-    }
-    this._galWizard.setObject(item);
-    this._galWizard.popup();
-}
 
 ZaDomainListController.prototype._authWizButtonListener =
 function(ev) {
 	try {
 		if(this._contentView.getSelectionCount() == 1) {
 			var item = this._contentView.getSelection()[0];
-			this._openAuthWiz(item);
+			this._currentObject = item;
+			item.load("name", item.attrs[ZaDomain.A_domainName],false,true);
+			this._authWizard = ZaApp.getInstance().dialogs["authWizard"] = new ZaAuthConfigXWizard(this._container);	
+			this._authWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishAuthButtonListener, this, null);			
+			this._authWizard.setObject(item);
+			this._authWizard.popup();
 		}
 	} catch (ex) {
 		this._handleException(ex, "ZaDomainListController.prototype._showAuthWizard", null, false);
 	}
 }
-
-ZaDomainListController.prototype._openAuthWiz =
-function (item) {
-    this._currentObject = item;
-    item.load("name", item.attrs[ZaDomain.A_domainName],false,true);
-    if(appNewUI){
-        this._authWizard = ZaApp.getInstance().dialogs["ZaTaskAuthConfigWizard"] = new ZaTaskAuthConfigWizard(this._container);
-        item._extid=ZaUtil.getItemUUid();
-        item._editObject = item;
-    }else{
-        this._authWizard = ZaApp.getInstance().dialogs["ZaAuthConfigXWizard"] = new ZaAuthConfigXWizard(this._container);
-        this._authWizard.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaDomainListController.prototype._finishAuthButtonListener, this, null);
-    }
-
-    this._authWizard.setObject(item);
-    this._authWizard.popup();
-}
-
-ZaDomainListController.prototype._autoProvWizButtonListener =
-function(ev) {
-	try {
-		if(this._contentView.getSelectionCount() == 1) {
-			var item = this._contentView.getSelection()[0];
-			this._currentObject = item;
-			item.load("name", item.attrs[ZaDomain.A_domainName],false,true);
-            if(!this._autoProvWizard) {
-                if(ZaApp.getInstance().dialogs["ZaTaskAutoProvDialog"])
-                     this._autoProvWizard = ZaApp.getInstance().dialogs["ZaTaskAutoProvDialog"];
-                else
-			        this._autoProvWizard = ZaApp.getInstance().dialogs["ZaTaskAutoProvDialog"] = new ZaTaskAutoProvDialog(this._container, ZaMsg.NAD_AutoProvConfigTitle);//ZaAutoProvConfigXWizard(this._container);
-            }
-            if(appNewUI){
-                item._extid=ZaUtil.getItemUUid();
-                item._editObject = item;
-                this._autoProvWizard.registerCallback(DwtDialog.OK_BUTTON, ZaTaskAutoProvDialog.prototype.finishWizard, this._autoProvWizard, null);
-            }else {
-                this._autoProvWizard.registerCallback(DwtDialog.OK_BUTTON, ZaDomainListController.prototype._finishAutoProvButtonListener, this, null);
-            }
-            item.currentTab = "1";
-			this._autoProvWizard.setObject(item);
-			this._autoProvWizard.popup();
-		}
-	} catch (ex) {
-		this._handleException(ex, "ZaDomainListController.prototype._autoProvWizButtonListener", null, false);
-	}
-}
-
 /**
 * This listener is called when the Delete button is clicked. 
 **/
@@ -484,8 +385,7 @@ function(ev) {
 		for(var key =0; key < cnt; key++) {
 			var item = arrItems[key];
 			if (item) {
-				//detect whether the deleting item is open in a tab
-				if (ZaApp.getInstance().getTabGroup() && ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
+				if (ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
 					this._itemsInTabList.push (item) ;
 				}else{
 					this._removeList.push(item);
@@ -550,7 +450,6 @@ function () {
 
 ZaDomainListController.getDlMsgFromList =
 function (listArr) {
-    var i = 0;
 	var	dlgMsg = "<br><ul>";
 	for(var key in listArr) {
 		if(i > 19) {
@@ -583,29 +482,26 @@ function (listArr) {
 
 ZaDomainListController.prototype._deleteDomainsCallback = 
 function () {
-    if(!this._successRemList)
-	    this._successRemList=new Array();
-    for(var key in this._removeList) {
-        if(this._removeList[key] && AjxUtil.indexOf(this._successRemList, this._removeList[key]) == -1) {
-            try {
-                this._removeList[key].remove();
-                this._successRemList.push(this._removeList[key]);
-            } catch (ex) {
-                this._removeConfirmMessageDialog.popdown();
-                if(ex.code == ZmCsfeException.DOMAIN_NOT_EMPTY) {
-                    this._forceDeleteDomain(this._removeList[key]);
-                    //this._errorDialog.setMessage(ZaMsg.ERROR_DOMAIN_NOT_EMPTY, null, DwtMessageDialog.CRITICAL_STYLE, null);
-                    //this._errorDialog.popup();
-                } else {
-                    this._handleException(ex, "ZaDomainListController.prototype._deleteDomainsCallback", null, false);
-                }
-                return;
-            }
-            this._list.remove(this._removeList[key]); //remove from the list
-        }
-    }
-	this.fireRemovalEvent(this._successRemList);
-    this._successRemList = null;
+	var successRemList=new Array();
+	for(var key in this._removeList) {
+		if(this._removeList[key]) {
+			try {
+				this._removeList[key].remove();
+				successRemList.push(this._removeList[key]);					
+			} catch (ex) {
+				this._removeConfirmMessageDialog.popdown();
+				if(ex.code == ZmCsfeException.DOMAIN_NOT_EMPTY) {
+					this._errorDialog.setMessage(ZaMsg.ERROR_DOMAIN_NOT_EMPTY, null, DwtMessageDialog.CRITICAL_STYLE, null);
+					this._errorDialog.popup();			
+				} else {
+					this._handleException(ex, "ZaDomainListController.prototype._deleteDomainsCallback", null, false);				
+				}
+				return;
+			}
+		}
+		this._list.remove(this._removeList[key]); //remove from the list
+	}
+	this.fireRemovalEvent(successRemList); 		
 	this._removeConfirmMessageDialog.popdown();
 	this._contentView.setUI();
 	this.show();
@@ -615,93 +511,6 @@ ZaDomainListController.prototype._donotDeleteDomainsCallback =
 function () {
 	this._removeList = new Array();
 	this._removeConfirmMessageDialog.popdown();
-}
-
-ZaDomainListController.prototype._getAllAccountDomain =
-function (domainName) {
-    if (domainName) {
-        var controller = ZaApp.getInstance().getCurrentController();
-        var busyId = Dwt.getNextId();
-
-        controller._currentQuery = "" ;
-        var searchTypes = [ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.ALIASES, ZaSearch.RESOURCES] ;
-
-        if(controller.setSearchTypes)
-            controller.setSearchTypes(searchTypes);
-	    controller._currentDomain = domainName;
-	    controller.fetchAttrs = AjxBuffer.concat(ZaAlias.searchAttributes,",",
-                        ZaDistributionList.searchAttributes,",",
-                        ZaResource.searchAttributes,",",
-                        ZaSearch.standardAttributes);
-
-        var searchParams = {
-            query:controller._currentQuery,
-            domain: controller._currentDomain,
-            types:searchTypes,
-            attrs:controller.fetchAttrs,
-            controller: controller,
-            showBusy:true,
-            busyId:busyId,
-            busyMsg:ZaMsg.BUSY_SEARCHING
-        }
-        var resp = ZaSearch.searchDirectory(searchParams);
-        if(resp && resp.Body.SearchDirectoryResponse) {
-            var response = resp.Body.SearchDirectoryResponse;
-            var acctlist = new ZaItemList(ZaAccount);
-            acctlist.loadFromJS(response);
-            return acctlist.getArray();
-        } else return null;
-    }else {
-        var currentController = ZaApp.getInstance().getCurrentController () ;
-        currentController.popupErrorDialog(ZaMsg.ERROR_NO_DOMAIN_NAME) ;
-    }
-    return null;
-}
-
-ZaDomainListController.prototype._forceDeleteDomain =
-function (domain) {
-    var acctlist = this._getAllAccountDomain(domain.name);
-    if(acctlist && acctlist.length > 0) {
-        var sysacctNum = 0;
-        var regularacctNum = 0;
-        for (var i = 0; i < acctlist.length; i++) {
-            if(acctlist[i].attrs[ZaAccount.A_zimbraIsSystemAccount] == "TRUE")
-                sysacctNum ++;
-            else regularacctNum++;
-        }
-        this._forceRemoveAccountList = acctlist;
-        this._forceRemoveDomain = domain;
-        var dlgMsg = AjxMessageFormat.format(ZaMsg.Q_FORCE_DELETE_DOMAIN, [domain.name, sysacctNum, regularacctNum]);
-        dlgMsg += ZaDomainListController.getDlMsgFromList (this._forceRemoveAccountList);
-        this._forceRemoveMessageDialog.setMessage(dlgMsg, DwtMessageDialog.INFO_STYLE);
-        this._forceRemoveMessageDialog.popup();
-    }
-}
-
-ZaDomainListController.prototype._forceDeleteDomainCallback =
-function() {
-    this._forceRemoveMessageDialog.popdown();
-    var acctList = this._forceRemoveAccountList;
-    var dom = this._forceRemoveDomain;
-    if(!acctList || !dom) return;
-    try {
-        for(var i = 0; i < acctList.length; i++) {
-            acctList[i].remove();
-        }
-        this._forceRemoveAccountList = null;
-        this._deleteDomainsCallback();
-    } catch (ex) {
-        this._handleException(ex, "ZaDomainListController.prototype._forceDeleteDomainCallback", null, false);
-    }
-}
-
-ZaDomainListController.prototype._donotForceDeleteDomainsCallback =
-function () {
-    this._forceRemoveMessageDialog.popdown();
-    if(this._forceRemoveDomain) {
-        AjxUtil.arrayRemove(this._removeList,this._forceRemoveDomain);
-        this._deleteDomainsCallback();
-    }
 }
 
 ZaDomainListController.changeActionsStateMethod = 
@@ -719,12 +528,6 @@ function () {
 				
 				if(this._popupOperations[ZaOperation.ADD_DOMAIN_ALIAS])
                                         this._popupOperations[ZaOperation.ADD_DOMAIN_ALIAS].enabled=false;
-
-				if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-                                        this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
-				if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-                                        this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
 			}
 			
 			if(item.attrs[ZaDomain.A_zimbraDomainStatus] == ZaDomain.DOMAIN_STATUS_SHUTDOWN) {
@@ -733,10 +536,7 @@ function () {
 			
 				if(this._toolbarOperations[ZaOperation.AUTH_WIZARD])
 					this._toolbarOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-				if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-					this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 				if(this._toolbarOperations[ZaOperation.GAL_WIZARD])
 					this._toolbarOperations[ZaOperation.GAL_WIZARD].enabled=false;
 					
@@ -745,10 +545,7 @@ function () {
 			
 				if(this._popupOperations[ZaOperation.AUTH_WIZARD])
 					this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-				if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-					this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 				if(this._popupOperations[ZaOperation.GAL_WIZARD])
 					this._popupOperations[ZaOperation.GAL_WIZARD].enabled=false;
 
@@ -778,14 +575,6 @@ function () {
 						this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
 				}
 
-				if(!(ZaDomain.canConfigureAutoProv(item))) {
-					if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-						this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled = false;
-
-					if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-						this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-				}
-
 				if(!item.rights[ZaDomain.RIGHT_DELETE_DOMAIN]) {
 					if(this._toolbarOperations[ZaOperation.DELETE]) {
 						this._toolbarOperations[ZaOperation.DELETE].enabled=false;
@@ -800,10 +589,7 @@ function () {
 	} else if (cnt > 1){
 		if(this._toolbarOperations[ZaOperation.AUTH_WIZARD])
 			this._toolbarOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 		if(this._toolbarOperations[ZaOperation.GAL_WIZARD])
 			this._toolbarOperations[ZaOperation.GAL_WIZARD].enabled=false;
 		
@@ -812,10 +598,7 @@ function () {
 
 		if(this._popupOperations[ZaOperation.AUTH_WIZARD])
 			this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+				
 		if(this._popupOperations[ZaOperation.GAL_WIZARD])
 			this._popupOperations[ZaOperation.GAL_WIZARD].enabled=false;
 		
@@ -836,10 +619,7 @@ function () {
 		
 		if(this._toolbarOperations[ZaOperation.AUTH_WIZARD])
 			this._toolbarOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._toolbarOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
-
+					
 		if(this._toolbarOperations[ZaOperation.GAL_WIZARD])
 			this._toolbarOperations[ZaOperation.GAL_WIZARD].enabled=false;
 			
@@ -852,9 +632,6 @@ function () {
 		
 		if(this._popupOperations[ZaOperation.AUTH_WIZARD])
 			this._popupOperations[ZaOperation.AUTH_WIZARD].enabled=false;
-
-		if(this._popupOperations[ZaOperation.AUTOPROV_WIZARD])
-			this._popupOperations[ZaOperation.AUTOPROV_WIZARD].enabled=false;
 					
 		if(this._popupOperations[ZaOperation.GAL_WIZARD])
 			this._popupOperations[ZaOperation.GAL_WIZARD].enabled=false;
@@ -877,11 +654,17 @@ function(ev) {
 			this._newDomainWizard.popdown();
 			//if creation took place - fire an DomainChangeEvent
 			this._fireDomainCreationEvent(domain);
+			if(this._newDomainWizard.getObject()[ZaDomain.A_CreateNotebook]=="TRUE") {
+				var params = new Object();
+				params.obj = obj;
+				var callback = new AjxCallback(this, this.initNotebookCallback, params);				
+				ZaDomain.initNotebook(obj,callback, this) ;
+			}			
+		
 			var evt = new ZaEvent(ZaEvent.S_DOMAIN);
 			evt.set(ZaEvent.E_CREATE, this);
 			evt.setDetails(domain);
 			this.handleCreation(evt);
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DomainCreated,[domain.name]));
 		}
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.DOMAIN_EXISTS) {
@@ -891,12 +674,6 @@ function(ev) {
 		}
 	}
 	return;
-}
-
-ZaDomainListController.prototype.notifyAllOpenTabs =
-function(editObject) {
-    this._currentObject = editObject;
-    this._notifyAllOpenTabs();
 }
 
 ZaDomainListController.prototype._notifyAllOpenTabs =
@@ -941,27 +718,6 @@ function(ev) {
 	return;
 }
 
-ZaDomainListController.prototype._finishAutoProvButtonListener =
-function(ev) {
-	try {
-
-
-        if(!this._autoProvWizard._checkGeneralConfig() || !this._autoProvWizard._checkEagerConfig()
-                || !this._autoProvWizard._checkLazyConfig()) {
-            return;
-        }
-        var savedObj = this._autoProvWizard.getObject();
-        this._autoProvWizard._combineConfigureValues(savedObj);
-		ZaDomain.modifyAutoPovSettings.call(this._currentObject,savedObj);
-		this._fireDomainChangeEvent(this._currentObject);
-		this._autoProvWizard.popdown();
-		this._notifyAllOpenTabs();
-	} catch (ex) {
-		this._handleException(ex, "ZaDomainListController.prototype._finishAutoProvButtonListener", null, false);
-	}
-	return;
-}
-
 ZaDomainListController.prototype._finishGalButtonListener =
 function(ev) {
 	try {
@@ -975,4 +731,29 @@ function(ev) {
 		this._handleException(ex, "ZaDomainListController.prototype._finishGalButtonListener", null, false);
 	}
 	return;
+}
+
+ZaDomainListController.prototype.initNotebookCallback = 
+function (params, resp) {
+	if(!resp)
+		return;
+	if(resp.isException()) {
+		this._handleException(resp.getException(), "ZaDomainListController.prototype.initNotebookCallback", null, false);
+		return;
+	} 
+//	if(params[ZaDomain.A_OverwriteNotebookACLs] && params.obj!=null) {
+	var callback = new AjxCallback(this, this.setNotebookAclsCallback);				
+	ZaDomain.setNotebookACLs(params.obj, callback) ;
+//	}
+	
+}
+
+ZaDomainListController.prototype.setNotebookAclsCallback = 
+function (resp) {
+	if(!resp)
+		return;
+	if(resp.isException()) {
+		this._handleException(resp.getException(), "ZaDomainListController.prototype.setNotebookAclsCallback", null, false);
+		return;
+	} 
 }

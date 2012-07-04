@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -72,9 +72,9 @@ ZaSearchOptionView.prototype.constructor = ZaSearchOptionView ;
 ZaSearchOptionView.HEADER_HEIGHT = 28 ;
 ZaSearchOptionView.WIDTH = 200 ;
 ZaSearchOptionView.BASIC_OPTION_WIDTH = 200 ;
-ZaSearchOptionView.DOMAIN_OPTION_WIDTH = 260;
-ZaSearchOptionView.COS_OPTION_WIDTH = 260;
-ZaSearchOptionView.ADVANCED_OPTION_WIDTH = 320 ;
+ZaSearchOptionView.ADVANCED_OPTION_WIDTH = 290 ;
+ZaSearchOptionView.DOMAIN_OPTION_WIDTH = 250;
+ZaSearchOptionView.COS_OPTION_WIDTH = 250;
 ZaSearchOptionView.MARGIN = 0 ;
 ZaSearchOptionView.HEIGHT = 225 ;
 

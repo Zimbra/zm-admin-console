@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -23,7 +23,6 @@ ZaDLController = function(appCtxt, container) {
 	this._UICreated = false;
 	this._toolbarOperations = new Array();
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/distribution_lists.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaDLController.helpButtonText;
 	this.deleteMsg = ZaMsg.Q_DELETE_DL;
 	this.objType = ZaEvent.S_ACCOUNT;
 	this.tabConstructor = ZaDLXFormView;
@@ -33,11 +32,8 @@ ZaDLController = function(appCtxt, container) {
 
 ZaDLController.prototype = new ZaXFormViewController();
 ZaDLController.prototype.constructor = ZaDLController;
-ZaDLController.helpButtonText = ZaMsg.helpEditDL;
-
 
 ZaController.initToolbarMethods["ZaDLController"] = new Array();
-ZaController.initPopupMenuMethods["ZaDLController"] = new Array();
 ZaController.setViewMethods["ZaDLController"] = [];
 ZaController.changeActionsStateMethods["ZaDLController"] = new Array();
 
@@ -49,8 +45,6 @@ ZaDLController.prototype.toString = function () {
 ZaDLController.prototype.show = 
 function(entry, openInNewTab, skipRefresh) {
 	this._setView(entry, openInNewTab, skipRefresh);
-	//if it has many members, that could slow down the performance when loading members, so make the get members request as async
-	entry.schedulePostLoading(this);
 }
 
 ZaDLController.setViewMethod =
@@ -80,19 +74,8 @@ ZaController.setViewMethods["ZaDLController"].push(ZaDLController.setViewMethod)
                             
 
 ZaDLController.changeActionsStateMethod = function () {
-    var isToEnable = (this._view && this._view.isDirty());
-
-    if(this._toolbarOperations[ZaOperation.SAVE])
-        this._toolbarOperations[ZaOperation.SAVE].enabled = isToEnable;
-
-    if(this._popupOperations[ZaOperation.SAVE]) {
-        this._popupOperations[ZaOperation.SAVE].enabled = isToEnable;
-    }
-
-    if(!this._currentObject.id || !ZaItem.hasRight(ZaAccount.RIGHT_DELETE_DL,this._currentObject)) {
-        this._toolbarOperations[ZaOperation.DELETE].enabled = false;
-        this._popupOperations[ZaOperation.DELETE].enabled = false;
-    }
+	if(this._toolbarOperations[ZaOperation.SAVE])
+		this._toolbarOperations[ZaOperation.SAVE].enabled = false;
 }
 ZaController.changeActionsStateMethods["ZaDLController"].push(ZaDLController.changeActionsStateMethod);
 
@@ -128,64 +111,6 @@ function () {
 	this._toolbarOrder.push(ZaOperation.DELETE);   	    	    	
 }
 ZaController.initToolbarMethods["ZaDLController"].push(ZaDLController.initToolbarMethod);
-
-ZaDLController.initPopupMenuMethod =
-function () {
-	var showNewDL = false;
-	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
-		showNewDL = true;
-	} else {
-		var domainList = ZaApp.getInstance().getDomainList().getArray();
-		var cnt = domainList.length;
-		for(var i = 0; i < cnt; i++) {
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_DL,domainList[i])) {
-				showNewDL = true;
-				break;
-			}
-		}
-	}
-   	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-   	this._popupOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));
-   	//this._popupOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
-   	if(showNewDL) {
-		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.DLTBB_New_tt, "DistributionList", "DistributionListDis", new AjxListener(this, this.newButtonListener, [true]));
-   	}
-   	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.DLTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
-
-   	if(showNewDL) {
-		this._popupOrder.push(ZaOperation.NEW);
-   	}
-	this._popupOrder.push(ZaOperation.DELETE);
-	this._popupOrder.push(ZaOperation.SAVE);
-	this._popupOrder.push(ZaOperation.CLOSE);
-	this._popupOrder.push(ZaOperation.SEP);
-}
-ZaController.initPopupMenuMethods["ZaDLController"].push(ZaDLController.initPopupMenuMethod);
-
-ZaDLController.prototype.getPopUpOperation =
-function() {
-    return this._popupOperations;
-}
-
-ZaDLController.prototype.getAppBarAction =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOperation)) {
-        this._appbarOperation[ZaOperation.SAVE]= new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "", "", new AjxListener(this, this.saveButtonListener));
-        this._appbarOperation[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "", "", new AjxListener(this, this.closeButtonListener));
-    }
-
-    return this._appbarOperation;
-}
-
-ZaDLController.prototype.getAppBarOrder =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOrder)) {
-        this._appbarOrder.push(ZaOperation.SAVE);
-        this._appbarOrder.push(ZaOperation.CLOSE);
-    }
-
-    return this._appbarOrder;
-}
 
 ZaDLController.prototype.newDl = function () {
 	var newDL = new ZaDistributionList();
@@ -224,7 +149,6 @@ function (entry) {
 	this._contentView = this._view = new this.tabConstructor(this._container, entry);
 
     this._initToolbar();
-    this._initPopupMenu();
 	//always add Help button at the end of the toolbar    
 	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
 	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));		
@@ -234,7 +158,6 @@ function (entry) {
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-    if(!appNewUI) {
 	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
 	//ZaApp.getInstance().createView(ZaZimbraAdmin._DL_VIEW, elements);
 	var tabParams = {
@@ -242,8 +165,7 @@ function (entry) {
 			tabId: this.getContentViewId()
 		}
 	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    } else
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	
 	this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
 	null, ZaId.CTR_PREFIX + ZaId.VIEW_DL + "_removeConfirm");			
 	this._UICreated = true;
@@ -296,12 +218,9 @@ ZaDLController.prototype._saveChanges = function () {
 			
 		if(!ZaDistributionList.checkValues(obj))
 			return retval;
-
-        if (this._currentObject[ZaModel.currentTab]!= obj[ZaModel.currentTab])
-             this._currentObject[ZaModel.currentTab] = obj[ZaModel.currentTab];
-
+		
 		if (this._currentObject.id){
-			this._currentObject.schedulePostLoading(this);
+
 			this._currentObject.modify(null, obj);
 			//check if need to rename
 			if(this._currentObject && obj.name != this._currentObject.name && this._currentObject.id) {
@@ -320,13 +239,10 @@ ZaDLController.prototype._saveChanges = function () {
 					}
 					return retval;
 				}
-			}
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DLModified,[this._currentObject.name]));
+			}				
 		} else {
 			this._currentObject = ZaItem.create(obj,ZaDistributionList,"ZaDistributionList");
-            ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.DLCreated,[this._currentObject.name]));
 			//this._currentObject.id = dl.id;
-            ZaApp.getInstance().getAccountListController().fireCreationEvent(this._currentObject);
 		}
 				
 		//save changed fields

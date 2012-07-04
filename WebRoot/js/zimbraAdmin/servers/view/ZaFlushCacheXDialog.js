@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -144,13 +144,12 @@ function() {
 		numCols:1,
 		items:[
 			{type:_ZAWIZGROUP_, isTabGroup:true,
-                colSizes:["200px", "275px"],
 				items:[
 					{ type: _DWT_ALERT_,
 						  style: DwtAlert.WARNING,
 						  iconVisible: true, 
 						  content: ZaMsg.Alert_FlushCache,
-						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"460px",
+						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"90%",
 						  visibilityChecks:[]
 					},
 					{ type: _DWT_ALERT_,
@@ -158,24 +157,24 @@ function() {
 						  iconVisible: true, 
 						  content: null,
 						  ref:"statusMessage",
-						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"460px",
+						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"90%",
 						  visibilityChecks:[[XForm.checkInstanceValueNotEmty,"statusMessage"]],
 						  visibilityChangeEventSources:["statusMessage"],bmolsnr:true
 					},
-					{ref:"serverList", type:_DWT_LIST_, labelLocation:_NONE_, label:null,  height:"120", width:"460",colSpan:2,
+					{ref:"serverList", type:_DWT_LIST_, labelLocation:_NONE_, label:null,  height:"120", width:"100%",colSpan:2,
 						headerList:srvHeaderList,align:_CENTER_,
 						visibilityChecks:[],enableDisableChecks:[],widgetClass:ZaServerMiniListView,valueChangeEventSources:["serverList"]
 					},
 					{ref:"flushZimlet",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_zimlet_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_zimlet_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{ref:"flushSkin",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_theme_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_theme_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{ref:"flushLocale",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_locale_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_locale_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},					
 					{type:_CELLSPACER_},

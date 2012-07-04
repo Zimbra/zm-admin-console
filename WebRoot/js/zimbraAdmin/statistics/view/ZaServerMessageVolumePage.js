@@ -39,18 +39,7 @@ function() {
 }
 
 ZaServerMessageVolumePage.prototype.showMe =  function(refresh) {
-    this.setZIndex(DwtTabView.Z_ACTIVE_TAB);
-	if (this.parent.getHtmlElement().offsetHeight > 26) { 						// if parent visible, use offsetHeight
-		this._contentEl.style.height=this.parent.getHtmlElement().offsetHeight-26;
-	} else {
-		var parentHeight = parseInt(this.parent.getHtmlElement().style.height);	// if parent not visible, resize page to fit parent
-		var units = AjxStringUtil.getUnitsFromSizeString(this.parent.getHtmlElement().style.height);
-		if (parentHeight > 26) {
-			this._contentEl.style.height = (Number(parentHeight-26).toString() + units);
-		}
-	}
-	this._contentEl.style.width = this.parent.getHtmlElement().style.width;	// resize page to fit parent
-
+	DwtTabViewPage.prototype.showMe.call(this);	
 	if(refresh && this._currentObject) {
 		this.setObject(this._currentObject);
 	}
@@ -96,26 +85,30 @@ function () {
 	var idx = 0;
 	var html = new Array(50);
     var serverId = this.serverId;
-	html[idx++] = "<h1 style='display:none;' id='loggerchartservermv-flashdetect-" + serverId + "'></h1>";	
-	html[idx++] = "<h1 style='display:none;' id='loggerchartservermv-no-mta-" + serverId + "'></h1>";		
-	html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_MV_Header + "</div>" ;	
-	html[idx++] = "<div class='StatsDiv' id='loggerchartservermv-" + serverId + "'>";	
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "<h1 style='display: none' id='loggerchartservermv-flashdetect-" + serverId + "'></h1>";	
+	html[idx++] = "<h1 style='display: none' id='loggerchartservermv-no-mta-" + serverId + "'></h1>";	
+	html[idx++] = "<h3 style='padding-left: 10px'>" + ZaMsg.Stats_MV_Header + "</h3>" ;
+	html[idx++] = "<div id='loggerchartservermv-" + serverId + "'>";	
+	html[idx++] = "<table cellpadding='5' cellspacing='4' border='0' align='left' style='width: 90%'>";	
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartserver-message-volume-48hours-" + serverId + "'></div>";	
-	html[idx++] = "</div>";
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartserver-message-volume-30days-" + serverId + "'></div>";	
-	html[idx++] = "</div>";	
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "<tr valign='top'><td align='left'>&nbsp;&nbsp;</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartserver-message-volume-60days-" + serverId + "'></div>";	
-	html[idx++] = "</div>";	
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "<tr valign='top'><td align='left'>&nbsp;&nbsp;</td></tr>";		
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartserver-message-volume-year-" + serverId + "'></div>";	
-	html[idx++] = "</div>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "</table>";
 	html[idx++] = "</div>";
 	this.getHtmlElement().innerHTML = html.join("");
 }

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -38,8 +38,6 @@ ZaZimletViewController.helpURL = location.pathname + ZaUtil.HELP_URL + "managing
 
 ZaController.initToolbarMethods["ZaZimletViewController"] = new Array();
 ZaController.setViewMethods["ZaZimletViewController"] = new Array();
-ZaController.initPopupMenuMethods["ZaZimletViewController"] = new Array();
-
 
 ZaZimletViewController.prototype.show = 
 function(entry, skipRefresh) {
@@ -76,8 +74,6 @@ function () {
 	this._contentView = this._view = new this.tabConstructor(this._container);
 
     this._initToolbar();
-    if(appNewUI)
-        this._initPopupMenu();
     this._toolbarOrder.push(ZaOperation.CLOSE);
     this._toolbarOrder.push(ZaOperation.NONE);
     this._toolbarOrder.push(ZaOperation.HELP);
@@ -91,43 +87,13 @@ function () {
 
     var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-    if(!appNewUI) {
-        elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
-        //ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_VIEW, elements);
-        var tabParams = {
-            openInNewTab: true,
-            tabId: this.getContentViewId()
-        }
-        ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
-    } else {
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-    }
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+    //ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_VIEW, elements);
+	var tabParams = {
+		openInNewTab: true,
+		tabId: this.getContentViewId()
+	}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }
-
-ZaZimletViewController.prototype.getAppBarAction =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOperation)) {
-        this._appbarOperation[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "", "", new AjxListener(this, this.closeButtonListener));
-    }
-
-    return this._appbarOperation;
-}
-
-ZaZimletViewController.prototype.getAppBarOrder =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOrder)) {
-        this._appbarOrder.push(ZaOperation.CLOSE);
-    }
-
-    return this._appbarOrder;
-}
-
-
-ZaZimletViewController.initPopupMenuMethod =
-function () {
-      this._popupOperations[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.DTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));
-      this._popupOrder.push(ZaOperation.CLOSE);
-}
-ZaController.initPopupMenuMethods["ZaZimletViewController"].push(ZaZimletViewController.initPopupMenuMethod);
