@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -34,8 +34,7 @@ ZaDomainListView = function(parent) {
 		className:className, 
 		posStyle:posStyle, 
 		headerList:headerList,
-		id: ZaId.TAB_DOMAIN_MANAGE,
-		scrollLoading:true
+		id: ZaId.TAB_DOMAIN_MANAGE
 	});
 
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
@@ -73,37 +72,33 @@ function(domain, now, isDragProxy) {
 	this.associateItemWithElement(domain, div, DwtListView.TYPE_LIST_ITEM);
 	
 	var idx = 0;
-	html[idx++] = "<table width='100%'>";
+	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
 	for(var i = 0; i < cnt; i++) {
 		var field = this._headerList[i]._field;
-		var cellWidth = this._getCellWidth(i, {});
-		if(field == "type") {
-			// type
-			html[idx++] = "<td width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml("Domain") + "</td>";
-		} else if(field == ZaDomain.A_domainName) {
+		if(field == ZaDomain.A_domainName) {
 			// name
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.name);
 			html[idx++] = "</nobr></td>";
 		} else if(field == ZaDomain.A_description) {
 			// description		
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(
-				ZaItem.getDescriptionValue(domain.attrs[ZaDomain.A_description]));
+                    ZaItem.getDescriptionValue(domain.attrs[ZaDomain.A_description]));
 			html[idx++] = "</nobr></td>";
 		} else if(field == ZaDomain.A_zimbraDomainStatus) {
 			// description		
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = ZaDomain._domainStatus(domain.attrs[ZaDomain.A_zimbraDomainStatus]);
 			html[idx++] = "</nobr></td>";
 		} else if (field == ZaDomain.A_domainType) {
-			// domain type
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+            // domain type
+			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.attrs[ZaDomain.A_domainType]);
 			html[idx++] = "</nobr></td>";
-		}
+        }
 	}
 	html[idx++] = "</tr></table>";
 	div.innerHTML = html.join("");
@@ -115,12 +110,12 @@ function() {
 
 	var headerList = new Array();
 	var sortable = 1;
-	var i = 0 ;
+    var i = 0 ;
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
-	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", sortable++, "objectClass", false, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainName , ZaMsg.DLV_Name_col, null, "250px", sortable++, ZaDomain.A_domainName, true, true);
 	//headerList[0].initialize(ZaMsg.CLV_Name_col, null, "245", true, ZaDomain.A_domainName);
-	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainType , ZaMsg.DLV_Type_col, null, "100px", sortable++, ZaDomain.A_domainType, true, true);
+
+    headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainType , ZaMsg.DLV_Type_col, null, "100px", sortable++, ZaDomain.A_domainType, true, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_zimbraDomainStatus , ZaMsg.DLV_Status_col, null, "100px", sortable++, ZaDomain.A_zimbraDomainStatus, true, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_description, ZaMsg.DLV_Description_col, null, "auto", null, null, true, true);
 	//headerList[1].initialize(ZaMsg.CLV_Description_col, null, "245", false, ZaDomain.A_description);

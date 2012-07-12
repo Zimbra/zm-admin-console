@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -26,9 +26,7 @@ ZaServerController = function(appCtxt, container) {
 	ZaXFormViewController.call(this, appCtxt, container,"ZaServerController");
 	this._UICreated = false;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_servers/managing_servers.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaServerController.helpButtonText;
 	this._toolbarOperations = new Array();
-    this._popupOperations = new Array();
 	this.deleteMsg = ZaMsg.Q_DELETE_SERVER;	
 	this.objType = ZaEvent.S_SERVER;	
 	this.tabConstructor = ZaServerXFormView ;
@@ -36,10 +34,8 @@ ZaServerController = function(appCtxt, container) {
 
 ZaServerController.prototype = new ZaXFormViewController();
 ZaServerController.prototype.constructor = ZaServerController;
-ZaServerController.helpButtonText = ZaMsg.helpManageServers;
 
 ZaController.initToolbarMethods["ZaServerController"] = new Array();
-ZaController.initPopupMenuMethods["ZaServerController"] = new Array();
 ZaController.setViewMethods["ZaServerController"] = new Array();
 ZaController.changeActionsStateMethods["ZaServerController"] = new Array();
 ZaXFormViewController.preSaveValidationMethods["ZaServerController"] = new Array();
@@ -56,12 +52,14 @@ function(entry) {
 }
 
 ZaServerController.changeActionsStateMethod = function () {
-    var isToEnable = (this._view && this._view.isDirty());
-
-    if(this._popupOperations[ZaOperation.SAVE]) {
-        this._popupOperations[ZaOperation.SAVE].enabled = isToEnable;
-    }
+	if(this._toolbarOperations[ZaOperation.SAVE])
+		this._toolbarOperations[ZaOperation.SAVE].enabled = false;
 		
+	if(this._toolbarOperations[ZaOperation.FLUSH_CACHE]) {
+		if(!ZaItem.hasRight(ZaServer.FLUSH_CACHE_RIGHT,this._currentObject) || !this._currentObject.attrs[ZaServer.A_zimbraMailboxServiceEnabled] || !this._currentObject.attrs[ZaServer.A_zimbraMailboxServiceInstalled]) {
+			this._toolbarOperations[ZaOperation.FLUSH_CACHE].enabled = false;
+		}
+	}
 }
 ZaController.changeActionsStateMethods["ZaServerController"].push(ZaServerController.changeActionsStateMethod);
 
@@ -88,34 +86,52 @@ function(listener) {
 	this._evtMgr.removeListener(ZaEvent.E_MODIFY, listener);    	
 }
 
-ZaServerController.initPopupMethod =
-function () {
-	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.SERTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
-   	this._popupOperations[ZaOperation.FLUSH_CACHE] = new ZaOperation(ZaOperation.FLUSH_CACHE, ZaMsg.SERTBB_FlushCache, ZaMsg.SERTBB_FlushCache_tt, "FlushCache", "FlushCache", new AjxListener(this, ZaServerController.prototype.flushCacheButtonListener));
-	this._popupOperations[ZaOperation.DOWNLOAD_SERVER_CONFIG]=new ZaOperation(ZaOperation.DOWNLOAD_SERVER_CONFIG,ZaMsg.TBB_DownloadConfig, ZaMsg.SERTBB_DownloadConfig_tt, "DownloadServerConfig", "DownloadServerConfig", new AjxListener(this, this.downloadConfigButtonListener));
+
+/**
+* @param nextViewCtrlr - the controller of the next view
+* Checks if it is safe to leave this view. Displays warning and Information messages if neccesary.
+**/
+ZaServerController.prototype.switchToNextView = 
+function (nextViewCtrlr, func, params) {
+	if(this._view.isDirty()) {
+		//parameters for the confirmation dialog's callback 
+		var args = new Object();		
+		args["params"] = params;
+		args["obj"] = nextViewCtrlr;
+		args["func"] = func;
+		//ask if the user wants to save changes			
+		//ZaApp.getInstance().dialogs["confirmMessageDialog"] = ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(this._view.shell, null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON, DwtDialog.CANCEL_BUTTON]);					
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(ZaMsg.Q_SAVE_CHANGES, DwtMessageDialog.INFO_STYLE);
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, this.validateChanges, this, args);		
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.NO_BUTTON, this.discardAndGoAway, this, args);		
+		ZaApp.getInstance().dialogs["confirmMessageDialog"].popup();
+	} else {
+		ZaController.prototype.switchToNextView.call(this, nextViewCtrlr, func, params);
+	}
 }
-ZaController.initPopupMenuMethods["ZaServerController"].push(ZaServerController.initPopupMethod);
 
-/*
-ZaServerController.prototype.getAppBarAction =
+
+
+/**
+* @method initToolbarMethod
+* This method creates ZaOperation objects 
+* All the ZaOperation objects are added to this._toolbarOperations array which is then used to 
+* create the toolbar for this view.
+* Each ZaOperation object defines one toolbar button.
+* Help button is always the last button in the toolbar
+**/
+ZaServerController.initToolbarMethod = 
 function () {
-    if (AjxUtil.isEmpty(this._appbarOperation)) {
-        this._appbarOperation[ZaOperation.SAVE]= new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "", "", new AjxListener(this, this.saveButtonListener));
-        this._appbarOperation[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "", "", new AjxListener(this, this.closeButtonListener));
-    }
-
-    return this._appbarOperation;
+	this._toolbarOrder.push(ZaOperation.SAVE);	
+	this._toolbarOrder.push(ZaOperation.FLUSH_CACHE);	
+	this._toolbarOrder.push(ZaOperation.DOWNLOAD_SERVER_CONFIG);
+	this._toolbarOrder.push(ZaOperation.CLOSE);			
+	this._toolbarOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.SERTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
+   	this._toolbarOperations[ZaOperation.FLUSH_CACHE] = new ZaOperation(ZaOperation.FLUSH_CACHE, ZaMsg.SERTBB_FlushCache, ZaMsg.SERTBB_FlushCache_tt, "FlushCache", "FlushCache", new AjxListener(this, ZaServerController.prototype.flushCacheButtonListener));	
+	this._toolbarOperations[ZaOperation.DOWNLOAD_SERVER_CONFIG]=new ZaOperation(ZaOperation.DOWNLOAD_SERVER_CONFIG,ZaMsg.TBB_DownloadConfig, ZaMsg.SERTBB_DownloadConfig_tt, "DownloadServerConfig", "DownloadServerConfig", new AjxListener(this, this.downloadConfigButtonListener));	
+	this._toolbarOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.SERTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));    	
 }
-
-ZaServerController.prototype.getAppBarOrder =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOrder)) {
-        this._appbarOrder.push(ZaOperation.SAVE);
-        this._appbarOrder.push(ZaOperation.CLOSE);
-    }
-
-    return this._appbarOrder;
-}*/
+ZaController.initToolbarMethods["ZaServerController"].push(ZaServerController.initToolbarMethod);
 
 /**
 *	@method setViewMethod 
@@ -124,8 +140,7 @@ function () {
 ZaServerController.setViewMethod =
 function(entry) {
 	entry.load("id", entry.id, false, true);
-    if (!this._UICreated)
-	    this._createUI(entry);
+	this._createUI(entry);
 	ZaApp.getInstance().pushView(this.getContentViewId());
 	this._view.setDirty(false);
 	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view	
@@ -140,29 +155,31 @@ ZaServerController.prototype._createUI =
 function (entry) {
 	this._contentView = this._view = new this.tabConstructor(this._container, entry);
 
-    this._initPopupMenu();
+	this._initToolbar();
 	//always add Help button at the end of the toolbar
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
+	this._toolbarOrder.push(ZaOperation.NONE);
+	this._toolbarOrder.push(ZaOperation.HELP);								
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder,null,null, ZaId.VIEW_SERVER);		
 	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-	ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+    var tabParams = {
+		openInNewTab: true,
+		tabId: this.getContentViewId()
+	}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
-}
-
-ZaServerController.prototype.getPopUpOperation =
-function () {
-    return this._popupOperations;
 }
 
 ZaServerController.prototype._saveChanges =
 function () {
 	var obj = this._view.getObject();
-    if (this._currentObject[ZaModel.currentTab]!= obj[ZaModel.currentTab])
-             this._currentObject[ZaModel.currentTab] = obj[ZaModel.currentTab];
 	this._currentObject.modify(obj);
-	this._view.setDirty(false);
-    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.ServerModified,[this._currentObject.name]));
+	this._view.setDirty(false);	
 	return true;
 }
 
@@ -185,26 +202,27 @@ function (params) {
 	var locals = [];
 	var locals2 = [];
 	var numIFs = 0;
-
 	if(this._currentObject.nifs && this._currentObject.nifs.length) {
 		numIFs = this._currentObject.nifs.length;
 		for (var i = 0; i < numIFs; i++) {
 			if(this._currentObject.nifs[i] && this._currentObject.nifs[i].attrs && this._currentObject.nifs[i].attrs.addr && this._currentObject.nifs[i].attrs.mask) {
-                try {
-                    var localIpData = ZaIPUtil.isValidIP(this._currentObject.nifs[i].attrs.addr);
-                    var localiNetBit = ZaIPUtil.getNetBit(this._currentObject.nifs[i].attrs.mask);
-                    var localCIDR = ZaIPUtil.getNetworkAddr(localIpData, localiNetBit);
-
-                    var localIpData2 = ZaIPUtil.isValidIP(this._currentObject.nifs[i].attrs.addr);
-                    var localiNetBit2 = ZaIPUtil.getNetBit(this._currentObject.nifs[i].attrs.mask);
-                    var localCIDR2 =  ZaIPUtil.getNetworkAddr(localIpData2, localiNetBit2);
-                    locals.push(localCIDR);
-                    locals2.push(localCIDR2);
-                } catch(ex) {
-
-                }
+				locals.push(
+				 	{
+				 		lAddr: ZaServer.octetsToLong(this._currentObject.nifs[i].attrs.addr),
+				 		szAddr: this._currentObject.nifs[i].attrs.addr,
+				 		iNetBits: ZaServer.DOT_TO_CIDR[this._currentObject.nifs[i].attrs.mask]
+				 	}
+				 );
+				 locals2.push(
+				 	{
+				 		lAddr: ZaServer.octetsToLong(this._currentObject.nifs[i].attrs.addr),
+				 		szAddr: this._currentObject.nifs[i].attrs.addr,
+				 		iNetBits: ZaServer.DOT_TO_CIDR[this._currentObject.nifs[i].attrs.mask]
+				 	}
+				 );
 			}
 		}
+	
 	}	
 	
 	var IFCounter = numIFs;
@@ -215,73 +233,66 @@ function (params) {
 		var cnt = chunks.length;
 		var masks=[];
 		var excludeMasks = [];
-        var cidrData;
-        var validStr;
+		var gotLocal = false;
+
 		for(var i=0;i<cnt;i++){
-			if(chunks[i]!=null && chunks[i].length>2) {
+			if(chunks[i]!=null && chunks[i].length>8) {
 				if(chunks[i].indexOf("!")==0) {
 					//exclude
-                    validStr = chunks[i].substr(1);
 					if(chunks[i].indexOf("/")>0) {
 						//subnet
-                        try {
-						    cidrData = ZaIPUtil.isValidCIDR(validStr);
-                        } catch (ex) {
-                            throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[validStr]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
-                        }
-						excludeMasks.push(cidrData);
+						var _lStartIP = ZaServer.lGetStartingAddress(chunks[i].substr(1));
+						var _iNetBits = ZaServer.iGetNumNetBits(chunks[i].substring(1));
+						var _obj = {
+								lStartingAddr: _lStartIP,
+								iNetBits: _iNetBits,
+								lEndingAddr:ZaServer.lGetEndingAddress(_lStartIP,_iNetBits),
+								szCIDR: chunks[i]
+							};
+							
+						excludeMasks.push(_obj);						
 						
 						for(var j=(numIFs-1);j>=0;j--) {
-							if(ZaIPUtil.isInSubNet(cidrData, locals2[j].ipData)) {
-								throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_LOCAL_ADDR_EXCLUDED,[locals2[j].ipData.src, chunks[i]]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+							if(locals2[j].lAddr >= _obj.lStartingAddr && locals2[j].lAddr <= _obj.lEndingAddr /*&& locals2[j].iNetBits <= _obj.iNetBits*/) {
+								throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_LOCAL_ADDR_EXCLUDED,[locals2[j].szAddr, chunks[i]]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
 							}
 						}						
 					} else {
 						//address
-                        try {
-						    var exIPData = ZaIPUtil.isValidIP(validStr);
-                        } catch (ex) {
-                            throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_EXCLUDE_ADDR,[validStr]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
-                        }
+						var addrNumber = ZaServer.octetsToLong(chunks[i].substr(1));
+						if(addrNumber < 0) {
+							throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_EXCLUDE_ADDR,[chunks[i]]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+						}
 						
 						for(var j=(numIFs-1);j>=0;j--) {
-                            var cmpResult = 1;
-                            try {
-                                cmpResult = ZaIPUtil.compareIP(locals2[j].ipData, exIPData);
-                            } catch (ex) {
-
-                            }
-
-							if(cmpResult === 0) {
-								throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_LOCAL_ADDR_EXCLUDED,[locals2[j].ipData.src,chunks[i]]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+							if(locals2[j].lAddr == addrNumber) {
+								throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_LOCAL_ADDR_EXCLUDED,[locals2[j].szAddr,chunks[i]]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
 							}
 						}
 					}
 				} else {
 					//include
-                    validStr = chunks[i];
-                    try {
-                        cidrData = ZaIPUtil.isValidCIDR(validStr);
-                    } catch (ex) {
-                        throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[validStr]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
-                    }
-                    masks.push(cidrData);
-
+					var _lStartIP = ZaServer.lGetStartingAddress(chunks[i]);
+					var _iNetBits = ZaServer.iGetNumNetBits(chunks[i]);
+					var _obj = {
+							lStartingAddr: _lStartIP,
+							iNetBits: _iNetBits,
+							lEndingAddr:ZaServer.lGetEndingAddress(_lStartIP,_iNetBits),
+							szCIDR: chunks[i]
+						};
+						
+					masks.push(_obj);
 					for(var j=(IFCounter-1);j>=0;j--) {
-                        try {
-                            if(ZaIPUtil.isInSubNet(cidrData, locals[j].ipData) /*&& locals[j].iNetBits <= _obj.iNetBits*/) {
-                                locals.splice(j,1);
-                                IFCounter--;
-                            }
-                        } catch (ex) {
-
-                        }
+						if(locals[j].lAddr >= _obj.lStartingAddr && locals[j].lAddr <= _obj.lEndingAddr /*&& locals[j].iNetBits <= _obj.iNetBits*/) {
+							locals.splice(j,1);
+							IFCounter--;
+						}
 					}
 				}
 									
 
 			} else {
-				throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[chunks[i]]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+				throw new AjxException(ZaMsg.ERROR_MISSING_LOCAL,AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");	
 			}
 		}
 		
@@ -295,10 +306,27 @@ function (params) {
 			//error! missing local interfaces
 			var missingIfs = [];
 			for(var ix=0;ix<IFCounter;ix++) {
-				missingIfs.push(locals[ix].ipData.src);
+				missingIfs.push(locals[ix].szAddr);
 			}
 			throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_MISSING_LOCAL,missingIfs.join(",")),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
 		}
+		cnt = masks.length;
+		for(var i=0;i<cnt;i++) {
+			if(ZaServer.isValidPostfixSubnetString(masks[i].szCIDR) == ZaServer.ERR_NOT_CIDR) {
+				throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[masks[i].szCIDR]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+			} else if (ZaServer.isValidPostfixSubnetString(masks[i].szCIDR) == ZaServer.ERR_NOT_STARTING_ADDR) {
+				throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_STARTING_ADDR,[masks[i].szCIDR,ZaServer.longToOctets(masks[i].lStartingAddr)]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");				
+			}
+		}
+		
+		cnt = excludeMasks.length;
+		for(var i=0;i<cnt;i++) {
+			if(ZaServer.isValidPostfixSubnetString(excludeMasks[i].szCIDR) == ZaServer.ERR_NOT_CIDR) {
+				throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[excludeMasks[i].szCIDR]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+			} else if (ZaServer.isValidPostfixSubnetString(excludeMasks[i].szCIDR) == ZaServer.ERR_NOT_STARTING_ADDR) {
+				throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_STARTING_ADDR,[excludeMasks[i].szCIDR,ZaServer.longToOctets(excludeMasks[i].lStartingAddr)]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");				
+			}
+		}		
 	} 
 
 	this.runValidationStack(params);
@@ -468,38 +496,6 @@ function (params) {
 	}
 }
 ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validatePop3BindPort);
-
-ZaServerController.prototype.validatePop3BindAddress = 
-function (params) {
-        if(!ZaItem.hasWritePermission(ZaServer.A_Pop3BindAddress,this._currentObject)) {
-                this.runValidationStack(params);
-                return;
-        }
-        var obj = this._view.getObject();
-	if(obj.attrs[ZaServer.A_Pop3BindAddress] != this._currentObject.attrs[ZaServer.A_Pop3BindAddress]) {
-		if(!ZaApp.getInstance().dialogs["confirmSaveDialog"]) {
-		var confirmDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, 
-			[DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null, ZaId.VIEW_STATUS + "_confirmSavePopAddr"); 
-		confirmDialog.setMessage(ZaMsg.NAD_POP_Address_Warning, DwtMessageDialog.WARNING_STYLE);
-		confirmDialog.registerCallback(DwtDialog.YES_BUTTON, ZaServerController._confirmSavePop3BindAddress, this, null);
-		ZaApp.getInstance().dialogs["confirmSaveDialog"] = confirmDialog;
-		}
-		ZaApp.getInstance().dialogs["confirmSaveDialog"].popup();
-
-	} else {
-                this.runValidationStack(params);
-                return;
-	}
-}
-ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validatePop3BindAddress);
-
-ZaServerController._confirmSavePop3BindAddress =
-function() {
-	if(ZaApp.getInstance().dialogs["confirmSaveDialog"])
-		ZaApp.getInstance().dialogs["confirmSaveDialog"].popdown();
-	ZaServerController.prototype.runValidationStack.call(this);
-}
-
 
 ZaServerController.prototype.validatePop3SSLBindPort =
 function (params) {
