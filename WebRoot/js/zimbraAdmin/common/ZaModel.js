@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -33,15 +33,6 @@ ZaModel.getBooleanChoices2 = function () {
     return [{value:"1", label:ZaMsg.Yes}, {value:"0", label:ZaMsg.No}, {value:null, label:ZaMsg.No}];
 }
 ZaModel.BOOLEAN_CHOICES2= ZaModel.getBooleanChoices2 ;
-
-ZaModel.getAllowChoices = function () {
-	return [{value:"1", label: ZaMsg.Yes},
-            {value:"0", label: ZaMsg.No},
-            {value:"-1", label: ZaMsg.Ignored},
-            {value: null, label: ZaMsg.No}];  
-}
-
-ZaModel.ALLOW_CHOICES = ZaModel.getAllowChoices;
 
 
 ZaModel.FONT_SIZE_CHOICES = [
@@ -122,15 +113,6 @@ ZaModel.getTimeChoices1 = function () {
  				{value:"d", label:AjxMsg.days},
 				{value:"h", label:AjxMsg.hours}
             ];
-}
-
-ZaModel.getLongTimeChoices = function () {
-    return [
-        {value:"d", label:AjxMsg.days},
-        {value:"w", label:AjxMsg.weeks},
-        {value:"m", label:AjxMsg.months},
-        {value:"y", label:AjxMsg.years}
-    ];
 }
 
 ZaModel.prototype.toString = 

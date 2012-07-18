@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -92,12 +92,6 @@ ZaResource.SCHEDULE_POLICY_FT = "scheduleFT";
 ZaResource.SCHEDULE_POLICY_TF = "scheduleTF";
 ZaResource.SCHEDULE_POLICY_FF = "scheduleFF";
 
-ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId = "zimbraPrefCalendarAutoAcceptSignatureId";
-ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId = "zimbraPrefCalendarAutoDeclineSignatureId";
-ZaResource.A_zimbraPrefCalendarAutoDenySignatureId = "zimbraPrefCalendarAutoDenySignatureId";
-ZaResource.A2_signatureList = "signatureList";
-ZaResource.A2_signature_selection_cache = "signatureSelectionCache";
-
 //this attributes are not used in the XML object, but is used in the model
 ZaResource.A2_schedulePolicy = "schedulePolicy";
 ZaResource.A2_autodisplayname = "autodisplayname";
@@ -120,7 +114,6 @@ ZaResource.searchAttributes = AjxBuffer.concat(ZaResource.A_displayname,",",
 
 ZaResource.VIEW_RESOURCE_MAIL_RIGHT = "adminLoginCalendarResourceAs";
 ZaResource.SET_CALRES_PASSWORD_RIGHT = "setCalendarResourcePassword";
-ZaResource.CHANGE_CALRES_PASSWORD_RIGHT = "changeCalendarResourcePassword";
 ZaResource.ADD_CALRES_ALIAS_RIGHT = "addCalendarResourceAlias";
 ZaResource.REMOVE_CALRES_ALIAS_RIGHT = "removeCalendarResourceAlias";
 ZaResource.DELETE_CALRES_RIGHT = "deleteCalendarResource";
@@ -165,7 +158,7 @@ function(tmpObj) {
 			maxPwdLen = tmpObj._defaultValues.attrs[ZaResource.A_zimbraMaxPwdLength];
 		}
 	}
-	if(ZaItem.hasAnyRight([ZaResource.SET_CALRES_PASSWORD_RIGHT, ZaResource.CHANGE_CALRES_PASSWORD_RIGHT],tmpObj)) {
+	if(ZaItem.hasRight(ZaResource.SET_CALRES_PASSWORD_RIGHT,tmpObj)) {
 		//if there is a password - validate it
 		if(tmpObj.attrs[ZaResource.A_password]!=null || tmpObj[ZaResource.A2_confirmPassword]!=null) {
 			if(tmpObj.attrs[ZaResource.A_password] != tmpObj[ZaResource.A2_confirmPassword]) {
@@ -175,25 +168,13 @@ function(tmpObj) {
 			} 			
 			if(tmpObj.attrs[ZaResource.A_password].length < minPwdLen || AjxStringUtil.trim(tmpObj.attrs[ZaResource.A_password]).length < minPwdLen) { 
 				//show error msg
-                var minpassMsg;
-                if (minPwdLen > 1) {
-                    minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                } else {
-                    minpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                }
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + minpassMsg);
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOSHORT + "<br>" + String(ZaMsg.NAD_passMinLengthMsg).replace("{0}",minPwdLen));
 				return false;		
 			}
 			
 			if(AjxStringUtil.trim(tmpObj.attrs[ZaResource.A_password]).length > maxPwdLen) { 
 				//show error msg
-                var maxpassMsg;
-                if (maxPwdLen > 1) {
-                    maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_p).replace("{0}",minPwdLen);
-                } else {
-                    maxpassMsg =  String(ZaMsg.NAD_passMinLengthMsg_s).replace("{0}",minPwdLen);
-                }
-				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + maxpassMsg);
+				ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + String(ZaMsg.NAD_passMaxLengthMsg).replace("{0}",maxPwdLen));
 				return false;		
 			}
 		} 	
@@ -234,10 +215,7 @@ function (tmpObj, resource) {
 		
 	//set all the other attrs automatically
 	for (var aname in tmpObj.attrs) {
-		if(aname == ZaResource.A_password || aname == ZaItem.A_objectClass || aname == ZaResource.A_mail ||
-           aname == ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId ||
-           aname == ZaResource.A_zimbraPrefCalendarAutoDenySignatureId ||
-           aname == ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId     ) {
+		if(aname == ZaResource.A_password || aname == ZaItem.A_objectClass || aname == ZaResource.A_mail) {
 			continue;
 		}	
 		
@@ -274,7 +252,6 @@ function (tmpObj, resource) {
 	return resource ;		
 }
 ZaItem.createMethods["ZaResource"].push(ZaResource.createMethod);
-ZaItem.createMethods["ZaResource"].push(ZaSignature.CreateAccountSignature);
 
 /**
 * @method modify
@@ -288,43 +265,26 @@ function(mods) {
 	var soapDoc = AjxSoapDoc.create("ModifyCalendarResourceRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.set("id", this.id);
 	for (var aname in mods) {
-		hasSomething = true;
-		//multi value attribute
+		//multy value attribute
 		if(mods[aname] instanceof Array) {
 			var cnt = mods[aname].length;
 			if(cnt) {
-				var nonemptyElements = false;
 				for(var ix=0; ix <cnt; ix++) {
-					var attr = null;
-					if(mods[aname][ix] instanceof String || AjxUtil.isString(mods[aname][ix])) {
-						if(AjxUtil.isEmpty(mods[aname][ix])) {
-							continue;
-						} else {
-							nonemptyElements = true;
-						}
-						var attr = soapDoc.set("a", mods[aname][ix].toString());
-					} else if(mods[aname][ix] instanceof Object) {
-						var attr = soapDoc.set("a", mods[aname][ix].toString());
-						nonemptyElements = true;
-					} else {
+					if(mods[aname][ix]) { //if there is an empty element in the array - don't send it
 						var attr = soapDoc.set("a", mods[aname][ix]);
-						nonemptyElements = true;
-					}
-					
-					if(attr)
 						attr.setAttribute("n", aname);
-				}
-				if(!nonemptyElements) {
-					var attr = soapDoc.set("a", "");
-					attr.setAttribute("n", aname);
+						hasSomething = true;
+					}
 				}
 			} else {
 				var attr = soapDoc.set("a", "");
 				attr.setAttribute("n", aname);
+				hasSomething = true;
 			}
 		} else {
 			var attr = soapDoc.set("a", mods[aname]);
 			attr.setAttribute("n", aname);
+			hasSomething = true;
 		}
 	}
 	if(!hasSomething) {
@@ -495,11 +455,7 @@ function(by, val, withCos) {
 	this.initFromJS(resp.calresource[0]);
 	
 	//if(this.attrs[ZaResource.A_locationDisplayName] == null || this.getAutoLocationName() == this.attrs[ZaResource.A_locationDisplayName]) {
-    var locationDisplayName = this.attrs[ZaResource.A_locationDisplayName]
-    if (!locationDisplayName) {
-        locationDisplayName = "";
-    }
-    if(this.getAutoLocationName() == locationDisplayName) {
+	if(this.getAutoLocationName() == this.attrs[ZaResource.A_locationDisplayName]) {
 		this[ZaResource.A2_autoLocationName] = "TRUE";
 	} else {
 		this[ZaResource.A2_autoLocationName] = "FALSE";
@@ -520,7 +476,7 @@ function(by, val, withCos) {
 	elBy.setAttribute("by", by);
 
 	//var getAccCommand = new ZmCsfeCommand();
-	var params = new Object();         i
+	var params = new Object();
 	params.soapDoc = soapDoc;	
 	var reqMgrParams = {
 		controller: ZaApp.getInstance().getCurrentController()
@@ -536,7 +492,6 @@ function(by, val, withCos) {
 		this[ZaAccount.A2_soapURL] = resp[ZaAccount.A2_soapURL][0]._content;
 }
 
-ZaItem.loadMethods["ZaResource"].push(ZaSignature.GetSignatures);
 ZaItem.loadMethods["ZaResource"].push(ZaResource.loadInfoMethod);
 
 ZaResource.prototype.getAutoLocationName = 
@@ -635,11 +590,7 @@ ZaResource.myXModel = {
 //		{id:ZaResource.A_description, type:_STRING_, ref:"attrs/"+ZaResource.A_description},
 		ZaItem.descriptionModelItem ,
           {id:ZaResource.A_notes, type:_STRING_, ref:"attrs/"+ZaResource.A_notes},
-
-        //Signature
-        {id:ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId},
-        {id:ZaResource.A_zimbraPrefCalendarAutoDenySignatureId, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraPrefCalendarAutoDenySignatureId},
-        {id:ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId},
+		
 		//Resource Location
 		{id:ZaResource.A_zimbraCalResSite, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResSite},
 		{id:ZaResource.A_zimbraCalResBuilding, type:_STRING_, ref:"attrs/"+ZaResource.A_zimbraCalResBuilding},
@@ -675,16 +626,15 @@ ZaResource.myXModel = {
 		{id:ZaResource.A2_autoMailServer, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaResource.A2_autoCos, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{id:ZaResource.A2_autoLocationName, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaAccount.A2_calFwdAddr_selection_cache, type:_LIST_},
-        {id:ZaResource.A2_signatureList, type:_LIST_},
-        {id:ZaResource.A2_signature_selection_cache, type:_LIST_}
+		{id:ZaAccount.A2_calFwdAddr_selection_cache, type:_LIST_}
+		
 	]
 };
 
 ZaItem._ATTR[ZaResource.A_displayname] = ZaMsg.attrDesc_accountName;
 ZaItem._ATTR[ZaResource.A_description] = ZaMsg.attrDesc_description;
 ZaItem._ATTR[ZaResource.A_accountStatus] = ZaMsg.attrDesc_accountStatus;
-ZaItem._ATTR[ZaResource.A_mailHost] =  ZabMsg.attrDesc_mailHost;
+ZaItem._ATTR[ZaResource.A_mailHost] =  ZaMsg.attrDesc_mailHost;
 ZaItem._ATTR[ZaResource.A_notes] = ZaMsg.attrDesc_notes;
 
 ZaResource.getAccountStatusLabel = ZaAccount.getAccountStatusMsg ;

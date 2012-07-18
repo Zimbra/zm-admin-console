@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -37,7 +37,6 @@ ZaResourceXFormView = function(parent, entry) {
 	   	];		
 	}
 	this.cosChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
-    this.signatureChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "id", "name");
 	this.initForm(ZaResource.myXModel,this.getMyXForm(entry), null);
 	this._localXForm.setController(ZaApp.getInstance());	
 	this._helpURL = ZaResourceXFormView.helpURL;
@@ -107,17 +106,7 @@ function(entry) {
 		this.cosChoices.setChoices([cos]);
 		this.cosChoices.dirtyChoices();
 	}		
-
-    if(entry[ZaResource.A2_signatureList]) {
-        this._containedObject[ZaResource.A2_signatureList] = entry[ZaResource.A2_signatureList];
-
-    } else {
-        this._containedObject[ZaResource.A2_signatureList] = [];
-    }
-
-    this.signatureChoices.setChoices(ZaSignature.getSignatureChoices(this._containedObject[ZaResource.A2_signatureList]));
-    this.signatureChoices.dirtyChoices();
-
+	
    	this._containedObject[ZaResource.A2_autodisplayname] = "FALSE";
    	this._containedObject[ZaResource.A2_autoLocationName] = entry[ZaResource.A2_autoLocationName];
    	
@@ -136,9 +125,8 @@ function(entry) {
 	this.formDirtyLsnr = new AjxListener(ZaApp.getInstance().getCurrentController(), ZaResourceController.prototype.handleXFormChange);
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, this.formDirtyLsnr);
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, this.formDirtyLsnr);	
-
-    if(!appNewUI)
-	    this.updateTab();
+	
+	this.updateTab();
 }
 
 ZaResourceXFormView.deleteCalFwdAddrButtonListener = function () {
@@ -258,175 +246,6 @@ ZaResourceXFormView.isAutoDisplayname = function () {
     return(this.getInstanceValue(ZaResource.A2_autoLocationName)=="FALSE");
 }
 
-
-ZaResourceXFormView.SignatureSelectionListener =
-function (ev) {
-	var arr = this.widget.getSelection();
-	if(arr && arr.length) {
-		arr.sort();
-		this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signature_selection_cache, arr);
-	} else {
-		this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signature_selection_cache, []);
-	}
-	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
-		ZaResourceXFormView.editSignatureButtonListener.call(this);
-	}
-}
-
-
-ZaResourceXFormView.editSignatureButtonListener =
-function () {
-    try {
-        var instance = this.getInstance();
-        if(instance[ZaResource.A2_signature_selection_cache] && instance[ZaResource.A2_signature_selection_cache][0]) {
-            var formPage = this.getForm().parent;
-            if(!formPage.editSignatureDlg) {
-                formPage.editSignatureDlg = new ZaEditSignatureDialog(ZaApp.getInstance().getAppCtxt().getShell(),"400px", "150px",ZaMsg.Title_EditSignature);
-                formPage.editSignatureDlg.registerCallback(DwtDialog.OK_BUTTON, ZaResourceXFormView.updateSignature, this.getForm(), null);
-            }
-            var obj  = ZaUtil.deepCloneObject(instance[ZaResource.A2_signature_selection_cache][0]);
-
-            formPage.editSignatureDlg.setObject(obj);
-            formPage.editSignatureDlg.popup();
-        }
-    } catch(ex) {
-        ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaResourceXFormView.editSignatureButtonListener", null, false);
-    }
-}
-
-ZaResourceXFormView.updateSignature = function () {
-   try {
-        if(this.parent.editSignatureDlg) {
-            this.parent.editSignatureDlg.popdown();
-            var obj = this.parent.editSignatureDlg.getObject();
-            var instance = this.getInstance();
-            var arr = instance[ZaResource.A2_signatureList];
-            var index = ZaUtil.findValueInObjArrByPropertyName(arr, obj[ZaSignature.A2_id], ZaSignature.A2_id);
-            if(index != -1 && !ZaSignature.compareObject(obj, arr[index])) {
-                ZaSignature.ModifySignature.call(obj, "id", instance.id);
-                this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signature_selection_cache, []);
-                arr[index] = obj;
-                this.getModel().setInstanceValue(instance, ZaResource.A2_signatureList, arr);
-            }
-        }
-   } catch(ex) {
-        ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaResourceXFormView.updateSignature", null, false);
-   }
-}
-
-
-ZaResourceXFormView.addSignatureButtonListener =
-function () {
-    try{
-        var instance = this.getInstance();
-        var formPage = this.getForm().parent;
-        if(!formPage.addSignatureDlg) {
-            formPage.addSignatureDlg = new ZaEditSignatureDialog(ZaApp.getInstance().getAppCtxt().getShell(), "400px", "150px",ZaMsg.Title_CreateSignature);
-            formPage.addSignatureDlg.registerCallback(DwtDialog.OK_BUTTON, ZaResourceXFormView.addSignature, this.getForm(), null);
-        }
-
-        var obj = new ZaSignature();
-        formPage.addSignatureDlg.setObject(obj);
-        formPage.addSignatureDlg.popup();
-    } catch(ex) {
-        ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaResourceXFormView.addSignatureButtonListener", null, false);
-    }
-}
-
-ZaResourceXFormView.addSignature  = function () {
-    try {
-        if(this.parent.addSignatureDlg) {
-            this.parent.addSignatureDlg.popdown();
-            var obj = this.parent.addSignatureDlg.getObject();
-            if(obj[ZaSignature.A2_name] && obj[ZaSignature.A2_name].length>0) {
-                var instance = this.getInstance();
-                var arr = instance[ZaResource.A2_signatureList];
-                var index = ZaUtil.findValueInObjArrByPropertyName(arr, obj[ZaSignature.A2_name], ZaSignature.A2_name);
-                if(index == -1) {
-                obj =  ZaSignature.CreateSignature.call(obj, "id", instance.id);
-                arr.push(obj);
-                this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signatureList, arr);
-                this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signature_selection_cache, []);
-                } else {
-                    var warningMsg = AjxMessageFormat.format(ZaMsg.SignatureExist, obj[ZaSignature.A2_name]);
-                    ZaApp.getInstance().getCurrentController().popupErrorDialog(warningMsg);
-                }
-            } else {
-                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.CreateWarningMsg);
-            }
-        }
-    } catch (ex) {
-        ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaResourceXFormView.addSignature", null, false);
-    }
-}
-
-
-ZaResourceXFormView.deleteSignatureButtonListener = function () {
-    try {
-        var instance = this.getInstance();
-        if(instance[ZaResource.A2_signature_selection_cache] != null) {
-            var cnt = instance[ZaResource.A2_signature_selection_cache].length;
-            if(cnt && instance[ZaResource.A2_signatureList]) {
-                var i;
-                var isUsed = false;
-                var warningMsg;
-                for (i = 0; i < cnt; i++) {
-                    var currentId = instance[ZaResource.A2_signature_selection_cache][i][ZaSignature.A2_id];
-                    if(this.getInstanceValue(ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId) == currentId){
-                        isUsed = true;
-                        warningMsg = AjxMessageFormat.format(ZaMsg.DeleteWarningAcceptMsg, instance[ZaResource.A2_signature_selection_cache][i][ZaSignature.A2_name]);
-                        break;
-                    }
-
-                    if(this.getInstanceValue(ZaResource.A_zimbraPrefCalendarAutoDenySignatureId) == currentId){
-                        isUsed = true;
-                        warningMsg = AjxMessageFormat.format(ZaMsg.DeleteWarningDenyMsg, instance[ZaResource.A2_signature_selection_cache][i][ZaSignature.A2_name]);
-                        break;
-                    }
-
-                    if(this.getInstanceValue(ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId) == currentId){
-                        warningMsg = AjxMessageFormat.format(ZaMsg.DeleteWarningDeclineMsg, instance[ZaResource.A2_signature_selection_cache][i][ZaSignature.A2_name]);
-                        isUsed = true;
-                        break;
-                    }
-                }
-
-                if (!isUsed) {
-                    var arr = instance[ZaResource.A2_signatureList];
-                    for(i=0;i<cnt;i++) {
-                        var cnt2 = arr.length-1;
-                        for(var k=cnt2;k>=0;k--) {
-                            if(arr[k][ZaSignature.A2_id]==instance[ZaResource.A2_signature_selection_cache][i][ZaSignature.A2_id]) {
-                                ZaSignature.DeleteSignature.call(instance[ZaResource.A2_signature_selection_cache][i], "id", instance.id);
-                                arr.splice(k,1);
-                                break;
-                            }
-                        }
-                    }
-                    this.getModel().setInstanceValue(instance, ZaResource.A2_signatureList, arr);
-                    this.getModel().setInstanceValue(instance, ZaResource.A2_signature_selection_cache, []);
-                } else {
-                    ZaApp.getInstance().getCurrentController().popupErrorDialog(warningMsg);
-                }
-            }
-        }
-    } catch(ex) {
-        ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaResourceXFormView.deleteSignatureButtonListener", null, false);
-    }
-}
-
-ZaResourceXFormView.isEditSignatureEnabled = function () {
-	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_signature_selection_cache)) && this.getInstanceValue(ZaResource.A2_signature_selection_cache).length==1);
-}
-
-ZaResourceXFormView.isDeleteSignatureEnabled = function () {
-	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_signature_selection_cache)));
-}
-
-ZaResourceXFormView.isSignatureSelectionEnabled = function() {
-	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_signatureList)));
-}
-
 ZaResourceXFormView.CONTACT_TAB_ATTRS = [ZaResource.A_zimbraCalResContactName,
 		ZaResource.A_zimbraCalResContactEmail, 
 		ZaResource.A_zimbraCalResContactPhone, 
@@ -471,9 +290,9 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	var imgChoices = [ 	{value:ZaResource.RESOURCE_TYPE_LOCATION, label: "Location_32"},
 						{value:ZaResource.RESOURCE_TYPE_EQUIPMENT, label: "Resource_32"}   ];
 						
-	var headerItems = [	{type:_AJX_IMAGE_, ref:ZaResource.A_zimbraCalResType, src:"Resource_32", label:null, rowSpan:3, choices: imgChoices, cssStyle:"margin:auto;"},
-						{type:_OUTPUT_, ref:ZaResource.A_displayname, label:null,cssClass:"AdminTitle", height:"auto", width:350, rowSpan:3, cssStyle:"word-wrap:break-word;overflow:hidden;",
-                             visibilityChecks:[ZaItem.hasReadPermission]}];
+	var headerItems = [	{type:_AJX_IMAGE_, ref:ZaResource.A_zimbraCalResType, src:"Resource_32", label:null, rowSpan:3, choices: imgChoices},
+						{type:_OUTPUT_, ref:ZaResource.A_displayname, label:null,cssClass:"AdminTitle", rowSpan:3,
+                            height: 32, visibilityChecks:[ZaItem.hasReadPermission]}];
 						
 	/*headerItems.push({type:_OUTPUT_, ref:ZaResource.A_COSId, labelLocation:_LEFT_, label:ZaMsg.NAD_ClassOfService, 
 		choices:this.cosChoices,getDisplayValue:function(newValue) {
@@ -489,32 +308,31 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 				}
 				return newValue;
 			},
-	 visibilityChecks:[ZaItem.hasReadPermission]});*/
-	
-    if (ZaItem.hasReadPermission(ZaItem.A_zimbraId, entry))
-        headerItems.push({type:_OUTPUT_,  ref:ZaItem.A_zimbraId, label:ZaMsg.NAD_ZimbraID});
-	
-    if (ZaItem.hasReadPermission(ZaItem.A_zimbraCreateTimestamp, entry))
-        headerItems.push({type:_OUTPUT_, ref:ZaItem.A_zimbraCreateTimestamp,
-						 label:ZaMsg.LBL_zimbraCreateTimestamp, labelLocation:_LEFT_,
-						 getDisplayValue:function() {
-						 var val = ZaItem.formatServerTime(this.getInstanceValue());
-						 if(!val)
-						 return ZaMsg.Server_Time_NA;
-						 else
-						 return val;
-						 }	
-						 });
-	
+			visibilityChecks:[ZaItem.hasReadPermission]});*/
     if (ZaItem.hasReadPermission(ZaResource.A_mailHost, entry)) {
 	    headerItems.push({type:_OUTPUT_, ref:ZaResource.A_mailHost, labelLocation:_LEFT_,label:ZaMsg.NAD_MailServer});
     }
-	
-    if (ZaItem.hasReadPermission(ZaResource.A_name, entry))
-    	headerItems.push({type:_OUTPUT_, ref:ZaResource.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false});
 
     if (ZaItem.hasReadPermission(ZaResource.A_accountStatus, entry))
 	    headerItems.push({type:_OUTPUT_,  ref:ZaResource.A_accountStatus, label:ZaMsg.NAD_ResourceStatus, labelLocation:_LEFT_, choices:ZaResource.accountStatusChoices});
+
+    if (ZaItem.hasReadPermission(ZaResource.A_name, entry))
+    	headerItems.push({type:_OUTPUT_, ref:ZaResource.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false});
+
+    if (ZaItem.hasReadPermission(ZaItem.A_zimbraId, entry))
+        headerItems.push({type:_OUTPUT_,  ref:ZaItem.A_zimbraId, label:ZaMsg.NAD_ZimbraID});
+
+    if (ZaItem.hasReadPermission(ZaItem.A_zimbraCreateTimestamp, entry))
+        headerItems.push({type:_OUTPUT_, ref:ZaItem.A_zimbraCreateTimestamp,
+							label:ZaMsg.LBL_zimbraCreateTimestamp, labelLocation:_LEFT_,
+							getDisplayValue:function() {
+								var val = ZaItem.formatServerTime(this.getInstanceValue());
+								if(!val)
+									return ZaMsg.Server_Time_NA;
+								else
+									return val;
+							}	
+						});
 
     if (ZaItem.hasReadPermission(ZaResource.A_zimbraCalResType, entry))
         headerItems.push({type:_OUTPUT_, ref:ZaResource.A_zimbraCalResType, label:ZaMsg.NAD_ResType, labelLocation:_LEFT_, required:false,
@@ -524,8 +342,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	var _tab2;
 	var _tab1 = ++this.TAB_INDEX;
     this.tabChoices.push({value:_tab1, label:ZaMsg.TABT_ResourceProperties});
-    this.helpMap = {};
-    this.helpMap[_tab1] = [location.pathname, ZaUtil.HELP_URL, "managing_accounts/managing_resource.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
+    
 	if(ZaTabView.isTAB_ENABLED(entry,ZaResourceXFormView.CONTACT_TAB_ATTRS, ZaResourceXFormView.CONTACT_TAB_RIGHTS)) {
 		_tab2 = ++this.TAB_INDEX;
 		this.tabChoices.push({value:_tab2, label:ZaMsg.TABT_ResLocationContact});	
@@ -576,7 +393,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                    }
                },
                {ref:ZaResource.A2_autoCos, type:_CHECKBOX_,
-                   msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,subLabel: "",
+                   msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
                    trueValue:"TRUE", falseValue:"FALSE" ,
                    elementChanged: function(elementValue,instanceValue, event) {
                        this.getForm().parent.setDirty(true);
@@ -604,7 +421,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
             msgName:ZaMsg.NAD_ResType,label:ZaMsg.NAD_SchedulePolicy,
             visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_zimbraCalResAutoAcceptDecline],[ZaItem.hasWritePermission,ZaResource.A_zimbraCalResAutoDeclineIfBusy]],
             enableDisableChecks:[[ZaItem.hasReadPermission,ZaResource.A_zimbraCalResAutoAcceptDecline],[ZaItem.hasReadPermission,ZaResource.A_zimbraCalResAutoDeclineIfBusy]],
-            labelLocation:_LEFT_, width:"320px", choices:ZaResource.schedulePolicyChoices});
+            labelLocation:_LEFT_, width: "500px", choices:ZaResource.schedulePolicyChoices});
 
     setupGroup.items.push({ref:ZaResource.A_zimbraCalResMaxNumConflictsAllowed, type:_TEXTFIELD_,
         msgName:ZaMsg.zimbraCalResMaxNumConflictsAllowed, label:ZaMsg.zimbraCalResMaxNumConflictsAllowed,
@@ -626,12 +443,10 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 								{ref:ZaResource.A_zimbraPrefCalendarForwardInvitesTo, type:_DWT_LIST_, height:"100", width:"350px",
 									forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource", 
 									headerList:null,onSelection:ZaResourceXFormView.calFwdAddrSelectionListener,label:ZaMsg.zimbraPrefCalendarForwardInvitesTo,
-                                    visibilityChecks:[ZaItem.hasReadPermission],
-                                    labelCssClass:"gridGroupBodyLabel",
-                                    labelCssStyle:(appNewUI?"text-align:left;border-right:1px solid;":_UNDEFINED_)
+                                    visibilityChecks:[ZaItem.hasReadPermission]
 								},
 								{type:_GROUP_, numCols:6, width:"625px",colSizes:["275","100px","auto","100px","auto","100px"], colSpan:2,
-									cssStyle:"margin:10px;padding-bottom:0;",
+									cssStyle:"margin-bottom:10px;padding-bottom:0px;margin-top:10px;pxmargin-left:10px;margin-right:10px;",
 									items: [
 										{type:_CELLSPACER_},
 										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
@@ -655,7 +470,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	 setupGroup.items.push(fwdInvitesGrpr);							
 
     var passwordGroup = {type:_TOP_GROUPER_, label:ZaMsg.NAD_PasswordGrouper, id:"resource_form_password_group",
-        visibilityChecks:[[XFormItem.prototype.hasAnyRight,[ZaResource.SET_CALRES_PASSWORD_RIGHT, ZaResource.CHANGE_CALRES_PASSWORD_RIGHT]]],
+        visibilityChecks:[[XFormItem.prototype.hasRight,ZaResource.SET_CALRES_PASSWORD_RIGHT]],
         colSizes:["275px","*"],numCols:2,items:[
         {ref:ZaResource.A_password, type:_SECRET_,
                 msgName:ZaMsg.NAD_Password,label:ZaMsg.NAD_Password, labelLocation:_LEFT_,
@@ -666,84 +481,6 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
             cssClass:"admin_xform_name_input",visibilityChecks:[],enableDisableChecks:[]
         }
     ]};
-
-    var signatureGroup = {type:_TOP_GROUPER_, label:ZaMsg.NAD_SignatureGrouper, id:"resource_form_signature_group",
-        colSizes:["275px", "*"],numCols:2,items:[
-        {type:_GROUP_, id:"resource_form_allsignature_group",
-		    numCols:2,label:null,colSizes:["275px","*"], colSpan: "*",
-            items:[
-             {ref:ZaResource.A2_signatureList, type:_DWT_LIST_, height:"100", width:"350px",
-            forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
-            headerList:null,label:ZaMsg.NAD_AllSignature,
-            labelCssClass:(appNewUI?"gridGroupBodyLabel":"xform_label"),
-            labelCssStyle:(appNewUI?"text-align:left;border-right:1px solid;":_UNDEFINED_),
-            onSelection:ZaResourceXFormView.SignatureSelectionListener,
-            bmolsnr: true,
-            getDisplayValue: function(value){
-                var form = this.getForm().parent;
-                var instance = this.getInstance();
-                var tempChoice = ZaSignature.getSignatureChoices(instance[ZaResource.A2_signatureList]);
-                form.signatureChoices.setChoices(tempChoice);
-                form.signatureChoices.dirtyChoices();
-                return value;
-            }
-        },
-        {type:_GROUP_, numCols:6, width:"625px",colSizes:["275","100px","auto","100px","auto","100px"], colSpan:2,
-            cssStyle:"margin:10px;padding-bottom:0;",
-            items: [
-                {type:_CELLSPACER_},
-                {type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
-                    onActivate:"ZaResourceXFormView.deleteSignatureButtonListener.call(this);",
-                    enableDisableChecks:[ZaResourceXFormView.isDeleteSignatureEnabled],
-                    enableDisableChangeEventSources:[ZaResource.A2_signature_selection_cache]
-                },
-                {type:_CELLSPACER_},
-                {type:_DWT_BUTTON_, label:ZaMsg.TBB_Edit,width:"100px",
-                    onActivate:"ZaResourceXFormView.editSignatureButtonListener.call(this);",
-                    enableDisableChecks:[ZaResourceXFormView.isEditSignatureEnabled],
-                    enableDisableChangeEventSources:[ZaResource.A2_signature_selection_cache]
-                },
-                {type:_CELLSPACER_},
-                   {type:_DWT_BUTTON_, label:ZaMsg.NAD_Add,width:"100px",
-                    enableDisableChecks:[[ZaItem.hasWritePermission,ZaResource.A_zimbraPrefCalendarForwardInvitesTo]],
-                    onActivate:"ZaResourceXFormView.addSignatureButtonListener.call(this);"
-                }
-            ]
-        }
-            ]
-        },
-        {ref:ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId, type:_OSELECT1_,
-            msgName:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
-            width: "280px",
-            label:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId, labelLocation:_LEFT_,
-            visibilityChecks:[],
-            enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
-            enableDisableChangeEventSources:[ZaResource.A2_signatureList],
-            valueChangeEventSources:[ZaResource.A2_signatureList],
-            choices:this.signatureChoices
-        },
-        {ref:ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId, type:_OSELECT1_,
-            msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
-            width: "280px",
-            label:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId, labelLocation:_LEFT_,
-            visibilityChecks:[],
-            enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
-            enableDisableChangeEventSources:[ZaResource.A2_signatureList],
-            valueChangeEventSources:[ZaResource.A2_signatureList],
-            choices:this.signatureChoices
-        },
-        {ref:ZaResource.A_zimbraPrefCalendarAutoDenySignatureId, type:_OSELECT1_,
-            msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
-            width: "280px",
-            label:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId, labelLocation:_LEFT_,
-            visibilityChecks:[],
-            enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
-            enableDisableChangeEventSources:[ZaResource.A2_signatureList],
-            valueChangeEventSources:[ZaResource.A2_signatureList],
-            choices:this.signatureChoices
-        }
-        ]
-    };
 
     var notesGroup = {type:_TOP_GROUPER_, label:ZaMsg.NAD_NotesGrouper, id:"resource_form_notes_group",
         colSizes:["275px","*"],numCols:2,items:[
@@ -759,9 +496,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
     ]};
 
     var case1 = {type:_ZATABCASE_, numCols:1,  caseKey:_tab1,
-        paddingStyle:(appNewUI? "padding-left:15px;":null), width:(appNewUI? "98%":"100%"), cellpadding:(appNewUI?2:0),
 //        height:"400px",  align:_LEFT_, valign:_TOP_,
-        items:[nameGroup,setupGroup,passwordGroup,signatureGroup,notesGroup]
+        items:[nameGroup,setupGroup,passwordGroup,notesGroup]
     };
 
     cases.push(case1);
@@ -769,11 +505,9 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 
     var defaultWidth = 200 ;
 	if(_tab2) {
-		this.helpMap[_tab2] = [location.pathname, ZaUtil.HELP_URL, "managing_accounts/managing_resource.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
         var case2={type:_ZATABCASE_, numCols:1, caseKey:_tab2,
-             paddingStyle:(appNewUI? "padding-left:15px;":null), width:(appNewUI? "98%":"100%"), cellpadding:(appNewUI?2:0),
             items: [
-                {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_ContactInfo, items:[
+                {type:_ZAGROUP_, items:[
                     {ref:ZaResource.A_zimbraCalResContactName, type:_TEXTFIELD_, msgName:ZaMsg.NAD_ContactName,label:ZaMsg.NAD_ContactName, labelLocation:_LEFT_, width:defaultWidth},
                     {ref:ZaResource.A_zimbraCalResContactEmail, type:_TEXTFIELD_, msgName:ZaMsg.NAD_ContactEmail,label:ZaMsg.NAD_ContactEmail, labelLocation:_LEFT_, width:defaultWidth},
                     {ref:ZaResource.A_zimbraCalResContactPhone, type:_TEXTFIELD_, msgName:ZaMsg.NAD_ContactPhone,label:ZaMsg.NAD_ContactPhone, labelLocation:_LEFT_, width:defaultWidth},
@@ -785,15 +519,14 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                     }
 
                 ]},
-                {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_LocationInfo, colSizes:["275px","*"],numCols:2, items:[
-                    {type:_GROUP_, numCols:3,colSizes:["156px","22px","100px"], nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
+                {type:_ZAGROUP_, items:[
+                    {type:_GROUP_, numCols:3, nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, width:200, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
                         items: [
                             {ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, label:null, cssClass:"admin_xform_name_input", width:defaultWidth,
 				enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname],
                                 enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
                             },
                             {ref:ZaResource.A2_autoLocationName, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,
-                                subLabel:"",
                                 label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
                                 trueValue:"TRUE", falseValue:"FALSE",
                                 elementChanged: ZaResource.setAutoLocationName
@@ -824,7 +557,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                         visibilityChangeEventSources:[ZaResource.A_zimbraCalResType]
                     }
                 ]},
-                {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_Address, items:ZaAccountXFormView.getAddressFormItem()
+                {type:_ZAGROUP_, items:ZaAccountXFormView.getAddressFormItem()
                  }
             ]
         };
@@ -833,18 +566,14 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
     
     xFormObject.tableCssStyle="width:100%;";
 	xFormObject.items = [
-			{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan:"*", id:"xform_header", 
+			{type:_GROUP_, cssClass:"ZmSelectedHeaderBg", colSpan: "*", id:"xform_header", 
 				items: [
-					{type:_GROUP_,	numCols:4,colSizes:["60px","*","80px","*"],items:headerItems}
-				]
+					{type:_GROUP_,	numCols:4,colSizes:["90px","350px","100px","200px"],items:headerItems}
+				],
+				cssStyle:"padding-top:5px; padding-bottom:5px"
 			},
-			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", cssStyle:(appNewUI?"display:none;":""), id:"xform_tabbar"},
+			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", id:"xform_tabbar"},
 			{type:_SWITCH_, align:_LEFT_, valign:_TOP_, items:cases}
 	];
 };
 ZaTabView.XFormModifiers["ZaResourceXFormView"].push(ZaResourceXFormView.myXFormModifier);
-
-ZaResourceXFormView.prototype.getTabChoices =
-function() {
-    return this.tabChoices;
-}

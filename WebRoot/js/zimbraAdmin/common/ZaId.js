@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -172,8 +172,7 @@ ZaId.NEW_FOLDER_BUTTON				= "zb_newFolder";		// New Folder button on current app
 ZaId.STATUS_VIEW				= "z_status";			// status view (shows toast)
 ZaId.TOAST					= "z_toast";			// toast
 ZaId.APP_CHOOSER				= "ztb_appChooser";		// app chooser toolbar
-/* New UI*/
-ZaId.CURRENT_APP_BAR         = "zb_currentApp";
+
 
 /* Functions for generating IDs */
 
@@ -537,7 +536,7 @@ ZaId.VIEW_SCH               	= "SCHV";
 
 ZaId.VIEW_MTA			= "MTAV";
 
-ZaId.VIEW_HOME          = "HOMEV";
+
 /* Operation  */
 ZaId.OP_NEW_ACCT		= "NEW_ACCT";
 ZaId.OP_EDIT_ACCT		= "EDIT_ACCT";
@@ -587,7 +586,6 @@ ZaId.TAB_SEARCH_EDIT            = "SEARCH_EDIT";
 ZaId.TAB_GSET_EDIT              = "GSET_EDIT";
 
 ZaId.TAB_DOWNLOADS		= "DOWNLOADS";
-ZaId.TAB_VIEWRIGHTS		= "VIEW_RIGHTS";
 
 ZaId.TAB_UNDEF			= "UNDEFINE";
 
@@ -613,20 +611,11 @@ ZaId.TABV_GSET_EDIT              = "V_GSET_EDIT";
 ZaId.DLG_NEW_ACCT		= "NEW_ACCT";
 ZaId.DLG_NEW_ALIAS              = "NEW_ALIAS";
 ZaId.DLG_EDIT_ALIAS             = "EDIT_ALIAS";
-ZaId.DLG_EDIT_SIGNATURE         = "EDIT_SIGNATURE";
 ZaId.DLG_NEW_RES               	= "NEW_RES";
 ZaId.DLG_NEW_ADMIN              = "NEW_ADMIN";
 ZaId.DLG_NEW_DOMAIN             = "NEW_DOMAIN";
 ZaId.DLG_ZIM_DEPLOY             = "ZIM_DEPLOY";
 ZaId.DLG_AUTH_CONFIG            = "AUTH_CONFIG";
-ZaId.DLG_AUTPROV_CONFIG         = "AUTOPROV_CONFIG";
-ZaId.DLG_AUTPROV_MANUAL         = "AUTOPROV_MANUAL";
-ZaId.DLG_AUTPROV_MANUAL_PWD     = "AUTOPROV_MANUAL_PWD";
-ZaId.DLG_AUTH_SPNEGO            = "AUTH_SPNEGO";
-ZaId.DLG_AUTH_SPNEGO_UA         = "AUTH_SPNEGO_UA";
-ZaId.DLG_NEW_DL                 = "NEW_DL";
-ZaId.DLG_NEW_COS                = "NEW_COS";
-ZaId.FLUSH_SERVER_CACHE			= "FLUSH_SERVER_CACHE";
 
 ZaId.DLG_MSG			= "MSG";
 ZaId.DLG_ERR			= "ERR";
