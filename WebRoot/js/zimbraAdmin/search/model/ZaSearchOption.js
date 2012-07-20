@@ -298,7 +298,8 @@ function (optionId, height){
 		 },
 		{ type: _SEPARATOR_ , width: 150 },*/
 		{ type: _TEXTFIELD_, ref:  ZaSearchOption.A_domainFilter,
-			label: ZaMsg.search_option_filter, align: _LEFT_, width: ZaSearchOptionView.DOMAIN_OPTION_WIDTH - domainFilterLabelWidth, 
+			label: ZaMsg.search_option_filter, align: _LEFT_, width: ZaSearchOptionView.DOMAIN_OPTION_WIDTH - domainFilterLabelWidth,
+			labelCssStyle: "white-space:nowrap",
 			inputHelp: ZaMsg.search_option_filter_input_help_domain,
 		  	toolTipContent: ZaMsg.tt_domain_search_option_filter,
 			onChange: ZaSearchBuilderController.filterDomains,
@@ -342,6 +343,7 @@ function (optionId, height){
 
                 { type: _TEXTFIELD_, ref:  ZaSearchOption.A_cosFilter,
                         label: ZaMsg.search_option_filter, align: _LEFT_, width: ZaSearchOptionView.COS_OPTION_WIDTH - domainFilterLabelWidth,
+                        labelCssStyle: "white-space:nowrap",
                         inputHelp: ZaMsg.search_option_filter_input_help_cos,
                         toolTipContent: ZaMsg.tt_cos_search_option_filter,
                         onChange: ZaSearchBuilderController.filterCOSES,
