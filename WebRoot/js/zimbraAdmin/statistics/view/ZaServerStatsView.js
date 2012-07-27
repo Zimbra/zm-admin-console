@@ -54,16 +54,26 @@ ZaServerStatsView = function(parent) {
         //this._mbxPage = new ZaServerMBXStatsPage (this);
         //ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
    // }
-    if(appNewUI){
-        this._tabBar.setVisible(false); //new UI doesn't need to show the inner tabbar
-    }
-    // TODO move add page to constructor function and not in setObject function
-    this._lastWidth = 0;
-    this._lastHeight = 0;
 }
 
 ZaServerStatsView.prototype = new DwtTabView;
 ZaServerStatsView.prototype.constructor = ZaServerStatsView;
+
+
+
+//ZaServerStatsView.prototype.getOneServersMtaServiceStatus = function( serverName ){
+//	
+//	allServersMtaServiceEnableStatus = ZaGlobalStatsView.prototype.getAllServersMtaServiceStatus();
+//  if( !allServersMtaServiceEnableStatus ){
+//  	return false;
+//  }
+//	
+//	if( allServersMtaServiceEnableStatus[serverName] ){
+//		return allServersMtaServiceEnableStatus[serverName];
+//	}
+//	return false;
+//		
+//}
 
 ZaServerStatsView.prototype.getOneServersMtaServiceStatus = function( by, val ){
 
@@ -130,6 +140,17 @@ ZaServerStatsView.prototype._isMtaEnable = function( id ){
 	return ZaServerStatsView.prototype.getOneServersMtaServiceStatus( "id", id );
 }
 
+//ZaServerStatsView.prototype._isMtaEnable = function( name ){
+//	
+//	if ( !name ){
+//		return false;
+//	}
+
+	//return ZaServerStatsView.prototype.getOneServersMtaServiceStatus( name ) ;
+//}
+
+
+
 ZaServerStatsView.prototype.toString = 
 function() {
 	return "ZaServerStatsView";
@@ -195,13 +216,12 @@ function(entry) {
     }
     this._sessionPage.setObject(entry);
 
-    if (ZaZimbraAdmin.isGlobalAdmin()) {
-        if( this._mbxPage == null ){
-            this._mbxPage = new ZaServerMBXStatsPage (this);
-            ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
-        }
-        this._mbxPage.setObject(entry);
+    if( this._mbxPage == null ){
+        this._mbxPage = new ZaServerMBXStatsPage (this);
+        ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
     }
+    this._mbxPage.setObject(entry);
+
 
 	if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
 
@@ -229,19 +249,11 @@ function(entry) {
 		szTitle = szTitle + entry.name;
 	}
 	this.titleCell.innerHTML = szTitle;
-    if (!appNewUI){
-		this.updateTab (); //new UI doesn't have the top level tab
-	}
-
-    // Only a hook here to resize all the page
-    if (this._lastWidth && this._lastHeight)
-        this._resetTabSizes(this._lastWidth, this._lastHeight);
+	this.updateTab ();
 }
 
 ZaServerStatsView.prototype._resetTabSizes = 
 function (width, height) {
-    this._lastWidth = width;
-    this._lastHeight = height;
     var tabBarSize = this._tabBar.getSize();
 	var titleCellSize = Dwt.getSize(this.titleCell);
 
@@ -289,33 +301,7 @@ function() {
 }
 
 
-ZaServerStatsView.prototype.getTabChoices =
-function() {
-    //var innerTabs = this._tab;
-    var innerTabs = [ZaMsg.TABT_Disk, ZaMsg.TABT_Session];
 
-    if (ZaZimbraAdmin.isGlobalAdmin()) {
-        innerTabs.push(ZaMsg.TABT_MBX);
-    }
-
-    var entry = this._containedObject;
-    if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
-        innerTabs.push(ZaMsg.TABT_InMsgs);
-        innerTabs.push(ZaMsg.TABT_InData);
-        innerTabs.push(ZaMsg.TABT_Spam_Activity);
-    }
-
-    var tabChoices = [];
-    //index of _tabs is based on 1 rather than 0
-    for (var i = 1; i <= innerTabs.length; i++){
-        tabChoices.push({ value: i,
-                            label: innerTabs[i-1]
-                            //label: innerTabs[i].title
-                        });
-    }
-
-    return tabChoices;
-}
 
 
 

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -25,18 +25,15 @@ ZaGlobalConfigViewController = function(appCtxt, container) {
 	ZaXFormViewController.call(this, appCtxt, container, "ZaGlobalConfigViewController");
 	this._UICreated = false;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_global_settings/global_settings.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaGlobalConfigViewController.helpButtonText;
 	this.objType = ZaEvent.S_GLOBALCONFIG;
 	this.tabConstructor = GlobalConfigXFormView;					
 }
 
 ZaGlobalConfigViewController.prototype = new ZaXFormViewController();
 ZaGlobalConfigViewController.prototype.constructor = ZaGlobalConfigViewController;
-ZaGlobalConfigViewController.helpButtonText = ZaMsg.helpManageGlobalSettings;
 
 //ZaGlobalConfigViewController.STATUS_VIEW = "ZaGlobalConfigViewController.STATUS_VIEW";
 ZaController.initToolbarMethods["ZaGlobalConfigViewController"] = new Array();
-ZaController.initPopupMenuMethods["ZaGlobalConfigViewController"] = new Array();
 ZaController.setViewMethods["ZaGlobalConfigViewController"] = [];
 ZaController.changeActionsStateMethods["ZaGlobalConfigViewController"] = [];
 ZaXFormViewController.preSaveValidationMethods["ZaGlobalConfigViewController"] = new Array();
@@ -57,44 +54,36 @@ function(item, openInNewTab) {
 	this._setView(item, false);
 }
 
-ZaGlobalConfigViewController.initPopupMenuMethod =
+ZaGlobalConfigViewController.initToolbarMethod =
 function () {
-	this._popupOperations[ZaOperation.SAVE] = new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));    			
-	this._popupOperations[ZaOperation.DOWNLOAD_GLOBAL_CONFIG] = new ZaOperation(ZaOperation.DOWNLOAD_GLOBAL_CONFIG, ZaMsg.TBB_DownloadConfig, ZaMsg.GLOBTBB_DownloadConfig_tt, "DownloadGlobalConfig", "DownloadGlobalConfig", new AjxListener(this, this.downloadConfigButtonListener));
-
+	this._toolbarOperations[ZaOperation.SAVE] = new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));    			
+	this._toolbarOperations[ZaOperation.DOWNLOAD_GLOBAL_CONFIG] = new ZaOperation(ZaOperation.DOWNLOAD_GLOBAL_CONFIG, ZaMsg.TBB_DownloadConfig, ZaMsg.GLOBTBB_DownloadConfig_tt, "DownloadGlobalConfig", "DownloadGlobalConfig", new AjxListener(this, this.downloadConfigButtonListener));
+	this._toolbarOrder.push(ZaOperation.SAVE);
+	this._toolbarOrder.push(ZaOperation.DOWNLOAD_GLOBAL_CONFIG);
 }
-ZaController.initPopupMenuMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.initPopupMenuMethod);
+ZaController.initToolbarMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.initToolbarMethod);
 
-ZaGlobalConfigViewController.prototype.getAppBarAction =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOperation)) {
-    	this._appbarOperation[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
-        this._appbarOperation[ZaOperation.SAVE]= new ZaOperation(ZaOperation.SAVE, ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "", "", new AjxListener(this, this.saveButtonListener));
-        this._appbarOperation[ZaOperation.CLOSE] = new ZaOperation(ZaOperation.CLOSE, ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "", "", new AjxListener(this, this.closeButtonListener));
-    }
-
-    return this._appbarOperation;
-}
-
-ZaGlobalConfigViewController.prototype.getAppBarOrder =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOrder)) {
-    	this._appbarOrder.push(ZaOperation.HELP);
-        this._appbarOrder.push(ZaOperation.SAVE);
-        this._appbarOrder.push(ZaOperation.CLOSE);
-    }
-
-    return this._appbarOrder;
-}
 
 ZaGlobalConfigViewController.setViewMethod = function (item) {
     try {
 	    if ( !this._UICreated || (this._view == null) || (this._toolbar == null)) {
-            this._initPopupMenu();
+            this._initToolbar();
+            this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+            this._toolbarOperations[ZaOperation.HELP] = new ZaOperation(ZaOperation.HELP, ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
+            this._toolbarOrder.push(ZaOperation.NONE);
+            this._toolbarOrder.push(ZaOperation.HELP);
+            this._toolbar = new ZaToolBar(this._container, this._toolbarOperations, this._toolbarOrder, null, null, ZaId.VIEW_GSET);
             this._contentView = this._view = new this.tabConstructor(this._container,item);
             var elements = new Object();
             elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-            ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+            elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+            var tabParams = {
+                openInNewTab: false,
+                tabId: this.getContentViewId(),
+                tab: this.getMainTab()
+            }
+            //ZaApp.getInstance().createView(ZaZimbraAdmin._GLOBAL_SETTINGS,elements);
+            ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
             this._UICreated = true;
             ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
         }
@@ -119,9 +108,8 @@ function(enable) {
 
 ZaGlobalConfigViewController.changeActionsStateMethod =
 function () {
-    var isToEnable = (this._view && this._view.isDirty());
-    if(this._popupOperations[ZaOperation.SAVE]) {
-        this._popupOperations[ZaOperation.SAVE].enabled = isToEnable;
+    if(this._toolbarOperations[ZaOperation.SAVE]) {
+        this._toolbarOperations[ZaOperation.SAVE].enabled = false;
     }
 }
 ZaController.changeActionsStateMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.changeActionsStateMethod);
@@ -262,7 +250,7 @@ function () {
                 }
                 if(!islegal) {
                         this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_MSG_EmailValidReg, regval),
-                                null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+                                null, DwtMessageDialog.CRITICAL_STYLE, ZaMsg.zimbraAdminTitle);
                         this._errorDialog.popup();
                         return islegal;
                 }
@@ -322,8 +310,6 @@ function () {
 		}		
 	}
 	//save the model
-    if (this._currentObject[ZaModel.currentTab]!= tmpObj[ZaModel.currentTab])
-             this._currentObject[ZaModel.currentTab] = tmpObj[ZaModel.currentTab];
 	//var changeDetails = new Object();
 	this._currentObject.modify(mods,tmpObj);
 
@@ -359,7 +345,6 @@ function () {
             	}
 
     }
-    ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(ZaMsg.GlobalConfigModified);
 	return true;
 }
 
@@ -369,15 +354,14 @@ ZaXFormViewController.preSaveValidationMethods["ZaGlobalConfigViewController"].p
 ZaGlobalConfigViewController.prototype.openFlushCacheDlg =
 function (serverList) {
 	ZaApp.getInstance().dialogs["confirmMessageDialog2"].popdown();
-	
+	if(!ZaApp.getInstance().dialogs["flushCacheDialog"]) {
+		ZaApp.getInstance().dialogs["flushCacheDialog"] = new ZaFlushCacheXDialog(this._container);
+	}
 	serverList._version = 1;
-	var uuid = [];
 	for(var i=0;i<serverList.length;i++) {
 		serverList[i]["status"] = 0;
-		uuid.push(serverList[i].id)
 	}
-	obj = {statusMessage:null,flushZimlet:false,flushSkin:true,flushLocale:false,serverList:serverList,status:0, _uuid:(uuid.length > 1 ? uuid.join("__") : uuid[0]), name:(uuid.length > 1 ? ZaMsg.multiple_servers : serverList[0].name)};
-	ZaApp.getInstance().dialogs["flushCacheDialog"] = new ZaFlushCacheXDialog(this._container, {id:(uuid.length > 1 ? uuid.join("__") : uuid[0]), name:(uuid.length > 1 ? ZaMsg.multiple_servers : serverList[0].name)});
+	obj = {statusMessage:null,flushZimlet:false,flushSkin:true,flushLocale:false,serverList:serverList,status:0};
 	ZaApp.getInstance().dialogs["flushCacheDialog"].setObject(obj);
 	ZaApp.getInstance().dialogs["flushCacheDialog"].popup();
 }
