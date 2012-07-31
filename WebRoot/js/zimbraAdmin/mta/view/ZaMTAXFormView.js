@@ -584,8 +584,8 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 									{type:_DWT_BUTTON_, label:ZaMsg.Next,toolTipContent:ZaMsg.NextPage_tt, width:86, id:"fwdButton", icon:"RightArrow", disIcon:"RightArrowDis",
 										ref:ZaMTA.A_DeferredQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 										enableDisableChangeEventSources:[ZaMTA.A_DeferredQ + "/" + ZaMTA.A_more],
-										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_DeferredQ]]										
-										//onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_DeferredQ]],										
+										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
 								    }]
 								 }
 							]},			
