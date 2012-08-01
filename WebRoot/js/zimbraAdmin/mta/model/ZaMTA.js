@@ -196,6 +196,7 @@ ZaMTA.prototype.initFromJS = function (obj, summary) {
 	if(obj.a) {
 		ZaItem.prototype.initFromJS.call(this,obj);
 	}
+	var idCounter = 100;
 	if(obj.queue) {
 		var cnt = obj.queue.length;
 		for (var ix=0; ix < cnt; ix++) {
@@ -265,6 +266,7 @@ ZaMTA.prototype.initFromJS = function (obj, summary) {
 							item[k].prototype = new ZaMTAQSummaryItem;
 							item[k].getToolTip = ZaMTAQSummaryItem.prototype.getToolTip;
 							item[k].toString = ZaMTAQSummaryItem.prototype.toString;
+							item[k].id = idCounter++;
 							//this[qName][qs[j].type].push(item);
 							//this[qName][qs[j].type].push(new ZaMTAQSummaryItem( item[ZaMTAQSummaryItem.A_description], item[ZaMTAQSummaryItem.A_text], item[ZaMTAQSummaryItem.A_count]));
 						}
