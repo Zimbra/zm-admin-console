@@ -585,7 +585,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 										ref:ZaMTA.A_DeferredQ,labelLocation:(DwtLabel.IMAGE_RIGHT | DwtLabel.ALIGN_CENTER),
 										enableDisableChangeEventSources:[ZaMTA.A_DeferredQ + "/" + ZaMTA.A_more],
 										enableDisableChecks:[[ZaMTAXFormView.shouldEnableMsgsForwardButton,ZaMTA.A_DeferredQ]],										
-										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)", 
+										onActivate:"ZaMTAXFormView.fwdMsgsButtonHndlr.call(this,event)" 
 								    }]
 								 }
 							]},			
