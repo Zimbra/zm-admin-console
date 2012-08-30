@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -339,7 +339,7 @@ ZaMTA.prototype.getMailQStatus = function (qName,query,offset,limit,force) {
 	serverEl.appendChild(qEl);
 	
 	var queryEl = soapDoc.getDoc().createElement("query");
-	if( !AjxUtil.isEmpty(query) ) {
+	if(query != null) {
 		for (var key in query) {
 			var arr = query[key];
 			if(arr) {
@@ -672,6 +672,58 @@ function() {
 PostQSummary_XModelItem = function (){}
 XModelItemFactory.createItemType("_POSTQSUMMARY_", "postqsummary", PostQSummary_XModelItem);
 PostQSummary_XModelItem.prototype.items = [
+				{id:ZaMTA.A_rdomain, type:_LIST_, listItem:
+					{type:_OBJECT_, 
+						items: [
+							{id:ZaMTA.A_name, type:_STRING_},
+							{id:ZaMTA.A_count, type:_NUMBER_}
+						]
+					}
+				},
+				{id:ZaMTA.A_origip, type:_LIST_, listItem:
+					{type:_OBJECT_, 
+						items: [
+							{id:ZaMTA.A_name, type:_STRING_},
+							{id:ZaMTA.A_count, type:_NUMBER_}
+						]
+					}
+				},
+				{id:ZaMTA.A_raddress, type:_LIST_, listItem:
+					{type:_OBJECT_, 
+						items: [
+							{id:ZaMTA.A_name, type:_STRING_},
+							{id:ZaMTA.A_count, type:_NUMBER_}
+						]
+					}
+				},		
+				{id:ZaMTA.A_saddress, type:_LIST_, listItem:
+					{type:_OBJECT_, 
+						items: [
+							{id:ZaMTA.A_name, type:_STRING_},
+							{id:ZaMTA.A_count, type:_NUMBER_}
+						]
+					}
+				},						
+				{id:ZaMTA.A_error, type:_LIST_, listItem:
+					{type:_OBJECT_, 
+						items: [
+							{id:ZaMTA.A_name, type:_STRING_},
+							{id:ZaMTA.A_count, type:_NUMBER_}
+						]
+					}
+				},
+				{id:ZaMTA.A_messages, type:_LIST_, listItem:
+					{type:_OBJECT_, 
+						items: [
+							{id:ZaMTAQMsgItem.A_id, type:_STRING_},
+							{id:ZaMTAQMsgItem.A_recipients, type:_STRING_},
+							{id:ZaMTAQMsgItem.A_content_filter, type:_STRING_},
+							{id:ZaMTAQMsgItem.A_origin_host, type:_STRING_},
+							{id:ZaMTAQMsgItem.A_sender, type:_STRING_},
+							{id:ZaMTAQMsgItem.A_origin_ip, type:_STRING_}
+						]
+					}
+				},				
 				{id:ZaMTA.A_count, type:_NUMBER_},
 				{id:ZaMTA.A_pageNum, type:_NUMBER_},
 				{id:ZaMTA.A_query, type:_STRING_},
