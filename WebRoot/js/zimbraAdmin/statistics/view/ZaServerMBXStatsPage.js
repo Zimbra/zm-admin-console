@@ -154,7 +154,7 @@ ZaServerMBXStatsPage.prototype.getMbxes = function ( targetServer, offset, sortB
 			}
 							    
 			accountArr [i] = { 	account : accounts[i].name,
-								diskUsage :  AjxMessageFormat.format (ZaMsg.MBXStats_DISK_MSB, [diskUsed]),
+								diskUsage :  AjxMessageFormat.format (ZaMsg.MBXStats_DISK_MSB, [AjxUtil.formatSizeForUnits(accounts[i].used, AjxUtil.SIZE_MEGABYTES, false, 1)]),
 								quotaUsage : percentage + "\%" ,
 								quota: quotaLimit + " MB"				 
 								};
