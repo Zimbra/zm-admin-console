@@ -87,8 +87,6 @@ function () {
 	}   			    	
 	this._toolbarOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.ACTBB_Delete_tt,"Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));    	    	
 	
-	this._toolbarOperations[ZaOperation.VIEW_MAIL] = new ZaOperation(ZaOperation.VIEW_MAIL, ZaMsg.ACTBB_ViewMail, ZaMsg.ACTBB_ViewMail_tt, "ReadMailbox", "ReadMailboxDis", new AjxListener(this, ZaAccountViewController.prototype._viewMailListener));		
-	this._toolbarOrder.push(ZaOperation.VIEW_MAIL);
 	this._toolbarOperations[ZaOperation.REINDEX_MAILBOX] = new ZaOperation(ZaOperation.REINDEX_MAILBOX, ZaMsg.ACTBB_ReindexMbx, ZaMsg.ACTBB_ReindexMbx_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaAccountViewController.prototype._reindexMbxListener));
 	this._toolbarOrder.push(ZaOperation.REINDEX_MAILBOX);
 					
@@ -195,10 +193,6 @@ ZaAccountViewController.changeActionsStateMethod = function () {
 	if(!this._currentObject)
 		return;
 		
-	if(!ZaItem.hasRight(ZaAccount.VIEW_MAIL_RIGHT,this._currentObject))	{
-		this._toolbarOperations[ZaOperation.VIEW_MAIL].enabled = false;
-	}
-
 	if(!ZaItem.hasRight(ZaAccount.DELETE_ACCOUNT_RIGHT,this._currentObject))	{
 		this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 	}
