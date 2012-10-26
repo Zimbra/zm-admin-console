@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -34,15 +34,6 @@ ZaModel.getBooleanChoices2 = function () {
 }
 ZaModel.BOOLEAN_CHOICES2= ZaModel.getBooleanChoices2 ;
 
-ZaModel.getAllowChoices = function () {
-	return [{value:"1", label: ZaMsg.Yes},
-            {value:"0", label: ZaMsg.No},
-            {value:"-1", label: ZaMsg.Ignored},
-            {value: null, label: ZaMsg.No}];  
-}
-
-ZaModel.ALLOW_CHOICES = ZaModel.getAllowChoices;
-
 
 ZaModel.FONT_SIZE_CHOICES = [
 	{value:"8pt", label: "8pt"},
@@ -54,18 +45,18 @@ ZaModel.FONT_SIZE_CHOICES = [
 	{value:"36pt", label: "36pt"}];
 	
 ZaModel.FONT_FAMILY_CHOICES = [
-	{label:ZaMsg.LBL_fontFamilySansSerif,		value:"arial, helvetica, sans-serif" },
-   	{label:ZaMsg.LBL_fontFamilySerif,				value:"times new roman, new york, times, serif"},
-    {label:ZaMsg.LBL_fontFamilyWideBlock,       	value:"arial black,avant garde" },
-	{label:ZaMsg.LBL_fontFamilyMonospaced, 		value:"courier new, courier, monaco, monospace, sans-serif" },
-    {label:ZaMsg.LBL_fontFamilyComic,		        value:"comic sans ms, comic sans, sans-serif" },
-    {label:ZaMsg.LBL_fontFamilyConsole,           value:"lucida console, sans-serif" },
-    {label:ZaMsg.LBL_fontFamilyGaramond,          value:"garamond, new york, times, serif" },
-    {label:ZaMsg.LBL_fontFamilyElegant,    		value:"georgia,serif" },
-    {label:ZaMsg.LBL_fontFamilyProfessional,		value:"tahoma, new york, times, serif"},
-    {label:ZaMsg.LBL_fontFamilyTerminal,          value:"terminal,monaco" },
-    {label:ZaMsg.LBL_fontFamilyModern,   			value:"trebuchet ms,sans-serif" },
-    {label:ZaMsg.LBL_fontFamilyWide,      		value:"verdana, helvetica, sans-serif" }
+	{label:"Sans Serif",		value:"arial, helvetica, sans-serif" },
+   	{label:"Serif",				value:"times new roman, new york, times, serif"},
+    {label:"Wide Block",       	value:"arial black,avant garde" },
+	{label:"Monospaced", 		value:"courier new, courier, monaco, monospace, sans-serif" },
+    {label:"Comic",		        value:"comic sans ms, comic sans, sans-serif" },
+    {label:"Console",           value:"lucida console, sans-serif" },
+    {label:"Garamond",          value:"garamond, new york, times, serif" },
+    {label:"Elegant",    		value:"georgia,serif" },
+    {label:"Professional",		value:"tahoma, new york, times, serif"},
+    {label:"Terminal",          value:"terminal,monaco" },
+    {label:"Modern",   			value:"trebuchet ms,sans-serif" },
+    {label:"Wide",      		value:"verdana, helvetica, sans-serif" }
 ];
 
 ZaModel.getComposeFormatChoices =   function () {
@@ -122,15 +113,6 @@ ZaModel.getTimeChoices1 = function () {
  				{value:"d", label:AjxMsg.days},
 				{value:"h", label:AjxMsg.hours}
             ];
-}
-
-ZaModel.getLongTimeChoices = function () {
-    return [
-        {value:"d", label:AjxMsg.days},
-        {value:"w", label:AjxMsg.weeks},
-        {value:"m", label:AjxMsg.months},
-        {value:"y", label:AjxMsg.years}
-    ];
 }
 
 ZaModel.prototype.toString = 

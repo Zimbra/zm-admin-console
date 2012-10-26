@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -20,7 +20,6 @@
 ZaItem = function(iKeyName) {
 	if (arguments.length == 0) return;
 	this._iKeyName = iKeyName;
-    this._uuid = ZaUtil.getItemUUid();
 	ZaModel.call(this, true);
 
 }
@@ -35,7 +34,6 @@ ZaItem.modifyMethodsExt = new Object();
 ZaItem.createMethods = new Object();
 ZaItem.removeMethods = new Object();
 ZaItem.modelExtensions = new Object();
-ZaItem.getRelatedMethods = new Object();
 
 ZaItem.ACCOUNT = "account";
 ZaItem.DATASOURCE = "dataSource";
@@ -48,11 +46,9 @@ ZaItem.COS = "cos";
 ZaItem.GLOBAL_CONFIG = "config";
 ZaItem.GLOBAL_GRANT = "global";
 ZaItem.SERVER = "server";
-ZaItem.STATS = "stats";
 ZaItem.ZIMLET = "zimlet";
 ZaItem.MAILQ_ITEM = "message";
 ZaItem.MAILQ = "mailque";
-ZaItem.HOME = "home";
 ZaItem.A_objectClass = "objectClass";
 ZaItem.A_zimbraId = "zimbraId";
 ZaItem.A_cn = "cn" ;
@@ -196,27 +192,9 @@ function () {
 	//Instrumentation code end
 }
 
-
 ZaItem.prototype.refresh = 
 function (skipRights,expandDefaults) {
 	this.load(this.id ? "id" : null, this.id ? this.id : null,skipRights,expandDefaults);
-}
-
-ZaItem.prototype.getRelatedList =
-function (parentPath) {
-	//Instrumentation code start
-    var ret = [];
-	if(ZaItem.getRelatedMethods[this._iKeyName]) {
-		var methods = ZaItem.getRelatedMethods[this._iKeyName];
-		var cnt = methods.length;
-		for(var i = 0; i < cnt; i++) {
-			if(typeof(methods[i]) == "function") {
-				ret = ret.concat(methods[i].call(this, parentPath));
-			}
-		}
-	}
-    return ret;
-	//Instrumentation code end
 }
 
 ZaItem.prototype.copyTo = 
@@ -354,72 +332,38 @@ ZaItem.prototype.initEffectiveRightsFromJS = function(resp) {
 ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults) {
 	if(!this.type)
 		return;
-
+		
+	var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
+	if(expandDefaults) {
+		soapDoc.setMethodAttribute("expandAllAttrs","getAttrs");
+	}
+	
 	if(AjxUtil.isUndefined(val) || AjxUtil.isNull(val))
 		val = "";
+		
+	var elTarget = soapDoc.set("target", val);
+	
+	if(!AjxUtil.isEmpty(by))
+		elTarget.setAttribute("by",by);
+		
+	elTarget.setAttribute("type",this.type);
 
+
+	var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
+	elGrantee.setAttribute("by","id");
+	
+	var csfeParams = new Object();
+	csfeParams.soapDoc = soapDoc;	
+	var reqMgrParams = {} ;
+	reqMgrParams.controller = (ZaApp.getInstance() && ZaApp.getInstance().getCurrentController()) ? ZaApp.getInstance().getCurrentController() : null;
+	reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
+	
 	try {
-		var resp = this._getEffectiveRights(by, val, expandDefaults)
+		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
 		this.initEffectiveRightsFromJS(resp);
 	} catch (ex) {
 		throw (ex);
 	}
-}
-
-ZaItem.RightCache = [];
-ZaItem.getCacheName = function (by, val, type, expandDefaults) {
-    var cacheName = by + val + " " + type;
-    if (expandDefaults)
-        cacheName = cacheName + "TRUE";
-    else
-        cacheName = cacheName + "FALSE";
-    return cacheName;
-}
-
-ZaItem.inCacheProcess = function (val) {
-    if (!val)
-        return false;
-
-    return ZaSettings.initializing;
-}
-
-ZaItem.prototype._getEffectiveRights = function (by, val, expandDefaults) {
-	var cacheName = ZaItem.getCacheName(by, val, this.type, expandDefaults);
-    var inCacheProcess =  ZaItem.inCacheProcess(val);
-    var resp;
-    if (((!ZaItem.RightCache[cacheName])&&inCacheProcess) || !inCacheProcess) {
-        var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
-        if(expandDefaults) {
-            soapDoc.setMethodAttribute("expandAllAttrs","getAttrs");
-        }
-
-        var elTarget = soapDoc.set("target", val);
-
-        if(!AjxUtil.isEmpty(by))
-            elTarget.setAttribute("by",by);
-
-        elTarget.setAttribute("type",this.type);
-
-        var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
-        elGrantee.setAttribute("by","id");
-
-        var csfeParams = new Object();
-        csfeParams.soapDoc = soapDoc;
-        var reqMgrParams = {} ;
-        reqMgrParams.controller = (ZaApp.getInstance() && ZaApp.getInstance().getCurrentController()) ? ZaApp.getInstance().getCurrentController() : null;
-        reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
-
-        try {
-            resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
-        } catch (ex) {
-            throw (ex);
-        }
-        if (inCacheProcess)
-            ZaItem.RightCache[cacheName]= resp;
-    } else {
-        resp = ZaItem.RightCache[cacheName];
-    }
-    return resp;
 }
 
 ZaItem.prototype.loadNewObjectDefaults = function (domainBy, domain, cosBy, cos) {
@@ -493,14 +437,11 @@ ZaItem.prototype.modify = function (mods, tmpObj) {
 		for(var i = 0; i < cnt; i++) {
 			if(typeof(methods[i]) == "function") {
 				methods[i].call(this, mods, tmpObj);
-
 			}
 		}
 	}	
 	//Instrumentation code end
 }
-
-
 
 /**
 * Factory method
@@ -1008,31 +949,6 @@ ZaItem.hasRight = function (right, instance) {
 }
 XFormItem.prototype.hasRight = ZaItem.hasRight;
 
-ZaItem.hasAnyRight = function (rights, instance) {
-	if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE')
-		return true;
-
-	if(!instance)
-		instance = this.getInstance();
-
-	if (!instance.rights)
-		return false;
-
-    if (!rights)
-        return true;
-
-    if (!rights instanceof Array)
-        rights = [rights];
-
-    for (var i = 0; i < rights.length; i++) {
-        if (instance.rights[rights[i]] === true) {
-            return true;
-        }
-    }
-    return false;
-}
-XFormItem.prototype.hasAnyRight = ZaItem.hasAnyRight;
-
 ZaItem.formatServerTime = function(serverStr) {
 	if(serverStr) {
 		var ajxTKServerStr = serverStr.substring(0,8) + "T" + serverStr.substring(8) ;
@@ -1052,10 +968,4 @@ ZaItem.getZeroIsUnlimitedItem = function () {
               content: ZaMsg.NAD_ZERO_UNLIMETED
             } ;
     return item ;
-}
-
-ZaItem.getSplashScreenCopyright = function() {
-	var date = new Date();
-	var curYear = date.getFullYear() + "";
-	return AjxMessageFormat.format(ZabMsg.splashScreenCopyright, [curYear]);
 }

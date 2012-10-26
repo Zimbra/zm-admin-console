@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -59,7 +59,6 @@ ZaEvent.S_CLUSTER_STATUS = ZaEvent.EVENT_SOURCE_INDEX++;
 ZaEvent.S_DL 			 = ZaEvent.EVENT_SOURCE_INDEX++;
 ZaEvent.S_MTA			 = ZaEvent.EVENT_SOURCE_INDEX++;
 ZaEvent.S_ZIMLET		 = ZaEvent.EVENT_SOURCE_INDEX++;
-ZaEvent.S_HOME		 = ZaEvent.EVENT_SOURCE_INDEX++;
 // Event types
 ZaEvent.EVENT_TYPES_INDEX = 1;
 ZaEvent.E_CREATE		= ZaEvent.EVENT_TYPES_INDEX++;
@@ -73,7 +72,6 @@ ZaEvent.E_MOVE			= ZaEvent.EVENT_TYPES_INDEX++;
 ZaEvent.E_FLAGS			= ZaEvent.EVENT_TYPES_INDEX++;
 ZaEvent.E_ADD_TAG		= ZaEvent.EVENT_TYPES_INDEX++;
 ZaEvent.E_REMOVE_TAG	= ZaEvent.EVENT_TYPES_INDEX++;
-ZaEvent.E_SEARCH  	    = ZaEvent.EVENT_TYPES_INDEX++;
 
 // Public methods
 
