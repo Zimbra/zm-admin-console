@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -38,13 +38,11 @@ ZaListViewController = function(appCtxt, container,iKeyName) {
 ZaListViewController.prototype = new ZaController();
 ZaListViewController.prototype.constructor = ZaListViewController;
 
-
-
 ZaListViewController.prototype._nextPageListener = 
 function (ev) {
 	if(this._currentPageNum < this.numPages) {
 		this._currentPageNum++;
-		this.show();
+		this.show();	
 	} 
 }
 
@@ -69,7 +67,7 @@ function() {
 }
 
 ZaListViewController.prototype._updateUI = 
-function(list, openInNewTab, openInSearchTab, hasMore) {
+function(list, openInNewTab, openInSearchTab) {
     if (!this._UICreated) {
 		this._createUI(openInNewTab, openInSearchTab);
 	} 
@@ -85,12 +83,34 @@ function(list, openInNewTab, openInSearchTab, hasMore) {
 		//add the default column sortable
 		this._contentView._bSortAsc = (this._currentSortOrder=="1");
 		this._contentView.set(AjxVector.fromArray(tmpArr), this._contentView._defaultColumnSortable);
-        this._contentView.setScrollSearchParams(this.scrollSearchParams);
-        this._contentView.setScrollHasMore(hasMore);
 	}
 	this._removeList = new Array();
 	this.changeActionsState();
-
+	
+	var s_result_start_n = (this._currentPageNum - 1) * this.RESULTSPERPAGE + 1;
+	var s_result_end_n = this._currentPageNum  * this.RESULTSPERPAGE;
+	if(this.numPages <= this._currentPageNum) {
+		s_result_end_n = this._searchTotal ;
+		this._toolbar.enable([ZaOperation.PAGE_FORWARD], false);
+	} else {
+		this._toolbar.enable([ZaOperation.PAGE_FORWARD], true);
+	}
+	if(this._currentPageNum == 1) {
+		this._toolbar.enable([ZaOperation.PAGE_BACK], false);
+	} else {
+		this._toolbar.enable([ZaOperation.PAGE_BACK], true);
+	}
+	
+	//update the search result number count now
+	var srCountBt = this._toolbar.getButton (ZaOperation.SEARCH_RESULT_COUNT) ;
+	if (srCountBt ) {
+		if  (this._searchTotal == 0) {
+			s_result_end_n = 0;
+			s_result_start_n = 0;
+		}
+		srCountBt.setText ( AjxMessageFormat.format (ZaMsg.searchResultCount, 
+				[s_result_start_n + " - " + s_result_end_n, this._searchTotal]));
+	}
 }
 
 ZaListViewController.prototype.closeButtonListener =
@@ -101,6 +121,10 @@ function(ev, noPopView, func, obj, params) {
 		ZaApp.getInstance().popView () ;
 	}
 	this._UICreated = false;
+	if(this._toolbar) {
+		this._toolbar.dispose();
+		this._toolbar = null;
+	}
 	if(this._contentView) {
 		this._contentView.dispose();
 		this._contentView = null;
@@ -110,7 +134,9 @@ function(ev, noPopView, func, obj, params) {
 		this._actionMenu.dispose();
 		this._actionMenu = null;
 	}
+	this._toolbarOperations = [];
 	this._popupOperations = [];
+	this._toolbarOrder = [];	
 }
 
 ZaListViewController.prototype.multipleSearchCallback =
@@ -180,8 +206,6 @@ function(preParams, paramsArr) {
 	}
 	
 	var respObj = ZaRequestMgr.invoke(params, reqMgrParams);
-    //Count statistics that will show in search tree
-    var resultStats;
 	if(respObj.isException && respObj.isException()) {
 		ZaApp.getInstance().getCurrentController()._handleException(respObj.getException(), "ZaListViewController.prototype.multipleSearchCallback", null, false);
 	} else if(respObj.Body.BatchResponse.Fault) {
@@ -200,7 +224,6 @@ function(preParams, paramsArr) {
 			ZaSearch.TOO_MANY_RESULTS_FLAG = false;
 			this._searchTotal = 0;
 			this._list = null;
-            var hasmore=false;
 			for(var i = 0; i < cnt2; i++) {
 				resp = batchResp.SearchDirectoryResponse[i];
 				var subList = new ZaItemList(preParams.CONS);
@@ -218,9 +241,8 @@ function(preParams, paramsArr) {
 						}
 					}
 				}
-	            hasmore= resp.more|hasmore;
+	
 				this._searchTotal += resp.searchTotal;
-                resultStats = this.getSearchResultStats(resp, resultStats);
 			}
 		        if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] != 'TRUE') {
 		                var act = new AjxTimedAction(this._list, ZaItemList.prototype.loadEffectiveRights, null);
@@ -231,32 +253,14 @@ function(preParams, paramsArr) {
 		        this.numPages = Math.ceil(this._searchTotal/preParams.limit);
 
                         if(preParams.show)
-                                this._show(this._list, preParams.openInNewTab, preParams.openInSearchTab,hasmore,preParams.isShowBubble);
+                                this._show(this._list, preParams.openInNewTab, preParams.openInSearchTab);
                         else
-                                this._updateUI(this._list, preParams.openInNewTab, preParams.openInSearchTab,hasmore);
+                                this._updateUI(this._list, preParams.openInNewTab, preParams.openInSearchTab);
 
 		}
 	}
-    ZaZimbraAdmin.getInstance().getOverviewPanelController().fireSearchEvent(resultStats);
 }
 
-ZaListViewController.prototype.getAppBarAction =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOperation)) {
-    	this._appbarOperation[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
-    }
-
-    return this._appbarOperation;
-}
-
-ZaListViewController.prototype.getAppBarOrder =
-function () {
-    if (AjxUtil.isEmpty(this._appbarOrder)) {
-    	this._appbarOrder.push(ZaOperation.HELP);
-    }
-
-    return this._appbarOrder;
-}
 
 
 ZaListViewController.prototype.searchCallback =
@@ -268,13 +272,10 @@ function(params, resp) {
 		if(!resp && !this._currentRequest.cancelled) {
 			throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaListViewController.prototype.searchCallback"));
 		}
-
-        var resultStats;
 		if(resp && resp.isException() && !this._currentRequest.cancelled) {
 			ZaSearch.handleTooManyResultsException(resp.getException(), "ZaListViewController.prototype.searchCallback");
-            this._list = new ZaItemList(params.CONS);
-
-            this._searchTotal = 0;
+			this._list = new ZaItemList(params.CONS);	
+			this._searchTotal = 0;
 			this.numPages = 0;
 			if(params.show)
 				this._show(this._list);			
@@ -287,9 +288,7 @@ function(params, resp) {
 			this._searchTotal = 0;
 			if(resp && !resp.isException()) {
 				var response = resp.getResponse().Body.SearchDirectoryResponse;
-
 				this._list = new ZaItemList(params.CONS);
-
                 tempList.loadFromJS(response);
                 // filter the search result
                 if(params.resultFilter && tempList.size() > 0) {
@@ -308,24 +307,20 @@ function(params, resp) {
                         }
 
                     }
-                } else  this._list = tempList;
-
+                } else this._list = tempList;
 				if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] != 'TRUE') {
 					var act = new AjxTimedAction(this._list, ZaItemList.prototype.loadEffectiveRights, null);
 					AjxTimedAction.scheduleAction(act, 150)
-				}
-
+				}	
 				this._searchTotal = response.searchTotal;
 				var limit = params.limit ? params.limit : this.RESULTSPERPAGE; 
 				this.numPages = Math.ceil(this._searchTotal/params.limit);
-                resultStats = this.getSearchResultStats(response);
 			}
 			if(params.show)
-				this._show(this._list, params.openInNewTab, params.openInSearchTab,response.more,params.isShowBubble);
+				this._show(this._list, params.openInNewTab, params.openInSearchTab);			
 			else
-				this._updateUI(this._list, params.openInNewTab, params.openInSearchTab,response.more);
+				this._updateUI(this._list, params.openInNewTab, params.openInSearchTab);
 		}
-        ZaZimbraAdmin.getInstance().getOverviewPanelController().fireSearchEvent(resultStats);
 	} catch (ex) {
 		if (ex.code != ZmCsfeException.MAIL_QUERY_PARSE_ERROR) {
 			this._handleException(ex, "ZaListViewController.prototype.searchCallback");	
@@ -337,30 +332,6 @@ function(params, resp) {
 	}
 }
 
-/**
- * Get the count statistics of the search result.
- * @param resp response
- * @param orig Optional. The count statics will be added to <code>orig</code> if it is provided.
- * It is used for batch request.
- */
-ZaListViewController.prototype.getSearchResultStats =
-function(resp, orig) {
-    var result = {};
-    if (orig) {
-        result = orig;
-    }
-
-    if (!resp || !resp.searchTotal) {
-        return result;
-    }
-
-    if (result.searchTotal) {
-        result.searchTotal += resp.searchTotal;
-    } else {
-        result.searchTotal = resp.searchTotal;
-    }
-    return result;
-}
 
 /**
 * @param ev
@@ -373,7 +344,6 @@ function (ev) {
 			this.show(false);			
 		}
 	}
-	ZaZimbraAdmin.getInstance().getOverviewPanelController().refreshRelatedTreeByEdit (ev.getDetails())
 }
 
 /**
@@ -387,7 +357,6 @@ function (ev) {
 			this.show(false);			
 		}
 	}
-    ZaZimbraAdmin.getInstance().getOverviewPanelController().refreshRelatedTree (ev.getDetails());
 }
 
 /**
@@ -401,7 +370,6 @@ function (ev) {
 			this._currentPageNum = 1 ; //due to bug 12091, always go back to the first page after the deleting of items.
 			this.show(false);			
 		}
-		ZaZimbraAdmin.getInstance().refreshHistoryTreeByDelete(ev.getDetails());
 	}
 }
 

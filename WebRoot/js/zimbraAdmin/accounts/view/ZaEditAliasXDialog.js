@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -71,18 +71,9 @@ ZaNewAliasXDialog = function(parent,   w, h, title) {
 
 ZaNewAliasXDialog.prototype = new ZaXDialog;
 ZaNewAliasXDialog.prototype.constructor = ZaNewAliasXDialog;
-ZaNewAliasXDialog.prototype.supportMinimize = true;
 ZaNewAliasXDialog.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/creating_a_mail_aliases.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-ZaNewAliasXDialog.prototype.getCacheName = function(){
-      return "newAliasDialog";
-}
 
-ZaNewAliasXDialog.prototype.setObject =
-function(entry) {
-      this._containedObject = entry;
-      this._containedObject._uuid = this._containedObject._uuid || ZaUtil.getItemUUid();
-      this._localXForm.setInstance(this._containedObject);
-}
+
 
 ZaNewAliasXDialog.prototype.getMyXForm = 
 function() {	
