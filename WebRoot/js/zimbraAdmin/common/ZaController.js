@@ -452,7 +452,7 @@ function(username, password) {
 		this.auth = new ZaAuthenticate(this._appCtxt);
 		this.auth.execute(username, password,callback);
 	} catch (ex) {
-		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || ex.code == ZmCsfeException.SVC_PERM_DENIED) {
+		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || ex.code == ZmCsfeException.SVC_PERM_DENIED ) {
 			this._showLoginDialog(false);
 			this._loginDialog.setError(ZaMsg.ERROR_AUTH_FAILED);
 			return;
