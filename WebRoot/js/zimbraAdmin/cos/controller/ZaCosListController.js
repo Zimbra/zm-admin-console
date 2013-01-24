@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -15,13 +15,11 @@
 
 ZaCosListController = function(appCtxt, container) {
 	ZaListViewController.call(this, appCtxt, container,"ZaCosListController");
-	this.objType = ZaEvent.S_COS;
-    this._defaultType = ZaItem.COS;
+	this.objType = ZaEvent.S_COS;	
 	this._currentSortField = ZaCos.A_name;
 	this._currentPageNum = 1;
 	this._currentSortOrder = "1";
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "cos/class_of_service.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaMsg.helpManageCOS;
 	this._currentQuery = "";
 	this.fetchAttrs = [ZaCos.A_name,ZaCos.A_description].join();
 	this.RESULTSPERPAGE = ZaDomain.RESULTSPERPAGE; 
@@ -73,25 +71,21 @@ ZaCosListController.prototype.show = function (doPush,openInNewTab) {
 			busyMsg:ZaMsg.BUSY_SEARCHING_COSES,
 			skipCallbackIfCancelled:false			
 	}
-    this.scrollSearchParams={
-        query:this._currentQuery ,
-			types:[ZaSearch.COSES],
-			sortBy:this._currentSortField,
-			sortAscending:this._currentSortOrder,
-			attrs:this.fetchAttrs,
-			controller: this,
-			showBusy:true,
-			busyMsg:ZaMsg.BUSY_SEARCHING_COSES,
-			skipCallbackIfCancelled:false
-    };
 	ZaSearch.searchDirectory(searchParams);
 }
 
 ZaCosListController.prototype._show = 
-function (list, openInNewTab, openInSearchTab, hasMore) {
-	this._updateUI(list, openInNewTab, openInSearchTab, hasMore);
+function (list, openInNewTab, openInSearchTab) {
+	this._updateUI(list, openInNewTab, openInSearchTab);
 	ZaApp.getInstance().pushView(this.getContentViewId (), openInNewTab, openInSearchTab);
-    return;
+	if (openInSearchTab) {
+		ZaApp.getInstance().updateSearchTab();
+	} else if(openInNewTab) {
+		var cTab = ZaApp.getInstance().getTabGroup().getTabById( this.getContentViewId());
+		ZaApp.getInstance().updateTab(cTab, ZaApp.getInstance()._currentViewId );
+	} else {
+		ZaApp.getInstance().updateTab(this.getMainTab(), ZaApp.getInstance()._currentViewId );
+	} 
 }
 
 
@@ -111,32 +105,56 @@ ZaController.initPopupMenuMethods["ZaCosListController"].push(ZaCosListControlle
 **/
 ZaCosListController.initToolbarMethod =
 function () {
+	if(ZaItem.hasRight(ZaCos.CREATE_COS_RIGHT, ZaZimbraAdmin.currentAdminAccount)) {
+		this._toolbarOrder.push(ZaOperation.NEW);
+		this._toolbarOrder.push(ZaOperation.DUPLICATE);
+	}
+	this._toolbarOrder.push(ZaOperation.EDIT);
+	this._toolbarOrder.push(ZaOperation.DELETE);
+	this._toolbarOrder.push(ZaOperation.NONE);	
+	this._toolbarOrder.push(ZaOperation.PAGE_BACK);
+	this._toolbarOrder.push(ZaOperation.PAGE_FORWARD);
+	this._toolbarOrder.push(ZaOperation.HELP);
 		
+	if(ZaItem.hasRight(ZaCos.CREATE_COS_RIGHT, ZaZimbraAdmin.currentAdminAccount)) {
+   		this._toolbarOperations[ZaOperation.NEW] = new ZaOperation(ZaOperation.NEW, ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener));
+	}
+   	this._toolbarOperations[ZaOperation.DUPLICATE] = new ZaOperation(ZaOperation.DUPLICATE, ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener));    	
+   	this._toolbarOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.COSTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaCosListController.prototype._editButtonListener));    	    	
+	this._toolbarOperations[ZaOperation.DELETE] = new ZaOperation(ZaOperation.DELETE, ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaCosListController.prototype._deleteButtonListener));   		
 }
 ZaController.initToolbarMethods["ZaCosListController"].push(ZaCosListController.initToolbarMethod);
 
 //private and protected methods
 ZaCosListController.prototype._createUI = 
 function (openInNewTab, openInSearchTab) {
-	this._contentView = new ZaCosListView(this._container, this._defaultType);
+	this._contentView = new ZaCosListView(this._container);
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 	// create the menu operations/listeners first	
-    //this._initToolbar();
+    this._initToolbar();
 	//always add Help and navigation buttons at the end of the toolbar    
-	//this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);	
-	//this._toolbarOperations[ZaOperation.PAGE_BACK]=new ZaOperation(ZaOperation.PAGE_BACK,ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener));
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);	
+	this._toolbarOperations[ZaOperation.PAGE_BACK]=new ZaOperation(ZaOperation.PAGE_BACK,ZaMsg.Previous, ZaMsg.PrevPage_tt, "LeftArrow", "LeftArrowDis",  new AjxListener(this, this._prevPageListener));
 	
 	//add the acount number counts
+	ZaSearch.searchResultCountsView(this._toolbarOperations, this._toolbarOrder);
 	
-	//this._toolbarOperations[ZaOperation.PAGE_FORWARD]=new ZaOperation(ZaOperation.PAGE_FORWARD,ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
-	//this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
+	this._toolbarOperations[ZaOperation.PAGE_FORWARD]=new ZaOperation(ZaOperation.PAGE_FORWARD,ZaMsg.Next, ZaMsg.NextPage_tt, "RightArrow", "RightArrowDis", new AjxListener(this, this._nextPageListener));
+	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));				
 
-	//this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_COSLIST);    
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_COSLIST);    
 		
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-    ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
-
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+	//ZaApp.getInstance().createView(ZaZimbraAdmin._DOMAINS_LIST_VIEW, elements);
+	var tabParams = {
+			openInNewTab: openInNewTab ? openInNewTab : false,
+			tabId: this.getContentViewId(),
+			tab: openInNewTab ? null : (openInSearchTab ? this.getSearchTab() : this.getMainTab()) 
+		}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+	
 	this._initPopupMenu();
 	this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_COSLIST, ZaId.MENU_POP);
 	
@@ -159,8 +177,8 @@ function(ev) {
 // duplicate button was pressed
 ZaCosListController.prototype._duplicateButtonListener =
 function(ev) {
+	var newCos = new ZaCos(); //new COS
 	if(this._contentView && (this._contentView.getSelectionCount() == 1)) {
-		var newCos = new ZaCos(); //new COS
 		var item = this._contentView.getSelection()[0];
 		if(item) { //copy the attributes from the selected COS to the new COS
             //need to get the cos first since rights, getAttrs and setAttrs are not in the cos list object
@@ -170,7 +188,7 @@ function(ev) {
 
             if ( item.attrs ) {
                 for(var aname in item.attrs) {
-                    if( (aname == ZaItem.A_objectClass) || (aname == ZaItem.A_zimbraId) || (aname == ZaCos.A_name) || (aname == ZaCos.A_description) || (aname == ZaCos.A_zimbraNotes) || (aname == ZaItem.A_zimbraCreateTimestamp) )
+                    if( (aname == ZaItem.A_objectClass) || (aname == ZaItem.A_zimbraId) || (aname == ZaCos.A_name) || (aname == ZaCos.A_description) || (aname == ZaCos.A_notes) || (aname == ZaItem.A_zimbraCreateTimestamp) )
                         continue;
 
                     if ( (typeof item.attrs[aname] == "object") || (item.attrs[aname] instanceof Array)) {
@@ -184,11 +202,6 @@ function(ev) {
                 }
             }
 
-
-            newCos.attrs[ZaCos.A_zimbraNotes] = AjxMessageFormat.format(ZaMsg.COSTBB_DuplicatingFrom_tt, [item.attrs[ZaCos.A_name]]);
-            //explicitly note the user this is duplicated from the one they select,
-            //instead of showing nothing at the first page of ZaNewCosXWizard
-
             if (item.getAttrs)   {
                 newCos.getAttrs = item.getAttrs ;
             }
@@ -201,9 +214,8 @@ function(ev) {
                 newCos.rights = item.rights ;
             }
         }
-
-        ZaCosListController.showMe.call(this, newCos);
-	}
+	}	
+	ZaApp.getInstance().getCosController().show(newCos);
 }
 
 // new button was pressed
@@ -221,8 +233,8 @@ function(ev) {
 			continue;			
 		newCos.attrs[aname] = defCos.attrs[aname];
 	}
-
-    ZaCosListController.showMe.call(this, newCos);
+	
+	ZaApp.getInstance().getCosController().show(newCos);
 }
 
 /**
@@ -234,8 +246,6 @@ function(ev) {
 	if (ev.detail == DwtListView.ITEM_DBL_CLICKED) {
 		if(ev.item) {
 			ZaApp.getInstance().getCosController().show(ev.item);
-            var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_cos]);
-            ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, ev.item.name, null, false, false, ev.item, undefined, true);
 		}
 	} else {
 		this.changeActionsState();	
@@ -258,15 +268,8 @@ ZaCosListController.prototype._editButtonListener =
 function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
-        this._editItem(item);
+		ZaApp.getInstance().getCosController().show(item);
 	}
-}
-
-ZaCosListController.prototype._editItem =
-function(item) {
-    ZaApp.getInstance().getCosController().show(item);
-    var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_cos]);
-    ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, item.name, null, false, false, item);
 }
 
 /**
@@ -284,8 +287,7 @@ function(ev) {
 		//	var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
 			var item = arrItems[key];
 			if (item) {
-				//detect whether the deleting item is open in a tab
-				if (ZaApp.getInstance().getTabGroup() && ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
+				if (ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
 					this._itemsInTabList.push (item) ;
 				}else{
 					this._removeList.push(item);
@@ -435,6 +437,10 @@ function (enableArray,disableArray) {
 		var item = this._contentView.getSelection()[0];
 		if(item) {
 			if(hasDefault) {
+				if(this._toolbarOperations[ZaOperation.DELETE]) {
+					this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+				}
+				
 				if(this._popupOperations[ZaOperation.DELETE]) {
 					this._popupOperations[ZaOperation.DELETE].enabled=false;
 				}
@@ -443,6 +449,10 @@ function (enableArray,disableArray) {
 					item.loadEffectiveRights("id", item.id, false);
 				}
 				if(!ZaItem.hasRight(ZaCos.DELETE_COS_RIGHT, item)) {
+					if(this._toolbarOperations[ZaOperation.DELETE]) {
+						this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+					}
+					
 					if(this._popupOperations[ZaOperation.DELETE]) {
 						this._popupOperations[ZaOperation.DELETE].enabled=false;
 					}
@@ -451,36 +461,49 @@ function (enableArray,disableArray) {
 		}
 	} else if (cnt > 1){
 		if(hasDefault) {
+			if(this._toolbarOperations[ZaOperation.DELETE]) {
+				this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+			}		
+			
 			if(this._popupOperations[ZaOperation.DELETE]) {
 				this._popupOperations[ZaOperation.DELETE].enabled=false;
 			}					
 		}
+		if(this._toolbarOperations[ZaOperation.DUPLICATE] && this._toolbarOperations[ZaOperation.DUPLICATE].enabled) {
+			this._toolbarOperations[ZaOperation.DUPLICATE].enabled=false;
+		}		
+		if(this._toolbarOperations[ZaOperation.EDIT]) {
+			this._toolbarOperations[ZaOperation.EDIT].enabled=false;
+		}
 		
-		if(this._popupOperations[ZaOperation.DUPLICATE] && this._popupOperations[ZaOperation.DUPLICATE].enabled) {
+		if(this._popupOperations[ZaOperation.DUPLICATE] && this._toolbarOperations[ZaOperation.DUPLICATE].enabled) {
 			this._popupOperations[ZaOperation.DUPLICATE].enabled=false;
 		}		
 		if(this._popupOperations[ZaOperation.EDIT]) {
 			this._popupOperations[ZaOperation.EDIT].enabled=false;
 		}					
 	} else {
+		if(this._toolbarOperations[ZaOperation.EDIT]) {
+			this._toolbarOperations[ZaOperation.EDIT].enabled=false;
+		}	
+		if(this._toolbarOperations[ZaOperation.DELETE]) {
+			this._toolbarOperations[ZaOperation.DELETE].enabled=false;
+		}	
+		if(this._toolbarOperations[ZaOperation.DUPLICATE] && this._toolbarOperations[ZaOperation.DUPLICATE].enabled) {
+			this._toolbarOperations[ZaOperation.DUPLICATE].enabled=false;
+		}
+
 		if(this._popupOperations[ZaOperation.EDIT]) {
 			this._popupOperations[ZaOperation.EDIT].enabled=false;
 		}	
 		if(this._popupOperations[ZaOperation.DELETE]) {
 			this._popupOperations[ZaOperation.DELETE].enabled=false;
 		}	
-		if(this._popupOperations[ZaOperation.DUPLICATE] && this._popupOperations[ZaOperation.DUPLICATE].enabled) {
+		if(this._popupOperations[ZaOperation.DUPLICATE] && this._toolbarOperations[ZaOperation.DUPLICATE].enabled) {
 			this._popupOperations[ZaOperation.DUPLICATE].enabled=false;
 		}		
 	}
 }
 ZaController.changeActionsStateMethods["ZaCosListController"].push(ZaCosListController.changeActionsStateMethod);
 
-ZaCosListController.showMe = function(newCos)
-{
-    if(!ZaApp.getInstance().dialogs["newCosXWizard"]){
-        ZaApp.getInstance().dialogs["newCosXWizard"] = new ZaNewCosXWizard(this._container,newCos);
-    }
-    ZaApp.getInstance().dialogs["newCosXWizard"].setObject(newCos);
-    ZaApp.getInstance().dialogs["newCosXWizard"].popup();
-}
+
