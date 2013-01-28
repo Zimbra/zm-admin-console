@@ -894,7 +894,7 @@ ZaCos.getEffectiveCosList = function(adminId) {
 ZaCos.prototype.countAllAccounts = function() {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
     soapDoc.getMethod().setAttribute("maxResults", "0");
-	soapDoc.getMethod().setAttribute("limit", "-1");
+    soapDoc.getMethod().setAttribute("limit", "-1");
 	var query = "(" + ZaAccount.A_COSId + "=" + this.id + ")";
 
     if(this.name == "default") {
@@ -921,7 +921,7 @@ ZaCos.prototype.countAllAccounts = function() {
 ZaCos.prototype.countAllDomains = function() {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
     soapDoc.getMethod().setAttribute("maxResults", "0");
-	soapDoc.getMethod().setAttribute("limit", "-1");
+    soapDoc.getMethod().setAttribute("limit", "-1");
 	var query = "(" + ZaDomain.A_domainDefaultCOSId + "=" + this.id + ")";
 
     if(this.name == "default") {
