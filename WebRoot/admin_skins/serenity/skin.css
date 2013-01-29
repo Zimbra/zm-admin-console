@@ -290,14 +290,15 @@ BODY {
 
 .LoginScreen,
 .SplashScreen {
-	@LoginScreen@
 	@FontSize-normal@
+	background-color:@LoginBkgdTop@;
 	font-family:@FontFamily-default@;
 	height:100%;
 	left:0;
 	position:absolute;
 	top:0;
 	width:100%;
+	@grad(LoginBkgdTop,LoginBkgdBottom,linear-vertical)@
 }
 
 .LoginScreen .center,
@@ -321,33 +322,23 @@ BODY {
 
 .LoginScreen .center, .LoginScreen .center-small,
 .SplashScreen .center, .SplashScreen .center-small {
+	background-color:@LoginCenterBottom@;
 	left:50%;
 	overflow:visible;
 	position:absolute;
 	top:40%;
 	z-index:11;
-}
-
-.LoginScreen .contentBox,
-.SplashScreen .contentBox {	
-	min-height:265px;
-	width:500px;
-#IFDEF MSIE
-	height:265px;
-#ENDIF
-	@LoginContentBox@ 	
+	@grad(LoginCenterTop,LoginCenterBottom,linear-vertical)@
 }
 
 .LoginScreen H1,
 .SplashScreen H1 	{	@LoginH1@ 		}
-
 #ZLoginAppName 		{	@LoginAppName@ 	}
-
 .LoginScreen .ImgLoginBanner,
+.LoginScreen .ImgAppBanner,
 .SplashScreen .ImgLoginBanner {
 	cursor:pointer;
 	display:block;
-	background-position:left bottom;
 }
 
 .LoginScreen .ImgAltBanner,
@@ -359,18 +350,30 @@ BODY {
 	@roundCorners(5px)@
 }
 
-.form .ZLoginButton {
-	@LoginButton@ 
-	/*@grad(#FFF,#DFE2E2)@
-	background-color:#DFE2E2;*/
+#ZLoginButton {
+	background-color:#DFE2E2;
 	float:right;
-	font-size:11px;
-	height:22px;
+	@grad(#FFF,#DFE2E2)@
+	@roundCorners(5px)@
+}
+
+.decor1Outer{
+	margin-left:-250px;
+	margin-top:160px;
+	left:50%;
+	top:40%;
+	z-index:10;
+	width:500px;
+	height:100px;
+	position:absolute;
+	@DecorOpacity@
 }
 
 .LoginScreen .decor1,
 .SplashScreen .decor1 {
 	@Decor1@
+	#background:none;/* '#'only ie work*/
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@DecorImg@');
 }
 
 .LoginScreen .Footer,
@@ -387,7 +390,7 @@ BODY {
 .SplashScreen .copyright {
 	color:@darken(AppC,55)@;
 	cursor:default;
-	font-size:11px;
+	@FontSize-normal@
 	margin-bottom:5px;
 }
 
@@ -395,10 +398,8 @@ BODY {
 	color:@darken(AppC,55)@;
 }
 
-/* accounts for default font size being enlarged to 12px */
-.LoginScreen TD,
-.SplashScreen TD {
-	font-size:11px;
+.form TD {
+	text-align:right;
 }
 
 /*Splash Screen Only Items*/
