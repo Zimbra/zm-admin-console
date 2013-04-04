@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -16,27 +16,15 @@
 /**
 * Utility Class for the Admin Console. 
 * @class ZaUtil
- * @deprecated
 * 
 **/
+
 ZaUtil = function() {};
 
-/**
- * @deprecated
- *
- * @see ZaHelper.HELP_URL
- *
- */
 ZaUtil.HELP_URL = "help/admin/html/";
 
 /*
  * @param v: all the valid life time value is end with smhd
- */
-/**
- * @deprecated
- *
- * @see ZaHelper.getLifeTimeInSeconds
- *
  */
 ZaUtil.getLifeTimeInSeconds =
 function (v){
@@ -64,12 +52,6 @@ function (v){
 	}
 }
 
-/**
- * @deprecated
- *
- * @see ZaHelper.getIndexForValueOfProperty
- *
- */
 ZaUtil.findValueInObjArrByPropertyName =
 function (arr, value, property){
 	if (!property) property = "name" ; //for ZaAccountMemberOfListView 
@@ -83,12 +65,6 @@ function (arr, value, property){
 	return -1;
 }
 
-/**
- * @deprecated
- *
- * @see ZaHelper.getLabelForValue
- *
- */
 ZaUtil.getListItemLabel = function (arr, value)  {
    if (arr != null) {
        for(var i=0; i<arr.length; i++) {
@@ -100,12 +76,6 @@ ZaUtil.getListItemLabel = function (arr, value)  {
     return null ;
 }
 
-/**
- * @deprecated
- *
- * @see ZaHelper.getIndexForValue
- *
- */
 ZaUtil.findValueInArray =
 function (arr, value){
     if (arr != null) {
@@ -119,10 +89,6 @@ function (arr, value){
 }
 
 /**
- * @deprecated
- *
- * @see ZaHelper.removeDuplicatesFromArray
- *
  * remove the duplicate elements from an array
  */
 ZaUtil.getUniqueArrayElements =
@@ -138,10 +104,6 @@ function (arr) {
 }
 
 /**
- * @deprecated
- *
- * @see ZaHelper.getAdminServerDateTime
- *
  * return a server date time string in yyyyMMddHHmmss'Z' format 
  * @param date: a Date object
  * 
@@ -153,10 +115,6 @@ function (date, useUTC) {
 	return s.substring(0,8) + s.substring(9) ;
 }
 
-/**
- * @deprecated
- *
- */
 ZaUtil.compareObjects = function(obj1, obj2) {
 	if(obj1.id==obj2.id)
 		return 0;
@@ -166,12 +124,6 @@ ZaUtil.compareObjects = function(obj1, obj2) {
 		return -1;	
 }
 
-/**
- * @deprecated
- *
- * @see ZaHelper.cloneObject
- *
- */
 ZaUtil.deepCloneObject = function (obj, ignoredProperties) {
     var newObj = {};
     if (obj) {
@@ -200,10 +152,6 @@ ZaUtil.deepCloneObject = function (obj, ignoredProperties) {
  * copy an array's content to another array.
  * Assume all the array elements types are primitive.
  *
- * @deprecated
- *
- * @see ZaHelper.cloneArray
- *
  * @param srcArr
  */
 ZaUtil.cloneArray = function (srcArr) {
@@ -225,8 +173,6 @@ ZaUtil.cloneArray = function (srcArr) {
  *      {name:"efg}
  * ]
  *
- * @deprecated
- *
  * ZaUtil.join(objArr, "name", ":") => "abc:efg" 
  */
 ZaUtil.join = function (objArray, key, delimiter) {
@@ -238,12 +184,6 @@ ZaUtil.join = function (objArray, key, delimiter) {
     return strArr.join(delimiter) ;
 }
 
-/**
- * @deprecated
- *
- * @see ZaUIHelper.getItemUUid
- *
- */
 ZaUtil.getItemUUid = function() {
     var itemPrefix = "ZaItem";
     return Dwt.getNextId(itemPrefix);

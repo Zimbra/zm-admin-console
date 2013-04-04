@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -99,7 +99,6 @@ ZaZimbraAdmin._SERVER_STATUS_VIEW =  ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_STATISTICS_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_STATISTICS_TAB_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_LIST_FOR_STATISTICS_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._HELP_CENTER_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 
 ZaZimbraAdmin._HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._XFORM_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
@@ -896,6 +895,8 @@ function(ev) {
 		ZaApp.getInstance().getHelpViewController().show();
 	}
 
+    var historyObject = new ZaHistory("HelpView", undefined, undefined, false, new AjxCallback(this, this._helpListener));
+    this._historyMgr.addHistory(historyObject);
 }
 
 ZaZimbraAdmin.prototype._dwListener = 
