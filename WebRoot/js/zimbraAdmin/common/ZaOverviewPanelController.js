@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -750,19 +750,6 @@ function() {
             this._handleException(ex, "ZaOverviewPanelController.prototype._buildNewFolderTree", null, false);
         }
     }
-
-    // Always add the Help Center link
-    ti = new ZaTreeItemData({
-            parent: ZaMsg.OVP_home,
-            id: ZaId.getTreeItemId(ZaId.PANEL_APP, ZaId.PANEL_HOME, null, "helpCenter"),
-            text: ZaMsg.zimbraHelpCenter,
-            mappingId: ZaZimbraAdmin._HELP_CENTER_HOME_VIEW,
-            image: "Help"
-    });
-
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._HELP_CENTER_HOME_VIEW] = ZaZimbraAdmin.prototype._helpListener;
-    tree.addTreeItemData(ti);
-
 	//Instrumentation code start
 	if(ZaOverviewPanelController.treeModifiers) {
 		var methods = ZaOverviewPanelController.treeModifiers;
