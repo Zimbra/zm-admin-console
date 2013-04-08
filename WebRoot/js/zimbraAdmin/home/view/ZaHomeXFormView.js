@@ -2,7 +2,7 @@
  * ***** BEGIN LICENSE BLOCK *****
  * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011, 2012 VMware, Inc.
+ * Copyright (C) 2011, 2012, 2013 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -410,9 +410,7 @@ ZaHomeXFormView.myXFormModifier = function(xFormObject, entry) {
                         {type:_CELL_SPACER_},
                         {type:_DWT_IMAGE_, value: "ImgRemoveLineUp", containerCssStyle:"cursor: pointer;", cssStyle:"position:static;display:none;",  onClick:ZaHomeXFormView.onCloseSetup}
                     ]},
-                    {type:_SETUPGROUP_, colSpan: "*", headerLabels: labelChoices, contentItems: contentChoices},
-                    {type:_OUTPUT_, value: ZabMsg.LBL_HomeHelpCenter, colSpan: "*", align:_RIGHT_, onClick: ZaHomeXFormView.onHelpLink,
-                        containerCssClass:"ZaLinkedItem"}
+                    {type:_SETUPGROUP_, colSpan: "*", headerLabels: labelChoices, contentItems: contentChoices}
                 ]}
             ]}
         ]

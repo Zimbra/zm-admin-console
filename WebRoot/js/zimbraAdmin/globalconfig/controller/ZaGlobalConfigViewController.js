@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -70,13 +70,21 @@ ZaGlobalConfigViewController.setViewMethod = function (entry) {
 	} catch (ex) {
 		this._handleException(ex, "ZaGlobalConfigViewController.prototype.show", null, false);
 	}
-	entry[ZaModel.currentTab] = "1"
-	this._currentObject = entry;
-	this._createUI(entry);
-     
-	ZaApp.getInstance().pushView(this.getContentViewId());
-	this._view.setDirty(false);
-	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view
+
+    if (!entry[ZaModel.currentTab]) {
+        entry[ZaModel.currentTab] = "1";
+    }
+
+    if (!this._UICreated) {
+        this._createUI(entry);
+    }
+
+    ZaApp.getInstance().pushView(this.getContentViewId());
+
+    this._view.setDirty(false);
+    this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view
+
+    this._currentObject = entry;
 }
 ZaController.setViewMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.setViewMethod) ;
 
