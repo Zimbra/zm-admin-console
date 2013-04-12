@@ -910,20 +910,20 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 
 							{ref:ZaServer.A_SmtpPort, type:_OUTPUT_, label:ZaMsg.NAD_MTA_WebMailPort, width:"4em"},
 
-							{
-                                ref: ZaServer.A_zimbraMtaRelayHost,
-                                type: _SUPER_HOSTPORT_,
-                                label: ZaMsg.NAD_MTA_RelayMTA,
-                                colSpan: 1,
-                                onClick: "ZaController.showTooltip",
-                                toolTipContent: ZaMsg.tt_MTA_RelayMTA,
-                                resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
-                                bmolsnr: true,
-                                elementChanged: function(elementValue,instanceValue, event) {
-                                    this.getForm().itemChanged(this, elementValue, event);
-                                    this.getForm().itemChanged(this.getParentItem(), elementValue, event);
-                                }
-                            },
+                              {
+                                  ref: ZaServer.A_zimbraMtaRelayHost,
+                                  type: _SUPER_HOSTPORT_,
+                                  label: ZaMsg.NAD_MTA_RelayMTA,
+                                  colSpan: 1,
+                                  onClick: "ZaController.showTooltip",
+                                  toolTipContent: ZaMsg.tt_MTA_RelayMTA,
+                                  resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                  bmolsnr:true,
+                                  elementChanged: function(elementValue,instanceValue, event) {
+                                      this.getForm().itemChanged(this, elementValue, event);
+                                      this.getForm().itemChanged(this.getParentItem(), elementValue, event);
+                                  }
+                              },
                               {
                                   ref: ZaServer.A_zimbraMtaFallbackRelayHost,
                                   type: _SUPER_HOSTPORT_,

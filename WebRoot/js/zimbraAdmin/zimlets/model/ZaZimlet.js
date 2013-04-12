@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -183,20 +183,6 @@ function () {
     			});	
 	}
 	return des;
-}
-
-/**
- * Searches for display name for the zimlet, and if not present, just returns an empty string
- * Needed to provide information as to which zimlets are missing the Display Names
- *
- * @return {*|string}
- *
- */
-ZaZimlet.prototype.getDisplayName = function () {
-    var name = this[ZaZimlet.A_name];
-    var obj = window[name];
-    var displayName = (obj && (obj["label"] || obj["zimletLabel"])) || "";
-    return displayName;
 }
 
 ZaZimlet.prototype.getLabel = 
