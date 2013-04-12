@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -1088,6 +1088,7 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
 	ZaAccount.A_zimbraFeatureFiltersEnabled,
 	ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,
 	ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
+	ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 	ZaAccount.A_zimbraFeatureIdentitiesEnabled,
 	ZaAccount.A_zimbraFeatureGroupCalendarEnabled,
 	//ZaAccount.A_zimbraFeatureInstantNotify,
@@ -2158,6 +2159,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 							 ZaAccount.A_zimbraFeatureFiltersEnabled,
 							 ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,
 							 ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
+							 ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 							 ZaAccount.A_zimbraFeatureIdentitiesEnabled,
 							 ZaAccount.A_zimbraFeatureReadReceiptsEnabled
 							 ]]
@@ -2176,6 +2178,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 							{ref:ZaAccount.A_zimbraFeatureFiltersEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureFiltersEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureFiltersEnabled,trueValue:"TRUE", falseValue:"FALSE"},
 							{ref:ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE"},
 							{ref:ZaAccount.A_zimbraFeatureNewMailNotificationEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+							{ref:ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled, trueValue:"TRUE", falseValue:"FALSE"},
 							{ref:ZaAccount.A_zimbraFeatureIdentitiesEnabled,
 								type:_SUPER_CHECKBOX_, 
 								resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
