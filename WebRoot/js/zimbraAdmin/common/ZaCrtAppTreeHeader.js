@@ -2,7 +2,7 @@
  * ***** BEGIN LICENSE BLOCK *****
  * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011, 2012 VMware, Inc.
+ * Copyright (C) 2011, 2012, 2013 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -271,6 +271,8 @@ ZaCrtAppTreeHeader.prototype.createMenu = function
         mi.setData("history", currentHistory);
         mi.addSelectionListener(listener);
     }
+
+    this.menu.createSeparator();
 
     mi = new DwtMenuItem({
                     parent: this.menu,

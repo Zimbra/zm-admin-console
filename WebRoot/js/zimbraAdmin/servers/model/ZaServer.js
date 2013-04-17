@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -58,9 +58,9 @@ ZaServer.A_zimbraMailProxyServiceInstalled = "_"+ZaServer.A_zimbraServiceInstall
 ZaServer.A_zimbraVmwareHAServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_vmwareha";
 ZaServer.A_zimbraPolicydServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_cbpolicyd";
 
-ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraReverseProxyHttpEnabled = "zimbraReverseProxyHttpEnabled";
 ZaServer.A_zimbraServiceEnabled = "zimbraServiceEnabled";
+ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraLdapServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_ldap";
 ZaServer.A_zimbraMailboxServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mailbox";
 ZaServer.A_zimbraMtaServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mta";
@@ -239,12 +239,12 @@ ZaServer.APPLIANCEUPDATE_CUSTOMREP = 3;
 ZaServer.DEFAULT_IMAP_PORT=143;
 ZaServer.DEFAULT_IMAP_SSL_PORT=993;
 ZaServer.DEFAULT_POP3_PORT=110;
-ZaServer.DEFAULT_POP3_SSL_PORT=900;
+ZaServer.DEFAULT_POP3_SSL_PORT=995;
 
 ZaServer.DEFAULT_IMAP_PORT_ZCS=7143;
 ZaServer.DEFAULT_IMAP_SSL_PORT_ZCS=7993;
 ZaServer.DEFAULT_POP3_PORT_ZCS=7110;
-ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7900;
+ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7995;
 
 ZaServer.ERR_NOT_CIDR = 1;
 ZaServer.ERR_NOT_STARTING_ADDR = 2;
