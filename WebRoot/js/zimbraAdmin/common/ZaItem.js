@@ -969,3 +969,14 @@ ZaItem.getZeroIsUnlimitedItem = function () {
             } ;
     return item ;
 }
+
+/**
+ * Returns the copyright information for the login screen and the subsequent splash screen
+ *
+ * @return {string} copyright string with the end year information
+ */
+ZaItem.getSplashScreenCopyright = function() {
+    var date = new Date();
+    var curYear = date.getFullYear() + "";
+    return AjxMessageFormat.format(ZaMsg.splashScreenCopyright, [curYear]);
+}
