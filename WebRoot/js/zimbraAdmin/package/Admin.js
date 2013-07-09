@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -12,67 +12,6 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
  * ***** END LICENSE BLOCK *****
  */
-
-/**
- * <p>Contains the list of all the JavaScript files to be loaded during runtime.</p>
- *
- * <p><u>Format</u>: Similar convention to that of Java Package names relative to
- * JavaScript source location.</p>
- *
- * <p><b>NOTE</b>: Comments should be in a line of their own. NO comments are allowed
- * after the semicolon ';' as the java parser doesn't recognise the same.</p>
- *
- */
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-// HELPER CLASSES
-//
-// Replaces ZaUtil
-AjxPackage.require("zimbraAdmin.helper.ZaHelper");
-// Replaces ZaUtil, ZaModel
-AjxPackage.require("zimbraAdmin.helper.ZaUIHelper");
-// TODO: Uncomment
-// AjxPackage.require("zimbraAdmin.common.ZaEvent");
-
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-// BASE CLASSES
-//
-// Replaces ZaModel
-AjxPackage.require("zimbraAdmin.model.ZaBaseModel");
-
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-// XFORM CLASSES
-//
-
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-// MODEL CLASSES
-//
-
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-// CONTROLLER CLASSES
-//
-
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-// VIEW CLASSES
-//
-
-// ==================================================================================
-// ==================================================================================
-// ==================================================================================
-//           *** ANYTHING BELOW THIS LINE SHALL BE DEPRECATED OVER TIME ***
-//
-
 AjxPackage.require("zimbraAdmin.common.ZaUtil");
 AjxPackage.require("zimbraAdmin.common.ZaEvent");
 AjxPackage.require("zimbraAdmin.common.ZaModel");

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -21,14 +21,12 @@
 * @author Greg Solovyev
 **/
 
-ZaDomainListView = function(parent, listType) {
+ZaDomainListView = function(parent) {
 
 //	var className = "ZaDomainListView";
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
-
-    this._listType = listType;
-
+	
 	var headerList = this._getHeaderList();
 
 	ZaListView.call(this, {
@@ -78,40 +76,33 @@ function(domain, now, isDragProxy) {
 	html[idx++] = "<table width='100%'>";
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
-    var dwtId = Dwt.getNextId();
-    var rowId = this._listType;
 	for(var i = 0; i < cnt; i++) {
 		var field = this._headerList[i]._field;
 		var cellWidth = this._getCellWidth(i, {});
 		if(field == "type") {
 			// type
-            var partialClassName = "Domain";
-            var domainType = domain.attrs[ZaDomain.A_domainType];
-            if (domainType === "alias") {
-                partialClassName += "Alias";
-            }
-			html[idx++] = "<td id=\"" + rowId + "_data_type_" + dwtId + "\" width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml(partialClassName) + "</td>";
+			html[idx++] = "<td width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml("Domain") + "</td>";
 		} else if(field == ZaDomain.A_domainName) {
 			// name
-			html[idx++] = "<td id=\"" + rowId + "_data_name_" + dwtId + "\" align='left' width=" + cellWidth + ">";
+			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.name);
-			html[idx++] = "</td>";
+			html[idx++] = "</nobr></td>";
 		} else if(field == ZaDomain.A_description) {
 			// description		
-			html[idx++] = "<td id=\"" + rowId + "_data_desc_" + dwtId + "\" align='left' width=" + cellWidth + ">";
+			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(
 				ZaItem.getDescriptionValue(domain.attrs[ZaDomain.A_description]));
-			html[idx++] = "</td>";
+			html[idx++] = "</nobr></td>";
 		} else if(field == ZaDomain.A_zimbraDomainStatus) {
 			// description		
-			html[idx++] = "<td id=\"" + rowId + "_data_status_" + dwtId + "\" align='left' width=" + cellWidth + ">";
+			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
 			html[idx++] = ZaDomain._domainStatus(domain.attrs[ZaDomain.A_zimbraDomainStatus]);
-			html[idx++] = "</td>";
+			html[idx++] = "</nobr></td>";
 		} else if (field == ZaDomain.A_domainType) {
 			// domain type
-			html[idx++] = "<td id=\"" + rowId + "_data_domain_type_" + dwtId + "\" align='left' width=" + cellWidth + ">";
+			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.attrs[ZaDomain.A_domainType]);
-			html[idx++] = "</td>";
+			html[idx++] = "</nobr></td>";
 		}
 	}
 	html[idx++] = "</tr></table>";
@@ -126,11 +117,11 @@ function() {
 	var sortable = 1;
 	var i = 0 ;
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
-	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", null, "objectClass", false, true);
+	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", sortable++, "objectClass", false, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainName , ZaMsg.DLV_Name_col, null, "250px", sortable++, ZaDomain.A_domainName, true, true);
 	//headerList[0].initialize(ZaMsg.CLV_Name_col, null, "245", true, ZaDomain.A_domainName);
-	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainType , ZaMsg.DLV_Type_col, null, "100px", null, ZaDomain.A_domainType, true, true);
-	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_zimbraDomainStatus , ZaMsg.DLV_Status_col, null, "100px", null, ZaDomain.A_zimbraDomainStatus, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainType , ZaMsg.DLV_Type_col, null, "100px", sortable++, ZaDomain.A_domainType, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_zimbraDomainStatus , ZaMsg.DLV_Status_col, null, "100px", sortable++, ZaDomain.A_zimbraDomainStatus, true, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_description, ZaMsg.DLV_Description_col, null, "auto", null, null, true, true);
 	//headerList[1].initialize(ZaMsg.CLV_Description_col, null, "245", false, ZaDomain.A_description);
 	

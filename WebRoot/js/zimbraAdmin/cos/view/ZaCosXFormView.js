@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -214,6 +214,7 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	ZaCos.A_zimbraFeatureFiltersEnabled,
 	ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
 	ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
+	ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 	ZaCos.A_zimbraFeatureIdentitiesEnabled,
 	ZaCos.A_zimbraFeatureGroupCalendarEnabled,
 	//ZaCos.A_zimbraFeatureInstantNotify,
@@ -781,6 +782,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 						ZaCos.A_zimbraFeatureFiltersEnabled,
 						ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
 						ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
+						ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 						ZaCos.A_zimbraFeatureIdentitiesEnabled,
 						ZaCos.A_zimbraFeatureReadReceiptsEnabled
 					]]
@@ -798,6 +800,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureFiltersEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFiltersEnabled,label:ZaMsg.LBL_zimbraFeatureFiltersEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled,label:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled,label:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"}
 
@@ -1861,9 +1864,7 @@ function (value, event, form) {
 	var minPollingInterval = instance.attrs[ZaCos.A_zimbraMailMinPollingInterval] ;
 	var prefPollingIntervalItem = form.getItemsById (ZaCos.A_zimbraPrefMailPollingInterval)[0];
 	try {
-        var prefPollingInNum = parseInt(ZaUtil.getLifeTimeInSeconds(prefPollingInterval));
-        var minPollingInNum = parseInt(ZaUtil.getLifeTimeInSeconds(minPollingInterval));
-        if (prefPollingInNum < minPollingInNum) {
+		if (ZaUtil.getLifeTimeInSeconds(prefPollingInterval) < ZaUtil.getLifeTimeInSeconds(minPollingInterval)){
 			prefPollingIntervalItem.setError (ZaMsg.tt_mailPollingIntervalError + minPollingInterval) ;
 			form.parent.setDirty(false);	
 		}else{
