@@ -2,7 +2,7 @@
  * ***** BEGIN LICENSE BLOCK *****
  * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011 VMware, Inc.
+ * Copyright (C) 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -52,7 +52,10 @@ ZaSearchOptionDialog = function(parent, optionId, w, h, contextId) {
 	this._pageDiv = document.createElement("div");
 	this._pageDiv.className = "ZaXWizardDialogPageDiv";
 
-	Dwt.setSize(this._pageDiv, w, h);
+    if (w)
+	    this._pageDiv.style.width = w;
+    if (h)
+	    this._pageDiv.style.height = h;
 	this._pageDiv.style.overflow = "auto";
 	this._pageDiv.style["overflow-y"] = "auto";
 	this._pageDiv.style["overflow-x"] = "auto";
