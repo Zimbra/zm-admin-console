@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -578,34 +578,14 @@ function() {
             }
 
             // Add Configuration / Global Settings
-            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_CONFIG_VIEW] ||
-                ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-
-                ti = new ZaTreeItemData(
-                    {
-                        parent: parentPath,
-                        id: ZaId.getTreeItemId(
-                            ZaId.PANEL_APP,
-                            ZaId.PANEL_CONFIGURATION,
-                            null,
-                            ZaId.TREEITEM_GSET
-                        ),
-                        text: ZaMsg.OVP_global,
-                        forceNode: true,
-                        mappingId: ZaZimbraAdmin._GLOBAL_SETTINGS
-                    }
-                );
-
-                ti.addListener(
-                    ZaTreeEvent.ONDESTROY,
-                    new AjxListener(
-                        this,
-                        this.saveBeforeExit
-                    )
-                );
-
+            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_CONFIG_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+                ti = new ZaTreeItemData({
+                                            parent:parentPath,
+                                            id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_CONFIGURATION,null, ZaId.TREEITEM_GSET),
+                                            text: ZaMsg.OVP_global,
+                                            mappingId: ZaZimbraAdmin._GLOBAL_SETTINGS});
+                ti.addListener(ZaTreeEvent.ONDESTROY, new AjxListener(this, this.saveBeforeExit));
                 tree.addTreeItemData(ti);
-
                 ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._GLOBAL_SETTINGS] = ZaOverviewPanelController.globalSettingsTreeListener;
             }
 
@@ -770,30 +750,6 @@ function() {
             this._handleException(ex, "ZaOverviewPanelController.prototype._buildNewFolderTree", null, false);
         }
     }
-
-    // Always add the Help Center link
-    ti = new ZaTreeItemData({
-            parent: ZaMsg.OVP_home,
-            id: ZaId.getTreeItemId(ZaId.PANEL_APP, ZaId.PANEL_HOME, null, "helpCenter"),
-            text: ZaMsg.zimbraHelpCenter,
-            className: "AdminHomeTreeItem",
-            defaultSelectedItem: 1,
-            mappingId: ZaZimbraAdmin._HELP_CENTER_HOME_VIEW,
-            image: "Help"
-    });
-    tree.addTreeItemData(ti);
-
-    ti = new ZaTreeItemData(
-        {
-            parent: ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.zimbraHelpCenter]),
-            id: ZaId.getTreeItemId(ZaId.PANEL_APP, "helpCenter", null, "helpCenter"),
-            text: ZaMsg.zimbraHelpCenter,
-            mappingId: ZaZimbraAdmin._HELP_CENTER_VIEW
-        }
-    );
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._HELP_CENTER_VIEW] = ZaZimbraAdmin.prototype._helpListener;
-    tree.addTreeItemData(ti);
-
 	//Instrumentation code start
 	if(ZaOverviewPanelController.treeModifiers) {
 		var methods = ZaOverviewPanelController.treeModifiers;
@@ -1848,8 +1804,6 @@ ZaOverviewPanelController.prototype.getIconByType = function(type) {
         image = "AccountAlias";
     else if(type == ZaItem.SERVER)
         image = "Server";
-    else if(type == ZaItem.RIGHT)
-        image = "RightObject";
 
     return image;
 }

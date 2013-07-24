@@ -2,7 +2,7 @@
  * ***** BEGIN LICENSE BLOCK *****
  * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011 VMware, Inc.
+ * Copyright (C) 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -24,7 +24,7 @@
 
 ZaTaskHeaderPanel = function(parent) {
     DwtComposite.call(this, parent, "TaskHeaderPanel", Dwt.ABSOLUTE_STYLE);
-    this._expanded =true;
+    this._expanded = false;
     this.getHtmlElement().innerHTML = this.getImgHtml();
     this.getHtmlElement().onclick = AjxCallback.simpleClosure(ZaTaskHeaderPanel.__handleClick, this);
 }

@@ -571,11 +571,7 @@ ZaSearchListController.prototype._editItem = function (item) {
 	} else if (type == ZaItem.RESOURCE ){
 		ZaApp.getInstance().getResourceController().show(item);
 	} else if (type==ZaItem.DOMAIN) {
-        if (item.attrs[ZaDomain.A_domainType] == ZaDomain.domainTypes.local) {
-            ZaApp.getInstance().getDomainController().show(item);
-        } else if (item.attrs[ZaDomain.A_domainType] == ZaDomain.domainTypes.alias) {
-            ZaApp.getInstance().getDomainAliasWizard(true).editDomainAlias (item, true);
-        }
+		ZaApp.getInstance().getDomainController().show(item);
 	}else if (type==ZaItem.COS) {
                 ZaApp.getInstance().getCosController().show(item);
     }
