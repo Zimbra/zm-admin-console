@@ -2,7 +2,7 @@
  * ***** BEGIN LICENSE BLOCK *****
  * 
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -323,6 +323,7 @@ ZaNewCosXWizard.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	ZaCos.A_zimbraFeatureFiltersEnabled,
 	ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
 	ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
+	ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 	ZaCos.A_zimbraFeatureIdentitiesEnabled,
 	ZaCos.A_zimbraFeatureGroupCalendarEnabled,
 	//ZaCos.A_zimbraFeatureInstantNotify,
@@ -616,6 +617,7 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
 						ZaCos.A_zimbraFeatureFiltersEnabled,
 						ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
 						ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
+						ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 						ZaCos.A_zimbraFeatureIdentitiesEnabled,
 						ZaCos.A_zimbraFeatureReadReceiptsEnabled
 					]]
@@ -633,6 +635,7 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureFiltersEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFiltersEnabled,label:ZaMsg.LBL_zimbraFeatureFiltersEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled,label:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled,label:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_WIZ_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"}
 
@@ -1554,34 +1557,13 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
     this._lastStep = this.stepChoices.length;
 
 	xFormObject.items = [
-        {
-            type: _OUTPUT_,
-            colSpan: 2,
-            valign: _TOP_,
-            ref: ZaModel.currentStep,
-            choices: this.stepChoices,
-            valueChangeEventSources: [ZaModel.currentStep],
-            cssStyle: "white-space: normal"
-        },
-        {
-            type: _SEPARATOR_,
-            align: _CENTER_,
-            valign: _TOP_
-        },
-        {
-            type: _SPACER_,
-            align: _CENTER_,
-            valign: _TOP_
-        },
-        {
-            type: _SWITCH_,
-            width: 635,
-            align: _LEFT_,
-            valign: _TOP_,
-            cssStyle: "white-space: normal",
-            items: cases
-        }
-    ];
+		{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices,valueChangeEventSources:[ZaModel.currentStep]},
+	    {type:_SEPARATOR_, align:_CENTER_, valign:_TOP_},
+		{type:_SPACER_,  align:_CENTER_, valign:_TOP_},
+		{type:_SWITCH_, width:635, align:_LEFT_, valign:_TOP_, items:cases}
+
+
+	];		
 };
 ZaXDialog.XFormModifiers["ZaNewCosXWizard"].push(ZaNewCosXWizard.myXFormModifier);
 

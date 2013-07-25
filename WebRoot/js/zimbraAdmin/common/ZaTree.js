@@ -606,8 +606,6 @@ function (dataItem) {
             type = ZaItem.ALIAS; break;
         case "Server":
             type = ZaItem.SERVER; break;
-        case "RightObject":
-            type = ZaItem.RIGHT; break;
 		default :
 			type = null;
 	}
@@ -635,8 +633,6 @@ function (dataItem) {
             image = "AccountAlias";
         else if(objList[i].type == ZaItem.SERVER)
             image = "Server";
-        else if(objList[i].type == ZaItem.RIGHT)
-            image = "RightObject";
 
         ti = new ZaTreeItemData({
                 text: objList[i].displayName,

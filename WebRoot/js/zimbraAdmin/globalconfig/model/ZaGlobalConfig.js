@@ -309,7 +309,6 @@ ZaGlobalConfig.prototype.initFromJS = function(obj) {
     this.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender] = [];
 
     this.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService] = [];
-
     // convert restrictions to hidden fields for xform binding
     var restrictions = this.attrs[ZaGlobalConfig.A_zimbraMtaRestriction];
 
@@ -538,7 +537,7 @@ ZaGlobalConfig.myXModel = {
 	  	{ id:ZaGlobalConfig.A_zimbraSpamSubjectTag, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpamSubjectTag, type: _STRING_, whiteSpace: 'collapse', maxLength: 32 },
 	  	// anti-virus
 	  	{ id:ZaGlobalConfig.A_zimbraVirusCheckEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-	  	{ id:ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, type: _STRING_, whiteSpace: 'collapse' },
+	  	{ id:ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, type: _LIFETIME_NUMBER_, minInclusive: 0, fractionDigits: 0 },
 	  	{ id:ZaGlobalConfig.A_zimbraVirusBlockEncryptedArchive, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusBlockEncryptedArchive, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
 	  	{ id:ZaGlobalConfig.A_zimbraVirusWarnAdmin, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusWarnAdmin, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
 	  	{ id:ZaGlobalConfig.A_zimbraVirusWarnRecipient, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusWarnRecipient, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -101,7 +101,7 @@ function() {
 	var sortable=1;
 	var i = 0 ;
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
-	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", null, "objectClass", false, true);
+	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", sortable++, "objectClass", false, true);
 	headerList[i++] = new ZaListHeaderItem(ZaServer.A_ServiceHostname, ZaMsg.SLV_ServiceHName_col, null, 200, sortable++, ZaServer.A_ServiceHostname, true, true);
 	headerList[i++] = new ZaListHeaderItem(ZaServer.A_description, ZaMsg.DLV_Description_col, null, "auto", null, ZaServer.A_description, true, true);
 		

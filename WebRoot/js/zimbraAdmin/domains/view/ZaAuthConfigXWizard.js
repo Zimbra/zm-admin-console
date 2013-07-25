@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -288,19 +288,11 @@ function(entry) {
 **/
 
 ZaAuthConfigXWizard.myXFormModifier = function(xFormObject) {
-    xFormObject.items = [
-        {
-            type: _OUTPUT_,
-            colSpan: 2,
-            valign: _TOP_,
-            cssStyle: "white-space: normal",
-            ref: ZaModel.currentStep,
-            choices: this.stepChoices,
-            valueChangeEventSources: [ZaModel.currentStep]
-        },
+	xFormObject.items = [
+			{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices,valueChangeEventSources:[ZaModel.currentStep]},
 			{type:_SEPARATOR_, align:_CENTER_, valign:_TOP_},
 			{type:_SPACER_,  align:_CENTER_, valign:_TOP_},				
-			{type:_SWITCH_,width:650, valign:_TOP_, cssStyle: "white-space: normal",
+			{type:_SWITCH_,width:650, valign:_TOP_,
 				items:[
 					{type:_CASE_, numCols:2,colSizes:["220px","430px"],	caseKey:ZaAuthConfigXWizard.AUTH_CONFIG_STEP_1,												
 						items:[

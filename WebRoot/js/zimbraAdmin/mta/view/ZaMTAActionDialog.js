@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2012, 2013 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -26,7 +26,7 @@ ZaMTAActionDialog = function(parent,title, instance, w, h) {
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON,DwtDialog.OK_BUTTON];
 	ZaXDialog.call(this, parent,null, title, w,h);
 	this.initForm(ZaMTAActionDialog.myXModel,this.getMyXForm(instance));
-	this._helpURL = ZaMTAActionDialog.helpURL;
+	this._helpURL = ZaMTAActionDialog.helpURL;		
 }
 
 ZaMTAActionDialog.prototype = new ZaXDialog;
@@ -201,7 +201,7 @@ Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.items = [
 		elementChanged: function(elementValue,instanceValue, event) {
 			this.getForm().itemChanged(this, ZaMTAActionDialog.FLTRED_SET, event);
 		},
-		bmolsnr:true
+		bmolsnr:true		
 	},
 	{type:_OUTPUT_, ref:ZaMTAActionDialog.FLTR_ITEMS,
 		getDisplayValue:function (itemVal) {
@@ -331,7 +331,7 @@ function(instance) {
 			{ type: _Q_MSGS_QUESTION_RADIO_,
                 visibilityChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
                 enableDisableChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
-			  align:_LEFT_
+                align:_LEFT_
 			},	
 			{ type: _Q_FLTRD_QUESTION_RADIO_,
                 visibilityChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
