@@ -164,19 +164,6 @@ body						{	@ChromeBg@	}
 #ZSplashPanel           {   @SplashOuterBorder@     }
 #ZSplashBodyContainer   {   @SplashInnerBorder@     }
 
-.LoginScreen .decor1, .SplashScreen .decor1 {
-    background-image:url("@SkinImgDir@/vmwarePeel.png");
-    background-repeat:no-repeat;
-    border-top-right-radius: 15px;
-    height:102px;
-    overflow:hidden;
-    position:absolute;
-    right:0;
-    top:0;
-    width:103px;
-    -moz-border-radius-topright:15px;
-    -webkit-border-top-right-radius:15px;
-}
 .SplashScreen { 
     position:absolute;
     left:0px;
@@ -237,13 +224,6 @@ body						{	@ChromeBg@	}
 }
 .SplashScreen .ImgLoginBanner {
     cursor:pointer;
-}
-.SplashScreen .ImgAltBanner {
-    background-image:url("@LogoImgDir@/AltBanner.png");
-    background-repeat:repeat-x;
-    height:11px;
-    margin:20px 0px 0px 20px;
-    width:71px;
 }
 .SplashScreen .content {
     color:@lighten(LoginColor,36)@; 
