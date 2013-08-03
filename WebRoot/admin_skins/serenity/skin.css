@@ -30,10 +30,6 @@ BODY {
 	padding:0;
 }
 
-.DwtShell {
-	background:transparent url(@SkinImgDir@/marge-mosaic-bg.png) no-repeat;
-}
-
 /* classes for the skin around the various pieces of the app */
 
 .skin_container	{	position:relative; overflow:hidden;	}
@@ -449,7 +445,8 @@ BODY {
 
 
 .AboutScreen {
-    background:transparent url(@SkinImgDir@/about-bg.png) no-repeat;
+    background-color:@LoginCenterBottom@;
+	@grad(LoginCenterTop,LoginCenterBottom,linear-vertical)@
     @roundCorners(5)@
 }
 
