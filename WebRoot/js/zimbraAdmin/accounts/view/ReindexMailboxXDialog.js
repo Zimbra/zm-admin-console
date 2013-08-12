@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -184,9 +184,9 @@ function() {
 				visibilityChecks:[ReindexMailboxXDialog.isStatusNotError],
 				visibilityChangeEventSources:[ZaReindexMailbox.A_status], 
 				height:"150px", width:"490px",colSpan:"*"
-			},
-			{type:_GROUP_, colSpan:"*", numCols:5, width:"490px",cssStyle:"text-align:center; overflow:hidden", align:_CENTER_, items: [
-				{type:_SPACER_, width:"30px", colSpan:1},
+			},			
+			{type:_GROUP_, colSpan:"*", numCols:5, width:"460px", cssStyle:"text-align:center", align:_CENTER_, items: [	
+				{type:_CELLSPACER_, width:"30px", colSpan:1},
 				{type:_DWT_BUTTON_, 
 					onActivate:"ReindexMailboxXDialog.startReindexMailbox.call(this)", label:ZaMsg.NAD_ACC_Start_Reindexing, 
 					enableDisableChecks:[ReindexMailboxXDialog.isStartEnabled],
@@ -194,7 +194,7 @@ function() {
 					visibilityChecks:[],					
 					valign:_BOTTOM_,width:"150px"
 				},
-				{type:_SPACER_, width:"90px", colSpan:1},
+				{type:_CELLSPACER_, width:"50px", colSpan:1},
 				{type:_DWT_BUTTON_, 
 					onActivate:"ReindexMailboxXDialog.abortReindexMailbox.call(this)", label:ZaMsg.NAD_ACC_Abort_Reindexing, 
 					enableDisableChecks:[ReindexMailboxXDialog.isAbortEnabled],
@@ -202,7 +202,7 @@ function() {
 					visibilityChecks:[],					
 					valign:_BOTTOM_,width:"150px"				
 				},
-				{type:_SPACER_, width:"30px", colSpan:1}
+				{type:_CELLSPACER_, width:"30px", colSpan:1}
 			]}
 		]		
 	}

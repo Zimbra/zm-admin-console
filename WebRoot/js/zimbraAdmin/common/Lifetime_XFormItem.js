@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -21,19 +21,19 @@ MLifetime_XModelItem = function () {}
 XModelItemFactory.createItemType("_MLIFETIME_", "mlifetime", MLifetime_XModelItem);
 MLifetime_XModelItem.prototype.validateType = function (value) {
 	var val = "";
-	if(value == ZaMsg.Unlimited) {
-		val = "0";
-	} else if(value != null && value.length >0) {
+	if(value != null && value.length >0) {
 		if(value.length > 1) {
 			val = value.substr(0, value.length-1);				
 		} else {
-			val = "0";
+			if(value == "0") {
+				val = "0";
+			} else {
+				val = "";
+			}
 		}
 	}
 	
-	if(val)
-		val =  XModelItem.prototype.validateNumber.call(this, val);
-	
+	val =  XModelItem.prototype.validateNumber.call(this, val);
 	return value;
 }
 /**
@@ -72,12 +72,9 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 				}
 			}
 			this.getParentItem()._numericPart = val;
-			return ((!val || val=="0") ? ZaMsg.Unlimited : val);
+			return val;	
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
-            if (numericPart  == ZaMsg.Unlimited) {
-                numericPart = 0;
-            }
 			var val = numericPart + this.getParentItem()._stringPart;
 			this.getParentItem()._numericPart = numericPart;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
@@ -108,9 +105,6 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 	Composite_XFormItem.prototype.initializeItems.call(this);
 }
 Lifetime_XFormItem.prototype.items = [];
-Lifetime_XFormItem.prototype.getDisplayElement = function () {
-	return this.getElement(this.getId() + "_display");
-}
 
 Lifetime1_XFormItem = function() {}
 XFormItemFactory.createItemType("_LIFETIME1_", "lifetime1", Lifetime1_XFormItem, Composite_XFormItem);
@@ -174,141 +168,31 @@ Lifetime2_XFormItem.prototype.nowrap = false;
 Lifetime2_XFormItem.prototype.labelWrap = true;
 XFormItemFactory.createItemType("_LIFETIME2_", "lifetime2", Lifetime2_XFormItem, Lifetime1_XFormItem);
 
-Lifetime2_XFormItem.prototype.initializeItems = function () {
-	this.items = [
-		{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_number_input", 
-			visibilityChecks:[],
-		 	enableDisableChecks:[],		
-			getDisplayValue:function (itemVal) {
-				var val = "";
-				if(itemVal != null && itemVal.length >0) {
-					if(itemVal.length > 1) {
-						val = itemVal.substr(0, itemVal.length-1);				
+Lifetime2_XFormItem.prototype.items = [
+	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_number_input", 
+		visibilityChecks:[],
+	 	enableDisableChecks:[],		
+		getDisplayValue:function (itemVal) {
+			var val = "";
+			if(itemVal != null && itemVal.length >0) {
+				if(itemVal.length > 1) {
+					val = itemVal.substr(0, itemVal.length-1);				
+				} else {
+					if(itemVal == "0") {
+						val = "0";
 					} else {
-						if(itemVal == "0") {
-							val = "0";
-						} else {
-							val = "";
-						}
+						val = "";
 					}
 				}
-				this.getParentItem()._numericPart = val;
-				this.getParentItem()._stringPart="d";
-				return val;	
-			},
-			elementChanged:function(numericPart, instanceValue, event) {
-				var val = numericPart + "d";
-				this.getForm().itemChanged(this.getParentItem(), val, event);
 			}
+			this.getParentItem()._numericPart = val;
+			this.getParentItem()._stringPart="d";
+			return val;	
 		},
-		{type:_OUTPUT_, ref:null, labelLocation:_NONE_, value:"d",getDisplayValue:function (itemVal){ return AjxMsg.days;}}
-	];
-	Composite_XFormItem.prototype.initializeItems.call(this);
-};
-Lifetime2_XFormItem.prototype.items = [];
-
-/**
-* _LIFETIME_MINUTES_ XForm item type allows time interval to be expressed only in minutes
-**/
-LifetimeMinutes_XFormItem = function() {}
-LifetimeMinutes_XFormItem.prototype.nowrap = false;
-LifetimeMinutes_XFormItem.prototype.labelWrap = true;
-XFormItemFactory.createItemType("_LIFETIME_MINUTES_", "lifetime_minutes", LifetimeMinutes_XFormItem, Lifetime1_XFormItem);
-
-LifetimeMinutes_XFormItem.prototype.initializeItems = function () {
-	this.items = [
-		{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_,cssClass:"admin_xform_number_input", 
-			visibilityChecks:[],
-		 	enableDisableChecks:[],		
-			getDisplayValue:function (itemVal) {
-				var val = "";
-				if(itemVal != null && itemVal.length >0) {
-					if(itemVal.length > 1) {
-						val = itemVal.substr(0, itemVal.length-1);				
-					} else {
-						if(itemVal == "0") {
-							val = "0";
-						} else {
-							val = "";
-						}
-					}
-				}
-				this.getParentItem()._numericPart = val;
-				this.getParentItem()._stringPart="m";
-				return val;	
-			},
-			elementChanged:function(numericPart, instanceValue, event) {
-				var val = numericPart + "m";
-				this.getForm().itemChanged(this.getParentItem(), val, event);
-			}
-		},
-		{type:_OUTPUT_, ref:null, labelLocation:_NONE_, value:"m",getDisplayValue:function (itemVal){ return AjxMsg.minutes;}}
-	];
-	Composite_XFormItem.prototype.initializeItems.call(this);
-};
-LifetimeMinutes_XFormItem.prototype.items = [];
-
-Long_Lifetime_XFormItem = function() {}
-XFormItemFactory.createItemType("_LONG_LIFETIME_", "long_lifetime", Long_Lifetime_XFormItem, Composite_XFormItem);
-Long_Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
-Long_Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
-Long_Lifetime_XFormItem.prototype.nowrap = false;
-Long_Lifetime_XFormItem.prototype.labelWrap = true;
-Long_Lifetime_XFormItem.prototype.initializeItems = function(){
-    this.items = [
-        {type:_TEXTFIELD_, ref:".", labelLocation:_NONE_, cssClass:"admin_xform_number_input",
-            visibilityChecks:[],
-            enableDisableChecks:[],
-            getDisplayValue:function (itemVal) {
-                var val = "";
-                if(itemVal != null && itemVal.length >0) {
-                    if(itemVal.length > 1) {
-                        val = parseInt(itemVal);
-                    } else {
-                        if(itemVal == "0") {
-                            val = "0";
-                        } else {
-                            val = "";
-                        }
-                    }
-                }
-                this.getParentItem()._numericPart = val;
-                return ((!val || val=="0") ? "0" : val);
-            },
-            elementChanged:function(numericPart, instanceValue, event) {
-                if (numericPart  == ZaMsg.Unlimited) {
-                    numericPart = 0;
-                }
-                var val = numericPart + this.getParentItem()._stringPart;
-                this.getParentItem()._numericPart = numericPart;
-                this.getForm().itemChanged(this.getParentItem(), val, event);
-            }
-        },
-        {type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices: ZaModel.getLongTimeChoices,
-            visibilityChecks:[],
-            enableDisableChecks:[],
-            getDisplayValue:function (itemVal){
-                var val = "d";
-                if(itemVal != null && itemVal.length >0) {
-                    if(itemVal.length > 1) {
-                        val = itemVal.substr(itemVal.length-1, 1);
-                    } else if (itemVal != "0") {
-                        val = (itemVal == "h" || itemVal == "d" || itemVal== "m" || itemVal == "y") ? itemVal : "d";
-                    }
-                }
-                this.getParentItem()._stringPart = val;
-                return val;
-            },
-            elementChanged:function(stringPart,instanceValue, event) {
-                var val = this.getParentItem()._numericPart + stringPart;
-                this.getParentItem()._stringPart = stringPart;
-                this.getForm().itemChanged(this.getParentItem(), val, event);
-            }
-        }
-    ];
-    Composite_XFormItem.prototype.initializeItems.call(this);
-}
-Long_Lifetime_XFormItem.prototype.items = [];
-Long_Lifetime_XFormItem.prototype.getDisplayElement = function () {
-    return this.getElement(this.getId() + "_display");
-}
+		elementChanged:function(numericPart, instanceValue, event) {
+			var val = numericPart + "d";
+			this.getForm().itemChanged(this.getParentItem(), val, event);
+		}
+	},
+	{type:_OUTPUT_, ref:null, labelLocation:_NONE_, value:"d",getDisplayValue:function (itemVal){ return AjxMsg.days;}}
+];

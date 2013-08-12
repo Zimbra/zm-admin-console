@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -25,7 +25,6 @@ ZaServerListController = function(appCtxt, container) {
    	this._popupOperations = new Array();			
 	
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_servers/managing_servers.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaMsg.helpManageServers;
 }
 
 ZaServerListController.prototype = new ZaListViewController();
@@ -78,12 +77,21 @@ ZaServerListController.prototype._createUI = function () {
 	try {
 		var elements = new Object();
 		this._contentView = new ZaServerListView(this._container);
+		this._initToolbar();
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_SERLIST); 
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 
 		this._initPopupMenu();
 		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_SERLIST, ZaId.MENU_POP);
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._SERVERS_LIST_VIEW, elements);
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab() 
+		}
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));								
 			
@@ -101,18 +109,17 @@ function(ev) {
 		if(this._contentView.getSelectionCount()>0) {
 			var arrItems = this._contentView.getSelection();
 			if(arrItems && arrItems.length) {
+				if(!ZaApp.getInstance().dialogs["flushCacheDialog"]) {
+					ZaApp.getInstance().dialogs["flushCacheDialog"] = new ZaFlushCacheXDialog(this._container);
+				}
 				srvList = [];
 				srvList._version = 1;
-				var uuid = [];
 				for(var i=0;i<arrItems.length;i++) {
 					var srv = arrItems[i];
 					srv["status"] = 0;
 					srvList.push(srv);
-					uuid.push(srv.id);
 				}
-				obj = {statusMessage:null,flushZimlet:true,flushSkin:true,flushLocale:true,serverList:srvList,status:0,name:(uuid.length > 1 ? ZaMsg.multiple_servers : srvList[0].name), _uuid:(uuid.length > 1 ? uuid.join("__") : uuid[0])};
-				obj._uuid = uuid.join("__");
-				ZaApp.getInstance().dialogs["flushCacheDialog"] = new ZaFlushCacheXDialog(this._container, {id:(uuid.length > 1 ? uuid.join("__") : uuid[0]), name:(uuid.length > 1 ? ZaMsg.multiple_servers : srvList[0].name)});
+				obj = {statusMessage:null,flushZimlet:true,flushSkin:true,flushLocale:true,serverList:srvList,status:0};
 				ZaApp.getInstance().dialogs["flushCacheDialog"].setObject(obj);
 				ZaApp.getInstance().dialogs["flushCacheDialog"].popup();
 			}
@@ -167,8 +174,6 @@ function(ev) {
 		if(ev.item) {
 			this._selectedItem = ev.item;
 			ZaApp.getInstance().getServerController().show(ev.item);
-            var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_servers]);
-            ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, ev.item.name, null, false, false, ev.item, undefined, true);
 		}
 	} else {
 		this.changeActionsState();	
@@ -190,14 +195,7 @@ function(ev) {
 	if(this._contentView.getSelectionCount() == 1) {
 		var item = this._contentView.getSelection()[0];
 		ZaApp.getInstance().getServerController().show(item);
-        var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_servers]);
-        ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, item.name, null, false, false, item);
 	}
-}
-
-ZaServerListController.prototype.getPopUpOperation =
-function () {
-    return this._popupOperations;
 }
 
 ZaServerListController.changeActionsStateMethod = 

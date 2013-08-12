@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -51,33 +51,25 @@ ZaServer.A_zimbraMtaServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_m
 ZaServer.A_zimbraSnmpServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_snmp";
 ZaServer.A_zimbraAntiVirusServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_antivirus";
 ZaServer.A_zimbraAntiSpamServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_antispam";
-ZaServer.A_zimbraOpenDKIMServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_opendkim";
 ZaServer.A_zimbraSpellServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_spell";
 ZaServer.A_zimbraLoggerServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_logger";
-ZaServer.A_zimbraMailProxyServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_proxy";
-ZaServer.A_zimbraVmwareHAServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_vmwareha";
-ZaServer.A_zimbraPolicydServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_cbpolicyd";
+ZaServer.A_zimbraMailProxyServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_imapproxy";
 
 ZaServer.A_zimbraReverseProxyHttpEnabled = "zimbraReverseProxyHttpEnabled";
 ZaServer.A_zimbraServiceEnabled = "zimbraServiceEnabled";
-ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraLdapServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_ldap";
 ZaServer.A_zimbraMailboxServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mailbox";
 ZaServer.A_zimbraMtaServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mta";
 ZaServer.A_zimbraSnmpServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_snmp";
 ZaServer.A_zimbraAntiVirusServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_antivirus";
 ZaServer.A_zimbraAntiSpamServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_antispam";
-ZaServer.A_zimbraOpenDKIMServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_opendkim";
 ZaServer.A_zimbraSpellServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_spell";
 ZaServer.A_zimbraLoggerServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_logger";
-ZaServer.A_zimbraMailProxyServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_proxy";
-ZaServer.A_zimbraVmwareHAServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_vmwareha";
-
+ZaServer.A_zimbraMailProxyServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_imapproxy";
 // MTA
-ZaServer.A_zimbraMtaSaslAuthEnable = "zimbraMtaSaslAuthEnable";
+ZaServer.A_zimbraMtaAuthEnabled = "zimbraMtaAuthEnabled";
 ZaServer.A_zimbraMtaDnsLookupsEnabled = "zimbraMtaDnsLookupsEnabled";
 ZaServer.A_zimbraMtaRelayHost = "zimbraMtaRelayHost";
-ZaServer.A_zimbraMtaFallbackRelayHost = "zimbraMtaFallbackRelayHost";
 ZaServer.A_zimbraMtaTlsAuthOnly = "zimbraMtaTlsAuthOnly";
 ZaServer.A_zimbraMtaMyNetworks = "zimbraMtaMyNetworks";
 //milter server
@@ -110,9 +102,6 @@ ZaServer.A_ImapSSLBindPort="zimbraImapSSLBindPort";
 ZaServer.A_ImapSSLServerEnabled="zimbraImapSSLServerEnabled";
 ZaServer.A_ImapCleartextLoginEnabled="zimbraImapCleartextLoginEnabled";
 
-//proxy lookup target
-ZaServer.A_zimbraReverseProxyLookupTarget = "zimbraReverseProxyLookupTarget";
-
 //redo log
 ZaServer.A_RedologEnabled = "zimbraRedologEnabled";
 ZaServer.A_RedologLogPath = "zimbraRedologLogPath";
@@ -139,43 +128,14 @@ ZaServer.A_VolumeType = "type";
 ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
 ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
 ZaServer.A_isCurrent = "isCurrent";
-
-//VAMI Appliance Update
-ZaServer.A_zimbraApplianceVendor = "zimbraApplianceVendor";
-ZaServer.A_zimbraApplianceName = "zimbraApplianceName";
-ZaServer.A_zimbraApplianceVersion = "zimbraApplianceVersion";
-ZaServer.A_zimbraApplianceFullVersion = "zimbraApplianceFullVersion";
-ZaServer.A_zimbraApplianceDetails = "zimbraApplianceDetails";
-ZaServer.A_zimbraApplianceDefaultRepUrl = "zimbraApplianceDefaultRepUrl";
-ZaServer.A_zimbraApplianceCustomRepUrl = "zimbraApplianceCustomRepUrl";
-ZaServer.A_zimbraApplianceCustomRepUrlUser = "zimbraApplianceCustomRepUrlUser";
-ZaServer.A_zimbraApplianceCustomRepUrlPass = "zimbraApplianceCustomRepUrlPass";
-ZaServer.A_zimbraApplianceUpdateOption = "zimbraApplianceUpdateOption";
-ZaServer.A_zimbraApplianceUpdateType = "zimbraApplianceUpdateType";
-ZaServer.A_zimbraApplianceUpdatehourofrun = "zimbraApplianceUpdatehourofrun";
-
-//bind ip address
-ZaServer.A_zimbraMailBindAddress = "zimbraMailBindAddress";
-ZaServer.A_zimbraMailSSLBindAddress = "zimbraMailSSLBindAddress";
-ZaServer.A_zimbraMailSSLClientCertBindAddress = "zimbraMailSSLClientCertBindAddress";
-ZaServer.A_zimbraAdminBindAddress = "zimbraAdminBindAddress";
-
-//spnego
-ZaServer.A_zimbraSpnegoAuthPrincipal = "zimbraSpnegoAuthPrincipal";
-ZaServer.A_zimbraSpnegoAuthTargetName = "zimbraSpnegoAuthTargetName";
-
-// Auto provision
-ZaServer.A_zimbraAutoProvPollingInterval = "zimbraAutoProvPollingInterval";
-ZaServer.A_zimbraAutoProvScheduledDomains = "zimbraAutoProvScheduledDomains";
-
-// web client authentication
-ZaServer.A_zimbraMailSSLClientCertMode = "zimbraMailSSLClientCertMode";
-ZaServer.A_zimbraMailSSLClientCertPort = "zimbraMailSSLClientCertPort";
-ZaServer.A_zimbraMailSSLProxyClientCertPort = "zimbraMailSSLProxyClientCertPort";
-ZaServer.A_zimbraReverseProxyMailMode = "zimbraReverseProxyMailMode";
-ZaServer.A_zimbraReverseProxyClientCertMode = "zimbraReverseProxyClientCertMode";
-ZaServer.A_zimbraReverseProxyClientCertCA = "zimbraReverseProxyClientCertCA";
-
+//mail proxy
+ZaServer.A_zimbraMailProxyPort = "zimbraMailProxyPort";
+ZaServer.A_zimbraMailSSLProxyPort = "zimbraMailSSLProxyPort";
+ZaServer.A_zimbraImapProxyBindPort="zimbraImapProxyBindPort";
+ZaServer.A_zimbraImapSSLProxyBindPort="zimbraImapSSLProxyBindPort";
+ZaServer.A_zimbraPop3ProxyBindPort="zimbraPop3ProxyBindPort";
+ZaServer.A_zimbraPop3SSLProxyBindPort="zimbraPop3SSLProxyBindPort";
+ZaServer.A_zimbraReverseProxyLookupTarget = "zimbraReverseProxyLookupTarget";                    
 // other
 ZaServer.A_zimbraScheduledTaskNumThreads = "zimbraScheduledTaskNumThreads" ;
 ZaServer.A_zimbraMailPurgeSleepInterval = "zimbraMailPurgeSleepInterval" ;
@@ -195,56 +155,15 @@ ZaServer.currentkeys[ZaServer.MSG] = ZaServer.A_CurrentMsgVolumeId;
 ZaServer.currentkeys[ZaServer.INDEX] = ZaServer.A_CurrentIndexVolumeId;
 ZaServer.volumeTypes =[ZaServer.MSG,ZaServer.INDEX];
 
-ZaServer.updateoptions = {};
-ZaServer.updateoptions[0] = ZaMsg.NONE = 111;
-ZaServer.updateoptions[2] = ZaMsg.EVERYDAY = 112;
-ZaServer.updateoptions[3] = ZaMsg.EVERYSUNDAY = 113;
-ZaServer.updateoptions[4] = ZaMsg.EVERYMONDAY =114;
-ZaServer.updateoptions[5] = ZaMsg.EVERYTUESDAY = 115;
-ZaServer.updateoptions[6] = ZaMsg.EVERYWEDNESDAY = 116;
-ZaServer.updateoptions[7] = ZaMsg.EVERYTHURSDAY = 117;
-ZaServer.updateoptions[8] = ZaMsg.EVERYFRIDAY = 118;
-ZaServer.updateoptions[9] = ZaMsg.EVERYSATURDAY = 119;
-
-ZaServer.updatehourofrun = {};
-ZaServer.updatehourofrun[0] = ZaMsg.ONEAM = 201;
-ZaServer.updatehourofrun[1] = ZaMsg.TWOAM = 202;
-ZaServer.updatehourofrun[2] = ZaMsg.THREEAM = 203;
-ZaServer.updatehourofrun[3] = ZaMsg.FOURAM = 204;
-ZaServer.updatehourofrun[4] = ZaMsg.FIVEAM = 205;
-ZaServer.updatehourofrun[5] = ZaMsg.SIXAM = 206;
-ZaServer.updatehourofrun[6] = ZaMsg.SEVENAM = 207;
-ZaServer.updatehourofrun[7] = ZaMsg.EIGHTAM = 208;
-ZaServer.updatehourofrun[8] = ZaMsg.NINEAM = 209;
-ZaServer.updatehourofrun[9] = ZaMsg.TENAM = 210;
-ZaServer.updatehourofrun[10] = ZaMsg.ELEVENAM = 211;
-ZaServer.updatehourofrun[11] = ZaMsg.TWELVEAM = 212;
-ZaServer.updatehourofrun[12] = ZaMsg.TWELVEPM = 312;
-ZaServer.updatehourofrun[13] = ZaMsg.ELEVENPM = 311; 
-ZaServer.updatehourofrun[14] = ZaMsg.TENPM = 310;
-ZaServer.updatehourofrun[15] = ZaMsg.NINEPM = 309;
-ZaServer.updatehourofrun[16] = ZaMsg.EIGHTPM = 308;
-ZaServer.updatehourofrun[17] = ZaMsg.SEVENPM = 307;
-ZaServer.updatehourofrun[18] = ZaMsg.SIXPM = 306;
-ZaServer.updatehourofrun[19] = ZaMsg.FIVEPM = 305;
-ZaServer.updatehourofrun[20] = ZaMsg.FOURPM = 304;
-ZaServer.updatehourofrun[21] = ZaMsg.THREEPM = 303;
-ZaServer.updatehourofrun[22] = ZaMsg.TWOPM = 302;
-ZaServer.updatehourofrun[23] = ZaMsg.ONEPM =301;
-
-ZaServer.APPLIANCEUPDATE_CD = 2;
-ZaServer.APPLIANCEUPDATE_DEFAULTREP = 1;
-ZaServer.APPLIANCEUPDATE_CUSTOMREP = 3;
-
 ZaServer.DEFAULT_IMAP_PORT=143;
 ZaServer.DEFAULT_IMAP_SSL_PORT=993;
 ZaServer.DEFAULT_POP3_PORT=110;
-ZaServer.DEFAULT_POP3_SSL_PORT=995;
+ZaServer.DEFAULT_POP3_SSL_PORT=900;
 
 ZaServer.DEFAULT_IMAP_PORT_ZCS=7143;
 ZaServer.DEFAULT_IMAP_SSL_PORT_ZCS=7993;
 ZaServer.DEFAULT_POP3_PORT_ZCS=7110;
-ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7995;
+ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7900;
 
 ZaServer.ERR_NOT_CIDR = 1;
 ZaServer.ERR_NOT_STARTING_ADDR = 2;
@@ -288,7 +207,6 @@ ZaServer.DOT_TO_CIDR["0xffffffff"] = ZaServer.DOT_TO_CIDR["255.255.255.255"] = 3
 
 ZaServer.FLUSH_CACHE_RIGHT = "flushCache";
 ZaServer.MANAGE_VOLUME_RIGHT = "manageVolume";
-ZaServer.RIGHT_GET_SESSIONS="getSessions";
 
 ZaServer.isValidPostfixSubnetString = function(mask) {
 	//is this a CIDR
@@ -321,7 +239,6 @@ ZaServer.isValidPostfixSubnetString = function(mask) {
 	}
 	return 0;
 }
-
 /**
  * extract number of network bits from CIDR string
  * @return integer
@@ -389,80 +306,13 @@ ZaServer.applyMask = function (addr1, netMask) {
 }
 
 ZaServer.octetsToLong = function (addrString) {
-        var patrn=/^[A-Fa-f0-9:.]+$/;
-   if(patrn.test(addrString)){
-        var temp1= addrString.indexOf(".");
-        var temp2= addrString.indexOf(":");
-        var temp3= addrString.indexOf("::");
-
-	   if(temp3!=-1){
-        var octets = addrString.split("::");
-        if(octets.length !=2) {
-                return -1;
-        }
-         else if(temp1==-1&&temp2>-1){
-        octetsub0=octets[0].split(":");
-        octetsub1=octets[1].split(":");
-          if (octetsub0.length+octetsub1.length>7)
-           return -1;
-           else{
-                   for(var j=0;j<octetsub0.length;j++){
-                     if(octetsub0[j].length>4)
-                     return -1;
-                   }
-                   for(var j=0;j<octetsub1.length;j++){
-                     if(octetsub1[j].length>4)
-                     return -1;
-                   }
-
-           }
-        }else if((temp1>-1)){
-                      if(octets[0]!="")
-                      return -1;
-                      else{
-                          octetsub=octets[1].split(".");
-                          for(var j=0;j<octetsub.length;j++){
-                          if(octetsub[j]>parseInt("255"))
-                          return -1;
-                          }
-             }
-            }
-                   return 0;
-    }
-
-        if(temp1!=-1){
-              var  octets = addrString.split(".");
-              if(octets.length !=4) {
-                return -1;
-              } else{
-                    for(var i=0;i<octets.length;i++){
-                    var j=octets[i];
-                    if(j>parseInt("255")){
-                    return -1;
-              }
+	var octets = addrString.split(".");
+	if(octets.length !=4) {
+		return -1;
+	}	
+	var addrNumber = Math.pow(256,3)*parseInt(octets[0]) + Math.pow(256,2)*parseInt(octets[1]) + Math.pow(256,1)*parseInt(octets[2]) + parseInt(octets[3]);
+	return addrNumber;
 }
-        var addrNumber = Math.pow(256,3)*parseInt(octets[0]) + Math.pow(256,2)*parseInt(octets[1]) + Math.pow(256,1)*parseInt(octets[2]) + parseInt(octets[3]);
-        return addrNumber;
-             }
-     }
-
-        if(temp2!=-1){
-        var octets = addrString.split(":");
-        if(octets.length !=8) {
-                return -1;
-       } else {
-        for(var i=0;i<octets.length;i++){
-        if(octets[i].length>4)
-        return -1;
-        }
- return 0;
-    }
-        }
-}
-return -1;
-}
-
-
 
 ZaServer.longToOctets = function(addrNumber) {
 	var ip1 = Math.floor(addrNumber/Math.pow(256,3));
@@ -498,22 +348,14 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_Service, ref:"attrs/" +  ZaServer.A_Service, type:_STRING_, maxLength: 256 },
 		{id:ZaServer.A_ServiceHostname, ref:"attrs/" +  ZaServer.A_ServiceHostname, type:_HOSTNAME_OR_IP_, maxLength: 256 },
 		// Services
-		{id:ZaServer.A_zimbraPolicydServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraPolicydServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraLdapServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraLdapServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMailboxServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMailboxServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMtaServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMtaServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraSnmpServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraSnmpServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiVirusServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraAntiVirusServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiSpamServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraAntiSpamServiceEnabled, type: _ENUM_, choices: [false,true] },
-        {
-            id: ZaServer.A_zimbraOpenDKIMServiceEnabled,
-            ref: "attrs/" + ZaServer.A_zimbraOpenDKIMServiceEnabled,
-            type: _ENUM_,
-            choices: [false, true]
-        },
 		{id:ZaServer.A_zimbraSpellServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraSpellServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraLoggerServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraLoggerServiceEnabled, type: _ENUM_, choices: [false,true] },
-        {id:ZaServer.A_zimbraVmwareHAServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraVmwareHAServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMailProxyServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMailProxyServiceEnabled, type: _ENUM_, choices: [false,true] },		
 		{id:ZaServer.A_zimbraReverseProxyLookupTarget, ref:"attrs/"+ZaServer.A_zimbraReverseProxyLookupTarget, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
 		{id:ZaServer.A_zimbraLdapServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraLdapServiceInstalled, type: _ENUM_, choices: [false,true] },
@@ -522,37 +364,20 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraSnmpServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraSnmpServiceInstalled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiVirusServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraAntiVirusServiceInstalled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiSpamServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraAntiSpamServiceInstalled, type: _ENUM_, choices: [false,true] },
-        {
-            id: ZaServer.A_zimbraOpenDKIMServiceInstalled,
-            ref: "attrs/" + ZaServer.A_zimbraOpenDKIMServiceInstalled,
-            type: _ENUM_,
-            choices: [false, true]
-        },
 		{id:ZaServer.A_zimbraSpellServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraSpellServiceInstalled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraLoggerServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraLoggerServiceInstalled, type: _ENUM_, choices: [false,true] },
-		{id:ZaServer.A_zimbraMailProxyServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraMailProxyServiceInstalled, type: _ENUM_, choices: [false,true] },
-        {id:ZaServer.A_zimbraVmwareHAServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraVmwareHAServiceInstalled, type: _ENUM_, choices: [false,true] },
-        {id:ZaServer.A_zimbraPolicydServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraPolicydServiceInstalled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraMailProxyServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraMailProxyServiceInstalled, type: _ENUM_, choices: [false,true] },				
 		// MTA
-		{id:ZaServer.A_zimbraMtaSaslAuthEnable, ref:"attrs/" +  ZaServer.A_zimbraMtaSaslAuthEnable, type: _COS_ENUM_, choices: ["yes", "no"] },
+		{id:ZaServer.A_zimbraMtaAuthEnabled, ref:"attrs/" +  ZaServer.A_zimbraMtaAuthEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaTlsAuthOnly, ref:"attrs/" +  ZaServer.A_zimbraMtaTlsAuthOnly, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaRelayHost, ref:"attrs/" +  ZaServer.A_zimbraMtaRelayHost,  type: _COS_HOSTNAME_OR_IP_, maxLength: 256 },
-        {id:ZaServer.A_zimbraMtaFallbackRelayHost, ref:"attrs/" + ZaServer.A_zimbraMtaFallbackRelayHost, type: _COS_HOSTNAME_OR_IP_, maxLength: 256 },
 		{id:ZaServer.A_zimbraMtaMyNetworks, ref:"attrs/" +  ZaServer.A_zimbraMtaMyNetworks, type:_COS_STRING_, maxLength: 10240 },
 		{id:ZaServer.A_zimbraMtaDnsLookupsEnabled, ref:"attrs/" +  ZaServer.A_zimbraMtaDnsLookupsEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		//milter server
 		{id:ZaServer.A_zimbraMilterBindAddress, ref:"attrs/" +  ZaServer.A_zimbraMilterBindAddress, type:_LIST_, listItem:{type:_HOSTNAME_OR_IP_, maxLength: 128} },
 		{id:ZaServer.A_zimbraMilterBindPort, ref:"attrs/" +  ZaServer.A_zimbraMilterBindPort, type:_COS_PORT_},
 		{id:ZaServer.A_zimbraMilterServerEnabled, ref:"attrs/" +  ZaServer.A_zimbraMilterServerEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-        //spnego
-		{id:ZaServer.A_zimbraSpnegoAuthTargetName, ref:"attrs/" +  ZaServer.A_zimbraSpnegoAuthTargetName, type:_STRING_},
-        {id:ZaServer.A_zimbraSpnegoAuthPrincipal, ref:"attrs/" +  ZaServer.A_zimbraSpnegoAuthPrincipal, type:_STRING_},
-        {id:ZaServer.A_zimbraMailSSLClientCertMode, ref:"attrs/" +  ZaServer.A_zimbraMailSSLClientCertMode, type:_COS_STRING_, choices:["Disabled","NeedClientAuth","WantClientAuth"]},
-        {id:ZaServer.A_zimbraMailSSLClientCertPort, ref:"attrs/" +  ZaServer.A_zimbraMailSSLClientCertPort, type:_COS_PORT_},
-        {id:ZaServer.A_zimbraMailSSLProxyClientCertPort, ref:"attrs/" +  ZaServer.A_zimbraMailSSLProxyClientCertPort, type:_COS_PORT_},
-        {id:ZaServer.A_zimbraReverseProxyMailMode, ref:"attrs/" +  ZaServer.A_zimbraReverseProxyMailMode, type:_COS_STRING_, choices:["http","https","both","mixed","redirect"]},
-        {id:ZaServer.A_zimbraReverseProxyClientCertMode, ref:"attrs/" +  ZaServer.A_zimbraReverseProxyClientCertMode, type:_COS_STRING_, choices:["on","off","optional"]},
-        {id:ZaServer.A_zimbraReverseProxyClientCertCA, ref:"attrs/" + ZaServer.A_zimbraReverseProxyClientCertCA, type:_STRING_},
+
 		// ...other...
 		{id:ZaServer.A_zimbraSmtpHostname, ref:"attrs/" +  ZaServer.A_zimbraSmtpHostname, type:_COS_LIST_, listItem:{type:_HOSTNAME_OR_IP_, maxLength: 256} },
 		{id:ZaServer.A_SmtpPort, ref:"attrs/" +  ZaServer.A_SmtpPort, type:_COS_PORT_},
@@ -577,16 +402,12 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_ImapServerEnabled, ref:"attrs/" + ZaServer.A_ImapServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaServer.A_ImapSSLBindPort, ref:"attrs/" + ZaServer.A_ImapSSLBindPort, type:_COS_PORT_ },
 		{id:ZaServer.A_ImapSSLServerEnabled, ref:"attrs/" + ZaServer.A_ImapSSLServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
+		//mail proxy
+		{id:ZaServer.A_zimbraImapProxyBindPort, ref:"attrs/" +  ZaServer.A_zimbraImapProxyBindPort, type:_COS_PORT_ },
+		{id:ZaServer.A_zimbraImapSSLProxyBindPort, ref:"attrs/" +  ZaServer.A_zimbraImapSSLProxyBindPort, type:_COS_PORT_ },
+		{id:ZaServer.A_zimbraPop3ProxyBindPort, ref:"attrs/" +  ZaServer.A_zimbraPop3ProxyBindPort, type:_COS_PORT_ },
+		{id:ZaServer.A_zimbraPop3SSLProxyBindPort, ref:"attrs/" +  ZaServer.A_zimbraPop3SSLProxyBindPort, type:_COS_PORT_ },
 		
-		//ip address bindings
-		{id:ZaServer.A_zimbraMailBindAddress, ref:"attrs/" +  ZaServer.A_zimbraMailBindAddress, type:_IP_},
-		{id:ZaServer.A_zimbraMailSSLBindAddress, ref:"attrs/" +  ZaServer.A_zimbraMailSSLBindAddress, type:_IP_ },
-		{id:ZaServer.A_zimbraMailSSLClientCertBindAddress, ref:"attrs/" +  ZaServer.A_zimbraMailSSLClientCertBindAddress, type:_IP_ },
-		{id:ZaServer.A_zimbraAdminBindAddress, ref:"attrs/" +  ZaServer.A_zimbraAdminBindAddress, type:_IP_ },
-
-        // auto provision
-        {id:ZaServer.A_zimbraAutoProvPollingInterval, ref:"attrs/" + ZaServer.A_zimbraAutoProvPollingInterval, type: _COS_MLIFETIME_, minInclusive: 0 },
-        {id:ZaServer.A_zimbraAutoProvScheduledDomains, ref:"attrs/" +  ZaServer.A_zimbraAutoProvScheduledDomains, type:_LIST_, listItem:{type:_STRING_, maxLength: 256} },
 		{id:ZaServer.A_ImapCleartextLoginEnabled, ref:"attrs/" + ZaServer.A_ImapCleartextLoginEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaServer.A_RedologEnabled, ref:"attrs/" + ZaServer.A_RedologEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaServer.A_RedologLogPath, ref:"attrs/" + ZaServer.A_RedologLogPath, type:_STRING_},		
@@ -603,20 +424,7 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_showVolumes, ref:ZaServer.A_showVolumes, type: _ENUM_, choices: [false,true]},
 		{id:ZaServer.A2_volume_selection_cache, ref:ZaServer.A2_volume_selection_cache, type:_LIST_},
 		{id:ZaServer.A_CurrentIndexVolumeId, ref:ZaServer.A_CurrentIndexVolumeId, type:_NUMBER_},
-		{id:ZaServer.A_CurrentMsgVolumeId, ref:ZaServer.A_CurrentMsgVolumeId, type:_NUMBER_},
-		//VAMI update
-		{id:ZaServer.A_zimbraApplianceVendor, ref:"attrs/" +  ZaServer.A_zimbraApplianceVendor, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceName, ref:"attrs/" +  ZaServer.A_zimbraApplianceName, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceVersion, ref:"attrs/" +  ZaServer.A_zimbraApplianceVersion, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceFullVersion, ref:"attrs/" +  ZaServer.A_zimbraApplianceFullVersion, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceDetails, ref:"attrs/" +  ZaServer.A_zimbraApplianceDetails, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceDefaultRepUrl, ref:"attrs/" +  ZaServer.A_zimbraApplianceDefaultRepUrl, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceCustomRepUrl, ref:"attrs/" +  ZaServer.A_zimbraApplianceCustomRepUrl, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceCustomRepUrlUser, ref:"attrs/" +  ZaServer.A_zimbraApplianceCustomRepUrlUser, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceCustomRepUrlPass, ref:"attrs/" +  ZaServer.A_zimbraApplianceCustomRepUrlPass, type:_STRING_, maxLength: 256 },
-		{id:ZaServer.A_zimbraApplianceUpdateOption, ref:"attrs/" +  ZaServer.A_zimbraApplianceUpdateOption, type:_LIST_},
-		{id:ZaServer.A_zimbraApplianceUpdateType, ref:"attrs/" +  ZaServer.A_zimbraApplianceUpdateType, type:_LIST_},
-		{id:ZaServer.A_zimbraApplianceUpdatehourofrun, ref:"attrs/" +  ZaServer.A_zimbraApplianceUpdatehourofrun, type:_LIST_}
+		{id:ZaServer.A_CurrentMsgVolumeId, ref:ZaServer.A_CurrentMsgVolumeId, type:_NUMBER_}
     ]
 };
 		
@@ -624,49 +432,39 @@ ZaServer.prototype.toString = function() {
 	return this.name;
 }
 
-ZaServer.staticServerByNameCacheTable = [];
-
-ZaServer.getServerByName = function (serverName) {
-    if (!serverName) {
-        return null;
-    }
-
-    var server = ZaServer.staticServerByNameCacheTable[serverName];
-
-	if (!server) {
-        server = new ZaServer();
+ZaServer.getServerByName = 
+function(serverName) {
+	if(!serverName)
+		return null;
+	var server = ZaServer.staticServerByNameCacheTable[serverName];
+	if(!server) {
+		domain = new ZaServer();
 		try {
 			server.load("name", serverName, false, true);
 		} catch (ex) {
             throw (ex);
         }
 
-        ZaServer.staticServerByNameCacheTable[serverName] = server;
-	}
-
+		ZaServer.putServeToCache(server);
+	} 
 	return server;	
-}
+} 
 
-ZaServer.staticServerByIdCacheTable = [];
-
-ZaServer.getServerById = function (serverId) {
-    if(!serverId) {
-        return null;
-    }
-
-    var server = ZaServer.staticServerByIdCacheTable[serverId];
-
-	if (!server) {
-        server = new ZaServer();
-        try {
-            server.load("id", serverId, false, true);
+ZaServer.getServerById = 
+function (serverId) {
+	if(!serverId)
+		return null;
+		
+	var server = ZaServer.staticServerByIdCacheTable[serverId];
+	if(!server) {
+		server = new ZaServer();
+		try {
+			server.load("id", serverId, false, true);
 		} catch (ex) {
-            throw (ex);
-        }
-
-        ZaServer.staticServerByIdCacheTable[serverId] = server;
+			throw (ex);
+		}
+		ZaServer.putServeToCache(server);
 	}
-
 	return server;
 }
 
@@ -730,11 +528,6 @@ ZaServer.modifyMethod = function (tmpObj) {
 			var enabled = [];
 			for (var i = 0; i < svcInstalled.length; i++) {
 				var service = svcInstalled[i];
-				if (service == "vmware-ha") {
-					if (tmpObj.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+"vmwareha"]) 
-						enabled.push("vmware-ha");
-					continue;
-				}
 				if (tmpObj.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+service]) {
 					enabled.push(service);
 				}			
@@ -754,15 +547,6 @@ ZaServer.modifyMethod = function (tmpObj) {
 				if (!dirty) {
 					for (var i = 0; i < prevEnabled.length; i++) {
 						var service = prevEnabled[i];
-						if (service == "vmware-ha") {
-							if(!tmpObj.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+"vmware"]){
-								dirty = true;
-								break;
-							} else {
-								continue;
-							}
-
-						}
 						if (!tmpObj.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+service]) {
 							dirty = true;
 							break;
@@ -1051,11 +835,6 @@ ZaServer.prototype.initFromJS = function(server) {
 		}
 		for (var i = 0; i < installed.length; i++) {
 			var service = installed[i];
-			if(service == "vmware-ha"){
-				this.attrs["_"+ZaServer.A_zimbraServiceInstalled+"_"+"vmwareha"] = true;
-                        	this.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+"vmwareha"] = false;
-				continue;
-			}
 			this.attrs["_"+ZaServer.A_zimbraServiceInstalled+"_"+service] = true;
 			this.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+service] = false;
 		}
@@ -1068,11 +847,6 @@ ZaServer.prototype.initFromJS = function(server) {
 		}
 		for (var i = 0; i < enabled.length; i++) {
 			var service = enabled[i];
-			if (service == "vmware-ha") {
-				this.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+"vmwareha"] = true;
-				continue;
-			}
-
 			this.attrs["_"+ZaServer.A_zimbraServiceEnabled+"_"+service] = true;
 		}
 	}
@@ -1093,10 +867,7 @@ ZaServer.prototype.initFromJS = function(server) {
         if(this._defaultValues && this._defaultValues.attrs[ZaServer.A_zimbraMilterBindAddress] && !(this._defaultValues.attrs[ZaServer.A_zimbraMilterBindAddress]  instanceof Array)) {
                 this._defaultValues.attrs[ZaServer.A_zimbraMilterBindAddress]  = [this._defaultValues.attrs[ZaServer.A_zimbraMilterBindAddress]];
         }
-
-	if(this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] && !(this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] instanceof Array)) {
-        this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] = [this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains]];
-    }
+	
 
 }
 

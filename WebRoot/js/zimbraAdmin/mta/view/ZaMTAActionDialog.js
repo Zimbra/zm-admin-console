@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -21,12 +21,12 @@
 * param w (width)
 * param h (height)
 **/
-ZaMTAActionDialog = function(parent,title, instance, w, h) {
+ZaMTAActionDialog = function(parent,title, w, h) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON,DwtDialog.OK_BUTTON];
 	ZaXDialog.call(this, parent,null, title, w,h);
-	this.initForm(ZaMTAActionDialog.myXModel,this.getMyXForm(instance));
-	this._helpURL = ZaMTAActionDialog.helpURL;
+	this.initForm(ZaMTAActionDialog.myXModel,this.getMyXForm());
+	this._helpURL = ZaMTAActionDialog.helpURL;		
 }
 
 ZaMTAActionDialog.prototype = new ZaXDialog;
@@ -100,92 +100,6 @@ Q_MSGS_QUESTION_RADIO_XFormItem.prototype.items = [
 	}
 ];
 
-Q_MSGS_QUESTION_RADIO_XFormItem.prototype.setElementEnabled = function (enable) {
-    this.getElement().disabled = (enable != true);
-}
-
-Q_MSGS_QUESTION_RADIO_XFormItem.prototype.updateEnabledDisabled = function () {
-    var isEnabled = true;
-
-    if (isEnabled) {
-        var myEnabledDisabledChecks = this.getInheritedProperty("enableDisableChecks");
-
-        if (myEnabledDisabledChecks && myEnabledDisabledChecks instanceof Array) {
-            var cnt = myEnabledDisabledChecks.length;
-
-            for (var i = 0; i < cnt; i++) {
-                if (myEnabledDisabledChecks[i] != null) {
-                    if (typeof myEnabledDisabledChecks[i] === "function") {
-                        isEnabled = myEnabledDisabledChecks[i].call(this);
-                        if (!isEnabled) {
-                            break;
-                        }
-                    } else if (myEnabledDisabledChecks[i] instanceof Array) {
-                        var func = myEnabledDisabledChecks[i].shift();
-                        if (!func || !func.apply) {
-                            continue;
-                        }
-                        isEnabled = func.apply(this, myEnabledDisabledChecks[i]);
-                        myEnabledDisabledChecks[i].unshift(func);
-                        if (!isEnabled) {
-                            break;
-                        }
-                    }
-                }
-            }
-        } else if (myEnabledDisabledChecks == false) {
-            isEnabled = false;
-        }
-    }
-
-    if (isEnabled) {
-        this.enableElement();
-    } else {
-        this.disableElement();
-    }
-}
-
-Q_MSGS_QUESTION_RADIO_XFormItem.prototype.updateVisibility = function () {
-    var isVisible = true;
-
-    if (isVisible) {
-        var myVisibilityChecks = this.getInheritedProperty("visibilityChecks");
-
-        if (myVisibilityChecks && myVisibilityChecks instanceof Array) {
-            var cnt = myVisibilityChecks.length;
-            for (var i = 0; i < cnt; i++) {
-                if (myVisibilityChecks[i] != null) {
-                    if (typeof myVisibilityChecks[i] === "function") {
-                        isVisible = myVisibilityChecks[i].call(this);
-                        if (!isVisible) {
-                            break;
-                        }
-                    } else if (myVisibilityChecks[i] instanceof Array) {
-                        var func = myVisibilityChecks[i].shift();
-                        isVisible = func.apply(this, myVisibilityChecks[i]);
-                        myVisibilityChecks[i].unshift(func);
-                        if (!isVisible) {
-                            break;
-                        }
-                    } else if (typeof myVisibilityChecks === "string") {
-                        var instance = this.getInstance();
-                        isVisible = eval(myVisibilityChecks[i]);
-                        if (!isVisible) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if (isVisible) {
-        this.show();
-    } else {
-        this.hide();
-    }
-}
-
 Q_FLTRD_QUESTION_RADIO_XFormItem = function() {}
 XFormItemFactory.createItemType("_Q_FLTRD_QUESTION_RADIO_", "q_fltrd_question_radio", Q_FLTRD_QUESTION_RADIO_XFormItem, Composite_XFormItem);
 Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.numCols = 2;
@@ -201,7 +115,7 @@ Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.items = [
 		elementChanged: function(elementValue,instanceValue, event) {
 			this.getForm().itemChanged(this, ZaMTAActionDialog.FLTRED_SET, event);
 		},
-		bmolsnr:true
+		bmolsnr:true		
 	},
 	{type:_OUTPUT_, ref:ZaMTAActionDialog.FLTR_ITEMS,
 		getDisplayValue:function (itemVal) {
@@ -229,95 +143,8 @@ Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.items = [
 		}
 	}
 ];
-
-Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.setElementEnabled = function (enable) {
-    this.getElement().disabled = (enable != true);
-}
-
-Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.updateEnabledDisabled = function () {
-    var isEnabled = true;
-
-    if (isEnabled) {
-        var myEnabledDisabledChecks = this.getInheritedProperty("enableDisableChecks");
-
-        if (myEnabledDisabledChecks && myEnabledDisabledChecks instanceof Array) {
-            var cnt = myEnabledDisabledChecks.length;
-
-            for (var i = 0; i < cnt; i++) {
-                if (myEnabledDisabledChecks[i] != null) {
-                    if (typeof myEnabledDisabledChecks[i] === "function") {
-                        isEnabled = myEnabledDisabledChecks[i].call(this);
-                        if (!isEnabled) {
-                            break;
-                        }
-                    } else if (myEnabledDisabledChecks[i] instanceof Array) {
-                        var func = myEnabledDisabledChecks[i].shift();
-                        if (!func || !func.apply) {
-                            continue;
-                        }
-                        isEnabled = func.apply(this, myEnabledDisabledChecks[i]);
-                        myEnabledDisabledChecks[i].unshift(func);
-                        if (!isEnabled) {
-                            break;
-                        }
-                    }
-                }
-            }
-        } else if (myEnabledDisabledChecks == false) {
-            isEnabled = false;
-        }
-    }
-
-    if (isEnabled) {
-        this.enableElement();
-    } else {
-        this.disableElement();
-    }
-}
-
-Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.updateVisibility = function () {
-    var isVisible = true;
-
-    if (isVisible) {
-        var myVisibilityChecks = this.getInheritedProperty("visibilityChecks");
-
-        if (myVisibilityChecks && myVisibilityChecks instanceof Array) {
-            var cnt = myVisibilityChecks.length;
-            for (var i = 0; i < cnt; i++) {
-                if (myVisibilityChecks[i] != null) {
-                    if (typeof myVisibilityChecks[i] === "function") {
-                        isVisible = myVisibilityChecks[i].call(this);
-                        if (!isVisible) {
-                            break;
-                        }
-                    } else if (myVisibilityChecks[i] instanceof Array) {
-                        var func = myVisibilityChecks[i].shift();
-                        isVisible = func.apply(this, myVisibilityChecks[i]);
-                        myVisibilityChecks[i].unshift(func);
-                        if (!isVisible) {
-                            break;
-                        }
-                    } else if (typeof myVisibilityChecks === "string") {
-                        var instance = this.getInstance();
-                        isVisible = eval(myVisibilityChecks[i]);
-                        if (!isVisible) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if (isVisible) {
-        this.show();
-    } else {
-        this.hide();
-    }
-}
-
 ZaMTAActionDialog.prototype.getMyXForm = 
-function(instance) {
+function() {	
 	var xFormObject = {
 		numCols:1, align:_CENTER_,cssStyle:"text-align:center",
 		items:[
@@ -329,13 +156,9 @@ function(instance) {
 			  valign:_TOP_
 			},
 			{ type: _Q_MSGS_QUESTION_RADIO_,
-                visibilityChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
-                enableDisableChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
 			  align:_LEFT_
 			},	
 			{ type: _Q_FLTRD_QUESTION_RADIO_,
-                visibilityChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
-                enableDisableChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
 			  align:_LEFT_
 			}
 		]		

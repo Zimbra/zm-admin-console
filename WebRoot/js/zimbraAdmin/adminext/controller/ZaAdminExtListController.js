@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -21,15 +21,16 @@
 **/
 ZaAdminExtListController = function(appCtxt, container) {
 	ZaListViewController.call(this, appCtxt, container,"ZaAdminExtListController");
+   	this._toolbarOperations = new Array();
    	this._popupOperations = new Array();			
 	this.objType = ZaEvent.S_ZIMLET;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "admin_console_misc/enhancing_the_zimbra_admin_console_user_interface.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaMsg.helpAdminExtensions;
 }
 
 ZaAdminExtListController.prototype = new ZaListViewController();
 ZaAdminExtListController.prototype.constructor = ZaAdminExtListController;
  
+ZaController.initToolbarMethods["ZaAdminExtListController"] = new Array();
 ZaController.initPopupMenuMethods["ZaAdminExtListController"] = new Array();
 ZaController.changeActionsStateMethods["ZaAdminExtListController"] = new Array();
 
@@ -63,19 +64,33 @@ function(list, openInNewTab) {
 	}*/
 }
 
+ZaAdminExtListController.initToolbarMethod =
+function () {
+//   	this._toolbarOperations[ZaOperation.EDIT]=new ZaOperation(ZaOperation.EDIT,ZaMsg.TBB_Edit, ZaMsg.SERTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaAdminExtListController.prototype._editButtonListener));    	
+	this._toolbarOperations[ZaOperation.DEPLOY_ZIMLET]=new ZaOperation(ZaOperation.DEPLOY_ZIMLET,ZaMsg.TBB_DeployNew, ZaMsg.TBB_DeployNew_tt, "Deploy", "Deploy", new AjxListener(this, this.deployZimletListener));				
+   	this._toolbarOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Undeploy, ZaMsg.DTBB_Undeploy_tt, "Undeploy", "Undeploy", new AjxListener(this, this._undeployButtonListener));    	    		
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
+	
+	
+	this._toolbarOrder.push(ZaOperation.DEPLOY_ZIMLET);
+	this._toolbarOrder.push(ZaOperation.DELETE);
+	this._toolbarOrder.push(ZaOperation.NONE);	
+	this._toolbarOrder.push(ZaOperation.HELP);					
+}
+ZaController.initToolbarMethods["ZaAdminExtListController"].push(ZaAdminExtListController.initToolbarMethod);
+
 ZaAdminExtListController.initPopupMenuMethod =
 function () {
-	this._popupOperations[ZaOperation.DEPLOY_ZIMLET]=new ZaOperation(ZaOperation.DEPLOY_ZIMLET,ZaMsg.TBB_DeployNew, ZaMsg.TBB_DeployNew_tt, "Deploy", "Deploy", new AjxListener(this, this.deployZimletListener));
-   	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Undeploy, ZaMsg.DTBB_Undeploy_tt, "Undeploy", "Undeploy", new AjxListener(this, this._undeployButtonListener));
-   	this._popupOrder.push(ZaOperation.DEPLOY_ZIMLET);
-   	this._popupOrder.push(ZaOperation.DELETE);
+//   	this._popupOperations[ZaOperation.EDIT]=new ZaOperation(ZaOperation.EDIT,ZaMsg.TBB_Edit, ZaMsg.SERTBB_Edit_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaAdminExtListController.prototype._editButtonListener));    	
+   	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Undeploy, ZaMsg.DTBB_Undeploy_tt, "Undeploy", "Undeploy", new AjxListener(this, this._undeployButtonListener));    	    		
 }
 ZaController.initPopupMenuMethods["ZaAdminExtListController"].push(ZaAdminExtListController.initPopupMenuMethod);
 
 ZaAdminExtListController.prototype.deployZimletListener = 
 function (ev) {
 	try {
-		//if(!this._deployZimletWizard)
+		if(!this._deployZimletWizard)
 			this._deployZimletWizard = new ZaZimletDeployXWizard(this._container);		
 	
 		var zimlet = new ZaZimlet();
@@ -91,13 +106,23 @@ ZaAdminExtListController.prototype._createUI = function () {
 	try {
 		var elements = new Object();
 		this._contentView = new ZaAdminExtListView(this._container);
+		this._initToolbar();
+
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_AELIST); 
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+
 		this._initPopupMenu();
 		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_AELIST, ZaId.MENU_POP);
 
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._ZIMLET_LIST_VIEW, elements);
-        
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab() 
+		}
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams);
+
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 		this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null, ZaId.CTR_PREFIX + ZaId.VIEW_AELIST + "_removeConfirm");					
@@ -126,9 +151,6 @@ function(ev) {
 		if(ev.item) {
 			this._selectedItem = ev.item;
 			ZaApp.getInstance().getZimletController().show(ev.item);
-
-            var parentPath = ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_configure, ZaMsg.OVP_adminZimlets]);
-            ZaZimbraAdmin.getInstance().getOverviewPanelController().addObjectItem(parentPath, ev.item.name, null, false, false, ev.item);
 		}
 	} else {
 		this.changeActionsState();	
@@ -239,11 +261,15 @@ function () {
 	if(cnt == 1) {
 		var arrItems = this._contentView.getSelection();
 		if(arrItems[0].attrs[ZaZimlet.A_zimbraAdminExtDisableUIUndeploy] && arrItems[0].attrs[ZaZimlet.A_zimbraAdminExtDisableUIUndeploy]=="TRUE") {
+			if(this._toolbarOperations[ZaOperation.DELETE])	
+				this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 				
 			if(this._popupOperations[ZaOperation.DELETE])	
 				this._popupOperations[ZaOperation.DELETE].enabled = false;				
 		} 
 	} else if (cnt > 1){
+		if(this._toolbarOperations[ZaOperation.EDIT])	
+			this._toolbarOperations[ZaOperation.EDIT].enabled = false; 
 			
 		var arrItems = this._contentView.getSelection();
 		var cnt = arrItems.length;
@@ -262,11 +288,18 @@ function () {
 			
 		}
 		if(gotInternal) {
+			if(this._toolbarOperations[ZaOperation.DELETE])	
+				this._toolbarOperations[ZaOperation.DELETE].enabled = false;
 				
 			if(this._popupOperations[ZaOperation.DELETE])	
 				this._popupOperations[ZaOperation.DELETE].enabled = false;				
 		}
 	} else {
+		if(this._toolbarOperations[ZaOperation.EDIT])	
+			this._toolbarOperations[ZaOperation.EDIT].enabled = false;
+			
+		if(this._toolbarOperations[ZaOperation.DELETE])	
+			this._toolbarOperations[ZaOperation.DELETE].enabled = false;					
 
 		if(this._popupOperations[ZaOperation.EDIT])	
 			this._popupOperations[ZaOperation.EDIT].enabled = false;

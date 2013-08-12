@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -23,7 +23,6 @@ ZaMTAListController = function(appCtxt, container) {
    	this._popupOperations = new Array();			
 	this.MTAPool = [];
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/monitoring_zimbra_mta_mail_queues.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaMsg.helpManageMailQueue;
 }
 
 ZaMTAListController.prototype = new ZaController();
@@ -77,6 +76,23 @@ function(list, openInNewTab) {
 	}*/
 }
 
+ZaMTAListController.initToolbarMethod =
+function () {
+	//this._toolbarOperations[ZaOperation.LABEL]=new ZaOperation(ZaOperation.LABEL,ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
+//	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
+	this._toolbarOperations[ZaOperation.REFRESH]=new ZaOperation(ZaOperation.REFRESH,ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener));	
+   	this._toolbarOperations[ZaOperation.VIEW]=new ZaOperation(ZaOperation.VIEW,ZaMsg.TBB_View, ZaMsg.PQTBB_View_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaMTAListController.prototype._viewButtonListener));    		
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
+	
+	this._toolbarOrder.push(ZaOperation.REFRESH);
+	this._toolbarOrder.push(ZaOperation.VIEW);
+	this._toolbarOrder.push(ZaOperation.NONE);
+	this._toolbarOrder.push(ZaOperation.HELP);
+   	
+}
+ZaController.initToolbarMethods["ZaMTAListController"].push(ZaMTAListController.initToolbarMethod);
+
 ZaMTAListController.initPopupMenuMethod =
 function () {
     this._popupOperations[ZaOperation.VIEW]=new ZaOperation(ZaOperation.VIEW,ZaMsg.TBB_View, ZaMsg.PQTBB_View_tt, "Properties", "PropertiesDis", new AjxListener(this, ZaMTAListController.prototype._viewButtonListener));
@@ -87,12 +103,22 @@ ZaMTAListController.prototype._createUI = function () {
 	try {
 		var elements = new Object();
 		this._contentView = new ZaMTAListView(this._container);
+		this._initToolbar();
+		this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_MTALIST); 
+		elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
 
 		this._initPopupMenu();
 		this._actionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_MTALIST, ZaId.MENU_POP);
 
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
-        ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab() 
+		}
+		//ZaApp.getInstance().createView(ZaZimbraAdmin._POSTQ_VIEW, elements);		
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
+		
 		this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 		this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
 		this._removeConfirmMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_MTALIST + "_removeConfirm");					
@@ -168,6 +194,9 @@ ZaMTAListController.changeActionsState =
 function () {
 	var cnt = this._contentView.getSelectionCount();
 	if (cnt != 1){
+		if(this._toolbarOperations[ZaOperation.EDIT])
+			this._toolbarOperations[ZaOperation.EDIT].enabled=false;
+			
 		if(this._popupOperations[ZaOperation.EDIT])
 			this._popupOperations[ZaOperation.EDIT].enabled=false;			
 	}
@@ -218,3 +247,21 @@ ZaMTAListController.prototype.refreshListener =
 function () {
 	this.getQCounts();
 }
+/*
+ZaMTAListController.prototype.changeActionsState = 
+function () {
+	var cnt = this._contentView.getSelectionCount();
+	if(cnt == 1) {
+		var opsArray = [ZaOperation.VIEW];
+		this._toolbar.enable(opsArray, true);
+		this._actionMenu.enable(opsArray, true);
+	} else if (cnt > 1){
+		var opsArray1 = [ZaOperation.VIEW];
+		this._toolbar.enable(opsArray1, false);
+		this._actionMenu.enable(opsArray1, false);
+	} else {
+		var opsArray = [ZaOperation.VIEW];
+		this._toolbar.enable(opsArray, false);
+		this._actionMenu.enable(opsArray, false);
+	}
+}*/

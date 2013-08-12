@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -108,7 +108,7 @@ function(html, idx, item, onlyServiceInfo, serviceName) {
 				html[idx++] = "><table cellpadding=0 cellspacing=0 border=0 style='table-layout:fixed;'>";
 				html[idx++] = "<tr>";
 
-				html[idx++] = "<td width=\"14px\" aligh=left onclick=\'javascript:ZaServicesListView.expand(event, this)\'>";
+				html[idx++] = "<td width=\"12px\" aligh=left onclick=\'javascript:ZaServicesListView.expand(event, this)\'>";
 				html[idx++] = AjxImg.getImageHtml("NodeExpanded");
 				html[idx++] = "</td>";
 			
@@ -121,7 +121,7 @@ function(html, idx, item, onlyServiceInfo, serviceName) {
 					html[idx++] = "&nbsp;";
 				}
 				html[idx++] = "</td>";			
-                                html[idx++] = "<td>";   
+
 				html[idx++] = AjxStringUtil.htmlEncode(item.name);
 
 				html[idx++] = "</td>";

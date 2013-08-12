@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -86,20 +86,34 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
 			{type:_GROUP_, numCols:1, colSpan:"*", zName:"DownloadsForAdmin",
 				items: [
                     // bug 70664, new genaral migration tool that will replace the original exchange/domino migration tool
+                    /*
+ 					 * Remove it for bug 71962 in 7.2.0 
 				    {type:_GROUP_, numCols:3,
 				    	items: [
 				    	    {type:_OUTPUT_, value:AjxImg.getImageHtml("Migration")},
-				    	    {type:_OUTPUT_, cssStyle:"font-size:12px", labelLocation:_NONE_, label:null,
+				    	    {type:_OUTPUT_, cssStyle:"front-size:12px", labelLocation:_NONE_, label:null,
 				    	     id:"general_migration_x86_link",
 				    	     value: ZaMigrationWizView.getDownloadLink(ZaMsg.GENERAL_MIG_WIZ_X86_DOWNLOAD_LINK, ZaMsg.GENERAL_MIG_WIZ_X86_DOWNLOAD_LINK_MSG)
 				    	    },
-				    	    {type:_OUTPUT_, cssStyle:"font-size:12px", labelLocation:_NONE_, label:null,
+				    	    {type:_OUTPUT_, cssStyle:"front-size:12px", labelLocation:_NONE_, label:null,
 				    	     id:"general_migration_x64_link",
 				    	     value: ZaMigrationWizView.getDownloadLink(ZaMsg.GENERAL_MIG_WIZ_X64_DOWNLOAD_LINK, ZaMsg.GENERAL_MIG_WIZ_X64_DOWNLOAD_LINK_MSG)
 				    	    }
 				    	]
 				    },
 				    {type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.GENERAL_MIG_WIZ_DOWNLOAD_TEXT},
+					*/
+					//Exchange Mig Wiz
+					{type:_GROUP_,numCols:2,
+						items: [
+							{type:_OUTPUT_,  value:AjxImg.getImageHtml("Migration")},
+							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null,
+							id:"exchange_migration_link",
+                                value: ZaMigrationWizView.getDownloadLink(ZaMsg.MIG_WIZ_DOWNLOAD_LINK, ZaMsg.MIG_WIZ_DOWNLOAD_LINK_MSG)
+                            }
+						]
+					},
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.MIG_WIZ_DOWNLOAD_TEXT},
 
 					//Groupwise Mig Wiz
 					/*Disable it for bug 19041
@@ -122,19 +136,7 @@ ZaMigrationWizView.myXFormModifier = function(xFormObject) {
                             }
 						]
 					},
-					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.DOMINO_MIG_WIZ_DOWNLOAD_TEXT},
-
-					//Exchange Mig Wiz
-					{type:_GROUP_,numCols:2,
-						items: [
-							{type:_OUTPUT_,  value:AjxImg.getImageHtml("Migration")},
-							{type:_OUTPUT_, cssStyle:"font-size:12px;", labelLocation:_NONE_, label:null,
-								id:"exchange_migration_link",
-								value: ZaMigrationWizView.getDownloadLink(ZaMsg.MIG_WIZ_DOWNLOAD_LINK, ZaMsg.MIG_WIZ_DOWNLOAD_LINK_MSG)
-							}
-						]
-					},
-					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.MIG_WIZ_DOWNLOAD_TEXT},
+					{type:_OUTPUT_, cssClass:"ZaDownloadText", label: null, value:ZaMsg.DOMINO_MIG_WIZ_DOWNLOAD_TEXT}
 				]
 			},
 			{type:_SPACER_, colSpan:"*"},

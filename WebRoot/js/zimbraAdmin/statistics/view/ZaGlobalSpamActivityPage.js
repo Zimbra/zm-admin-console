@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -39,19 +39,7 @@ function() {
 
 
 ZaGlobalSpamActivityPage.prototype.showMe =  function(refresh) {
-
-    this.setZIndex(DwtTabView.Z_ACTIVE_TAB);
-    if (this.parent.getHtmlElement().offsetHeight > 26) { 						// if parent visible, use offsetHeight
-        this._contentEl.style.height=this.parent.getHtmlElement().offsetHeight-26;
-    } else {
-        var parentHeight = parseInt(this.parent.getHtmlElement().style.height);	// if parent not visible, resize page to fit parent
-        var units = AjxStringUtil.getUnitsFromSizeString(this.parent.getHtmlElement().style.height);
-        if (parentHeight > 26) {
-            this._contentEl.style.height = (Number(parentHeight-26).toString() + units);
-        }
-    }
-    this._contentEl.style.width = this.parent.getHtmlElement().style.width;	// resize page to fit parent
-
+	DwtTabViewPage.prototype.showMe.call(this);	
 	ZaGlobalAdvancedStatsPage.detectFlash(document.getElementById("loggerchartglobalasav-flashdetect"));
 	if(refresh) {
 		this.setObject();
@@ -72,25 +60,29 @@ function () {
 	DwtTabViewPage.prototype._createHtml.call(this);
 	var idx = 0;
 	var html = new Array(50);
-	html[idx++] = "<h1 style='display:none;' id='loggerchartglobalasav-flashdetect'></h1>";		
-	html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_AV_Header + "</div>";	
-	html[idx++] = "<div class='StatsDiv'>";
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "<h1 style='display: none' id='loggerchartglobalasav-flashdetect'></h1>";	
+	html[idx++] = "<h3 style='padding-left: 10px'>" + ZaMsg.Stats_AV_Header + "</h3>" ;	
+	html[idx++] = "<div>";	
+	html[idx++] = "<table cellpadding='5' cellspacing='4' border='0' align='left' style='width: 90%'>";	
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartglobal-message-asav-48hours'></div>";	
-	html[idx++] = "</div>";
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartglobal-message-asav-30days'></div>";	
-	html[idx++] = "</div>";
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "<tr valign='top'><td align='left'>&nbsp;&nbsp;</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartglobal-message-asav-60days'></div>";	
-	html[idx++] = "</div>";	
-	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</div>";	
-	html[idx++] = "<div class='StatsImage'>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "<tr valign='top'><td align='left'>&nbsp;&nbsp;</td></tr>";		
+	html[idx++] = "<tr valign='top'><td align='left' class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</td></tr>";	
+	html[idx++] = "<tr valign='top'><td align='left'>";
 	html[idx++] = "<div id='loggerchartglobal-message-asav-year'></div>";	
-	html[idx++] = "</div>";
+	html[idx++] = "</td></tr>";
+	html[idx++] = "</table>";
 	html[idx++] = "</div>";
 	this.getHtmlElement().innerHTML = html.join("");
 }

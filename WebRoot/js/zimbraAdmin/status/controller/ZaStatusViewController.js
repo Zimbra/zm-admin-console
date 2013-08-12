@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -24,8 +24,8 @@
 **/
 ZaStatusViewController = function(appCtxt, container) {
 	ZaController.call(this, appCtxt, container,"ZaStatusViewController");
-	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_servers/monitoring_zimbra_collaboration_suite.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaMsg.helpEditDomains;
+   	this._toolbarOperations = new Array();
+   	this._toolbarOrder = new Array();
    	this._popupOperations = new Array();
 	this._UICreated = false;	
 }
@@ -37,46 +37,65 @@ ZaController.initPopupMenuMethods["ZaStatusViewController"] = new Array();
 
 ZaStatusViewController.prototype.show = function(openInNewTab) {
 	try {
-		this._createUI(openInNewTab);
+	    if (!this._UICreated) {
+			this._createUI(openInNewTab);
+		}
 		var statusObj = new ZaStatus();
 		statusObj.load();
 		var statusVector = statusObj.getStatusVector();
 		this._contentView.set(statusVector);
+//		ZaApp.getInstance().pushView(ZaZimbraAdmin._STATUS);
 		ZaApp.getInstance().pushView(this.getContentViewId());
 		var now = new Date();
+		this._toolbar.getButton("refreshTime").setText(ZaMsg.TBB_LastUpdated + " " + AjxDateUtil.computeTimeString(now));
+		
+		/*
+		if (openInNewTab) {//when a ctrl shortcut is pressed
+			
+		}else{ //open in the main tab
+			this.updateMainTab ("Status") ;
+		
+		}*/
 	} catch (ex) {
 		this._handleException(ex, "ZaStatusViewController.prototype.show", null, false);
 		return;
 	}	
 };
 
-ZaStatusViewController.prototype.getAppBarAction =function () {
-    if (AjxUtil.isEmpty(this._appbarOperation)) {
-    	this._appbarOperation[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
-    }
-
-    return this._appbarOperation;
+ZaStatusViewController.initToolbarMethod =
+function () {
+	// first button in the toolbar is a menu.
+	var newMenuOpList = new Array();
+	this._toolbarOrder.push(ZaOperation.LABEL);
+	this._toolbarOrder.push(ZaOperation.SEP);
+	this._toolbarOrder.push(ZaOperation.REFRESH);
+	this._toolbarOperations[ZaOperation.LABEL] = new ZaOperation(ZaOperation.LABEL, ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,"ZaUpdatedLabel","refreshTime");	
+	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
+	this._toolbarOperations[ZaOperation.REFRESH] =new ZaOperation(ZaOperation.REFRESH, ZaMsg.TBB_Refresh, ZaMsg.TBB_Refresh_tt, "Refresh", "Refresh", new AjxListener(this, this.refreshListener));	
 }
-
-ZaStatusViewController.prototype.getAppBarOrder = function () {
-    if (AjxUtil.isEmpty(this._appbarOrder)) {
-    	this._appbarOrder.push(ZaOperation.HELP);
-    }
-
-    return this._appbarOrder;
-}
+ZaController.initToolbarMethods["ZaStatusViewController"].push(ZaStatusViewController.initToolbarMethod);
 
 ZaStatusViewController.prototype._createUI = function (openInNewTab) {
 	try {
 		var elements = new Object();
 		this._contentView = new ZaServicesListView(this._container);
+		this._initToolbar();
+		if(this._toolbarOperations && this._toolbarOperations.length) {
+			this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_STATUSLIST); 
+			elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;
+		}
 		this._initPopupMenu();
 		if(this._popupOperations && this._popupOperations.length) {
 			this._acctionMenu =  new ZaPopupMenu(this._contentView, "ActionMenu", null, this._popupOperations, ZaId.VIEW_STATUSLIST, ZaId.MENU_POP);
 		}
 		elements[ZaAppViewMgr.C_APP_CONTENT] = this._contentView;
 		//ZaApp.getInstance().createView(ZaZimbraAdmin._STATUS, elements);
-		ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+		var tabParams = {
+			openInNewTab: false,
+			tabId: this.getContentViewId(),
+			tab: this.getMainTab()
+		}
+		ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 		this._UICreated = true;
 		ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 	} catch (ex) {

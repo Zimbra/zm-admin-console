@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -44,11 +44,9 @@ ZaController = function(appCtxt, container,iKeyName) {
     
     this.objType = ZaEvent.S_ACCOUNT;
     this._helpURL = ZaController.helpURL;
-    this._helpButtonText = ZabMsg.zimbraHomePage;
-   	this._popupOperations = new Array();
-    this._popupOrder = new Array();
-    this._appbarOperation = new Array();
-    this._appbarOrder = new Array();
+   	this._toolbarOperations = new Array();
+   	this._toolbarOrder = new Array();
+   	this._popupOperations = new Array();	    
 }
 ZaController.CLICK_DELAY = 150;
 ZaController.prototype.initDialogs = function (refresh) {
@@ -94,7 +92,6 @@ ZaController.saveChangeCheckMethods = new Object();
 ZaController.postChangeMethods = new Object();
 
 ZaController.helpURL = location.pathname + ZaUtil.HELP_URL + "administration_console_help.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-
 // Public methods
 ZaController.prototype.toString =
 function() {
@@ -178,7 +175,7 @@ function(msg, ex, style)  {
     }
 
 	if (this._errorDialog) {
-        this._errorDialog.setMessage(msg, detailStr, style, ZabMsg.zimbraAdminTitle);
+        this._errorDialog.setMessage(msg, detailStr, style, ZaMsg.zimbraAdminTitle);
 
 	
         if (!this._errorDialog.isPoppedUp()) {
@@ -194,7 +191,7 @@ function(msg, noExecReset)  {
 		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	// popup alert
-	this._msgDialog.setMessage(msg, DwtMessageDialog.INFO_STYLE, ZabMsg.zimbraAdminTitle);
+	this._msgDialog.setMessage(msg, DwtMessageDialog.INFO_STYLE, ZaMsg.zimbraAdminTitle);
 	if (!this._msgDialog.isPoppedUp()) {
 		this._msgDialog.popup();
 	}
@@ -207,7 +204,7 @@ function(msg, noExecReset)  {
 		this._execFrame = {func: null, args: null, restartOnError: false};
 	
 	// popup alert
-	this._msgDialog.setMessage(msg, DwtMessageDialog.WARNING_STYLE, ZabMsg.zimbraAdminTitle);
+	this._msgDialog.setMessage(msg, DwtMessageDialog.WARNING_STYLE, ZaMsg.zimbraAdminTitle);
 	if (!this._msgDialog.isPoppedUp()) {
 		this._msgDialog.popup();
 	}
@@ -265,7 +262,28 @@ function(entry, openInNewTab, skipRefresh) {
 	}
 	this.changeActionsState();	
 	//Instrumentation code end	
+	/*
+	if (openInNewTab) {
+		var tab = new ZaAppTab (ZaApp.getInstance().getTabGroup(),  
+				entry.name, entry.getTabIcon() , null, null, true, true, ZaApp.getInstance()._currentViewId) ;
+		tab.setToolTipContent( entry.getTabToolTip()) ;
+	}*/
 }
+
+//Switch to the main tab and display the current view.
+/*
+ZaController.prototype.updateMainTab =
+function (icon, titleLabel, tabId ) {
+	titleLabel = titleLabel || this._contentView.getTitle () ;
+	tabId = tabId || ZaApp.getInstance()._currentViewId ;
+	var tabGroup = ZaApp.getInstance().getTabGroup() ;
+	var mainTab = tabGroup.getMainTab() ;
+	mainTab.setToolTipContent (titleLabel) ;
+	mainTab.resetLabel (titleLabel) ;
+	mainTab.setImage (icon) ;
+	mainTab.setTabId (tabId) ;
+	tabGroup.selectTab(mainTab);
+}*/
 
 ZaController.prototype.getMainTab =
 function () {
@@ -313,6 +331,9 @@ function() {
 	ZaZimbraAdmin._killSplash();
 	this._authenticating = true;
 	this._loginDialog.setVisible(true, false);
+	/*if(!AjxEnv.isFirefox1up && !AjxEnv.isFirefox3up && !AjxEnv.isFirefox2_0up && !AjxEnv.isNav7 && !AjxEnv.isIE6up && !AjxEnv.isIE7up)
+		this._loginDialog.setError(AjxMessageFormat.format(ZaMsg.ERROR_BROWSER_UNSUPORTED, [navigator.userAgent]));
+	*/	
 	try {
 		var uname = null; // don't change current display username
 		this._loginDialog.setFocus(uname);
@@ -378,7 +399,7 @@ function(ex, method, params, restartOnError, obj) {
 			this.popupErrorDialog(ZaMsg.JAVASCRIPT_ERROR + " in method " + method, ex);
 		
 		} else if(ex.code == ZmCsfeException.EMPTY_RESPONSE) {
-			this.popupErrorDialog(ZabMsg.ERROR_ZCS_NOT_RUNNING, ex);
+			this.popupErrorDialog(ZaMsg.ERROR_ZCS_NOT_RUNNING, ex);
 		} else if (ex.code == ZmCsfeException.SOAP_ERROR) {
 			this.popupErrorDialog(ZaMsg.SOAP_ERROR, ex);
 		} else if (ex.code == ZmCsfeException.NETWORK_ERROR ||
@@ -452,9 +473,13 @@ function(username, password) {
 		this.auth = new ZaAuthenticate(this._appCtxt);
 		this.auth.execute(username, password,callback);
 	} catch (ex) {
-		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || ex.code == ZmCsfeException.SVC_PERM_DENIED || ex.code == ZmCsfeException.SVC_FAILURE ) {
+		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED) {
 			this._showLoginDialog(false);
 			this._loginDialog.setError(ZaMsg.ERROR_AUTH_FAILED);
+			return;
+		} else if(ex.code == ZmCsfeException.SVC_PERM_DENIED) {
+			this._showLoginDialog(false);
+			this._loginDialog.setError(ZaMsg.ERROR_AUTH_NO_ADMIN_RIGHTS);
 			return;
 		} else if (ex.code == ZmCsfeException.ACCT_CHANGE_PASSWORD) {
 			this._showLoginDialog(true);
@@ -489,10 +514,15 @@ function (resp) {
 	//if login failed - hide splash screen, show login dialog
 	if(resp.isException && resp.isException()) {
 		var ex = resp.getException();
-		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || ex.code == ZmCsfeException.SVC_PERM_DENIED || ex.code == ZmCsfeException.SVC_FAILURE)
+		if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED) 
 		{
 			this._showLoginDialog(false);
 			this._loginDialog.setError(ZaMsg.ERROR_AUTH_FAILED);
+			this._loginDialog.clearPassword();
+			return;
+		} else if(ex.code == ZmCsfeException.SVC_PERM_DENIED) {
+			this._showLoginDialog(false);			
+			this._loginDialog.setError(ZaMsg.ERROR_AUTH_NO_ADMIN_RIGHTS);
 			this._loginDialog.clearPassword();
 			return;
 		} else if (ex.code == ZmCsfeException.ACCT_CHANGE_PASSWORD) {
@@ -656,6 +686,21 @@ function() {
 * @private
 **/
 ZaController.prototype._initToolbar = function () {
+	//Instrumentation code start
+	if(ZaController.initToolbarMethods[this._iKeyName]) {
+		var methods = ZaController.initToolbarMethods[this._iKeyName];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				try {
+					methods[i].call(this);
+				} catch (ex) {
+					this._handleException(ex, "ZaController.prototype._initToolbar");
+				}
+			}
+		}
+	}	
+	//Instrumentation code end
 }
 
 /**
@@ -699,7 +744,10 @@ function () {
 **/
 ZaController.prototype.getToolBar = 
 function () {
-	return null;
+	if (this._toolbar != null)	
+		return this._toolbar;	
+	else
+		return null;
 }
 
 /**
@@ -758,23 +806,6 @@ function(listener) {
 	this._evtMgr.removeListener(ZaEvent.E_MODIFY, listener);    	
 }
 
-/**
- * Adds listener for search finished event.
- * @param listener
- **/
-ZaController.prototype.addSearchListener =
-function(listener) {
-    this._evtMgr.addListener(ZaEvent.E_SEARCH, listener);
-}
-
-/**
- * Removes listeners for search finished event.
- * @param listener
- **/
-ZaController.prototype.removeSearchListener =
-function(listener) {
-    this._evtMgr.removeListener(ZaEvent.E_SEARCH, listener);
-}
 
 /**
 * member of ZaXFormViewController
@@ -834,25 +865,6 @@ function(details) {
 		this._handleException(ex, "ZaXFormViewController.prototype.fireChangeEvent", null, false);	
 	}
 }
-
-/**
- *	Method that notifies listeners that search is done
- * 	@param details
- */
-ZaController.prototype.fireSearchEvent =
-function(details) {
-    try {
-        if (this._evtMgr.isListenerRegistered(ZaEvent.E_SEARCH)) {
-            var evt = new ZaEvent(this.objType);
-            evt.set(ZaEvent.E_SEARCH, this);
-            evt.setDetails(details);
-            this._evtMgr.notifyListeners(ZaEvent.E_SEARCH, evt);
-        }
-    } catch (ex) {
-        this._handleException(ex, "ZaController.prototype.fireSearchEvent", details, false);
-    }
-}
-
 //item should be an xform item
 ZaController.showTooltip =
 function (event, item) {
@@ -873,7 +885,14 @@ function (event) {
 
 ZaController.prototype.selectExistingTabByItemId =
 function (itemId, tabConstructor) {
-    return false;
+	var tabGroup = ZaApp.getInstance().getTabGroup ();
+	var tab = tabGroup.getTabByItemId (itemId, tabConstructor ? tabConstructor : this.tabConstructor) ;
+	if (tab) {
+		tabGroup.selectTab (tab) ;
+		return true ;
+	}else{
+		return false ;
+	}
 }
 
 ZaController.prototype.changeActionsState =
@@ -882,6 +901,13 @@ function () {
 	if(this.changeAcStateAcId)
 		this.changeAcStateAcId = null;
 		
+	if(this._toolbarOperations) {
+		for(var i in this._toolbarOperations) {
+			if(this._toolbarOperations[i] instanceof ZaOperation) {
+				this._toolbarOperations[i].enabled = true;
+			}
+		}
+	}	
 	if(this._popupOperations) {
 		for(var i in  this._popupOperations) {
 			if(this._popupOperations[i] instanceof ZaOperation) {
@@ -904,6 +930,19 @@ function () {
 		}
 	}	
 	
+	if(this._toolbar && this._toolbarOperations) {
+		for(var i in  this._toolbarOperations) {
+			if(this._toolbarOperations[i] instanceof ZaOperation &&  !AjxUtil.isEmpty(this._toolbar.getButton(this._toolbarOperations[i].id))) {
+				//paging button should be excluded
+	            if (this._toolbarOperations[i].id == ZaOperation.PAGE_BACK || this._toolbarOperations[i].id == ZaOperation.PAGE_FORWARD) {
+	                //do nothing
+	            }else{
+	                this._toolbar.getButton(this._toolbarOperations[i].id).setEnabled(this._toolbarOperations[i].enabled);
+	            }
+	        }
+		}
+	}
+	
 	if(this._actionMenu && this._popupOperations) {
 		for(var i in this._popupOperations) {
 			if(this._popupOperations[i] instanceof ZaOperation && !AjxUtil.isEmpty(this._actionMenu.getMenuItem(this._popupOperations[i].id))) {
@@ -912,22 +951,8 @@ function () {
 		}                                      
 	}
     //enable More Actions Buttons
-
-    // For New UI
-    var isCurrentController;
-    var currentController = ZaApp.getInstance().getCurrentController();
-    if ( currentController && this != currentController) {
-        isCurrentController = false;
-    } else {
-        isCurrentController = true;
-    }
-    var settingMenu = ZaZimbraAdmin.getInstance().getSettingMenu();
-    if (isCurrentController && this._popupOperations && settingMenu) {
-        for(var i in this._popupOperations) {
-            if(this._popupOperations[i] instanceof ZaOperation && !AjxUtil.isEmpty(settingMenu.getMenuItem(this._popupOperations[i].id))) {
-                settingMenu.getMenuItem(this._popupOperations[i].id).setEnabled(this._popupOperations[i].enabled);
-            }
-        }
+    if(this._toolbar) {
+    	this._toolbar.enableMoreActionsMenuItems () ;
     }
 }
 
@@ -944,7 +969,7 @@ function (){
 }
 
 
-ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuery) {
+ZaController.prototype._showAccountsView = function (defaultType, ev) {
 
 	var viewId = null;  
 	if(defaultType == ZaItem.DL) {
@@ -967,10 +992,10 @@ ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuer
 		//var domainList = [];
 		var cnt = domainList.length;
 		if(cnt>0) {
-			queryChunks.push("(|");
+			queryChunks.push("(");	
 		}
-		
 		for(var i = 0; i < cnt; i++) {
+			queryChunks.push("|");
 			queryChunks.push("(zimbraMailDeliveryAddress=*@");
 			queryChunks.push(domainList[i].name);
 			queryChunks.push(")");
@@ -981,13 +1006,10 @@ ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuer
 		if(cnt>0) {
 			queryChunks.push(")");
 			query=queryChunks.join("");
-		}
+		}		
 	}
     }
 
-    if(filterQuery) {
-        query = query + filterQuery;
-    }
 
 	acctListController.setPageNum(1);	
 	acctListController.setQuery(query);
@@ -1018,20 +1040,4 @@ function (params) {
 		this._currentRequest.cancel() ;
 	}
 	ZaApp.getInstance().getAppCtxt().getShell().setBusy(false, params.busyId);	
-}
-
-ZaController.prototype.getPopUpOperation =
-function() {
-    if (this._popupOperations && this._popupOperations.length > 0)
-        return  this._popupOperations;
-    else
-        return "";
-}
-
-ZaController.prototype.getPopUpMenu = 
-function () {
-	if (this._actionMenu != null)
-		return this._actionMenu;
-	else
-		return null;
 }

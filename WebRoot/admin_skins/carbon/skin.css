@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2010, 2011, 2012 VMware, Inc.
+ * Copyright (C) 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -132,17 +132,11 @@ body						{	@ChromeBg@	}
 
 /* status box */
 
-#skin_container_status {
-    height:30;
+#skin_tr_status	{	}
+#skin_td_status {	
+		padding:0;
 }
-
-.statusBox {
-    background-color: #F9EDBE;
-    border-top: 1px solid #F0C36D;
-    border-bottom: 1px solid #F0C36D;
-    font-weight: bold;    
-	padding:5px 10px;    
-}
+#skin_container_status 					{	@SkinBorderStatus@	height:30;		}
 
 .AppSash-vert {
 	height:11px;
@@ -170,19 +164,6 @@ body						{	@ChromeBg@	}
 #ZSplashPanel           {   @SplashOuterBorder@     }
 #ZSplashBodyContainer   {   @SplashInnerBorder@     }
 
-.LoginScreen .decor1, .SplashScreen .decor1 {
-    background-image:url("@SkinImgDir@/vmwarePeel.png");
-    background-repeat:no-repeat;
-    border-top-right-radius: 15px;
-    height:102px;
-    overflow:hidden;
-    position:absolute;
-    right:0;
-    top:0;
-    width:103px;
-    -moz-border-radius-topright:15px;
-    -webkit-border-top-right-radius:15px;
-}
 .SplashScreen { 
     position:absolute;
     left:0px;
@@ -244,13 +225,6 @@ body						{	@ChromeBg@	}
 .SplashScreen .ImgLoginBanner {
     cursor:pointer;
 }
-.SplashScreen .ImgAltBanner {
-    background-image:url("@LogoImgDir@/AltBanner.png");
-    background-repeat:repeat-x;
-    height:11px;
-    margin:20px 0px 0px 20px;
-    width:71px;
-}
 .SplashScreen .content {
     color:@lighten(LoginColor,36)@; 
     font-size:10px;
@@ -262,14 +236,6 @@ body						{	@ChromeBg@	}
     font-weight:bold;
     padding-top:20px;
 }
-
-.ZLoadingMessage {
-    color:#FFFFFF;
-    font-size:14px;
-    font-weight:bold;
-    padding-top:50px;
-}
-
 .SplashScreen .switch{
     margin:30px 0px 60px;
 }
@@ -319,115 +285,6 @@ body						{	@ChromeBg@	}
     #IFDEF MSIE
     border: 1px solid #000; /* Plain border for IE */
     #ENDIF
-}
-
-.LoginScreen .h1 {
-    margin: 22px 20px 32px;
-}
-
-.LoginScreen .center {
-    left: 50%;
-    top: 50%;
-    z-index: 11;
-    position: absolute;
-    overflow: visible;
-    width: 500px;
-    min-height: 300px;
-    margin-left: -250px;
-    margin-top: -150px;
-}
-
-.LoginScreen h1 {margin:22px 20px 32px 20px;}
-
-.LoginScreen form {text-align:center;}  /* fixes IE centering of form */
-.form {
-	color: @darken(AppC,50)@;
-	margin: 0px auto;
-	border-collapse:collapse;
-	text-align:left;
-}
-
-.LoginScreen #ZLoginErrorPanel {
-	margin:10px 10%;
-	padding:5px;
-	background-color:#FF9;
-	border-width:0px;
-	border-radius:10px;
-#IFDEF GECKO
-	-moz-border-radius:10px;
-	-moz-box-shadow:0px 0px 10px #FF9;
-#ENDIF
-#IFDEF SAFARI
-	-webkit-border-radius:10px;
-	-webkit-box-shadow:0px 0px 10px #FF9;
-#ENDIF
-	box-shadow:0px 0px 10px #FF9;
-	position:relative;
-	left:auto;
-}
-
-.LoginScreen #ZLoginWhatsThisAnchor {
-	color: @darken(AppC,50)@;
-	font-size:10px;
-	margin-left:5px;
-#IFDEF GECKO
-	-moz-border-radius: 10px;
-#ENDIF
-#IFDEF SAFARI
-	-webkit-border-radius: 10px;
-#ENDIF
-	border-radius: 10px;
-}
-
-.LoginScreen #ZLoginWhatsThis {
-	margin-left:-10em;
-	position:absolute;
-	width:40em;
-	top: 25px;
-	left: 0;
-	z-index: 30;
-}
-
-.LoginScreen .ZLoginInfoMessage {
-	background-color: @lighten(AltC,53)@;
-	border:1px solid @lighten(AltC,25)@;
-	padding:3px;
-	text-align:left;
-}
-
-.LoginScreen .Footer{
-	position: absolute;
-	bottom: 0;
-	z-index: 10;
-	width: 100%;
-	text-align: center;
-}
-
-.LoginScreen #ZLoginNotice {
-	color:@darken(AppC,50)@;
-	font-size:11px;
-    margin-bottom: 10px;
-}
-
-.LoginScreen #ZLoginNotice A {
-	color:@darken(AppC,50)@;
-}
-
-.LoginScreen #login {  /*Is this used?*/
-	float:right;
-}
-
-.LoginScreen .copyright {
-    color: @darken(AppC,50)@;
- 	font-size:11px;
- 	margin-bottom:5px;
-	text-align:center;
-}
-
-.LoginScreen .ImgLoginBanner, .LoginScreen .ImgAppBanner {
-    background-repeat: no-repeat;
-    cursor: pointer;
-    display: block;
 }
 
 .form input[type='text'], 
@@ -486,34 +343,4 @@ body						{	@ChromeBg@	}
 
 .AboutScreen .version {
     color:@lighten(LoginColor,36)@;
-}
-
-.ZaHelpViewGroupBorder {
-    border: none;
-    border-right: solid 2px black !important;
-    padding-right: 10px;
-}
-
-.ZaHelpViewGroupNoneBorder {
-    border: none;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-.ZaHelpViewGroupLabel {
-    display: none;
-}
-
-.ZaHelpAskCommunityContainer {
-    padding:12px;
-}
-
-.ZaHelpAskCommunityPanel{
-    background-color:#F2F2F2;
-    border:1px solid #E3DA93;
-    @roundCorners(10px)@
-}
-
-.ZaHelpAskCommunityContent {
-    padding:12px;
 }

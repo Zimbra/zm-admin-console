@@ -1,10 +1,10 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012 VMware, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
- * Version 1.3 ("License"); you may not use this file except in
+ * Version 1.4 ("License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  * http://www.zimbra.com/license.
  * 
@@ -16,10 +16,10 @@
  /**
  * @author Greg Solovyev
  **/
-ZaAccMiniListView = function(parent, className, posStyle, headerList, view, id, scrollLoading) {
+ZaAccMiniListView = function(parent, className, posStyle, headerList) {
 	if (arguments.length == 0) return;
     if (posStyle == null) posStyle = DwtControl.RELATIVE_STYLE ;
-	ZaListView.call(this, parent, className, posStyle, headerList, view, id, scrollLoading);
+	ZaListView.call(this, parent, className, posStyle, headerList);           
 	this.hideHeader = true;
 }
 
@@ -58,61 +58,38 @@ function(account, now, isDragProxy) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			var field = this._headerList[i]._field;
-			var imgName = null;
 			if(field!=null) {			
 				if(field == "type") {
 					// type
 					html[idx++] = "<td width=" + this._headerList[i]._width + ">";
 					switch(account.type) {
 						case ZaItem.ACCOUNT:
-							if(account.attrs[ZaAccount.A_zimbraIsAdminAccount]=="TRUE" ) {
-								imgName = ("AdminUser");
-							} else if (account.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] == "TRUE") {
-								imgName = ("DomainAdminUser");
-							} else if (account.attrs[ZaAccount.A_zimbraIsSystemAccount] == "TRUE") {
-								imgName = ("SpecialAccount");
-							} else if (account.attrs[ZaAccount.A_zimbraIsSystemResource] == "TRUE") {
-								imgName = ("SystemResource");
-							} else if (account.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] == "TRUE") {
-								imgName = ("AccountExternalVirtual");
-							} else {
-								if(account.isExternal) {
-									imgName = ("AccountIMAP");
-								} else {
-									imgName = ("Account");
-								}
-							}
+							html[idx++] = AjxImg.getImageHtml("Account");
 						break;
 						case ZaItem.DL:
-							if (account.attrs[ZaDistributionList.A_isAdminGroup] == "TRUE") {
-								imgName = ("DistributionListGroup");
-							} else {
-								imgName = ("DistributionList");
-							}
+							html[idx++] = AjxImg.getImageHtml("DistributionList");				
 						break;
 						case ZaItem.ALIAS:
-							imgName = ("AccountAlias");
-						break;
+							html[idx++] = AjxImg.getImageHtml("AccountAlias");				
+						break;	
 						case ZaItem.DOMAIN:
-							imgName = ("Domain");
-						break;
+							html[idx++] = AjxImg.getImageHtml("Domain");				
+						break;					
 						case ZaItem.COS:
-							imgName = ("COS");
-						break;
+							html[idx++] = AjxImg.getImageHtml("COS");				
+						break;					
+						
 						case ZaItem.RESOURCE:
 							if (account.attrs[ZaResource.A_zimbraCalResType] == ZaResource.RESOURCE_TYPE_LOCATION){
-								imgName = ("Location");
+								html[idx++] = AjxImg.getImageHtml("Location");	
 							} else {//equipment or other resource types
-								imgName = ("Resource");
-							}
-						break;
+								html[idx++] = AjxImg.getImageHtml("Resource");	
+							}	
+							//html[idx++] = AjxImg.getImageHtml("Resource");				
+						break;												
 						default:
 							html[idx++] = AjxStringUtil.htmlEncode(account.type);
 						break;
-					}
-
-					if (imgName != null) {
-						html[idx++] = AjxImg.getImageHtml(imgName);
 					}
 					html[idx++] = "</td>";
 				} else if(field == ZaAccount.A_name) {
