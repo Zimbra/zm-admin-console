@@ -282,7 +282,7 @@ ZaHelpView.getAdminXFormItems = function() {
 
     var bulletImgItem = {
         type: _OUTPUT_,
-        cssStyle: "font-size: 8px; margin-left: 20px;",
+        cssStyle: "font-size: 8px; margin-left: 5px;",
         label: null,
         value: "<li></li>"
     };
