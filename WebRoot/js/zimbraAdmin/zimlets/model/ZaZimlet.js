@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -43,15 +43,11 @@ ZaZimlet.A_zimbraZimletHandlerClass = "zimbraZimletHandlerClass";
 ZaZimlet.A_zimbraZimletHandlerConfig = "zimbraZimletHandlerConfig";
 ZaZimlet.A_zimbraZimletContentObject = "zimbraZimletContentObject";
 ZaZimlet.A_zimbraZimletPanelItem = "zimbraZimletPanelItem";
-ZaZimlet.A_zimbraCreateTimestamp = "zimbraCreateTimestamp";
 ZaZimlet.A_zimbraZimletScript = "zimbraZimletScript";
 ZaZimlet.A_zimbraZimletServerIndexRegex = "zimbraZimletServerIndexRegex";
 ZaZimlet.A_zimbraAdminExtDisableUIUndeploy = "zimbraAdminExtDisableUIUndeploy";
 ZaZimlet.A_attachmentId = "attId";
-ZaZimlet.A_uploadStatus = "uploadStatus";
 ZaZimlet.A_deployStatus = "deployStatus";
-ZaZimlet.A_uploadStatusMsg = "uploadStatusMsg";
-ZaZimlet.A_deployStatusMsg = "deployStatusMsg";
 ZaZimlet.A_statusMsg = "statusMsg";
 ZaZimlet.EXCLUDE_MAIL = "mail";
 ZaZimlet.EXCLUDE_EXTENSIONS = "extension";
@@ -91,56 +87,11 @@ ZaZimlet._handleGetAllResponse = function(callback, resp) {
     var list = new ZaItemList(ZaZimlet);
     resp = resp instanceof ZmCsfeResult ? resp.getResponse() : resp;
     list.loadFromJS(resp.Body.GetAllZimletsResponse);
-    
-    // cache all the zimlets information, so we can them in other pages
-    // format: zimlet-name --> ZaZimlet object
-    if (ZaZimlet.zimlets == null) {
-    	ZaZimlet.zimlets = new Object();
-    }
-    var newZimlets = new Object();
-    var zimlets = list.getVector()._array;
-    for(var i in zimlets) {
-    	var z = zimlets[i];
-    	newZimlets[z[ZaZimlet.A_name]] = z;
-    }
-    
-    // compare and decide which zimlets to include
-    var incList;
-
-	incList = new ZaItemList(ZaZimlet);
-	for (var zimletName in newZimlets) {
-		var oz = ZaZimlet.zimlets[zimletName];
-		var nz = newZimlets[zimletName];
-		
-		if(!oz) {
-			// put the new zimlet into cache
-			ZaZimlet.zimlets[zimletName] = nz;
-			incList.add(nz);
-		} else {
-			if (nz.attrs[ZaZimlet.A_zimbraCreateTimestamp] !=
-    			oz.attrs[ZaZimlet.A_zimbraCreateTimestamp]) {
-    			// the zimlet has been updated
-				ZaZimlet.zimlets[zimletName] = nz;
-				incList.add(nz);
-    		}
-		}
-	}
-    
     if (callback) {
-    	var args = callback.args;
+        var args = callback.args;
         args = args ? (args instanceof Array ? args : [args]) : [];
-   		callback = new AjxCallback(callback.obj, callback.func, args.concat(list));
-    	if (incList.size() == 0) {
-    		callback.run();
-    	} else {
-    		  // callback need to know the whole list, 
-    		  // but _handleGetAllResouce need only know what are to be included
-    	    ZaZimlet._handleGetAllResources(incList, callback);
-    	}     
-    } else {
-    	if (incList.size() > 0) {
-    		ZaZimlet._handleGetAllResources(incList);
-    	}
+        callback = new AjxCallback(callback.obj, callback.func, args.concat(list));
+        ZaZimlet._handleGetAllResources(list, callback);
     }
     return list;
 };
@@ -183,20 +134,6 @@ function () {
     			});	
 	}
 	return des;
-}
-
-/**
- * Searches for display name for the zimlet, and if not present, just returns an empty string
- * Needed to provide information as to which zimlets are missing the Display Names
- *
- * @return {*|string}
- *
- */
-ZaZimlet.prototype.getDisplayName = function () {
-    var name = this[ZaZimlet.A_name];
-    var obj = window[name];
-    var displayName = (obj && (obj["label"] || obj["zimletLabel"])) || "";
-    return displayName;
 }
 
 ZaZimlet.prototype.getLabel = 

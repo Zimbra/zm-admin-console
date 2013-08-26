@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -176,8 +176,8 @@ function() {
 
 ZaAppCtxt.getLogoURI =
 function () {
-    if (skin && skin.hints && skin.hints.banner) {
-        return skin.hints.banner.url ;
+    if (skin && skin.hints && skin.hints.logo) {
+        return skin.hints.logo.url ;
     } else {
         return ZaSettings.LOGO_URI ;
     }

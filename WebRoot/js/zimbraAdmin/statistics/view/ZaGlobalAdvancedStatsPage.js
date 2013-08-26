@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -38,18 +38,7 @@ function() {
 }
 
 ZaGlobalAdvancedStatsPage.prototype.showMe =  function(refresh) {
-    this.setZIndex(DwtTabView.Z_ACTIVE_TAB);
-	if (this.parent.getHtmlElement().offsetHeight > 26) { 						// if parent visible, use offsetHeight
-		this._contentEl.style.height=this.parent.getHtmlElement().offsetHeight-26;
-	} else {
-		var parentHeight = parseInt(this.parent.getHtmlElement().style.height);	// if parent not visible, resize page to fit parent
-		var units = AjxStringUtil.getUnitsFromSizeString(this.parent.getHtmlElement().style.height);
-		if (parentHeight > 26) {
-			this._contentEl.style.height = (Number(parentHeight-26).toString() + units);
-		}
-	}
-	this._contentEl.style.width = this.parent.getHtmlElement().style.width;	// resize page to fit parent
-
+	DwtTabViewPage.prototype.showMe.call(this);	
 	if(refresh) {
 		this.setObject();
 	}
@@ -59,8 +48,7 @@ ZaGlobalAdvancedStatsPage.prototype.showMe =  function(refresh) {
 	}
 
     var controller = ZaApp.getInstance().getCurrentController();
-    controller._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/creating_advanced_server_statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-    controller._helpButtonText = ZaMsg.helpCreateAdvServerStat;
+    controller._helpURL = location.pathname + ZaUtil.HELP_URL + "Monitoring/Creating_Advanced_Server_Statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 }
 
 ZaGlobalAdvancedStatsPage.prototype.hideMe =
@@ -68,7 +56,6 @@ function (){
 	DwtTabViewPage.prototype.hideMe.call(this);
 	var controller = ZaApp.getInstance().getCurrentController();
     controller._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/checking_usage_statistics.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-    controller._helpButtonText = ZaMsg.helpCheckStatistics;
 };
 
 
@@ -345,7 +332,6 @@ ZaGlobalAdvancedStatsPage.plotQuickChart = function (id, hostname, group, column
     ZaRequestMgr.invoke(csfeParams, reqMgrParams);
 }
 
-
 ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
     var yAxis = new YAHOO.widget.NumericAxis();
     var max = 0;
@@ -373,16 +359,15 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
         var ts0 = newData[0].timestamp.getTime();
         var ts1 = newData[newData.length - 1].timestamp.getTime();
         var delta = (ts1 - ts0) / 1000;
-
-        var formatter;
-        if (delta > 2 * 24 * 60 * 60) { //2 days
-            formatter = AjxDateFormat.getDateInstance(AjxDateFormat.SHORT);
-
+    
+        var fmt;
+        if (delta > (2 * 24 * 60 * 60)) {
+            fmt = ZaMsg.NAD_AdvStatsTimeAxisLabelMonthDay;
         } else {
-
-            formatter = AjxDateFormat.getTimeInstance(AjxDateFormat.SHORT); 
+            fmt = ZaMsg.NAD_AdvStatsTimeAxisLabelHourMinute;
         }
-        return formatter.format(value);
+        
+        return YAHOO.util.Date.format(value, { format: fmt });
     }
     
     timeAxis.maximum = newData[newData.length - 1].timestamp;
@@ -468,16 +453,14 @@ ZaGlobalAdvancedStatsPage._getCounters = function(hostname, group, counterSelect
     var cb = function(response) {
         var soapResponse = response.getResponse().Body.GetLoggerStatsResponse;
         var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
-        if (statCounters) {
-            for (var i = 0, j = statCounters.length; i < j; i++) {
-                var option = document.createElement("option");
-                option.value = statCounters[i].name;
-                ZaGlobalAdvancedStatsPage.setText(option, statCounters[i].name);
-                if (statCounters[i].type) {
-                    option.columnUnit = statCounters[i].type;
-                }
-                counterSelect.appendChild(option);
+        for (var i = 0, j = statCounters.length; i < j; i++) {
+            var option = document.createElement("option");
+            option.value = statCounters[i].name;
+            ZaGlobalAdvancedStatsPage.setText(option, statCounters[i].name);
+            if (statCounters[i].type) {
+                option.columnUnit = statCounters[i].type;
             }
+            counterSelect.appendChild(option);
         }
     };
     
@@ -553,52 +536,23 @@ ZaGlobalAdvancedStatsPage.getCounters = function(hostname, group) {
     var csfeParams = { soapDoc: soapRequest };
     var reqMgrParams = { controller: ZaApp.getInstance().getCurrentController(), busyMsg: ZaMsg.PQ_LOADING };
     var soapResponse = ZaRequestMgr.invoke(csfeParams, reqMgrParams).Body.GetLoggerStatsResponse;
-    if (soapResponse && soapResponse.hostname && soapResponse.hostname[0] &&
-        soapResponse.hostname[0].stats && soapResponse.hostname[0].stats[0] &&
-        soapResponse.hostname[0].stats[0].values && soapResponse.hostname[0].stats[0].values[0] &&
-        soapResponse.hostname[0].stats[0].values[0].stat
-        ) {
-        var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
-        var counters = [];
-        if ( statCounters ) {
-            for (var i = 0, j = statCounters.length; i < j; i++) {
-                counters.push(statCounters[i].name);
-            }
-        }
-        return counters;
+    var statCounters = soapResponse.hostname[0].stats[0].values[0].stat;
+    var counters = [];
+    for (var i = 0, j = statCounters.length; i < j; i++) {
+        counters.push(statCounters[i].name);
     }
-
-    return 0;
+    return counters;
 }
 
 ZaGlobalAdvancedStatsPage.counterSelected = function(evt, id) {
     var select = ZaGlobalAdvancedStatsPage.getTarget(evt);
-    if (AjxUtil.isEmpty(select)) {
-        return;
-	}
     
     var chartdiv = document.getElementById("loggerchart" + id);
     ZaGlobalAdvancedStatsPage.setText(chartdiv, ZaMsg.NAD_AdvStatsLoadingDataLabel);
     
     var serverSelect = document.getElementById("select-servers" + id);
-    if (AjxUtil.isEmpty(serverSelect) ||
-        AjxUtil.isEmpty(serverSelect.selectedIndex) ||
-        serverSelect.selectedIndex < 0 ||
-        !serverSelect[serverSelect.selectedIndex] ||
-        !serverSelect[serverSelect.selectedIndex].value) {
-        return;
-    }
-
     var hostname = serverSelect[serverSelect.selectedIndex].value;
-
     var groupSelect = document.getElementById("select-group" + id);
-    if (AjxUtil.isEmpty(groupSelect) ||
-        AjxUtil.isEmpty(groupSelect.selectedIndex) ||
-        groupSelect.selectedIndex < 0 ||
-        !groupSelect[groupSelect.selectedIndex] ||
-        !groupSelect[groupSelect.selectedIndex].value)
-        return;
-
     var group = groupSelect[groupSelect.selectedIndex].value;
     
     var selected = [];
@@ -621,34 +575,27 @@ ZaGlobalAdvancedStatsPage.counterSelected = function(evt, id) {
 
 ZaGlobalAdvancedStatsPage.showhide = function(id) {
     var e = document.getElementById(id);
-    e.style.display = (e.style.display == "none") ? "" : "none";  //show it as the original
+    e.style.display = e.style.display == "none" ? "block" : "none";
     return e.style.display != "none";
 }
 
 ZaGlobalAdvancedStatsPage.removeChild = function(id) {
     var e = document.getElementById(id);
-    if (!AjxUtil.isEmpty(e) && !AjxUtil.isEmpty(e.parentNode)) {
-        e.parentNode.removeChild(e);
-    }
+    e.parentNode.removeChild(e);
 }
 
 ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	var id = Math.random();
 	var form = document.createElement("form");
-	form.style.margin = "5px 10px";
+	form.style.margin = "5px 20px";
 	form.id = "loggerform" + id;
 	form.onsubmit = "return false;";
 	form.action = "#";
 	
 	var table = document.createElement("table");
-	table.className = "ChartSettings";
 	var tbody = document.createElement("tbody");
         table.appendChild(tbody);
 	table.id = "loggertable" + id;
-	table.style.tableLayout = "fixed";
-	if (AjxEnv.isIE) {
-		table.style.width = "96%";
-	}
 	
 	var label;
 	var tr;
@@ -657,7 +604,6 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	tr = document.createElement("tr");
 	td = document.createElement("td");
 	label = document.createElement("label");
-	label.style.display = "block"; //show it in a single line
 	label.htmlFor = "select-servers" + id;
 	ZaGlobalAdvancedStatsPage.setText(label, ZaMsg.NAD_AdvStatsServerLabel);
 	select = document.createElement("select");
@@ -671,7 +617,6 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	tr.appendChild(td);
 	td = document.createElement("td");
 	label = document.createElement("label");
-	label.style.display = "block"; //show it in a single line
 	label.htmlFor = "select-group" + id;
 	ZaGlobalAdvancedStatsPage.setText(label, ZaMsg.NAD_AdvStatsGroupLabel);
 	select = document.createElement("select");
@@ -685,7 +630,6 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	tr.appendChild(td);
 	td = document.createElement("td");
 	label = document.createElement("label");
-	label.style.display = "block"; //show it in a single line
 	label.htmlFor = "select-counter" + id;
 	ZaGlobalAdvancedStatsPage.setText(label, ZaMsg.NAD_AdvStatsCountersLabel);
 	select = document.createElement("select");
@@ -705,7 +649,6 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	tr = document.createElement("tr");
 	td = document.createElement("td");
 	label = document.createElement("label");
-	label.style.display = "block"; //show it in a single line
 	label.htmlFor = "input-start-time" + id;
 	ZaGlobalAdvancedStatsPage.setText(label, ZaMsg.NAD_AdvStatsStartLabel);
 	input = document.createElement("input");
@@ -719,7 +662,6 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	tr.appendChild(td);
 	td = document.createElement("td");
 	label = document.createElement("label");
-	label.style.display = "block"; //show it in a single line
 	label.htmlFor = "input-end-time" + id;
 	ZaGlobalAdvancedStatsPage.setText(label, ZaMsg.NAD_AdvStatsEndLabel);
 	input = document.createElement("input");
@@ -738,46 +680,40 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	var a;
 	var span;
 	a = document.createElement("a");
-	a.href = "javascript:void(0)";
-	a.className = "LinkButton";
+	a.href = "#";
 	a.onclick = function (evt) {
-		var showing = ZaGlobalAdvancedStatsPage.showhide("loggertable" + id);
-		var target = ZaGlobalAdvancedStatsPage.getTarget(evt);
-		ZaGlobalAdvancedStatsPage.setText(target, (showing ? ZaMsg.NAD_AdvStatsHideChartSettingsLabel : ZaMsg.NAD_AdvStatsShowChartSettingsLabel));
-		return false; //disable the default action from broswer, such as jumping to other page
+	    var showing = ZaGlobalAdvancedStatsPage.showhide("loggertable" + id);
+            var target = ZaGlobalAdvancedStatsPage.getTarget(evt);
+	    ZaGlobalAdvancedStatsPage.setText(target, (showing ? " - " : " + ") + ZaMsg.NAD_AdvStatsChartSettingsLabel);
 	}
-	ZaGlobalAdvancedStatsPage.setText(a, ZaMsg.NAD_AdvStatsHideChartSettingsLabel);
+	ZaGlobalAdvancedStatsPage.setText(a, " - " + ZaMsg.NAD_AdvStatsChartSettingsLabel);
 	form.appendChild(a);
 	
-	//span = document.createElement("span");
-	//ZaGlobalAdvancedStatsPage.setText(span, " | ");
-	//form.appendChild(span);
+	span = document.createElement("span");
+	ZaGlobalAdvancedStatsPage.setText(span, " | ");
+	form.appendChild(span);
 	a = document.createElement("a");
-	a.href = "javascript:void(0)";
-	a.className = "LinkButton";
+	a.href = "#";
 	a.onclick = function () {
-		var s = document.getElementById("select-counter" + id);
-		ZaGlobalAdvancedStatsPage.counterSelected({ target: s }, id);
-		return false; //disable the default action from broswer, such as jumping to other page
-	}
+	    var s = document.getElementById("select-counter" + id);
+	    ZaGlobalAdvancedStatsPage.counterSelected({ target: s }, id);
+    }
 	ZaGlobalAdvancedStatsPage.setText(a, ZaMsg.NAD_AdvStatsUpdateChartLabel);
 	form.appendChild(a);
-	//span = document.createElement("span");
-	//ZaGlobalAdvancedStatsPage.setText(span, " | ");
-	//form.appendChild(span);
+	span = document.createElement("span");
+	ZaGlobalAdvancedStatsPage.setText(span, " | ");
+	form.appendChild(span);
 	a = document.createElement("a");
-	a.href = "javascript:void(0)";
-	a.className = "LinkButton";
+	a.href = "#";
 	a.onclick = function () {
-		ZaGlobalAdvancedStatsPage.removeChild("loggerform" + id);
-		ZaGlobalAdvancedStatsPage.removeChild("loggerchart" + id);
-		return false; //disable the default action from broswer, such as jumping to other page
-	}
+	    ZaGlobalAdvancedStatsPage.removeChild("loggerform" + id);
+	    ZaGlobalAdvancedStatsPage.removeChild("loggerchart" + id);
+    }
 	ZaGlobalAdvancedStatsPage.setText(a, ZaMsg.NAD_AdvStatsRemoveChartLabel);
 	form.appendChild(a);
 	
 	var div = document.createElement("div");
-	div.style.padding = "5px 10px 15px";
+	div.style.padding = "20px";
 	div.id = "loggerchart" + id;
 	element.appendChild(form);
 	element.appendChild(div);
@@ -809,15 +745,11 @@ function () {
 	DwtTabViewPage.prototype._createHtml.call(this);
 	var element = this.getHtmlElement();
 	var div = document.createElement("div");
-	div.style.padding = "5px 10px";
+	div.style.padding = "20px";
 	var a = document.createElement("a");
 	ZaGlobalAdvancedStatsPage.setText(a, ZaMsg.NAD_AdvStatsAddChartLabel);
-	a.href = "javascript:void(0)";
-	a.className = "LinkButton";
-	a.onclick = function () {
-		ZaGlobalAdvancedStatsPage.insertChartHTML(element);
-		return false; //disable the default action from broswer, such as jumping to other page
-	};
+	a.href = "#";
+	a.onclick = function () { ZaGlobalAdvancedStatsPage.insertChartHTML(element); };
 	div.appendChild(a);
 	element.appendChild(div);
 }

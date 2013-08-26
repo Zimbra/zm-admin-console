@@ -94,7 +94,6 @@ ZaOperation.PAGE_BACK = ++ZA_OP_INDEX;
 ZaOperation.DUPLICATE = ++ZA_OP_INDEX;
 ZaOperation.GAL_WIZARD = ++ZA_OP_INDEX;
 ZaOperation.AUTH_WIZARD =++ZA_OP_INDEX;
-ZaOperation.AUTOPROV_WIZARD =++ZA_OP_INDEX;
 ZaOperation.VIEW_MAIL =++ZA_OP_INDEX;
 ZaOperation.MOVE_ALIAS = ++ZA_OP_INDEX;
 ZaOperation.NEW_MENU = ++ZA_OP_INDEX;
@@ -138,7 +137,6 @@ ZaOperation.MORE_ACTIONS = ++ZA_OP_INDEX;
 ZaOperation.EXPIRE_SESSION = ++ZA_OP_INDEX;
 ZaOperation.ADD_DOMAIN_ALIAS = ++ZA_OP_INDEX;
 ZaOperation.INSTALL_DOMAIN_CERT = ++ZA_OP_INDEX;
-ZaOperation.LOGOFF = ++ZA_OP_INDEX;
 // For Appliance
 ZaOperation.LEFT_BRACKET = ++ZA_OP_INDEX;
 ZaOperation.RIGHT_BRACKET = ++ZA_OP_INDEX;
@@ -165,7 +163,6 @@ var ZaOpList = [
 	"DUPLICATE",
 	"GAL_WIZARD",
 	"AUTH_WIZARD",
-    "AUTOPROV_WIZARD",
 	"VIEW_MAIL",
 	"MOVE_ALIAS",
 	"NEW_MENU",
@@ -207,7 +204,6 @@ var ZaOpList = [
 	"EXPIRE_SESSION",
 	"ADD_DOMAIN_ALIAS",
 	"INSTALL_DOMAIN_CERT",
-    "LOGOFF",
     "LEFT_BRACKET",
     "RIGHT_BRACKET"
 	/* other operation name */

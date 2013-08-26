@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -26,9 +26,7 @@ ZaMTAController = function(appCtxt, container) {
 	ZaXFormViewController.call(this, appCtxt, container,"ZaMTAController");
 	this._UICreated = false;
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "monitoring/monitoring_zimbra_mta_mail_queues.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-	this._helpButtonText = ZaMsg.helpManageMailQueue;
 	this._toolbarOperations = new Array();
-    this._popupOperations = new Array();
 	this.objType = ZaEvent.S_MTA;	
 	this.tabConstructor = ZaMTAXFormView;	
 }
@@ -37,7 +35,6 @@ ZaMTAController.prototype = new ZaXFormViewController();
 ZaMTAController.prototype.constructor = ZaMTAController;
 
 ZaController.initToolbarMethods["ZaMTAController"] = new Array();
-ZaController.initPopupMenuMethods["ZaMTAController"] = new Array();
 ZaController.setViewMethods["ZaMTAController"] = new Array();
 ZaController.changeActionsStateMethods["ZaMTAController"] = new Array();
 /**
@@ -70,11 +67,25 @@ function(entry) {
 }
 ZaController.setViewMethods["ZaMTAController"].push(ZaMTAController.setViewMethod);
 
-ZaMTAController.initPopupMenuMethod =
+/**
+* @method initToolbarMethod
+* This method creates ZaOperation objects 
+* All the ZaOperation objects are added to this._toolbarOperations array which is then used to 
+* create the toolbar for this view.
+* Each ZaOperation object defines one toolbar button.
+* Help button is always the last button in the toolbar
+**/
+ZaMTAController.initToolbarMethod = 
 function () {
-	this._popupOperations[ZaOperation.FLUSH]=new ZaOperation(ZaOperation.FLUSH,ZaMsg.TBB_FlushQs, ZaMsg.TBB_TBB_FlushQs_tt, "FlushAllQueues", "FlushAllQueues", new AjxListener(this, this.flushListener));
+	//this._toolbarOperations[ZaOperation.LABEL]=new ZaOperation(ZaOperation.LABEL,ZaMsg.TBB_LastUpdated, ZaMsg.TBB_LastUpdated_tt, null, null, null,null,null,null,"refreshTime"));	
+//	this._toolbarOperations[ZaOperation.SEP] = new ZaOperation(ZaOperation.SEP);
+	this._toolbarOrder.push(ZaOperation.FLUSH);
+	this._toolbarOrder.push(ZaOperation.CLOSE);
+	this._toolbarOperations[ZaOperation.FLUSH]=new ZaOperation(ZaOperation.FLUSH,ZaMsg.TBB_FlushQs, ZaMsg.TBB_TBB_FlushQs_tt, "FlushAllQueues", "FlushAllQueues", new AjxListener(this, this.flushListener));	
+	this._toolbarOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.SERTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));    	
 }
-ZaController.initPopupMenuMethods["ZaMTAController"].push(ZaMTAController.initPopupMenuMethod);
+ZaController.initToolbarMethods["ZaMTAController"].push(ZaMTAController.initToolbarMethod);
+
 /**
 * @method _createUI
 **/
@@ -82,11 +93,23 @@ ZaMTAController.prototype._createUI =
 function () {
 	this._contentView = this._view = new this.tabConstructor(this._container);
 
-
-    this._initPopupMenu();
+	this._initToolbar();
+	//always add Help button at the end of the toolbar
+	this._toolbarOperations[ZaOperation.NONE] = new ZaOperation(ZaOperation.NONE);
+	this._toolbarOperations[ZaOperation.HELP]=new ZaOperation(ZaOperation.HELP,ZaMsg.TBB_Help, ZaMsg.TBB_Help_tt, "Help", "Help", new AjxListener(this, this._helpButtonListener));
+	this._toolbarOrder.push(ZaOperation.NONE);
+	this._toolbarOrder.push(ZaOperation.HELP);								
+	this._toolbar = new ZaToolBar(this._container, this._toolbarOperations,this._toolbarOrder, null, null, ZaId.VIEW_MTA);		
+	
 	var elements = new Object();
 	elements[ZaAppViewMgr.C_APP_CONTENT] = this._view;
-    ZaApp.getInstance().getAppViewMgr().createView(this.getContentViewId(), elements);
+	elements[ZaAppViewMgr.C_TOOLBAR_TOP] = this._toolbar;		
+    //ZaApp.getInstance().createView(ZaZimbraAdmin._POSTQ_BY_SERVER_VIEW, elements);
+    var tabParams = {
+			openInNewTab: true,
+			tabId: this.getContentViewId()
+		}
+	ZaApp.getInstance().createView(this.getContentViewId(), elements, tabParams) ;
 	this._UICreated = true;
 	ZaApp.getInstance()._controllers[this.getContentViewId ()] = this ;
 }

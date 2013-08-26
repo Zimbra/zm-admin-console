@@ -24,7 +24,7 @@
 * This widget class extends DwtMenu. Similar to ZaToolBar, this class creates
 * buttons form an array of ZaOperation objects
 **/
-ZaPopupMenu = function(parent, className, dialog, opList, contextId, menuType, btnOrder) {
+ZaPopupMenu = function(parent, className, dialog, opList, contextId, menuType) {
 	if (arguments.length == 0) return;
 	className = className || "ActionMenu";
         this._contextId = contextId;
@@ -33,31 +33,16 @@ ZaPopupMenu = function(parent, className, dialog, opList, contextId, menuType, b
 	this._menuItems = new Object();	
 	if(opList) {
 		//var cnt = opList.length;
-
-        var ix = 0;
-        for(ix = 0; btnOrder && ix < btnOrder.length; ix++) {
-            if(opList[btnOrder[ix]] instanceof ZaOperation) {
-                if(opList[btnOrder[ix]].id == ZaOperation.NONE  || opList[btnOrder[ix]].id == ZaOperation.HELP)
-                    continue;
-
-                var style = (opList[btnOrder[ix]].id == ZaOperation.SEP) ? DwtMenuItem.SEPARATOR_STYLE : DwtMenuItem.NO_STYLE;
-                this.createMenuItem(opList[btnOrder[ix]].id, opList[btnOrder[ix]].imageId, opList[btnOrder[ix]].caption, null, opList[btnOrder[ix]].enabled,style,null);
-                this.addSelectionListener(opList[btnOrder[ix]].id, opList[btnOrder[ix]].listener);
-            }
-        }
-        // add the remained buttons
-        for(ix in opList) {
-            if(!btnOrder || AjxUtil.indexOf(btnOrder,ix) < 0) {
-                if(opList[ix] instanceof ZaOperation) {
-                    if(opList[ix].id == ZaOperation.NONE  || opList[ix].id == ZaOperation.HELP)
-                        continue;
-
-                    var style = (opList[ix].id == ZaOperation.SEP) ? DwtMenuItem.SEPARATOR_STYLE : DwtMenuItem.NO_STYLE;
-                    this.createMenuItem(opList[ix].id, opList[ix].imageId, opList[ix].caption, null, opList[ix].enabled,style,null);
-                    this.addSelectionListener(opList[ix].id, opList[ix].listener);
-                }
-            }
-        }
+		for(var ix in opList) {
+			if(opList[ix] instanceof ZaOperation) {
+				if(opList[ix].id == ZaOperation.NONE  || opList[ix].id == ZaOperation.HELP)
+					continue;
+					
+				var style = (opList[ix].id == ZaOperation.SEP) ? DwtMenuItem.SEPARATOR_STYLE : DwtMenuItem.NO_STYLE;
+				this.createMenuItem(opList[ix].id, opList[ix].imageId, opList[ix].caption, null, true,style,null);
+				this.addSelectionListener(opList[ix].id, opList[ix].listener);		
+			}
+		}
 	}
 }
 
