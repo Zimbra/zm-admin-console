@@ -32,6 +32,7 @@ ZaSplashScreen =function(parent) {
 	params.showRememberMeCheckbox = false;
 	params.showLogOff = false;
 	params.showButton = false;
+    params.showLoading = true;
     params.companyURL = ZaAppCtxt.getLogoURI () ;
     var html = ZLoginFactory.getLoginDialogHTML(params);
 	this.setContent(html);
