@@ -116,26 +116,6 @@ Cos_Enum_XModelItem.prototype.validateType = function (value) {
 	throw this.getModel().getErrorMessage("didNotMatchChoice", value);
 }
 
-Cos_Enum_Polling_XModelItem = function () {}
-XModelItemFactory.createItemType("_COS_ENUM_POLLING_", "cos_enum_polling", Cos_Enum_Polling_XModelItem, Cos_Enum_XModelItem);
-
-Cos_Enum_Polling_XModelItem.prototype.getValue = function (instance, current, ref) {
-
-    var value = this.getLocalValue(instance);
-    if (value == null) {
-        value = this.getSuperValue(instance);
-    }
-
-    var POLLING_REGEX = /^([0-9])+([dhms]|ms)$/;
-
-    // IF the units are not part of the value, then default is seconds
-    if (!POLLING_REGEX.test(value)) {
-        value += "s";
-    }
-
-    return value;
-}
-
 Cos_List_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_LIST_", "list_enum", Cos_List_XModelItem, Cos_String_XModelItem);
 Cos_List_XModelItem.prototype.outputType = _LIST_;
@@ -1793,7 +1773,7 @@ ZAGroup_XFormItem.prototype.initializeItems = function () {
 ZAWizGroup_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZAWIZGROUP_", "zawizgroup", ZAWizGroup_XFormItem, Group_XFormItem);
 ZAWizGroup_XFormItem.prototype.numCols = 2;
-ZAWizGroup_XFormItem.prototype.colSizes = ["125px","450px"];
+ZAWizGroup_XFormItem.prototype.colSizes = [(AjxEnv.isIE ? "100px":"200px"),(AjxEnv.isIE ? "450px":"275px" )];// modified by qin@zimbra.com
 ZAWizGroup_XFormItem.prototype.cssStyle = "margin-top:20px;margin-bottom:0px;padding-bottom:0px;";
 
 ZARightGrouper_XFormItem = function() {}
