@@ -712,19 +712,10 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
     };
 
 	xFormObject.items = [
-        {
-            type: _OUTPUT_,
-            colSpan: 2,
-            valign: _TOP_,
-            cssStyle:"white-space: normal",
-            ref: ZaModel.currentStep,
-            choices: this.stepChoices,
-            valueChangeEventSources: [ZaModel.currentStep],
-            labelVisibility: labelVisibility
-        },
+		{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices,valueChangeEventSources:[ZaModel.currentStep], labelVisibility: labelVisibility},
 		{type:_SEPARATOR_, align:_CENTER_, valign:_TOP_},
 		{type:_SPACER_,  align:_CENTER_, valign:_TOP_},		
-		{type: _SWITCH_,width:"100%", valign:_TOP_, cssStyle: "white-space: normal",
+		{type: _SWITCH_,width:"100%", valign:_TOP_,
 			items: [
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.GENERAL_STEP, colSizes:["200px","*"],numCols:2,
 					items: [{type:_ZAWIZ_TOP_GROUPER_, colSpan:"*", label:ZaMsg.TABT_GeneralPage,
@@ -1557,7 +1548,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 					]
 				},
 
-				{type:_CASE_, numCols:1, caseKey: ZaNewDomainXWizard.AUTH_TEST_RESULT_STEP,colSizes:["380px","290px"],
+				{type:_CASE_, numCols:1, caseKey: ZaNewDomainXWizard.AUTH_TEST_RESULT_STEP,colSizes:["220px","450px"],
 					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaNewDomainXWizard.isAuthMechNotZimbra],
 					visibilityChangeEventSources:[ZaModel.currentStep],
 					items: [

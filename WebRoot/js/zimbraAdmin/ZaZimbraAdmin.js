@@ -99,8 +99,6 @@ ZaZimbraAdmin._SERVER_STATUS_VIEW =  ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_STATISTICS_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_STATISTICS_TAB_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_LIST_FOR_STATISTICS_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._HELP_CENTER_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
-ZaZimbraAdmin._HELP_CENTER_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 
 ZaZimbraAdmin._HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._XFORM_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
@@ -789,16 +787,29 @@ function () {
 	}
 	
 	var dwLabel = new DwtLabel(this._shell, "", "", Dwt.RELATIVE_STYLE);	
-
+	var containerWidth = Dwt.getSize(userNameContainer).x;
+	var innerContent = null;
     var tmpName = AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName);
+	if(containerWidth <= 20) {
+		// if there are not enough space, just follow skin's setting
+		innerContent = ( String(tmpName).length>(skin.maxAdminName+1)) ? String(tmpName).substr(0,skin.maxAdminName) : tmpName;
+	}
+	else {
+		// reserve 20px for estimation error. 
+		// here we assume 5.5px for one word, just follow the apptab.
+		var maxNumberOfLetters = Math.floor((containerWidth - 20)/5.5);
+		innerContent = tmpName;
+		if (maxNumberOfLetters < innerContent.length) {
+			innerContent = innerContent.substring(0, (maxNumberOfLetters - 3)) + "..."
+		}	
+	}
 
-    var innerContent = "<div class='skin_container_username_div'>" + tmpName + "</div>";
-
-	dwLabel.setText(innerContent);
-    dwLabel._setMouseEvents();
-    dwLabel.setToolTipContent( tmpName );
-
-	userNameContainer.innerHTML = ""; // clean the "Administrator" inherited from the skin's raw html code
+	dwLabel.setText(innerContent);	
+	if(innerContent != ZaZimbraAdmin.currentUserName){
+		dwLabel._setMouseEvents();
+		dwLabel.setToolTipContent( tmpName );
+	}	
+	userNameContainer.innerHTML = ""; // clean the "Administrator" inherited from the skin's raw html code	
 	dwLabel.reparentHtmlElement (ZaSettings.SKIN_USER_NAME_ID) ;
 }
 
@@ -814,15 +825,32 @@ function () {
 	}
 
 	var dwButton = new DwtBorderlessButton(this._shell, "", "", Dwt.RELATIVE_STYLE);
-
+	var containerWidth = Dwt.getSize(userNameContainer).x;
+	containerWidth = containerWidth - 16; // substract drop-down icon's width
+	if(AjxEnv.isIE) {
+		containerWidth -= 12; //substract extra padding+border
+	}
+	var innerContent = null;
     var tmpName = AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName);
-
-    var innerContent = "<div class='skin_container_username_div'>" + tmpName + "</div>";
+	if(containerWidth <= 40) {
+		// if there are not enough space, just follow skin's setting
+		innerContent = ( String(tmpName).length>(skin.maxAdminName+1)) ? String(tmpName).substr(0,skin.maxAdminName) : tmpName;
+	}
+	else {
+		// reserve 10px for estimation error.
+		// here we assume 5.5px for one word, just follow the apptab.
+		var maxNumberOfLetters = Math.floor((containerWidth - 10)/5.5);
+		innerContent = tmpName;
+		if (maxNumberOfLetters < innerContent.length) {
+			innerContent = innerContent.substring(0, (maxNumberOfLetters - 3)) + "..."
+		}
+	}
 
 	dwButton.setText(innerContent);
     dwButton.setDropDownImages("NodeExpandedWhite");
-    dwButton.setToolTipContent( tmpName );
-
+	if(innerContent != ZaZimbraAdmin.currentUserName){
+		dwButton.setToolTipContent( tmpName );
+	}
 	userNameContainer.innerHTML = "";
 	dwButton.reparentHtmlElement (ZaSettings.SKIN_USERNAME_DOM_ID);
 
@@ -867,6 +895,8 @@ function(ev) {
 		ZaApp.getInstance().getHelpViewController().show();
 	}
 
+    var historyObject = new ZaHistory("HelpView", undefined, undefined, false, new AjxCallback(this, this._helpListener));
+    this._historyMgr.addHistory(historyObject);
 }
 
 ZaZimbraAdmin.prototype._dwListener = 
@@ -893,7 +923,6 @@ function() {
 	html[i++] = ZaAppCtxt.getLogoURI ();
 	html[i++] = "' target='_blank'><div  class='"+AjxImg.getClassForImage("AppBanner")+"'></div></a>";
 	banner.getHtmlElement().innerHTML = html.join("");
-    banner.getHtmlElement().style.height = '100%';
 	return banner;
 }
 

@@ -1212,7 +1212,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureMailPriorityEnabled,ZaAccount.A_zimbraFeatureFlaggingEnabled,
 			ZaAccount.A_zimbraImapEnabled,ZaAccount.A_zimbraPop3Enabled,ZaAccount.A_zimbraFeatureImapDataSourceEnabled,
 			ZaAccount.A_zimbraFeaturePop3DataSourceEnabled,ZaAccount.A_zimbraFeatureConversationsEnabled,ZaAccount.A_zimbraFeatureFiltersEnabled,
-			ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
+			ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, 
 			ZaAccount.A_zimbraFeatureMailSendLaterEnabled,ZaAccount.A_zimbraFeatureIdentitiesEnabled,ZaAccount.A_zimbraFeatureReadReceiptsEnabled],[])) {
 			featuresCase.items.push({type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraMailFeature, id:"account_wiz_features_mail",
 						colSizes:["auto"],numCols:1,
@@ -1252,6 +1252,11 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 								msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,
 								checkBoxLabel:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, 
 								trueValue:"TRUE", falseValue:"FALSE"},
+							{ref:ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, 
+								type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
+								msgName:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled,
+								checkBoxLabel:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled, 
+								trueValue:"TRUE", falseValue:"FALSE"},
 							{ref:ZaAccount.A_zimbraFeatureIdentitiesEnabled,
 								type:_SUPER_WIZ_CHECKBOX_, 
 								resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
@@ -1270,13 +1275,13 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 			
 		};
         if (ZAWizTopGrouper_XFormItem.isGroupVisible(
-                entry,
-                [
-                    ZaAccount.A_zimbraFeatureContactsEnabled,
-                    ZaAccount.A_zimbraFeatureDistributionListFolderEnabled
-                ],
-                []
-            )
+            entry,
+            [
+                ZaAccount.A_zimbraFeatureContactsEnabled,
+                ZaAccount.A_zimbraFeatureDistributionListFolderEnabled
+            ],
+            []
+        )
             ) {
             featuresCase.items.push(
                 {

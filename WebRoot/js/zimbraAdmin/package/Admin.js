@@ -12,17 +12,6 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
  * ***** END LICENSE BLOCK *****
  */
-
-/**
- * <p>Contains the list of all the JavaScript files to be loaded during runtime.</p>
- *
- * <p><u>Format</u>: Similar convention to that of Java Package names relative to
- * JavaScript source location.</p>
- *
- * <p><b>NOTE</b>: Comments should be in a line of their own. NO comments are allowed
- * after the semicolon ';' as the java parser doesn't recognise the same.</p>
- *
- */
 AjxPackage.require("zimbraAdmin.common.ZaUtil");
 AjxPackage.require("zimbraAdmin.common.ZaEvent");
 AjxPackage.require("zimbraAdmin.common.ZaModel");
