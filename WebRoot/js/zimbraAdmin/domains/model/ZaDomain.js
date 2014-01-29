@@ -2588,7 +2588,6 @@ ZaDomain.myXModel = {
       // web client redirect
       { id:ZaDomain.A_zimbraWebClientLoginURL, ref:"attrs/" + ZaDomain.A_zimbraWebClientLoginURL, type:_COS_STRING_ },
       { id:ZaDomain.A_zimbraWebClientLogoutURL, ref:"attrs/" + ZaDomain.A_zimbraWebClientLogoutURL, type:_COS_STRING_ },
-
         // Clear Cookies
         {
             id: ZaDomain.A_zimbraForceClearCookies,
@@ -3044,7 +3043,7 @@ ZaDomain.getEffectiveDomainList = function(adminId) {
 ZaDomain.prototype.countAllAccounts = function() {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
     soapDoc.getMethod().setAttribute("maxResults", "0");
-	soapDoc.getMethod().setAttribute("limit", "-1");
+    soapDoc.getMethod().setAttribute("limit", "-1");
 	var query = "";
     var types = [ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.ALIASES, ZaSearch.RESOURCES];
 

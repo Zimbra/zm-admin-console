@@ -270,8 +270,6 @@ ZaCrtAppTreeHeader.prototype.createMenu = function
         mi.addSelectionListener(listener);
     }
 
-    this.menu.createSeparator();
-
     mi = new DwtMenuItem({
                     parent: this.menu,
                     style:		DwtMenuItem.NO_STYLE,

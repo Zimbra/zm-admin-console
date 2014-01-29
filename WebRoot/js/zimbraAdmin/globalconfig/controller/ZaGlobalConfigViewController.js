@@ -70,21 +70,13 @@ ZaGlobalConfigViewController.setViewMethod = function (entry) {
 	} catch (ex) {
 		this._handleException(ex, "ZaGlobalConfigViewController.prototype.show", null, false);
 	}
-
-    if (!entry[ZaModel.currentTab]) {
-        entry[ZaModel.currentTab] = "1";
-    }
-
-    if (!this._UICreated) {
-        this._createUI(entry);
-    }
-
-    ZaApp.getInstance().pushView(this.getContentViewId());
-
-    this._view.setDirty(false);
-    this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view
-
-    this._currentObject = entry;
+	entry[ZaModel.currentTab] = "1"
+	this._currentObject = entry;
+	this._createUI(entry);
+     
+	ZaApp.getInstance().pushView(this.getContentViewId());
+	this._view.setDirty(false);
+	this._view.setObject(entry); 	//setObject is delayed to be called after pushView in order to avoid jumping of the view
 }
 ZaController.setViewMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.setViewMethod) ;
 
@@ -267,8 +259,8 @@ function () {
         for (var ix = 0 ; ix < numRHSblSender; ix++) {
             restrictions.push("reject_rhsbl_sender " + tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender][ix]);
         }
-
-        if (dirty) {
+	
+		if (dirty) {
 			tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRestriction] = restrictions;
 		}
 	}

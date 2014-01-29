@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2010, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2010, 2012, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -198,10 +198,17 @@ ZaSkin.prototype = {
 		}
 	},
 	
+	_setSize : function(id, width, height) {
+		var el = this._getEl(id);
+		if (!el) return;
+		if (width != null) el.style.width = width;
+		if (height != null) el.style.height = height;
+	},
+	
 	_setContainerSizes : function(containerName, width, height) {
 		var containers = this.hints[containerName].resizeContainers || this.hints[containerName].containers;
 		for (var i = 0; i < containers.length; i++) {
-			Dwt.setSize(containers[i], width, height);
+			this._setSize(containers[i], width, height);
 		}
 	},
 	

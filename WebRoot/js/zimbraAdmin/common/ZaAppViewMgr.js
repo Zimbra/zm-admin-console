@@ -390,7 +390,6 @@ ZaAppViewMgr.prototype.fitAll = function () {
 }
 ZaAppViewMgr.prototype._stickToGrid = 
 function(components) {
-	this._shell.relayout();
 	for (var i = 0; i < components.length; i++) {
 		var cid = components[i];
 		// don't resize logo image (it will tile) or reposition it (centered via style)
