@@ -795,31 +795,25 @@ ZaSettings.mailCharsetChoices = [
 
 ZaSettings.getLocaleChoices = function () {
 
-    if (!ZaSettings.localeChoices) {
+    if (! ZaSettings.localeChoices) {
+       //getAllLocalesRequest
+//        var soapDoc = AjxSoapDoc.create("GetAllLocalesRequest", ZaZimbraAdmin.URN, null);
         var soapDoc = AjxSoapDoc.create("GetAvailableLocalesRequest", "urn:zimbraAccount", null);
         var params = {};
         params.soapDoc = soapDoc;
-
         var reqMgrParams = {
-            controller: (ZaApp.getInstance() ? ZaApp.getInstance().getCurrentController() : null),
-            busyMsg: ZaMsg.BUSY_GET_LOCALE
-        }
-
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAvailableLocalesResponse;
-        var locales = resp.locale;
-
-        ZaSettings.localeChoices = [];
-
-        for (var i = 0; i < locales.length; i++) {
-            var displayLabel = locales[i].localName;
-
-            if (locales[i].name != locales[i].localName) {
-                displayLabel += " - " + locales[i].name;
+                controller: (ZaApp.getInstance() ? ZaApp.getInstance().getCurrentController(): null ),
+                busyMsg : ZaMsg.BUSY_GET_LOCALE
             }
+//        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllLocalesResponse;
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAvailableLocalesResponse;
+        var locales = resp.locale ;            
+        ZaSettings.localeChoices = [] ;
 
+        for (var i=0; i < locales.length; i ++) {
             ZaSettings.localeChoices.push({
                 value: locales[i].id,
-                label: displayLabel
+                label: locales[i].name
             });
         }
     }
@@ -830,6 +824,26 @@ ZaSettings.getLocaleChoices = function () {
 ZaSettings.isNetworkVersion = function () {
     return (ZaSettings.IS_ZCS_NETWORK_VERSION || false );
 }
+
+ZaSettings.getMailPollingIntervalChoices = function() {
+
+	return [
+	    {value: "500ms", label: ZaMsg.LBL_asNewMailArrives},
+	    {value: "120s", label: "2 " + ZaMsg.LBL_minute},
+	    {value: "180s", label: "3 " + ZaMsg.LBL_minute},
+	    {value: "240s", label: "4 " + ZaMsg.LBL_minute},
+	    {value: "300s", label: "5 " + ZaMsg.LBL_minute},
+	    {value: "360s", label: "6 " + ZaMsg.LBL_minute},
+	    {value: "420s", label: "7 " + ZaMsg.LBL_minute},
+	    {value: "480s", label: "8 " + ZaMsg.LBL_minute},
+	    {value: "540s", label: "9 " + ZaMsg.LBL_minute},
+	    {value: "600s", label: "10 " + ZaMsg.LBL_minute},
+	    {value: "900s", label: "15 " + ZaMsg.LBL_minute},
+	    {value: "31536000s", label: ZaMsg.LBL_manual} /* one year */
+	];
+}
+
+ZaSettings.mailPollingIntervalChoices = ZaSettings.getMailPollingIntervalChoices;
 
 ZaSettings.isOctopus = function () {
     return (ZaSettings.IS_OCTOPUS || false);
