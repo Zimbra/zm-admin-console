@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -39,7 +39,7 @@ ZaTabView = function(params) {
 	this._drawn = false;	
 	this._appCtxt = this.shell.getData(ZaAppCtxt.LABEL);
 	this._containedObject = null;
-	this.setScrollStyle(Dwt.SCROLL_Y);
+	this.setScrollStyle(Dwt.VISIBLE);
 	this._currentSubTab = [];
 }
 
@@ -187,6 +187,8 @@ function(entry) {
 	this.formDirtyLsnr = new AjxListener(ZaApp.getInstance().getCurrentController(), ZaXFormViewController.prototype.handleXFormChange);
 	this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE, this.formDirtyLsnr);
 	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, this.formDirtyLsnr);	
+	
+	this.updateTab();
 }
 
 ZaTabView.ObjectModifiers = {} ;

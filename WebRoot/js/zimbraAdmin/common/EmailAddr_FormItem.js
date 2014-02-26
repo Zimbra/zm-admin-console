@@ -23,7 +23,6 @@
 DynSelectDomainPart_XFormItem = function() {}
 XFormItemFactory.createItemType("_DYNSELECT_DOMAIN_PART_", "dynselect_domain_part", DynSelectDomainPart_XFormItem, DynSelect_XFormItem);
 DynSelectDomainPart_XFormItem.prototype.inputSize = 35 ;
-DynSelectDomainPart_XFormItem.prototype.setMenuWidth = false;
 DynSelectDomainPart_XFormItem.prototype.handleKeyPressDelay = function (event,value) {
 	if(!this.dataFetcherObject && this.dataFetcherClass !=null && this.dataFetcherMethod !=null) {
 		this.dataFetcherObject = new this.dataFetcherClass(this.getForm().getController());
@@ -83,9 +82,9 @@ function () {
 	this.items[0].width = this._inputWidth;
 
 	this.items[0].containerCssStyle = this.getInheritedProperty("nameContainerCss"); 
-
-	this.items[1].containerCssStyle = this.getInheritedProperty("midContainerCss");
 	
+	this.items[1].containerCssStyle = this.getInheritedProperty("midContainerCss");
+
 	this.items[2].inputWidth =  this.getInheritedProperty("domainPartWidth");
 
 	this.items[2].width  =  this.getInheritedProperty("domainContainerWidth");

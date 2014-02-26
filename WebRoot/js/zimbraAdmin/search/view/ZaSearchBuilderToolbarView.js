@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -58,7 +58,7 @@ ZaSearchBuilderToolbarView = function(parent){
 	this._toolbarOrder.push(ZaOperation.SEARCH_BY_REMOVE_ALL);
 	this._toolbarOrder.push(ZaOperation.NONE);
 	this._toolbarOrder.push(ZaOperation.CLOSE);	
-	ZaToolBar.call(this, parent, this._toolbarOperations, this._toolbarOrder, null, "ZaSearchBuilderToolBar" );
+	ZaToolBar.call(this, parent, this._toolbarOperations, this._toolbarOrder, null, AjxEnv.isIE ? null : "ZaSearchBuilderToolBar" );
 	
 	
 	this._app = ZaApp.getInstance();

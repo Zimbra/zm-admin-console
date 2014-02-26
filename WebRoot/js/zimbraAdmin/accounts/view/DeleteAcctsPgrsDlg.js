@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -60,15 +60,6 @@ DeleteAcctsPgrsDlg.myXModel = {
 }
 DeleteAcctsPgrsDlg.prototype = new ZaXDialog;
 DeleteAcctsPgrsDlg.prototype.constructor = DeleteAcctsPgrsDlg;
-DeleteAcctsPgrsDlg.prototype.miniType= 2;
-DeleteAcctsPgrsDlg.prototype.supportMinimize = true;
-DeleteAcctsPgrsDlg.prototype.toString = function() {
-    return "DeleteAcctsPgrsDlg";
-}
-
-DeleteAcctsPgrsDlg.prototype.getCacheName = function() {
-    return "removeProgressDlg";
-}
 DeleteAcctsPgrsDlg.ABORT_BUTTON = ++DwtDialog.LAST_BUTTON;
 
 /**
@@ -78,21 +69,12 @@ DeleteAcctsPgrsDlg.prototype.setObject =
 function(entry) {
 	this._containedObject = entry;
 	var obj = new Object();
-    obj._uuid = entry._uuid || ZaUtil.getItemUUid();
-	obj[DeleteAcctsPgrsDlg._DELETED_ACCTS] = entry[DeleteAcctsPgrsDlg._DELETED_ACCTS] || [];
-	obj[DeleteAcctsPgrsDlg._STATUS] = entry[DeleteAcctsPgrsDlg._STATUS] ||  "";
-	obj[DeleteAcctsPgrsDlg._ERROR_MSG] = entry[DeleteAcctsPgrsDlg._ERROR_MSG] || null;
+	obj[DeleteAcctsPgrsDlg._DELETED_ACCTS] = [];
+	obj[DeleteAcctsPgrsDlg._STATUS] = "";
+	obj[DeleteAcctsPgrsDlg._ERROR_MSG] = null;
 	this._localXForm.setInstance(obj);
 	this._button[DeleteAcctsPgrsDlg.ABORT_BUTTON].setEnabled(false);		
 	this._button[DwtDialog.OK_BUTTON].setEnabled(true);	
-}
-
-DeleteAcctsPgrsDlg.prototype.getObject =
-function () {
-    if (this._localXForm)
-        return this._localXForm.getInstance();
-    else
-        return this._containedObject;
 }
 
 
@@ -131,7 +113,6 @@ function(evt) {
 		this.pollAction = new AjxTimedAction(this, this.deleteOneAccount);		
 		this._currentIndex=0;
 		var obj = new Object();
-        obj._uuid = ZaUtil.getItemUUid();
 		obj[DeleteAcctsPgrsDlg._STATUS] = AjxMessageFormat.format(ZaMsg.NAD_DeleteAccStatus, [this._containedObject[this._currentIndex][ZaAccount.A_name]]);
 		obj[DeleteAcctsPgrsDlg._DELETED_ACCTS] = new Array();
 		this._localXForm.setInstance(obj);
@@ -180,11 +161,8 @@ function (result) {
 DeleteAcctsPgrsDlg.prototype.deleteOneAccount = 
 function () {
 	var callback = new AjxCallback(this, this.deleteOneAccountCallback);
-    if (this._containedObject[this._currentIndex] && this._containedObject[this._currentIndex].remove){
-        this._containedObject[this._currentIndex].remove(callback);
-        this._button[DeleteAcctsPgrsDlg.ABORT_BUTTON].setEnabled(true);
-    }
-
+	this._containedObject[this._currentIndex].remove(callback);
+	this._button[DeleteAcctsPgrsDlg.ABORT_BUTTON].setEnabled(true);		
 }
 
 
@@ -192,19 +170,19 @@ DeleteAcctsPgrsDlg.prototype.getMyXForm =
 function() {	
 	var sourceHeaderList = new Array();
 	var sortable = 1;
-	sourceHeaderList[0] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, 34, null, "objectClass", true, true);
+	sourceHeaderList[0] = new ZaListHeaderItem("type", ZaMsg.ALV_Type_col, null, 34, sortable++, "objectClass", true, true);
 	sourceHeaderList[1] = new ZaListHeaderItem(ZaAccount.A_name, ZaMsg.ALV_NameAddress_col, null, "auto", sortable++, ZaAccount.A_name, true, true);
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
 //	sourceHeaderList[2] = new ZaListHeaderItem(ZaAccount.A_displayname, ZaMsg.ALV_DspName_col, null, 100, sortable++,ZaAccount.A_displayname, true, true);
 
 	var xFormObject = {
-		numCols:1, height:"300px",width: (AjxEnv.isIE ? "490px" : "495px"),align:_CENTER_,cssStyle:"text-align:center",
+		numCols:2, colSizes:[140,140], height:"300px",width:"390px",align:_CENTER_,cssStyle:"text-align:center",
 		items:[
 			{ type: _DWT_ALERT_,
 				  style: DwtAlert.INFORMATION,
 				  iconVisible: true, 
 				  content: null,
-				  ref:DeleteAcctsPgrsDlg._STATUS,align:_CENTER_, valign:_MIDDLE_,colSpan:"*",width: (AjxEnv.isIE ? "490px" : "495px"),
+				  ref:DeleteAcctsPgrsDlg._STATUS,align:_CENTER_, valign:_MIDDLE_,colSpan:"*",width:"100%",
 				  visibilityChecks:[[XForm.checkInstanceValueEmty,DeleteAcctsPgrsDlg._ERROR_MSG]],
 				  visibilityChangeEventSources:[DeleteAcctsPgrsDlg._ERROR_MSG]
 			},
@@ -212,14 +190,14 @@ function() {
 				  style: DwtAlert.CRITICAL,
 				  iconVisible: true, 
 				  content: null,
-				  ref:DeleteAcctsPgrsDlg._ERROR_MSG, align:_CENTER_, valign:_MIDDLE_,colSpan:"*", width: (AjxEnv.isIE ? "490px" : "495px"),
+				  ref:DeleteAcctsPgrsDlg._ERROR_MSG, align:_CENTER_, valign:_MIDDLE_,colSpan:"*", width:"100%",
 				  visibilityChecks:[[XForm.checkInstanceValueNotEmty,DeleteAcctsPgrsDlg._ERROR_MSG]],
 				  visibilityChangeEventSources:[DeleteAcctsPgrsDlg._ERROR_MSG]				  				  
 			},			
 			{type:_SPACER_, height:"5"},	
 			{type:_OUTPUT_,value:ZaMsg.NAD_DeletedAccounts,colSpan:"*", colSpan:"*",align:_LEFT_},
 		   	{type:_SPACER_, height:"10"},
-		   	{ref:DeleteAcctsPgrsDlg._DELETED_ACCTS, type:_DWT_LIST_, height:(AjxEnv.isIE ? "180px" : "210px"), width:(AjxEnv.isIE ? "490px" : "495px"), colSpan:"*",  cssClass: "DLSource",align:_CENTER_, 
+		   	{ref:DeleteAcctsPgrsDlg._DELETED_ACCTS, type:_DWT_LIST_, height:"180", width:"100%",colSpan:"*",  cssClass: "DLSource", 
 				forceUpdate: true, widgetClass:ZaAccMiniListView, headerList:sourceHeaderList, hideHeader: false
 			}			
 		]		

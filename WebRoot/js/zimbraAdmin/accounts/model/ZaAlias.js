@@ -174,12 +174,10 @@ function (form) {
 			}
 		}
 		
-		targetObj.addAlias ( newAlias ) ;
-        this.targetObj = targetObj;
+		targetObj.addAlias ( newAlias ) ;  
 		//TODO Need to refresh the alias list view.
 		ZaApp.getInstance().getAccountViewController(true).fireCreationEvent(this);
 		form.parent.popdown();
-        ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.AliasCreated,[newAlias]));
 	} catch (ex) {
 		if(ex.code == ZmCsfeException.ACCT_EXISTS ) {
 			ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.WARNING_ALIAS_EXISTS, [newAlias]) 

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -65,9 +65,8 @@ function(entry) {
         this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
 
     this._localXForm.setInstance(this._containedObject) ;
-
+    this.updateTab();
 }
-
 ZaZimletXFormView.myXFormModifier = function(xFormObject) {
     this.tabChoices = [] ;
     var cases = [] ;
@@ -102,13 +101,9 @@ ZaZimletXFormView.myXFormModifier = function(xFormObject) {
 				],
 				cssStyle:"padding-top:5px; padding-bottom:5px"
 			},
-			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", cssStyle:"display:none;", id:"xform_tabbar"},
+			{type:_TAB_BAR_,  ref:ZaModel.currentTab,choices:this.tabChoices,cssClass:"ZaTabBar", id:"xform_tabbar"},
 			{type:_SWITCH_, align:_LEFT_, valign:_TOP_, items:cases}
 	];
 
 };
 ZaTabView.XFormModifiers["ZaZimletXFormView"].push(ZaZimletXFormView.myXFormModifier);
-
-ZaZimletXFormView.prototype.getTabChoices = function() {
-    return this.tabChoices;
-}

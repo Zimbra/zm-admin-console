@@ -116,10 +116,3 @@ ZaQMessagesListView.prototype._sortColumn = function (columnItem, bSortAsc){
 		this.getList().sort();
 	}
 };
-
-
-ZaQMessagesListView.prototype._handleColHeaderResize = function(ev){
-	ZaListView._handleColHeaderResize.call(this,ev);
-}
-
-

@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -42,8 +42,6 @@ ZaLoginDialog = function(parent, zIndex, className, appCtxt) {
 	params.loginAction = "ZaLoginDialog._loginListener(this)";
 	params.showButton = true;
     params.companyURL = ZaAppCtxt.getLogoURI () ;
-    params.copyrightText = ZaItem.getSplashScreenCopyright();
-    params.clientLevelNotice = ZabMsg.clientLevelNotice ? ZabMsg.clientLevelNotice :"";
     var html = ZLoginFactory.getLoginDialogHTML(params);
 	this.setContent(html);
 }

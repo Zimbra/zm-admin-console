@@ -91,7 +91,3 @@ ZaQSummaryListView.prototype._sortColumn = function (columnItem, bSortAsc){
 		this.getList().sort();
 	}
 };
-
-ZaQSummaryListView.prototype._handleColHeaderResize = function(ev){
-	ZaListView._handleColHeaderResize.call(this,ev);
-}

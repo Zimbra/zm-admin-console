@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2009, 2010, 2011, 2013 Zimbra Software, LLC.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.4 ("License"); you may not use this file except in
@@ -22,18 +22,16 @@
 * @param h
 * @param title
 **/
-ZaFlushCacheXDialog = function(parent, server) {
+ZaFlushCacheXDialog = function(parent) {
 	if (arguments.length == 0) return;
 	this._standardButtons = [DwtDialog.OK_BUTTON];	
-	ZaXDialog.call(this, parent,null, ZaMsg.FlushCacheDlgTitle + " (" + server.name + ")", "480px", "380px","ZaFlushCacheXDialog", ZaId.FLUSH_SERVER_CACHE + server.id);
+	ZaXDialog.call(this, parent,null, ZaMsg.FlushCacheDlgTitle, "480px", "380px","ZaFlushCacheXDialog");
 	this._containedObject = {};
 	this.initForm(ZaServer.volumeObjModel,this.getMyXForm());
     this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_servers/flushing_the_server_cache.htm?locid="+AjxEnv.DEFAULT_LOCALE;
-    ZaApp.getInstance().dialogs["ZaFlushCacheXDialog_"+ server.id] = this;
 }
 
 ZaFlushCacheXDialog.prototype = new ZaXDialog;
-ZaFlushCacheXDialog.prototype.supportMinimize = true;
 ZaFlushCacheXDialog.prototype.constructor = ZaFlushCacheXDialog;
 
 ZaFlushCacheXDialog.flushingServerModel = {
@@ -146,13 +144,12 @@ function() {
 		numCols:1,
 		items:[
 			{type:_ZAWIZGROUP_, isTabGroup:true,
-                colSizes:["200px", "275px"],
 				items:[
 					{ type: _DWT_ALERT_,
 						  style: DwtAlert.WARNING,
 						  iconVisible: true, 
 						  content: ZaMsg.Alert_FlushCache,
-						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"460px",
+						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"90%",
 						  visibilityChecks:[]
 					},
 					{ type: _DWT_ALERT_,
@@ -160,24 +157,24 @@ function() {
 						  iconVisible: true, 
 						  content: null,
 						  ref:"statusMessage",
-						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"460px",
+						  align:_CENTER_, valign:_MIDDLE_,colSpan:2,width:"90%",
 						  visibilityChecks:[[XForm.checkInstanceValueNotEmty,"statusMessage"]],
 						  visibilityChangeEventSources:["statusMessage"],bmolsnr:true
 					},
-					{ref:"serverList", type:_DWT_LIST_, labelLocation:_NONE_, label:null,  height:"120", width:"460",colSpan:2,
+					{ref:"serverList", type:_DWT_LIST_, labelLocation:_NONE_, label:null,  height:"120", width:"100%",colSpan:2,
 						headerList:srvHeaderList,align:_CENTER_,
 						visibilityChecks:[],enableDisableChecks:[],widgetClass:ZaServerMiniListView,valueChangeEventSources:["serverList"]
 					},
 					{ref:"flushZimlet",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_zimlet_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_zimlet_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{ref:"flushSkin",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_theme_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_theme_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},
 					{ref:"flushLocale",
-						type:_WIZ_CHECKBOX_, label:ZaMsg.Flush_locale_cache,
+						type:_ZA_CHECKBOX_, label:ZaMsg.Flush_locale_cache,
 						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
 					},					
 					{type:_CELLSPACER_},
