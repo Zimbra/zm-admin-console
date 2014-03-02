@@ -58,9 +58,9 @@ ZaServer.A_zimbraMailProxyServiceInstalled = "_"+ZaServer.A_zimbraServiceInstall
 ZaServer.A_zimbraVmwareHAServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_vmwareha";
 ZaServer.A_zimbraPolicydServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_cbpolicyd";
 
+ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraReverseProxyHttpEnabled = "zimbraReverseProxyHttpEnabled";
 ZaServer.A_zimbraServiceEnabled = "zimbraServiceEnabled";
-ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraLdapServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_ldap";
 ZaServer.A_zimbraMailboxServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mailbox";
 ZaServer.A_zimbraMtaServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mta";
@@ -239,12 +239,12 @@ ZaServer.APPLIANCEUPDATE_CUSTOMREP = 3;
 ZaServer.DEFAULT_IMAP_PORT=143;
 ZaServer.DEFAULT_IMAP_SSL_PORT=993;
 ZaServer.DEFAULT_POP3_PORT=110;
-ZaServer.DEFAULT_POP3_SSL_PORT=995;
+ZaServer.DEFAULT_POP3_SSL_PORT=900;
 
 ZaServer.DEFAULT_IMAP_PORT_ZCS=7143;
 ZaServer.DEFAULT_IMAP_SSL_PORT_ZCS=7993;
 ZaServer.DEFAULT_POP3_PORT_ZCS=7110;
-ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7995;
+ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7900;
 
 ZaServer.ERR_NOT_CIDR = 1;
 ZaServer.ERR_NOT_STARTING_ADDR = 2;
@@ -624,49 +624,39 @@ ZaServer.prototype.toString = function() {
 	return this.name;
 }
 
-ZaServer.staticServerByNameCacheTable = [];
-
-ZaServer.getServerByName = function (serverName) {
-    if (!serverName) {
-        return null;
-    }
-
-    var server = ZaServer.staticServerByNameCacheTable[serverName];
-
-	if (!server) {
-        server = new ZaServer();
+ZaServer.getServerByName = 
+function(serverName) {
+	if(!serverName)
+		return null;
+	var server = ZaServer.staticServerByNameCacheTable[serverName];
+	if(!server) {
+		domain = new ZaServer();
 		try {
 			server.load("name", serverName, false, true);
 		} catch (ex) {
             throw (ex);
         }
 
-        ZaServer.staticServerByNameCacheTable[serverName] = server;
-	}
-
+		ZaServer.putServeToCache(server);
+	} 
 	return server;	
-}
+} 
 
-ZaServer.staticServerByIdCacheTable = [];
-
-ZaServer.getServerById = function (serverId) {
-    if(!serverId) {
-        return null;
-    }
-
-    var server = ZaServer.staticServerByIdCacheTable[serverId];
-
-	if (!server) {
-        server = new ZaServer();
-        try {
-            server.load("id", serverId, false, true);
+ZaServer.getServerById = 
+function (serverId) {
+	if(!serverId)
+		return null;
+		
+	var server = ZaServer.staticServerByIdCacheTable[serverId];
+	if(!server) {
+		server = new ZaServer();
+		try {
+			server.load("id", serverId, false, true);
 		} catch (ex) {
-            throw (ex);
-        }
-
-        ZaServer.staticServerByIdCacheTable[serverId] = server;
+			throw (ex);
+		}
+		ZaServer.putServeToCache(server);
 	}
-
 	return server;
 }
 

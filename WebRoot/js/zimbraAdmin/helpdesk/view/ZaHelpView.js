@@ -32,6 +32,7 @@ ZaHelpView.mainHelpPage = "administration_console_help.htm";
 // URL for the most latest documentation page
 ZaHelpView.RELEASE_NOTES_URL = "http://www.zimbra.com/support/documentation/zcs-ne-documentation.html";
 
+ZaHelpView.RELEASE_NOTE_LINK = "adminhelp/pdf/Zimbra_Release_Note.pdf";
 ZaHelpView.HELP_FORUM_LINK = "http://www.zimbra.com/forums/";
 ZaHelpView.HELP_WIKI_LINK = "http://wiki.zimbra.com";
 ZaHelpView.prototype = new ZaTabView();
@@ -110,7 +111,7 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("PDFDoc")},
-							{
+                            {
                                 type:_ANCHOR_,
                                 cssStyle: "font-size:12px;",
                                 showInNewWindow: true,
@@ -281,7 +282,7 @@ ZaHelpView.getAdminXFormItems = function() {
 
     var bulletImgItem = {
         type: _OUTPUT_,
-        cssStyle: "font-size: 8px; margin-left: 20px;",
+        cssStyle: "font-size: 8px; margin-left: 5px;",
         label: null,
         value: "<li></li>"
     };
@@ -634,3 +635,4 @@ ZaHelpView._getGuideURL = function (filename) {
 
     return hrefURL.join("");
 }
+
