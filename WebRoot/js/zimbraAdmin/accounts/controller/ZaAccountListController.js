@@ -706,7 +706,8 @@ function(account) {
 		}
 
 		var publicMailURL = account[ZaAccount.A2_publicMailURL];
-	    if (AjxUtil.IP_ADDRESS_RE.test(location.hostname) && publicMailURL) {
+		// Fix for bug: 88094. Ip_XModelItem is responsible for parsing/validating IP addresses
+	    if (Ip_XModelItem.EXACT_IP_ADDRESS_RE.test(location.hostname) && publicMailURL) {
 			// Here we guess user prefer to use IP, if possible, I will replace FQDN with IP
 			try {
 				var startIndex = publicMailURL.indexOf("//");
