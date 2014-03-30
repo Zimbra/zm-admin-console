@@ -104,15 +104,21 @@ ZaHome.updateMaintenanceNum = function() {
 
 ZaHome.postLoadDataFunction.push(ZaHome.updateMaintenanceNum);
 
-ZaHome.accountStatCallback = function(accountStat) {
-	ZaApp.getInstance().getHomeViewController().setInstanceValue(accountStat[ZaItem.ACCOUNT], ZaHome.A2_accountNum);
+ZaHome.loadAccountNum = function() {
+    var num = 1;
+    try {
+        num = ZaApp.getInstance().getAccountStats(true)[ZaItem.ACCOUNT];
+    } catch (ex) {
+
+    }
+    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_accountNum);
 }
 
-ZaHome.loadAccountNum = function() {
-	var callback =  new AjxCallback(ZaHome.accountStatCallback);
-	ZaSearch.getObjectCounts([ZaItem.ACCOUNT],callback);
-}
 ZaHome.postLoadDataFunction.push(ZaHome.loadAccountNum);
+
+ZaHome.prototype.updateAccountNum = function(resp) {
+    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_accountNum);
+}
 
 ZaHome.loadServerServerNum = function() {
     var soapDoc = AjxSoapDoc.create("GetAllServersRequest", ZaZimbraAdmin.URN, null);
@@ -146,15 +152,30 @@ ZaHome.prototype.updateServerNum = function(resp) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_serverNum);
 }
 
-ZaHome.domainStatCallback = function(accountStat) {
-	ZaApp.getInstance().getHomeViewController().setInstanceValue(accountStat[ZaItem.DOMAIN], ZaHome.A2_domainNum);
+ZaHome.loadDomainNum = function() {
+    var num = 1;
+    try {
+        num = ZaApp.getInstance().getDomainList(ZaZimbraAdmin.isGlobalAdmin()).size();
+    } catch (ex) {
+
+    }
+    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_domainNum);
 }
 
-ZaHome.loadDomainNum = function() {
-	var callback =  new AjxCallback(ZaHome.domainStatCallback);
-	ZaSearch.getObjectCounts([ZaItem.DOMAIN],callback);
-}
 ZaHome.postLoadDataFunction.push(ZaHome.loadDomainNum);
+
+ZaHome.prototype.updateDomainNum = function(resp) {
+    var num = 1;
+    try {
+        var resp = resp.getResponse().Body.GetAllServersResponse;
+        var list = new ZaItemList(ZaDomain);
+        list.loadFromJS(resp);
+        num = list.size();
+    } catch (ex) {
+
+    }
+    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_domainNum);
+}
 
 ZaHome.loadCosNum = function() {
     var num = 1
@@ -266,43 +287,43 @@ ZaHome.loadActiveSesson = function () {
 
             if (parameterList.length > 0) {
                 var currentSession = parameterList.shift();
-                try {
-            		var server = ZaServer.getServerById(currentSession.targetServer);
-            		if(server) {
-            			if(ZaItem.hasRight(ZaServer.RIGHT_GET_SESSIONS, server)) {
-            				 var soapDoc = AjxSoapDoc.create("GetSessionsRequest", ZaZimbraAdmin.URN, null);
-                             var sessionCallback = new  AjxCallback (this, loadOneSessionNumer);
-                             var params = {};
-                             params.type = currentSession.type;
 
-                             soapDoc.getMethod().setAttribute("type", params.type);
+                var server = ZaServer.getServerById(currentSession.targetServer);
+                if (server) {
+                    if (ZaItem.hasRight(ZaServer.RIGHT_GET_SESSIONS, server)) {
+                        var sessionCallback = new  AjxCallback (this, loadOneSessionNumer);
+                        try {
+                            var soapDoc = AjxSoapDoc.create("GetSessionsRequest", ZaZimbraAdmin.URN, null);
+                            var params = {};
+                            params.type = currentSession.type;
 
-                             params.fresh = 1;
-                             soapDoc.getMethod().setAttribute("refresh", params.fresh);
+                            soapDoc.getMethod().setAttribute("type", params.type);
 
-                             soapDoc.getMethod().setAttribute("limit", ZaServerSessionStatsPage.PAGE_LIMIT);
+                            params.fresh = 1;
+                            soapDoc.getMethod().setAttribute("refresh", params.fresh);
 
-                             params.offset = 0 ;
+                            soapDoc.getMethod().setAttribute("limit", ZaServerSessionStatsPage.PAGE_LIMIT);
 
-                             soapDoc.getMethod().setAttribute("offset", params.offset);
+                            params.offset = 0 ;
 
-                             params.sortBy = "nameAsc";
+                            soapDoc.getMethod().setAttribute("offset", params.offset);
 
-                             soapDoc.getMethod().setAttribute("sortBy", params.sortBy);
+                            params.sortBy = "nameAsc";
 
-                             var getSessCmd = new ZmCsfeCommand ();
-                             params.soapDoc = soapDoc ;
-                             params.asyncMode = true;
-                             params.noAuthToken = true;
-                             params.callback = sessionCallback;
-                             params.targetServer = currentSession.targetServer ;
+                            soapDoc.getMethod().setAttribute("sortBy", params.sortBy);
 
-                             var resp = getSessCmd.invoke(params);
-            			}
-            		}
+                            var getSessCmd = new ZmCsfeCommand ();
+                            params.soapDoc = soapDoc ;
+                            params.asyncMode = true;
+                            params.noAuthToken = true;
+                            params.callback = sessionCallback;
+                            params.targetServer = currentSession.targetServer ;
 
-                } catch (ex) {
-                    // Won't do anything here to avoid disturbe the loading process.
+                            var resp = getSessCmd.invoke(params);
+                        } catch (ex) {
+                            sessionCallback.run();
+                        }
+                    }
                 }
             } else {
                 this.updateSessionNum(totalSession);
