@@ -104,21 +104,15 @@ ZaHome.updateMaintenanceNum = function() {
 
 ZaHome.postLoadDataFunction.push(ZaHome.updateMaintenanceNum);
 
+ZaHome.accountStatCallback = function(accountStat) {
+	ZaApp.getInstance().getHomeViewController().setInstanceValue(accountStat[ZaItem.ACCOUNT], ZaHome.A2_accountNum);
+}
+
 ZaHome.loadAccountNum = function() {
-    var num = 1;
-    try {
-        num = ZaApp.getInstance().getAccountStats(true)[ZaItem.ACCOUNT];
-    } catch (ex) {
-
-    }
-    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_accountNum);
+	var callback =  new AjxCallback(ZaHome.accountStatCallback);
+	ZaSearch.getObjectCounts([ZaItem.ACCOUNT],callback);
 }
-
 ZaHome.postLoadDataFunction.push(ZaHome.loadAccountNum);
-
-ZaHome.prototype.updateAccountNum = function(resp) {
-    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_accountNum);
-}
 
 ZaHome.loadServerServerNum = function() {
     var soapDoc = AjxSoapDoc.create("GetAllServersRequest", ZaZimbraAdmin.URN, null);
@@ -152,30 +146,15 @@ ZaHome.prototype.updateServerNum = function(resp) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_serverNum);
 }
 
+ZaHome.domainStatCallback = function(accountStat) {
+	ZaApp.getInstance().getHomeViewController().setInstanceValue(accountStat[ZaItem.DOMAIN], ZaHome.A2_domainNum);
+}
+
 ZaHome.loadDomainNum = function() {
-    var num = 1;
-    try {
-        num = ZaApp.getInstance().getDomainList(true).size();
-    } catch (ex) {
-
-    }
-    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_domainNum);
+	var callback =  new AjxCallback(ZaHome.domainStatCallback);
+	ZaSearch.getObjectCounts([ZaItem.DOMAIN],callback);
 }
-
 ZaHome.postLoadDataFunction.push(ZaHome.loadDomainNum);
-
-ZaHome.prototype.updateDomainNum = function(resp) {
-    var num = 1;
-    try {
-        var resp = resp.getResponse().Body.GetAllServersResponse;
-        var list = new ZaItemList(ZaDomain);
-        list.loadFromJS(resp);
-        num = list.size();
-    } catch (ex) {
-
-    }
-    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_domainNum);
-}
 
 ZaHome.loadCosNum = function() {
     var num = 1

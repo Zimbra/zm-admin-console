@@ -1241,17 +1241,32 @@ ZaOverviewPanelController.postqByServerTreeListener = function (ev) {
 	}
 }
 
-ZaOverviewPanelController.manageAccountTreeListener = function (ev) {
-    var accountStat =  ZaApp.getInstance().getAccountStats(true);
-    var tree = this._overviewPanel.getFolderTree();
-    var rootItem = tree.getCurrentRootItem();
-    var childitems = rootItem.getItems();
+ZaOverviewPanelController.accountStatCallback = function (accountStat) {
+    var childitems = this._overviewPanel.getFolderTree().getCurrentRootItem().getItems();
 
     for(var i = 0; i < childitems.length; i++) {
         var child = childitems[i];
         var attr = child.getData("TreeItemType");
         child.setCount(accountStat[attr]);
-    }
+    }	
+}
+
+ZaOverviewPanelController.manageAccountTreeListener = function (ev) {
+	var types = [];
+    var childitems = this._overviewPanel.getFolderTree().getCurrentRootItem().getItems();
+
+    for(var i = 0; i < childitems.length; i++) {
+        var child = childitems[i];
+        if(child) {
+        	var type = child.getData("TreeItemType");
+        	if(!AjxUtil.isEmpty(type)) {
+        		types.push(type);
+        	}
+        }
+    }	
+    
+	var callback =  new AjxCallback(this, ZaOverviewPanelController.accountStatCallback);
+	ZaSearch.getObjectCounts(types,callback);
 }
 
 ZaOverviewPanelController.accountListInDomainTreeListener = function(ev) {
