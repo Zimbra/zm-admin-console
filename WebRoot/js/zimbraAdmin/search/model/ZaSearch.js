@@ -296,6 +296,7 @@ ZaSearch.prototype.dynSelectSearchCosesCallback = function (params, resp) {
 		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.prototype.dynSelectSearchCosesCallback");	
 	}
 }
+
 /**
  * @argument callArgs {value, event, callback}
  */
@@ -307,7 +308,7 @@ ZaSearch.prototype.dynSelectSearch = function (callArgs) {
 		var busyId = Dwt.getNextId ();
 		
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId });
+		var dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId });
 		params.types = callArgs.types ? callArgs.types : [ZaSearch.ACCOUNTS, ZaSearch.DLS];
 		if(!AjxUtil.isEmpty(callArgs.attrs)) {
 			params.attrs = callArgs.attrs;
@@ -356,7 +357,7 @@ ZaSearch.prototype.dynSelectSearchGroups = function (callArgs) {
 		var busyId = Dwt.getNextId ();
 		
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
+		var dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
 		params.types = [ZaSearch.DLS];
         params.callback = dataCallback;
 		params.sortBy = ZaAccount.A_name;
@@ -385,7 +386,7 @@ ZaSearch.prototype.dynSelectSearchDomains = function (callArgs) {
 		var busyId = Dwt.getNextId();
 				
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
+		var dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
 		params.types = [ZaSearch.DOMAINS];
 		params.callback = dataCallback;
 		params.sortBy = ZaDomain.A_domainName;
@@ -423,7 +424,7 @@ ZaSearch.prototype.dynSelectSearchOnlyDomains = function (callArgs) {
                 var busyId = Dwt.getNextId();
 
                 var params = new Object();
-                dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
+                var dataCallback = new AjxCallback(this, this.dynSelectDataCallback, {callback:callback,busyId:busyId});
                 params.types = [ZaSearch.DOMAINS];
                 params.callback = dataCallback;
                 params.sortBy = ZaDomain.A_domainName;
@@ -451,7 +452,7 @@ ZaSearch.prototype.dynSelectSearchCoses = function (callArgs) {
 		var busyId = Dwt.getNextId();
 				
 		var params = new Object();
-		dataCallback = new AjxCallback(this, this.dynSelectSearchCosesCallback, {callback:callback,busyId:busyId});
+		var dataCallback = new AjxCallback(this, this.dynSelectSearchCosesCallback, {callback:callback,busyId:busyId});
 		params.types = [ZaSearch.COSES];
 		params.callback = dataCallback;
 		params.sortBy = ZaCos.A_name;
@@ -563,86 +564,76 @@ function (domainName, types, pagenum, orderby, isascending, attrs, limit) {
 	return ZaSearch.search("", types, pagenum, orderby, isascending,  attrs, limit, domainName);
 }
 
-ZaSearch.getAccountStats =
-function() {
-	var retObj;
-    retObj = {};
-    retObj[ZaItem.ACCOUNT] = 0;
-    retObj[ZaItem.ALIAS] = 0;
-    retObj[ZaItem.RESOURCE] = 0;
-    retObj[ZaItem.DL] = 0;
-
-    for (var i in retObj) {
-        retObj[i] = ZaSearch.getObjectNumberByType(i);
-    }
-
-    return retObj;
+ZaSearch.getObjectCountsCalback = function (params, resp) {
+	var callback = params.callback;
+	
+	if(!callback)	
+		return;
+	try {
+		if(!resp) {
+			throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaSearch.getObjectCountsCalback"));
+		}
+		if(resp.isException()) {
+			throw(resp.getException());
+		} else {
+			var retObj;
+		    retObj = {};
+		    retObj[ZaItem.ACCOUNT] = 0;
+		    retObj[ZaItem.ALIAS] = 0;
+		    retObj[ZaItem.RESOURCE] = 0;
+		    retObj[ZaItem.DL] = 0;
+		    retObj[ZaItem.DOMAIN] = 0;
+		    retObj[ZaItem.SERVER] = 0;
+		    
+			// parse batch response and fill in the result object
+			var batchResp = resp.getResponse().Body.BatchResponse;
+			
+			if(batchResp.CountObjectsResponse) {
+				for(var i=0;i<batchResp.CountObjectsResponse.length;i++) {
+					resp = batchResp.CountObjectsResponse[i];
+					var type = resp.type;
+					if (type == "userAccount") {
+					    type = ZaItem.ACCOUNT; //UI only shows number of non-system accounts
+					}
+					retObj[type] = resp.num;
+				}
+			}
+			
+			//call the callback that will use the response data
+            callback.run(retObj);
+		}
+	} catch (ex) {
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.getObjectCountsCalback");	
+	}
 }
 
-ZaSearch.getObjectNumberBySearch = function (type) {
-    var query = "";
-    if (type == ZaItem.ACCOUNT) {
-        query = "(!("+ ZaAccount.A_zimbraIsSystemAccount +"=TRUE))";
-        type = ZaSearch.ACCOUNTS;
-    } else if (type == ZaItem.ALIAS) {
-        type = ZaSearch.ALIASES;
-    } else if (type == ZaItem.RESOURCE) {
-        type = ZaSearch.RESOURCES;
-    }  else if (type  == ZaItem.DL) {
-        type = [ZaSearch.DLS, ZaSearch.DDLS];
+ZaSearch.getObjectCounts =
+function(types,callback) {
+
+	var dataCallback = new AjxCallback(ZaSearch.getObjectCountsCalback, {callback:callback});
+	
+	var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
+    soapDoc.setMethodAttribute("onerror", "continue");
+    for(var i=0;i<types.length;i++) {
+    	var type = types[i];
+        var getCountDoc = soapDoc.set("CountObjectsRequest",  null, null, ZaZimbraAdmin.URN);
+
+    	if (type == ZaItem.ACCOUNT) {
+    	    type = "userAccount"; // exclude system account
+    	}
+    	getCountDoc.setAttribute("type", type);
     }
-
-    var num = 0;
-    var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
-    soapDoc.getMethod().setAttribute("maxResults", "0");
-    soapDoc.setMethodAttribute("types", type);
-    soapDoc.setMethodAttribute("countOnly", 1);
-
-    soapDoc.set("query", query)
     try {
-        var params = new Object();
-        params.soapDoc = soapDoc;
-        var reqMgrParams ={
-            controller:ZaApp.getInstance().getCurrentController()
-        }
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams);
-        num = resp.Body.SearchDirectoryResponse.num;
+		var command = new ZmCsfeCommand();
+	    var cmdParams = new Object();
+	    cmdParams.noAuthToken = true;
+	    cmdParams.soapDoc = soapDoc;
+	    cmdParams.asyncMode = true;
+	    cmdParams.callback = dataCallback;
+	    command.invoke(cmdParams);
     } catch (ex) {
-
+    	ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.getObjectCounts", null, false);	
     }
-    return num;
-}
-
-ZaSearch.getObjectNumberByType = function (type) {
-    var num = 0;
-    var soapDoc = AjxSoapDoc.create("CountObjectsRequest", ZaZimbraAdmin.URN, null);
-    
-    if (!ZaZimbraAdmin.isGlobalAdmin()) {
-	    if(type == ZaItem.ACCOUNT || type == ZaItem.DATASOURCE || type==ZaItem.DL || type == ZaItem.ALIAS || type==ZaItem.RESOURCE) {
-	    	var domainList = ZaApp.getInstance().getDomainList().getArray();
-	    	for(var i = 0; i < domainList.length; i++) {
-	            var el = soapDoc.set("domain", domainList[i].name) ;
-	            el.setAttribute("by", "name") ;	    		
-	    	}
-	    }
-	}
-
-	if (type == ZaItem.ACCOUNT) {
-	    type = "userAccount"; // exclude system account
-	}
-    soapDoc.setMethodAttribute("type", type);
-    try {
-        var params = new Object();
-        params.soapDoc = soapDoc;
-        var reqMgrParams ={
-            controller:ZaApp.getInstance().getCurrentController()
-        }
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams);
-        num = resp.Body.CountObjectsResponse.num;
-    } catch (ex) {
-
-    }
-    return num;
 }
 
 ZaSearch.getSearchCosByNameQuery =

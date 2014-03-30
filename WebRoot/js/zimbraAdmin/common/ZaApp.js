@@ -538,6 +538,7 @@ function (params, resp) {
 		}		
 	}
 }
+
 ZaApp.prototype.getDomainList =
 function(refresh) {
 	if (refresh || this._domainList == null) {
@@ -747,32 +748,6 @@ function(refresh) {
 
 	}
 	return this._cosListChoices;	
-}
-
-/*
-ZaApp.prototype.getStatusList =
-function(refresh) {
-	if (refresh || this._statusList == null) {
-		this._statusList = ZaStatus.loadStatusTable();
-	}
-	return this._statusList;	
-}
-*/
-/*
-ZaApp.prototype.getAccountList =
-function(refresh) {
-	if (refresh || this._accountList == null) {
-		this._accountList = ZaSearch.getAll(this).list;
-	}
-	return this._accountList;	
-}*/
-
-ZaApp.prototype.getAccountStats =
-function(refresh) {
-    if (refresh || this._accountStats == null) {
-        this._accountStats = ZaSearch.getAccountStats();
-    }
-    return this._accountStats;
 }
 
 ZaApp.prototype.getGlobalConfig =
