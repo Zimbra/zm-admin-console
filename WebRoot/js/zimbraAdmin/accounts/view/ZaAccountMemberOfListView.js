@@ -528,7 +528,7 @@ function (account, removeArray){
 	for (var i = 0; i < len; ++i) {
 		removeMemberSoapDoc = AjxSoapDoc.create("RemoveDistributionListMemberRequest", ZaZimbraAdmin.URN, null);
 		removeMemberSoapDoc.set("id", removeArray[i].id);
-		removeMemberSoapDoc.set("dlm", account.name);
+		accountEl = removeMemberSoapDoc.set("account", account.id);
 		var params = new Object();
 		params.soapDoc = removeMemberSoapDoc;
 		params.noAuthToken = true;	
