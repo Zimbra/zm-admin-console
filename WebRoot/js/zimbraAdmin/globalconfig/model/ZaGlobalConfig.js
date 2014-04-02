@@ -80,7 +80,7 @@ ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender = "_"+ZaGlobalConfig.A_zimbraMtaRe
 ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_client_hostname";
 ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_reverse_client_hostname";
 ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_sender_domain";
-ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_helo_hostname";
+ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_helo_hostname";
 //rbl check
 ZaGlobalConfig.A_zimbraMtaRejectRblClient = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_rbl_client";
 ZaGlobalConfig.A_zimbraMtaRejectRHSblClient = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_rhsbl_client";
