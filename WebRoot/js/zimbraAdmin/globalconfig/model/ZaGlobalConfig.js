@@ -28,8 +28,9 @@ ZaItem.modifyMethods["ZaGlobalConfig"] = new Array();
 ZaItem.modifyMethodsExt["ZaGlobalConfig"] = new Array();
 
 ZaGlobalConfig.MTA_RESTRICTIONS = [
-	"reject_invalid_hostname", "reject_non_fqdn_hostname", "reject_non_fqdn_sender",
-	"reject_unknown_client", "reject_unknown_hostname", "reject_unknown_sender_domain"
+	"reject_invalid_helo_hostname", "reject_non_fqdn_helo_hostname", "reject_non_fqdn_sender",
+	"reject_unknown_client_hostname", "reject_unknown_reverse_client_hostname", "reject_unknown_sender_domain",
+	"reject_unknown_helo_hostname"
 ];
 
 //general
@@ -72,13 +73,14 @@ ZaGlobalConfig.A_zimbraMtaRestriction = "zimbraMtaRestriction";
 // --policy service checks
 ZaGlobalConfig.A_zimbraMtaPolicyService = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_policy_service";
 // --protocol checks
-ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_invalid_hostname";
-ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_non_fqdn_hostname";
+ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_invalid_helo_hostname";
+ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_non_fqdn_helo_hostname";
 ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_non_fqdn_sender";
 // -- dns checks
-ZaGlobalConfig.A_zimbraMtaRejectUnknownClient = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_client";
-ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_hostname";
+ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_client_hostname";
+ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_reverse_client_hostname";
 ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_sender_domain";
+ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_unknown_helo_hostname";
 //rbl check
 ZaGlobalConfig.A_zimbraMtaRejectRblClient = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_rbl_client";
 ZaGlobalConfig.A_zimbraMtaRejectRHSblClient = "_"+ZaGlobalConfig.A_zimbraMtaRestriction+"_reject_rhsbl_client";
@@ -461,13 +463,14 @@ ZaGlobalConfig.myXModel = {
                 { id:ZaGlobalConfig.A_zimbraMilterBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraMilterBindPort, type:_PORT_ },
 
 		// -- protocol checks
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHostname, type: _ENUM_, choices: [false,true] },
+		{ id:ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, type: _ENUM_, choices: [false,true] },
+		{ id:ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, type: _ENUM_, choices: [false,true] },
 		{ id:ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, type: _ENUM_, choices: [false,true] },
 		// -- dns checks
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownClient, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownClient, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname, type: _ENUM_, choices: [false,true] },
+		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname, type: _ENUM_, choices: [false,true] },
+		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname, type: _ENUM_, choices: [false,true] },
 		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain, type: _ENUM_, choices: [false,true] },
+		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname, type: _ENUM_, choices: [false,true] },
 		{id:ZaGlobalConfig.A_zimbraDNSCheckHostname, type:_STRING_, ref:"attrs/" + ZaGlobalConfig.A_zimbraDNSCheckHostname, maxLength:255},		
 		{id:ZaGlobalConfig.A_zimbraBasicAuthRealm, type:_STRING_, ref:"attrs/" + ZaGlobalConfig.A_zimbraBasicAuthRealm, maxLength:255},
 		{id:ZaGlobalConfig.A_zimbraAdminConsoleDNSCheckEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleDNSCheckEnabled},
