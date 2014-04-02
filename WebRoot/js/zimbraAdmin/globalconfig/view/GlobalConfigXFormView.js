@@ -745,20 +745,21 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
 
 						{type:_ZA_TOP_GROUPER_,label: ZaMsg.NAD_MTA_ProtocolChecks,
                             visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                    [ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname,
-                                    ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHostname,
+                                    [ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname,
+                                    ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname
                                     ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender]]],
-                            visibilityChangeEventSources:[ZaGlobalConfig.A_zimbraMtaRejectUnknownClient,
-                                    ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname,
-                                    ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain
+                            visibilityChangeEventSources:[ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname,
+                                    ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname,
+                                    ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain,
+                                    ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname
                             ],
 							items:[
-						  	{ ref: ZaGlobalConfig.A_zimbraMtaRejectInvalidHostname, type: _CHECKBOX_,
-						  	  label: ZaMsg.NAD_MTA_reject_invalid_hostname
+						  	{ ref: ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, type: _CHECKBOX_,
+						  	  label: ZaMsg.NAD_MTA_reject_invalid_helo_hostname
 
 						  	},
-						  	{ ref: ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHostname, type: _CHECKBOX_,
-						  	  label: ZaMsg.NAD_MTA_reject_non_fqdn_hostname
+						  	{ ref: ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, type: _CHECKBOX_,
+						  	  label: ZaMsg.NAD_MTA_reject_non_fqdn_helo_hostname
 						  	},
 						  	{ ref: ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, type: _CHECKBOX_,
 						  	  label: ZaMsg.NAD_MTA_reject_non_fqdn_sender
@@ -775,19 +776,24 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
 						],
 						  items: [
                               {
-                                  ref: ZaGlobalConfig.A_zimbraMtaRejectUnknownClient,
+                                  ref: ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname,
                                   type: _CHECKBOX_,
-                                  label: ZaMsg.NAD_MTA_reject_unknown_client
+                                  label: ZaMsg.NAD_MTA_reject_unknown_client_hostname
                               },
                               {
-                                  ref: ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname,
+                                  ref: ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname,
                                   type: _CHECKBOX_,
-                                  label: ZaMsg.NAD_MTA_reject_unknown_hostname
+                                  label: ZaMsg.NAD_MTA_reject_unknown_reverse_client_hostname
                               },
                               {
                                   ref: ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain,
                                   type: _CHECKBOX_,
                                   label: ZaMsg.NAD_MTA_reject_unknown_sender_domain
+                              },
+                              {
+                                  ref: ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname,
+                                  type: _CHECKBOX_,
+                                  label: ZaMsg.NAD_MTA_reject_unknown_helo_hostname
                               },
                               {
                                   ref: ZaGlobalConfig.A_zimbraMtaRejectRblClient,
