@@ -744,7 +744,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
 						{type:_ZA_TOP_GROUPER_,label: ZaMsg.NAD_MTA_ProtocolChecks,
                             visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
                                     [ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname,
-                                    ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname
+                                    ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname,
                                     ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender]]],
                             visibilityChangeEventSources:[ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname,
                                     ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname,
