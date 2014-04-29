@@ -851,15 +851,28 @@ function(tmpObj) {
 		}	
 	}
 
-    if (ZaItem.hasWritePermission(ZaAccount.A_zimbraPrefMailForwardingAddress, tmpObj)) {
-        var forwardingEmail = tmpObj.attrs[ZaAccount.A_zimbraPrefMailForwardingAddress];
-        var keepLocalCopy = tmpObj.attrs[ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled];
+    var forwardFields = [
+        ZaAccount.A_zimbraMailForwardingAddress,
+        ZaAccount.A_zimbraPrefMailForwardingAddress,
+        ZaAccount.A_zimbraPrefCalendarForwardInvitesTo
+    ];
+    var canFixForwardingErrors =
+        AjxUtil.reduce(
+            forwardFields.concat([ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled]),
+            function(found, name) {
+                return found || ZaItem.hasWritePermission(name, tmpObj);
+            });
 
-        if (keepLocalCopy == "TRUE") {
-            if (forwardingEmail == null || forwardingEmail === "") {
-                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_missing_zimbraPrefMailForwardingAddress);
-                return false;
-            }
+    if (canFixForwardingErrors && tmpObj.attrs[ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled] == "TRUE") {
+        var hasForwardingEmail = AjxUtil.reduce(forwardFields, function(found, name) {
+            // this check handles undefined values, strings and arrays
+            return found ||
+                (tmpObj.attrs[name] && tmpObj.attrs[name].length > 0);
+        });
+
+        if (!hasForwardingEmail) {
+            ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_missing_zimbraPrefMailForwardingAddress);
+            return false;
         }
     }
 
