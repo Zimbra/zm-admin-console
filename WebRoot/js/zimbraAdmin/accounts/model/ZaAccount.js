@@ -852,16 +852,39 @@ function(tmpObj) {
 		}	
 	}
 
-    if (ZaItem.hasWritePermission(ZaAccount.A_zimbraPrefMailForwardingAddress, tmpObj)) {
-        var forwardingEmail = tmpObj.attrs[ZaAccount.A_zimbraPrefMailForwardingAddress];
-        var keepLocalCopy = tmpObj.attrs[ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled];
-        if (keepLocalCopy == "TRUE") {
-            if (forwardingEmail == null || forwardingEmail === "") {
+    var forwardFields = [
+        ZaAccount.A_zimbraMailForwardingAddress,
+        ZaAccount.A_zimbraPrefMailForwardingAddress,
+        ZaAccount.A_zimbraPrefCalendarForwardInvitesTo
+    ];
+    var canFixForwardingErrors = false;
+
+    AjxUtil.foreach(
+        forwardFields.concat([ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled]),
+        function(name) {
+            canFixForwardingErrors = canFixForwardingErrors ||
+                ZaItem.hasWritePermission(name, tmpObj);
+            console.log(name, canFixForwardingErrors);
+        }
+    );
+
+    if (canFixForwardingErrors && tmpObj.attrs[ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled] == "TRUE") {
+        var hasForwardingEmail  = false;
+
+        AjxUtil.foreach(
+            forwardFields,
+            function(name) {
+                hasForwardingEmail = hasForwardingEmail ||
+                    (tmpObj.attrs[name] && tmpObj.attrs[name].length > 0);
+                console.log(name, hasForwardingEmail);
+            }
+        );
+
+        if (!hasForwardingEmail) {
                 ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_missing_zimbraPrefMailForwardingAddress);
                 return false;
             }
         }
-    }
 
     if(ZaItem.hasWritePermission(ZaAccount.A_zimbraPasswordLockoutMaxFailures,tmpObj)&& tmpObj.attrs[ZaAccount.A_zimbraPasswordLockoutMaxFailures] && !AjxUtil.isInt(tmpObj.attrs[ZaAccount.A_zimbraPasswordLockoutMaxFailures])) {
 			//show error msg
