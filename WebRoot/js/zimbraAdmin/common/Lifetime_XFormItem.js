@@ -19,6 +19,8 @@
 
 MLifetime_XModelItem = function () {}
 XModelItemFactory.createItemType("_MLIFETIME_", "mlifetime", MLifetime_XModelItem);
+MLifetime_XModelItem.prototype.minInclusive = 0;
+MLifetime_XModelItem.prototype.required = false;
 MLifetime_XModelItem.prototype.validateType = function (value) {
 	var val = "";
 	if(value == ZaMsg.Unlimited) {
@@ -33,6 +35,10 @@ MLifetime_XModelItem.prototype.validateType = function (value) {
 	
 	if(val)
 		val =  XModelItem.prototype.validateNumber.call(this, val);
+
+	if (val == 0 && this.required) {
+		throw AjxMessageFormat.format(ZaMsg.exception_required_lifetime, value);
+	}
 	
 	return value;
 }
