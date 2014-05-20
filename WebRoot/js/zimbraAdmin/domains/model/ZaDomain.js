@@ -2381,8 +2381,8 @@ ZaDomain.myXModel = {
                 {id:ZaDomain.A2_new_gal_sync_account_name, type:_STRING_, ref:ZaDomain.A2_new_gal_sync_account_name, defaultValue: "galsync"},
                 {id:ZaDomain.A2_new_internal_gal_ds_name, type:_STRING_, ref:ZaDomain.A2_new_internal_gal_ds_name, defaultValue: "zimbra"},
                 {id:ZaDomain.A2_new_external_gal_ds_name, type:_STRING_, ref:ZaDomain.A2_new_external_gal_ds_name, defaultValue: "ldap"},
-                {id:ZaDomain.A2_new_internal_gal_polling_interval, type:_MLIFETIME_, ref:ZaDomain.A2_new_internal_gal_polling_interval, defaultValue: "1d"},
-                {id:ZaDomain.A2_new_external_gal_polling_interval, type:_MLIFETIME_, ref:ZaDomain.A2_new_external_gal_polling_interval, defaultValue: "1d"}
+                {id:ZaDomain.A2_new_internal_gal_polling_interval, type:_MINTERVAL_, ref:ZaDomain.A2_new_internal_gal_polling_interval, defaultValue: "1d"},
+                {id:ZaDomain.A2_new_external_gal_polling_interval, type:_MINTERVAL_, ref:ZaDomain.A2_new_external_gal_polling_interval, defaultValue: "1d"}
             ]
         }},
 		{id:ZaDomain.A2_gal_sync_accounts, type:_LIST_, listItem:{type:_OBJECT_, items:ZaAccount.myXModel.items}, ref:ZaDomain.A2_gal_sync_accounts},
@@ -2436,7 +2436,7 @@ ZaDomain.myXModel = {
 		{id:ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled},
         {id:ZaDomain.A2_zimbraAutoProvServerList, type:_LIST_, ref:ZaDomain.A2_zimbraAutoProvServerList},
         {id:ZaDomain.A2_zimbraAutoProvSelectedServerList, type:_LIST_},
-        {id:ZaDomain.A2_zimbraAutoProvPollingInterval, ref: ZaDomain.A2_zimbraAutoProvPollingInterval, type: _MLIFETIME_, minInclusive: 0 },
+        {id:ZaDomain.A2_zimbraAutoProvPollingInterval, ref: ZaDomain.A2_zimbraAutoProvPollingInterval, type: _MINTERVAL_, minInclusive: 0 },
         {id:ZaDomain.A2_zimbraAutoProvSearchActivated, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvSearchActivated},
         {id:ZaDomain.A2_zimbraAutoProvAccountPool,type:_LIST_,ref:ZaDomain.A2_zimbraAutoProvAccountPool},
         {id:ZaDomain.A2_zimbraAutoProvAccountPoolPageNum,ref:ZaDomain.A2_zimbraAutoProvAccountPoolPageNum, type:_NUMBER_,defaultValue:1},

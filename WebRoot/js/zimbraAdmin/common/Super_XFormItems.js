@@ -2520,6 +2520,3 @@ Collaborated_Select_XFormItem.prototype._getSelectable = function() {
     return result;
 }
 
-
-
-

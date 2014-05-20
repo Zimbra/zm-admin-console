@@ -20,10 +20,11 @@
 MLifetime_XModelItem = function () {}
 XModelItemFactory.createItemType("_MLIFETIME_", "mlifetime", MLifetime_XModelItem);
 MLifetime_XModelItem.prototype.minInclusive = 0;
+MLifetime_XModelItem.prototype.zeroValue = ZaMsg.Unlimited;
 MLifetime_XModelItem.prototype.required = false;
 MLifetime_XModelItem.prototype.validateType = function (value) {
 	var val = "";
-	if(value == ZaMsg.Unlimited) {
+	if(value == this.zeroValue) {
 		val = "0";
 	} else if(value != null && value.length >0) {
 		if(value.length > 1) {
@@ -59,6 +60,7 @@ Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 Lifetime_XFormItem.prototype.nowrap = false;
 Lifetime_XFormItem.prototype.labelWrap = true;
+
 Lifetime_XFormItem.prototype.initializeItems = function(){
 	this.items = [
 	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_, cssClass:"admin_xform_number_input", 
@@ -77,11 +79,12 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 					}
 				}
 			}
+
 			this.getParentItem()._numericPart = val;
-			return ((!val || val=="0") ? ZaMsg.Unlimited : val);
+			return ((!val || val=="0") ? this.getModelItem().zeroValue : val);
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
-            if (numericPart  == ZaMsg.Unlimited) {
+            if (numericPart  == this.getModelItem().zeroValue) {
                 numericPart = 0;
             }
 			var val = numericPart + this.getParentItem()._stringPart;
@@ -113,6 +116,7 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 ];
 	Composite_XFormItem.prototype.initializeItems.call(this);
 }
+
 Lifetime_XFormItem.prototype.items = [];
 Lifetime_XFormItem.prototype.getDisplayElement = function () {
 	return this.getElement(this.getId() + "_display");
@@ -282,7 +286,7 @@ Long_Lifetime_XFormItem.prototype.initializeItems = function(){
                 return ((!val || val=="0") ? "0" : val);
             },
             elementChanged:function(numericPart, instanceValue, event) {
-                if (numericPart  == ZaMsg.Unlimited) {
+                if (numericPart == this.getModelItem().zeroValue) {
                     numericPart = 0;
                 }
                 var val = numericPart + this.getParentItem()._stringPart;
@@ -318,3 +322,7 @@ Long_Lifetime_XFormItem.prototype.items = [];
 Long_Lifetime_XFormItem.prototype.getDisplayElement = function () {
     return this.getElement(this.getId() + "_display");
 }
+
+MInterval_XModelItem = function () {}
+XModelItemFactory.createItemType("_MINTERVAL_", "minterval", MInterval_XModelItem, MLifetime_XModelItem);
+MInterval_XModelItem.prototype.zeroValue = ZaMsg.never.toLowerCase();

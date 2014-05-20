@@ -445,7 +445,7 @@ ZaGlobalConfig.myXModel = {
         },
 		{ id:ZaGlobalConfig.A_zimbraDefaultDomainName, ref:"attrs/" + ZaGlobalConfig.A_zimbraDefaultDomainName, type:_STRING_, maxLength: 256},
 		{ id:ZaGlobalConfig.A_zimbraScheduledTaskNumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraScheduledTaskNumThreads , type:_NUMBER_, minInclusive: 1 },
-		{ id:ZaGlobalConfig.A_zimbraMailPurgeSleepInterval, type:_MLIFETIME_, ref:"attrs/"+ZaGlobalConfig.A_zimbraMailPurgeSleepInterval},
+		{ id:ZaGlobalConfig.A_zimbraMailPurgeSleepInterval, type:_MINTERVAL_, ref:"attrs/"+ZaGlobalConfig.A_zimbraMailPurgeSleepInterval},
 		
 		{ id:ZaGlobalConfig.A_currentMonitorHost, ref: "attrs/"+ZaGlobalConfig.A_currentMonitorHost, type: _STRING_ },
 		// attachments
