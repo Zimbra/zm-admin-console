@@ -233,33 +233,52 @@ ZaHome.prototype.updateServiceStatus = function (resp) {
     }
 }
 
-ZaHome.loadActiveSesson = function () {
-    var serverList = ZaApp.getInstance().getMailServers();
-    var totalSession = 0;
-    if(serverList && serverList.length) {
+ZaHome.startLoadingSessions = function() {
+	ZaHome.totalSession = 0;
+	var callback = new AjxCallback(this,ZaHome.startLoadingSessionsCallback);
+	ZaApp.getInstance().getMailServers(false, callback);
+}
+
+ZaHome.startLoadingSessionsCallback = function(resp) {
+	if(resp.getResponse() && resp.getResponse().Body && resp.getResponse().Body.GetAllServersResponse) {
+		var list = new ZaItemList(ZaServer);
+		list.loadFromJS(resp.getResponse().Body.GetAllServersResponse);
+		var serverArray = list.getArray();
+		for(var i=0;i<serverArray.length;i++) {
+			var server = serverArray[i];
+			var callback = new AjxCallback(this,ZaHome.loadActiveSession,server);
+			server.loadEffectiveRights("id", server.id, true,callback);
+		}
+	}
+}
+
+
+ZaHome.totalSession = 0;
+ZaHome.loadActiveSession = function (server,rightsResp) {
+	if(rightsResp && rightsResp.getResponse() && rightsResp.getResponse().Body && rightsResp.getResponse().Body.GetEffectiveRightsResponse && server) {
+		
+		server.initEffectiveRightsFromJS(rightsResp.getResponse().Body.GetEffectiveRightsResponse);
+
         var sessionType = ["soap", "admin", "imap"];
         var parameterList = []
-        var cnt = serverList.length;
-        for (var i = 0; i < cnt; i++) {
-            for (var j = 0 ; j < sessionType.length; j ++) {
-               parameterList.push (
-                   {
-                       targetServer: serverList[i].id,
-                       type: sessionType[j]
-                   }
-               )
-            }
+        for (var j = 0 ; j < sessionType.length; j ++) {
+           parameterList.push (
+               {
+                   targetServer: server.id,
+                   type: sessionType[j]
+               }
+           )
         }
-
+        
         var loadOneSessionNumer = function (resp) {
             if (!resp) {
-                totalSession =  0;
+            	ZaHome.totalSession =  0;
             } else {
                 if(resp && resp.getException && !resp.getException()) {
                     resp = resp.getResponse();
                     if (resp && resp.Body && resp.Body.GetSessionsResponse) {
                         var sessionStats = resp.Body.GetSessionsResponse;
-                            totalSession += sessionStats.total;
+                        ZaHome.totalSession += sessionStats.total;
                     }
                 }
             }
@@ -267,7 +286,15 @@ ZaHome.loadActiveSesson = function () {
             if (parameterList.length > 0) {
                 var currentSession = parameterList.shift();
 
-                var server = ZaServer.getServerById(currentSession.targetServer);
+                var server = ZaServer.getServerById(currentSession.targetServer, true);
+                if(!server) {
+                	server = new ZaServer();
+                    try {
+                        server.load("id", serverId, false, true);
+            		} catch (ex) {
+                        throw (ex);
+                    }
+                }
                 if (server) {
                     if (ZaItem.hasRight(ZaServer.RIGHT_GET_SESSIONS, server)) {
                         var sessionCallback = new  AjxCallback (this, loadOneSessionNumer);
@@ -305,21 +332,21 @@ ZaHome.loadActiveSesson = function () {
                     }
                 }
             } else {
-                this.updateSessionNum(totalSession);
+                this.updateSessionNum(ZaHome.totalSession);
             }
         }
 
         loadOneSessionNumer.call(this);
     } else {
-        this.updateSessionNum(totalSession);
+        this.updateSessionNum(ZaHome.totalSession);
     }
 }
 
 ZaHome.prototype.updateSessionNum = function(num) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_activeSession);
 }
-ZaHome.postLoadDataFunction.push(ZaHome.loadActiveSesson);
-
+//ZaHome.postLoadDataFunction.push(ZaHome.loadActiveSession);
+ZaHome.postLoadDataFunction.push(ZaHome.startLoadingSessions);
 ZaHome.loadQueueLength = function () {
     var mtaList = ZaApp.getInstance().getPostQList().getArray();
     var totalQueueLength = 0;
