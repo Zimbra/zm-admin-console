@@ -238,6 +238,7 @@ ZaHome.startLoadingSessions = function() {
 	var callback = new AjxCallback(this,ZaHome.startLoadingSessionsCallback);
 	ZaApp.getInstance().getMailServers(false, callback);
 }
+ZaHome.postLoadDataFunction.push(ZaHome.startLoadingSessions);
 
 ZaHome.startLoadingSessionsCallback = function(resp) {
 	if(resp.getResponse() && resp.getResponse().Body && resp.getResponse().Body.GetAllServersResponse) {
@@ -260,156 +261,121 @@ ZaHome.loadActiveSession = function (server,rightsResp) {
 		server.initEffectiveRightsFromJS(rightsResp.getResponse().Body.GetEffectiveRightsResponse);
 
         var sessionType = ["soap", "admin", "imap"];
-        var parameterList = []
         for (var j = 0 ; j < sessionType.length; j ++) {
-           parameterList.push (
-               {
-                   targetServer: server.id,
-                   type: sessionType[j]
-               }
-           )
-        }
-        
-        var loadOneSessionNumer = function (resp) {
-            if (!resp) {
-            	ZaHome.totalSession =  0;
-            } else {
-                if(resp && resp.getException && !resp.getException()) {
-                    resp = resp.getResponse();
-                    if (resp && resp.Body && resp.Body.GetSessionsResponse) {
-                        var sessionStats = resp.Body.GetSessionsResponse;
-                        ZaHome.totalSession += sessionStats.total;
-                    }
+            if (ZaItem.hasRight(ZaServer.RIGHT_GET_SESSIONS, server)) {
+                var sessionCallback = new  AjxCallback (this, ZaHome.loadOneSessionNumer);
+                try {
+                    var soapDoc = AjxSoapDoc.create("GetSessionsRequest", ZaZimbraAdmin.URN, null);
+                    var params = {};
+                    params.type = sessionType[j];
+
+                    soapDoc.getMethod().setAttribute("type", params.type);
+
+                    params.fresh = 1;
+                    soapDoc.getMethod().setAttribute("refresh", params.fresh);
+
+                    soapDoc.getMethod().setAttribute("limit", ZaServerSessionStatsPage.PAGE_LIMIT);
+
+                    params.offset = 0 ;
+
+                    soapDoc.getMethod().setAttribute("offset", params.offset);
+
+                    params.sortBy = "nameAsc";
+
+                    soapDoc.getMethod().setAttribute("sortBy", params.sortBy);
+
+                    var getSessCmd = new ZmCsfeCommand ();
+                    params.soapDoc = soapDoc ;
+                    params.asyncMode = true;
+                    params.noAuthToken = true;
+                    params.callback = sessionCallback;
+                    params.targetServer = currentSession.targetServer ;
+
+                    var resp = getSessCmd.invoke(params);
+                } catch (ex) {
+                    sessionCallback.run();
                 }
             }
-
-            if (parameterList.length > 0) {
-                var currentSession = parameterList.shift();
-
-                var server = ZaServer.getServerById(currentSession.targetServer, true);
-                if(!server) {
-                	server = new ZaServer();
-                    try {
-                        server.load("id", serverId, false, true);
-            		} catch (ex) {
-                        throw (ex);
-                    }
-                }
-                if (server) {
-                    if (ZaItem.hasRight(ZaServer.RIGHT_GET_SESSIONS, server)) {
-                        var sessionCallback = new  AjxCallback (this, loadOneSessionNumer);
-                        try {
-                            var soapDoc = AjxSoapDoc.create("GetSessionsRequest", ZaZimbraAdmin.URN, null);
-                            var params = {};
-                            params.type = currentSession.type;
-
-                            soapDoc.getMethod().setAttribute("type", params.type);
-
-                            params.fresh = 1;
-                            soapDoc.getMethod().setAttribute("refresh", params.fresh);
-
-                            soapDoc.getMethod().setAttribute("limit", ZaServerSessionStatsPage.PAGE_LIMIT);
-
-                            params.offset = 0 ;
-
-                            soapDoc.getMethod().setAttribute("offset", params.offset);
-
-                            params.sortBy = "nameAsc";
-
-                            soapDoc.getMethod().setAttribute("sortBy", params.sortBy);
-
-                            var getSessCmd = new ZmCsfeCommand ();
-                            params.soapDoc = soapDoc ;
-                            params.asyncMode = true;
-                            params.noAuthToken = true;
-                            params.callback = sessionCallback;
-                            params.targetServer = currentSession.targetServer ;
-
-                            var resp = getSessCmd.invoke(params);
-                        } catch (ex) {
-                            sessionCallback.run();
-                        }
-                    }
-                }
-            } else {
-                this.updateSessionNum(ZaHome.totalSession);
-            }
         }
-
-        loadOneSessionNumer.call(this);
-    } else {
-        this.updateSessionNum(ZaHome.totalSession);
     }
+}
+
+ZaHome.loadOneSessionNumer = function (resp) {
+    if(resp && resp.getException && !resp.getException()) {
+        resp = resp.getResponse();
+        if (resp && resp.Body && resp.Body.GetSessionsResponse) {
+            var sessionStats = resp.Body.GetSessionsResponse;
+            ZaHome.totalSession += sessionStats.total;
+        }
+    }
+    this.updateSessionNum(ZaHome.totalSession);
 }
 
 ZaHome.prototype.updateSessionNum = function(num) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_activeSession);
 }
-//ZaHome.postLoadDataFunction.push(ZaHome.loadActiveSession);
-ZaHome.postLoadDataFunction.push(ZaHome.startLoadingSessions);
-ZaHome.loadQueueLength = function () {
-    var mtaList = ZaApp.getInstance().getPostQList().getArray();
-    var totalQueueLength = 0;
-    if(mtaList && mtaList.length) {
-        var parameterList = [];
-        var cnt = mtaList.length;
-        for (var i = 0; i < cnt; i++) {
-            parameterList.push(mtaList[i].name);
-        }
 
-        var loadOneQueueLength = function (resp, isReset) {
-            if (!resp && isReset) {
-                totalQueueLength =  0;
-            } else {
-                if (resp && resp.getException) {
-                    if (!resp.getException()) {
-                        resp = resp.getResponse();
-                        var body = resp.Body;
-                        if(body && body.GetMailQueueInfoResponse.server && body.GetMailQueueInfoResponse.server[0]) {
-                            var queue =  body.GetMailQueueInfoResponse.server[0].queue;
-                            for ( var j in queue) {
-                                if (queue[j].n) {
-                                    totalQueueLength += parseInt(queue[j].n);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+ZaHome.startLoadingMTAS = function() {
+	ZaHome.totalSession = 0;
+	var callback = new AjxCallback(this,ZaHome.startLoadingMTAsCallback);
+	ZaApp.getInstance().getMailServers(false, callback);
+}
+ZaHome.postLoadDataFunction.push(ZaHome.startLoadingMTAS);
 
-            if (parameterList.length > 0) {
-                var currentName = parameterList.shift();
-                var isEx = false;
-                var queueLengthCallback = new AjxCallback(this, loadOneQueueLength);
-                try {
-                    var soapDoc = AjxSoapDoc.create("GetMailQueueInfoRequest", ZaZimbraAdmin.URN, null);
-                    var attr = soapDoc.set("server", "");
-                    attr.setAttribute("name", currentName);
-                    var command = new ZmCsfeCommand();
-                    var params = new Object();
-                    params.soapDoc = soapDoc ;
-                    params.asyncMode = true;
-                    params.noAuthToken = true;
-                    params.callback = queueLengthCallback;
-
-                    command.invoke(params);
-
-                } catch (ex) {
-                    queueLengthCallback.run();
-                }
-            } else {
-                this.updateQueueLength(totalQueueLength);
-            }
-        }
-
-        loadOneQueueLength.call(this, "", true);
-    }
-    else {
-        this.updateQueueLength(totalQueueLength);
-    }
+ZaHome.startLoadingMTAsCallback = function(resp) {
+	if(resp.getResponse() && resp.getResponse().Body && resp.getResponse().Body.GetAllServersResponse) {
+		var list = new ZaItemList(ZaMTA);
+		list.loadFromJS(resp.getResponse().Body.GetAllServersResponse);
+		var serverArray = list.getArray();
+		for(var i=0;i<serverArray.length;i++) {
+			var server = serverArray[i];
+			var callback = new AjxCallback(this,ZaHome.loadQueueLength,server);
+			server.loadEffectiveRights("id", server.id, true,callback);
+		}
+	}
 }
 
-ZaHome.postLoadDataFunction.push(ZaHome.loadQueueLength);
+ZaHome.totalQueueLength = 0;
+ZaHome.loadQueueLength = function (server,rightsResp) {
+	if(rightsResp && rightsResp.getResponse() && rightsResp.getResponse().Body && rightsResp.getResponse().Body.GetEffectiveRightsResponse && server) {
+		
+		server.initEffectiveRightsFromJS(rightsResp.getResponse().Body.GetEffectiveRightsResponse);
+		if(ZaItem.hasRight(ZaServer.MANAGE_MAIL_QUEUE_RIGHT, server)) {
+            var isEx = false;
+            var queueLengthCallback = new AjxCallback(this, ZaHome.loadOneQueueNumber);
+            try {
+                var soapDoc = AjxSoapDoc.create("GetMailQueueInfoRequest", ZaZimbraAdmin.URN, null);
+                var attr = soapDoc.set("server", "");
+                attr.setAttribute("name", server.name);
+                var command = new ZmCsfeCommand();
+                var params = new Object();
+                params.soapDoc = soapDoc ;
+                params.asyncMode = true;
+                params.noAuthToken = true;
+                params.callback = queueLengthCallback;
+                command.invoke(params);
+            } catch (ex) {
+            	//
+            }
+        }
+    } 
+}
+
+ZaHome.loadOneQueueNumber = function (resp) {
+    if(resp && resp.getException && !resp.getException()) {
+    	resp = resp.getResponse();
+        var body = resp.Body;
+        if(body && body.GetMailQueueInfoResponse.server && body.GetMailQueueInfoResponse.server[0]) {
+            var queue =  body.GetMailQueueInfoResponse.server[0].queue;
+            for ( var j in queue) {
+                if (queue[j].n) {
+                	ZaHome.totalQueueLength += parseInt(queue[j].n);
+                }
+            }
+        }
+    }
+    this.updateQueueLength(ZaHome.totalQueueLength);
+}
 ZaHome.prototype.updateQueueLength = function(queueLength) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(queueLength, ZaHome.A2_queueLength);
 }

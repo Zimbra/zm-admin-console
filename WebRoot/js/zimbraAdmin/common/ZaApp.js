@@ -607,16 +607,16 @@ function(refresh) {
 }
 
 ZaApp.prototype.getPostQList = 
-function (refresh) {
-	if (refresh || this._postqList == null) {
-		this._postqList = ZaMTA.getAll();
+	function (refresh, callback) {
+		if (refresh || this._postqList == null || callback) {
+			this._postqList = ZaMTA.getAll(callback);
+		}
+		return this._postqList;	
 	}
-	return this._postqList;	
-}
 
 ZaApp.prototype.getMailServers =
 function(refresh, callback) {
-	if (refresh || this._mbsList == null) {
+	if (refresh || this._mbsList == null || callback) {
 		this._mbsList = ZaServer.getAllMBSs([ZaServer.A_ServiceHostname, ZaServer.A_description, ZaServer.A_zimbraServiceEnabled, ZaServer.A_zimbraServiceInstalled, ZaItem.A_zimbraId], callback);
 	}
 	if(!callback) {
