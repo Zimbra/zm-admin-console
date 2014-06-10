@@ -154,34 +154,39 @@ ZaMTA.prototype.QCountsCallback = function (resp) {
 * @param app {ZaApp}
 * @return {ZaItemList} a list of ZaMTA objects {@link ZaItemList}
 **/
-ZaMTA.getAll = function () {
+ZaMTA.getAll = function (callback) {
 	var soapDoc = AjxSoapDoc.create("GetAllServersRequest", ZaZimbraAdmin.URN, null);	
 	soapDoc.getMethod().setAttribute("service", "mta");
 	soapDoc.getMethod().setAttribute("applyConfig", "false");
 	//var command = new ZmCsfeCommand();
 	var params = new Object();
-	params.asyncMode=false;
+	params.asyncMode = callback ? true : false;
+	params.callback = callback ? callback : null;
 	params.soapDoc = soapDoc;
 	soapDoc.setMethodAttribute("attrs", [ZaServer.A_ServiceHostname, ZaServer.A_description, ZaServer.A_zimbraServiceEnabled, ZaServer.A_zimbraServiceInstalled, ZaItem.A_zimbraId].join(","));	
 	var reqMgrParams = {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
-	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllServersResponse;	
-	var list = new ZaItemList(ZaMTA);
-	var retVal = new ZaItemList(ZaMTA);
-	list.loadFromJS(resp);	
-	
-	var servers = list.getArray();
-	var cnt = servers.length;
-	for(var i = 0; i < cnt; i++) {
-		if(ZaItem.hasRight(ZaMTA.MANAGE_MAIL_QUEUE_RIGHT, servers[i])) {
-			retVal.add(servers[i]);
+	if(callback) {
+		ZaRequestMgr.invoke(params, reqMgrParams);
+	} else {
+		var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllServersResponse;	
+		var list = new ZaItemList(ZaMTA);
+		var retVal = new ZaItemList(ZaMTA);
+		list.loadFromJS(resp);	
+		
+		var servers = list.getArray();
+		var cnt = servers.length;
+		for(var i = 0; i < cnt; i++) {
+			if(ZaItem.hasRight(ZaMTA.MANAGE_MAIL_QUEUE_RIGHT, servers[i])) {
+				retVal.add(servers[i]);
+			}
 		}
+		
+		retVal.loadedRights = list.loadedRights;
+		return retVal;
 	}
-	
-	retVal.loadedRights = list.loadedRights;
-	return retVal;	
 }
 
 

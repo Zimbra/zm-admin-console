@@ -624,50 +624,61 @@ ZaServer.prototype.toString = function() {
 	return this.name;
 }
 
-ZaServer.getServerByName = 
-function(serverName) {
-	if(!serverName)
-		return null;
-	var server = ZaServer.staticServerByNameCacheTable[serverName];
-	if(!server) {
-		domain = new ZaServer();
+ZaServer.staticServerByNameCacheTable = [];
+
+ZaServer.getServerByName = function (serverName) {
+    if (!serverName) {
+        return null;
+    }
+
+    var server = ZaServer.staticServerByNameCacheTable[serverName];
+
+	if (!server) {
+        server = new ZaServer();
 		try {
 			server.load("name", serverName, false, true);
 		} catch (ex) {
             throw (ex);
         }
 
-		ZaServer.putServeToCache(server);
-	} 
-	return server;	
-} 
-
-ZaServer.getServerById = 
-function (serverId) {
-	if(!serverId)
-		return null;
-		
-	var server = ZaServer.staticServerByIdCacheTable[serverId];
-	if(!server) {
-		server = new ZaServer();
-		try {
-			server.load("id", serverId, false, true);
-		} catch (ex) {
-			throw (ex);
-		}
-		ZaServer.putServeToCache(server);
+        ZaServer.staticServerByNameCacheTable[serverName] = server;
 	}
+
+	return server;	
+}
+
+ZaServer.staticServerByIdCacheTable = [];
+
+ZaServer.getServerById = function (serverId) {
+    if(!serverId) {
+        return null;
+    }
+
+    var server = ZaServer.staticServerByIdCacheTable[serverId];
+
+	if (!server) {
+        server = new ZaServer();
+        try {
+            server.load("id", serverId, false, true);
+		} catch (ex) {
+            throw (ex);
+        }
+
+        ZaServer.staticServerByIdCacheTable[serverId] = server;
+	}
+
 	return server;
 }
 
 ZaServer.getAllMBSs =
-function(attrs) {
+function(attrs, callback) {
 	var soapDoc = AjxSoapDoc.create("GetAllServersRequest", ZaZimbraAdmin.URN, null);	
 	soapDoc.getMethod().setAttribute("service", "mailbox");
 	soapDoc.getMethod().setAttribute("applyConfig", "false");
 	var params = new Object();
 	params.soapDoc = soapDoc;
-	params.asyncMode=false;
+	params.asyncMode = callback ? true : false;
+	params.callback = callback ? callback : null;
 	if(attrs) {
 		soapDoc.setMethodAttribute("attrs", attrs.join(","));
 	}	
@@ -675,10 +686,14 @@ function(attrs) {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
-	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllServersResponse;	
-	var list = new ZaItemList(ZaServer);
-	list.loadFromJS(resp);	
-	return list;
+	if(callback) {
+		ZaRequestMgr.invoke(params, reqMgrParams);
+	} else {
+		var resp = 	ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllServersResponse;
+		var list = new ZaItemList(ZaServer);
+		list.loadFromJS(resp);	
+		return list;
+	}
 }
 
 ZaServer.getAll =
@@ -688,7 +703,7 @@ function(attrs) {
 //	var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;
-	params.asyncMode=false;
+	params.asyncMode = false;
 	if(attrs) {
 		soapDoc.setMethodAttribute("attrs", attrs.join(","));
 	}	

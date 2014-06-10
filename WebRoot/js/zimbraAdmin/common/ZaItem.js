@@ -351,7 +351,7 @@ ZaItem.prototype.initEffectiveRightsFromJS = function(resp) {
 	
 }
 
-ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults) {
+ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults, callback) {
 	if(!this.type)
 		return;
 
@@ -359,8 +359,12 @@ ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults) {
 		val = "";
 
 	try {
-		var resp = this._getEffectiveRights(by, val, expandDefaults)
-		this.initEffectiveRightsFromJS(resp);
+		if(callback) {
+			this._getEffectiveRights(by, val, expandDefaults, callback);
+		} else {
+			var resp = this._getEffectiveRights(by, val, expandDefaults, callback);
+			this.initEffectiveRightsFromJS(resp);
+		}
 	} catch (ex) {
 		throw (ex);
 	}
@@ -383,7 +387,7 @@ ZaItem.inCacheProcess = function (val) {
     return ZaSettings.initializing;
 }
 
-ZaItem.prototype._getEffectiveRights = function (by, val, expandDefaults) {
+ZaItem.prototype._getEffectiveRights = function (by, val, expandDefaults, callback) {
 	var cacheName = ZaItem.getCacheName(by, val, this.type, expandDefaults);
     var inCacheProcess =  ZaItem.inCacheProcess(val);
     var resp;
@@ -405,17 +409,26 @@ ZaItem.prototype._getEffectiveRights = function (by, val, expandDefaults) {
 
         var csfeParams = new Object();
         csfeParams.soapDoc = soapDoc;
+        csfeParams.asyncMode = callback ? true : false;
+        csfeParams.callback =  callback ? callback : null;
+        
         var reqMgrParams = {} ;
         reqMgrParams.controller = (ZaApp.getInstance() && ZaApp.getInstance().getCurrentController()) ? ZaApp.getInstance().getCurrentController() : null;
         reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
-
+        
         try {
-            resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
+        	if(callback) {
+        		ZaRequestMgr.invoke(csfeParams, reqMgrParams);
+        	} else {
+        		resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams).Body.GetEffectiveRightsResponse;
+                if (inCacheProcess) {
+                    ZaItem.RightCache[cacheName]= resp;
+                }
+        	}
         } catch (ex) {
             throw (ex);
         }
-        if (inCacheProcess)
-            ZaItem.RightCache[cacheName]= resp;
+
     } else {
         resp = ZaItem.RightCache[cacheName];
     }
