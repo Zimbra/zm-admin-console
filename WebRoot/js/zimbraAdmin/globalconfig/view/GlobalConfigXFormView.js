@@ -767,12 +767,14 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
 						]},
 						{ type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_MTA_DnsChecks,
                         				visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                                		[ZaGlobalConfig.A_zimbraMtaRejectUnknownClient,
-                                                		ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname,
-                                                		ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain]]],
-							visibilityChangeEventSources:[ZaGlobalConfig.A_zimbraMtaRejectUnknownClient,
-								ZaGlobalConfig.A_zimbraMtaRejectUnknownHostname,
-								ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain
+                                                		[ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname,
+                                                		ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname,
+                                                		ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain,
+								ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname]]],
+							visibilityChangeEventSources:[ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname,
+								ZaGlobalConfig.A_zimbraMtaRejectReverseClientUnknownHostname,
+								ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain,
+								ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname
 						],
 						  items: [
                               {
