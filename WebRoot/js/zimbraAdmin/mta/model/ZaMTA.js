@@ -151,7 +151,7 @@ ZaMTA.prototype.QCountsCallback = function (resp) {
 }
 
 /**
-* @param callback {AjxCallback}
+* @param app {ZaApp}
 * @return {ZaItemList} a list of ZaMTA objects {@link ZaItemList}
 **/
 ZaMTA.getAll = function (callback) {

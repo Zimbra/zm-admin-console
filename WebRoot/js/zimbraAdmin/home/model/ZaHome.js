@@ -240,6 +240,7 @@ ZaHome.startLoadingSessions = function() {
 }
 ZaHome.postLoadDataFunction.push(ZaHome.startLoadingSessions);
 
+
 ZaHome.startLoadingSessionsCallback = function(resp) {
 	if(resp.getResponse() && resp.getResponse().Body && resp.getResponse().Body.GetAllServersResponse) {
 		var list = new ZaItemList(ZaServer);
@@ -252,7 +253,6 @@ ZaHome.startLoadingSessionsCallback = function(resp) {
 		}
 	}
 }
-
 
 ZaHome.totalSession = 0;
 ZaHome.loadActiveSession = function (server,rightsResp) {
@@ -309,7 +309,8 @@ ZaHome.loadOneSessionNumer = function (resp) {
         }
     }
     this.updateSessionNum(ZaHome.totalSession);
-}
+} 
+
 
 ZaHome.prototype.updateSessionNum = function(num) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_activeSession);
@@ -340,6 +341,7 @@ ZaHome.loadQueueLength = function (server,rightsResp) {
 	if(rightsResp && rightsResp.getResponse() && rightsResp.getResponse().Body && rightsResp.getResponse().Body.GetEffectiveRightsResponse && server) {
 		
 		server.initEffectiveRightsFromJS(rightsResp.getResponse().Body.GetEffectiveRightsResponse);
+		
 		if(ZaItem.hasRight(ZaServer.MANAGE_MAIL_QUEUE_RIGHT, server)) {
             var isEx = false;
             var queueLengthCallback = new AjxCallback(this, ZaHome.loadOneQueueNumber);
@@ -376,6 +378,7 @@ ZaHome.loadOneQueueNumber = function (resp) {
     }
     this.updateQueueLength(ZaHome.totalQueueLength);
 }
+
 ZaHome.prototype.updateQueueLength = function(queueLength) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(queueLength, ZaHome.A2_queueLength);
 }

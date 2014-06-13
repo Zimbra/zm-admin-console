@@ -316,8 +316,8 @@ function(popupOperations, popupOrder) {
     var isPopup = false;
     if(oldMenu) {
         isPopup = oldMenu.isPoppedUp();
-        this.setMenu();
-        this.menu = null;
+        this.setMenu("");
+        this.menu = "";
         try {
             oldMenu.dispose();
             delete oldMenu;

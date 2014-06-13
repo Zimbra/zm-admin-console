@@ -186,6 +186,7 @@ ZaCos.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
 ZaCos.A_zimbraFeatureSkinChangeEnabled = "zimbraFeatureSkinChangeEnabled";
 ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled = "zimbraFeatureOutOfOfficeReplyEnabled";
 ZaCos.A_zimbraFeatureNewMailNotificationEnabled = "zimbraFeatureNewMailNotificationEnabled";
+ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled = "zimbraFeatureMailPollingIntervalPreferenceEnabled" ;
 ZaCos.A_zimbraFeatureOptionsEnabled = "zimbraFeatureOptionsEnabled" ;
 //ZaCos.A_zimbraFeatureShortcutAliasesEnabled = "zimbraFeatureShortcutAliasesEnabled" ;
 ZaCos.A_zimbraFeatureMailEnabled = "zimbraFeatureMailEnabled";
@@ -633,20 +634,20 @@ ZaCos.myXModel = {
 //        {id:ZaCos.A_description, type:_STRING_, ref:"attrs/"+ZaCos.A_description},
         ZaItem.descriptionModelItem ,
         {id:ZaCos.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraAttachmentsBlocked},
-        {id:ZaCos.A_zimbraAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAuthTokenLifetime, required: true},
-        {id:ZaCos.A_zimbraAdminAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAdminAuthTokenLifetime, required: true},
-        {id:ZaCos.A_zimbraMailIdleSessionTimeout, type:_MINTERVAL_, ref:"attrs/"+ZaCos.A_zimbraMailIdleSessionTimeout},
+        {id:ZaCos.A_zimbraAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAuthTokenLifetime},
+        {id:ZaCos.A_zimbraAdminAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAdminAuthTokenLifetime},
+        {id:ZaCos.A_zimbraMailIdleSessionTimeout, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraMailIdleSessionTimeout},
         {id:ZaCos.A_zimbraContactMaxNumEntries, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraContactMaxNumEntries, maxInclusive:2147483647, minInclusive:0},
         {id:ZaCos.A_zimbraMailForwardingAddressMaxLength, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraMailForwardingAddressMaxLength, maxInclusive:2147483647, minInclusive:0},
         {id:ZaCos.A_zimbraMailForwardingAddressMaxNumAddrs, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraMailForwardingAddressMaxNumAddrs, maxInclusive:2147483647, minInclusive:0},
-        {id:ZaCos.A_zimbraMailMinPollingInterval, type:_MINTERVAL_, ref:"attrs/"+ZaCos.A_zimbraMailMinPollingInterval},
+        {id:ZaCos.A_zimbraMailMinPollingInterval, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraMailMinPollingInterval},
         {id:ZaCos.A_zimbraMailMessageLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraMailMessageLifetime},
         {id:ZaCos.A_zimbraMailTrashLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraMailTrashLifetime},
         {id:ZaCos.A_zimbraPrefItemsPerVirtualPage, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraPrefItemsPerVirtualPage},
         {id:ZaCos.A_zimbraMailSpamLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraMailSpamLifetime},
 
         {id:ZaCos.A_zimbraQuotaWarnPercent, type:_NUMBER_, ref:"attrs/" + ZaCos.A_zimbraQuotaWarnPercent},
-        {id:ZaCos.A_zimbraQuotaWarnInterval, type:_MINTERVAL_, ref:"attrs/"+ZaCos.A_zimbraQuotaWarnInterval},
+        {id:ZaCos.A_zimbraQuotaWarnInterval, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraQuotaWarnInterval},
         {id:ZaCos.A_zimbraQuotaWarnMessage, type:_STRING_, ref:"attrs/" + ZaCos.A_zimbraQuotaWarnMessage},
 
 //pref
@@ -691,19 +692,14 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraPrefShowSearchString, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefShowSearchString, type:_ENUM_},
         //{id:ZaCos.A_zimbraPrefMailSignatureStyle, choices:ZaModel.SIGNATURE_STYLE_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailSignatureStyle, type:_ENUM_,defaultValue:"internet"},
         {id:ZaCos.A_zimbraPrefUseTimeZoneListInCalendar, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefUseTimeZoneListInCalendar, type:_ENUM_},
-        {
-            id: ZaCos.A_zimbraPrefMailPollingInterval,
-            ref: "attrs/" + ZaCos.A_zimbraPrefMailPollingInterval,
-            type: _ENUM_,
-            choices: ZaModel.MAIL_POLLING_INTERVAL_CHOICES
-        },
-	{id:ZaCos.A_zimbraPrefAutoSaveDraftInterval, ref:"attrs/"+ZaCos.A_zimbraPrefAutoSaveDraftInterval, type:_MINTERVAL_},
-        {id:ZaCos.A_zimbraDataSourceMinPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceMinPollingInterval, type:_MINTERVAL_},
-        {id:ZaCos.A_zimbraDataSourcePop3PollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourcePop3PollingInterval, type:_MINTERVAL_},
-        {id:ZaCos.A_zimbraDataSourceImapPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceImapPollingInterval, type:_MINTERVAL_},
-        {id:ZaCos.A_zimbraDataSourceCalendarPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceCalendarPollingInterval, type:_MINTERVAL_},
-        {id:ZaCos.A_zimbraDataSourceRssPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceRssPollingInterval, type:_MINTERVAL_},
-        {id:ZaCos.A_zimbraDataSourceCaldavPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceCaldavPollingInterval, type:_MINTERVAL_},
+        {id:ZaCos.A_zimbraPrefMailPollingInterval, ref:"attrs/"+ZaCos.A_zimbraPrefMailPollingInterval, type:_ENUM_, choices: ZaSettings.mailPollingIntervalChoices},
+	{id:ZaCos.A_zimbraPrefAutoSaveDraftInterval, ref:"attrs/"+ZaCos.A_zimbraPrefAutoSaveDraftInterval, type:_MLIFETIME_},
+        {id:ZaCos.A_zimbraDataSourceMinPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceMinPollingInterval, type:_MLIFETIME_},
+        {id:ZaCos.A_zimbraDataSourcePop3PollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourcePop3PollingInterval, type:_MLIFETIME_},
+        {id:ZaCos.A_zimbraDataSourceImapPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceImapPollingInterval, type:_MLIFETIME_},
+        {id:ZaCos.A_zimbraDataSourceCalendarPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceCalendarPollingInterval, type:_MLIFETIME_},
+        {id:ZaCos.A_zimbraDataSourceRssPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceRssPollingInterval, type:_MLIFETIME_},
+        {id:ZaCos.A_zimbraDataSourceCaldavPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceCaldavPollingInterval, type:_MLIFETIME_},
 	{id:ZaCos.A_zimbraProxyAllowedDomains, type: _LIST_, ref:"attrs/"+ZaCos.A_zimbraProxyAllowedDomains, listItem:{ type: _STRING_}}, 
         {id:ZaCos.A_zimbraPrefMailFlashIcon, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailFlashIcon, type:_ENUM_},
         {id:ZaCos.A_zimbraPrefMailFlashTitle, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailFlashTitle, type:_ENUM_},
@@ -779,6 +775,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraPublicSharingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPublicSharingEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureOptionsEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureOptionsEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureSkinChangeEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureSkinChangeEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureManageZimlets, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureManageZimlets, type:_ENUM_},
@@ -802,7 +799,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraFileSendExpirationWarning, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFileSendExpirationWarning,
         	choices:["none", "owner", "all"]
         },
-        {id:ZaCos.A_zimbraFileExpirationWarningDays, type:_MINTERVAL_, ref:"attrs/"+ZaCos.A_zimbraFileExpirationWarningDays},
+        {id:ZaCos.A_zimbraFileExpirationWarningDays, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraFileExpirationWarningDays},
         {id:ZaCos.A2_retentionPoliciesKeepInherited, type:_ENUM_, ref:ZaCos.A2_retentionPoliciesKeepInherited, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaCos.A2_retentionPoliciesKeep, type:_LIST_},
         {id:ZaCos.A2_retentionPoliciesPurge, type:_LIST_},
@@ -905,7 +902,7 @@ ZaCos.getEffectiveCosList = function(adminId) {
 ZaCos.prototype.countAllAccounts = function() {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
     soapDoc.getMethod().setAttribute("maxResults", "0");
-	soapDoc.getMethod().setAttribute("limit", "-1");
+    soapDoc.getMethod().setAttribute("limit", "-1");
 	var query = "(" + ZaAccount.A_COSId + "=" + this.id + ")";
 
     if(this.name == "default") {
@@ -934,7 +931,7 @@ ZaCos.prototype.countAllAccounts = function() {
 ZaCos.prototype.countAllDomains = function() {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
     soapDoc.getMethod().setAttribute("maxResults", "0");
-	soapDoc.getMethod().setAttribute("limit", "-1");
+    soapDoc.getMethod().setAttribute("limit", "-1");
 	var query = "(" + ZaDomain.A_domainDefaultCOSId + "=" + this.id + ")";
 
     if(this.name == "default") {

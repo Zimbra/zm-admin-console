@@ -251,6 +251,7 @@ ZaAccount.A_zimbraPop3Enabled = "zimbraPop3Enabled";
 ZaAccount.A_zimbraFeatureSkinChangeEnabled = "zimbraFeatureSkinChangeEnabled";
 ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled = "zimbraFeatureOutOfOfficeReplyEnabled";
 ZaAccount.A_zimbraFeatureNewMailNotificationEnabled = "zimbraFeatureNewMailNotificationEnabled";
+ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled = "zimbraFeatureMailPollingIntervalPreferenceEnabled" ;
 ZaAccount.A_zimbraHideInGal = "zimbraHideInGal";
 ZaAccount.A_zimbraMailCanonicalAddress = "zimbraMailCanonicalAddress";
 ZaAccount.A_zimbraMailCatchAllAddress = "zimbraMailCatchAllAddress" ;
@@ -856,25 +857,34 @@ function(tmpObj) {
         ZaAccount.A_zimbraPrefMailForwardingAddress,
         ZaAccount.A_zimbraPrefCalendarForwardInvitesTo
     ];
-    var canFixForwardingErrors =
-        AjxUtil.reduce(
-            forwardFields.concat([ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled]),
-            function(found, name) {
-                return found || ZaItem.hasWritePermission(name, tmpObj);
-            });
+    var canFixForwardingErrors = false;
+
+    AjxUtil.foreach(
+        forwardFields.concat([ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled]),
+        function(name) {
+            canFixForwardingErrors = canFixForwardingErrors ||
+                ZaItem.hasWritePermission(name, tmpObj);
+            console.log(name, canFixForwardingErrors);
+        }
+    );
 
     if (canFixForwardingErrors && tmpObj.attrs[ZaAccount.A_zimbraPrefMailLocalDeliveryDisabled] == "TRUE") {
-        var hasForwardingEmail = AjxUtil.reduce(forwardFields, function(found, name) {
-            // this check handles undefined values, strings and arrays
-            return found ||
-                (tmpObj.attrs[name] && tmpObj.attrs[name].length > 0);
-        });
+        var hasForwardingEmail  = false;
+
+        AjxUtil.foreach(
+            forwardFields,
+            function(name) {
+                hasForwardingEmail = hasForwardingEmail ||
+                    (tmpObj.attrs[name] && tmpObj.attrs[name].length > 0);
+                console.log(name, hasForwardingEmail);
+            }
+        );
 
         if (!hasForwardingEmail) {
-            ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_missing_zimbraPrefMailForwardingAddress);
-            return false;
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_missing_zimbraPrefMailForwardingAddress);
+                return false;
+            }
         }
-    }
 
     if(ZaItem.hasWritePermission(ZaAccount.A_zimbraPasswordLockoutMaxFailures,tmpObj)&& tmpObj.attrs[ZaAccount.A_zimbraPasswordLockoutMaxFailures] && !AjxUtil.isInt(tmpObj.attrs[ZaAccount.A_zimbraPasswordLockoutMaxFailures])) {
 			//show error msg
@@ -1876,8 +1886,8 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraQuotaWarnInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraQuotaWarnInterval},
         {id:ZaAccount.A_zimbraQuotaWarnMessage, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnMessage},
 
-        {id:ZaAccount.A_zimbraAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAuthTokenLifetime, required: true},
-        {id:ZaAccount.A_zimbraAdminAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAdminAuthTokenLifetime, required: true},
+        {id:ZaAccount.A_zimbraAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAuthTokenLifetime},
+        {id:ZaAccount.A_zimbraAdminAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAdminAuthTokenLifetime},
         {id:ZaAccount.A_zimbraMailIdleSessionTimeout, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraMailIdleSessionTimeout},
         {id:ZaAccount.A_zimbraMailMessageLifetime, type:_COS_MLIFETIME_, ref:"attrs/" + ZaAccount.A_zimbraMailMessageLifetime},
         {id:ZaAccount.A_zimbraMailSpamLifetime, type:_COS_MLIFETIME_, ref:"attrs/" + ZaAccount.A_zimbraMailSpamLifetime},
@@ -1912,12 +1922,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefMailInitialSearch, type:_COS_STRING_, ref:"attrs/"+ZaAccount.A_zimbraPrefMailInitialSearch},
         {id:ZaAccount.A_zimbraMaxMailItemsPerPage, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMaxMailItemsPerPage,maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraPrefMailItemsPerPage, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPrefMailItemsPerPage, choices:[10,25,50,100]},
-        {
-            id: ZaAccount.A_zimbraPrefMailPollingInterval,
-            type: _COS_ENUM_POLLING_,
-            ref: "attrs/" + ZaAccount.A_zimbraPrefMailPollingInterval,
-            choices: ZaModel.MAIL_POLLING_INTERVAL_CHOICES
-        },
+        {id:ZaAccount.A_zimbraPrefMailPollingInterval, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefMailPollingInterval, choices: ZaSettings.mailPollingIntervalChoices},
         {id:ZaAccount.A_zimbraMailMinPollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraMailMinPollingInterval},
         {id:ZaAccount.A_zimbraPrefMailFlashIcon, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPrefMailFlashIcon, type:_COS_ENUM_},
         {id:ZaAccount.A_zimbraPrefMailFlashTitle, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPrefMailFlashTitle, type:_COS_ENUM_},
@@ -2041,6 +2046,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPublicSharingEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPublicSharingEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureNewMailNotificationEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureNewMailNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         //{id:ZaAccount.A_zimbraFeatureShortcutAliasesEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureShortcutAliasesEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureOptionsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureOptionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureSkinChangeEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureSkinChangeEnabled, choices:ZaModel.BOOLEAN_CHOICES},

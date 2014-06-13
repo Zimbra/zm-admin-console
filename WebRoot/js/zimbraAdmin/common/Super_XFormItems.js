@@ -116,26 +116,6 @@ Cos_Enum_XModelItem.prototype.validateType = function (value) {
 	throw this.getModel().getErrorMessage("didNotMatchChoice", value);
 }
 
-Cos_Enum_Polling_XModelItem = function () {}
-XModelItemFactory.createItemType("_COS_ENUM_POLLING_", "cos_enum_polling", Cos_Enum_Polling_XModelItem, Cos_Enum_XModelItem);
-
-Cos_Enum_Polling_XModelItem.prototype.getValue = function (instance, current, ref) {
-
-    var value = this.getLocalValue(instance);
-    if (value == null) {
-        value = this.getSuperValue(instance);
-    }
-
-    var POLLING_REGEX = /^([0-9])+([dhms]|ms)$/;
-
-    // IF the units are not part of the value, then default is seconds
-    if (!POLLING_REGEX.test(value)) {
-        value += "s";
-    }
-
-    return value;
-}
-
 Cos_List_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_LIST_", "list_enum", Cos_List_XModelItem, Cos_String_XModelItem);
 Cos_List_XModelItem.prototype.outputType = _LIST_;
@@ -299,8 +279,8 @@ Cos_HostNameOrIp_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_HOSTNAME_OR_IP_", "cos_hostname_or_ip", Cos_HostNameOrIp_XModelItem, Cos_String_XModelItem);
 Cos_HostNameOrIp_XModelItem.prototype.validateType = XModelItem.prototype.validateString;
 Cos_HostNameOrIp_XModelItem.prototype.maxLength = 256;
-//Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IPv4_ADDRESS_RE ];
-Cos_HostNameOrIp_XModelItem.prototype.pattern =  [AjxUtil.HOST_NAME_RE, AjxUtil.IPv4_ADDRESS_RE, AjxUtil.HOST_NAME_WITH_PORT_RE];
+//Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE ];
+Cos_HostNameOrIp_XModelItem.prototype.pattern =  [AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE, AjxUtil.HOST_NAME_WITH_PORT_RE];
 
 /**
 * _COS_PORT_
@@ -318,7 +298,7 @@ Cos_Subnet_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_SUBNET_", "cos_subnet", Cos_Subnet_XModelItem, Cos_String_XModelItem);
 Cos_Subnet_XModelItem.prototype.validateType = XModelItem.prototype.validateString;
 Cos_Subnet_XModelItem.prototype.maxLength = 256;
-Cos_Subnet_XModelItem.prototype.pattern =  [AjxUtil.IPv4_ADDRESS_RE, AjxUtil.SUBNET_RE];
+Cos_Subnet_XModelItem.prototype.pattern =  [AjxUtil.IP_ADDRESS_RE, AjxUtil.SUBNET_RE];
 
 /**
 *	XForm Items that have overwritable super values
@@ -1793,7 +1773,7 @@ ZAGroup_XFormItem.prototype.initializeItems = function () {
 ZAWizGroup_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZAWIZGROUP_", "zawizgroup", ZAWizGroup_XFormItem, Group_XFormItem);
 ZAWizGroup_XFormItem.prototype.numCols = 2;
-ZAWizGroup_XFormItem.prototype.colSizes = ["125px","450px"];
+ZAWizGroup_XFormItem.prototype.colSizes = [(AjxEnv.isIE ? "100px":"200px"),(AjxEnv.isIE ? "450px":"275px" )];// modified by qin@zimbra.com
 ZAWizGroup_XFormItem.prototype.cssStyle = "margin-top:20px;margin-bottom:0px;padding-bottom:0px;";
 
 ZARightGrouper_XFormItem = function() {}
@@ -2519,4 +2499,7 @@ Collaborated_Select_XFormItem.prototype._getSelectable = function() {
     }
     return result;
 }
+
+
+
 

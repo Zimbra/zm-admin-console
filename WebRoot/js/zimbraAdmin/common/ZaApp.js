@@ -607,12 +607,12 @@ function(refresh) {
 }
 
 ZaApp.prototype.getPostQList = 
-	function (refresh, callback) {
-		if (refresh || this._postqList == null || callback) {
-			this._postqList = ZaMTA.getAll(callback);
-		}
-		return this._postqList;	
+function (refresh, callback) {
+	if (refresh || this._postqList == null || callback) {
+		this._postqList = ZaMTA.getAll(callback);
 	}
+	return this._postqList;	
+}
 
 ZaApp.prototype.getMailServers =
 function(refresh, callback) {
