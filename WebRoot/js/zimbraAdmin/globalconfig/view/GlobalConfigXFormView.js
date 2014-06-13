@@ -772,7 +772,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 		ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain,
 								ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname]]],
 							visibilityChangeEventSources:[ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname,
-								ZaGlobalConfig.A_zimbraMtaRejectReverseClientUnknownHostname,
+								ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname,
 								ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain,
 								ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname
 						],
