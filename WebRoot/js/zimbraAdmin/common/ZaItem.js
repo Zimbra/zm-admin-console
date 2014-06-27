@@ -1108,9 +1108,9 @@ ZaItem.getZeroIsUnlimitedItem = function () {
  * @return {string} copyright string with the end year information
  */
 ZaItem.getAboutScreenCopyright = function() {
-    var date = new Date();
-    var curYear = date.getFullYear() + "";
-    return AjxMessageFormat.format(ZabMsg.aboutScreenCopyright, [curYear]);
+    var version = ZaServerVersionInfo.version || 'N/A';
+    var release = ZaServerVersionInfo.release || 'N/A';
+    return AjxMessageFormat.format(ZabMsg.aboutScreenCopyright, [version, release]);
 }
 
 /**
