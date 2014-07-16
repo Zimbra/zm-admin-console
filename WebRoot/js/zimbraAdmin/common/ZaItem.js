@@ -296,7 +296,14 @@ ZaItem.prototype.parseTargetsRightsFromJS = function(targetObj) {
 					if(getAttrs[a]["default"] && getAttrs[a]["default"][0] && getAttrs[a]["default"][0].v && getAttrs[a]["default"][0].v instanceof Array) {
 						var cnt = getAttrs[a]["default"][0].v.length; 
 						if(cnt == 1) {
-							this._defaultValues.attrs[getAttrs[a].n] = getAttrs[a]["default"][0].v[0]._content;
+							if((getAttrs[a].n == ZaDomain.A_zimbraFreebusyExchangeAuthPassword) &&
+								(getAttrs[a]["default"][0].v[0]._content == "VALUE-BLOCKED")) {
+								/* Value was replaced in SOAP response.  Treat as empty string so that it is clear it
+								 * needs to be typed again before using "Check the settings" */
+								this._defaultValues.attrs[getAttrs[a].n] = "";
+							} else {
+								this._defaultValues.attrs[getAttrs[a].n] = getAttrs[a]["default"][0].v[0]._content;
+							}
 						} else if (cnt >1) {
 							this._defaultValues.attrs[getAttrs[a].n] = new Array();
 							for(var i = 0; i<cnt;i++) { 
@@ -337,7 +344,7 @@ ZaItem.prototype.parseTargetsRightsFromJS = function(targetObj) {
 								this._defaultValues.attrs[setAttrs[a].n][i] = setAttrs[a]["default"][0].v[i]._content;
 							}
 						}
-					}					
+					}
 				}
 			} 
 			if(targetObj.setAttrs[0].all) {

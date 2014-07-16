@@ -2042,6 +2042,12 @@ function (obj) {
 	this[ZaDomain.A_GALSampleQuery] = "john";
 	if(!this.attrs[ZaDomain.A_zimbraGalAutoCompleteLdapFilter])
 		this.attrs[ZaDomain.A_zimbraGalAutoCompleteLdapFilter] = "(|(cn=%s*)(sn=%s*)(gn=%s*)(mail=%s*))";
+	if(this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] &&
+		(this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] == "VALUE-BLOCKED")) {
+		/* Value was replaced in SOAP response - treat as empty string so that it is clear it needs to be typed again
+		 * before using "Check the settings" */
+		this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] = "";
+	}
 }
 
 ZaDomain.prototype.parseNotebookFolderAcls = function (resp) {

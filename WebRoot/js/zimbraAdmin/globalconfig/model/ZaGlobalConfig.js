@@ -364,9 +364,16 @@ ZaGlobalConfig.prototype.initFromJS = function(obj) {
         }
     }
 
-	if(this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin] != null && !(this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin] instanceof Array)) {
-		this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin] = [this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin]];
-	}
+    if(this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin] != null && !(this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin] instanceof Array)) {
+        this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin] = [this.attrs[ZaGlobalConfig.A_zimbraInstalledSkin]];
+    }
+
+    if(this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] &&
+        (this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] == "VALUE-BLOCKED")) {
+        /* Value was replaced in SOAP response - treat as empty string so that it is clear it needs to be typed again
+         * before using "Check the settings" */
+        this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] = "";
+    }
 }
 
 //ZaGlobalConfig.prototype.modify = 
