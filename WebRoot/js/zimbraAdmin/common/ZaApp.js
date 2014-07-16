@@ -630,7 +630,7 @@ function(refresh, callback) {
 		var tmpArray = this._mbsList.getArray();
 		var cnt = tmpArray.length;
 		for(var i = 0; i < cnt; i++) {
-			if(tmpArray[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
+			if(tmpArray[i].attrs[ZaServer.A_zimbraMailStoreServletEnabled]) {
 				resArray.push(tmpArray[i]);
 			}
 		}
@@ -647,7 +647,7 @@ function(refresh) {
 		var hashMap = this._serverList.getIdHash();
 		var mailServerArr = [];
 		for (var i in hashMap) {
-			if (hashMap[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]){
+			if (hashMap[i].attrs[ZaServer.A_zimbraMailStoreServletEnabled]){
 				mailServerArr.push(hashMap[i]);
 			}
 		}
@@ -670,7 +670,7 @@ function(refresh) {
 		var hashMap = this._serverList.getIdHash();
 		var mailServerArr = [];
 		for (var i in hashMap) {
-			if (hashMap[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]){
+			if (hashMap[i].attrs[ZaServer.A_zimbraMailStoreServletEnabled]){
 				var obj = new Object();
 				obj[ZaServer.A_ServiceHostname] = hashMap[i].attrs[ZaServer.A_ServiceHostname];
 				obj.id = hashMap[i].id;
