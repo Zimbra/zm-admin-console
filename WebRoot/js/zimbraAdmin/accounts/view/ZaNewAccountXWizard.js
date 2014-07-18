@@ -695,8 +695,12 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 						trueValue:"TRUE", falseValue:"FALSE" , subLabel:"",
 						elementChanged: function(elementValue,instanceValue, event) {
 							if(elementValue=="TRUE") {
+								var cositem = this.getParentItem().getItems()[0];
+								cositem.setValue(null);
+
 								ZaAccount.setDefaultCos(this.getInstance(), this.getForm().parent._app);	
 							}
+
 							this.getForm().itemChanged(this, elementValue, event);
 						},
                         enableDisableChecks:[ [ZaItem.hasWritePermission,ZaAccount.A_COSId]],

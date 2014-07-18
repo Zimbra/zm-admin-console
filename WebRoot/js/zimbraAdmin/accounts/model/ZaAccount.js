@@ -2181,6 +2181,7 @@ ZaAccount.setCosChanged = function (value, event, form) {
 		var cos = ZaCos.getCosByName(value);
 		if(cos) {
 			this._defaultValues = cos;
+			this.getInstance().attrs[ZaAccount.A_COSId] = cos.id;
 		} else {
 			this.setError(AjxMessageFormat.format(ZaMsg.ERROR_NO_SUCH_COS,[value]));
 			var event = new DwtXFormsEvent(form, this, value);
