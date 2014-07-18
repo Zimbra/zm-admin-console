@@ -41,69 +41,14 @@ ZaServerStatsView = function(parent) {
 ZaServerStatsView.prototype = new DwtTabView;
 ZaServerStatsView.prototype.constructor = ZaServerStatsView;
 
-ZaServerStatsView.prototype.getOneServersMtaServiceStatus = function( by, val ){
+ZaServerStatsView.prototype._isMtaEnabled = function(server) {
+	return server && server.attrs[ZaServer.A_zimbraMtaServiceEnabled];
+}
 
-
-	try {
-						
-			var soapDoc = AjxSoapDoc.create("GetServerRequest", ZaZimbraAdmin.URN, null);
-			var elBy = soapDoc.set("server", val );
-			elBy.setAttribute( "by", by );
-			soapDoc.setMethodAttribute("applyConfig", "false");
-			soapDoc.setMethodAttribute("attrs", ZaServer.A_zimbraServiceInstalled + "," +  ZaServer.A_zimbraServiceEnabled  );
-		
-			var params = new Object();
-			params.soapDoc = soapDoc;	
-			params.asyncMode = false;
-			var reqMgrParams = {
-				controller : ZaApp.getInstance().getCurrentController(),
-				busyMsg : ZaMsg.BUSY_GET_SERVER
-			}
-			resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetServerResponse.server[0];
-	
-	}catch(ex) {
-			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaServerStatsView.getOneServersMtaServiceStatus", null, false);
-	}
-
-	
-	if ( !resp ){	
-		return false;	
-	}
-
-	var oneServerDetailInfo = resp.a;
-	if ( !oneServerDetailInfo ){
-		return false;
-	}
-
-	var oneService = null;
-	var isEnabled = false;
-	var isInstalled = false;
-	var j = 0;
- 	for ( ; j < oneServerDetailInfo.length; j++){
-			oneService = oneServerDetailInfo[j];
-			if( "mta" == oneService._content){
-				if( oneService.n == ZaServer.A_zimbraServiceEnabled ){
-							
-					isEnabled = true;
-							
-				}else if ( oneService.n == ZaServer.A_zimbraServiceInstalled ){
-							
-					isInstalled = true;
-						
-				}							
-			} 
-   }
-  	  
-   return(isEnabled && isInstalled);
-} 
-
-
-ZaServerStatsView.prototype._isMtaEnable = function( id ){
-
-	if( !id ){
-		return false;
-	}
-	return ZaServerStatsView.prototype.getOneServersMtaServiceStatus( "id", id );
+ZaServerStatsView.prototype._isMailStoreEnabled = function(server) {
+	return server &&
+		server.attrs[ZaServer.A_zimbraMailboxServiceEnabled] &&
+		server.attrs[ZaServer.A_zimbraMailStoreServletEnabled];
 }
 
 ZaServerStatsView.prototype.toString = 
@@ -171,7 +116,7 @@ function(entry) {
     }
     this._sessionPage.setObject(entry);
 
-    if (ZaZimbraAdmin.isGlobalAdmin()) {
+    if (ZaZimbraAdmin.isGlobalAdmin() && this._isMailStoreEnabled(entry)) {
         if( this._mbxPage == null ){
             this._mbxPage = new ZaServerMBXStatsPage (this);
             ZaServerMBXStatsPage.TAB_KEY = this.addTab(ZaMsg.TABT_MBX, this._mbxPage);
@@ -179,7 +124,7 @@ function(entry) {
         this._mbxPage.setObject(entry);
     }
 
-	if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
+	if (this._isMtaEnabled(entry)) {
 
 	    if( this._msgCountPage == null ){
 	        this._msgCountPage = new ZaServerMessageCountPage(this);
@@ -265,13 +210,13 @@ ZaServerStatsView.prototype.getTabChoices =
 function() {
     //var innerTabs = this._tab;
     var innerTabs = [ZaMsg.TABT_Disk, ZaMsg.TABT_Session];
+    var entry = this._containedObject;
 
-    if (ZaZimbraAdmin.isGlobalAdmin()) {
+    if (ZaZimbraAdmin.isGlobalAdmin() && this._isMailStoreEnabled(entry)) {
         innerTabs.push(ZaMsg.TABT_MBX);
     }
 
-    var entry = this._containedObject;
-    if( ZaServerStatsView.prototype._isMtaEnable( entry.id ) ){
+    if (this._isMtaEnabled(entry)) {
         innerTabs.push(ZaMsg.TABT_InMsgs);
         innerTabs.push(ZaMsg.TABT_InData);
         innerTabs.push(ZaMsg.TABT_Spam_Activity);
