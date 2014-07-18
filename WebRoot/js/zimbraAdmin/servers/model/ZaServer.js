@@ -996,7 +996,7 @@ function(by, val) {
 		params = new Object();
 		params.soapDoc = soapDoc;	
 		params.asyncMode = false;
-		if(this.attrs && this.attrs[ZaServer.A_zimbraMailboxServiceInstalled] && this.attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
+		if(this.attrs && this.attrs[ZaServer.A_zimbraMailStoreServletEnabled]) {
 			params.targetServer = this.id;
 		}
 		var reqMgrParams = {
