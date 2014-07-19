@@ -48,7 +48,7 @@ ZaServerStatsView.prototype._isMtaEnabled = function(server) {
 ZaServerStatsView.prototype._isMailStoreEnabled = function(server) {
 	return server &&
 		server.attrs[ZaServer.A_zimbraMailboxServiceEnabled] &&
-		server.attrs[ZaServer.A_zimbraMailStoreServletEnabled];
+		server.attrs[ZaServer.A_zimbraMailClientServiceEnabled];
 }
 
 ZaServerStatsView.prototype.toString = 

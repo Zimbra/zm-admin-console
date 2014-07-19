@@ -218,7 +218,7 @@ ZaServerXFormView.getPOP3SSLEnabled = function () {
 	return (value == 'TRUE' && ZaServerXFormView.getPOP3Enabled.call(this));
 }
 
-ZaServerXFormView.getMailStoreEnabled = function () {
+ZaServerXFormView.getMailClientEnabled = function () {
 	var value = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_showVolumes);
 	return value;
 }
@@ -1293,7 +1293,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
    if(_tab7) {
        var case7 = 	{type:_ZATABCASE_,width:"100%", id:"server_form_volumes_tab", caseKey:_tab7,
 					visibilityChangeEventSources:[ZaModel.currentTab],
-					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaServerXFormView.getMailStoreEnabled],
+					visibilityChecks:[Case_XFormItem.prototype.isCurrentTab,ZaServerXFormView.getMailClientEnabled],
 
 					numCols:1,
 					items:[
