@@ -166,10 +166,6 @@ function(domain) {
 	var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
 	soapDoc.setMethodAttribute("onerror", "continue");
 	
-	if (!ZaServerVersionInfo._loaded){
-		var versionInfoReq = soapDoc.set("GetVersionInfoRequest", null, null, ZaZimbraAdmin.URN);
-	}	
-
 	var domainInfoReq = soapDoc.set("GetDomainInfoRequest", null, null, ZaZimbraAdmin.URN);
 	var elBy = soapDoc.set("domain", location.hostname, domainInfoReq);
 	elBy.setAttribute("by", "virtualHostname");
@@ -194,15 +190,6 @@ function(domain) {
 		params.resend = true;
         resp = command.invoke(params).Body.BatchResponse;
     }
-
-	if(resp.GetVersionInfoResponse && resp.GetVersionInfoResponse[0]) {
-		var versionResponse = resp.GetVersionInfoResponse[0];
-		ZaServerVersionInfo.buildDate = ZaServerVersionInfo._parseDateTime(versionResponse.info[0].buildDate);
-		ZaServerVersionInfo.host = versionResponse.info[0].host;
-		ZaServerVersionInfo.release = versionResponse.info[0].release;
-		ZaServerVersionInfo.version = versionResponse.info[0].version;
-		ZaServerVersionInfo._loaded = true;
-	}	
 
 	if(resp.GetDomainInfoResponse && resp.GetDomainInfoResponse[0]) {
 		var domainInfoResponse = resp.GetDomainInfoResponse[0];
@@ -408,6 +395,8 @@ function() {
 		ZaZimbraAdmin.isFirstRequest = false;
 		//initialize my rights
 		ZaZimbraAdmin.initInfo (resp);
+
+		ZaServerVersionInfo.load();
 
         //check the user locale settings and reload the message is needed.
         ZaZimbraAdmin.LOCALE_QS = "" ;
