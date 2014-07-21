@@ -92,17 +92,10 @@ ZaController.initToolbarMethods["ZaDLController"].push(ZaDLController.initToolba
 ZaDLController.initPopupMenuMethod =
 function () {
 	var showNewDL = false;
-	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
+	if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 		showNewDL = true;
 	} else {
-		var domainList = ZaApp.getInstance().getDomainList().getArray();
-		var cnt = domainList.length;
-		for(var i = 0; i < cnt; i++) {
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_DL,domainList[i])) {
-				showNewDL = true;
-				break;
-			}
-		}
+		showNewDL = ZaZimbraAdmin.canCreateDL();
 	}
    	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.ALTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
    	this._popupOperations[ZaOperation.CLOSE]=new ZaOperation(ZaOperation.CLOSE,ZaMsg.TBB_Close, ZaMsg.ALTBB_Close_tt, "Close", "CloseDis", new AjxListener(this, this.closeButtonListener));

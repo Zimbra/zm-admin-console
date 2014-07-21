@@ -1088,13 +1088,13 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                   {   type:_CELLSPACER_ },
                                   {
                                       type: _DWT_BUTTON_ , colSpan: 2, label: ZaMsg.Check_Settings, autoPadding: false,
-                                      onActivate: ZaItem.checkInteropSettings, enableDisableChecks:[[ZaItem.hasRight,ZaGlobalConfig.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT,ZaZimbraAdmin.currentAdminAccount]]
+                                      onActivate: ZaItem.checkInteropSettings, enableDisableChecks:[ZaZimbraAdmin.canChangeExchangeConfig]
                                   } ,
                                   {   type:_CELLSPACER_ } ,
                                   {
                                       type: _DWT_BUTTON_ , colSpan: 2, label: ZaMsg.Clear_Settings,autoPadding: false,
                                       onActivate: ZaItem.clearInteropSettings,
-                                      enableDisableChecks:[[ZaItem.hasRight,ZaGlobalConfig.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT,ZaZimbraAdmin.currentAdminAccount]]
+                                      enableDisableChecks:[ZaZimbraAdmin.canChangeExchangeConfig]
                                   },
                                   {   type:_CELLSPACER_ }
                                  ]

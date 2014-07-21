@@ -78,19 +78,14 @@ ZaSettings.initRights = function () {
 	} else {
 		if(typeof(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents])=="string") {
 			ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents] = [ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]];
-			//ZaSettings.ENABLED_UI_COMPONENTS[ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents]] = true;		
 		}	
 		var cnt = ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents].length;
 		for(var i=0;i<cnt;i++) {
 			ZaSettings.ENABLED_UI_COMPONENTS[ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraAdminConsoleUIComponents][i]] = true;
 		}
 	}
-	//load global permissions, e.g. createTopDomain, createCos
-	var soapDoc = AjxSoapDoc.create("GetEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
-	var elTarget = soapDoc.set("target", "");
-	elTarget.setAttribute("type","global");
-
-
+	//load  permissions, e.g. createTopDomain, createCos, createDistributionList
+	var soapDoc = AjxSoapDoc.create("GetAllEffectiveRightsRequest", ZaZimbraAdmin.URN, null);
 	var elGrantee = soapDoc.set("grantee", ZaZimbraAdmin.currentUserId);
 	elGrantee.setAttribute("by","id");
 	
@@ -100,10 +95,10 @@ ZaSettings.initRights = function () {
 	reqMgrParams.controller = ZaApp.getInstance().getCurrentController();
 	reqMgrParams.busyMsg = ZaMsg.BUSY_REQUESTING_ACCESS_RIGHTS ;
 	try {
-		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetEffectiveRightsResponse;
-		ZaZimbraAdmin.currentAdminAccount.initEffectiveRightsFromJS(resp);
+		var resp = ZaRequestMgr.invoke(csfeParams, reqMgrParams ).Body.GetAllEffectiveRightsResponse;
+		ZaSettings.initGlobalRightsFromJS(resp);
 	} catch (ex) {
-		//not implemented yet
+		//keep loading
 	}	
 	
 	var comps = ZaSettings.getUIComponents() ;
@@ -111,8 +106,80 @@ ZaSettings.initRights = function () {
     for(var i=0;i<cnt;i++) {
       ZaSettings.ENABLED_UI_COMPONENTS[comps[i]._content] = true;
     }
+    
 }
 ZaSettings.initMethods.push(ZaSettings.initRights);
+
+ZaSettings.initGlobalRightsFromJS = function(resp) {
+	ZaSettings.targetRights = {};
+	var cosNameList = [];
+	var domainNameList = [];
+	if(resp && resp.target && resp.target instanceof Array) {
+		for(var i = 0; i < resp.target.length; i++) {
+			ZaSettings.parseTargetsRightsFromJS(resp.target[i]);
+			if(resp.target[i].type == ZaItem.COS) {
+				if(resp.target[i].entries && resp.target[i].entries.length) {
+					for(var j = 0; j < resp.target[i].entries.length; j++) {
+						var entry = resp.target[i].entries[j].entry;
+						for(var k = 0; k < entry.length; k++) {
+							cosNameList.push(entry[k].name);
+						}
+					}
+	            }
+			} else if(resp.target[i].type == ZaItem.DOMAIN) {
+				if(resp.target[i].entries && resp.target[i].entries.length) {
+					for(var j = 0; j < resp.target[i].entries.length; j++) {
+						var entry = resp.target[i].entries[j].entry;
+						for(var k = 0; k < entry.length; k++) {
+							domainNameList.push(entry[k].name);
+						}
+					}
+	            }
+			}
+		}
+	}	
+	ZaApp.getInstance()._cosNameList = cosNameList;
+	ZaApp.getInstance()._domainNameList = domainNamelist;
+}
+
+ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
+	if(targetObj) {
+		if(targetObj.type && AjxUtil.isEmpty(ZaSettings.targetRights[targetObj.type])) {
+			ZaSettings.targetRights[targetObj.type] = {};
+		}
+
+		if(targetObj.all && targetObj.all.length && targetObj.all[0] && targetObj.all[0].right && targetObj.all[0].right.length) {
+			var rights = targetObj.all[0].right;
+			for (var r in rights) {
+				ZaSettings.targetRights[targetObj.type][rights[r].n] = ["all"];
+			}
+		}
+		
+		if(targetObj.entries && targetObj.entries.length) {
+			for (var i = 0; i < targetObj.entries.length; i++) {
+				var entry = targetObj.entries[i];
+				if(entry.rights && entry.rights.length && entry.rights[0] && entry.rights[0].right && entry.rights[0].right.length) {
+					var rights = entry.rights[0].right;
+					for (var r in rights) {
+						if(!ZaSettings.targetRights[targetObj.type][rights[r].n]) {
+							ZaSettings.targetRights[targetObj.type][rights[r].n] = [];
+						}
+					}
+				}
+				
+				if(entry.entry && entry.entry.length) {
+					for(var j = 0; j < entry.entry.length; j++) {
+						if(entry.entry[j] && entry.entry[j].name) {
+							for(var rightName in ZaSettings.targetRights[targetObj.type]) {
+								ZaSettings.targetRights[targetObj.type][rightName].push(entry.entry[j].name);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 ZaSettings.getUIComponents = function (item) {
     soapDoc = AjxSoapDoc.create("GetAdminConsoleUICompRequest", ZaZimbraAdmin.URN, null);
