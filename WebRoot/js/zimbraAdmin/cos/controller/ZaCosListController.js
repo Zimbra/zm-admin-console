@@ -103,7 +103,7 @@ function (list, openInNewTab, openInSearchTab, hasMore) {
 
 ZaCosListController.initPopupMenuMethod =
 function () {
-	if(ZaItem.hasRight(ZaCos.CREATE_COS_RIGHT, ZaZimbraAdmin.currentAdminAccount)) {
+	if(ZaZimbraAdmin.canCreateCos()) {
    		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosListController.prototype._newButtonListener));
    		this._popupOperations[ZaOperation.DUPLICATE]=new ZaOperation(ZaOperation.DUPLICATE,ZaMsg.TBB_Duplicate, ZaMsg.COSTBB_Duplicate_tt, "DuplicateCOS", "DuplicateCOSDis", new AjxListener(this, ZaCosListController.prototype._duplicateButtonListener));
 	}

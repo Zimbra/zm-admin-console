@@ -1347,11 +1347,70 @@ ZaZimbraAdmin.isGlobalAdmin = function () {
 }
 
 ZaZimbraAdmin.hasGlobalDomainListAccess = function () {
-    return (ZaZimbraAdmin.isGlobalAdmin() || ZaDomain.globalRights[ZaDomain.RIGHT_LIST_DOMAIN]);
+	return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[ZaItem.DOMAIN] && ZaSettings.targetRights[ZaItem.DOMAIN][ZaCos.RIGHT_LIST_DOMAIN] && ZaSettings.targetRights[ZaItem.DOMAIN][ZaCos.RIGHT_LIST_DOMAIN].length));
 }
 
 ZaZimbraAdmin.hasGlobalCOSSListAccess = function () {
-	return (ZaZimbraAdmin.isGlobalAdmin() || ZaCos.globalRights[ZaCos.RIGHT_LIST_COS]);
+	return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[ZaItem.COS] && ZaSettings.targetRights[ZaItem.COS][ZaCos.RIGHT_LIST_COS] && ZaSettings.targetRights[ZaItem.COS][ZaCos.RIGHT_LIST_COS].length));
 }
 
+ZaZimbraAdmin.canCreateTopDomain = function() {
+	return (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_TOP_DOMAIN]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_TOP_DOMAIN].length > 0);
+}
 
+ZaZimbraAdmin.canCreateDomain = function() {
+	return ((ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_TOP_DOMAIN]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_TOP_DOMAIN].length > 0) 
+		|| (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_SUB_DOMAIN]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_SUB_DOMAIN].length > 0)
+		|| (ZaSettings.targetRights[ZaItem.DOMAIN]
+			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_SUB_DOMAIN]
+			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_SUB_DOMAIN].length > 0)
+	);
+}
+
+ZaZimbraAdmin.canCreateAccount = function() {
+	return ((ZaSettings.targetRights[ZaItem.DOMAIN]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT].length > 0)
+		|| (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_ACCOUNT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_ACCOUNT].length > 0));
+}
+
+ZaZimbraAdmin.canCreateDL = function() {
+	return ((ZaSettings.targetRights[ZaItem.DOMAIN]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_DL]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_DL].length > 0)
+		|| (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_DL]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_DL].length > 0));
+}
+
+ZaZimbraAdmin.canCreateCalRes = function() {
+	return ((ZaSettings.targetRights[ZaItem.DOMAIN]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES].length > 0)
+		|| (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_CALRES]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_CALRES].length > 0));
+}
+
+ZaZimbraAdmin.canCreateCos = function() {
+	return (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.CREATE_COS_RIGHT]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.CREATE_COS_RIGHT].length > 0);
+}
+
+ZaZimbraAdmin.canChangeExchangeConfig = function() {
+	return ((ZaSettings.targetRights[ZaItem.DOMAIN]
+	&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT]
+	&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT].length > 0)
+	|| (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT]
+		&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.CHECK_EXCHANGE_AUTH_CONFIG_RIGHT].length > 0));
+}

@@ -75,7 +75,7 @@ ZaCosController.initPopupMenuMethod =
 function () {
 	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.COSTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
 
-	if(ZaItem.hasRight(ZaCos.CREATE_COS_RIGHT, ZaZimbraAdmin.currentAdminAccount)) {
+	if(ZaZimbraAdmin.canCreateCos()) {
 		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.COSTBB_New_tt, "NewCOS", "NewCOSDis", new AjxListener(this, ZaCosController.prototype._newButtonListener, [true]));
 	}
 	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.COSTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));

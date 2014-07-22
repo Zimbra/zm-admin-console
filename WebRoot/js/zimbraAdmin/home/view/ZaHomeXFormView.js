@@ -245,7 +245,7 @@ ZaHomeXFormView.myXFormModifier = function(xFormObject, entry) {
 
     if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
         var domainContentChoices = [];
-	    if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount)) {
+	    if(ZaZimbraAdmin.canCreateTopDomain()) {
             domainContentChoices.push({value:ZaMsg.LBL_HomeCreateDomain, onClick: ZaHomeXFormView.onCreateDomain});
         }
 

@@ -244,58 +244,42 @@ function () {
 	this.showNewDL = false;
 	this.showNewCalRes = false;
 	this.showNewAlias = false;
-	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
+	if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 		this.showNewAccount = true;
 		this.showNewDL = true;
 		this.showNewCalRes = true;
 		this.showNewAlias = true;
 	} else {
-		var domainList = ZaApp.getInstance().getDomainList().getArray();
-		var cnt = domainList.length;
-		if (cnt === 0) {
-			//user probably does not have list domain access so check the access for the current domain
-			try {
-				var domain = ZaDomain.getDomainByName(ZaSettings.myDomainName);
-			} catch (ex) {
-
-			}
-			if (domain) {
-				if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ACCOUNT,domain)) {
-					this.showNewAccount = true;
-				}
-				if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_CALRES,domain)) {
-					this.showNewCalRes = true;
-				}
-				if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_DL,domain)) {
-					this.showNewDL = true;
-				}
-				if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ALIAS,domain)) {
-					this.showNewAlias = true;
-				}
-			}
-		}
-		for(var i = 0; i < cnt; i++) {
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ACCOUNT,domainList[i])) {
-				this.showNewAccount = true;
-			}	
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_CALRES,domainList[i])) {
-				this.showNewCalRes = true;
-			}
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_DL,domainList[i])) {
-				this.showNewDL = true;
-			}				
-			if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_ALIAS,domainList[i])) {
-				this.showNewAlias = true;
-			}
-			if(this.showNewAlias && this.showNewDL && this.showNewCalRes && this.showNewAccount) {
-				break;
-			}
-		}
+		this.showNewAccount = ZaSettings.targetRights[ZaItem.DOMAIN]
+				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT]
+				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT].length > 0;   
+				
+		this.showNewCalRes = ZaSettings.targetRights[ZaItem.DOMAIN]
+				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES]
+				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES].length > 0;
+		
+		this.showNewDL = ZaSettings.targetRights[ZaItem.DOMAIN]
+			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_DL]
+			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_DL].length > 0;
+		
+		this.showNewAlias = ZaSettings.targetRights[ZaItem.DOMAIN]
+			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ALIAS]
+			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ALIAS].length > 0;
 	}
 	
     //push it firstly to make it as the first one
-    this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "NewAccount", "AccountDis",new AjxListener(this, ZaAccountListController.prototype._newAccountListener));;
-    this._popupOrder.push(ZaOperation.NEW_MENU);
+	if(this.showNewAccount && this._defaultType == ZaItem.ACCOUNT) {
+		this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ACTBB_New_tt, "NewAccount", "AccountDis",new AjxListener(this, ZaAccountListController.prototype._newAccountListener));;
+	} else if(this.showNewCalRes && this._defaultType == ZaItem.RESOURCE) {
+		this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "Resource", "ResourceDis",new AjxListener(this, ZaAccountListController.prototype._newResourceListener));
+	} else if(this.showNewDL && this._defaultType == ZaItem.DL) {
+		this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "DistributionList", "DistributionListDis",new AjxListener(this, ZaAccountListController.prototype._newDistributionListListener));
+	} else if(this.showNewAlias && this._defaultType == ZaItem.ALIAS) {
+		this._popupOperations[ZaOperation.NEW_MENU] = new ZaOperation(ZaOperation.NEW_MENU, ZaMsg.TBB_New, ZaMsg.ALTBB_New_tt, "AccountAlias", "AccountDis",new AjxListener(this, ZaAccountListController.prototype._newAliasListener));
+	}
+	if(this.showNewAccount || this.showNewCalRes || this.showNewDL || this.showNewAlias) {
+		this._popupOrder.push(ZaOperation.NEW_MENU);
+	}
 
     this._popupOperations[ZaOperation.EDIT] = new ZaOperation(ZaOperation.EDIT, ZaMsg.TBB_Edit, ZaMsg.ACTBB_Edit_tt, "Edit", "EditDis", new AjxListener(this, ZaAccountListController.prototype._editButtonListener));
     this._popupOrder.push(ZaOperation.EDIT);

@@ -146,12 +146,12 @@ function (ev) {
 
 ZaDomainListController.initPopupMenuMethod =
 function () {
-	if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount)) {
+	if(ZaZimbraAdmin.canCreateTopDomain()) {
 		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.DTBB_New_tt, "Domain", "DomainDis", new AjxListener(this, ZaDomainListController.prototype._newButtonListener));
 	}
 	this._popupOperations[ZaOperation.EDIT]=new ZaOperation(ZaOperation.EDIT,ZaMsg.TBB_Edit, ZaMsg.DTBB_Edit_tt, "Edit", "EditDis",  new AjxListener(this, ZaDomainListController.prototype._editButtonListener));    	
 	this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.DTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, ZaDomainListController.prototype._deleteButtonListener));    	    	
-    	if(ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount)){
+    if(ZaZimbraAdmin.canCreateTopDomain()) {
 		this._popupOperations[ZaOperation.ADD_DOMAIN_ALIAS]=new ZaOperation(ZaOperation.ADD_DOMAIN_ALIAS,ZaMsg.TBB_AddDomainAlias, ZaMsg.DTBB_addDomainAlias_tt, "DomainAlias", "DomainAliasDis", new AjxListener(this, ZaDomainListController.prototype._addDomainAliasListener));
 	}
 	this._popupOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS]=new ZaOperation(ZaOperation.VIEW_DOMAIN_ACCOUNTS,ZaMsg.Domain_view_accounts, ZaMsg.Domain_view_accounts_tt, "Search", "SearchDis", new AjxListener(this, this.viewAccountsButtonListener));

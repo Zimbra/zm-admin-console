@@ -84,8 +84,7 @@ ZaDomainController.initPopupMenuMethod = function () {
         )
     );
 
-    if (ZaItem.hasRight(ZaDomain.RIGHT_CREATE_TOP_DOMAIN, ZaZimbraAdmin.currentAdminAccount) ||
-        ZaItem.hasRight(ZaDomain.RIGHT_CREATE_SUB_DOMAIN, this._currentObject)) {
+    if (ZaZimbraAdmin.canCreateDomain()) {
 
         this._popupOperations[ZaOperation.NEW] = new ZaOperation(
             ZaOperation.NEW,

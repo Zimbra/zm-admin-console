@@ -27,6 +27,7 @@ ZaItem = function(iKeyName) {
 	if (arguments.length == 0) return;
 	this._iKeyName = iKeyName;
     this._uuid = ZaUtil.getItemUUid();
+    this.rightsLoaded = false;
 	ZaModel.call(this, true);
 
 }
@@ -354,6 +355,7 @@ ZaItem.prototype.parseTargetsRightsFromJS = function(targetObj) {
 			}
 		} 
 	}
+	this.rightsLoaded = true;
 }
 
 ZaItem.prototype.initEffectiveRightsFromJS = function(resp) {
@@ -361,7 +363,6 @@ ZaItem.prototype.initEffectiveRightsFromJS = function(resp) {
 	if(resp && resp.target && resp.target instanceof Array) {
 		this.parseTargetsRightsFromJS(resp.target[0]);
 	}
-	
 }
 
 ZaItem.prototype.loadEffectiveRights = function (by, val, expandDefaults, callback) {
@@ -1023,12 +1024,17 @@ ZaItem.hasRight = function (right, instance) {
 		
 	if(!instance)
 		instance = this.getInstance();
-		
+
+	if(!right)
+		return true;
+	
+	if(!instance.rightsLoaded && instance.id) {
+		instance.loadEffectiveRights("id", instance.id, true);
+	}
+	
 	if (!instance.rights)
 		return false;
 	
-	if(!right)
-		return true;
 		
 	return (instance.rights[right] === true);
 }
