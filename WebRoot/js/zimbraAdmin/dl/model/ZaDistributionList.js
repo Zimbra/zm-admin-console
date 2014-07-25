@@ -629,16 +629,14 @@ ZaDistributionList.addRemoveOwners = function (mods, obj) {
 		if(currentObjCnt != -1) {
 			currentObjCnt = this[ZaDistributionList.A2_DLOwners].length;
 		}
-        var hasRemoveRight =  true;
-		if(hasRemoveRight) {
-			try {
-				for(var ix=0; ix < currentObjCnt; ix++) {
-					this.addRemoveOwner(this[ZaDistributionList.A2_DLOwners][ix]);
-				}
-			} catch (ex) {
-				ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.addRemoveOwner", null, false);
-				return false;
+		
+		try {
+			for(var ix=0; ix < currentObjCnt; ix++) {
+				this.addRemoveOwner(this[ZaDistributionList.A2_DLOwners][ix]);
 			}
+		} catch (ex) {
+			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.addRemoveOwner", null, false);
+			return false;
 		}
 
         // add owners
@@ -646,23 +644,20 @@ ZaDistributionList.addRemoveOwners = function (mods, obj) {
 			tmpObjCnt = obj[ZaDistributionList.A2_DLOwners].length;
 		}
 
-        var hasAddRight = true;
-		if(hasAddRight) {
-			try {
-				for(var ix=0; ix < tmpObjCnt; ix++) {
-					try {
-						if(obj[ZaDistributionList.A2_DLOwners][ix]) {
-							this.addRemoveOwner(obj[ZaDistributionList.A2_DLOwners][ix], true);
-						}
-					} catch (ex) {
-							//if failed for another reason - jump out
-							throw (ex);
+		try {
+			for(var ix=0; ix < tmpObjCnt; ix++) {
+				try {
+					if(obj[ZaDistributionList.A2_DLOwners][ix]) {
+						this.addRemoveOwner(obj[ZaDistributionList.A2_DLOwners][ix], true);
 					}
+				} catch (ex) {
+						//if failed for another reason - jump out
+						throw (ex);
 				}
-			} catch (ex) {
-				ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.addRemoveOwner", null, false);
-				return false;
 			}
+		} catch (ex) {
+			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.addRemoveOwner", null, false);
+			return false;
 		}
 	}
 }
@@ -671,41 +666,34 @@ ZaItem.modifyMethods["ZaDistributionList"].push(ZaDistributionList.addRemoveOwne
 ZaDistributionList.addOwners = function (obj, dl) {
 	//add-remove Owners
 	var tmpObjCnt = -1;
-    // Used for ACL in future
-    var hasAddRight = true;
-	if(hasAddRight) {
-		if(obj[ZaDistributionList.A2_DLOwners]) {
-			if(!(obj[ZaDistributionList.A2_DLOwners] instanceof Array)) {
-				var tmpStr = obj[ZaDistributionList.A2_DLOwners] ;
-				obj[ZaDistributionList.A2_DLOwners]  = new Array();
-				obj[ZaDistributionList.A2_DLOwners].push(tmpStr);
-			}
-			tmpObjCnt = obj[ZaDistributionList.A2_DLOwners].length - 1;
+	if(obj[ZaDistributionList.A2_DLOwners]) {
+		if(!(obj[ZaDistributionList.A2_DLOwners] instanceof Array)) {
+			var tmpStr = obj[ZaDistributionList.A2_DLOwners] ;
+			obj[ZaDistributionList.A2_DLOwners]  = new Array();
+			obj[ZaDistributionList.A2_DLOwners].push(tmpStr);
 		}
+		tmpObjCnt = obj[ZaDistributionList.A2_DLOwners].length - 1;
+	}
 
-        // add owners
-		if(tmpObjCnt != -1) {
-			tmpObjCnt = obj[ZaDistributionList.A2_DLOwners].length;
-		}
+    // add owners
+	if(tmpObjCnt != -1) {
+		tmpObjCnt = obj[ZaDistributionList.A2_DLOwners].length;
+	}
 
-        var hasAddRight = true;
-		if(hasAddRight) {
+	try {
+		for(var ix=0; ix < tmpObjCnt; ix++) {
 			try {
-				for(var ix=0; ix < tmpObjCnt; ix++) {
-					try {
-						if(obj[ZaDistributionList.A2_DLOwners][ix]) {
-							obj.addRemoveOwner(obj[ZaDistributionList.A2_DLOwners][ix], true);
-						}
-					} catch (ex) {
-							//if failed for another reason - jump out
-							throw (ex);
-					}
+				if(obj[ZaDistributionList.A2_DLOwners][ix]) {
+					obj.addRemoveOwner(obj[ZaDistributionList.A2_DLOwners][ix], true);
 				}
 			} catch (ex) {
-				ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.addOwner", null, false);
-				return false;
+					//if failed for another reason - jump out
+					throw (ex);
 			}
 		}
+	} catch (ex) {
+		ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.addOwner", null, false);
+		return false;
 	}
 }
 ZaItem.createMethods["ZaDistributionList"].push(ZaDistributionList.addOwners);
@@ -975,97 +963,6 @@ ZaDistributionList.prototype.pageAllMembers = function ( ) {
 
 	this[ZaDistributionList.A2_allMemberPages] = pages;
 }
-
-/**
- * Makes a server call to get the distribution list details, if the
- * internal list of members is null
- */
-
-/*
-ZaDistributionList.prototype.getMembers = function () {
-	if (this.id != null) {
-		var soapDoc = AjxSoapDoc.create("GetDistributionListRequest", ZaZimbraAdmin.URN, null);
-
-		var limit = ZaDistributionList.MEMBER_LIST_PAGE_SIZE;
-			
-		soapDoc.setMethodAttribute("limit", limit);
-		if(!this.getAttrs.all && !AjxUtil.isEmpty(this.attrsToGet)) {
-			soapDoc.setMethodAttribute("attrs", this.attrsToGet.join(","));
-		}
-        if (!this.memPagenum) this.memPagenum = 1 ; //by default, first page.
-        var offset = (this.memPagenum-1)*limit;
-		soapDoc.setMethodAttribute("offset", offset);
-			
-		var dl = soapDoc.set("dl", this.id);
-		dl.setAttribute("by", "id");
-		soapDoc.set("name", this.getName());
-		try {
-
-			//var command = new ZmCsfeCommand();
-			var params = new Object();
-			params.soapDoc = soapDoc;
-			var reqMgrParams = {
-				controller : ZaApp.getInstance().getCurrentController(),
-				busyMsg : ZaMsg.BUSY_GET_DL
-			}
-			var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDistributionListResponse;	
-			//DBG.dumpObj(resp);
-            if (resp.dl[0].dynamic === true)
-                this[ZaDistributionList.A2_dlType] = ZaDistributionList.DYNAMIC_DL_TYPE;
-			var members = resp.dl[0].dlm;
-			this[ZaDistributionList.A2_numMembers] = resp.total;
-			this[ZaDistributionList.A2_memNumPages] = Math.ceil(resp.total/limit);
-			this[ZaDistributionList.A2_memberList] = new Array();
-			this[ZaDistributionList.A2_origList] = new Array();
-			var len = members ? members.length : 0;
-			if (len > 0) {
-				for (var i =0; i < len; ++i) {
-					var mem = new ZaDistributionListMember(members[i]._content);
-					this[ZaDistributionList.A2_memberList].push(mem);
-					this[ZaDistributionList.A2_origList].push(mem);
-				}
-				this[ZaDistributionList.A2_memberList].sort();
-				this[ZaDistributionList.A2_origList].sort();
-			}
-			this.id = resp.dl[0].id;
-			this.initFromJS(resp.dl[0]);
-			
-			//Make a GetAccountMembershipRequest
-            if (this[ZaDistributionList.A2_dlType] !== ZaDistributionList.DYNAMIC_DL_TYPE)
-			    this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.getDlMemberShip(this.id, "id" ) ;
-            else
-                this[ZaAccount.A2_memberOf] = {	directMemberList: [],
-						                        indirectMemberList: [],
-		                        				nonMemberList: []
-					                            };
-			this[ZaAccount.A2_directMemberList + "_more"] = 
-				(this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
-			this[ZaAccount.A2_indirectMemberList + "_more"] = 
-				(this[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
-
-            var owners = resp.dl[0].owners;
-            var ownerLen = owners ? owners.length: 0;
-            this[ZaDistributionList.A2_DLOwners] = new Array();
-            if (ownerLen > 0) {
-                var ownerSet = owners[0].owner;
-                for (var i = 0; i < ownerSet.length; i++) {
-                    var owner = new ZaDistributionListOwner(ownerSet[i]);
-                    this[ZaDistributionList.A2_DLOwners].push(owner.name);
-                }
-            }
-		} catch (ex) {
-			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaDistributionList.prototype.getMembers", null, false);
-			//DBG.dumpObj(ex);
-		}
-	} else if (this[ZaDistributionList.A2_memberList] == null){
-		this[ZaDistributionList.A2_memberList] = new Array();
-	}
-	return this[ZaDistributionList.A2_memberList];
-};
-*/
-//ZaItem.loadMethods["ZaDistributionList"].push(ZaDistributionList.prototype.getMembers) ;
-
-
 
 ZaDistributionList.removeDeletedMembers = function (mods, obj, dl, finishedCallback) {
 	if(!ZaItem.hasRight(ZaDistributionList.REMOVE_DL_MEMBER_RIGHT, obj)) {

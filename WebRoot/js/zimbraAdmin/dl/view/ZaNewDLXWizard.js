@@ -1765,6 +1765,8 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
 							showAddOnNextRow:true,
 							removeButtonLabel:"Remove Owner",
 							removeButtonCSSStyle: "margin-left: 50px",
+							enableDisableChecks:[],
+							visibilityChecks:[],
 							items: [
 								{ref:".", type:_EMAILADDR_, label:null, enableDisableChecks:[],
 									visibilityChecks:[]
