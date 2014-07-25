@@ -87,7 +87,7 @@ function(entry) {
     entry.manageSpecialAttrs();
 	entry.modifyObject();
 
-    this._containedObject = new Object();
+    this._containedObject = new ZaAccount();
 	this._containedObject.attrs = new Object();
     
     for (var a in entry.attrs) {

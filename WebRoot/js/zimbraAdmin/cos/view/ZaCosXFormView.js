@@ -46,7 +46,7 @@ ZaCosXFormView.prototype.setObject =
 function(entry) {
 	//handle the special attributes to be displayed in xform
 	entry.manageSpecialAttrs();
-	this._containedObject = new Object();
+	this._containedObject = new ZaCos();
 	this._containedObject.attrs = new Object();
 	
 	this._containedObject.name = entry.name;

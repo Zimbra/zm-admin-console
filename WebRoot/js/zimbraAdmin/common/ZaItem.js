@@ -1015,7 +1015,7 @@ ZaItem.hasRight = function (right, instance) {
 	if(!right)
 		return true;
 	
-	if(!instance.rightsLoaded && instance.id) {
+	if(!instance.rightsLoaded && instance.id && instance.loadEffectiveRights) {
 		instance.loadEffectiveRights("id", instance.id, true);
 	}
 	

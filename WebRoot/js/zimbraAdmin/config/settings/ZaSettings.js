@@ -151,7 +151,11 @@ ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
 		if(targetObj.all && targetObj.all.length && targetObj.all[0] && targetObj.all[0].right && targetObj.all[0].right.length) {
 			var rights = targetObj.all[0].right;
 			for (var r in rights) {
-				ZaSettings.targetRights[targetObj.type][rights[r].n] = ["all"];
+				if(!ZaSettings.targetRights[targetObj.type][rights[r].n]) {
+					ZaSettings.targetRights[targetObj.type][rights[r].n] = {all:true};
+				} else {
+					ZaSettings.targetRights[targetObj.type][rights[r].n].all = true;
+				}
 			}
 		}
 		
@@ -162,7 +166,7 @@ ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
 					var rights = entry.rights[0].right;
 					for (var r in rights) {
 						if(!ZaSettings.targetRights[targetObj.type][rights[r].n]) {
-							ZaSettings.targetRights[targetObj.type][rights[r].n] = [];
+							ZaSettings.targetRights[targetObj.type][rights[r].n] = {all:false};
 						}
 					}
 				}
@@ -171,8 +175,32 @@ ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
 					for(var j = 0; j < entry.entry.length; j++) {
 						if(entry.entry[j] && entry.entry[j].name) {
 							for(var rightName in ZaSettings.targetRights[targetObj.type]) {
-								ZaSettings.targetRights[targetObj.type][rightName].push(entry.entry[j].name);
+								ZaSettings.targetRights[targetObj.type][rightName][entry.entry[j].name] = true;
+								ZaSettings.targetRights[targetObj.type][rightName].some = true;
 							}
+						}
+					}
+				}
+			}
+		}
+		
+		if(targetObj.inDomains && targetObj.inDomains.length) {
+			for (var i = 0; i < targetObj.inDomains.length; i++) {
+				var entry = targetObj.inDomains[i];
+				var domainList = [];
+				if(entry.domain && entry.domain.length) {
+					for(var j = 0; j < entry.domain.length; j++) {
+						domainList.push(entry.domain[j].name);
+					}
+				}
+				if(entry.rights && entry.rights.length && entry.rights[0] 
+						&& entry.rights[0].right && entry.rights[0].right.length) {
+					for(var j = 0; j < entry.rights[0].right.length; j++) {
+						if(!ZaSettings.targetRights[targetObj.type][entry.rights[0].right[j].n]) {
+							ZaSettings.targetRights[targetObj.type][entry.rights[0].right[j].n] = {all:false,some:true};
+						} 
+						for(var k = 0; k < domainList.length; k++) {
+							ZaSettings.targetRights[targetObj.type][entry.rights[0].right[j].n][domainList[k]] = true;
 						}
 					}
 				}

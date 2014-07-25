@@ -68,8 +68,10 @@ function (arr) {
     var result = [];
     result.push({name:ZaMsg.VALUE_NOT_SET, id:""});
     var i = 0;
-    for(i = 0; i < arr.length; i++){
-       result.push({name:arr[i].name, id:arr[i].id});
+    for(i = 0; i < arr.length; i++) {
+    	if(arr[i] && arr[i].name) {
+    		result.push({name:arr[i].name, id:arr[i].id});
+    	}
     }
     return result;
 }
@@ -80,14 +82,20 @@ function (arr) {
     result.push({name:ZaMsg.VALUE_NOT_SET, id:""});
     var i = 0;
     for(i = 0; i < arr.length; i++){
-        if(arr[i].name)
+        if(arr[i] && arr[i].name) {
             result.push({name:arr[i].name, id:arr[i].name});
+        }
     }
     return result;
 }
 
 ZaSignature.GetSignatures =
 function(by, val) {
+	if(!ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,this.name)
+			&& !ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,ZaAccount.getDomain(this.name))) {
+		return;
+	}
+	
     var soapDoc = AjxSoapDoc.create("GetSignaturesRequest", "urn:zimbraAccount", null);
 
     var params = new Object();
@@ -177,6 +185,10 @@ function(by, val) {
 
 ZaSignature.CreateAccountSignature =
 function(tmpObj, resource){
+	if(!ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,resource.name)
+			&& !ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,ZaAccount.getDomain(resource.name))) {
+		return;
+	}
     if (!AjxUtil.isEmpty(tmpObj[ZaResource.A2_signatureList])) {
         for(var i = 0; i < tmpObj[ZaResource.A2_signatureList].length; i++) {
             var current = tmpObj[ZaResource.A2_signatureList][i];

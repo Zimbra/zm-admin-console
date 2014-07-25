@@ -57,7 +57,7 @@ function (arr, value, property){
 	if (!property) property = "name" ; //for ZaAccountMemberOfListView 
 	if (arr != null) {
         for(var i=0; i<arr.length; i++) {
-            if (arr[i][property] == value){
+            if (arr[i] && arr[i][property] == value){
                 return i ;
             }
         }
