@@ -250,21 +250,13 @@ function () {
 		this.showNewCalRes = true;
 		this.showNewAlias = true;
 	} else {
-		this.showNewAccount = ZaSettings.targetRights[ZaItem.DOMAIN]
-				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT]
-				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT].length > 0;   
+		this.showNewAccount = ZaZimbraAdmin.canCreateAccount();   
 				
-		this.showNewCalRes = ZaSettings.targetRights[ZaItem.DOMAIN]
-				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES]
-				&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES].length > 0;
+		this.showNewCalRes = ZaZimbraAdmin.canCreateCalRes;
 		
-		this.showNewDL = ZaSettings.targetRights[ZaItem.DOMAIN]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_DL]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_DL].length > 0;
+		this.showNewDL = ZaZimbraAdmin.canCreateDL();
 		
-		this.showNewAlias = ZaSettings.targetRights[ZaItem.DOMAIN]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ALIAS]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ALIAS].length > 0;
+		this.showNewAlias = ZaZimbraAdmin.canCreateAlias();
 	}
 	
     //push it firstly to make it as the first one
