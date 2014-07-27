@@ -1467,3 +1467,8 @@ ZaZimbraAdmin.haveTargetRight = function(targetType, rightName, targetName) {
 	return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[targetType][rightName] 
 			&& ZaSettings.targetRights[targetType][rightName][targetName]));
 }
+
+ZaZimbraAdmin.haveAnyTargetRight = function(targetType, rightName) {
+	return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[targetType][rightName] 
+			&& ZaSettings.targetRights[targetType][rightName].some));
+}
