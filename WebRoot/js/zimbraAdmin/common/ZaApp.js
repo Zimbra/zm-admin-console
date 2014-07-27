@@ -211,7 +211,7 @@ ZaApp.prototype.getSearchListController =
 function() {
 	if (this._controllers[ZaZimbraAdmin._SEARCH_LIST_VIEW] == null) {
 		this._controllers[ZaZimbraAdmin._SEARCH_LIST_VIEW] = new ZaSearchListController(this._appCtxt, this._container);
-		this._controllers[ZaZimbraAdmin._SEARCH_LIST_VIEW].addRemovalListener(new AjxListener(this.getSearchListController(), this.getSearchListController().handleRemoval));							
+		this._controllers[ZaZimbraAdmin._SEARCH_LIST_VIEW].addRemovalListener(new AjxListener(this.getSearchListController(), this.getSearchListController().handleRemoval));
 	}
 	return this._controllers[ZaZimbraAdmin._SEARCH_LIST_VIEW] ;
 }
@@ -334,6 +334,7 @@ function(viewId, newController) {
 		c.addCreationListener(new AjxListener(this, ZaApp.prototype.handleDomainCreation));					
 		c.addRemovalListener(new AjxListener(this, ZaApp.prototype.handleDomainRemoval));
         c.addChangeListener(new AjxListener(this.getDomainListController(), ZaDomainListController.prototype.handleDomainChange));
+		c.addRemovalListener(new AjxListener(this.getDomainListController(), c.handleRemoval));
 		return c ;
 	}
 }
