@@ -69,7 +69,7 @@ ZaDomainXFormView.prototype.setObject =
 function(entry) {
     ZaAccount.prototype.manageSpecialAttrs.call (entry) ;
 
-    this._containedObject = new Object();
+    this._containedObject = new ZaDomain();
 	this._containedObject.attrs = new Object();
 	
 	if(entry.rights)

@@ -689,7 +689,8 @@ function ( xform, containedObject, entry ) {
 
 ZaDLXFormView.prototype.setObject = 
 function (entry) {
-    this._containedObject = {attrs:{}};
+    this._containedObject = new ZaDistributionList();
+    this._containedObject.attrs = new Object();
 
     ZaDLXFormView._copyAttrFromEntry( this._localXForm, this._containedObject, entry );
 
@@ -706,39 +707,6 @@ function (entry) {
 	this._containedObject[ZaDistributionList.A2_totalNumInPool] = entry [ZaDistributionList.A2_totalNumInPool] || -1; //-1 means hasn't start searching yet 
 
 	this._containedObject[ZaDistributionList.A2_query] = "";
-
-	/* those followings will be evaluated in ZaDLXFormView.prototype.updateMemberList()
-
-		this._containedObject[ZaDistributionList.A2_memberList],
-		this._containedObject[ZaDistributionList.A2_memPagenum],
-		this._containedObject[ZaDistributionList.A2_memNumPages],
-		this._containedObject[ZaDistributionList.A2_numMembers],
-		this._containedObject[ZaDistributionList.A2_allMemberHash],
-		this._containedObject[ZaDistributionList.A2_allMemberPages]
-
-		//membership related instance variables
-		this._containedObject[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.cloneMemberOf(entry);
-		// the origList is inited when we load the object, it won't be modified unless the first time
-		// So there is no need for me to do deep clone
-		this._containedObject[ZaDistributionList.A2_origList] = entry [ZaDistributionList.A2_origList];
-		this._containedObject[ZaAccount.A2_directMemberList + "_more"] = entry[ZaAccount.A2_directMemberList + "_more"];
-		this._containedObject[ZaAccount.A2_directMemberList + "_offset"] = entry[ZaAccount.A2_directMemberList + "_offset"];
-		this._containedObject[ZaAccount.A2_indirectMemberList + "_more"] = entry[ZaAccount.A2_indirectMemberList + "_more"];
-		this._containedObject[ZaAccount.A2_indirectMemberList + "_offset"] = entry[ZaAccount.A2_indirectMemberList + "_offset"];	
-		this._containedObject[ZaAccount.A2_nonMemberList + "_more"] = entry[ZaAccount.A2_nonMemberList + "_more"];
-		this._containedObject[ZaAccount.A2_nonMemberList + "_offset"] = entry[ZaAccount.A2_nonMemberList + "_offset"];
-
-		this._containedObject[ZaDistributionList.A2_DLOwners] = new Array();
-		if (entry[ZaDistributionList.A2_DLOwners])
-			this._containedObject[ZaDistributionList.A2_DLOwners] = ZaItem.deepCloneListItem(entry[ZaDistributionList.A2_DLOwners]);
-
-		if(entry[ZaDistributionList.A2_dlType])
-			this._containedObject[ZaDistributionList.A2_dlType] = entry[ZaDistributionList.A2_dlType];
-
-	*/
-
-
-	//dl.isgroup = this.isgroup ;
 
 	this._containedObject.name = entry.name;
         if(entry.name == ""){this._containedObject.name = ZaMsg.TBB_New;}

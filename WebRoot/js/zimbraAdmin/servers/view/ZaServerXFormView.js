@@ -69,9 +69,10 @@ function (value, event, form) {
 ZaServerXFormView.prototype.setObject = 
 function (entry) {
     this.entry = entry;
-	this._containedObject = {attrs:{}};
+	this._containedObject = new ZaServer();
+	this._containedObject.attrs = new Object();
+	
 	this._containedObject[ZaServer.A_showVolumes] = entry[ZaServer.A_showVolumes];
-    
     this._containedObject[ZaServer.A_ServiceHostname] = entry[ZaServer.A_ServiceHostname];
 	this._containedObject.name = entry.name;
 	this._containedObject.type = entry.type ;

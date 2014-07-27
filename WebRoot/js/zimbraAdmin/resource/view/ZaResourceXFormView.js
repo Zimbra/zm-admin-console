@@ -70,7 +70,7 @@ function () {
 **/
 ZaResourceXFormView.prototype.setObject =
 function(entry) {
-	this._containedObject = new Object();
+	this._containedObject = new ZaResource();
     this._containedObject.attrs = new Object();
 
     for (var a in entry.attrs) {
@@ -430,6 +430,11 @@ ZaResourceXFormView.isSignatureSelectionEnabled = function() {
 	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_signatureList)));
 }
 
+ZaResourceXFormView.isSignagureSectionVisible = function () {
+	return (ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,this.getInstance().name)
+	|| ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,ZaAccount.getDomain(this.getInstance().name)));
+}
+
 ZaResourceXFormView.CONTACT_TAB_ATTRS = [ZaResource.A_zimbraCalResContactName,
 		ZaResource.A_zimbraCalResContactEmail, 
 		ZaResource.A_zimbraCalResContactPhone, 
@@ -670,83 +675,133 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
         }
     ]};
 
-    var signatureGroup = {type:_TOP_GROUPER_, label:ZaMsg.NAD_SignatureGrouper, id:"resource_form_signature_group",
-        colSizes:["275px", "*"],numCols:2,items:[
-        {type:_GROUP_, id:"resource_form_allsignature_group",
-		    numCols:2,label:null,colSizes:["275px","*"], colSpan: "*",
-            items:[
-             {ref:ZaResource.A2_signatureList, type:_DWT_LIST_, height:"100", width:"350px",
-            forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
-            headerList:null,label:ZaMsg.NAD_AllSignature,
-            labelCssClass:"gridGroupBodyLabel",
-            labelCssStyle:"text-align:left;border-right:1px solid;",
-            onSelection:ZaResourceXFormView.SignatureSelectionListener,
-            bmolsnr: true,
-            getDisplayValue: function(value){
-                var form = this.getForm().parent;
-                var instance = this.getInstance();
-                var tempChoice = ZaSignature.getSignatureChoices(instance[ZaResource.A2_signatureList]);
-                form.signatureChoices.setChoices(tempChoice);
-                form.signatureChoices.dirtyChoices();
-                return value;
-            }
-        },
-        {type:_GROUP_, numCols:6, width:"625px",colSizes:["275","100px","auto","100px","auto","100px"], colSpan:2,
-            cssStyle:"margin:10px;padding-bottom:0;",
-            items: [
-                {type:_CELLSPACER_},
-                {type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
-                    onActivate:"ZaResourceXFormView.deleteSignatureButtonListener.call(this);",
-                    enableDisableChecks:[ZaResourceXFormView.isDeleteSignatureEnabled],
-                    enableDisableChangeEventSources:[ZaResource.A2_signature_selection_cache]
-                },
-                {type:_CELLSPACER_},
-                {type:_DWT_BUTTON_, label:ZaMsg.TBB_Edit,width:"100px",
-                    onActivate:"ZaResourceXFormView.editSignatureButtonListener.call(this);",
-                    enableDisableChecks:[ZaResourceXFormView.isEditSignatureEnabled],
-                    enableDisableChangeEventSources:[ZaResource.A2_signature_selection_cache]
-                },
-                {type:_CELLSPACER_},
-                   {type:_DWT_BUTTON_, label:ZaMsg.NAD_Add,width:"100px",
-                    enableDisableChecks:[[ZaItem.hasWritePermission,ZaResource.A_zimbraPrefCalendarForwardInvitesTo]],
-                    onActivate:"ZaResourceXFormView.addSignatureButtonListener.call(this);"
-                }
-            ]
-        }
-            ]
-        },
-        {ref:ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId, type:_OSELECT1_,
-            msgName:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
-            width: "280px",
-            label:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId, labelLocation:_LEFT_,
-            visibilityChecks:[],
-            enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
-            enableDisableChangeEventSources:[ZaResource.A2_signatureList],
-            valueChangeEventSources:[ZaResource.A2_signatureList],
-            choices:this.signatureChoices
-        },
-        {ref:ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId, type:_OSELECT1_,
-            msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
-            width: "280px",
-            label:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId, labelLocation:_LEFT_,
-            visibilityChecks:[],
-            enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
-            enableDisableChangeEventSources:[ZaResource.A2_signatureList],
-            valueChangeEventSources:[ZaResource.A2_signatureList],
-            choices:this.signatureChoices
-        },
-        {ref:ZaResource.A_zimbraPrefCalendarAutoDenySignatureId, type:_OSELECT1_,
-            msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
-            width: "280px",
-            label:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId, labelLocation:_LEFT_,
-            visibilityChecks:[],
-            enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
-            enableDisableChangeEventSources:[ZaResource.A2_signatureList],
-            valueChangeEventSources:[ZaResource.A2_signatureList],
-            choices:this.signatureChoices
-        }
-        ]
-    };
+    var signatureGroup = {
+		type : _TOP_GROUPER_,
+		label : ZaMsg.NAD_SignatureGrouper,
+		id : "resource_form_signature_group",
+		visibilityChecks:[ZaResourceXFormView.isSignagureSectionVisible],
+		colSizes : [ "275px", "*" ],
+		numCols : 2,
+		items : [
+				{
+					type : _GROUP_,
+					id : "resource_form_allsignature_group",
+					numCols : 2,
+					label : null,
+					colSizes : [ "275px", "*" ],
+					colSpan : "*",
+					items : [
+							{
+								ref : ZaResource.A2_signatureList,
+								type : _DWT_LIST_,
+								height : "100",
+								width : "350px",
+								forceUpdate : true,
+								preserveSelection : false,
+								multiselect : true,
+								cssClass : "DLSource",
+								headerList : null,
+								label : ZaMsg.NAD_AllSignature,
+								labelCssClass : "gridGroupBodyLabel",
+								labelCssStyle : "text-align:left;border-right:1px solid;",
+								onSelection : ZaResourceXFormView.SignatureSelectionListener,
+								bmolsnr : true,
+								getDisplayValue : function(value) {
+									var form = this.getForm().parent;
+									var instance = this.getInstance();
+									var tempChoice = ZaSignature
+											.getSignatureChoices(instance[ZaResource.A2_signatureList]);
+									form.signatureChoices
+											.setChoices(tempChoice);
+									form.signatureChoices.dirtyChoices();
+									return value;
+								}
+							},
+							{
+								type : _GROUP_,
+								numCols : 6,
+								width : "625px",
+								colSizes : [ "275", "100px", "auto", "100px",
+										"auto", "100px" ],
+								colSpan : 2,
+								cssStyle : "margin:10px;padding-bottom:0;",
+								items : [
+										{
+											type : _CELLSPACER_
+										},
+										{
+											type : _DWT_BUTTON_,
+											label : ZaMsg.TBB_Delete,
+											width : "100px",
+											onActivate : "ZaResourceXFormView.deleteSignatureButtonListener.call(this);",
+											enableDisableChecks : [ ZaResourceXFormView.isDeleteSignatureEnabled ],
+											enableDisableChangeEventSources : [ ZaResource.A2_signature_selection_cache ]
+										},
+										{
+											type : _CELLSPACER_
+										},
+										{
+											type : _DWT_BUTTON_,
+											label : ZaMsg.TBB_Edit,
+											width : "100px",
+											onActivate : "ZaResourceXFormView.editSignatureButtonListener.call(this);",
+											enableDisableChecks : [ ZaResourceXFormView.isEditSignatureEnabled ],
+											enableDisableChangeEventSources : [ ZaResource.A2_signature_selection_cache ]
+										},
+										{
+											type : _CELLSPACER_
+										},
+										{
+											type : _DWT_BUTTON_,
+											label : ZaMsg.NAD_Add,
+											width : "100px",
+											enableDisableChecks : [ [
+													ZaItem.hasWritePermission,
+													ZaResource.A_zimbraPrefCalendarForwardInvitesTo ] ],
+											onActivate : "ZaResourceXFormView.addSignatureButtonListener.call(this);"
+										} ]
+							} ]
+				},
+				{
+					ref : ZaResource.A_zimbraPrefCalendarAutoAcceptSignatureId,
+					type : _OSELECT1_,
+					msgName : ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
+					width : "280px",
+					label : ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
+					labelLocation : _LEFT_,
+					visibilityChecks : [],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
+					valueChangeEventSources : [ ZaResource.A2_signatureList ],
+					choices : this.signatureChoices
+				},
+				{
+					ref : ZaResource.A_zimbraPrefCalendarAutoDeclineSignatureId,
+					type : _OSELECT1_,
+					msgName : ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
+					width : "280px",
+					label : ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
+					labelLocation : _LEFT_,
+					visibilityChecks : [],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
+					valueChangeEventSources : [ ZaResource.A2_signatureList ],
+					choices : this.signatureChoices
+				},
+				{
+					ref : ZaResource.A_zimbraPrefCalendarAutoDenySignatureId,
+					type : _OSELECT1_,
+					msgName : ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
+					width : "280px",
+					label : ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
+					labelLocation : _LEFT_,
+					visibilityChecks : [],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
+					valueChangeEventSources : [ ZaResource.A2_signatureList ],
+					choices : this.signatureChoices
+				} ]
+	};
 
     var notesGroup = {type:_TOP_GROUPER_, label:ZaMsg.NAD_NotesGrouper, id:"resource_form_notes_group",
         colSizes:["275px","*"],numCols:2,items:[
