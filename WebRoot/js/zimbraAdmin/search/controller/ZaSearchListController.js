@@ -331,18 +331,17 @@ function(query) {
 /*********** Search Field Callback */
 ZaSearchListController.prototype._searchFieldCallback =
 function(params) {
-	var controller = this;
 	var searchQueryList = new Array();
-	if(controller.setSearchTypes)
-		controller.setSearchTypes(params.types);
+	if(this.setSearchTypes)
+		this.setSearchTypes(params.types);
 
-	controller._currentQuery = params.query;
-	controller._currentSortField = params.sortBy;
+	this._currentQuery = params.query;
+	this._currentSortField = params.sortBy;
 	var busyId = Dwt.getNextId();	
-	var callback = new AjxCallback(controller, controller.searchCallback, {limit:controller.RESULTSPERPAGE,show:true, openInSearchTab: true,busyId:busyId, resultFilter:controller._filterObj, isShowBubble:params.isShowBubble});
+	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,show:true, openInSearchTab: true,busyId:busyId, resultFilter:this._filterObj, isShowBubble:params.isShowBubble});
         var postCallback = new AjxCallback(this, this.updateSearchTree);
         var searchParams = {
-                        query:controller._currentQuery,//params.query,
+                        query:this._currentQuery,//params.query,
                         types:params.types,
                         showBusy:true,
                         busyId:busyId,
@@ -354,7 +353,7 @@ function(params) {
                         limit:this.RESULTSPERPAGE,
                         attrs:ZaSearch.standardAttributes,
                         callback:callback,
-                        controller: controller
+                        controller:this
         }
 
 	var isAliasSpec = false;
@@ -365,7 +364,7 @@ function(params) {
 
 	if(isAliasSpec) {
           this.scrollSearchParams={
-                        query:controller._currentQuery,//params.query,
+                        query:this._currentQuery,//params.query,
                         types:params.types,
                         showBusy:true,
                         busyId:busyId,
@@ -374,16 +373,16 @@ function(params) {
                         sortBy:params.sortBy,
                         sortAscending:this._currentSortOrder,
                         attrs:ZaSearch.standardAttributes,
-                        controller: controller,
+                        controller:this,
                         scrollType:"isAliasSearch",
                         postCallback: postCallback
          }
 		searchQueryList.push(searchParams);
 		var keyword = ZaSearchListController._getSearchKeyWord(params.query);
-		ZaSearchListController.searchAliasDomain(keyword,controller,searchQueryList, params.isShowBubble);
+		ZaSearchListController.searchAliasDomain(keyword,this,searchQueryList, params.isShowBubble);
 	}else {
         this.scrollSearchParams={
-                        query:controller._currentQuery,//params.query,
+                        query:this._currentQuery,//params.query,
                         types:params.types,
                         showBusy:true,
                         busyId:busyId,
@@ -392,7 +391,7 @@ function(params) {
                         sortBy:params.sortBy,
                         sortAscending:this._currentSortOrder,
                         attrs:ZaSearch.standardAttributes,
-                        controller: controller,
+                        controller:this,
                         postCallback: postCallback
         }
 		ZaSearch.searchDirectory(searchParams);

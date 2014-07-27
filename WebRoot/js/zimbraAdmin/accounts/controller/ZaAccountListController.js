@@ -801,12 +801,16 @@ function(ev) {
 					} else if(!this._haveDomains && item.type == ZaItem.DOMAIN) {
 						this._haveDomains = true;
 					} else if(!this._haveCoses && item.type == ZaItem.COS) {
-                                                this._haveCoses = true;
-                                        }
-
-
+                        this._haveCoses = true;
+					}
 				}
 			}
+		}
+		//delegate to Domain list controller if we are only deleting domains
+		if(this._haveDomains && !(this._haveAliases || this._haveAccounts || this._haveDls || this._haveCoses)) {
+			var domainListController = ZaApp.getInstance().getDomainListController ();
+			domainListController._deleteButtonListener(ev); 
+			return;
 		}
 	}
 	

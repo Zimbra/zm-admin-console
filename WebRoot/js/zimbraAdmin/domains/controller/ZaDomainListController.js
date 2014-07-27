@@ -183,15 +183,23 @@ function (openInNewTab, openInSearchTab) {
 	//set a selection listener on the account list view
 	this._contentView.addSelectionListener(new AjxListener(this, this._listSelectionListener));
 	this._contentView.addActionListener(new AjxListener(this, this._listActionListener));			
-	this._removeConfirmMessageDialog = ZaApp.getInstance().dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_DMLIST + "_removeConfirm");			
-	this._forceRemoveMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_DMLIST + "_forceRemoveConfirm");
-    this._forceRemoveMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaDomainListController.prototype._forceDeleteDomainCallback, this);
-    this._forceRemoveMessageDialog.registerCallback(DwtDialog.NO_BUTTON, ZaDomainListController.prototype._donotForceDeleteDomainsCallback, this);
-    this._forceRemoveMessageDialog._button[DwtDialog.YES_BUTTON].setText(ZaMsg.FORCE_DELETE_BUTTON);
 
+	this._initDeleteDialogs();
 	this._UICreated = true;
 }
 
+ZaDomainListController.prototype._initDeleteDialogs = 
+function() {
+	if(!this._removeConfirmMessageDialog) {
+		this._removeConfirmMessageDialog = ZaApp.getInstance().dialogs["removeConfirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_DMLIST + "_removeConfirm");
+	}
+	if(!this._forceRemoveMessageDialog) {
+		this._forceRemoveMessageDialog = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_DMLIST + "_forceRemoveConfirm");
+	    this._forceRemoveMessageDialog.registerCallback(DwtDialog.YES_BUTTON, ZaDomainListController.prototype._forceDeleteDomainCallback, this);
+	    this._forceRemoveMessageDialog.registerCallback(DwtDialog.NO_BUTTON, ZaDomainListController.prototype._donotForceDeleteDomainsCallback, this);
+	    this._forceRemoveMessageDialog._button[DwtDialog.YES_BUTTON].setText(ZaMsg.FORCE_DELETE_BUTTON);
+	}
+}
 /**
 *	Private method that notifies listeners that a new ZaDomain is created
 * 	@param details
@@ -399,10 +407,12 @@ function(ev) {
 **/
 ZaDomainListController.prototype._deleteButtonListener =
 function(ev) {
+	this._initDeleteDialogs();
 	this._removeList = new Array();
 	this._itemsInTabList = [] ;
-	if(this._contentView.getSelectionCount()>0) {
-		var arrItems = this._contentView.getSelection();
+	var contentView = ZaApp.getInstance().getCurrentController()._contentView;
+	if(contentView.getSelectionCount()>0) {
+		var arrItems = contentView.getSelection();
 		var cnt = arrItems.length;
 		for(var key =0; key < cnt; key++) {
 			var item = arrItems[key];
@@ -517,21 +527,28 @@ function () {
                 this._removeConfirmMessageDialog.popdown();
                 if(ex.code == ZmCsfeException.DOMAIN_NOT_EMPTY) {
                     this._forceDeleteDomain(this._removeList[key]);
-                    //this._errorDialog.setMessage(ZaMsg.ERROR_DOMAIN_NOT_EMPTY, null, DwtMessageDialog.CRITICAL_STYLE, null);
-                    //this._errorDialog.popup();
                 } else {
                     this._handleException(ex, "ZaDomainListController.prototype._deleteDomainsCallback", null, false);
                 }
                 return;
             }
-            this._list.remove(this._removeList[key]); //remove from the list
+            if(this._list) {
+            	this._list.remove(this._removeList[key]); //remove from the list
+            }
         }
     }
-	this.fireRemovalEvent(this._successRemList);
+    ZaApp.getInstance().getCurrentController().fireRemovalEvent(this._successRemList);
     this._successRemList = null;
 	this._removeConfirmMessageDialog.popdown();
-	this._contentView.setUI();
-	this.show();
+	/*if(this._UICreated) {
+		this._contentView.setUI();
+	} 
+	if(ZaApp.getInstance().getCurrentController() == this) {
+		this.show();			
+	} else if(this._UICreated) {
+        this.show(false);
+    }
+	this.changeActionsState();*/
 }
 
 ZaDomainListController.prototype._donotDeleteDomainsCallback = 
@@ -543,26 +560,17 @@ function () {
 ZaDomainListController.prototype._getAllAccountDomain =
 function (domainName) {
     if (domainName) {
-        var controller = ZaApp.getInstance().getCurrentController();
         var busyId = Dwt.getNextId();
-
-        controller._currentQuery = "" ;
         var searchTypes = [ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.ALIASES, ZaSearch.RESOURCES] ;
-
-        if(controller.setSearchTypes)
-            controller.setSearchTypes(searchTypes);
-	    controller._currentDomain = domainName;
-	    controller.fetchAttrs = AjxBuffer.concat(ZaAlias.searchAttributes,",",
-                        ZaDistributionList.searchAttributes,",",
-                        ZaResource.searchAttributes,",",
-                        ZaSearch.standardAttributes);
-
         var searchParams = {
-            query:controller._currentQuery,
-            domain: controller._currentDomain,
+            query:"",
+            domain:domainName,
             types:searchTypes,
-            attrs:controller.fetchAttrs,
-            controller: controller,
+            attrs:AjxBuffer.concat(ZaAlias.searchAttributes,",",
+                    ZaDistributionList.searchAttributes,",",
+                    ZaResource.searchAttributes,",",
+                    ZaSearch.standardAttributes),
+            controller: ZaApp.getInstance().getCurrentController(),
             showBusy:true,
             busyId:busyId,
             busyMsg:ZaMsg.BUSY_SEARCHING
@@ -574,7 +582,7 @@ function (domainName) {
             acctlist.loadFromJS(response);
             return acctlist.getArray();
         } else return null;
-    }else {
+    } else {
         var currentController = ZaApp.getInstance().getCurrentController () ;
         currentController.popupErrorDialog(ZaMsg.ERROR_NO_DOMAIN_NAME) ;
     }
@@ -792,9 +800,7 @@ ZaDomainListController.prototype._finishAuthButtonListener =
 function(ev) {
 	try {
 		ZaDomain.modifyAuthSettings.call(this._currentObject,this._authWizard.getObject());
-		//var changeDetails = new Object();
 		//if a modification took place - fire an DomainChangeEvent
-		//changeDetails["obj"] = this._currentObject;
 		this._fireDomainChangeEvent(this._currentObject);
 		this._authWizard.popdown();
 		this._notifyAllOpenTabs();
@@ -828,10 +834,8 @@ function(ev) {
 ZaDomainListController.prototype._finishGalButtonListener =
 function(ev) {
 	try {
-		//var changeDetails = new Object();
 		ZaDomain.modifyGalSettings.call(this._currentObject,this._galWizard.getObject()); 
 		//if a modification took place - fire an DomainChangeEvent
-		//changeDetails["obj"] = this._currentObject;
 		this._fireDomainChangeEvent(this._currentObject);
 		this._galWizard.popdown();
 	} catch (ex) {
