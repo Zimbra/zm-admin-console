@@ -2204,6 +2204,8 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
                     showAddOnNextRow: true,
                     removeButtonLabel: ZaMsg.BTN_Remove_Owner,
                     removeButtonCSSStyle: "margin-left: 50px",
+                    enableDisableChecks: [],
+                    visibilityChecks: [],
                     items: [
                         {
                             ref: ".",
