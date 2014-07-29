@@ -518,16 +518,20 @@ ZaDomainListController.prototype._deleteDomainsCallback =
 function () {
     if(!this._successRemList)
 	    this._successRemList=new Array();
-    for(var key in this._removeList) {
+    for(var key = 0; key <  this._removeList.length; key++) {
         if(this._removeList[key] && AjxUtil.indexOf(this._successRemList, this._removeList[key]) == -1) {
             try {
                 this._removeList[key].remove();
                 this._successRemList.push(this._removeList[key]);
             } catch (ex) {
                 this._removeConfirmMessageDialog.popdown();
-                if(ex.code == ZmCsfeException.DOMAIN_NOT_EMPTY) {
+                if(ex.code == ZmCsfeException.DOMAIN_NOT_EMPTY 
+                		&& ZaZimbraAdmin.haveTargetRight(ZaItem.ACCOUNT, ZaAccount.DELETE_ACCOUNT_RIGHT, this._removeList[key].name)
+                		&& ZaZimbraAdmin.haveTargetRight(ZaItem.ACCOUNT, ZaAccount.RIGHT_LIST_ACCOUNT, this._removeList[key].name)) {
                     this._forceDeleteDomain(this._removeList[key]);
-                } else {
+                } else if(ex.code == ZmCsfeException.DOMAIN_NOT_EMPTY) {
+            		this.popupErrorDialog(ZaMsg.ERROR_DOMAIN_NOT_EMPTY);
+            	} else {
                     this._handleException(ex, "ZaDomainListController.prototype._deleteDomainsCallback", null, false);
                 }
                 return;
@@ -540,15 +544,6 @@ function () {
     ZaApp.getInstance().getCurrentController().fireRemovalEvent(this._successRemList);
     this._successRemList = null;
 	this._removeConfirmMessageDialog.popdown();
-	/*if(this._UICreated) {
-		this._contentView.setUI();
-	} 
-	if(ZaApp.getInstance().getCurrentController() == this) {
-		this.show();			
-	} else if(this._UICreated) {
-        this.show(false);
-    }
-	this.changeActionsState();*/
 }
 
 ZaDomainListController.prototype._donotDeleteDomainsCallback = 
