@@ -152,9 +152,10 @@ ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
 			var rights = targetObj.all[0].right;
 			for (var r in rights) {
 				if(!ZaSettings.targetRights[targetObj.type][rights[r].n]) {
-					ZaSettings.targetRights[targetObj.type][rights[r].n] = {all:true};
+					ZaSettings.targetRights[targetObj.type][rights[r].n] = {all:true,some:true};
 				} else {
 					ZaSettings.targetRights[targetObj.type][rights[r].n].all = true;
+					ZaSettings.targetRights[targetObj.type][rights[r].n].some = true;
 				}
 			}
 		}
@@ -201,6 +202,7 @@ ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
 						} 
 						for(var k = 0; k < domainList.length; k++) {
 							ZaSettings.targetRights[targetObj.type][entry.rights[0].right[j].n][domainList[k]] = true;
+							ZaSettings.targetRights[targetObj.type][entry.rights[0].right[j].n].some = true;
 						}
 					}
 				}
