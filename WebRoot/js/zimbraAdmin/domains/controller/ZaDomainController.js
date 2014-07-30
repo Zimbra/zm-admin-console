@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -64,41 +70,96 @@ ZaDomainController.changeActionsStateMethod = function () {
 ZaController.changeActionsStateMethods["ZaDomainController"].push(ZaDomainController.changeActionsStateMethod);
 
 
-ZaDomainController.initPopupMenuMethod =
-function () {
+ZaDomainController.initPopupMenuMethod = function () {
 
-	this._popupOperations[ZaOperation.SAVE]=new ZaOperation(ZaOperation.SAVE,ZaMsg.TBB_Save, ZaMsg.DTBB_Save_tt, "Save", "SaveDis", new AjxListener(this, this.saveButtonListener));
+    this._popupOperations[ZaOperation.SAVE] = new ZaOperation(
+        ZaOperation.SAVE,
+        ZaMsg.TBB_Save,
+        ZaMsg.DTBB_Save_tt,
+        "Save",
+        "SaveDis",
+        new AjxListener(
+            this,
+            this.saveButtonListener
+        )
+    );
 
-	if(ZaZimbraAdmin.canCreateDomain()) {
-		this._popupOperations[ZaOperation.NEW]=new ZaOperation(ZaOperation.NEW,ZaMsg.TBB_New, ZaMsg.DTBB_New_tt, "Domain", "DomainDis", new AjxListener(this, this._newButtonListener));
-	}
+    if (ZaZimbraAdmin.canCreateDomain()) {
 
-	if(ZaItem.hasRight(ZaDomain.RIGHT_DELETE_DOMAIN,this._currentObject))	{
-		this._popupOperations[ZaOperation.DELETE]=new ZaOperation(ZaOperation.DELETE,ZaMsg.TBB_Delete, ZaMsg.DTBB_Delete_tt, "Delete", "DeleteDis", new AjxListener(this, this.deleteButtonListener));
-	}
+        this._popupOperations[ZaOperation.NEW] = new ZaOperation(
+            ZaOperation.NEW,
+            ZaMsg.TBB_New,
+            ZaMsg.DTBB_New_tt,
+            "Domain",
+            "DomainDis",
+            new AjxListener(
+                this,
+                this._newButtonListener
+            )
+        );
+    }
 
-    this._popupOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS]=new ZaOperation(ZaOperation.VIEW_DOMAIN_ACCOUNTS,ZaMsg.Domain_view_accounts, ZaMsg.Domain_view_accounts_tt, "Search", "SearchDis", new AjxListener(this, this.viewAccountsButtonListener));
+    this._popupOperations[ZaOperation.VIEW_DOMAIN_ACCOUNTS] = new ZaOperation(
+        ZaOperation.VIEW_DOMAIN_ACCOUNTS,
+        ZaMsg.Domain_view_accounts,
+        ZaMsg.Domain_view_accounts_tt,
+        "Search",
+        "SearchDis",
+        new AjxListener(
+            this,
+            this.viewAccountsButtonListener
+        )
+    );
 
-    //if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_GAL_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-    if(ZaDomain.canConfigureGal(this._currentObject))	{
-		this._popupOperations[ZaOperation.GAL_WIZARD]=new ZaOperation(ZaOperation.GAL_WIZARD,ZaMsg.DTBB_GAlConfigWiz, ZaMsg.DTBB_GAlConfigWiz_tt, "GALWizard", "GALWizardDis", new AjxListener(this, ZaDomainController.prototype._galWizButtonListener));
-	}
-	if(ZaDomain.canConfigureAuth(this._currentObject)) {
-	//if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_AUTH_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-		this._popupOperations[ZaOperation.AUTH_WIZARD]=new ZaOperation(ZaOperation.AUTH_WIZARD,ZaMsg.DTBB_AuthConfigWiz, ZaMsg.DTBB_AuthConfigWiz_tt, "AuthWizard", "AuthWizardDis", new AjxListener(this, ZaDomainController.prototype._authWizButtonListener));
-	}
+    if (ZaDomain.canConfigureGal(this._currentObject)) {
 
-	if(ZaItem.hasRight(ZaDomain.RIGHT_CHECK_MX_RECORD,this._currentObject)) {
-	//if(ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOMAIN_CHECK_MX_WIZ] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-	   	this._popupOperations[ZaOperation.CHECK_MX_RECORD]=new ZaOperation(ZaOperation.CHECK_MX_RECORD,ZaMsg.DTBB_CheckMX, ZaMsg.DTBB_CheckMX_tt, "ReindexMailboxes", "ReindexMailboxes", new AjxListener(this, ZaDomainController.prototype._checkMXButtonListener));
-	}
+        this._popupOperations[ZaOperation.GAL_WIZARD] = new ZaOperation(
+            ZaOperation.GAL_WIZARD,
+            ZaMsg.DTBB_GAlConfigWiz,
+            ZaMsg.DTBB_GAlConfigWiz_tt,
+            "GALWizard",
+            "GALWizardDis",
+            new AjxListener(
+                this,
+                ZaDomainController.prototype._galWizButtonListener
+            )
+        );
 
-	/* bug 71235, remove auto provisioning
-	if(ZaDomain.canConfigureAutoProv(this._currentObject)) {
-		this._popupOperations[ZaOperation.AUTOPROV_WIZARD]=new ZaOperation(ZaOperation.AUTOPROV_WIZARD,ZaMsg.DTBB_AutoProvConfigWiz,
-                ZaMsg.DTBB_AutoProvConfigWiz_tt, "Backup", "BackupDis",
-                new AjxListener(this, ZaDomainController.prototype._autoProvWizButtonListener));
-	} */
+    }
+
+    if (ZaDomain.canConfigureAuth(this._currentObject)) {
+
+        this._popupOperations[ZaOperation.AUTH_WIZARD] = new ZaOperation(
+            ZaOperation.AUTH_WIZARD,
+            ZaMsg.DTBB_AuthConfigWiz,
+            ZaMsg.DTBB_AuthConfigWiz_tt,
+            "AuthWizard",
+            "AuthWizardDis",
+            new AjxListener(
+                this,
+                ZaDomainController.prototype._authWizButtonListener
+            )
+        );
+    }
+
+    if (ZaItem.hasRight(ZaDomain.RIGHT_CHECK_MX_RECORD,this._currentObject)) {
+
+        this._popupOperations[ZaOperation.CHECK_MX_RECORD] = new ZaOperation(
+            ZaOperation.CHECK_MX_RECORD,
+            ZaMsg.DTBB_CheckMX,
+            ZaMsg.DTBB_CheckMX_tt,
+            "ReindexMailboxes",
+            "ReindexMailboxes",
+            new AjxListener(
+                this,
+                ZaDomainController.prototype._checkMXButtonListener
+            )
+        );
+    }
+
+    // For reference
+    // Bug 79717 - Removed DELETE operation
+    // Bug 71235 - Removed AUTOPROV_WIZARD operation
 
 }
 ZaController.initPopupMenuMethods["ZaDomainController"].push(ZaDomainController.initPopupMenuMethod);

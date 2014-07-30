@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -580,14 +586,34 @@ function() {
             }
 
             // Add Configuration / Global Settings
-            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_CONFIG_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-                ti = new ZaTreeItemData({
-                                            parent:parentPath,
-                                            id:ZaId.getTreeItemId(ZaId.PANEL_APP,ZaId.PANEL_CONFIGURATION,null, ZaId.TREEITEM_GSET),
-                                            text: ZaMsg.OVP_global,
-                                            mappingId: ZaZimbraAdmin._GLOBAL_SETTINGS});
-                ti.addListener(ZaTreeEvent.ONDESTROY, new AjxListener(this, this.saveBeforeExit));
+            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.GLOBAL_CONFIG_VIEW] ||
+                ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+
+                ti = new ZaTreeItemData(
+                    {
+                        parent: parentPath,
+                        id: ZaId.getTreeItemId(
+                            ZaId.PANEL_APP,
+                            ZaId.PANEL_CONFIGURATION,
+                            null,
+                            ZaId.TREEITEM_GSET
+                        ),
+                        text: ZaMsg.OVP_global,
+                        forceNode: true,
+                        mappingId: ZaZimbraAdmin._GLOBAL_SETTINGS
+                    }
+                );
+
+                ti.addListener(
+                    ZaTreeEvent.ONDESTROY,
+                    new AjxListener(
+                        this,
+                        this.saveBeforeExit
+                    )
+                );
+
                 tree.addTreeItemData(ti);
+
                 ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._GLOBAL_SETTINGS] = ZaOverviewPanelController.globalSettingsTreeListener;
             }
 
@@ -752,6 +778,30 @@ function() {
             this._handleException(ex, "ZaOverviewPanelController.prototype._buildNewFolderTree", null, false);
         }
     }
+
+    // Always add the Help Center link
+    ti = new ZaTreeItemData({
+            parent: ZaMsg.OVP_home,
+            id: ZaId.getTreeItemId(ZaId.PANEL_APP, ZaId.PANEL_HOME, null, "helpCenter"),
+            text: ZaMsg.zimbraHelpCenter,
+            className: "AdminHomeTreeItem",
+            defaultSelectedItem: 1,
+            mappingId: ZaZimbraAdmin._HELP_CENTER_HOME_VIEW,
+            image: "Help"
+    });
+    tree.addTreeItemData(ti);
+
+    ti = new ZaTreeItemData(
+        {
+            parent: ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.zimbraHelpCenter]),
+            id: ZaId.getTreeItemId(ZaId.PANEL_APP, "helpCenter", null, "helpCenter"),
+            text: ZaMsg.zimbraHelpCenter,
+            mappingId: ZaZimbraAdmin._HELP_CENTER_VIEW
+        }
+    );
+    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._HELP_CENTER_VIEW] = ZaZimbraAdmin.prototype._helpListener;
+    tree.addTreeItemData(ti);
+
 	//Instrumentation code start
 	if(ZaOverviewPanelController.treeModifiers) {
 		var methods = ZaOverviewPanelController.treeModifiers;
@@ -811,6 +861,9 @@ ZaOverviewPanelController.homeTreeListener = function (ev) {
 	} else {
 		ZaApp.getInstance().getHomeViewController().show();
 	}
+
+    this._modifySearchMenuButton();
+
 }
 
 ZaOverviewPanelController.cosTreeListener = function (ev) {
@@ -1562,28 +1615,38 @@ ZaOverviewPanelController.prototype.refreshRelatedTreeByEdit = function(newItem)
    }
 
 
-ZaOverviewPanelController.prototype._modifySearchMenuButton = 
-function (itemType) {
-	if (itemType) {
-		var searchListController = ZaApp.getInstance().getSearchListController(); 
-		if(!searchListController || !searchListController._searchField) {
-			return;
-		}
-		switch (itemType) {
-			case ZaItem.ACCOUNT:
-				searchListController._searchField.accFilterSelected(); break ;
-			case ZaItem.ALIAS:
-				searchListController._searchField.aliasFilterSelected(); break ;
-			case ZaItem.DL:
-				searchListController._searchField.dlFilterSelected(); break ;
-			case ZaItem.RESOURCE:
-				searchListController._searchField.resFilterSelected(); break ;
-			case ZaItem.DOMAIN:
-				searchListController._searchField.domainFilterSelected(); break ;
+ZaOverviewPanelController.prototype._modifySearchMenuButton = function (itemType) {
+
+    var searchListController = ZaApp.getInstance().getSearchListController();
+    if (!searchListController || !searchListController._searchField) {
+        return;
+    }
+
+    if (itemType) {
+        switch (itemType) {
+            case ZaItem.ACCOUNT:
+                searchListController._searchField.accFilterSelected();
+                break;
+            case ZaItem.ALIAS:
+                searchListController._searchField.aliasFilterSelected();
+                break;
+            case ZaItem.DL:
+                searchListController._searchField.dlFilterSelected();
+                break;
+            case ZaItem.RESOURCE:
+                searchListController._searchField.resFilterSelected();
+                break;
+            case ZaItem.DOMAIN:
+                searchListController._searchField.domainFilterSelected();
+                break;
             case ZaItem.COS:
-                searchListController._searchField.cosFilterSelected(); break ;
-		}
-	}
+                searchListController._searchField.cosFilterSelected();
+                break;
+        }
+    } else {
+        searchListController._searchField.allFilterSelected();
+    }
+
 }
 
 ZaOverviewPanelController.prototype.addAccountItem =
@@ -1831,6 +1894,8 @@ ZaOverviewPanelController.prototype.getIconByType = function(type) {
         image = "AccountAlias";
     else if(type == ZaItem.SERVER)
         image = "Server";
+    else if(type == ZaItem.RIGHT)
+        image = "RightObject";
 
     return image;
 }

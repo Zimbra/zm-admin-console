@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -32,7 +38,6 @@ ZaHelpView.mainHelpPage = "administration_console_help.htm";
 // URL for the most latest documentation page
 ZaHelpView.RELEASE_NOTES_URL = "http://www.zimbra.com/support/documentation/zcs-ne-documentation.html";
 
-ZaHelpView.RELEASE_NOTE_LINK = "adminhelp/pdf/Zimbra_Release_Note.pdf";
 ZaHelpView.HELP_FORUM_LINK = "http://www.zimbra.com/forums/";
 ZaHelpView.HELP_WIKI_LINK = "http://wiki.zimbra.com";
 ZaHelpView.prototype = new ZaTabView();
@@ -111,7 +116,7 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 					{type:_GROUP_,numCols:2,
 						items: [
 							{type:_OUTPUT_,  value:AjxImg.getImageHtml("PDFDoc")},
-                            {
+							{
                                 type:_ANCHOR_,
                                 cssStyle: "font-size:12px;",
                                 showInNewWindow: true,
@@ -282,7 +287,7 @@ ZaHelpView.getAdminXFormItems = function() {
 
     var bulletImgItem = {
         type: _OUTPUT_,
-        cssStyle: "font-size: 8px; margin-left: 5px;",
+        cssStyle: "font-size: 8px; margin-left: 20px;",
         label: null,
         value: "<li></li>"
     };
@@ -635,4 +640,3 @@ ZaHelpView._getGuideURL = function (filename) {
 
     return hrefURL.join("");
 }
-

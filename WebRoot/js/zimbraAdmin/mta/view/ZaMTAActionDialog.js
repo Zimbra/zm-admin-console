@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -26,7 +32,7 @@ ZaMTAActionDialog = function(parent,title, instance, w, h) {
 	this._standardButtons = [DwtDialog.CANCEL_BUTTON,DwtDialog.OK_BUTTON];
 	ZaXDialog.call(this, parent,null, title, w,h);
 	this.initForm(ZaMTAActionDialog.myXModel,this.getMyXForm(instance));
-	this._helpURL = ZaMTAActionDialog.helpURL;		
+	this._helpURL = ZaMTAActionDialog.helpURL;
 }
 
 ZaMTAActionDialog.prototype = new ZaXDialog;
@@ -201,7 +207,7 @@ Q_FLTRD_QUESTION_RADIO_XFormItem.prototype.items = [
 		elementChanged: function(elementValue,instanceValue, event) {
 			this.getForm().itemChanged(this, ZaMTAActionDialog.FLTRED_SET, event);
 		},
-		bmolsnr:true		
+		bmolsnr:true
 	},
 	{type:_OUTPUT_, ref:ZaMTAActionDialog.FLTR_ITEMS,
 		getDisplayValue:function (itemVal) {
@@ -331,7 +337,7 @@ function(instance) {
 			{ type: _Q_MSGS_QUESTION_RADIO_,
                 visibilityChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
                 enableDisableChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],
-                align:_LEFT_
+			  align:_LEFT_
 			},	
 			{ type: _Q_FLTRD_QUESTION_RADIO_,
                 visibilityChecks:[[ZaItem.hasAnyRight,[ZaMTA.MANAGE_MAIL_QUEUE_RIGHT],instance]],

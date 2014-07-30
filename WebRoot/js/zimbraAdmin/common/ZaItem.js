@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -291,7 +297,14 @@ ZaItem.prototype.parseTargetsRightsFromJS = function(targetObj) {
 					if(getAttrs[a]["default"] && getAttrs[a]["default"][0] && getAttrs[a]["default"][0].v && getAttrs[a]["default"][0].v instanceof Array) {
 						var cnt = getAttrs[a]["default"][0].v.length; 
 						if(cnt == 1) {
-							this._defaultValues.attrs[getAttrs[a].n] = getAttrs[a]["default"][0].v[0]._content;
+							if((getAttrs[a].n == ZaDomain.A_zimbraFreebusyExchangeAuthPassword) &&
+								(getAttrs[a]["default"][0].v[0]._content == "VALUE-BLOCKED")) {
+								/* Value was replaced in SOAP response.  Treat as empty string so that it is clear it
+								 * needs to be typed again before using "Check the settings" */
+								this._defaultValues.attrs[getAttrs[a].n] = "";
+							} else {
+								this._defaultValues.attrs[getAttrs[a].n] = getAttrs[a]["default"][0].v[0]._content;
+							}
 						} else if (cnt >1) {
 							this._defaultValues.attrs[getAttrs[a].n] = new Array();
 							for(var i = 0; i<cnt;i++) { 
@@ -332,7 +345,7 @@ ZaItem.prototype.parseTargetsRightsFromJS = function(targetObj) {
 								this._defaultValues.attrs[setAttrs[a].n][i] = setAttrs[a]["default"][0].v[i]._content;
 							}
 						}
-					}					
+					}
 				}
 			} 
 			if(targetObj.setAttrs[0].all) {
@@ -1108,9 +1121,9 @@ ZaItem.getZeroIsUnlimitedItem = function () {
  * @return {string} copyright string with the end year information
  */
 ZaItem.getAboutScreenCopyright = function() {
-    var date = new Date();
-    var curYear = date.getFullYear() + "";
-    return AjxMessageFormat.format(ZabMsg.aboutScreenCopyright, [curYear]);
+    var version = ZaServerVersionInfo.version || 'N/A';
+    var release = ZaServerVersionInfo.release || 'N/A';
+    return AjxMessageFormat.format(ZabMsg.aboutScreenCopyright, [version, release]);
 }
 
 /**

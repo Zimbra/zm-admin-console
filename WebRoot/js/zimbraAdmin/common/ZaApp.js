@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -608,12 +614,12 @@ function(refresh) {
 }
 
 ZaApp.prototype.getPostQList = 
-function (refresh, callback) {
-	if (refresh || this._postqList == null || callback) {
-		this._postqList = ZaMTA.getAll(callback);
+	function (refresh, callback) {
+		if (refresh || this._postqList == null || callback) {
+			this._postqList = ZaMTA.getAll(callback);
+		}
+		return this._postqList;	
 	}
-	return this._postqList;	
-}
 
 ZaApp.prototype.getMailServers =
 function(refresh, callback) {
@@ -625,7 +631,7 @@ function(refresh, callback) {
 		var tmpArray = this._mbsList.getArray();
 		var cnt = tmpArray.length;
 		for(var i = 0; i < cnt; i++) {
-			if(tmpArray[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
+			if(tmpArray[i].attrs[ZaServer.A_zimbraMailClientServiceEnabled]) {
 				resArray.push(tmpArray[i]);
 			}
 		}
@@ -642,7 +648,7 @@ function(refresh) {
 		var hashMap = this._serverList.getIdHash();
 		var mailServerArr = [];
 		for (var i in hashMap) {
-			if (hashMap[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]){
+			if (hashMap[i].attrs[ZaServer.A_zimbraMailClientServiceEnabled]){
 				mailServerArr.push(hashMap[i]);
 			}
 		}
@@ -665,7 +671,7 @@ function(refresh) {
 		var hashMap = this._serverList.getIdHash();
 		var mailServerArr = [];
 		for (var i in hashMap) {
-			if (hashMap[i].attrs[ZaServer.A_zimbraMailboxServiceEnabled]){
+			if (hashMap[i].attrs[ZaServer.A_zimbraMailClientServiceEnabled]){
 				var obj = new Object();
 				obj[ZaServer.A_ServiceHostname] = hashMap[i].attrs[ZaServer.A_ServiceHostname];
 				obj.id = hashMap[i].id;

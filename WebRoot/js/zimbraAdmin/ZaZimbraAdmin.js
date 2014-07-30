@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -99,6 +105,8 @@ ZaZimbraAdmin._SERVER_STATUS_VIEW =  ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_STATISTICS_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_STATISTICS_TAB_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._SERVER_LIST_FOR_STATISTICS_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
+ZaZimbraAdmin._HELP_CENTER_HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
+ZaZimbraAdmin._HELP_CENTER_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 
 ZaZimbraAdmin._HOME_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 ZaZimbraAdmin._XFORM_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
@@ -158,10 +166,6 @@ function(domain) {
 	var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
 	soapDoc.setMethodAttribute("onerror", "continue");
 	
-	if (!ZaServerVersionInfo._loaded){
-		var versionInfoReq = soapDoc.set("GetVersionInfoRequest", null, null, ZaZimbraAdmin.URN);
-	}	
-
 	var domainInfoReq = soapDoc.set("GetDomainInfoRequest", null, null, ZaZimbraAdmin.URN);
 	var elBy = soapDoc.set("domain", location.hostname, domainInfoReq);
 	elBy.setAttribute("by", "virtualHostname");
@@ -186,15 +190,6 @@ function(domain) {
 		params.resend = true;
         resp = command.invoke(params).Body.BatchResponse;
     }
-
-	if(resp.GetVersionInfoResponse && resp.GetVersionInfoResponse[0]) {
-		var versionResponse = resp.GetVersionInfoResponse[0];
-		ZaServerVersionInfo.buildDate = ZaServerVersionInfo._parseDateTime(versionResponse.info[0].buildDate);
-		ZaServerVersionInfo.host = versionResponse.info[0].host;
-		ZaServerVersionInfo.release = versionResponse.info[0].release;
-		ZaServerVersionInfo.version = versionResponse.info[0].version;
-		ZaServerVersionInfo._loaded = true;
-	}	
 
 	if(resp.GetDomainInfoResponse && resp.GetDomainInfoResponse[0]) {
 		var domainInfoResponse = resp.GetDomainInfoResponse[0];
@@ -400,6 +395,8 @@ function() {
 		ZaZimbraAdmin.isFirstRequest = false;
 		//initialize my rights
 		ZaZimbraAdmin.initInfo (resp);
+
+		ZaServerVersionInfo.load();
 
         //check the user locale settings and reload the message is needed.
         ZaZimbraAdmin.LOCALE_QS = "" ;
@@ -787,29 +784,16 @@ function () {
 	}
 	
 	var dwLabel = new DwtLabel(this._shell, "", "", Dwt.RELATIVE_STYLE);	
-	var containerWidth = Dwt.getSize(userNameContainer).x;
-	var innerContent = null;
-    var tmpName = AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName);
-	if(containerWidth <= 20) {
-		// if there are not enough space, just follow skin's setting
-		innerContent = ( String(tmpName).length>(skin.maxAdminName+1)) ? String(tmpName).substr(0,skin.maxAdminName) : tmpName;
-	}
-	else {
-		// reserve 20px for estimation error. 
-		// here we assume 5.5px for one word, just follow the apptab.
-		var maxNumberOfLetters = Math.floor((containerWidth - 20)/5.5);
-		innerContent = tmpName;
-		if (maxNumberOfLetters < innerContent.length) {
-			innerContent = innerContent.substring(0, (maxNumberOfLetters - 3)) + "..."
-		}	
-	}
 
-	dwLabel.setText(innerContent);	
-	if(innerContent != ZaZimbraAdmin.currentUserName){
-		dwLabel._setMouseEvents();
-		dwLabel.setToolTipContent( tmpName );
-	}	
-	userNameContainer.innerHTML = ""; // clean the "Administrator" inherited from the skin's raw html code	
+    var tmpName = AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName);
+
+    var innerContent = "<div class='skin_container_username_div'>" + tmpName + "</div>";
+
+	dwLabel.setText(innerContent);
+    dwLabel._setMouseEvents();
+    dwLabel.setToolTipContent( tmpName );
+
+	userNameContainer.innerHTML = ""; // clean the "Administrator" inherited from the skin's raw html code
 	dwLabel.reparentHtmlElement (ZaSettings.SKIN_USER_NAME_ID) ;
 }
 
@@ -825,32 +809,15 @@ function () {
 	}
 
 	var dwButton = new DwtBorderlessButton(this._shell, "", "", Dwt.RELATIVE_STYLE);
-	var containerWidth = Dwt.getSize(userNameContainer).x;
-	containerWidth = containerWidth - 16; // substract drop-down icon's width
-	if(AjxEnv.isIE) {
-		containerWidth -= 12; //substract extra padding+border
-	}
-	var innerContent = null;
+
     var tmpName = AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName);
-	if(containerWidth <= 40) {
-		// if there are not enough space, just follow skin's setting
-		innerContent = ( String(tmpName).length>(skin.maxAdminName+1)) ? String(tmpName).substr(0,skin.maxAdminName) : tmpName;
-	}
-	else {
-		// reserve 10px for estimation error.
-		// here we assume 5.5px for one word, just follow the apptab.
-		var maxNumberOfLetters = Math.floor((containerWidth - 10)/5.5);
-		innerContent = tmpName;
-		if (maxNumberOfLetters < innerContent.length) {
-			innerContent = innerContent.substring(0, (maxNumberOfLetters - 3)) + "..."
-		}
-	}
+
+    var innerContent = "<div class='skin_container_username_div'>" + tmpName + "</div>";
 
 	dwButton.setText(innerContent);
     dwButton.setDropDownImages("NodeExpandedWhite");
-	if(innerContent != ZaZimbraAdmin.currentUserName){
-		dwButton.setToolTipContent( tmpName );
-	}
+    dwButton.setToolTipContent( tmpName );
+
 	userNameContainer.innerHTML = "";
 	dwButton.reparentHtmlElement (ZaSettings.SKIN_USERNAME_DOM_ID);
 
@@ -895,8 +862,6 @@ function(ev) {
 		ZaApp.getInstance().getHelpViewController().show();
 	}
 
-    var historyObject = new ZaHistory("HelpView", undefined, undefined, false, new AjxCallback(this, this._helpListener));
-    this._historyMgr.addHistory(historyObject);
 }
 
 ZaZimbraAdmin.prototype._dwListener = 
@@ -923,6 +888,7 @@ function() {
 	html[i++] = ZaAppCtxt.getLogoURI ();
 	html[i++] = "' target='_blank'><div  class='"+AjxImg.getClassForImage("AppBanner")+"'></div></a>";
 	banner.getHtmlElement().innerHTML = html.join("");
+    banner.getHtmlElement().style.height = '100%';
 	return banner;
 }
 
