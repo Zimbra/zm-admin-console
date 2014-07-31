@@ -286,8 +286,6 @@ function(ev) {
 		var arrItems = this._contentView.getSelection();
 		var cnt = arrItems.length;
 		for(var key =0; key < cnt; key++) {
-		
-		//	var item = DwtListView.prototype.getItemFromElement.call(this, arrDivs[key]);
 			var item = arrItems[key];
 			if (item) {
 				//detect whether the deleting item is open in a tab
