@@ -1387,6 +1387,18 @@ ZaZimbraAdmin.canCreateAccount = function() {
 			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_ACCOUNT].some));
 }
 
+ZaZimbraAdmin.canListAccounts = function() {
+	return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[ZaItem.DOMAIN]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaAccount.RIGHT_LIST_ACCOUNT]
+		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaAccount.RIGHT_LIST_ACCOUNT].some)
+		|| (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaAccount.RIGHT_LIST_ACCOUNT]
+			&& ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaAccount.RIGHT_LIST_ACCOUNT].some)
+			|| (ZaSettings.targetRights[ZaItem.ACCOUNT]
+			&& ZaSettings.targetRights[ZaItem.ACCOUNT][ZaAccount.RIGHT_LIST_ACCOUNT]
+			&& ZaSettings.targetRights[ZaItem.ACCOUNT][ZaAccount.RIGHT_LIST_ACCOUNT].some));
+}
+
 ZaZimbraAdmin.canCreateAlias = function() {
 	return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[ZaItem.DOMAIN]
 		&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ALIAS]

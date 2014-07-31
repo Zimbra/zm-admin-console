@@ -264,11 +264,19 @@ ZaHomeXFormView.myXFormModifier = function(xFormObject, entry) {
     }
 
     if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNT_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-        labelChoices.push(ZaMsg.LBL_HomeAddAccounts);
         var addAccountChoices = [];
-        addAccountChoices.push({value:ZaMsg.LBL_HomeAddAccount, onClick: ZaHomeXFormView.onCreateAccount});
-        addAccountChoices.push({value:ZaMsg.LBL_HomeManageAccount, onClick: ZaHomeXFormView.onManageAccount});
-        contentChoices.push(addAccountChoices);
+        if(ZaZimbraAdmin.canCreateAccount()) {
+        	labelChoices.push(ZaMsg.LBL_HomeAddAccounts);
+        	addAccountChoices.push({value:ZaMsg.LBL_HomeAddAccount, onClick: ZaHomeXFormView.onCreateAccount});
+        } else if(ZaZimbraAdmin.canListAccounts()) {
+        	labelChoices.push(ZaMsg.LBL_HomeManageAccount);
+        }
+        if(ZaZimbraAdmin.canListAccounts()) {
+        	addAccountChoices.push({value:ZaMsg.LBL_HomeManageAccount, onClick: ZaHomeXFormView.onManageAccount});
+        }
+        if(addAccountChoices.length > 0) {
+        	contentChoices.push(addAccountChoices);	
+        }
     }
 
     var case1 = {type:_ZATABCASE_, numCols: 3,  colSizes:["37%", "34%", "29%"], caseKey:1,
