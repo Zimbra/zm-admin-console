@@ -99,7 +99,7 @@ ZaHelpView.myXFormModifier = function(xFormObject) {
 	xFormObject.items = [
 	        {type:_SWITCH_, align:_LEFT_, valign:_TOP_, items:[{type:_ZATABCASE_,id:"help_view_tab",  numCols:1, width:"100%", caseKey:1,
 	        		paddingStyle:"padding-left:15px;", width:"98%", cellpadding:2,
-	        		visibilityChecks:[function() { return true; }],
+	        		visibilityChecks:[],
 	        		items: [
 			{type:_OUTPUT_, label:null, value:ZabMsg.HELP_PAGE_0, colSpan:"*", cssStyle:"font-size:12pt;	font-weight: bold;"},
 			{type:_OUTPUT_, label:null, value:ZabMsg.HELP_PAGE_1, colSpan:"*", cssStyle:"font-size:12px;"},
@@ -393,7 +393,9 @@ ZaHelpView.getAdminXFormItems = function() {
                                                     height: "5"
                                                 },
                                                 {
-                                                    type: _GROUP_,
+                                                	visibilityChecks:[function () { try {return ZaSettings.EnabledZimlet["com_zimbra_mobilesync"]; } catch (ex) { return false;} }],
+                                                	enableDisableChecks:[],
+                                                	type: _GROUP_,
                                                     width: "100%",
                                                     numCols: 2,
                                                     colSizes: ["20", "*"],
@@ -423,6 +425,8 @@ ZaHelpView.getAdminXFormItems = function() {
                                                     height: "5"
                                                 },
                                                 {
+                                                	visibilityChecks:[function () { try {return ZaSettings.EnabledZimlet["com_zimbra_mobilesync"]; } catch (ex) { return false;} }],
+                                                	enableDisableChecks:[],
                                                     type: _GROUP_,
                                                     width: "100%",
                                                     numCols: 2,
