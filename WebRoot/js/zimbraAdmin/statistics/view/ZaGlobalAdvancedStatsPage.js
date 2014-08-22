@@ -299,7 +299,7 @@ ZaGlobalAdvancedStatsPage.plotQuickChart = function (id, hostname, group, column
         var period = 0;
         var fixedColumns = new Array();
         for (var i = 0; i < columns.length; i++) {
-            fixedColumns.push(columns[i].replace(/[/%:]/g, "_"));
+            fixedColumns.push(columns[i].replace(/[\/%:]/g, "_"));
         }
         for (var i = 0; i < values.length; i++) {
            if (i + 1 < values.length)
@@ -310,8 +310,7 @@ ZaGlobalAdvancedStatsPage.plotQuickChart = function (id, hostname, group, column
             var record = { timestamp: ts };
             for (var j = 0; j < values[i].stat.length; j++) {
                 if (ZaGlobalAdvancedStatsPage.indexOf(columns, values[i].stat[j].name) != -1) {
-                    //record[values[i].stat[j].name] = values[i].stat[j].value;
-                    record[values[i].stat[j].name.replace(/[/%:]/g, "_")] = values[i].stat[j].value;
+                    record[values[i].stat[j].name.replace(/[\/%:]/g, "_")] = values[i].stat[j].value;
                 }
             }
             for (var j = 0; j < fixedColumns.length; j++) {
