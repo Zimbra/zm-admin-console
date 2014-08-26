@@ -338,15 +338,13 @@ function () {
 	if(!ZaAccount.checkValues(tmpObj))
 		return false;
 	
-	if(ZaItem.hasRight(ZaAccount.SET_PASSWORD_RIGHT,tmpObj)) {
-		//change password if new password is provided
-		if(tmpObj.attrs[ZaAccount.A_password]!=null && tmpObj[ZaAccount.A2_confirmPassword]!=null && tmpObj.attrs[ZaAccount.A_password].length > 0) {
-			try {
-				this._currentObject.changePassword(tmpObj.attrs[ZaAccount.A_password]);
-			} catch (ex) {
-				this.popupErrorDialog(ZaMsg.FAILED_SAVE_ACCOUNT, ex);
-				return false;	
-			}
+	//change password if new password is provided
+	if(tmpObj.attrs[ZaAccount.A_password]!=null && tmpObj[ZaAccount.A2_confirmPassword]!=null && tmpObj.attrs[ZaAccount.A_password].length > 0) {
+		try {
+			this._currentObject.changePassword(tmpObj.attrs[ZaAccount.A_password]);
+		} catch (ex) {
+			this.popupErrorDialog(ZaMsg.FAILED_SAVE_ACCOUNT, ex);
+			return false;	
 		}
 	}
 
