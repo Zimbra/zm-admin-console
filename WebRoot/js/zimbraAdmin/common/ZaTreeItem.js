@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 /**
@@ -25,6 +31,7 @@ ZaTreeItem = function(params) {
 
     params.expandNodeImage = params.expandNodeImage || "Blank_16";
     params.collapseNodeImage= params.collapseNodeImage || "AdminCollapse";
+    params.arrowDisabled = true;
     params = Dwt.getParams(arguments, ZaTreeItem.PARAMS);
     this._parentInTree = params.parent;
     this._countParam = params.count;
@@ -73,41 +80,21 @@ function(index, realizeDeferred, forceNode) {
         }
     }
 
+    if (this._arrowDisabled){
+        var tableNode = document.getElementById(this._htmlElId + "_table");
+        tableNode.style.tableLayout = "fixed";
+        tableNode.style.width = "100%";
+
+        this._textCell.style.width = "100%";
+    }
+
     this._adjustText();
 }
 
 ZaTreeItem.prototype._adjustText = function() {
-    var tableNode = document.getElementById(this._htmlElId + "_table");
-    if (tableNode && this._textCell && this._text) {
-        var currentTextSize = AjxStringUtil.getWidth(this._text);
-        // ToDo compute the DOM's width
-        // 202: Total Left Panel Width
-        // 16: first type image 16 expanded image 5 padding before text
-        var allowedSize = 202 - 16 - 16 - 5;
-        if (this._count !== undefined) {
-            allowedSize = allowedSize - 16;
-        }
-
-        if (allowedSize < currentTextSize) {
-            var displayText = this._getDisplayText (currentTextSize, allowedSize);
-            this._textCell.innerHTML = displayText;
-            this.setToolTipContent(this._text);
-        } else {
-            this.setToolTipContent("");
-        }
-
-    }
+    this.setToolTipContent(this._text);
 }
 
-ZaTreeItem.prototype._getDisplayText = function (currentTextSize, allowedSize) {
-    var totalNumber = (this._text && this._text.length) ? this._text.length: 0;
-    var maxNumberOfLetters= Math.floor(allowedSize * totalNumber / currentTextSize);
-    var displayText  = "";
-    if(maxNumberOfLetters > 0){
-        displayText = this._text.substring(0, maxNumberOfLetters)
-    }
-    return displayText;
-}
 /**
  * Sets the text.
  *

@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -528,7 +534,7 @@ function (account, removeArray){
 	for (var i = 0; i < len; ++i) {
 		removeMemberSoapDoc = AjxSoapDoc.create("RemoveDistributionListMemberRequest", ZaZimbraAdmin.URN, null);
 		removeMemberSoapDoc.set("id", removeArray[i].id);
-		removeMemberSoapDoc.set("dlm", account.name);
+		accountEl = removeMemberSoapDoc.set("account", account.id);
 		var params = new Object();
 		params.soapDoc = removeMemberSoapDoc;
 		params.noAuthToken = true;	
@@ -874,25 +880,30 @@ S_Dwt_List_XFormItem.prototype.setItems = function (itemArray){
 **/
 ZaAccountMemberOfsourceHeaderList = function(type, nameDefaultWidth) {
 	var sourceHeaderList = new Array();
-	var sortable = 0;
-	
-//	defaultColumnSortable = sortable ;
-    if (!nameDefaultWidth) {
-        nameDefaultWidth = 230;
+
+	sourceHeaderList[0] = new ZaListHeaderItem (
+        ZaAccountMemberOfListView.A_name,
+        ZaMsg.CLV_Name_col,
+        null,
+        null,
+        null,
+        ZaAccountMemberOfListView.A_name,
+        false,
+        true
+    );
+
+    if (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) {
+        sourceHeaderList[1] = new ZaListHeaderItem (
+            ZaAccountMemberOfListView.A_via,
+            ZaMsg.Group_via,
+            null,
+            null,
+            null,
+            ZaAccountMemberOfListView.A_via,
+            false,
+            true
+        );
     }
-	var nameWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? nameDefaultWidth : null ;
-	sourceHeaderList[0] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_name, 	ZaMsg.CLV_Name_col, 	
-												null, nameWidth, null, ZaAccountMemberOfListView.A_name, false, true);
-	
-	/*
-	var isgroupWidth = (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) ? 80 : null ;
-	sourceHeaderList[1] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_isgroup,   	ZaMsg.Account_Group,   	
-	 											null, isgroupWidth,  null,  ZaAccountMemberOfListView.A_isgroup, true, true);
-	*/
-	if (type == ZaAccountMemberOfsourceHeaderList.INDIRECT) { 																							
-		sourceHeaderList[1] = new ZaListHeaderItem(ZaAccountMemberOfListView.A_via,   	ZaMsg.Group_via,   	
-	 											null, "auto",  null,  ZaAccountMemberOfListView.A_via, false, true);
-	}
 	
 	return sourceHeaderList ;
 }
@@ -900,4 +911,3 @@ ZaAccountMemberOfsourceHeaderList = function(type, nameDefaultWidth) {
 ZaAccountMemberOfsourceHeaderList.DIRECT = 1 ; //direct membership group
 ZaAccountMemberOfsourceHeaderList.INDIRECT = 2; //indirect/derived membership group
 ZaAccountMemberOfsourceHeaderList.NON = 3; //non membership groups.
-

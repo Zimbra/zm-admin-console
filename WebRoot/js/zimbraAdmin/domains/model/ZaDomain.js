@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -2036,6 +2042,12 @@ function (obj) {
 	this[ZaDomain.A_GALSampleQuery] = "john";
 	if(!this.attrs[ZaDomain.A_zimbraGalAutoCompleteLdapFilter])
 		this.attrs[ZaDomain.A_zimbraGalAutoCompleteLdapFilter] = "(|(cn=%s*)(sn=%s*)(gn=%s*)(mail=%s*))";
+	if(this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] &&
+		(this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] == "VALUE-BLOCKED")) {
+		/* Value was replaced in SOAP response - treat as empty string so that it is clear it needs to be typed again
+		 * before using "Check the settings" */
+		this.attrs[ZaDomain.A_zimbraFreebusyExchangeAuthPassword] = "";
+	}
 }
 
 ZaDomain.prototype.parseNotebookFolderAcls = function (resp) {
@@ -2381,8 +2393,8 @@ ZaDomain.myXModel = {
                 {id:ZaDomain.A2_new_gal_sync_account_name, type:_STRING_, ref:ZaDomain.A2_new_gal_sync_account_name, defaultValue: "galsync"},
                 {id:ZaDomain.A2_new_internal_gal_ds_name, type:_STRING_, ref:ZaDomain.A2_new_internal_gal_ds_name, defaultValue: "zimbra"},
                 {id:ZaDomain.A2_new_external_gal_ds_name, type:_STRING_, ref:ZaDomain.A2_new_external_gal_ds_name, defaultValue: "ldap"},
-                {id:ZaDomain.A2_new_internal_gal_polling_interval, type:_MLIFETIME_, ref:ZaDomain.A2_new_internal_gal_polling_interval, defaultValue: "1d"},
-                {id:ZaDomain.A2_new_external_gal_polling_interval, type:_MLIFETIME_, ref:ZaDomain.A2_new_external_gal_polling_interval, defaultValue: "1d"}
+                {id:ZaDomain.A2_new_internal_gal_polling_interval, type:_MINTERVAL_, ref:ZaDomain.A2_new_internal_gal_polling_interval, defaultValue: "1d"},
+                {id:ZaDomain.A2_new_external_gal_polling_interval, type:_MINTERVAL_, ref:ZaDomain.A2_new_external_gal_polling_interval, defaultValue: "1d"}
             ]
         }},
 		{id:ZaDomain.A2_gal_sync_accounts, type:_LIST_, listItem:{type:_OBJECT_, items:ZaAccount.myXModel.items}, ref:ZaDomain.A2_gal_sync_accounts},
@@ -2436,7 +2448,7 @@ ZaDomain.myXModel = {
 		{id:ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled},
         {id:ZaDomain.A2_zimbraAutoProvServerList, type:_LIST_, ref:ZaDomain.A2_zimbraAutoProvServerList},
         {id:ZaDomain.A2_zimbraAutoProvSelectedServerList, type:_LIST_},
-        {id:ZaDomain.A2_zimbraAutoProvPollingInterval, ref: ZaDomain.A2_zimbraAutoProvPollingInterval, type: _MLIFETIME_, minInclusive: 0 },
+        {id:ZaDomain.A2_zimbraAutoProvPollingInterval, ref: ZaDomain.A2_zimbraAutoProvPollingInterval, type: _MINTERVAL_, minInclusive: 0 },
         {id:ZaDomain.A2_zimbraAutoProvSearchActivated, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvSearchActivated},
         {id:ZaDomain.A2_zimbraAutoProvAccountPool,type:_LIST_,ref:ZaDomain.A2_zimbraAutoProvAccountPool},
         {id:ZaDomain.A2_zimbraAutoProvAccountPoolPageNum,ref:ZaDomain.A2_zimbraAutoProvAccountPoolPageNum, type:_NUMBER_,defaultValue:1},
@@ -2584,6 +2596,7 @@ ZaDomain.myXModel = {
       // web client redirect
       { id:ZaDomain.A_zimbraWebClientLoginURL, ref:"attrs/" + ZaDomain.A_zimbraWebClientLoginURL, type:_COS_STRING_ },
       { id:ZaDomain.A_zimbraWebClientLogoutURL, ref:"attrs/" + ZaDomain.A_zimbraWebClientLogoutURL, type:_COS_STRING_ },
+
         // Clear Cookies
         {
             id: ZaDomain.A_zimbraForceClearCookies,
@@ -3039,7 +3052,7 @@ ZaDomain.getEffectiveDomainList = function(adminId) {
 ZaDomain.prototype.countAllAccounts = function() {
 	var soapDoc = AjxSoapDoc.create("SearchDirectoryRequest", ZaZimbraAdmin.URN, null);
     soapDoc.getMethod().setAttribute("maxResults", "0");
-    soapDoc.getMethod().setAttribute("limit", "-1");
+	soapDoc.getMethod().setAttribute("limit", "-1");
 	var query = "";
     var types = [ZaSearch.ACCOUNTS, ZaSearch.DLS, ZaSearch.ALIASES, ZaSearch.RESOURCES];
 

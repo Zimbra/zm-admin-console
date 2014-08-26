@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -43,6 +49,29 @@ ZaMTAXFormView.prototype = new ZaTabView();
 ZaMTAXFormView.prototype.constructor = ZaMTAXFormView;
 ZaTabView.XFormModifiers["ZaMTAXFormView"] = new Array();
 
+ZaMTAXFormView.SCANNER_STATUS_CHOICES = new XFormChoices(
+    [
+        {
+            value: ZaMTA.STATUS_IDLE,
+            label: ZaMsg.PQ_ScannerIdle
+        },
+        {
+            value: ZaMTA.STATUS_SCANNING,
+            label: ZaMsg.PQ_ScannerScanning
+        },
+        {
+            value: ZaMTA.STATUS_SCAN_COMPLETE,
+            label: ZaMsg.PQ_ScannerScanComplete
+        },
+        {
+            value: ZaMTA.STATUS_STALE,
+            label: ZaMsg.PQ_ScannerStaleData
+        }
+    ],
+    XFormChoices.OBJECT_LIST,
+    "value",
+    "label"
+);
 
 ZaMTAXFormView.tabChoices = new XFormChoices([{value:ZaMTAXFormView._tab1, label:ZaMsg.PQV_Tab_Deferred},
 				{value:ZaMTAXFormView._tab2, label:ZaMsg.PQV_Tab_IncomingQ},
@@ -64,6 +93,25 @@ function (entry) {
 		this._containedObject[ZaModel.currentTab] = "1";
 	else
 		this._containedObject[ZaModel.currentTab] = entry[ZaModel.currentTab];
+
+    ZaMTAXFormView.SCANNER_STATUS_CHOICES.setChoices([
+        {
+            value: ZaMTA.STATUS_IDLE,
+            label: ZaMsg.PQ_ScannerIdle
+        },
+        {
+            value: ZaMTA.STATUS_SCANNING,
+            label: ZaMsg.PQ_ScannerScanning
+        },
+        {
+            value: ZaMTA.STATUS_SCAN_COMPLETE,
+            label: ZaMsg.PQ_ScannerScanComplete
+        },
+        {
+            value: ZaMTA.STATUS_STALE,
+            label: ZaMsg.PQ_ScannerStaleData
+        }
+    ]);
 		
 	ZaMTAXFormView.tabChoices.setChoices([
 		{value:ZaMTAXFormView._tab1, label:ZaMsg.PQV_Tab_Deferred + " (" + this._containedObject[ZaMTA.A_DeferredQ][ZaMTA.A_count] + ")"},
@@ -477,14 +525,10 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 	
 	
 	var headerList = new Array();
-    if(ZaZimbraAdmin.LOCALE=="en"||ZaZimbraAdmin.LOCALE=="en_AU"||ZaZimbraAdmin.LOCALE=="en_GB")
-        headerList[0] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_text_col, ZaMsg.PQV_name_col, null, "55px", false, null, true, true);
-    else
-	    headerList[0] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_text_col, ZaMsg.PQV_name_col, null, "38px", false, null, true, true);
 
-	headerList[1] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_count_col, ZaMsg.PQV_count_col, null, "auto", false, null, true, true);
-	//headerList[2] = new ZaListHeaderItem(null, null, null, null, null, null, false, true);							
-		
+    headerList[0] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_text_col, ZaMsg.PQV_name_col, null, "auto", false, null, true, true);
+    headerList[1] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_count_col, ZaMsg.PQV_count_col, null, "38px", false, null, true, true);
+
 	var msgHeaderList = new Array();
 	msgHeaderList[0] = new ZaListHeaderItem(ZaMTAQMsgItem.A_id, ZaMsg.PQV_qid_col, null, "100px", null, null, true, true);
 
@@ -526,7 +570,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "17%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_refreshTime},
-							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_Status,choices:ZaMTAXFormView.SCANNER_STATUS_CHOICES},
 							{type:_DWT_PROGRESS_BAR_,label:ZaMsg.PQ_ParsingProgress,
 								maxValue:null,
 								maxValueRef:ZaMTA.A_DeferredQ+"/"+ZaMTA.A_count,
@@ -609,7 +653,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "15%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_refreshTime},
-							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_Status,choices:ZaMTAXFormView.SCANNER_STATUS_CHOICES},
 							{type:_DWT_PROGRESS_BAR_,label:ZaMsg.PQ_ParsingProgress,
 								maxValue:null,
 								maxValueRef:ZaMTA.A_IncomingQ+"/"+ZaMTA.A_count,
@@ -687,7 +731,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "15%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", items: [
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_refreshTime},
-							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_Status,choices:ZaMTAXFormView.SCANNER_STATUS_CHOICES},
 							{type:_DWT_PROGRESS_BAR_,label:ZaMsg.PQ_ParsingProgress,
 								maxValue:null,
 								maxValueRef:ZaMTA.A_ActiveQ+"/"+ZaMTA.A_count,
@@ -763,7 +807,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						{type:_SPACER_, height:"15"},
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "15%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", width:"95%", items: [
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_refreshTime},
-							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_HoldQ+"/"+ZaMTA.A_Status,choices:ZaMTAXFormView.SCANNER_STATUS_CHOICES},
 							{type:_DWT_PROGRESS_BAR_,label:ZaMsg.PQ_ParsingProgress,
 								maxValue:null,
 								maxValueRef:ZaMTA.A_HoldQ+"/"+ZaMTA.A_count,
@@ -843,7 +887,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
 						
 						{type:_GROUP_,numCols:8, colSizes:["10%", "10%","10%", "15%", "15%", "25%", "auto", "10%"],tableCssClass:"search_field_tableCssClass", cssClass:"qsearch_field_bar", items: [
 							{type:_OUTPUT_, label:ZaMsg.TBB_LastUpdated, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_refreshTime},
-							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_Status,choices:ZaMTA.SCANNER_STATUS_CHOICES},							
+							{type:_OUTPUT_, label:ZaMsg.PQ_AnalyzerStatus, ref:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_Status,choices:ZaMTAXFormView.SCANNER_STATUS_CHOICES},
 							{type:_DWT_PROGRESS_BAR_,label:ZaMsg.PQ_ParsingProgress,
 								maxValue:null,
 								maxValueRef:ZaMTA.A_CorruptQ+"/"+ZaMTA.A_count,

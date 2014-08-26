@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 /**
@@ -310,6 +316,9 @@ ZaNewCosXWizard.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	//ZaCos.A_zimbraFeatureShortcutAliasesEnabled,
 	ZaCos.A_zimbraFeatureGalEnabled,
 	ZaCos.A_zimbraFeatureMAPIConnectorEnabled,
+	ZaCos.A_zimbraFeatureEwsEnabled,
+	ZaCos.A_zimbraFeatureTouchClientEnabled,
+	ZaCos.A_zimbraFeatureWebClientOfflineAccessEnabled,
 	ZaCos.A_zimbraFeatureGalAutoCompleteEnabled,
 	ZaCos.A_zimbraFeatureMailPriorityEnabled,
 	ZaCos.A_zimbraFeatureFlaggingEnabled,
@@ -321,7 +330,6 @@ ZaNewCosXWizard.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
 	ZaCos.A_zimbraFeatureFiltersEnabled,
 	ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
 	ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
-	ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 	ZaCos.A_zimbraFeatureIdentitiesEnabled,
 	ZaCos.A_zimbraFeatureGroupCalendarEnabled,
 	//ZaCos.A_zimbraFeatureInstantNotify,
@@ -566,6 +574,9 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
 						ZaCos.A_zimbraFeatureHtmlComposeEnabled,
 						ZaCos.A_zimbraFeatureGalEnabled,
 						ZaCos.A_zimbraFeatureMAPIConnectorEnabled,
+						ZaCos.A_zimbraFeatureEwsEnabled,
+						ZaCos.A_zimbraFeatureTouchClientEnabled,
+						ZaCos.A_zimbraFeatureWebClientOfflineAccessEnabled,
 						ZaCos.A_zimbraFeatureGalAutoCompleteEnabled,
 						ZaCos.A_zimbraFeatureImportFolderEnabled,
                         ZaCos.A_zimbraFeatureExportFolderEnabled,
@@ -589,6 +600,9 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                     //{ref:ZaCos.A_zimbraFeatureShortcutAliasesEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureShortcutAliasesEnabled,label:ZaMsg.LBL_zimbraFeatureShortcutAliasesEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraFeatureGalEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureGalEnabled,label:ZaMsg.LBL_zimbraFeatureGalEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraFeatureMAPIConnectorEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureMAPIConnectorEnabled,label:ZaMsg.LBL_zimbraFeatureMAPIConnectorEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraFeatureEwsEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureEwsEnabled,label:ZaMsg.LBL_zimbraFeatureEwsEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraFeatureTouchClientEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureTouchClientEnabled,label:ZaMsg.LBL_zimbraFeatureTouchClientEnabled, trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraFeatureWebClientOfflineAccessEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureWebClientOfflineAccessEnabled,label:ZaMsg.LBL_zimbraFeatureWebClientOfflineAccessEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraFeatureGalAutoCompleteEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureGalAutoCompleteEnabled,label:ZaMsg.LBL_zimbraFeatureGalAutoCompleteEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraFeatureImportFolderEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureImportFolderEnabled,label:ZaMsg.LBL_zimbraFeatureImportFolderEnabled, trueValue:"TRUE", falseValue:"FALSE"},
 		    		{ref:ZaCos.A_zimbraFeatureExportFolderEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureExportFolderEnabled,label:ZaMsg.LBL_zimbraFeatureExportFolderEnabled, trueValue:"TRUE", falseValue:"FALSE"},
@@ -615,7 +629,6 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
 						ZaCos.A_zimbraFeatureFiltersEnabled,
 						ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
 						ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
-						ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled,
 						ZaCos.A_zimbraFeatureIdentitiesEnabled,
 						ZaCos.A_zimbraFeatureReadReceiptsEnabled
 					]]
@@ -633,7 +646,6 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureFiltersEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFiltersEnabled,label:ZaMsg.LBL_zimbraFeatureFiltersEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled,label:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
-                        {ref:ZaCos.A_zimbraFeatureMailPollingIntervalPreferenceEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled,label:ZaMsg.LBL_zimbraFeatureMailPollingIntervalPreferenceEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_WIZ_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"}
 
@@ -1555,13 +1567,34 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
     this._lastStep = this.stepChoices.length;
 
 	xFormObject.items = [
-		{type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices,valueChangeEventSources:[ZaModel.currentStep]},
-	    {type:_SEPARATOR_, align:_CENTER_, valign:_TOP_},
-		{type:_SPACER_,  align:_CENTER_, valign:_TOP_},
-		{type:_SWITCH_, width:635, align:_LEFT_, valign:_TOP_, items:cases}
-
-
-	];		
+        {
+            type: _OUTPUT_,
+            colSpan: 2,
+            valign: _TOP_,
+            ref: ZaModel.currentStep,
+            choices: this.stepChoices,
+            valueChangeEventSources: [ZaModel.currentStep],
+            cssStyle: "white-space: normal"
+        },
+        {
+            type: _SEPARATOR_,
+            align: _CENTER_,
+            valign: _TOP_
+        },
+        {
+            type: _SPACER_,
+            align: _CENTER_,
+            valign: _TOP_
+        },
+        {
+            type: _SWITCH_,
+            width: 635,
+            align: _LEFT_,
+            valign: _TOP_,
+            cssStyle: "white-space: normal",
+            items: cases
+        }
+    ];
 };
 ZaXDialog.XFormModifiers["ZaNewCosXWizard"].push(ZaNewCosXWizard.myXFormModifier);
 

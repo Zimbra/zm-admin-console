@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 /**
@@ -258,11 +264,19 @@ ZaHomeXFormView.myXFormModifier = function(xFormObject, entry) {
     }
 
     if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.ACCOUNT_LIST_VIEW] || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
-        labelChoices.push(ZaMsg.LBL_HomeAddAccounts);
         var addAccountChoices = [];
-        addAccountChoices.push({value:ZaMsg.LBL_HomeAddAccount, onClick: ZaHomeXFormView.onCreateAccount});
-        addAccountChoices.push({value:ZaMsg.LBL_HomeManageAccount, onClick: ZaHomeXFormView.onManageAccount});
-        contentChoices.push(addAccountChoices);
+        if(ZaZimbraAdmin.canCreateAccount()) {
+        	labelChoices.push(ZaMsg.LBL_HomeAddAccounts);
+        	addAccountChoices.push({value:ZaMsg.LBL_HomeAddAccount, onClick: ZaHomeXFormView.onCreateAccount});
+        } else if(ZaZimbraAdmin.canListAccounts()) {
+        	labelChoices.push(ZaMsg.LBL_HomeManageAccount);
+        }
+        if(ZaZimbraAdmin.canListAccounts()) {
+        	addAccountChoices.push({value:ZaMsg.LBL_HomeManageAccount, onClick: ZaHomeXFormView.onManageAccount});
+        }
+        if(addAccountChoices.length > 0) {
+        	contentChoices.push(addAccountChoices);	
+        }
     }
 
     var case1 = {type:_ZATABCASE_, numCols: 3,  colSizes:["37%", "34%", "29%"], caseKey:1,
@@ -408,9 +422,7 @@ ZaHomeXFormView.myXFormModifier = function(xFormObject, entry) {
                         {type:_CELL_SPACER_},
                         {type:_DWT_IMAGE_, value: "ImgRemoveLineUp", containerCssStyle:"cursor: pointer;", cssStyle:"position:static;display:none;",  onClick:ZaHomeXFormView.onCloseSetup}
                     ]},
-                    {type:_SETUPGROUP_, colSpan: "*", headerLabels: labelChoices, contentItems: contentChoices},
-                    {type:_OUTPUT_, value: ZabMsg.LBL_HomeHelpCenter, colSpan: "*", align:_RIGHT_, onClick: ZaHomeXFormView.onHelpLink,
-                        containerCssClass:"ZaLinkedItem"}
+                    {type:_SETUPGROUP_, colSpan: "*", headerLabels: labelChoices, contentItems: contentChoices}
                 ]}
             ]}
         ]

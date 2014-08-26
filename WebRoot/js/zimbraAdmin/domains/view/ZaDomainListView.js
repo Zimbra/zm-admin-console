@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -21,12 +27,14 @@
 * @author Greg Solovyev
 **/
 
-ZaDomainListView = function(parent) {
+ZaDomainListView = function(parent, listType) {
 
 //	var className = "ZaDomainListView";
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
-	
+
+    this._listType = listType;
+
 	var headerList = this._getHeaderList();
 
 	ZaListView.call(this, {
@@ -76,33 +84,40 @@ function(domain, now, isDragProxy) {
 	html[idx++] = "<table width='100%'>";
 	html[idx++] = "<tr>";
 	var cnt = this._headerList.length;
+    var dwtId = Dwt.getNextId();
+    var rowId = this._listType;
 	for(var i = 0; i < cnt; i++) {
 		var field = this._headerList[i]._field;
 		var cellWidth = this._getCellWidth(i, {});
 		if(field == "type") {
 			// type
-			html[idx++] = "<td width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml("Domain") + "</td>";
+            var partialClassName = "Domain";
+            var domainType = domain.attrs[ZaDomain.A_domainType];
+            if (domainType === "alias") {
+                partialClassName += "Alias";
+            }
+			html[idx++] = "<td id=\"" + rowId + "_data_type_" + dwtId + "\" width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml(partialClassName) + "</td>";
 		} else if(field == ZaDomain.A_domainName) {
 			// name
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td id=\"" + rowId + "_data_name_" + dwtId + "\" align='left' width=" + cellWidth + ">";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.name);
-			html[idx++] = "</nobr></td>";
+			html[idx++] = "</td>";
 		} else if(field == ZaDomain.A_description) {
 			// description		
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td id=\"" + rowId + "_data_desc_" + dwtId + "\" align='left' width=" + cellWidth + ">";
 			html[idx++] = AjxStringUtil.htmlEncode(
 				ZaItem.getDescriptionValue(domain.attrs[ZaDomain.A_description]));
-			html[idx++] = "</nobr></td>";
+			html[idx++] = "</td>";
 		} else if(field == ZaDomain.A_zimbraDomainStatus) {
 			// description		
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td id=\"" + rowId + "_data_status_" + dwtId + "\" align='left' width=" + cellWidth + ">";
 			html[idx++] = ZaDomain._domainStatus(domain.attrs[ZaDomain.A_zimbraDomainStatus]);
-			html[idx++] = "</nobr></td>";
+			html[idx++] = "</td>";
 		} else if (field == ZaDomain.A_domainType) {
 			// domain type
-			html[idx++] = "<td align='left' width=" + cellWidth + "><nobr>";
+			html[idx++] = "<td id=\"" + rowId + "_data_domain_type_" + dwtId + "\" align='left' width=" + cellWidth + ">";
 			html[idx++] = AjxStringUtil.htmlEncode(domain.attrs[ZaDomain.A_domainType]);
-			html[idx++] = "</nobr></td>";
+			html[idx++] = "</td>";
 		}
 	}
 	html[idx++] = "</tr></table>";
@@ -117,11 +132,11 @@ function() {
 	var sortable = 1;
 	var i = 0 ;
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
-	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", sortable++, "objectClass", false, true);
+	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", null, "objectClass", false, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainName , ZaMsg.DLV_Name_col, null, "250px", sortable++, ZaDomain.A_domainName, true, true);
 	//headerList[0].initialize(ZaMsg.CLV_Name_col, null, "245", true, ZaDomain.A_domainName);
-	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainType , ZaMsg.DLV_Type_col, null, "100px", sortable++, ZaDomain.A_domainType, true, true);
-	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_zimbraDomainStatus , ZaMsg.DLV_Status_col, null, "100px", sortable++, ZaDomain.A_zimbraDomainStatus, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_domainType , ZaMsg.DLV_Type_col, null, "100px", null, ZaDomain.A_domainType, true, true);
+	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_zimbraDomainStatus , ZaMsg.DLV_Status_col, null, "100px", null, ZaDomain.A_zimbraDomainStatus, true, true);
 	headerList[i++] = new ZaListHeaderItem(ZaDomain.A_description, ZaMsg.DLV_Description_col, null, "auto", null, null, true, true);
 	//headerList[1].initialize(ZaMsg.CLV_Description_col, null, "245", false, ZaDomain.A_description);
 	

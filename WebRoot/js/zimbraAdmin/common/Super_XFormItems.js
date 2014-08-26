@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -114,6 +120,26 @@ Cos_Enum_XModelItem.prototype.validateType = function (value) {
 	
 	// if we get here, we didn't match any of the choices
 	throw this.getModel().getErrorMessage("didNotMatchChoice", value);
+}
+
+Cos_Enum_Polling_XModelItem = function () {}
+XModelItemFactory.createItemType("_COS_ENUM_POLLING_", "cos_enum_polling", Cos_Enum_Polling_XModelItem, Cos_Enum_XModelItem);
+
+Cos_Enum_Polling_XModelItem.prototype.getValue = function (instance, current, ref) {
+
+    var value = this.getLocalValue(instance);
+    if (value == null) {
+        value = this.getSuperValue(instance);
+    }
+
+    var POLLING_REGEX = /^([0-9])+([dhms]|ms)$/;
+
+    // IF the units are not part of the value, then default is seconds
+    if (!POLLING_REGEX.test(value)) {
+        value += "s";
+    }
+
+    return value;
 }
 
 Cos_List_XModelItem = function (){}
@@ -279,8 +305,8 @@ Cos_HostNameOrIp_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_HOSTNAME_OR_IP_", "cos_hostname_or_ip", Cos_HostNameOrIp_XModelItem, Cos_String_XModelItem);
 Cos_HostNameOrIp_XModelItem.prototype.validateType = XModelItem.prototype.validateString;
 Cos_HostNameOrIp_XModelItem.prototype.maxLength = 256;
-//Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE ];
-Cos_HostNameOrIp_XModelItem.prototype.pattern =  [AjxUtil.HOST_NAME_RE, AjxUtil.IP_ADDRESS_RE, AjxUtil.HOST_NAME_WITH_PORT_RE];
+//Cos_HostNameOrIp_XModelItem.prototype.pattern = [ AjxUtil.HOST_NAME_RE, AjxUtil.IPv4_ADDRESS_RE ];
+Cos_HostNameOrIp_XModelItem.prototype.pattern =  [AjxUtil.HOST_NAME_RE, AjxUtil.IPv4_ADDRESS_RE, AjxUtil.HOST_NAME_WITH_PORT_RE];
 
 /**
 * _COS_PORT_
@@ -298,7 +324,7 @@ Cos_Subnet_XModelItem = function (){}
 XModelItemFactory.createItemType("_COS_SUBNET_", "cos_subnet", Cos_Subnet_XModelItem, Cos_String_XModelItem);
 Cos_Subnet_XModelItem.prototype.validateType = XModelItem.prototype.validateString;
 Cos_Subnet_XModelItem.prototype.maxLength = 256;
-Cos_Subnet_XModelItem.prototype.pattern =  [AjxUtil.IP_ADDRESS_RE, AjxUtil.SUBNET_RE];
+Cos_Subnet_XModelItem.prototype.pattern =  [AjxUtil.IPv4_ADDRESS_RE, AjxUtil.SUBNET_RE];
 
 /**
 *	XForm Items that have overwritable super values
@@ -1773,7 +1799,7 @@ ZAGroup_XFormItem.prototype.initializeItems = function () {
 ZAWizGroup_XFormItem = function() {}
 XFormItemFactory.createItemType("_ZAWIZGROUP_", "zawizgroup", ZAWizGroup_XFormItem, Group_XFormItem);
 ZAWizGroup_XFormItem.prototype.numCols = 2;
-ZAWizGroup_XFormItem.prototype.colSizes = [(AjxEnv.isIE ? "100px":"200px"),(AjxEnv.isIE ? "450px":"275px" )];// modified by qin@zimbra.com
+ZAWizGroup_XFormItem.prototype.colSizes = ["125px","450px"];
 ZAWizGroup_XFormItem.prototype.cssStyle = "margin-top:20px;margin-bottom:0px;padding-bottom:0px;";
 
 ZARightGrouper_XFormItem = function() {}
@@ -2499,7 +2525,4 @@ Collaborated_Select_XFormItem.prototype._getSelectable = function() {
     }
     return result;
 }
-
-
-
 

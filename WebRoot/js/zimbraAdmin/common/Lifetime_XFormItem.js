@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -19,9 +25,12 @@
 
 MLifetime_XModelItem = function () {}
 XModelItemFactory.createItemType("_MLIFETIME_", "mlifetime", MLifetime_XModelItem);
+MLifetime_XModelItem.prototype.minInclusive = 0;
+MLifetime_XModelItem.prototype.zeroValue = ZaMsg.Unlimited;
+MLifetime_XModelItem.prototype.required = false;
 MLifetime_XModelItem.prototype.validateType = function (value) {
 	var val = "";
-	if(value == ZaMsg.Unlimited) {
+	if(value == this.zeroValue) {
 		val = "0";
 	} else if(value != null && value.length >0) {
 		if(value.length > 1) {
@@ -33,6 +42,10 @@ MLifetime_XModelItem.prototype.validateType = function (value) {
 	
 	if(val)
 		val =  XModelItem.prototype.validateNumber.call(this, val);
+
+	if (val == 0 && this.required) {
+		throw AjxMessageFormat.format(ZaMsg.exception_required_lifetime, value);
+	}
 	
 	return value;
 }
@@ -53,6 +66,7 @@ Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 Lifetime_XFormItem.prototype.nowrap = false;
 Lifetime_XFormItem.prototype.labelWrap = true;
+
 Lifetime_XFormItem.prototype.initializeItems = function(){
 	this.items = [
 	{type:_TEXTFIELD_, ref:".", labelLocation:_NONE_, cssClass:"admin_xform_number_input", 
@@ -71,11 +85,12 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 					}
 				}
 			}
+
 			this.getParentItem()._numericPart = val;
-			return ((!val || val=="0") ? ZaMsg.Unlimited : val);
+			return ((!val || val=="0") ? this.getModelItem().zeroValue : val);
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
-            if (numericPart  == ZaMsg.Unlimited) {
+            if (numericPart  == this.getModelItem().zeroValue) {
                 numericPart = 0;
             }
 			var val = numericPart + this.getParentItem()._stringPart;
@@ -107,6 +122,7 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 ];
 	Composite_XFormItem.prototype.initializeItems.call(this);
 }
+
 Lifetime_XFormItem.prototype.items = [];
 Lifetime_XFormItem.prototype.getDisplayElement = function () {
 	return this.getElement(this.getId() + "_display");
@@ -276,7 +292,7 @@ Long_Lifetime_XFormItem.prototype.initializeItems = function(){
                 return ((!val || val=="0") ? "0" : val);
             },
             elementChanged:function(numericPart, instanceValue, event) {
-                if (numericPart  == ZaMsg.Unlimited) {
+                if (numericPart == this.getModelItem().zeroValue) {
                     numericPart = 0;
                 }
                 var val = numericPart + this.getParentItem()._stringPart;
@@ -312,3 +328,7 @@ Long_Lifetime_XFormItem.prototype.items = [];
 Long_Lifetime_XFormItem.prototype.getDisplayElement = function () {
     return this.getElement(this.getId() + "_display");
 }
+
+MInterval_XModelItem = function () {}
+XModelItemFactory.createItemType("_MINTERVAL_", "minterval", MInterval_XModelItem, MLifetime_XModelItem);
+MInterval_XModelItem.prototype.zeroValue = ZaMsg.never.toLowerCase();

@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -58,9 +64,9 @@ ZaServer.A_zimbraMailProxyServiceInstalled = "_"+ZaServer.A_zimbraServiceInstall
 ZaServer.A_zimbraVmwareHAServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_vmwareha";
 ZaServer.A_zimbraPolicydServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_cbpolicyd";
 
-ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraReverseProxyHttpEnabled = "zimbraReverseProxyHttpEnabled";
 ZaServer.A_zimbraServiceEnabled = "zimbraServiceEnabled";
+ZaServer.A_zimbraPolicydServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_cbpolicyd";
 ZaServer.A_zimbraLdapServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_ldap";
 ZaServer.A_zimbraMailboxServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mailbox";
 ZaServer.A_zimbraMtaServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_mta";
@@ -72,6 +78,12 @@ ZaServer.A_zimbraSpellServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_spe
 ZaServer.A_zimbraLoggerServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_logger";
 ZaServer.A_zimbraMailProxyServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_proxy";
 ZaServer.A_zimbraVmwareHAServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_vmwareha";
+
+// servlets
+ZaServer.A_zimbraWebClientServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_zimbra";
+ZaServer.A_zimbraAdminClientServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_zimbraAdmin";
+ZaServer.A_zimbraMailClientServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_service";
+ZaServer.A_zimbraZimletServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_zimlet";
 
 // MTA
 ZaServer.A_zimbraMtaSaslAuthEnable = "zimbraMtaSaslAuthEnable";
@@ -239,12 +251,12 @@ ZaServer.APPLIANCEUPDATE_CUSTOMREP = 3;
 ZaServer.DEFAULT_IMAP_PORT=143;
 ZaServer.DEFAULT_IMAP_SSL_PORT=993;
 ZaServer.DEFAULT_POP3_PORT=110;
-ZaServer.DEFAULT_POP3_SSL_PORT=900;
+ZaServer.DEFAULT_POP3_SSL_PORT=995;
 
 ZaServer.DEFAULT_IMAP_PORT_ZCS=7143;
 ZaServer.DEFAULT_IMAP_SSL_PORT_ZCS=7993;
 ZaServer.DEFAULT_POP3_PORT_ZCS=7110;
-ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7900;
+ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7995;
 
 ZaServer.ERR_NOT_CIDR = 1;
 ZaServer.ERR_NOT_STARTING_ADDR = 2;
@@ -501,6 +513,10 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraPolicydServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraPolicydServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraLdapServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraLdapServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMailboxServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMailboxServiceEnabled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraWebClientServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraWebClientServiceEnabled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraAdminClientServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraAdminClientServiceEnabled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraMailClientServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMailClientServiceEnabled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraZimletServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraZimletServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMtaServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMtaServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraSnmpServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraSnmpServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraAntiVirusServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraAntiVirusServiceEnabled, type: _ENUM_, choices: [false,true] },
@@ -783,7 +799,7 @@ ZaServer.modifyMethod = function (tmpObj) {
 		}	
 	}
 	//modify volumes
-	if(this.attrs[ZaServer.A_zimbraMailboxServiceEnabled] && ZaItem.hasRight(ZaServer.MANAGE_VOLUME_RIGHT,this)) {
+	if(this.attrs[ZaServer.A_zimbraMailClientServiceEnabled] && ZaItem.hasRight(ZaServer.MANAGE_VOLUME_RIGHT,this)) {
 		//remove Volumes
 		if(tmpObj[ZaServer.A_RemovedVolumes]) {
 			var cnt = tmpObj[ZaServer.A_RemovedVolumes].length;
@@ -969,7 +985,7 @@ function(by, val) {
 	soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
 	soapDoc.setMethodAttribute("onerror", "continue");	
 	
-	if(this.attrs[ZaServer.A_zimbraMailboxServiceEnabled] && ZaItem.hasRight(ZaServer.MANAGE_VOLUME_RIGHT,this)) {
+	if(this.attrs[ZaServer.A_zimbraMailClientServiceEnabled] && ZaItem.hasRight(ZaServer.MANAGE_VOLUME_RIGHT,this)) {
 		var getAllVols = soapDoc.set("GetAllVolumesRequest", null, null, ZaZimbraAdmin.URN);
 		var getCurrentVols = soapDoc.set("GetCurrentVolumesRequest", null, null, ZaZimbraAdmin.URN);
 	}				
@@ -980,7 +996,7 @@ function(by, val) {
 		params = new Object();
 		params.soapDoc = soapDoc;	
 		params.asyncMode = false;
-		if(this.attrs && this.attrs[ZaServer.A_zimbraMailboxServiceInstalled] && this.attrs[ZaServer.A_zimbraMailboxServiceEnabled]) {
+		if(this.attrs && this.attrs[ZaServer.A_zimbraMailClientServiceEnabled]) {
 			params.targetServer = this.id;
 		}
 		var reqMgrParams = {
@@ -1082,7 +1098,7 @@ ZaServer.prototype.initFromJS = function(server) {
 		}
 	}
 	this[ZaServer.A_ServiceHostname] = this.attrs[ZaServer.A_ServiceHostname]; // a hack for New Account Wizard	
-	this[ZaServer.A_showVolumes] = this.attrs[ZaServer.A_zimbraMailboxServiceEnabled];
+	this[ZaServer.A_showVolumes] = this.attrs[ZaServer.A_zimbraMailClientServiceEnabled];
 	if(this.attrs[ZaServer.A_zimbraSmtpHostname] && !(this.attrs[ZaServer.A_zimbraSmtpHostname] instanceof Array)) {
 		this.attrs[ZaServer.A_zimbraSmtpHostname] = [this.attrs[ZaServer.A_zimbraSmtpHostname]];
 	}

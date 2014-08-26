@@ -1,15 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Zimbra Software, LLC.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
  * 
- * The contents of this file are subject to the Zimbra Public License
- * Version 1.4 ("License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- * http://www.zimbra.com/license.
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
  * 
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -21,10 +27,12 @@
 * @author Greg Solovyev
 **/
 
-ZaCosListView = function(parent) {
+ZaCosListView = function(parent, listType) {
 	var className = null;
 	var posStyle = DwtControl.ABSOLUTE_STYLE;
-	
+
+    this._listType = listType;
+
 	var headerList = this._getHeaderList();
 	ZaListView.call(this, {
 		parent:parent, 
@@ -75,20 +83,24 @@ function(cos, no, isDragProxy) {
 
 
 	var cnt = this._headerList.length;
+
+    var dwtId = Dwt.getNextId();
+    var rowId = this._listType;
+
 	for(var i = 0; i < cnt; i++) {
 		var field = this._headerList[i]._field;
 		var cellWidth = this._getCellWidth(i, {});
 		if (field == "type") {
 		// type
-			html[idx++] = "<td width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml("COS") + "</td>";
+			html[idx++] = "<td id=\"" + rowId + "_data_type_" + dwtId + "\" width=" + this._headerList[i]._width + ">" + AjxImg.getImageHtml("COS") + "</td>";
 		} else if (field == ZaCos.A_name) {
 		// name
-			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td id=\"" + rowId + "_data_name_" + dwtId + "\" align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(cos.name);
 			html[idx++] = "</nobr></td>";
 		} else if (field == ZaCos.A_description) {
 			// description
-			html[idx++] = "<td align='left' width=" + this._headerList[i]._width + "><nobr>";
+			html[idx++] = "<td id=\"" + rowId + "_data_desc_" + dwtId + "\" align='left' width=" + this._headerList[i]._width + "><nobr>";
 			html[idx++] = AjxStringUtil.htmlEncode(ZaItem.getDescriptionValue (cos.attrs[ZaCos.A_description]));
 			html[idx++] = "</nobr></td>";	
 		}
@@ -105,7 +117,7 @@ function() {
 	var sortable = 1;
 	var i = 0 ;
 	//idPrefix, label, iconInfo, width, sortable, sortField, resizeable, visible
-	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", sortable++, "objectClass", false, true);
+	headerList[i++] = new ZaListHeaderItem("type", null, null, "22px", null, "objectClass", false, true);
 	headerList[i++] = new ZaListHeaderItem(ZaCos.A_name, ZaMsg.CLV_Name_col, null, "200px", sortable++, ZaCos.A_name, true, true);
 	headerList[i++] = new ZaListHeaderItem(ZaCos.A_description, ZaMsg.CLV_Description_col, null, "auto", null, null, true, true);
 	
