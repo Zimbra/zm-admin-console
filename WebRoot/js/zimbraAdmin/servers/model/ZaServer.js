@@ -85,6 +85,7 @@ ZaServer.A_zimbraAdminClientServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled
 ZaServer.A_zimbraMailClientServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_service";
 ZaServer.A_zimbraZimletServiceEnabled = "_"+ZaServer.A_zimbraServiceEnabled+"_zimlet";
 
+ZaServer.servlets = ["zimbra","zimbraAdmin","service","zimlet"];
 // MTA
 ZaServer.A_zimbraMtaSaslAuthEnable = "zimbraMtaSaslAuthEnable";
 ZaServer.A_zimbraMtaDnsLookupsEnabled = "zimbraMtaDnsLookupsEnabled";
@@ -760,9 +761,15 @@ ZaServer.modifyMethod = function (tmpObj) {
 					enabled.push(service);
 				}			
 			}
-			
+
+			//add the servlets
+			for(var i = 0; i < ZaServer.servlets.length; i++) {
+				var service = ZaServer.servlets[i];
+				if(this.attrs["_"+ZaServer.A_zimbraServiceEnabled + "_" + service]) {
+					enabled.push(service)
+				}
+			}
 			// see if list of actually enabled fields is same as before
-			
 			var dirty = false; 
 			
 			if (this.attrs[ZaServer.A_zimbraServiceEnabled]) {
