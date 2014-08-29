@@ -622,7 +622,7 @@ function () {
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
 						 
 					}	
-					if(!ZaItem.hasRight(ZaAccount.SET_PASSWORD_RIGHT, item)) {
+					if(!ZaItem.hasAnyRight([ZaAccount.SET_PASSWORD_RIGHT, ZaAccount.CHANGE_PASSWORD_RIGHT], item)) {
 						 if(this._popupOperations[ZaOperation.CHNG_PWD])
 						 	this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
 						 
@@ -649,7 +649,7 @@ function () {
 						 	this._popupOperations[ZaOperation.DELETE].enabled = false;
 						 
 					}
-					if(!ZaItem.hasRight(ZaAccount.SET_PASSWORD_RIGHT,item.targetObj)) {
+					if(!ZaItem.hasAnyRight([ZaAccount.SET_PASSWORD_RIGHT, ZaAccount.CHANGE_PASSWORD_RIGHT], item.targetObj)) {
 						 if(this._popupOperations[ZaOperation.CHNG_PWD])
 						 	this._popupOperations[ZaOperation.CHNG_PWD].enabled = false;
 						 
