@@ -502,7 +502,10 @@ function (entry) {
         if(entry.name == ""){this._containedObject.name = ZaMsg.TBB_New;}
 	this._containedObject.type = entry.type;
 	this._containedObject.id = entry.id;
-    this._containedObject[ZaAccount.A2_autoMailServer] = entry[ZaAccount.A2_autoMailServer];
+
+	if (entry[ZaDistributionList.A2_dlType] === ZaDistributionList.STATIC_DL_TYPE) {
+		this._containedObject[ZaAccount.A2_autoMailServer] = entry[ZaAccount.A2_autoMailServer];
+	}
 
     if(entry[ZaDistributionList.A2_dlType])
         this._containedObject[ZaDistributionList.A2_dlType] = entry[ZaDistributionList.A2_dlType];
@@ -1266,27 +1269,6 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
 						}
 						,
 						{
-							type : _GROUP_, numCols : 3, nowrap : true, label : ZaMsg.NAD_MailServer, labelLocation : _LEFT_,
-							visibilityChecks : [[ZaItem.hasWritePermission, ZaAccount.A_mailHost]],
-							items : [
-								{
-									ref : ZaAccount.A_mailHost, type : _OSELECT1_, label : null, editable : false, choices : ZaApp.getInstance().getServerListChoices(),
-									enableDisableChecks : [ZaAccount.isAutoMailServer],
-									enableDisableChangeEventSources : [ZaAccount.A2_autoMailServer],
-									visibilityChecks : [],
-									tableCssStyle : "height: 15px",
-									cssStyle : "margin-left:5px;margin-bottom-10px;"
-								}
-								,
-								{
-									ref : ZaAccount.A2_autoMailServer, type : _WIZ_CHECKBOX_, msgName : ZaMsg.NAD_Auto, label : ZaMsg.NAD_Auto, labelLocation : _RIGHT_, trueValue : "TRUE", falseValue : "FALSE",
-									visibilityChecks : [], labelLocation : _RIGHT_, align : _RIGHT_, subLabel : "",
-									enableDisableChecks : []
-								}
-							]
-						}
-						,
-						{
 							type : _GROUP_, colSpan : "*", colSizes : ["153px", "*"],
 							labelCssClass : "xform_label", cssStyle : "padding-left:0px",
 							items : [
@@ -1334,7 +1316,7 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
 									align : _LEFT_,
 									subLabel : "",
 									visibilityChangeEventSources : [ZaDistributionList.A2_dlType],
-									visibilityChecks : [ZaDLXFormView.isDynamicDL],
+									visibilityChecks : [[XForm.checkInstanceValue, ZaDistributionList.A2_dlType, ZaDistributionList.DYNAMIC_DL_TYPE]],
 									enableDisableChecks : [],
 									elementChanged: function (elementValue, instanceValue, event) {
 										var memberItem = this.getParentItem().items[2];
@@ -1360,9 +1342,33 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
 									width : "100%",
 									bmolsnr: true,
 									visibilityChangeEventSources : [ZaDistributionList.A2_dlType],
-									visibilityChecks : [ZaDLXFormView.isDynamicDL],
+									visibilityChecks : [[XForm.checkInstanceValue, ZaDistributionList.A2_dlType, ZaDistributionList.DYNAMIC_DL_TYPE]],
 									enableDisableChangeEventSources : [ZaDistributionList.A_zimbraIsACLGroup],
 									enableDisableChecks : [ZaDLXFormView.isNotACLGroup]
+								}
+							]
+						}
+						,
+						{
+							type : _GROUP_, numCols : 3, nowrap : true, label : ZaMsg.NAD_MailServer, labelLocation : _LEFT_,
+							visibilityChangeEventSources: [ZaDistributionList.A2_dlType],
+							visibilityChecks : [[ZaItem.hasWritePermission, ZaAccount.A_mailHost],
+												[XForm.checkInstanceValue, ZaDistributionList.A2_dlType, ZaDistributionList.STATIC_DL_TYPE]],
+							items : [
+								{
+									ref : ZaAccount.A_mailHost, type : _OSELECT1_, label : null, editable : false, choices : ZaApp.getInstance().getServerListChoices(),
+									enableDisableChecks : [ZaAccount.isAutoMailServer],
+									enableDisableChangeEventSources : [ZaAccount.A2_autoMailServer],
+									visibilityChangeEventSources: [ZaDistributionList.A2_dlType],
+									visibilityChecks : [[XForm.checkInstanceValue, ZaDistributionList.A2_dlType, ZaDistributionList.STATIC_DL_TYPE]],
+									tableCssStyle : "height: 15px",
+									cssStyle : "margin-left:5px;margin-bottom-10px;"
+								}
+								,
+								{
+									ref : ZaAccount.A2_autoMailServer, type : _WIZ_CHECKBOX_, msgName : ZaMsg.NAD_Auto, label : ZaMsg.NAD_Auto, labelLocation : _RIGHT_, trueValue : "TRUE", falseValue : "FALSE",
+									visibilityChecks : [], labelLocation : _RIGHT_, align : _RIGHT_, subLabel : "",
+									enableDisableChecks : []
 								}
 							]
 						}
