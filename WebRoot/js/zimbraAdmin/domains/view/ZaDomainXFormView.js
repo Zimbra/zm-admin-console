@@ -1623,6 +1623,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
         this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "managing_servers/viewing_mailbox_quotas.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
         tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_MBX});
 		var case10 = {type:_SUPER_TABCASE_, numCols:1, caseKey:tabIx, colSizes: ["100%"],paddingStyle:"padding: 0px", width: "100%",
+			height: "100%",
             getCustomPaddingStyle:"return 0",
             loadDataMethods: [ZaDomainXFormView.getUserQuota],
 			items: [
