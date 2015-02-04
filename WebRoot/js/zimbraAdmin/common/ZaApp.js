@@ -705,7 +705,7 @@ function(refresh) {
 }
 
 ZaApp.prototype.getCosList =
-function(refresh) {
+function(refresh, callback) {
 	if (refresh || !this._cosList) {
 		var query = "";
 		if(!ZaZimbraAdmin.hasGlobalCOSSListAccess()) {
@@ -730,16 +730,37 @@ function(refresh) {
 			offset:0,
 			sortAscending:"1",
 			limit:ZaDomain.RESULTSPERPAGE,
-			callback:null,
 			attrs:[ZaCos.A_name,ZaCos.A_description].join(),
 			controller: this.getCurrentController()
+		};
+		this._cosList = new ZaItemList(ZaCos);
+		if (callback) {
+			searchParams.callback = this._getCosListCallback.bind(this, callback);
+			ZaSearch.searchDirectory(searchParams);
 		}
-		var response = ZaSearch.searchDirectory(searchParams).Body.SearchDirectoryResponse;
-		this._cosList = new ZaItemList(ZaCos);		
-		this._cosList.loadFromJS(response);
+		else {
+			var response = ZaSearch.searchDirectory(searchParams).Body.SearchDirectoryResponse;
+			this._cosList.loadFromJS(response);
+		}
 	}
 	return this._cosList;	
-}
+};
+
+ZaApp.prototype._getCosListCallback =
+function(callback, result) {
+	var response = result.getResponse().Body;
+	if (!response) {
+		return;
+	}
+	var searchDirectoryResponse = response.SearchDirectoryResponse;
+	if (!searchDirectoryResponse) {
+		return;
+	}
+	this._cosList.loadFromJS(searchDirectoryResponse);
+	if (callback) {
+		callback(this._cosList);
+	}
+};
 
 ZaApp.prototype.getCosListChoices =
 function(refresh) {

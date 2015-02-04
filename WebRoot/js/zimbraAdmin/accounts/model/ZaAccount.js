@@ -1539,9 +1539,18 @@ function(by, val) {
 	
 	//Make a GetAccountMembershipRequest
 	if(ZaItem.hasRight(ZaAccount.GET_ACCOUNT_MEMBERSHIP_RIGHT,this)) {
-		var getAccMembershipReq = soapDoc.set("GetAccountMembershipRequest", null, null, ZaZimbraAdmin.URN);
-		var account = soapDoc.set("account", this.attrs[ZaItem.A_zimbraId], getAccMembershipReq);
-		account.setAttribute("by","id");		
+		var getAccMembershipDoc = AjxSoapDoc.create("GetAccountMembershipRequest", ZaZimbraAdmin.URN);
+		var account = getAccMembershipDoc.set("account", this.attrs[ZaItem.A_zimbraId]);
+		account.setAttribute("by", "id");
+		var params = {
+			soapDoc : getAccMembershipDoc,
+			asyncMode : true,
+			callback : this._handleAccountMembershipResponse.bind(this)
+		};
+		var reqMgrParams = {
+			controller : ZaApp.getInstance().getCurrentController()
+		};
+		ZaRequestMgr.invoke(params, reqMgrParams);
 	}
 	
 	if(ZaItem.hasRight(ZaAccount.GET_ACCOUNT_INFO_RIGHT,this)) {
@@ -1601,9 +1610,9 @@ function(by, val) {
 				if(batchResp.GetAccountMembershipResponse) {
 					resp = batchResp.GetAccountMembershipResponse[0];
 					this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.parseGetAccMembershipResponse(resp) ;
-					this[ZaAccount.A2_directMemberList + "_more"] = 
+					this[ZaAccount.A2_directMemberList + "_more"] =
 						(this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
-					this[ZaAccount.A2_indirectMemberList + "_more"] = 
+					this[ZaAccount.A2_indirectMemberList + "_more"] =
 						(this[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
 				}
 				
@@ -2855,3 +2864,36 @@ function (parentPath) {
 }
 ZaItem.getRelatedMethods["ZaAccount"].push(ZaAccount.getRelatedList);
 
+ZaAccount.prototype._handleAccountMembershipResponse = function(result) {
+	var response = result.getResponse().Body;
+	if (!response) {
+		return;
+	}
+	var accountMembershipResponse = response.GetAccountMembershipResponse;
+	if (!accountMembershipResponse) {
+		return;
+	}
+	this[ZaAccount.A2_memberOf] = ZaAccountMemberOfListView.parseGetAccMembershipResponse(accountMembershipResponse) ;
+	this[ZaAccount.A2_directMemberList + "_more"] = (this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
+	this[ZaAccount.A2_indirectMemberList + "_more"] = (this[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList].length > ZaAccountMemberOfListView.SEARCH_LIMIT) ? 1: 0;
+	var controller = ZaApp.getInstance().getCurrentController();
+	//If controller's current object is not equal to the current account, then don't update the model.
+	if (!controller || controller._currentObject !== this) {
+		return;
+	}
+	var view = controller._view;
+	if (view) {
+		var form = view.getMyForm();
+		if (form) {
+			var model = form.getModel();
+			var instance = form.getInstance();
+			if (model && instance) {
+				var directMemberList = this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
+				var indirectMemberList = this[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList];
+				instance.memberOfLoaded = true;
+				model.setInstanceValue(instance, ZaAccount.A2_directMemberList, directMemberList);
+				model.setInstanceValue(instance, ZaAccount.A2_indirectMemberList, indirectMemberList);
+			}
+		}
+	}
+};
