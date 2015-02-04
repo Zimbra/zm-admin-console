@@ -163,14 +163,15 @@ ZaHome.loadDomainNum = function() {
 ZaHome.postLoadDataFunction.push(ZaHome.loadDomainNum);
 
 ZaHome.loadCosNum = function() {
-    var num = 1
-    try {
-        num = ZaApp.getInstance().getCosList(true).size();
-    } catch (ex) {
+	var callback = function(cosList) {
+		ZaApp.getInstance().getHomeViewController().setInstanceValue(cosList.size(), ZaHome.A2_cosNum);
+	};
+	try {
+		ZaApp.getInstance().getCosList(true, callback);
+	} catch (ex) {
 
-    }
-    ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_cosNum);
-}
+	}
+};
 
 ZaHome.postLoadDataFunction.push(ZaHome.loadCosNum);
 
