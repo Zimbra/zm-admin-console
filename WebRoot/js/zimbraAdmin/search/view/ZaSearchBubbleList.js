@@ -236,7 +236,8 @@ function() {
     var removeLink = 'ZaSearchXFormView.removeBubble("' + this.id + '","'+ this.parentId +'");';
     var style = "display:inline-block;cursor:pointer;";
     var closeText = AjxImg.getImageHtml("BubbleDelete", style, "id='" + removeLinkId + "' onclick='" + removeLink + "'");
-    var html = "<span id='"+this.id+"_displayName'>"+this.displayName + "</span>" + closeText;
+	var displayName = this.displayName && this.displayName.toString();
+	var html = "<span id='"+this.id+"_displayName'>" + AjxStringUtil.htmlEncode(displayName) + "</span>" + closeText;
 	el.innerHTML = html;
     this.reparentHtmlElement(this.parentCell);
 }
@@ -269,7 +270,8 @@ function(ev) {
 
 ZaSearchBubble.prototype._mouseOverAction =
 function(ev) {
-	this.setToolTipContent(this.getToolTip());
+	var toolTipContent = AjxStringUtil.htmlEncode(this.getToolTip());
+	this.setToolTipContent(toolTipContent);
 	return true;
 }
 
