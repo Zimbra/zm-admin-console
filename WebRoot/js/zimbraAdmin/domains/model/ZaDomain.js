@@ -446,7 +446,7 @@ ZaDomain.compareACLs = function (val1, val2) {
 //Use ZaSearch.SearchDirectory
 //In order to keep the domain list synchronized with server, we use synchronous call here.
 ZaDomain.getAll =
-function(target) {
+function(target, defaultParams) {
 	var query = "";
         if(!ZaZimbraAdmin.hasGlobalDomainListAccess()) {
             var domainNameList = ZaApp.getInstance()._domainNameList;
@@ -471,18 +471,34 @@ function(target) {
 		ignoreTooManyResultsException: true,
 		exceptionFrom: "ZaDomain.getAll",
 		controller: ZaApp.getInstance().getCurrentController()
-	}
-	var list = new ZaItemList(ZaDomain);
-	var responce = ZaSearch.searchDirectory(params);
-	if(responce) {
-		var resp = responce.Body.SearchDirectoryResponse;
-		if(resp != null) {
-			ZaSearch.TOO_MANY_RESULTS_FLAG = false;
-			list.loadFromJS(resp);		
+	};
+	if (defaultParams) {
+		if (defaultParams.limit) {
+			params.limit = defaultParams.limit;
+		}
+		if (defaultParams.callback) {
+			params.callback = ZaDomain._getAllCallback.bind(window, defaultParams.callback);
 		}
 	}
+	var response = ZaSearch.searchDirectory(params);
+	if (response) {
+		return ZaDomain._getAllCallback(false, response);
+	}
+};
+
+ZaDomain._getAllCallback = function(callback, response) {
+	var responseBody = response.isZmCsfeResult ? response.getResponse().Body : response.Body;
+	var searchDirectoryResponse = responseBody && responseBody.SearchDirectoryResponse;
+	var list = new ZaItemList(ZaDomain);
+	if(searchDirectoryResponse != null) {
+		ZaSearch.TOO_MANY_RESULTS_FLAG = false;
+		list.loadFromJS(searchDirectoryResponse);
+	}
+	if (callback) {
+		callback(list);
+	}
 	return list;
-}
+};
 
 /**
 * Creates a new ZaDomain. This method makes SOAP request (CreateDomainRequest) to create a new domain record in LDAP. 
