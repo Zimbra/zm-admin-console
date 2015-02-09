@@ -128,7 +128,11 @@ function(appCtxt) {
         var historyObject = new ZaHistory(homePath, ZaMsg.OVP_home);
         ZaZimbraAdmin.getInstance().updateHistory(historyObject, true);
     }
-}
+	// For delegated admin accounts pre fetch all the domains.
+	if (ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] === "TRUE") {
+		this.getDomainList(false, {limit : 25, asyncMode : true});
+	}
+};
 
 ZaApp.prototype.getAppCtxt = 
 function() {
@@ -546,13 +550,44 @@ function (params, resp) {
 	}
 }
 
+/**
+ * Get all the domains from the server.
+ * @param {Boolean}		refresh				bypass the cache
+ * @param {Boolean}		params.asyncMode	if <code>true</code>, request will be made asynchronously
+ * @param {AjxCallback}	params.callback		the next callback in chain for async request
+ */
 ZaApp.prototype.getDomainList =
-function(refresh) {
+function(refresh, params) {
 	if (refresh || this._domainList == null) {
-		this._domainList = ZaDomain.getAll();
+		if (params && params.asyncMode) {
+			var getDomainListCallbackArray = this._getDomainListCallbackArray;
+			if (!getDomainListCallbackArray) {
+				getDomainListCallbackArray = this._getDomainListCallbackArray = [];
+			}
+			getDomainListCallbackArray.push(params.callback);
+			// Send a request to the server only once. All other callbacks will be added to _getDomainListCallbackArray and executed once the response comes back from the server.
+			if (getDomainListCallbackArray.length === 1) {
+				params.callback = this._getDomainListCallback.bind(this);
+				ZaDomain.getAll(false, params);
+			}
+		}
+		else {
+			this._domainList = ZaDomain.getAll();
+		}
 	}
-	return this._domainList;	
-}
+	return this._domainList;
+};
+
+ZaApp.prototype._getDomainListCallback =
+function(list) {
+	this._domainList = list;
+	for (var i = 0; i < this._getDomainListCallbackArray.length; i++) {
+		if (this._getDomainListCallbackArray[i]) {
+			this._getDomainListCallbackArray[i](list);
+		}
+	}
+	this._getDomainListCallbackArray = [];
+};
 
 ZaApp.prototype.getSavedSearchList =
 function (refresh) {

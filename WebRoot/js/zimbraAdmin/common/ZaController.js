@@ -969,7 +969,15 @@ ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuer
     if (defaultType != ZaItem.ALIAS)  { //alias uid has no domain name, we shouldn't add a domain name filter. See bug 46626, 44799 & 4704 
     	if(!ZaSettings.HAVE_MORE_DOMAINS && ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] != 'TRUE') {
 		var queryChunks = [];
-		var domainList = ZaApp.getInstance().getDomainList().getArray();
+		var params = {
+			asyncMode : true,
+			callback : this._showAccountsView.bind(this, defaultType, ev, filterQuery)
+		};
+		var domainList = ZaApp.getInstance().getDomainList(false, params);
+		if (!domainList) {
+			return;
+		}
+		domainList = domainList.getArray();
 		//var domainList = [];
 		var cnt = domainList.length;
 		if(cnt>0) {
