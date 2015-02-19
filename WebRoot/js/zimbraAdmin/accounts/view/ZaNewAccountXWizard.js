@@ -661,47 +661,36 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 				visibilityChecks:[[ZaItem.hasWritePermission,ZaAccount.A_COSId]],
 				id: ZaNewAccountXWizard.cosGroupItemId,
 				items: [
-					{ref:ZaAccount.A_COSId, type:_DYNSELECT_,label: null, 
-						inputPreProcessor:ZaAccountXFormView.preProcessCOS,
-						toolTipContent:ZaMsg.tt_StartTypingCOSName,
+					{ref:ZaAccount.A_COSId, label: null,
+						type : _INPUT_,
 						onChange:ZaAccount.setCosChanged,
-						onClick:ZaController.showTooltip,
-						emptyText:ZaMsg.enterSearchTerm,						
 						enableDisableChecks:[[ZaNewAccountXWizard.isAutoCos], [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
-						enableDisableChangeEventSources:[ZaAccount.A2_autoCos],
-						visibilityChecks:[],
-						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
-						choices:this.cosChoices,
-						dataFetcherClass:ZaSearch,
-						editable:true,
-						getDisplayValue:function(newValue) {
-							// dereference through the choices array, if provided
-							//newValue = this.getChoiceLabel(newValue);
-							if(ZaItem.ID_PATTERN.test(newValue)) {
-								var cos = ZaCos.getCosById(newValue, this.getForm().parent._app);
-								if(cos)
-									newValue = cos.name;
-							} 
-							if (newValue == null) {
-								newValue = "";
-							} else {
-								newValue = "" + newValue;
-							}
-							return newValue;
-						}
+						enableDisableChangeEventSources:[ZaAccount.A2_autoCos]
 					},
 					{ref:ZaAccount.A2_autoCos, type:_WIZ_CHECKBOX_,
 						msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
 						trueValue:"TRUE", falseValue:"FALSE" , subLabel:"",
 						elementChanged: function(elementValue,instanceValue, event) {
+							var cositem = this.getParentItem().getItems()[0];
+							var form = this.getForm();
 							if(elementValue=="TRUE") {
-								var cositem = this.getParentItem().getItems()[0];
-								cositem.setValue(null);
-
-								ZaAccount.setDefaultCos(this.getInstance(), this.getForm().parent._app);	
+								cositem.updateElement(null);
+								ZaAccount.setDefaultCos(this.getInstance(), form.parent._app);
 							}
-
-							this.getForm().itemChanged(this, elementValue, event);
+							else {
+								if (AjxEnv.supported.input.list && !cositem.listCreated) {
+									var cosList = ZaApp.getInstance().getCosList();
+									var cosListArray = cosList && cosList.getArray();
+									if (cosListArray) {
+										var list = [];
+										for (var i = 0; i < cosListArray.length; i++) {
+											list.push(cosListArray[i].name);
+										}
+										cositem.createDataList(list);
+									}
+								}
+							}
+							form.itemChanged(this, elementValue, event);
 						},
                         enableDisableChecks:[ [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
 						visibilityChecks:[]
