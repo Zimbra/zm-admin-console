@@ -754,7 +754,7 @@ ZaDomainXFormView.getCustomWidth = function() {
         if (isNaN(totalWidth)) {
             totalWidth =  parentPage.clientWidth? parentPage.clientWidth : parentPage.offsetWidth;
         }
-        return totalWidth;
+        return totalWidth + "px";
     } catch(ex) {
 
     }
@@ -781,7 +781,7 @@ ZaDomainXFormView.getCustomHeight = function() {
         if (AjxEnv.isIE)
             containerHeight = 3;
         if (totalHeight > (headHeight+containerHeight)) {
-            return totalHeight - headHeight -containerHeight ;
+            return totalHeight - headHeight -containerHeight + "px";
         }
 
     } catch(ex) {
@@ -1624,7 +1624,6 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
         this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "managing_servers/viewing_mailbox_quotas.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
         tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_MBX});
 		var case10 = {type:_SUPER_TABCASE_, numCols:1, caseKey:tabIx, colSizes: ["100%"],paddingStyle:"padding: 0px", width: "100%",
-			height: "100%",
             getCustomPaddingStyle:"return 0",
             loadDataMethods: [ZaDomainXFormView.getUserQuota],
 			items: [
