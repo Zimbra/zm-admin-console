@@ -1896,7 +1896,7 @@ ZATabCase_XFormItem.prototype.getCustomHeight = function () {
 		if(totalHeight<=0 || totalHeight < (totalHeaderHeight + totalTabBarHeight + 2))
 			return "100%";
 		else
-			return totalHeight - totalHeaderHeight - totalTabBarHeight - 2 + "px";
+			return totalHeight - totalHeaderHeight - totalTabBarHeight - 2;
 	} catch (ex) {
         
 	}
@@ -1921,7 +1921,7 @@ ZATabCase_XFormItem.prototype.getCustomWidth = function () {
                 if(paddingStyle&&!AjxEnv.isIE)
                     res = res - 15;
             }
-			return res + "px";
+			return res;
 		}
 	} catch (ex) {
         
@@ -1934,9 +1934,8 @@ function() {
 	try {
 		var element = this.getElement();
 		var height = this.cacheInheritedMethod("getCustomHeight", "$getCustomHeight").call(this);
-		var width = this.cacheInheritedMethod("getCustomWidth", "$getCustomWidth").call(this);		
-		element.style.height = height;
-		element.style.width = width;
+		var width = this.cacheInheritedMethod("getCustomWidth", "$getCustomWidth").call(this);
+		Dwt.setSize(element, width, height);
 	} catch (ex) {
 		alert(ex);
 	}
