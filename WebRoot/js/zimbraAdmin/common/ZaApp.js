@@ -814,6 +814,17 @@ function(refresh) {
 	return this._cosListChoices;	
 }
 
+ZaApp.prototype.getCosListName =
+function() {
+	if (!this._cosListName) {
+		var cosList = this.getCosList();
+		this._cosListName = AjxUtil.map(cosList ? cosList.getArray() : [], function(cos) {
+			return cos.name;
+		});
+	}
+	return this._cosListName;
+};
+
 ZaApp.prototype.getGlobalConfig =
 function(refresh) {
 	if (refresh || this._globalConfig == null) {
