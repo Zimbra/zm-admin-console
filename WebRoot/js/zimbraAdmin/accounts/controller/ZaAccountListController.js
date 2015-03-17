@@ -52,10 +52,20 @@ ZaAccountListController = function(appCtxt, container) {
 ZaAccountListController.prototype = new ZaListViewController();
 ZaAccountListController.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/provisioning_accounts.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 ZaController.initPopupMenuMethods["ZaAccountListController"] = new Array();
-ZaController.changeActionsStateMethods["ZaAccountListController"] = new Array(); 
+ZaController.changeActionsStateMethods["ZaAccountListController"] = new Array();
 
 
-ZaAccountListController.prototype.show = function (doPush) {
+/**
+* Shows the view
+* @param {Boolean}		refresh				bypass the cache
+*/
+ZaAccountListController.prototype.show = function (doPush, refresh) {
+	if (doPush && !refresh) {
+		var list = this._contentView && this._contentView.getList();
+		if (list) {
+			return this._show(list, false, false, this._contentView.scrollHasMore);
+		}
+	}
 	var busyId = Dwt.getNextId();
 	var callback = new AjxCallback(this, this.searchCallback, {limit:this.RESULTSPERPAGE,CONS:null,show:doPush,busyId:busyId});
 
