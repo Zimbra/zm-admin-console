@@ -1021,7 +1021,7 @@ ZaController.prototype._showAccountsView = function (defaultType, ev, filterQuer
 	}	
 	
 	if(ZaApp.getInstance().getCurrentController()) {
-		ZaApp.getInstance().getCurrentController().switchToNextView(acctListController, ZaAccountListController.prototype.show,true);
+		ZaApp.getInstance().getCurrentController().switchToNextView(acctListController, ZaAccountListController.prototype.show, [true, ev.refresh]);
 	} else {					
 		acctListController.show(true);
 	}
