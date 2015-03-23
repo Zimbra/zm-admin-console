@@ -401,13 +401,6 @@ function(value, event, form) {
 	return value;
 }
 
-ZaNewDomainXWizard.onCOSFocus =
-function() {
-	if (AjxEnv.supported.input.list && !this.listCreated) {
-		this.createDataList(ZaApp.getInstance().getCosListName());
-	}
-};
-
 ZaNewDomainXWizard.testAuthSettings =
 function () {
 	var instance = this.getInstance();
@@ -758,8 +751,10 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 	                            type:_INPUT_,
                                 label:ZaMsg.Domain_DefaultCOS,
                                 onChange:ZaNewDomainXWizard.onCOSChanged,
-	                            onFocus:"ZaNewDomainXWizard.onCOSFocus",
 	                            getDisplayValue:function(newValue) {
+									if (!this.listCreated) {
+										this.createDataList(ZaApp.getInstance().getCosListName());
+									}
 		                            if (newValue) {
 			                            var cos = ZaCos.getCosById(newValue);
 			                            return cos && cos.name;
