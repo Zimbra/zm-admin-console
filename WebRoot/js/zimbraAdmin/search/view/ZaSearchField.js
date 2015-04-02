@@ -233,6 +233,12 @@ function () {
 ZaSearchField.srchButtonHndlr = 
 function(evt) {	
 	var fieldObj = this.getForm().parent;
+	//If the search input is less than 3 characters show the error message.
+	var value = fieldObj.getSearchFieldElement().value;
+	if (!value || value.length < 3) {
+		var searchItem = this.getParentItem().getItems()[2] || this;
+		return searchItem.setError(AjxMessageFormat.format(AjxMsg.stringTooShort, 3));
+	}
 	//reset the search list toolbar parameters
 
 	
