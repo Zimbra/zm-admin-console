@@ -63,6 +63,9 @@ ZaSearchOptionDialog = function(parent, optionId, w, h, contextId) {
 
 	this._createContentHtml();
     this.initForm(ZaSearchOption.getNewObjectTypeXModel(optionId), ZaSearchOption.getNewObjectTypeXForm (optionId), ZaSearchOption.getDefaultInstance(optionId));
+
+	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_CHANGED, new AjxListener(this, this._handleXFormChange));
+	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR, new AjxListener(this, this._handleXFormError));
 }
 
 ZaSearchOptionDialog.prototype = new ZaXDialog;
@@ -77,3 +80,11 @@ function(templateId, data) {
 ZaSearchOptionDialog.prototype.getMyXForm =
 function(entry) {
 }
+
+ZaSearchOptionDialog.prototype._handleXFormChange = function (ev) {
+	this._button[DwtDialog.OK_BUTTON].setEnabled(true);
+};
+
+ZaSearchOptionDialog.prototype._handleXFormError = function (ev) {
+	this._button[DwtDialog.OK_BUTTON].setEnabled(false);
+};

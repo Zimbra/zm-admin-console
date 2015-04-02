@@ -194,12 +194,12 @@ function (optionId){
 	}
 
     var basicFilterItems = [
-			{id: ZaSearchOption.A_basic_uid, ref: "options/" + ZaSearchOption.A_basic_uid, type: _STRING_},
+			{id: ZaSearchOption.A_basic_uid, ref: "options/" + ZaSearchOption.A_basic_uid, type: _STRING_, minLength:3},
 			{id: ZaSearchOption.A_objTypeAccountAdmin, ref: "options/" + ZaSearchOption.A_objTypeAccountAdmin, type: _STRING_},
 			{id: ZaSearchOption.A_objTypeSystemAccount, ref: "options/" + ZaSearchOption.A_objTypeSystemAccount, type: _STRING_},
-			{id: ZaSearchOption.A_basic_sn, ref: "options/" + ZaSearchOption.A_basic_sn, type: _STRING_},
-			{id: ZaSearchOption.A_basic_displayName, ref: "options/" + ZaSearchOption.A_basic_displayName, type: _STRING_},
-			{id: ZaSearchOption.A_basic_zimbraId, ref: "options/" + ZaSearchOption.A_basic_zimbraId, type: _STRING_}
+			{id: ZaSearchOption.A_basic_sn, ref: "options/" + ZaSearchOption.A_basic_sn, type: _STRING_, minLength:3},
+			{id: ZaSearchOption.A_basic_displayName, ref: "options/" + ZaSearchOption.A_basic_displayName, type: _STRING_, minLength:3},
+			{id: ZaSearchOption.A_basic_zimbraId, ref: "options/" + ZaSearchOption.A_basic_zimbraId, type: _STRING_, minLength:3}
 		];
 
 	//network build
@@ -211,7 +211,7 @@ function (optionId){
 
 	var domainFilterItems = [
 			//{id: ZaSearchOption.A_domainAll, ref: "options/" + ZaSearchOption.A_domainAll, type: _STRING_},
-			{id: ZaSearchOption.A_domainFilter, ref: "options/" + ZaSearchOption.A_domainFilter, type: _STRING_},
+			{id: ZaSearchOption.A_domainFilter, ref: "options/" + ZaSearchOption.A_domainFilter, type: _STRING_, minLength:3},
 			{id: ZaSearchOption.A_domainListChecked, ref: "options/" + ZaSearchOption.A_domainListChecked, type:_LIST_},
 			{id: ZaSearchOption.A_domainList, ref: "options/" + ZaSearchOption.A_domainList, type:_LIST_}
 		];
@@ -236,14 +236,14 @@ function (optionId){
 
 
     var cosFilterItems = [
-                    {id: ZaSearchOption.A_cosFilter, ref: "options/" + ZaSearchOption.A_cosFilter, type: _STRING_},
+                    {id: ZaSearchOption.A_cosFilter, ref: "options/" + ZaSearchOption.A_cosFilter, type: _STRING_, minLength:3},
                     {id: ZaSearchOption.A_cosListChecked, ref: "options/" + ZaSearchOption.A_cosListChecked, type:_LIST_},
                     {id: ZaSearchOption.A2_cosNotSet, ref: ZaSearchOption.A2_cosNotSet, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
                     {id: ZaSearchOption.A_cosList, ref: "options/" + ZaSearchOption.A_cosList, type:_LIST_}
     ];
 
     var extEmailItem = [
-            {id: ZaSearchOption.A_zimbraMailForwardingAddress, ref: "options/" + ZaSearchOption.A_zimbraMailForwardingAddress, type:_STRING_}
+            {id: ZaSearchOption.A_zimbraMailForwardingAddress, ref: "options/" + ZaSearchOption.A_zimbraMailForwardingAddress, type:_STRING_, minLength:3}
     ]
     var accountStatusItem = [
         {id:ZaSearchOption.A2_status_active, ref: "options/" + ZaSearchOption.A2_status_active, type:_STRING_},
