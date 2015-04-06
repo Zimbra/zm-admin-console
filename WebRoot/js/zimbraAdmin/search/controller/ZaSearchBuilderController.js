@@ -1285,8 +1285,8 @@ function (filterType, noCached) {
             w = ZaSearchOptionView.DOMAIN_OPTION_WIDTH;
             h = 150;
         } else if (filterType == ZaSearchOption.EXT_EMAIL_ADDRESS_FILTER_ID) {
-            w = 230;
-            h= 45;
+			w = 240;
+			h= 60;
         }
         ZaSearchBuilderController.filterDialogSet[filterType] = new ZaSearchOptionDialog(ZaApp.getInstance().getAppCtxt().getShell(), filterType, w, h);
         ZaSearchBuilderController.filterDialogSet[filterType].registerCallback(DwtDialog.OK_BUTTON, this.filterOKListener, this, filterType);
