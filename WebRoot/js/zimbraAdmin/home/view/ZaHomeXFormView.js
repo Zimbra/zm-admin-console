@@ -126,15 +126,7 @@ ZaHomeXFormView.canConfigAuth =function (ev) {
     var domainList = ZaApp.getInstance().getDomainList();
     var canConfigAuth = false;
     if (domainList.size() > 0) {
-        var currentDomain;
-        var vector = domainList.getVector();
-        for (var i = vector.size() -1; i >= 0; i--) {
-            currentDomain = vector.get(i);
-            if (ZaDomain.canConfigureAuth(currentDomain)) {
-                canConfigAuth = true;
-                break;
-            }
-        }
+		canConfigAuth = ZaDomain.canConfigureAuth(domainList.getVector().getLast());
     }
     return canConfigAuth;
 }
