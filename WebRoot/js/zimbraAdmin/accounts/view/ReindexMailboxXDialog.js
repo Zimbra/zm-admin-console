@@ -44,15 +44,15 @@ ReindexMailboxXDialog.prototype.constructor = ReindexMailboxXDialog;
 ReindexMailboxXDialog.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/re-indexing_a_mailbox.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 
 ReindexMailboxXDialog.isStartEnabled = function () {
-	return (this.getInstanceValue(ZaReindexMailbox.A_statusCode) != ZaReindexMailbox.STATUS_RUNNING)	
+	return (this.getInstanceValue(ZaReindexMailbox.A_status) != "running" && this.getInstanceValue(ZaReindexMailbox.A_status) != "started")	
 }
 
 ReindexMailboxXDialog.isAbortEnabled = function () {
-	return (this.getInstanceValue(ZaReindexMailbox.A_statusCode) == ZaReindexMailbox.STATUS_RUNNING)	
+	return (this.getInstanceValue(ZaReindexMailbox.A_status) == "running" || this.getInstanceValue(ZaReindexMailbox.A_status) == "started")	
 }
 
 ReindexMailboxXDialog.isStatusNotError = function () {
-	return (this.getInstanceValue(ZaReindexMailbox.A_statusCode) != ZaReindexMailbox.STATUS_FAILED);
+	return (this.getInstanceValue(ZaReindexMailbox.A_status) != "error");
 }
 ReindexMailboxXDialog.prototype.popup = 
 function () {
@@ -62,7 +62,19 @@ function () {
 	if(this._containedObject.mbxId) {
 		var callback = new AjxCallback(this, ReindexMailboxXDialog.prototype.getReindexStatusCallBack);
 		ZaAccount.getReindexStatus(this._containedObject.mbxId,callback);
+		//ZaAccount.parseReindexResponse(ZaAccount.getReindexStatus(this._containedObject.mbxId),this._containedObject);
 	}
+		
+	
+	//this._localXForm.refresh();
+/*	if(this._containedObject.status == "running" || this._containedObject.status == "started") {
+		// schedule next poll
+		this._pollHandler = AjxTimedAction.scheduleAction(this.pollAction, this._containedObject.pollInterval);		
+	} else if(this._pollHandler) {
+		//stop polling
+		AjxTimedAction.cancelAction(this._pollHandler);
+	}
+	*/
 }
 
 ReindexMailboxXDialog.prototype.popdown = 
@@ -105,7 +117,7 @@ function(evt) {
 ReindexMailboxXDialog.prototype.getReindexStatusCallBack = 
 function (resp) {
 	ZaAccount.parseReindexResponse(resp,this._containedObject,this._localXForm);
-	if((this._containedObject.statusCode == ZaReindexMailbox.STATUS_IDLE || this._containedObject.statusCode == ZaReindexMailbox.STATUS_RUNNING) && this.isPoppedUp()) {
+	if((this._containedObject.status == "running" || this._containedObject.status == "started") && this.isPoppedUp()) {
 		// schedule next poll
 		this._pollHandler = AjxTimedAction.scheduleAction(this.pollAction, this._containedObject.pollInterval);		
 	} else if(this._pollHandler) {
@@ -113,6 +125,9 @@ function (resp) {
 		AjxTimedAction.cancelAction(this._pollHandler);
 		this._pollHandler = null;		
 	}
+	
+	//this._localXForm.setInstance(this._containedObject);
+	//this._localXForm.refresh();	
 }
 
 ReindexMailboxXDialog.prototype.getReindexStatus = 
@@ -140,15 +155,15 @@ function() {
 			 iconVisible: true, 
 			 content: null,
 			 ref:ZaReindexMailbox.A_resultMsg,
-			 visibilityChangeEventSources:[ZaReindexMailbox.A_statusCode],
-			 visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_statusCode,ZaReindexMailbox.STATUS_FAILED],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_resultMsg]],
+			 visibilityChangeEventSources:[ZaReindexMailbox.A_status],
+			 visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_status,"error"],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_resultMsg]],
 			 valueChangeEventSources:[ZaReindexMailbox.A_resultMsg],			  
 		  	 align:_CENTER_,
 		  	 colSpan:"*"
 			},	
 			{type:_TEXTAREA_,
-				visibilityChangeEventSources:[ZaReindexMailbox.A_statusCode],
-				visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_statusCode,ZaReindexMailbox.STATUS_FAILED],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_errorDetail]],
+				visibilityChangeEventSources:[ZaReindexMailbox.A_status],
+				visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_status,"error"],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_errorDetail]],
 				valueChangeEventSources:[ZaReindexMailbox.A_errorDetail],
 				ref:ZaReindexMailbox.A_errorDetail, 
 				label:ZaMsg.FAILED_REINDEX_DETAILS,
@@ -173,7 +188,7 @@ function() {
 			},		
 			{type:_SPACER_,
 				visibilityChecks:[ReindexMailboxXDialog.isStatusNotError],
-				visibilityChangeEventSources:[ZaReindexMailbox.A_statusCode], 
+				visibilityChangeEventSources:[ZaReindexMailbox.A_status], 
 				height:"150px", width:"490px",colSpan:"*"
 			},
 			{type:_GROUP_, colSpan:"*", numCols:5, width:"490px",cssStyle:"text-align:center; overflow:hidden", align:_CENTER_, items: [
@@ -181,7 +196,7 @@ function() {
 				{type:_DWT_BUTTON_, 
 					onActivate:"ReindexMailboxXDialog.startReindexMailbox.call(this)", label:ZaMsg.NAD_ACC_Start_Reindexing, 
 					enableDisableChecks:[ReindexMailboxXDialog.isStartEnabled],
-					enableDisableChangeEventSources:[ZaReindexMailbox.A_statusCode],
+					enableDisableChangeEventSources:[ZaReindexMailbox.A_status],
 					visibilityChecks:[],					
 					valign:_BOTTOM_,width:"150px"
 				},
@@ -189,7 +204,7 @@ function() {
 				{type:_DWT_BUTTON_, 
 					onActivate:"ReindexMailboxXDialog.abortReindexMailbox.call(this)", label:ZaMsg.NAD_ACC_Abort_Reindexing, 
 					enableDisableChecks:[ReindexMailboxXDialog.isAbortEnabled],
-					enableDisableChangeEventSources:[ZaReindexMailbox.A_statusCode],
+					enableDisableChangeEventSources:[ZaReindexMailbox.A_status],
 					visibilityChecks:[],					
 					valign:_BOTTOM_,width:"150px"				
 				},
