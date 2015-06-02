@@ -93,7 +93,10 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
             if (numericPart  == this.getModelItem().zeroValue) {
                 numericPart = 0;
             }
-			var val = numericPart + this.getParentItem()._stringPart;
+			var val = null;
+			if (AjxUtil.isNumeric(numericPart)) {
+				val = numericPart + this.getParentItem()._stringPart;
+			}
 			this.getParentItem()._numericPart = numericPart;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}

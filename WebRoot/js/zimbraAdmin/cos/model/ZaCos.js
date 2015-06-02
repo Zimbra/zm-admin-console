@@ -1135,82 +1135,91 @@ ZaCos.checkValues = function(tmpObj){
         }
 
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceMinPollingInterval,tmpObj)) {
-                if(tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval])) {
-                    ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceMinPollingInterval]));
-                        return false;
-                }
+            var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval];
+            if (!AjxUtil.isEmpty(p_dataInterval) && !AjxUtil.isLifeTime(p_dataInterval)) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceMinPollingInterval]));
+                return false;
+            }
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourcePop3PollingInterval,tmpObj)) {
-                if(tmpObj.attrs[ZaCos.A_zimbraDataSourcePop3PollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourcePop3PollingInterval])) {
+            var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourcePop3PollingInterval];
+            if (!AjxUtil.isEmpty(p_dataInterval)) {
+                if (!AjxUtil.isLifeTime(p_dataInterval)) {
                     ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourcePop3PollingInterval]));
+                    return false;
+                }
+		var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval];
+                if (!AjxUtil.isEmpty(min_dataInterval)) {
+                    if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
+                        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.tt_mailPollingIntervalError + min_dataInterval);
                         return false;
+                    }
                 }
-		var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] ;
-		var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourcePop3PollingInterval] ;
-                if(p_dataInterval != null && min_dataInterval != null) {
-                        if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
-                                ZaApp.getInstance().getCurrentController().popupErrorDialog (ZaMsg.tt_mailPollingIntervalError + min_dataInterval) ;
-                                return false ;
-                        }
-                }
-
+            }
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceImapPollingInterval,tmpObj)) {
-                if(tmpObj.attrs[ZaCos.A_zimbraDataSourceImapPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceImapPollingInterval])) {
+            var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceImapPollingInterval];
+            if (!AjxUtil.isEmpty(p_dataInterval)) {
+                if (!AjxUtil.isLifeTime(p_dataInterval)) {
                     ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceImapPollingInterval]));
+                    return false;
+                }
+                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval];
+                if (!AjxUtil.isEmpty(min_dataInterval)) {
+                    if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
+                        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.tt_mailPollingIntervalError + min_dataInterval);
                         return false;
+                    }
                 }
-                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] ;
-                var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceImapPollingInterval] ;
-                if(p_dataInterval != null && min_dataInterval != null) {
-                        if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
-                                ZaApp.getInstance().getCurrentController().popupErrorDialog (ZaMsg.tt_mailPollingIntervalError + min_dataInterval) ;
-                                return false ;
-                        }
-                }
+            }
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceCalendarPollingInterval,tmpObj)) {
-                if(tmpObj.attrs[ZaCos.A_zimbraDataSourceCalendarPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceCalendarPollingInterval])) {
+            var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceCalendarPollingInterval];
+            if (!AjxUtil.isEmpty(p_dataInterval)) {
+                if (!AjxUtil.isLifeTime(p_dataInterval)) {
                     ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceCalendarPollingInterval]));
+                    return false;
+                }
+                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval];
+                if (!AjxUtil.isEmpty(min_dataInterval)) {
+		    if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
+                        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.tt_mailPollingIntervalError + min_dataInterval);
                         return false;
+                    }
                 }
-                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] ;
-                var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceCalendarPollingInterval] ;
-                if(p_dataInterval != null && min_dataInterval != null) {
-			if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
-				ZaApp.getInstance().getCurrentController().popupErrorDialog (ZaMsg.tt_mailPollingIntervalError + min_dataInterval) ;
-                                return false ;
-                        }
-                }
+            }
         }
         if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceRssPollingInterval,tmpObj)) {
-                if(tmpObj.attrs[ZaCos.A_zimbraDataSourceRssPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceRssPollingInterval])) {
-
+            var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceRssPollingInterval];
+            if (!AjxUtil.isEmpty(p_dataInterval)) {
+                if (!AjxUtil.isLifeTime(p_dataInterval)) {
                     ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zimbraDataSourceRssPollingInterval]));
-                        return false;
+                    return false;
                 }
-                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] ;
-                var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceRssPollingInterval] ;
-                if(p_dataInterval != null && min_dataInterval != null) {
-                        if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
-                                ZaApp.getInstance().getCurrentController().popupErrorDialog (ZaMsg.tt_mailPollingIntervalError + min_dataInterval) ;                                        return false ;
-                        }
+                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval];
+                if (!AjxUtil.isEmpty(min_dataInterval)) {
+                    if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
+                        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.tt_mailPollingIntervalError + min_dataInterval);
+                        return false;
+                    }
 		}
+            }
         }
-        if(ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceCaldavPollingInterval,tmpObj)) {
-                if(tmpObj.attrs[ZaCos.A_zimbraDataSourceCaldavPollingInterval] != null && !AjxUtil.isLifeTime(tmpObj.attrs[ZaCos.A_zimbraDataSourceCaldavPollingInterval])) {
-
+        if (ZaItem.hasWritePermission(ZaCos.A_zimbraDataSourceCaldavPollingInterval,tmpObj)) {
+            var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceCaldavPollingInterval];
+            if (!AjxUtil.isEmpty(p_dataInterval)) {
+                if (!AjxUtil.isLifeTime(p_dataInterval)) {
                     ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_VALUE_FOR, [ZaMsg.MSG_zzimbraDataSourceCaldavPollingInterval]));
+                    return false;
+                }
+                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval];
+                if (!AjxUtil.isEmpty(min_dataInterval)) {
+                    if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
+                        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.tt_mailPollingIntervalError + min_dataInterval);
                         return false;
+                    }
                 }
-                var min_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceMinPollingInterval] ;
-                var p_dataInterval = tmpObj.attrs[ZaCos.A_zimbraDataSourceCaldavPollingInterval] ;
-                if(p_dataInterval != null && min_dataInterval != null) {
-			if (ZaUtil.getLifeTimeInSeconds(p_dataInterval) < ZaUtil.getLifeTimeInSeconds(min_dataInterval)){
-                                ZaApp.getInstance().getCurrentController().popupErrorDialog (ZaMsg.tt_mailPollingIntervalError + min_dataInterval) ;
-                                return false ;
-                        }
-                }
+            }
         }
 
 	if(ZaItem.hasWritePermission(ZaCos.A_zimbraPrefMailPollingInterval,tmpObj)) {
