@@ -286,9 +286,11 @@ Cos_MailQuota_XModelItem.prototype.setLocalValue = function(value, instance, cur
 Cos_MLifetime_XModelItem = function () {}
 XModelItemFactory.createItemType("_COS_MLIFETIME_", "cos_mlifetime", Cos_MLifetime_XModelItem, Cos_String_XModelItem);
 Cos_MLifetime_XModelItem.prototype.validateType = function (value) {
-	var val = 1;
+	var val = "0";
 	var lastChar = "d";
-	if(value != null && value.length >0) {
+	if(value == this.zeroValue) {
+		val = "0";
+	} else if(value != null && value.length >0) {
 		var lastChar = (value.toLowerCase()).charAt(value.length-1);
 		lastChar = (lastChar == "d" || lastChar == "h" || lastChar== "m" || lastChar == "s") ? lastChar : "s"
 		val = parseInt(value);
@@ -297,6 +299,10 @@ Cos_MLifetime_XModelItem.prototype.validateType = function (value) {
 	val =  [XModelItem.prototype.validateNumber.call(this, val),lastChar].join("");
 	return val;
 }
+
+Cos_MInterval_XModelItem = function () {}
+XModelItemFactory.createItemType("_COS_MINTERVAL_", "cos_minterval", Cos_MInterval_XModelItem, Cos_MLifetime_XModelItem);
+Cos_MInterval_XModelItem.prototype.zeroValue = ZaMsg.never.toLowerCase();
 
 /**
 * _COS_HOSTNAME_OR_IP_
@@ -1270,7 +1276,7 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 		labelLocation:(txtBoxLabel ? _LEFT_ : _NONE_),
 		cssClass:"admin_xform_number_input", 
 		getDisplayValue:function (itemVal) {
-			var val = "1";
+			var val = "";
 			if(itemVal != null && itemVal.length >0) {
 				if(itemVal.length > 1) {
 					val = parseInt(itemVal);
@@ -1278,15 +1284,21 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 					if(itemVal == "0") {
 						val = "0";
 					} else {
-						val = "1";
+						val = "";
 					}
 				}
 			}
 			this.getParentItem()._numericPart = val;
-			return val;	
+			return ((typeof itemVal === "undefined" || val=="0") ? this.getModelItem().zeroValue : val);
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
-			var val = numericPart + this.getParentItem()._stringPart;
+			if (numericPart  == this.getModelItem().zeroValue) {
+				numericPart = 0;
+			}
+			var val = numericPart;
+			if (AjxUtil.isNumeric(numericPart)) {
+				val = numericPart + this.getParentItem()._stringPart;
+			}
 			this.getForm().itemChanged(this, val, event);
 		},onChange:Composite_XFormItem.onFieldChange,
 		updateElement:function(value) {
