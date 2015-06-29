@@ -919,6 +919,15 @@ function(resp, orig) {
         }
     }
 
+    if (resp[ZaItem.ALIAS] instanceof Array) {
+        if (result[ZaItem.ALIAS]) {
+            result[ZaItem.ALIAS] += resp[ZaItem.ALIAS].length;
+        }
+        else {
+            result[ZaItem.ALIAS] = resp[ZaItem.ALIAS].length;
+        }
+    }
+
     if (resp[ZaItem.DOMAIN] instanceof Array) {
         if (result[ZaItem.DOMAIN])
             result[ZaItem.DOMAIN] += resp[ZaItem.DOMAIN].length;
