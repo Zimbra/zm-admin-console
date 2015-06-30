@@ -708,6 +708,13 @@ function() {
                                     mappingId: ZaZimbraAdmin._SEARCH_RESULT_VIEW});
     ti.setData("TreeItemType", ZaItem.ACCOUNT);
     tree.addTreeItemData(ti);
+    ti = new ZaTreeItemData({
+        parent:ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_search, ZaMsg.OVP_search]),
+        id:ZaId.getTreeItemId(ZaId.PANEL_APP,"currentSearch",null, "aliasResult"),
+        text: ZaMsg.OVP_aliasSearchResult,
+        mappingId: ZaZimbraAdmin._SEARCH_RESULT_VIEW});
+    ti.setData("TreeItemType", ZaItem.ALIAS);
+    tree.addTreeItemData(ti);
 
     ti = new ZaTreeItemData({
                                     parent:ZaTree.getPathByArray([ZaMsg.OVP_home, ZaMsg.OVP_search, ZaMsg.OVP_search]),
@@ -1190,6 +1197,14 @@ ZaOverviewPanelController.searchResultTreeListener = function (ev) {
             }
             else
                searchField.accFilterSelectedFromResults();
+        } else if (itemType == ZaItem.ALIAS ) {
+            if(searchField._containedObject[ZaSearch.A_fAliases] == "FALSE"){
+                contentView.set();
+                skipNotify = true;
+            }
+            else {
+                searchField.aliasFilterSelectedFromResults();
+            }
         } else if (itemType == ZaItem.DOMAIN  ) {
             if(searchField._containedObject[ZaSearch.A_fDomains]== "FALSE" ){
                 contentView.set();

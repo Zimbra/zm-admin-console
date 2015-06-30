@@ -624,6 +624,11 @@ ZaSearchField.prototype.aliasFilterSelected = function (ev) {
     this.searchSelectedType = ZaSearch.ALIASES;
 }
 
+ZaSearchField.prototype.aliasFilterSelectedFromResults = function (ev) {
+    this.resetSearchFilter();
+    this._containedObject[ZaSearch.A_fAliases] = "TRUE";
+}
+
 ZaSearchField.prototype.dlFilterSelected = function (ev) {
 	this.resetSearchFilter();
 	//ev.item.parent.parent.setImage(ev.item.getImage());
