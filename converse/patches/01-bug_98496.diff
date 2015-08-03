@@ -1,0 +1,304 @@
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/converse.js	2015-05-05 19:12:45.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/converse.js	2015-05-05 19:12:45.000000000 -0500
+@@ -1968,7 +1968,9 @@
+             events: {
+                 'click span.close-chatbox-button': 'close', // ZCS - replaced a tag with span for minimize/close button
+                 'click ul#controlbox-tabs li a': 'switchTab',
+-                'mousedown .dragresize-tm': 'onDragResizeStart'
++                'mousedown .dragresize-tm': 'onDragResizeStart',
++                'click span.add-contact-flyout-close': 'closeAddContactForm', // ZCS - event for add contact form close
++                'submit form.add-contact-form': 'addContactFromForm' // ZCS - event for add contact form submit button
+             },
+ 
+             initialize: function () {
+@@ -2158,6 +2160,54 @@
+             showHelpMessages: function (msgs) {
+                 // Override showHelpMessages in ChatBoxView, for now do nothing.
+                 return;
++            },
++            
++            /**
++             * Closes add contact form.
++             * 
++             */
++            closeAddContactForm: function() {
++                var addContactPanel = $('.add-contact-flyout'),
++                    controlboxPane = $('.controlbox-panes'),
++                    plusIcon = $('.plus-icon');
++
++                controlboxPane.show();
++                addContactPanel.hide();
++                plusIcon.removeAttr("disabled","disabled");
++                plusIcon.removeClass('disabled');
++            },
++
++            /**
++             * Adds contacts to the roster based on form input.
++             * 
++             * @param   {object}      ev        the event object
++             */ 
++            addContactFromForm: function (ev) {
++                ev.preventDefault();
++                
++                var $email = $(ev.target).find('#email'),
++                    $displayName = $(ev.target).find('#display'),
++                    jid = $email.val();
++                
++                if (!jid) {
++                    // this is not a valid JID
++                    $email.addClass('error');
++                    return;
++                }
++                this.closeAddContactForm();
++                this.addContact(jid, $displayName.val());
++            },
++
++            /**
++             * Adds contacts to the roster based on form input.
++             * 
++             * @param   {string}      jid        jabber ID
++             * @param   {string}      name       display name for contact
++             */ 
++            addContact: function (jid, name) {
++                converse.connection.roster.add(jid, name, [], function (iq) {
++                    converse.connection.roster.subscribe(jid, null, name);
++                });
+             }
+         });
+ 
+@@ -4132,7 +4182,8 @@
+ 
+             update: _.debounce(function () {
+                 var $count = $('#online-count');
+-                $count.text('('+converse.roster.getNumOnlineContacts()+')');
++                // ZCS - formats online contact count for minimized buddy list
++                $count.text(converse.roster.getNumOnlineContacts());
+ 
+                 // ZCS - modified roster template to add online contacts count
+                 var $roster_count = $('#online-contacts-count');
+@@ -4557,7 +4608,8 @@
+                 "click a.choose-xmpp-status": "toggleOptions",
+                 "click #fancy-xmpp-status-select a.change-xmpp-status-message": "renderStatusChangeForm",
+                 "submit #set-custom-xmpp-status": "setStatusMessage",
+-                "click .dropdown dd ul li a": "setStatus"
++                "click .dropdown dd ul li a": "setStatus",
++                "click span.plus-icon": "toggleContactForm" // ZCS - toggles display of add contact form
+             },
+ 
+             initialize: function () {
+@@ -4682,6 +4734,32 @@
+                         'desc_custom_status': __('Click here to write a custom status message'),
+                         'desc_change_status': __('Click to change your chat status')
+                     }));
++            },
++
++            /**
++             * Show/hide add contact form.
++             * 
++             * @param   {object}      ev        the event object
++             */
++            toggleContactForm: function (ev) {
++                ev.preventDefault();
++
++                var plusIcon = $('.plus-icon');
++
++                if (plusIcon.attr("disabled")=="disabled") {
++                    return;
++                }
++                
++                var addContactPanel = $('.add-contact-flyout'),
++                    controlboxPane = $('.controlbox-panes'),
++                    emailField = addContactPanel.find('#email'),
++                    displayField = addContactPanel.find('#display');
++
++                controlboxPane.hide();
++                addContactPanel.show();
++                plusIcon.attr("disabled","disabled");
++                plusIcon.addClass('disabled');
++                emailField[0].focus();
+             }
+         });
+ 
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/converse.scss	2015-05-05 19:12:45.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/converse.scss	2015-05-05 19:12:45.000000000 -0500
+@@ -336,21 +336,30 @@
+ 
+   .toggle-controlbox,
+   #minimized-chats {
+-    border-top-left-radius: 4px;
+-    border-top-right-radius: 4px;
++    /* ZCS - Original code commented */
++    //border-top-left-radius: 4px;
++    //border-top-right-radius: 4px;
+     float: right;
+     margin: 0 $chat-gutter;
+-    font-weight: bold;
++    //font-weight: bold;
++    font-weight: normal;
+   }
+ 
+   .toggle-controlbox {
+-    background-color: $link-color;
++    background-color: $zmchat-bkg-color;
+     color: #0a0a0a;
+-    height: 100%;
+-    padding: 10px 8px 0 8px;
++    width: 200px;
++    /* ZCS - Original code commented and new code added */
++    //height: 100%;
++    height: 39px;
++    //padding: 10px 8px 0 8px;
+     span {
+       color: $inverse-link-color;
++      //padding: 10px 8px 0 8px;
+     }
++    div {
++      padding: 10px 0 0 35px;
++    }
+   }
+ 
+   .button-group,
+@@ -998,6 +1007,9 @@
+     .box-flyout {
+       z-index: 1;
+       width: $chat-width;
++      /* ZCS - New code added */
++      background-color: #fff;
++
+         @media screen and (max-width: $mobile_landscape_length) {
+             width: $mobile-chat-width;
+         }
+@@ -1009,6 +1021,66 @@
+           font-size: 1rem;
+         }
+       }
++      /* ZCS - New code added */
++      .add-contact-flyout {
++        color: #000;
++
++        .flyout-heading {
++          border-bottom: 1px solid #000;
++          padding: 4px;
++        }
++
++        .add-contact-flyout-close {
++          float: right;
++          cursor: pointer;
++        }
++
++        .add-contact-form {
++          padding: 10px;
++
++          div.button {
++            text-align: center;
++            
++            BUTTON {
++              width: $zmchat-button-width;
++              cursor: pointer;
++            }
++          }
++
++          HR {
++            margin: 50px 0 5px 0;
++          }
++
++          div:nth-child(2) {
++            margin: 15px 0 0 0;
++          }
++        }
++
++        INPUT[type=email] {
++          margin: 5px 0 0 0;
++          width: $zmchat-textbox-width;
++          height: $zmchat-textbox-height;
++        }
++
++        INPUT[type=text] {
++          height: $zmchat-textbox-height;
++          margin: 5px 0 0 0;
++          -webkit-appearance: textfield;
++          padding: 1px;
++          background-color: white;
++          border: 2px inset;
++          border-image-source: initial;
++          border-image-slice: initial;
++          border-image-width: initial;
++          border-image-outset: initial;
++          border-image-repeat: initial;
++          -webkit-rtl-ordering: logical;
++          -webkit-user-select: text;
++          cursor: auto;
++          font-size: inherit;
++          width: $zmchat-textbox-width;
++        }
++      }
+     }
+     .dropdown {
+       a {
+@@ -1620,3 +1692,9 @@
+     z-index: 20;
+   }
+ }
++
++/* ZCS - New code added */
++.disabled {
++  opacity: 0.4;
++  filter: alpha(opacity=40); /* msie */
++}
+\ No newline at end of file
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/variables.scss	2015-05-05 19:12:45.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/variables.scss	2015-05-05 19:12:45.000000000 -0500
+@@ -39,4 +39,7 @@
+ 
+   $zmchat-bkg-color: #013e62;
+   $zmchat-highlight-color: #add8e6;
+-  $zmchat-xmpp-status-logo: "\25fc";
+\ No newline at end of file
++  $zmchat-xmpp-status-logo: "\25fc";
++  $zmchat-textbox-width: 175px;
++  $zmchat-textbox-height: 25px;
++  $zmchat-button-width: 115px;
+\ No newline at end of file
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/controlbox.html	2015-05-05 19:12:45.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/controlbox.html	2015-05-05 19:12:45.000000000 -0500
+@@ -4,6 +4,28 @@
+         <div id="controlbox-tabs"></div>                
+     </div>
+     <div class="controlbox-panes">
+-    	<span id="online-contacts-count"></span>
++    	<span id="online-contacts-count"></span>    	
++    </div>
++    <div class="add-contact-flyout" style="display: none;">
++    	<div>
++    		<div class="flyout-heading">
++    			<span>Add Contact</span>
++    			<span class="add-contact-flyout-close">x</span>
++    		</div>    		
++    		<form class="add-contact-form">
++				<div>
++					<label for="email">Email</label>
++					<input type="email" id="email" placeholder="e.g. user@example.com"/>
++				</div>
++				<div>
++					<label for="display">Display</label>
++					<input type="text" id="display" placeholder="Alias or display name"/>
++				</div>
++				<div class="button">
++					<hr>
++					<button>Add</button>
++				</div>
++    		</form>
++    	</div>
+     </div>
+ </div>
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/controlbox_toggle.html	2015-04-16 11:49:46.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/controlbox_toggle.html	2015-04-16 11:49:46.000000000 -0500
+@@ -1,2 +1,5 @@
+-<span class="conn-feedback">{{label_toggle}}</span>
+-<span style="display: none" id="online-count">(0)</span>
++<div class="zmchat-controlbox-toggle">
++	<span style="display: none" id="online-count">0</span>
++	<span class="conn-feedback">{{label_toggle}}</span>
++	<span>Online</span>
++</div>
+\ No newline at end of file

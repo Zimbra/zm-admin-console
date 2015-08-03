@@ -1,0 +1,456 @@
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/converse.js	2015-06-02 04:04:30.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/converse.js	2015-06-02 04:04:30.000000000 -0500
+@@ -334,8 +334,8 @@
+ 
+         var HEADER_WEIGHTS = {};
+         HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 0;
+-        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 1;
+-        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 2;
++        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 1;
++        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 2;
+         HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 3;
+ 
+         // Module-level variables
+@@ -1185,7 +1185,14 @@
+             },
+ 
+             sendMessage: function (text) {
+-                var match = text.replace(/^\s*/, "").match(/^\/(.*)\s*$/), msgs;
++                var match = text.replace(/^\s*/, "").match(/^\/(.*)\s*$/), msgs,
++                    userChatStatus = this.model.get('chat_status');
++
++                if (userChatStatus === 'offline' || userChatStatus === 'dnd') {
++                    this.$el.find('.chat-content').append("<span class='offline-error'>Message delivery restricted to busy/offline users.</span><br>");
++                    return;
++                }
++
+                 if (match) {
+                     if (match[1] === "clear") {
+                         return this.clearMessages();
+@@ -1971,7 +1978,10 @@
+                 'click ul#controlbox-tabs li a': 'switchTab',
+                 'mousedown .dragresize-tm': 'onDragResizeStart',
+                 'click span.add-contact-flyout-close': 'closeAddContactForm', // ZCS - event for add contact form close
+-                'submit form.add-contact-form': 'addContactFromForm' // ZCS - event for add contact form submit button
++                'submit form.add-contact-form': 'addContactFromForm', // ZCS - event for add contact form submit button
++                'click span.search-contact-flyout-close': 'closeSearchContactForm',
++                'keyup input#search': 'searchContacts',
++                "click .zmsearch-xmpp a.open-chat": 'openSearchedContactChat'
+             },
+ 
+             initialize: function () {
+@@ -2170,15 +2180,45 @@
+             closeAddContactForm: function() {
+                 var addContactPanel = $('.add-contact-flyout'),
+                     controlboxPane = $('.controlbox-panes'),
+-                    plusIcon = $('.plus-icon');
++                    plusIcon = $('.icon-plus'),
++                    searchIcon = $('.icon-search');
+ 
+                 controlboxPane.show();
+                 addContactPanel.hide();
+                 plusIcon.removeAttr("disabled","disabled");
+                 plusIcon.removeClass('disabled');
++
++                searchIcon.removeAttr("disabled","disabled");
++                searchIcon.removeClass('disabled');
+             },
+ 
+             /**
++             * Closes search contact form.
++             * 
++             */
++            closeSearchContactForm: function() {
++                var controlboxPane = $('.controlbox-panes'),
++                    searchContactPanel = $('.search-contact-flyout'),
++                    searchField = searchContactPanel.find('#search'),
++                    plusIcon = $('.icon-plus'),
++                    searchIcon = $('.icon-search'),
++                    searchPanel = $('.search-converse-contact'),
++                    searchedContactPanel = $('.search-converse-contact .zmsearch-xmpp');
++
++                controlboxPane.show();
++                searchContactPanel.hide();
++                searchIcon.removeAttr("disabled","disabled");
++                searchIcon.removeClass('disabled');
++
++                plusIcon.removeAttr("disabled","disabled");
++                plusIcon.removeClass('disabled');
++
++                searchField.val('');
++                searchedContactPanel.html('');
++                searchPanel.hide();
++            },
++
++            /**
+              * Adds contacts to the roster based on form input.
+              * 
+              * @param   {object}      ev        the event object
+@@ -2209,6 +2249,62 @@
+                 converse.connection.roster.add(jid, name, [], function (iq) {
+                     converse.connection.roster.subscribe(jid, null, name);
+                 });
++            },
++
++            /**
++             * Searches for roster contacts. Pending contacts are restricted from being searched.
++             * 
++             */
++            searchContacts: function (ev) {                
++                ev.preventDefault();
++                
++                var searchString = $(ev.target).val() || " ",
++                    searchPanel = $('.search-converse-contact'),
++                    searchedContactPanel = $('.search-converse-contact .zmsearch-xmpp'),
++                    searchedContactCount = $('.searchedContactCount'),
++                    allMatchingContacts = converse.roster.filter(contains(['fullname', 'jid'], searchString)),
++                    matchedContacts = allMatchingContacts.filter(contains(['subscription'], 'both'));
++                
++                searchedContactPanel.html('');
++                searchPanel.show();
++
++                _.each(matchedContacts, function (contactItem) {
++                    searchedContactPanel.append(converse.templates.roster_item(
++                        _.extend(contactItem.toJSON(), {
++                            'desc_status': STATUSES[contactItem.get('chat_status') || 'offline'],
++                            'desc_chat': __('Click to chat with this contact'),
++                            'desc_remove': __('Click to remove this contact'),
++                            'allow_contact_removal': false
++                        })
++                    ));
++                });
++
++                if (matchedContacts.length === 1) {
++                    searchedContactCount.text(matchedContacts.length + ' contact found');
++                } else {
++                    searchedContactCount.text(matchedContacts.length + ' contacts found');
++                }
++
++                if (matchedContacts.length === 0) {
++                    searchedContactPanel.html('');
++                    searchedContactCount.text('0 contact found');
++                }
++
++                this.model.set({searchedContacts: matchedContacts});
++            },
++
++            /**
++             * Open chat window for searched contact on tap.
++             * 
++             */
++            openSearchedContactChat: function(ev) {
++                if (ev && ev.preventDefault) {
++                    ev.preventDefault();
++                }
++                var clickedContactJID = ev.target.text,
++                    clickedContact = this.model.get('searchedContacts').filter(contains(['fullname', 'jid'], ev.target.text))[0];
++
++                return converse.chatboxviews.showChat(clickedContact.attributes);
+             }
+         });
+ 
+@@ -4187,7 +4283,7 @@
+                 $count.text(converse.roster.getNumOnlineContacts());
+ 
+                 // ZCS - modified roster template to add online contacts count
+-                var $roster_count = $('#online-contacts-count');
++                var $roster_count = $('#' + HEADER_UNGROUPED);
+                 if (converse.roster.getNumOnlineContacts() === 1) {
+                     $roster_count.text(converse.roster.getNumOnlineContacts() + ' contact online');
+                 } else {
+@@ -4613,7 +4709,8 @@
+                 "click #fancy-xmpp-status-select a.change-xmpp-status-message": "renderStatusChangeForm",
+                 "submit #set-custom-xmpp-status": "setStatusMessage",
+                 "click .dropdown dd ul li a": "setStatus",
+-                "click span.plus-icon": "toggleContactForm" // ZCS - toggles display of add contact form
++                "click span.icon-plus": "toggleContactForm", // ZCS - toggles display of add contact form
++                "click span.icon-search": "toggleSearchForm"
+             },
+ 
+             initialize: function () {
+@@ -4748,22 +4845,53 @@
+             toggleContactForm: function (ev) {
+                 ev.preventDefault();
+ 
+-                var plusIcon = $('.plus-icon');
++                var plusIcon = $('.icon-plus');
+ 
+-                if (plusIcon.attr("disabled")=="disabled") {
++                if (plusIcon.attr("disabled") == "disabled") {
+                     return;
+                 }
+                 
+                 var addContactPanel = $('.add-contact-flyout'),
+                     controlboxPane = $('.controlbox-panes'),
++                    searchContactPanel = $('.search-contact-flyout'),
+                     emailField = addContactPanel.find('#email'),
+                     displayField = addContactPanel.find('#display');
+ 
+                 controlboxPane.hide();
++                searchContactPanel.hide();
+                 addContactPanel.show();
+                 plusIcon.attr("disabled","disabled");
+                 plusIcon.addClass('disabled');
+                 emailField[0].focus();
++            },
++
++            /**
++             * Show/hide search contact form.
++             * 
++             * @param   {object}      ev        the event object
++             */
++            toggleSearchForm: function(ev) {
++                ev.preventDefault();
++
++                var searchIcon = $('.icon-search');
++
++                if (searchIcon.attr("disabled") === "disabled") {
++                    return;
++                }
++
++                var addContactPanel = $('.add-contact-flyout'),
++                    controlboxPane = $('.controlbox-panes'),
++                    searchContactPanel = $('.search-contact-flyout'),
++                    searchField = searchContactPanel.find('#search');
++
++                controlboxPane.hide();
++                addContactPanel.hide();
++                searchContactPanel.show();
++
++                searchIcon.attr("disabled","disabled");
++                searchIcon.addClass('disabled');
++
++                searchField[0].focus();                
+             }
+         });
+ 
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/converse.scss	2015-05-27 17:37:10.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/converse.scss	2015-05-27 17:37:10.000000000 -0500
+@@ -492,6 +492,10 @@
+     line-height: 1.3em;
+     height: 206px;
+     height: calc(100% - #{$toolbar-height + $chat-textarea-height + 2});
++
++    .offline-error {
++      color: $zmchat-send-chat-error-color;
++    }
+   }
+ 
+   .chat-info {
+@@ -792,7 +796,7 @@
+     float: right;
+   }
+ 
+-  #converse-roster {
++  #converse-roster, .search-converse-contact {
+     text-align: left;
+     width: 100%;
+     position: relative;
+@@ -838,7 +842,7 @@
+       padding-bottom: 15px;
+     }
+     .group-toggle {
+-      color: $text-color;
++      color: $zmchat-head-text-color;
+       display: block;
+       font-family: $zmchat-font-family;
+       width: 100%;
+@@ -863,8 +867,12 @@
+         padding: 0 5px 0 0;
+       }
+       a {
++        /* ZCS - decline contact request icon */
+          &.decline-xmpp-request {
+-            margin-left: 5px;
++            &.icon-close {
++              margin-left: 5px;
++              color: $zmchat-reject-req-icon-color;
++            }
+         }
+         &.remove-xmpp-contact {
+             float: right;
+@@ -873,6 +881,12 @@
+             display: none;
+             color: $text-color;
+         }
++        /* ZCS - accept contact request icon */
++        &.accept-xmpp-request {
++          &.icon-checkmark {
++            color: $zmchat-accept-req-icon-color;
++          }
++        }
+       }
+     }
+     dd:hover a.remove-xmpp-contact {
+@@ -883,34 +897,39 @@
+         background-color: #DCEAC5;
+         /* Make this difference */
+       }
+-      &.current-xmpp-contact span {
++      &.current-xmpp-contact span, &.zmsearch-xmpp span {
+         font-size: 16px;
+         float: left;
+         color: $link-color;
+       }
+       a.open-chat {
+-        width: 99%;
++         width: 80%;
+         /* ZCS - New code added */
+         color: $text-color;
+-        &:hover {
+-          width: 80%;
+-        }
+       }
+     }
+     span {
+-      &.pending-contact-name {
+-        width: 99%;
+-        &:hover {
+-          width: 80%;
+-        }
++       &.pending-contact-name {
++        width: 80%;
+       }
+       &.req-contact-name {
+-        width: 99%;
++        width: 69%;
+         padding: 0;
+-        &:hover {
+-          width: 69%;
++
++        &:before {
++          font-family: 'zimbra-chat';
++          content: "\003F";
++          color: $zmchat-offline-color
+         }
+-      }
++      }      
++    }
++
++    .searchedContactCount {
++      margin: 5px 0 2px 10px;
++    }
++
++    dd.zmsearch-xmpp {
++      height: auto;
+     }
+   }
+ 
+@@ -980,17 +999,17 @@
+   }
+ 
+   dd.available-chatroom,
+-  #converse-roster dd {
++  #converse-roster dd, .search-converse-contact dd {
+     font-weight: bold;
+     border: none;
+     display: block;
+     color: $text-color;
+-    text-shadow: 0 1px 0 $text-shadow-color;
++    //text-shadow: 0 1px 0 $text-shadow-color;
+     clear: both;
+     overflow-y: hidden;
+   }
+ 
+-  .roster-group:hover,
++  //.roster-group:hover,
+   dd.available-chatroom:hover,
+   #converse-roster dd:hover {
+     /* ZCS - Original code commented */
+@@ -1033,7 +1052,7 @@
+         }
+       }
+       /* ZCS - New code added */
+-      .add-contact-flyout {
++      .add-contact-flyout, .search-contact-flyout {
+         color: #333333;
+ 
+         .flyout-heading {
+@@ -1041,7 +1060,7 @@
+           padding: 4px;
+         }
+ 
+-        .add-contact-flyout-close {
++        .add-contact-flyout-close, .search-contact-flyout-close {
+           float: right;
+           cursor: pointer;
+         }
+@@ -1067,6 +1086,17 @@
+           }
+         }
+ 
++        .search-contact-form {
++          div {
++           margin: 5px 0 0 10px; 
++          }
++          INPUT[type=text] {
++            &::-webkit-input-placeholder { font-style: italic; }
++            &::-ms-input-placeholder { font-style: italic; }
++            &::-moz-placeholder { font-style: italic; }
++          }
++        }
++
+         INPUT[type=email] {
+           margin: 5px 0 0 0;
+           width: $zmchat-textbox-width;
+@@ -1407,7 +1437,7 @@
+           //border-top-left-radius: $zmchat-border-radius;
+           //border-top-right-radius: $zmchat-border-radius;
+           //box-shadow: inset 2px -2px 20px rgba(0, 0, 0, 0.3);
+-          color: #000;
++          color: $text-color;
+           display: block;
+           font-size: 12px;
+           //height: $chat-head-height - 1px;
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/variables.scss	2015-05-27 17:37:10.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/sass/variables.scss	2015-05-27 17:37:10.000000000 -0500
+@@ -52,4 +52,8 @@
+   $zmchat-online-color: #00A651;
+   $zmchat-dnd-color: #ED1C24;
+   $zmchat-away-color: #F5BD00;
+-  $zmchat-offline-color: #808080;
+\ No newline at end of file
++  $zmchat-offline-color: #808080;
++  $zmchat-head-text-color: #939393;
++  $zmchat-accept-req-icon-color: #008000;
++  $zmchat-reject-req-icon-color: #FF0000;
++  $zmchat-send-chat-error-color: $zmchat-reject-req-icon-color;
+\ No newline at end of file
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/controlbox.html	2015-05-19 10:08:09.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/controlbox.html	2015-05-19 10:08:09.000000000 -0500
+@@ -4,7 +4,6 @@
+         <div id="controlbox-tabs"></div>                
+     </div>
+     <div class="controlbox-panes">
+-    	<span id="online-contacts-count"></span>    	
+     </div>
+     <div class="add-contact-flyout" style="display: none;">
+     	<div>
+@@ -28,4 +27,22 @@
+     		</form>
+     	</div>
+     </div>
++    <div class="search-contact-flyout" style="display: none;">
++        <div>
++            <div class="flyout-heading">
++                <span>Search Contacts</span>
++                <span class="search-contact-flyout-close">x</span>
++            </div>
++            <form class="search-contact-form">
++                <div>                    
++                    <input type="text" id="search" placeholder="Type text to search"/>
++                </div>
++            </form>
++        </div>
++        
++        <dl class="search-converse-contact" style="display:none">
++            <span class="searchedContactCount group-toggle"></span>
++            <dd class="zmsearch-xmpp"></dd>
++        </dl>
++    </div>
+ </div>
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/group_header.html	2015-04-16 11:49:46.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/src/templates/group_header.html	2015-04-16 11:49:46.000000000 -0500
+@@ -1,1 +1,1 @@
+-<a href="#" class="group-toggle icon-{{toggle_state}}" title="{{desc_group_toggle}}">{{label_group}}</a>
++<span id="{{label_group}}" href="#" class="group-toggle" title="{{desc_group_toggle}}">{{label_group}}</span>
