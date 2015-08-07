@@ -316,7 +316,11 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
 	ZaCos.A_zimbraMinPwdAge,
 	ZaCos.A_zimbraMaxPwdAge,
 	ZaCos.A_zimbraEnforcePwdHistory,
-	ZaCos.A_zimbraPasswordLockoutEnabled,
+	ZaCos.A_zimbraTwoFactorAuthEnabled,
+	ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
+	ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
+	ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled,
+    ZaCos.A_zimbraPasswordLockoutEnabled,
 	ZaCos.A_zimbraPasswordLockoutMaxFailures,
 	ZaCos.A_zimbraPasswordLockoutDuration,
 	ZaCos.A_zimbraPasswordLockoutFailureLifetime,
@@ -1636,6 +1640,70 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 		    }
                 ]
             },
+			{
+				type: _ZA_TOP_GROUPER_,
+				id: "two_factor_authentication_settings",
+				colSizes: ["auto"],
+				numCols: 1,
+				label: ZaMsg.Two_Factor_Authentication,
+				visibilityChecks:[
+					[
+						ZATopGrouper_XFormItem.isGroupVisible,
+						[
+							ZaCos.A_zimbraFeatureTwoFactorAuthAvailable,
+							ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
+							ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
+							ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled
+						]
+					]
+				],
+				items : [
+					{
+						ref : ZaCos.A_zimbraFeatureTwoFactorAuthAvailable,
+						type : _SUPER_CHECKBOX_,
+						checkBoxLabel : ZaMsg.LBL_Enable_Two_Factor_Authentication,
+						msgName :  ZaMsg.LBL_Enable_Two_Factor_Authentication,
+						trueValue : "TRUE",
+						falseValue : "FALSE",
+						resetToSuperLabel : ZaMsg.NAD_ResetToCOS
+					},
+					{
+						ref : ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
+						type : _SUPER_CHECKBOX_,
+						enableDisableChecks : [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
+						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId],
+						labelLocation : _LEFT_,
+						trueValue : "TRUE",
+						falseValue : "FALSE",
+						checkBoxLabel : ZaMsg.LBL_Require_Two_Step_Authentication,
+						resetToSuperLabel : ZaMsg.NAD_ResetToCOS,
+						msgName : ZaMsg.LBL_Require_Two_Step_Authentication
+					},
+					{
+						ref : ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
+						type : _SUPER_TEXTFIELD_,
+						enableDisableChecks : [[XForm.checkInstanceValue, ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
+						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId],
+						txtBoxLabel : ZaMsg.LBL_Number_Of_One_Time_Codes,
+						msgName : ZaMsg.MSG_Number_Of_One_Time_Codes,
+						labelLocation : _LEFT_,
+						textFieldCssClass : "admin_xform_number_input",
+						resetToSuperLabel : ZaMsg.NAD_ResetToCOS
+					},
+					{
+						ref : ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled,
+						type : _SUPER_CHECKBOX_,
+						enableDisableChecks: [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
+						enableDisableChangeEventSources:[ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId],
+						labelLocation : _LEFT_,
+						trueValue : "TRUE",
+						falseValue : "FALSE",
+						checkBoxLabel : ZaMsg.LBL_Enable_Application_Passcodes,
+						msgName :  ZaMsg.LBL_Enable_Application_Passcodes,
+						resetToSuperLabel : ZaMsg.NAD_ResetToCOS
+					}
+				]
+			},
             {type:_ZA_TOP_GROUPER_, id:"cos_password_lockout_settings",
                 label:ZaMsg.NAD_FailedLoginGrouper,
                 items :[
