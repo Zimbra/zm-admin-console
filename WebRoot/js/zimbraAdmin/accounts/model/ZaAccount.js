@@ -267,6 +267,12 @@ ZaAccount.A_zimbraFeatureGroupCalendarEnabled = "zimbraFeatureGroupCalendarEnabl
 //ZaAccount.A_zimbraFeatureIMEnabled = "zimbraFeatureIMEnabled" ;
 ZaAccount.A_zimbraFeatureFlaggingEnabled = "zimbraFeatureFlaggingEnabled" ;
 ZaAccount.A_zimbraForeignPrincipal = "zimbraForeignPrincipal" ;
+// Two Factor Authentication
+ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable = "zimbraFeatureTwoFactorAuthAvailable";
+ZaAccount.A_zimbraTwoFactorAuthEnabled = "zimbraTwoFactorAuthEnabled";
+ZaAccount.A_zimbraFeatureTwoFactorAuthRequired = "zimbraFeatureTwoFactorAuthRequired";
+ZaAccount.A_zimbraTwoFactorAuthNumScratchCodes = "zimbraTwoFactorAuthNumScratchCodes";
+ZaAccount.A_zimbraFeatureAppSpecificPasswordsEnabled = "zimbraFeatureAppSpecificPasswordsEnabled";
 //security
 ZaAccount.A_zimbraPasswordLockoutEnabled = "zimbraPasswordLockoutEnabled";
 ZaAccount.A_zimbraPasswordLockoutDuration = "zimbraPasswordLockoutDuration";
@@ -2092,6 +2098,13 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraHideInGal, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideInGal, choices:ZaModel.BOOLEAN_CHOICES},
 
 	{id:ZaAccount.A_zimbraMailTransport, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraMailTransport},	
+
+		//Two Factor Authentication
+		{id:ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, choices:ZaModel.BOOLEAN_CHOICES},
+		{id:ZaAccount.A_zimbraTwoFactorAuthEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraTwoFactorAuthEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+		{id:ZaAccount.A_zimbraFeatureTwoFactorAuthRequired, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureTwoFactorAuthRequired, choices:ZaModel.BOOLEAN_CHOICES},
+		{id:ZaAccount.A_zimbraTwoFactorAuthNumScratchCodes, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraTwoFactorAuthNumScratchCodes, minInclusive:1, maxInclusive:40},
+		{id:ZaAccount.A_zimbraFeatureAppSpecificPasswordsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureAppSpecificPasswordsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
 
         //security
         {id:ZaAccount.A_zimbraPasswordLockoutEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordLockoutEnabled, choices:ZaModel.BOOLEAN_CHOICES},
