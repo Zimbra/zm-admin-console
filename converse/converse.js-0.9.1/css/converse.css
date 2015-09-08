@@ -46,6 +46,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  /* Content will be change to a suitable icon code */
   /* @group Tabs */
   /* status dropdown styles */ }
   #conversejs ::selection {
@@ -73,7 +74,9 @@
     padding: 0;
     border: 0;
     /* ZCS - Original code commented */
-    vertical-align: baseline; }
+    vertical-align: baseline;
+    /* Remove dotted outline around links */
+    outline: 0; }
   #conversejs textarea,
   #conversejs input[type=submit], #conversejs input[type=button],
   #conversejs input[type=text], #conversejs input[type=password],
@@ -300,6 +303,8 @@
     content: "\e02b"; }
   #conversejs .icon-zoom-out:before {
     content: "\e02a"; }
+  #conversejs .icon-more-options:before {
+    content: "\25bc"; }
   #conversejs .icon-minimize:before {
     font-family: 'zimbra-chat';
     content: "m";
@@ -387,7 +392,7 @@
     margin: 0 7px;
     font-weight: normal; }
   #conversejs .toggle-controlbox {
-    background-color: #003D61;
+    background-color: @darken(AltC,50)@;
     color: #0a0a0a;
     width: 200px;
     /* ZCS - Original code commented and new code added */
@@ -499,8 +504,10 @@
     border: 0;
     background-color: white;
     line-height: 1.3em;
+    /* ZCS - added to move the emoticon to side.
     height: 206px;
-    height: calc(100% - 58px); }
+    height: calc(100% - 58px); */
+    height: calc(100% - 38px); }
     #conversejs .chat-content .offline-error {
       color: #FF0000; }
   #conversejs .chat-info {
@@ -599,9 +606,9 @@
     position: relative;
     padding: 5px; }
   #conversejs .chat-head-chatroom {
-    background-color: #003D61; }
+    background-color: @darken(AltC,50)@; }
   #conversejs .chat-head-chatbox {
-    background-color: #003D61; }
+    background-color: @darken(AltC,50)@; }
   #conversejs .user-custom-message,
   #conversejs .chatroom-topic {
     color: white;
@@ -766,7 +773,7 @@
         #conversejs #converse-roster dd a.decline-xmpp-request.icon-close, #conversejs .search-converse-contact dd a.decline-xmpp-request.icon-close {
           margin-left: 5px;
           color: #FF0000; }
-        #conversejs #converse-roster dd a.remove-xmpp-contact, #conversejs .search-converse-contact dd a.remove-xmpp-contact {
+        #conversejs #converse-roster dd a.remove-xmpp-contact, #conversejs #converse-roster dd a.alter-menu-xmpp-contact, #conversejs .search-converse-contact dd a.remove-xmpp-contact, #conversejs .search-converse-contact dd a.alter-menu-xmpp-contact {
           float: right;
           width: 22px;
           margin: 0;
@@ -774,7 +781,7 @@
           color: #333333; }
         #conversejs #converse-roster dd a.accept-xmpp-request.icon-checkmark, #conversejs .search-converse-contact dd a.accept-xmpp-request.icon-checkmark {
           color: #008000; }
-    #conversejs #converse-roster dd:hover a.remove-xmpp-contact, #conversejs .search-converse-contact dd:hover a.remove-xmpp-contact {
+    #conversejs #converse-roster dd:hover a.remove-xmpp-contact, #conversejs #converse-roster dd:hover a.alter-menu-xmpp-contact, #conversejs .search-converse-contact dd:hover a.remove-xmpp-contact, #conversejs .search-converse-contact dd:hover a.alter-menu-xmpp-contact {
       display: inline-block; }
     #conversejs #converse-roster dd.odd, #conversejs .search-converse-contact dd.odd {
       background-color: #DCEAC5;
@@ -1125,7 +1132,7 @@
     margin: 0;
     padding: 6px; }
     #conversejs .chat-head.controlbox-head {
-      background-color: #003D61;
+      background-color: @darken(AltC,50)@;
       /* ZCS - Original code commented */
       color: #333333;
       height: 32px;
@@ -1181,7 +1188,8 @@
     position: relative;
     height: 56px;
     /* ZCS - Original code commented */
-    width: 198px; }
+    width: 198px;
+    /* ZCS - added to move the emoticon to side. */ }
     @media screen and (max-width: 480px) {
       #conversejs form.sendXMPPMessage {
         width: 100%; } }
@@ -1191,14 +1199,21 @@
       border: 0;
       height: 36px;
       padding: 0.5em;
-      width: 100%;
-      resize: none; }
+      resize: none;
+      /* ZCS - added to move the emoticon to side.
+      width: 100%; */
+      vertical-align: middle;
+      width: 80%; }
+    #conversejs form.sendXMPPMessage .chat-textarea-divider {
+      border: thin solid; }
   #conversejs .chat-toolbar {
     font-size: 14px;
     margin: 0;
     padding: 0 4px;
     height: 20px;
-    display: block; }
+    /* ZCS - added to move the emoticon to side.
+    display: block;*/
+    display: inline-block; }
     #conversejs .chat-toolbar a {
       color: #005A95; }
     #conversejs .chat-toolbar .unencrypted a,
@@ -1367,3 +1382,25 @@
   opacity: 0.4;
   filter: alpha(opacity=40);
   /* msie */ }
+
+.custom-menu {
+  display: none;
+  z-index: 1000;
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid #CCC !important;
+  white-space: nowrap;
+  font-family: sans-serif;
+  background: #FFF;
+  color: #333333;
+  padding: 10px; }
+
+/* Each of the items in the list */
+.custom-menu li {
+  padding: 5px 18px !important;
+  cursor: pointer;
+  list-style-type: none;
+  font-weight: normal; }
+
+.custom-menu li:hover {
+  background-color: #ADD8E6; }

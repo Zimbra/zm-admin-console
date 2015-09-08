@@ -1032,7 +1032,7 @@
                     .html(converse.templates.chatbox(
                             _.extend(this.model.toJSON(), {
                                     show_toolbar: converse.show_toolbar,
-                                    label_personal_message: __('Personal message')
+                                    label_personal_message: ZmMsg.chatTypeMessage
                                 }
                             )
                         )
@@ -1097,7 +1097,7 @@
                 }
                 var message = template({
                     'sender': msg_dict.sender,
-                    'time': msg_time.format('hh:mm a'),
+					'time': msg_time.format('hh:mma').slice(0,-1), //TODO handle locale specific formats here.
                     'username': username,
                     'message': '',
                     'extra_classes': extra_classes
@@ -1429,7 +1429,9 @@
 
             onChatStatusChanged: function (item) {
                 var chat_status = item.get('chat_status'),
-                    fullname = item.get('fullname');
+                    fullname = item.get('fullname'),
+                    elChatTitle = this.$el.find('.chat-title>span');
+                    
                 fullname = _.isEmpty(fullname)? item.get('jid'): fullname;
                 if (this.$el.is(':visible')) {
                     if (chat_status === 'offline') {
@@ -1442,8 +1444,13 @@
                         this.$el.find('div.chat-event').remove();
                     }
                 }
-				this.$el.find('.chat-title>span').removeClass().addClass('icon-' + chat_status);
-                converse.emit('contactStatusChanged', item.attributes, item.get('chat_status'));
+
+                // Fix for Bug: 100630 - IM broken
+                /* Emit contactStatusChanged only if the chatbox is rendered. Else breaks IM functionality. */
+                if (elChatTitle) {
+				    elChatTitle.removeClass().addClass('icon-' + chat_status);
+                    converse.emit('contactStatusChanged', item.attributes, item.get('chat_status'));
+                }
             },
 
             onStatusChanged: function (item) {
@@ -2219,7 +2226,7 @@
             },
 
             /**
-             * Adds contacts to the roster based on form input.
+             * Add/Update contacts to the roster based on form input.
              * 
              * @param   {object}      ev        the event object
              */ 
@@ -2235,8 +2242,34 @@
                     $email.addClass('error');
                     return;
                 }
+
+                var addContactPanel = $('.add-contact-flyout'),
+                    button = addContactPanel.find('button'),
+                    formHeading = $('.flyout-heading').children().first();
+
                 this.closeAddContactForm();
-                this.addContact(jid, $displayName.val());
+
+                // Update display name of the already added contact
+                if (button.hasClass('renameContact')) {
+                    button.html(ZmMsg.chatAddContactButton);
+                    formHeading.html(ZmMsg.chatAddContactFormHeading);
+                    button.removeClass().addClass('addContact');
+
+                    $email.removeAttr('disabled');
+                    var connectionItem = converse.connection.roster.findItem(jid);
+                    if (connectionItem && connectionItem.subscription === "both") {
+                        converse.connection.roster.update(jid, $displayName.val(), [], null);
+
+                        var contact = converse.roster.get(jid);
+                        if (contact) {
+                            contact.attributes.fullname = $displayName.val();
+                            converse.getVCard(contact.get('jid'));
+                        }
+                    }
+                }
+                else {
+                    this.addContact(jid, $displayName.val());
+                }
             },
 
             /**
@@ -3273,6 +3306,16 @@
                      * the user, then a chat box is created here which then
                      * opens automatically :(
                      */
+
+                    /* 
+                        Fix for Bug: 100630 - This is fixed in converse version 0.9.2
+                        Note - The below if block need not be migrated as part of the
+                        refactor process since this was fixed as a part of converse v0.9.2.
+                    */
+                    if ($message.find('body').length === 0) {
+                        return true;
+                    }
+
                     var fullname = roster_item.get('fullname');
                     fullname = _.isEmpty(fullname)? contact_jid: fullname;
                     chatbox = this.create({
@@ -3281,7 +3324,8 @@
                         'fullname': fullname,
                         'image_type': roster_item.get('image_type'),
                         'image': roster_item.get('image'),
-                        'url': roster_item.get('url')
+                        'url': roster_item.get('url'),
+                        'chat_status': roster_item.get('chat_status')
                     });
                 }
                 if (msgid && chatbox.messages.findWhere({msgid: msgid})) {
@@ -4702,41 +4746,22 @@
         });
 
         this.XMPPStatusView = Backbone.View.extend({
-            el: "div#controlbox-tabs", // ZCS - modified template, replaced ul/li tree with div based layout
+            el: "span#xmpp-status-holder",
 
             events: {
                 "click a.choose-xmpp-status": "toggleOptions",
                 "click #fancy-xmpp-status-select a.change-xmpp-status-message": "renderStatusChangeForm",
                 "submit #set-custom-xmpp-status": "setStatusMessage",
-                "click .dropdown dd ul li a": "setStatus",
-                "click span.icon-plus": "toggleContactForm", // ZCS - toggles display of add contact form
-                "click span.icon-search": "toggleSearchForm"
+                "click .dropdown dd ul li a": "setStatus"
             },
 
             initialize: function () {
                 this.model.on("change:status", this.updateStatusUI, this);
                 this.model.on("change:status_message", this.updateStatusUI, this);
                 this.model.on("update-status-ui", this.updateStatusUI, this);
-
-                // ZCS - Chat status dropdown/label
-                this.$tabs = this.$el;
             },
 
            render: function () {
-                // ZCS - replaces placeholder text for status drop down in the template
-                var LABEL_ONLINE = __('Online'),
-                    LABEL_BUSY = __('Busy'),
-                    LABEL_AWAY = __('Away'),
-                    LABEL_OFFLINE = __('Offline');                
-
-                // ZCS - contacts tab renders the UI for status drop down
-                this.$tabs.append(converse.templates.contacts_tab({
-                    label_online: LABEL_ONLINE,
-                    label_busy: LABEL_BUSY,
-                    label_away: LABEL_AWAY,
-                    label_offline: LABEL_OFFLINE                    
-                }));                
-
                 // Replace the default dropdown with something nicer
                 var $select = this.$el.find('select#select-xmpp-status'),
                     chat_status = this.model.get('status') || 'offline',
@@ -4809,15 +4834,13 @@
                 if (stat === 'chat') {
                     pretty_status = __('online');
                 } else if (stat === 'dnd') {
-                    pretty_status = __('Busy');
+                    pretty_status = __('busy');
                 } else if (stat === 'xa') {
-                    pretty_status = __('Away for long');
+                    pretty_status = __('away for long');
                 } else if (stat === 'away') {
-                    pretty_status = __('Away');
+                    pretty_status = __('away');
                 } else {
-                    // Bug fix - Error: No translation key found.
-                    // ZCS - Make first character upper case                                        
-                    pretty_status = stat && (__(stat).charAt(0).toUpperCase() + __(stat).slice(1)) || __('online');
+                    pretty_status = __(stat) || __('online');
                 }
                 return pretty_status;
             },
@@ -4835,66 +4858,6 @@
                         'desc_custom_status': __('Click here to write a custom status message'),
                         'desc_change_status': __('Click to change your chat status')
                     }));
-            },
-
-            /**
-             * Show/hide add contact form.
-             * 
-             * @param   {object}      ev        the event object
-             */
-            toggleContactForm: function (ev) {
-                ev.preventDefault();
-
-                var plusIcon = $('.icon-plus');
-
-                if (plusIcon.attr("disabled") == "disabled") {
-                    return;
-                }
-                
-                var addContactPanel = $('.add-contact-flyout'),
-                    controlboxPane = $('.controlbox-panes'),
-                    searchContactPanel = $('.search-contact-flyout'),
-                    emailField = addContactPanel.find('#email'),
-                    displayField = addContactPanel.find('#display');
-
-                controlboxPane.hide();
-                searchContactPanel.hide();
-                addContactPanel.show();
-                plusIcon.attr("disabled","disabled");
-                plusIcon.addClass('disabled');
-                // ZCS - Fix for Bug: 100561
-                emailField[0].value = "";
-                displayField[0].value = "";
-                emailField[0].focus();
-            },
-
-            /**
-             * Show/hide search contact form.
-             * 
-             * @param   {object}      ev        the event object
-             */
-            toggleSearchForm: function(ev) {
-                ev.preventDefault();
-
-                var searchIcon = $('.icon-search');
-
-                if (searchIcon.attr("disabled") === "disabled") {
-                    return;
-                }
-
-                var addContactPanel = $('.add-contact-flyout'),
-                    controlboxPane = $('.controlbox-panes'),
-                    searchContactPanel = $('.search-contact-flyout'),
-                    searchField = searchContactPanel.find('#search');
-
-                controlboxPane.hide();
-                addContactPanel.hide();
-                searchContactPanel.show();
-
-                searchIcon.attr("disabled","disabled");
-                searchIcon.addClass('disabled');
-
-                searchField[0].focus();                
             }
         });
 
@@ -5815,13 +5778,13 @@
                 * attributes: A hash of attributes, such as you would pass to Backbone.Model.extend or Backbone.View.extend
                 */
                 if (!obj.prototype._super) {
-                    obj.prototype._super = {};
+                    obj.prototype._super = {'converse': converse};
                 }
                 _.each(attributes, function (value, key) {
                     if (key === 'events') {
                         obj.prototype[key] = _.extend(value, obj.prototype[key]);
                     } else {
-                        if (typeof key === 'function') {
+                        if (typeof value === 'function') {
                             obj.prototype._super[key] = obj.prototype[key];
                         }
                         obj.prototype[key] = value;

@@ -88,6 +88,8 @@
     /* ZCS - Original code commented */
     //font: inherit;
     vertical-align: baseline;
+    /* Remove dotted outline around links */
+    outline: 0;
   }
 
   textarea,
@@ -243,6 +245,7 @@
   .icon-youtube:before            { content: "\e055"; }
   .icon-zoom-in:before            { content: "\e02b"; }
   .icon-zoom-out:before           { content: "\e02a"; }
+  .icon-more-options:before       { content: "\25bc"; } /* Content will be change to a suitable icon code */
 
   // ZCS - New classes added
 
@@ -490,8 +493,10 @@
     border: 0;
     background-color: white;
     line-height: 1.3em;
+    /* ZCS - added to move the emoticon to side.
     height: 206px;
-    height: calc(100% - #{$toolbar-height + $chat-textarea-height + 2});
+    height: calc(100% - #{$toolbar-height + $chat-textarea-height + 2}); */
+    height: calc(100% - #{$chat-textarea-height + 2});
 
     .offline-error {
       color: $zmchat-send-chat-error-color;
@@ -875,7 +880,7 @@
               color: $zmchat-reject-req-icon-color;
             }
         }
-        &.remove-xmpp-contact {
+        &.remove-xmpp-contact, &.alter-menu-xmpp-contact {
             float: right;
             width: 22px;
             margin: 0;
@@ -890,7 +895,7 @@
         }
       }
     }
-    dd:hover a.remove-xmpp-contact {
+    dd:hover a.remove-xmpp-contact, dd:hover a.alter-menu-xmpp-contact {
       display: inline-block;
     }
     dd {
@@ -901,7 +906,7 @@
       &.current-xmpp-contact span, &.zmsearch-xmpp span {
         font-size: 16px;
         float: left;
-        color: $link-color;
+        color: $link-color;        
       }
       a.open-chat {
          width: 80%;
@@ -1243,9 +1248,9 @@
     }
   }
 
-  .chatroom-form,
-  .controlbox-pane {
-    /* ZCS - Original code commented */
+ .chatroom-form,
+ .controlbox-pane {
+   /* ZCS - Original code commented */
     //background-color: white;
     border-bottom-left-radius: $zmchat-border-radius;
     border-bottom-right-radius: $zmchat-border-radius;
@@ -1489,8 +1494,16 @@
       border: 0;
       height: $chat-textarea-height;
       padding: 0.5em;
-      width: 100%;
       resize: none;
+      /* ZCS - added to move the emoticon to side.
+      width: 100%; */
+      vertical-align: middle;
+      width: 80%;
+    }
+
+    /* ZCS - added to move the emoticon to side. */
+    .chat-textarea-divider {
+      border: thin solid;
     }
   }
 
@@ -1499,7 +1512,9 @@
     margin: 0;
     padding: 0 4px;
     height: $toolbar-height;
-    display: block;
+    /* ZCS - added to move the emoticon to side.
+    display: block;*/
+    display: inline-block;
 
     a {
       color: $link-color;
@@ -1744,4 +1759,29 @@
 .disabled {
   opacity: 0.4;
   filter: alpha(opacity=40); /* msie */
+}
+
+.custom-menu {
+  display: none;
+  z-index: 1000;
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid #CCC !important;
+  white-space: nowrap;
+  font-family: sans-serif;
+  background: #FFF;
+  color: #333333;
+  padding: 10px;
+}
+
+/* Each of the items in the list */
+.custom-menu li {
+  padding: 5px 18px !important;
+  cursor: pointer;
+  list-style-type: none;
+  font-weight: normal;
+}
+
+.custom-menu li:hover {
+  background-color: #ADD8E6;
 }
