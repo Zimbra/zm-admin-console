@@ -160,6 +160,10 @@ ZaCosXFormView.gotNoSkins = function () {
     return !ZaCosXFormView.gotSkins.call(this);
 }
 
+ZaCosXFormView.isTwoFactorAuthAvailable = function() {
+	return (this.getInstanceValue(ZaCos.A_zimbraFeatureTwoFactorAuthAvailable) == 'TRUE');
+};
+
 ZaCosXFormView.isPasswordLockoutEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraPasswordLockoutEnabled) == 'TRUE');
 }
@@ -1659,8 +1663,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 			{
 				type: _ZA_TOP_GROUPER_,
 				id: "two_factor_authentication_settings",
-				colSizes: ["auto"],
-				numCols: 1,
 				label: ZaMsg.Two_Factor_Authentication,
 				visibilityChecks:[
 					[
@@ -1676,47 +1678,43 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 				items : [
 					{
 						ref : ZaCos.A_zimbraFeatureTwoFactorAuthAvailable,
-						type : _SUPER_CHECKBOX_,
-						checkBoxLabel : ZaMsg.LBL_Enable_Two_Factor_Authentication,
+						type : _CHECKBOX_,
+						label : ZaMsg.LBL_Enable_Two_Factor_Authentication,
 						msgName :  ZaMsg.LBL_Enable_Two_Factor_Authentication,
 						trueValue : "TRUE",
-						falseValue : "FALSE",
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS
+						falseValue : "FALSE"
 					},
 					{
 						ref : ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
-						type : _SUPER_CHECKBOX_,
-						enableDisableChecks : [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
-						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId],
+						type : _CHECKBOX_,
+						enableDisableChecks : [ZaCosXFormView.isTwoFactorAuthAvailable],
+						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable],
 						labelLocation : _LEFT_,
 						trueValue : "TRUE",
 						falseValue : "FALSE",
-						checkBoxLabel : ZaMsg.LBL_Require_Two_Step_Authentication,
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS,
+						label : ZaMsg.LBL_Require_Two_Step_Authentication,
 						msgName : ZaMsg.LBL_Require_Two_Step_Authentication
 					},
 					{
 						ref : ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
-						type : _SUPER_TEXTFIELD_,
-						enableDisableChecks : [[XForm.checkInstanceValue, ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
-						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId],
-						txtBoxLabel : ZaMsg.LBL_Number_Of_One_Time_Codes,
+						type : _TEXTFIELD_,
+						enableDisableChecks : [ZaCosXFormView.isTwoFactorAuthAvailable],
+						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable],
+						label : ZaMsg.LBL_Number_Of_One_Time_Codes,
 						msgName : ZaMsg.MSG_Number_Of_One_Time_Codes,
 						labelLocation : _LEFT_,
-						textFieldCssClass : "admin_xform_number_input",
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS
+						cssClass : "admin_xform_number_input"
 					},
 					{
 						ref : ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled,
-						type : _SUPER_CHECKBOX_,
-						enableDisableChecks: [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
-						enableDisableChangeEventSources:[ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId],
+						type : _CHECKBOX_,
+						enableDisableChecks: [ZaCosXFormView.isTwoFactorAuthAvailable],
+						enableDisableChangeEventSources:[ZaCos.A_zimbraFeatureTwoFactorAuthAvailable],
 						labelLocation : _LEFT_,
 						trueValue : "TRUE",
 						falseValue : "FALSE",
-						checkBoxLabel : ZaMsg.LBL_Enable_Application_Passcodes,
-						msgName :  ZaMsg.LBL_Enable_Application_Passcodes,
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS
+						label : ZaMsg.LBL_Enable_Application_Passcodes,
+						msgName :  ZaMsg.LBL_Enable_Application_Passcodes
 					}
 				]
 			},
