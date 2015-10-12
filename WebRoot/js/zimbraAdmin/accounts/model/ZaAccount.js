@@ -2902,15 +2902,14 @@ ZaAccount.prototype._handleAccountMembershipResponse = function(result) {
     if (view) {
         var form = view.getMyForm();
         if (form) {
-            var model = form.getModel();
-            var instance = form.getInstance();
-            if (model && instance) {
-                var directMemberList = this[ZaAccount.A2_memberOf][ZaAccount.A2_directMemberList];
-                var indirectMemberList = this[ZaAccount.A2_memberOf][ZaAccount.A2_indirectMemberList];
-                instance.memberOfLoaded = true;
-                model.setInstanceValue(instance, ZaAccount.A2_directMemberList, directMemberList);
-                model.setInstanceValue(instance, ZaAccount.A2_indirectMemberList, indirectMemberList);
-            }
+			//add the member group, need a deep clone
+			form.setInstanceValue(ZaAccountMemberOfListView.cloneMemberOf(this), ZaAccount.A2_memberOf);
+			//add the memberList page information
+			form.setInstanceValue(this[ZaAccount.A2_directMemberList + "_more"], ZaAccount.A2_directMemberList + "_more");
+			form.setInstanceValue(this[ZaAccount.A2_indirectMemberList + "_more"], ZaAccount.A2_indirectMemberList + "_more");
+			form.setInstanceValue(true, "memberOfLoaded");
+			//This will also notify form instance is changed
+			form.setInstance(form.getInstance());
         }
     }
 };
