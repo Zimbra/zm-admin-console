@@ -93,6 +93,13 @@ ZaCosListController.prototype.show = function (doPush,openInNewTab) {
 	ZaSearch.searchDirectory(searchParams);
 }
 
+ZaCosListController.prototype.searchCallback = function(params, resp) {
+	ZaListViewController.prototype.searchCallback.call(this, params, resp);
+	var app = ZaApp.getInstance();
+	app._cosList = this._list;
+	app._cosListName = undefined;
+};
+
 ZaCosListController.prototype._show = 
 function (list, openInNewTab, openInSearchTab, hasMore) {
 	this._updateUI(list, openInNewTab, openInSearchTab, hasMore);
