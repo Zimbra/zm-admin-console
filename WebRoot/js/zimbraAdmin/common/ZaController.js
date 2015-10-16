@@ -556,7 +556,10 @@ ZaController.prototype.authCallback = function(resp) {
             var authToken, sessionId;
             var response = resp.getResponse();
             var body = response.Body;
-
+            if(body.AuthResponse && body.AuthResponse.csrfToken && 
+                    body.AuthResponse.csrfToken._content) {
+                window.csrfToken = body.AuthResponse.csrfToken._content;
+            }
             ZmCsfeCommand.noAuth = false;
 
             // Instrumentation code start
