@@ -752,9 +752,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                 label:ZaMsg.Domain_DefaultCOS,
                                 onChange:ZaNewDomainXWizard.onCOSChanged,
 	                            getDisplayValue:function(newValue) {
-									if (!this.listCreated) {
-										this.createDataList(ZaApp.getInstance().getCosListName());
-									}
+									this.createDataList(ZaApp.getInstance().getCosListName());
 		                            if (newValue) {
 			                            var cos = ZaCos.getCosById(newValue);
 			                            return cos && cos.name;
