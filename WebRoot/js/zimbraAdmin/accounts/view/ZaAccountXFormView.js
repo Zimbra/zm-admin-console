@@ -1715,9 +1715,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                         enableDisableChecks:[[ZaNewAccountXWizard.isAutoCos], [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
                         enableDisableChangeEventSources:[ZaAccount.A2_autoCos],
                         getDisplayValue: function(newValue) {
-                            if (!this.listCreated) {
-                                this.createDataList(ZaApp.getInstance().getCosListName());
-                            }
+							this.createDataList(ZaApp.getInstance().getCosListName());
                             if (newValue) {
                                 var cos = ZaCos.getCosById(newValue);
                                 return cos && cos.name;
