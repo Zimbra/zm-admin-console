@@ -560,29 +560,20 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
           {type:_GROUP_, numCols:3, nowrap:true, label:ZaMsg.NAD_ClassOfService, labelLocation:_LEFT_,
           	visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_COSId]],
             items: [
-              {ref:ZaResource.A_COSId, type:_DYNSELECT_,label: null, choices:this.cosChoices,
-                   inputPreProcessor:ZaAccountXFormView.preProcessCOS,
-                   emptyText:ZaMsg.enterSearchTerm,
-                   visibilityChecks:[],
-                   enableDisableChecks:[ [XForm.checkInstanceValue,ZaResource.A2_autoCos,"FALSE"]],
-                   enableDisableChangeEventSources:[ZaResource.A2_autoCos],
-                   dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
-                   toolTipContent:ZaMsg.tt_StartTypingCOSName,
-                   onChange:ZaAccount.setCosChanged,
-                   dataFetcherClass:ZaSearch,editable:true,getDisplayValue:function(newValue) {
-                       if(ZaItem.ID_PATTERN.test(newValue)) {
-                           var cos = ZaCos.getCosById(newValue);
-                           if(cos)
-                               newValue = cos.name;
-                       }
-                       if (newValue == null) {
-                          newValue = "";
-                       } else {
-                           newValue = "" + newValue;
-                       }
-                       return newValue;
-                   }
-               },
+				{
+					ref : ZaResource.A_COSId,
+					type : _INPUT_,
+					onChange : ZaAccount.setCosChanged,
+					enableDisableChecks : [[XForm.checkInstanceValue, ZaResource.A2_autoCos, "FALSE"]],
+					enableDisableChangeEventSources : [ZaResource.A2_autoCos],
+					getDisplayValue : function(newValue) {
+						this.createDataList(ZaApp.getInstance().getCosListName());
+						if (newValue) {
+							var cos = ZaCos.getCosById(newValue);
+							return cos && cos.name;
+						}
+					}
+				},
                {ref:ZaResource.A2_autoCos, type:_CHECKBOX_,
                    msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,subLabel: "",
                    trueValue:"TRUE", falseValue:"FALSE" ,
@@ -590,7 +581,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                        this.getForm().parent.setDirty(true);
                        if(elementValue=="TRUE") {
                            ZaAccount.setDefaultCos(this.getInstance(), this.getForm().parent._app);
-                       }
+						   this.getParentItem().getItems()[0].updateElement(null);
+					   }
                        this.getForm().itemChanged(this, elementValue, event);
                    },
                    enableDisableChecks:[ [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
