@@ -4,15 +4,16 @@
   $inverse-link-color: white;
   $link-shadow-color: #FAFAFA;
   $text-shadow-color: #FAFAFA;
+  $text-shadow-rgba-color: rgba(0, 0, 0, 0.51);
   $text-color: #333333;
-  $border-color: #CCC;
+  $instruction-text-color: gray;
+  $border-color: #CCC; 
   $warning-color: #681F2C;
   $light-background-border-color: #F1DCD6;
   $light-background-color: #F1E2DD;
   $icon-color: #114327;
   $highlight-color: #E3C9C1;
-  $chat-head-color: #003D61;
-  $chatroom-head-color: #003D61;
+  $chat-sel-color: #578308;
   $chat-head-text-color: #D5D5D5;
   $chat-head-inverse-text-color: #333333;
   $chat-head-height: 32px;
@@ -22,6 +23,8 @@
   $message-them-color: #4B7003;
   $roster-height: 194px;
   $controlbox-dropdown-height: 25px;
+  $input-bgcolor: white;
+  $info-color: green;
 
   $bottom-gutter-height: 32px;
 
@@ -37,10 +40,35 @@
 
   $mobile-chat-width: 100%;
   $mobile-chat-height: 400px;
+  
+  $unencrypted-color: #8f2831;
+  $unverified-color: #cf5300;
+  $private-color: #4b7003;
+  
+  $controlbox-color: #0a0a0a;
+  $controlbox-pane-color: #666666;
+  $flyout-color: #333333;
+  
+  $tt-bgcolor: #00230F;
+  $tt-menu-bgcolor: #27774A;
+  $blink-bgcolor: #176679;
+  
+  $delayed-them-color: #FB5D50;
+  $delayed-me-color: #7EABBB;
+  
+  $error-color: red;
+  $msg-error-color: #76797C;
+  
+  $roster-filter-color: #999;
+  $row-odd-bgcolor: #DCEAC5;
+  
+  $participant-border-color: #AAA;
+  $send-msg-border-color: #BBB;
+  
+  $box-shadow-color: rgba(0, 0, 0, 0.4);
 
   // START ZIMBRA VARIABLES
 
-  $zmchat-bkg-color: #003D61;
   $zmchat-highlight-color: #ADD8E6;
   $zmchat-xmpp-status-logo: "\25fc";
   $zmchat-textbox-width: 175px;
@@ -57,3 +85,5 @@
   $zmchat-accept-req-icon-color: #008000;
   $zmchat-reject-req-icon-color: #FF0000;
   $zmchat-send-chat-error-color: $zmchat-reject-req-icon-color;
+  
+  $input-field-border-color: #B2B2B2;

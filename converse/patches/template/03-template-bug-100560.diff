@@ -1,0 +1,11 @@
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/controlbox.html	2015-09-29 07:21:39.000000000 -0500
++++ /Users/ryadav/perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/controlbox.html	2015-09-29 07:21:39.000000000 -0500
+@@ -11,7 +11,7 @@
+     			<span>Add Contact</span>
+     			<span class="add-contact-flyout-close">x</span>
+     		</div>    		
+-    		<form class="add-contact-form">
++    		<form class="add-contact-form" novalidate>
+ 				<div>
+ 					<label for="email">Email</label>
+ 					<input type="email" id="email" placeholder="e.g. user@example.com"/>

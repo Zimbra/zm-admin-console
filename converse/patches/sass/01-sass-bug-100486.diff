@@ -1,0 +1,1412 @@
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/sass/_core.scss	2015-08-26 07:57:01.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/sass/_core.scss	2015-08-26 07:57:01.000000000 -0500
+@@ -6,10 +6,20 @@
+  * Licensed under the Mozilla Public License
+  */
+ 
++//@import "../ruby/1.9.1/gems/bourbon-4.2.1/app/assets/stylesheets/_bourbon";
++//@import "bourbon/_bourbon";
++
+ @font-face {
+   font-family: 'Converse-js';
+-  src: url($font-path + 'icomoon.eot?-mnoxh0');
+-  src: url($font-path + 'icomoon.eot?#iefix-mnoxh0') format("embedded-opentype"), url($font-path + 'icomoon.woff?-mnoxh0') format("woff"), url($font-path + 'icomoon.ttf?-mnoxh0') format("truetype"), url($font-path + 'icomoon.svg?-mnoxh0#icomoon') format("svg");
++  src: url('../fonticons/fonts/icomoon.eot?-mnoxh0');
++  src: url('../fonticons/fonts/icomoon.eot?#iefix-mnoxh0') format("embedded-opentype"), url('../fonticons/fonts/icomoon.woff?-mnoxh0') format("woff"), url('../fonticons/fonts/icomoon.ttf?-mnoxh0') format("truetype"), url('../fonticons/fonts/icomoon.svg?-mnoxh0#icomoon') format("svg");
++  font-weight: normal;
++  font-style: normal;
++}
++
++@font-face {
++  font-family: 'zimbra-chat';
++  src: url('../fonticons/fonts/zmchat.woff') format("woff"), url('../fonticons/fonts/zmchat.ttf') format("truetype"), url('../fonticons/fonts/zmchat.svg') format("svg");
+   font-weight: normal;
+   font-style: normal;
+ }
+@@ -26,41 +36,37 @@
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+ }
++
+ .icon-conversejs:before {
+   content: "\e600";
+ }
+ 
+ #conversejs {
+   @import "variables";
++
+   ::selection {
+     background-color: $highlight-color;
+   }
+-  ::-moz-selection {
+-    background-color: $highlight-color;
+-  }
+ 
+   color: $text-color;
+   font-size: $font-size;
++  font-family: $zmchat-font-family;
+   bottom: 0;
+   direction: ltr;
+   height: $bottom-gutter-height;
+-  left: auto;
++  left: 0;
+   position: fixed;
+-  right: 15px;
++  right: 0;
+   z-index: 30;
+   display: block;
+-  width: auto;
+ 
+   @include box-sizing(border-box);
+   *, *:before, *:after {
+     @include box-sizing(border-box);
+   }
+ 
+-  @media screen and (max-width: $mobile-landscape-length) {
+-      margin: 0;
+-      right: 10px;
+-      left: 10px;
+-      bottom: 5px;
++  @media screen and (max-width: $mobile_landscape_length) {
++      margin: 5px 10px;
+   }
+ 
+   a, a:visited {
+@@ -79,8 +85,11 @@
+     margin: 0;
+     padding: 0;
+     border: 0;
+-    font: inherit;
++    /* ZCS - Original code commented */
++    //font: inherit;
+     vertical-align: baseline;
++    /* Remove dotted outline around links */
++    outline: 0;
+   }
+ 
+   textarea,
+@@ -109,7 +118,8 @@
+   }
+ 
+   ul, ol, dl {
+-    font: inherit;
++    /* ZCS - Original code commented */
++    //font: inherit;
+     margin: 0;
+   }
+ 
+@@ -192,7 +202,6 @@
+   .icon-notebook:before           { content: "\2710"; }
+   .icon-notification:before       { content: "\e01f"; }
+   .icon-online:before             { content: "\25fc"; }
+-  .icon-chat:before               { content: "\25fc"; }
+   .icon-opened:before             { content: "\25bc"; }
+   .icon-pencil:before             { content: "\270e"; }
+   .icon-phone-hang-up:before      { content: "\260e"; }
+@@ -230,13 +239,48 @@
+   .icon-wink:before               { content: "\e03a"; }
+   .icon-wondering:before          { content: "\2369"; }
+   .icon-wrench:before             { content: "\e024"; }
+-  .icon-xa:before                 { content: "\e602"; }
++  .icon-xa:before,
+   .icon-unavailable:before,
+   .icon-offline:before            { content: "\e002"; }
+   .icon-youtube:before            { content: "\e055"; }
+   .icon-zoom-in:before            { content: "\e02b"; }
+   .icon-zoom-out:before           { content: "\e02a"; }
++  .icon-more-options:before       { content: "\25bc"; } /* Content will be change to a suitable icon code */
++
++  // ZCS - New classes added
+ 
++  .icon-minimize:before {
++    font-family: 'zimbra-chat';
++    content: "m";
++    color: $chat-head-text-color;
++  }
++
++  .icon-online:before {
++    font-family: 'zimbra-chat';
++    content: "C";
++    color: $zmchat-online-color;
++  }
++
++  .icon-dnd:before {
++    font-family: 'zimbra-chat';
++    content: "D";
++    color: $zmchat-dnd-color;
++  }
++
++  .icon-away:before {
++    font-family: 'zimbra-chat';
++    content: "T";
++    color: $zmchat-away-color;
++  }
++
++  .icon-xa:before,
++  .icon-unavailable:before,
++  .icon-offline:before {
++    font-family: 'zimbra-chat';
++    content: "S";
++    color: $zmchat-offline-color !important;
++  }
++
+   .no-text-select {
+       -webkit-touch-callout: none;
+       @include user-select(none);
+@@ -247,10 +291,10 @@
+   }
+ 
+   .left {
+-      float: left;
++    float: left;
+    } 
+-   .right {
+-       float: right;
++  .right {
++    float: right;
+    }
+   .hidden {
+     display: none;
+@@ -269,17 +313,17 @@
+     }
+   }
+ 
+-  .spinner:before {
+-    font-size: 24px;
+-    font-family: 'Converse-js' !important;
+-    content: "\231b";
+-  }
+-
+   .spinner {
+     @include animation(spin 2s infinite, linear);
+     display: block;
+     text-align: center;
+     margin: 5px;
++
++    &:before {
++      font-size: 24px;
++      font-family: 'Converse-js' !important;
++      content: "\231b";
++    }
+   }
+ 
+   .centered {
+@@ -292,23 +336,29 @@
+     text-align: center;
+     display: block;
+     margin: 0 auto;
+-    clear: both;
+   }
+ 
+   .toggle-controlbox,
+   #minimized-chats {
+-    border-top-left-radius: 4px;
+-    border-top-right-radius: 4px;
++    /* ZCS - Original code commented */
++    //border-top-left-radius: $zmchat-border-radius;
++    //border-top-right-radius: $zmchat-border-radius;
+     float: right;
+     margin: 0 $chat-gutter;
+-    font-weight: bold;
++    //font-weight: bold;
++    font-weight: normal;
+   }
+ 
+   .toggle-controlbox {
+-    background-color: $link-color;
+     color: #0a0a0a;
+-    height: 100%;
+-    padding: 10px 8px 0 8px;
++    width: 200px;
++    /* ZCS - Original code commented and new code added */
++    //height: 100%;
++    height: $bottom-gutter-height;
++    font-size:11px;
++    padding: 9px 8px;
++    border-radius: $zmchat-border-radius $zmchat-border-radius 0 0;
++
+     span {
+       color: $inverse-link-color;
+     }
+@@ -334,8 +384,8 @@
+     width: 130px;
+ 
+     #toggle-minimized-chats {
+-      border-top-left-radius: 4px;
+-      border-top-right-radius: 4px;
++      border-top-left-radius: $zmchat-border-radius;
++      border-top-right-radius: $zmchat-border-radius;
+       background-color: ivory;
+       position: relative;
+       padding: 10px 0 0 0;
+@@ -370,7 +420,7 @@
+ 
+       .chat-head {
+         font-size: 100%;
+-        border-radius: 4px;
++        border-radius: $zmchat-border-radius;
+         padding: 3px 0 0 5px;
+         margin: 0 0 1px 0;
+         box-shadow: 1px 3px 5px 3px rgba(0, 0, 0, 0.4);
+@@ -382,8 +432,8 @@
+ 
+   .chat-body {
+     background-color: white;
+-    border-bottom-right-radius: 4px;
+-    border-bottom-left-radius: 4px;
++    border-bottom-right-radius: $zmchat-border-radius;
++    border-bottom-left-radius: $zmchat-border-radius;
+     height: 289px;
+     @include calc(height, '100% - #{$chat-head-height}');
+     border-top: 0;
+@@ -423,8 +473,8 @@
+     overflow-y: auto;
+     text-overflow: ellipsis;
+     background: #27774A;
+-    border-bottom-right-radius: 4px;
+-    border-bottom-left-radius: 4px;
++    border-bottom-right-radius: $zmchat-border-radius;
++    border-bottom-left-radius: $zmchat-border-radius;
+   }
+ 
+   .chat-blink {
+@@ -440,10 +490,16 @@
+     color: $text-color;
+     overflow-y: auto;
+     border: 0;
+-    background-color: #ffffff;
++    background-color: white;
+     line-height: 1.3em;
++    /* ZCS - added to move the emoticon to side.
+     height: 206px;
+-    height: calc(100% - #{$toolbar-height + $chat-textarea-height + 2});
++    height: calc(100% - #{$toolbar-height + $chat-textarea-height + 2}); */
++    height: calc(100% - #{$chat-textarea-height + 2});
++
++    .offline-error {
++      color: $zmchat-send-chat-error-color;
++    }
+   }
+ 
+   .chat-info {
+@@ -528,6 +584,24 @@
+     border: 1px solid red;
+   }
+ 
++  #converse-register {
++    .form-errors {
++      color: red;
++      display: none;
++    }
++    .provider-title {
++      font-size: 115%;
++    }
++    .provider-score {
++      width: 178px;
++      margin-bottom: 8px;
++    }
++    .form-help .url {
++      font-weight: bold;
++      color: $link-color;
++    }
++  }
++
+   .reg-feedback {
+     font-size: 85%;
+   }
+@@ -547,17 +621,20 @@
+ 
+   a.restore-chat,
+   .chat-title {
+-    padding: 1px 0 1px 5px;
+-    color: $chat-head-text-color;
+-    font-weight: bold;
+-    line-height: 15px;
+-    display: block;
+-    overflow: hidden;
+-    text-overflow: ellipsis;
+-    white-space: nowrap;
+-    text-shadow: rgba(0, 0, 0, 0.51) 0 -1px 0;
++	padding: 2px 0 1px 0px;
++	margin-left: -1px;
++	color: $chat-head-text-color;
++	line-height: 15px;
++	display: block;
++	overflow: hidden;
++	text-overflow: ellipsis;
++	white-space: nowrap;
+   }
+ 
++  .chat-title [class^="icon-"], #conversejs [class*=" icon-"] {
++		  padding-right: 3px;
++  }
++  
+   a.restore-chat:visited {
+     color: $chat-head-text-color;
+   }
+@@ -575,12 +652,6 @@
+     position: relative;
+     padding: 5px;
+   }
+-  .chat-head-chatroom {
+-    background-color: $chatroom-head-color;
+-  }
+-  .chat-head-chatbox {
+-    background-color: $chat-head-color;
+-  }
+ 
+   .user-custom-message,
+   .chatroom-topic {
+@@ -605,11 +676,12 @@
+   }
+ 
+   dl.add-converse-contact {
+-    margin: 0 0.5em 0.75em 0.5em;
++    margin: 0 0.5em 0.5em 0.5em;
+   }
+ 
+   .fancy-dropdown {
+-    border: 1px solid $light-background-border-color;
++    /* ZCS - Original code commented */
++    //border: 1px solid $light-background-border-color;
+     height: $controlbox-dropdown-height;
+     text-align: left;
+     .choose-xmpp-status {
+@@ -622,7 +694,7 @@
+     }
+     .choose-xmpp-status,
+     .toggle-xmpp-contact-form {
+-      text-shadow: 0 1px 0 #ffffff;
++      text-shadow: 0 1px 0 white;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space: nowrap;
+@@ -635,13 +707,18 @@
+ 
+ 
+   #fancy-xmpp-status-select a.change-xmpp-status-message {
+-    float: right;
+-    clear: right;
++    /* ZCS - Original code commented */
++    //float: right;    
++    //clear: right;
+     height: 22px;
+     width: 12px;
+-    margin: 0px 5px 0 0;
++    //margin: 0px 5px 0 0;
+     color: $link-color;
+   }
++  .icon-pencil:before {
++    /* ZCS - New code added */
++    color: white;
++  }
+ 
+   ul#found-users {
+     padding: 10px 0 5px 5px;
+@@ -660,18 +737,15 @@
+   a.configure-chatroom-button,
+   a.toggle-chatbox-button,
+   a.close-chatbox-button {
+-    border-radius: 5px;
+-    border: 1px solid #888;
+-    color: white;
++    border-radius: 6px;
++    //border: 1px solid #888;
++    color: $chat-head-text-color;
+     cursor: pointer;
+     display: inline-block;
+     float: right;
+-    font-size: $box-close-font-size;
+-    margin: 0 0 0 3px;
+-    padding-top: $box-close-button-padding-top;
+-    padding-bottom: $box-close-button-padding-bottom;
+-    padding-left: $box-close-button-padding-left;
+-    padding-right: $box-close-button-padding-right;
++    font-size: 10px;
++    margin: 2px 0 0 3px;
++    padding: 3px 3px 2px 3px;
+     text-decoration: none;
+   }
+ 
+@@ -686,8 +760,8 @@
+     height: 100%;
+     color: $text-color;
+     overflow-y: auto;
+-    border-bottom-right-radius: 4px;
+-    border-bottom-left-radius: 4px;
++    border-bottom-right-radius: $zmchat-border-radius;
++    border-bottom-left-radius: $zmchat-border-radius;
+   }
+ 
+   .chatroom-form {
+@@ -723,19 +797,16 @@
+     float: right;
+   }
+ 
+-  #converse-roster {
++  #converse-roster, .search-converse-contact {
+     text-align: left;
+     width: 100%;
+     position: relative;
+     margin: 0.5em 0 0 0;
+-    height: $roster-height;
+-    height: calc(100% - #{$controlbox-dropdown-height*2} - 20px);
++    //height: $roster-height;
++    //height: calc(100% - 68px);
++    height: 100%;
+     overflow: hidden;
+ 
+-    &.no-contact-requests {
+-        height: calc(100% - #{$controlbox-dropdown-height} - 20px);
+-    }
+-
+     .filter-type {
+       display: table-cell;
+       float: right;
+@@ -767,14 +838,15 @@
+     .roster-contacts {
+       margin: 0;
+       max-height: 195px;
+-      max-height: calc(100% - 26px);
++      max-height: calc(100% - 4px);
+       overflow-x: hidden;
+       overflow-y: auto;
+       padding-bottom: 15px;
+     }
+     .group-toggle {
+-      color: $text-color;
++      color: $zmchat-head-text-color;
+       display: block;
++      font-family: $zmchat-font-family;
+       width: 100%;
+     }
+     dt {
+@@ -785,7 +857,8 @@
+       padding: 4px 2px 0 4px;
+       height: 24px;
+       a, span {
+-        text-shadow: 0 1px 0 $link-shadow-color;
++        /* ZCS - Original code commented */
++        //text-shadow: 0 1px 0 $link-shadow-color;        
+         display: inline-block;
+         overflow: hidden;
+         white-space: nowrap;
+@@ -796,19 +869,29 @@
+         padding: 0 5px 0 0;
+       }
+       a {
++        /* ZCS - decline contact request icon */
+          &.decline-xmpp-request {
+-            margin-left: 5px;
++            &.icon-close {
++              margin-left: 5px;
++              color: $zmchat-reject-req-icon-color;
++            }
+         }
+-        &.remove-xmpp-contact {
++        &.remove-xmpp-contact, &.alter-menu-xmpp-contact {
+             float: right;
+             width: 22px;
+             margin: 0;
+             display: none;
+             color: $text-color;
+         }
++        /* ZCS - accept contact request icon */
++        &.accept-xmpp-request {
++          &.icon-checkmark {
++            color: $zmchat-accept-req-icon-color;
++          }
++        }
+       }
+     }
+-    dd:hover a.remove-xmpp-contact {
++    dd:hover a.remove-xmpp-contact, dd:hover a.alter-menu-xmpp-contact {
+       display: inline-block;
+     }
+     dd {
+@@ -816,23 +899,43 @@
+         background-color: #DCEAC5;
+         /* Make this difference */
+       }
+-      &.current-xmpp-contact span {
++      &.current-xmpp-contact span, &.zmsearch-xmpp span {
+         font-size: 16px;
+         float: left;
+-        color: $link-color;
++        color: $link-color;        
+       }
+       a.open-chat {
+-        width: 80%;
++         width: 80%;
++        /* ZCS - New code added */
++        color: $text-color;
+       }
+     }
+     span {
+       &.pending-contact-name {
+         width: 80%;
+       }
++      &.pending-contact-name:before {
++        content: "\003f";
++        padding: 0.5rem;
++      }
+       &.req-contact-name {
+         width: 69%;
+         padding: 0;
+-      }
++
++        &:before {
++          font-family: 'zimbra-chat';
++          content: "\003F";
++          color: $zmchat-offline-color
++        }
++      }      
++    }
++
++    .searchedContactCount {
++      margin: 5px 0 2px 10px;
++    }
++
++    dd.zmsearch-xmpp {
++      height: auto;
+     }
+   }
+ 
+@@ -862,7 +965,6 @@
+ 
+   div.room-info {
+     clear: left;
+-	width: 100%;
+   }
+ 
+   p.room-info {
+@@ -887,41 +989,38 @@
+   }
+ 
+   dd.available-chatroom {
+-    border: none;
+-    clear: both;
+-    color: $text-color;
+-    display: block;
+-    font-weight: bold;
+-    overflow: hidden;
++    display: inline-block;
++    overflow-x: hidden;
++    text-overflow: ellipsis;
+     padding: 0.25em 0.5em;
+-    text-overflow: ellipsis;
+-    text-shadow: 0 1px 0 $text-shadow-color;
+     white-space: nowrap;
+     a.open-room {
+       width: 150px;
+     }
+-    &:hover {
+-      background-color: $highlight-color;
+-      .room-info {
+-        display: block;
+-        font-size: 14px;
+-      }
+-    }
++  }
++
++  dd.available-chatroom:hover a.room-info {
++    display: inline-block;
++    font-size: 14px;
+   }
+ 
+-  #converse-roster dd {
++  dd.available-chatroom,
++  #converse-roster dd, .search-converse-contact dd {
++    font-weight: bold;
+     border: none;
++    display: block;
++    color: $text-color;
++    //text-shadow: 0 1px 0 $text-shadow-color;
+     clear: both;
+-    color: $text-color;
+-    display: block;
+-    font-weight: bold;
+     overflow-y: hidden;
+-    text-shadow: 0 1px 0 $text-shadow-color;
+   }
+ 
+-  .roster-group:hover,
++  //.roster-group:hover,
++  dd.available-chatroom:hover,
+   #converse-roster dd:hover {
+-    background-color: $highlight-color;
++    /* ZCS - Original code commented */
++    //background-color: $highlight-color;
++    background-color: $zmchat-highlight-color;
+   }
+ 
+   .chatbox,
+@@ -929,7 +1028,7 @@
+     height: $bottom-gutter-height;
+     float: right;
+     margin: 0 $chat-gutter;
+-    @media screen and (max-width: $mobile-landscape-length) {
++    @media screen and (max-width: $mobile_landscape_length) {
+         margin: 0;
+     }
+     display: block;
+@@ -937,20 +1036,112 @@
+ 
+   .chatbox {
+     width: $chat-width;
+-    @media screen and (max-width: $mobile-landscape-length) {
++    @media screen and (max-width: $mobile_landscape_length) {
+         width: $mobile-chat-width;
+     }
+     .box-flyout {
+       z-index: 1;
+       width: $chat-width;
+-        @media screen and (max-width: $mobile-landscape-length) {
++      /* ZCS - New code added */
++      background-color: white;
++
++        @media screen and (max-width: $mobile_landscape_length) {
+             width: $mobile-chat-width;
+         }
++      /* ZCS - New code added */
++      .controlbox-panes {
++        #online-contacts-count {
++          color: #666666;
++          cursor: default;
++          display: inline-block;
++          margin: 4px 8px 0;
++        }
++      }
++      /* ZCS - New code added */
++      .add-contact-flyout, .search-contact-flyout {
++        color: #333333;
++
++        .flyout-heading {
++          padding: 6px;
++        }
++
++        .add-contact-flyout-close, .search-contact-flyout-close {
++          float: right;
++          cursor: pointer;
++        }
++
++        .add-contact-form {
++          padding: 35px 10px 10px 10px;
++
++          div.button {
++            text-align: center;
++            
++            BUTTON {
++				width: $zmchat-button-width;
++				cursor: pointer;
++				margin-top: 25px;
++            }
++          }
++
++          HR {
++            margin: 40px 0 5px 0;
++			 border: none;
++			 height: 1px;
++			 background-color: $input-field-border-color;
++          }
++
++          div:nth-child(2) {
++            margin: 15px 0 0 0;
++          }
++        }
++
++        .search-contact-form {
++          div {
++           margin: 5px 0 0 10px; 
++          }
++          INPUT[type=text] {
++            &::-webkit-input-placeholder { font-style: italic; }
++            &::-ms-input-placeholder { font-style: italic; }
++            &::-moz-placeholder { font-style: italic; }
++          }
++        }
++
++        INPUT[type=email] {
++          margin: 5px 0 0 0;
++          width: $zmchat-textbox-width;
++          height: $zmchat-textbox-height;
++		   border: 1px solid $input-field-border-color;
++        }
++
++        INPUT[type=text] {
++          height: $zmchat-textbox-height;
++          margin: 5px 0 0 0;
++          -webkit-appearance: textfield;
++          padding: 1px;
++          background-color: white;
++		   border: 1px solid $input-field-border-color;
++          border-image-source: initial;
++          border-image-slice: initial;
++          border-image-width: initial;
++          border-image-outset: initial;
++          border-image-repeat: initial;
++          -webkit-rtl-ordering: logical;
++          -webkit-user-select: text;
++          cursor: auto;
++          font-size: inherit;
++          width: $zmchat-textbox-width;
++        }
++      }
+     }
+     .dropdown {
+       a {
+-        width: 148px;
++        /* ZCS - Original code commented */
++        //width: 148px;        
++        width: 100px;
++        color: $chat-head-text-color;
++        float: left;
+         display: inline-block;
++        text-shadow: none;
+         line-height: $controlbox-dropdown-height;
+       }
+       li {
+@@ -964,12 +1155,13 @@
+           position: absolute;
+           left: 0;
+           top: 0;
+-          border: 1px solid $light-background-border-color;
+-          width: 100%;
++          /* ZCS - Original code commented */
++          //border: 1px solid $light-background-border-color;
++          width: 50%;
+           z-index: 21;
+-          background-color: $light-background-color;
++          background-color: white;
+           li:hover {
+-            background-color: $highlight-color;
++            background-color: $zmchat-highlight-color;
+           }
+         }
+       }
+@@ -983,7 +1175,9 @@
+       dt a span {
+         cursor: pointer;
+         display: block;
+-        padding: 4px 7px 0 5px;
++        /* ZCS - Original code commented */
++        //padding: 4px 7px 0 5px;
++        padding: 7px 7px 0 5px;
+       }
+     }
+   }
+@@ -993,7 +1187,7 @@
+     .box-flyout {
+       width: $chatroom-width;
+     }
+-    @media screen and (max-width: $mobile-landscape-length) {
++    @media screen and (max-width: $mobile_landscape_length) {
+       width: $mobile-chat-width;
+       .box-flyout {
+         width: $mobile-chat-width;
+@@ -1042,7 +1236,7 @@
+       overflow-y: auto;
+       overflow-x: hidden;
+       border-left: 1px solid #AAA;
+-      border-bottom-right-radius: 4px;
++      border-bottom-right-radius: $zmchat-border-radius;
+       width: 100px;
+       height: 100%;
+       label {
+@@ -1054,11 +1248,12 @@
+     }
+   }
+ 
+-  .chatroom-form,
+-  .controlbox-pane {
+-    background-color: white;
+-    border-bottom-left-radius: 4px;
+-    border-bottom-right-radius: 4px;
++ .chatroom-form,
++ .controlbox-pane {
++   /* ZCS - Original code commented */
++    //background-color: white;
++    border-bottom-left-radius: $zmchat-border-radius;
++    border-bottom-right-radius: $zmchat-border-radius;
+     border: 0;
+     font-size: $font-size;
+     overflow-y: auto;
+@@ -1070,19 +1265,18 @@
+   }
+ 
+   .controlbox-pane {
++    padding: 5px 0;
+     overflow-y: hidden;
+-    overflow-x: hidden;
+     dd {
+       margin-left: 0;
+       margin-bottom: 0;
+-      &.odd {
+-        background-color: #DCEAC5;
+-      }
++    }
++    dd.odd {
++      background-color: #DCEAC5;
+     }
+   }
+ 
+   #converse-register {
+-    background: white;
+     .title {
+       font-weight: bold;
+     }
+@@ -1092,85 +1286,60 @@
+       font-size: 85%;
+       margin: 5px 0;
+     }
+-    .form-errors {
+-      color: red;
+-      display: none;
+-    }
+-    .provider-title {
+-      font-size: 22px;
+-    }
+-    .provider-score {
+-      width: 178px;
+-      margin-bottom: 8px;
+-    }
+-    .form-help .url {
+-      font-weight: bold;
+-      color: $link-color;
+-    }
++  }
++
++  .form-help,
++  #converse-register .instructions {
++    color: gray;
++    font-size: 85%;
++  }
++
++  .form-help:hover,
++  #converse-register .instructions:hover {
++    color: $text-color;
++  }
++
++  .form-help {
++    padding-top: 5px;
++  }
++
++  #converse-register,
++  #converse-login {
++    background: white;
++    padding: 1em;
++  }
++
++  #converse-register input,
++  #converse-login input {
++    width: 100%;
++    height: 30px;
++    margin: 5px 0 10px 0;
++    padding-left: 0.5em;
++  }
++
++  #converse-register {
+     .input-group {
+       display: table;
+       margin: auto;
+-      width: 100%;
+-      span {
+-          overflow-x: hidden;
+-          text-overflow: ellipsis;
+-          max-width: 110px;
+-      }
++      width: 178px;
+       span, input[name=username] {
+           display: table-cell;
+-          text-align: left;
+       }
+-    }
+-    .instructions {
+-      color: gray;
+-      font-size: 85%;
+-      &:hover {
+-        color: $text-color;
++      input[name=username] {
++        width: 100%;
+       }
+     }
+   }
+ 
+-  #converse-register, #converse-login {
+-    margin: 2em 1em 1em 1em;
+-    background: white;
+-
+-    .login-submit, .submit {
+-      height: 30px;
+-      padding: 0px;
+-      font-size: $font-size;
+-    }
+-    .submit {
+-      margin: 1em 0;
+-    }
+-    .login-anon {
+-      height: auto;
+-      white-space: normal;
+-    }
+-    .cancel-submit, .save-submit {
+-      width: 45%;
+-      margin: 5px 3px 5px 3px;
+-    }
+-    .cancel, .cancel-submit {
+-      color: $warning-color;
+-    }
+-    .save-submit {
+-      color: $save-button-color;
+-    }
+-    input {
+-      width: 100%;
+-      height: 30px;
+-      margin: 5px 0 10px 0;
+-      padding-left: 0.5em;
+-    }
++  .cancel-submit, .save-submit {
++    width: 45%;
++    margin: 5px 3px 5px 3px;
++  }
++  .cancel, .cancel-submit {
++    color: $warning-color;
+   }
+-
+-  .form-help {
+-    color: gray;
+-    font-size: 85%;
+-    padding-top: 5px;
+-    &:hover {
+-      color: $text-color;
+-    }
++  .save-submit {
++    color: $save-button-color;
+   }
+ 
+   .chatroom-form label,
+@@ -1182,7 +1351,20 @@
+     height: auto;
+     margin: 4px;
+   }
+-  
++
++  #converse-register .login-submit,
++  #converse-login .login-submit,
++  #converse-register .submit,
++  #converse-login .submit {
++    height: 30px;
++    padding: 0px;
++    font-size: $font-size;
++  }
++
++  #converse-login .submit {
++    margin: 1em 0;
++  }
++
+   form.add-chatroom {
+     background: none;
+     padding: 0.5em;
+@@ -1213,20 +1395,22 @@
+ 
+   /* @group Tabs */
+   .chat-head {
+-    border-top-left-radius: 4px;
+-    border-top-right-radius: 4px;
+-    color: #ffffff;
++    //border-top-left-radius: $zmchat-border-radius;
++    //border-top-right-radius: $zmchat-border-radius;
++    color: white;
+     font-size: 100%;
+     margin: 0;
+     padding: 6px;
+     &.controlbox-head {
+-      background-color: $chat-head-color;
+-      border-top-left-radius: 4px;
+-      border-top-right-radius: 4px;
++      /* ZCS - Original code commented */
++      //border-top-left-radius: $zmchat-border-radius;
++      //border-top-right-radius: $zmchat-border-radius;
+       color: $chat-head-inverse-text-color;
++      //height: $chat-head-height;
+       height: $chat-head-height;
+       margin: 0;
+-      padding: 6px 6px 6px 0;
++      //padding: 6px 6px 6px 0;
++      padding: 3px 0;
+     }
+     .avatar {
+       float: left;
+@@ -1244,7 +1428,7 @@
+         border-bottom: 0;
+         height: $chat-head-height;
+         cursor: default;
+-        color: $text-color;
++        color: $chat-head-text-color;
+       }
+ 
+       /* single tab */
+@@ -1253,21 +1437,22 @@
+         list-style: none;
+         padding-left: 0;
+         text-shadow: white 0 1px 0;
+-        width: 38%;
++        width: $mobile-chat-width;
+ 
+         a {
+-          background-color: white;
+-          border-bottom: 1px solid $border-color;
+-          border-top-left-radius: 4px;
+-          border-top-right-radius: 4px;
+-          box-shadow: inset 2px -2px 20px rgba(0, 0, 0, 0.3);
+-          color: #888;
++          /* ZCS - Original code commented */
++          //background-color: white;
++          //border-bottom: 1px solid $border-color;
++          //border-top-left-radius: $zmchat-border-radius;
++          //border-top-right-radius: $zmchat-border-radius;
++          //box-shadow: inset 2px -2px 20px rgba(0, 0, 0, 0.3);
++          color: $text-color;
+           display: block;
+           font-size: 12px;
+-          height: $chat-head-height - 1px;
+-          line-height: $chat-head-height - 1px;
++          //height: $chat-head-height - 1px;
++          //line-height: $chat-head-height - 1px;
+           margin: 0;
+-          text-align: center;
++          //text-align: center;
+           text-decoration: none;
+         }
+         a:hover {
+@@ -1283,9 +1468,9 @@
+ 
+   form.sendXMPPMessage {
+     -moz-background-clip: padding;
+-    -moz-border-radius: 4px;
++    -moz-border-radius: $zmchat-border-radius;
+     -webkit-background-clip: padding-box;
+-    -webkit-border-radius: 4px;
++    -webkit-border-radius: $zmchat-border-radius;
+     background-clip: padding-box;
+     background: white;
+     border-radius: 4px;
+@@ -1297,27 +1482,38 @@
+     padding: 0;
+     position: relative;
+     height: #{$chat-textarea-height + $toolbar-height};
+-    width: $chat-width;
+-    @media screen and (max-width: $mobile-landscape-length) {
++    /* ZCS - Original code commented */
++    //width: $chat-width;
++    width: $chat-width - 2;
++    @media screen and (max-width: $mobile_landscape_length) {
+         width: 100%;
+     }
+     .chat-textarea {
+-      @include border-bottom-radius(4px);
++      @include border-bottom-radius($zmchat-border-radius);
+       border: 0;
+       height: $chat-textarea-height;
+       padding: 0.5em;
+-      width: 100%;
+       resize: none;
++      /* ZCS - added to move the emoticon to side.
++      width: 100%; */
++      vertical-align: middle;
++      width: 80%;
++    }
++
++    /* ZCS - added to move the emoticon to side. */
++    .chat-textarea-divider {
++      border: thin solid;
+     }
+   }
+ 
+   .chat-toolbar {
+     font-size: $font-size;
+     margin: 0;
+-    padding: 5px;
++    padding: 0 4px;
+     height: $toolbar-height;
+-    display: block;
+-    background-color: $light-background-color;
++    /* ZCS - added to move the emoticon to side.
++    display: block;*/
++    display: inline-block;
+ 
+     a {
+       color: $link-color;
+@@ -1356,9 +1552,9 @@
+     }
+ 
+     ul {
+-      background: #fff;
++      background: white;
+       bottom: 100%;
+-      box-shadow: -1px -1px 2px 0 rgba(0, 0, 0, 0.4);
++      box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.4);
+       display: none;
+       font-size: 12px;
+       margin: 0 0 1px 0;
+@@ -1375,7 +1571,6 @@
+     }
+ 
+     .toggle-smiley {
+-      color: $link-color;
+       padding-left: 5px;
+       ul {
+         li {
+@@ -1392,7 +1587,6 @@
+     .toggle-otr {
+       ul { 
+         li {
+-          padding: 7px;
+           background-color: white;
+           display: block;
+           z-index: 99;
+@@ -1405,9 +1599,6 @@
+             text-decoration: none;
+           }
+         }
+-        li:hover {
+-          background-color: $highlight-color;
+-        }
+       }
+     }
+   }
+@@ -1415,7 +1606,6 @@
+   .chat-toolbar-text {
+     font-size: 12px;
+     padding-right: 3px;
+-    text-shadow: 0 1px 0 white
+   }
+ 
+   #set-custom-xmpp-status {
+@@ -1447,13 +1637,26 @@
+     display: none;
+     div.xmpp-status {
+       display: inline;
++
++      /* ZCS - New code added */
++      & > SPAN {
++        color: $chat-head-text-color;
++        cursor: pointer;
++        float: right;
++        font-size: 1.2em;
++        margin-top: 5px;
++        width: 24px;
++        height: 24px;
++        text-align: center;
++      }
+     }
+   }
+ 
+   /* status dropdown styles */
+   .chatbox {
+     .dropdown {
+-      background-color: $light-background-color;
++      /* ZCS - Original code commented */
++      //background-color: $light-background-color;
+       dd {
+         position: relative;
+       }
+@@ -1493,11 +1696,11 @@
+   .xmpp-status-menu li a.logout,
+   .xmpp-status-menu li a.logout span {
+     color: $warning-color;
+-  }
++  }  
+ 
+   .set-xmpp-status {
+     background: none;
+-    padding: 0.75em 0.5em 0.5em 0.5em;
++    padding: 0.5em;
+     .dropdown dd ul {
+       z-index: 22;
+     }
+@@ -1505,28 +1708,30 @@
+ 
+   .minimized-chats-flyout,
+   .box-flyout {
+-    border-radius: 4px;
+-    bottom: 6px;
+-    box-shadow: 1px 3px 5px 3px rgba(0, 0, 0, 0.4);
++    /* ZCS - Original code commented */
++    //border-radius: $zmchat-border-radius;
++	border: 1px solid #000;
++    bottom: -1px;
++    //box-shadow: 1px 3px 5px 3px rgba(0, 0, 0, 0.4);
+     display: block;
+     height: $chat-height;
+-    @media screen and (max-width: $mobile-landscape-length) {
++    @media screen and (max-width: $mobile_landscape_length) {
+       height: $mobile-chat-height;
+     }
+     position: absolute;
+   }
+ 
+   .minimized-chats-flyout {
+-    border-radius: 4px;
++    border-radius: $zmchat-border-radius;
+     bottom: $bottom-gutter-height;
+-    box-shadow: 1px 3px 5px 3px rgba(0, 0, 0, 0.4);
++    //box-shadow: 1px 3px 5px 3px rgba(0, 0, 0, 0.4);
+     display: block;
+     position: absolute;
+     height: auto;
+     width: 130px;
+     .chat-head-chatroom,
+     .chat-head {
+-      border-radius: 4px;
++      border-radius: $zmchat-border-radius;
+       width: 130px;
+       height: 35px;
+       margin-bottom: 1px;
+@@ -1548,3 +1753,34 @@
+     z-index: 20;
+   }
+ }
++
++/* ZCS - New code added */
++.disabled {
++  opacity: 0.4;
++  filter: alpha(opacity=40); /* msie */
++}
++
++.custom-menu {
++  display: none;
++  z-index: 1000;
++  position: absolute;
++  overflow: hidden;
++  border: 1px solid #CCC !important;
++  white-space: nowrap;
++  font-family: sans-serif;
++  background: #FFF;
++  color: #333333;
++  padding: 10px;
++}
++
++/* Each of the items in the list */
++.custom-menu li {
++  padding: 5px 18px !important;
++  cursor: pointer;
++  list-style-type: none;
++  font-weight: normal;
++}
++
++.custom-menu li:hover {
++  background-color: #ADD8E6;
++}
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/sass/_variables.scss	2015-08-26 07:57:01.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/sass/_variables.scss	2015-08-26 07:57:01.000000000 -0500
+@@ -1,47 +1,60 @@
+-  $link-color: #436F64 !default;
+-  $inverse-link-color: white !default;
+-  $link-shadow-color: #FAFAFA !default;
+-  $text-shadow-color: #FAFAFA !default;
+-  $text-color: #6C4C44 !default;
+-  $border-color: #CCC !default;
+-  $warning-color: #681F2C !default;
+-  $light-background-border-color: #E5E9E8 !default;
+-  $light-background-color: beige !default;
+-  $icon-color: #114327 !default;
+-  $highlight-color: #E1E6E5 !default;
+-  $chat-head-color: #436F64 !default;
+-  $chatroom-head-color: #346121 !default;
+-  $chat-head-text-color: white !default;
+-  $chat-head-inverse-text-color: white !default;
+-  $chat-head-height: 44px !default;
+-  $save-button-color: #436F64 !default;
+-  $chat-textarea-height: 62px !default;
+-  $toolbar-height: 25px !default;
+-  $toolbar-color: beige !default;
+-  $message-them-color: #346121 !default;
+-  $roster-height: 194px !default;
+-  $controlbox-dropdown-height: 25px !default;
++  //START CONVERSE VARIABLES
++
++  $link-color: #005A95;
++  $inverse-link-color: white;
++  $link-shadow-color: #FAFAFA;
++  $text-shadow-color: #FAFAFA;
++  $text-color: #333333;
++  $border-color: #CCC; 
++  $warning-color: #681F2C;
++  $light-background-border-color: #F1DCD6;
++  $light-background-color: #F1E2DD;
++  $icon-color: #114327;
++  $highlight-color: #E3C9C1;
++  $chat-head-text-color: #D5D5D5;
++  $chat-head-inverse-text-color: #333333;
++  $chat-head-height: 32px;
++  $save-button-color: #436F64;
++  $chat-textarea-height: 36px;
++  $toolbar-height: 20px;
++  $message-them-color: #4B7003;
++  $roster-height: 194px;
++  $controlbox-dropdown-height: 25px;
++
++  $bottom-gutter-height: 32px;
+ 
+-  $bottom-gutter-height: 35px !default;
++  $mobile_landscape_length: 480px;
+ 
+-  $mobile_landscape_length: 480px !default;
++  $font-size: 14px;
++  $legend-font-size: 16px;
+ 
+-  $font-size: 14px !default;
+-  $legend-font-size: 16px !default;
++  $chatroom-width: 300px;
++  $chat-width: 200px;
++  $chat-height: 400px;
++  $chat-gutter: 7px;
+ 
+-  $chatroom-width: 300px !default;
+-  $chat-width: 200px !default;
+-  $chat-height: 400px !default;
+-  $chat-gutter: 7px !default;
++  $mobile-chat-width: 100%;
++  $mobile-chat-height: 400px;
++  
++  $controlbox-color: #0a0a0a;
+ 
+-  $mobile-chat-width: 100% !default;
+-  $mobile-chat-height: 400px !default;
+-  $small-mobile-chat-height: 300px !default;
++  // START ZIMBRA VARIABLES
+ 
+-  $font-path: "../fonticons/fonts/" !default;
++  $zmchat-highlight-color: #ADD8E6;
++  $zmchat-xmpp-status-logo: "\25fc";
++  $zmchat-textbox-width: 175px;
++  $zmchat-textbox-height: 25px;
++  $zmchat-button-width: 115px;
++  $zmchat-font-family: "Segoe UI","Lucida Sans",sans-serif;
++  $zmchat-border-radius: 4px;
+ 
+-  $box-close-button-padding-top: 3px !default;
+-  $box-close-button-padding-bottom: 3px !default;
+-  $box-close-button-padding-left: 2px !default;
+-  $box-close-button-padding-right: 3px !default;
+-  $box-close-font-size: 10px !default;
++  $zmchat-online-color: #00A651;
++  $zmchat-dnd-color: #ED1C24;
++  $zmchat-away-color: #F5BD00;
++  $zmchat-offline-color: #808080;
++  $zmchat-head-text-color: #939393;
++  $zmchat-accept-req-icon-color: #008000;
++  $zmchat-reject-req-icon-color: #FF0000;
++  $zmchat-send-chat-error-color: $zmchat-reject-req-icon-color;
++  
++  $input-field-border-color: #B2B2B2;
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/sass/converse.scss	2015-08-26 07:57:01.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/sass/converse.scss	2015-08-26 07:57:01.000000000 -0500
+@@ -6,6 +6,6 @@
+  * Licensed under the Mozilla Public License
+  */
+ 
+-@import "bourbon";
++@import "bourbon/_bourbon";
+ @import "variables";
+ @import "core";
