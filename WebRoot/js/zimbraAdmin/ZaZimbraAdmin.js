@@ -158,26 +158,21 @@ function(domain) {
         return;
     if(!DBG)
         DBG = new AjxDebug(AjxDebug.NONE, null, false);
-    //AjxEnv.hasFirebug = (AjxEnv.isFirefox && (typeof (console) != typeof (_UNDEFINED_)) && DBG && (DBG.getDebugLevel() > 0)) ; 
-        
     ZmCsfeCommand.setServerUri(location.protocol+"//" + domain + ZaSettings.CSFE_SERVER_URI);
     ZmCsfeCommand.setCookieName(ZaZimbraAdmin._COOKIE_NAME);
 
-    var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
-    soapDoc.setMethodAttribute("onerror", "continue");
-    
-    var domainInfoReq = soapDoc.set("GetDomainInfoRequest", null, null, ZaZimbraAdmin.URN);
-    var elBy = soapDoc.set("domain", location.hostname, domainInfoReq);
+    var soapDoc = AjxSoapDoc.create("GetDomainInfoRequest", ZaZimbraAdmin.URN, null);
+    var elBy = soapDoc.set("domain", location.hostname);
     elBy.setAttribute("by", "virtualHostname");
-    
+
     var command = new ZmCsfeCommand();
     var params = new Object();
-    params.soapDoc = soapDoc;    
+    params.soapDoc = soapDoc;
     params.noAuthToken = true;
     var resp;
     var isResend = false;
     try {
-        resp = command.invoke(params).Body.BatchResponse;        
+        resp = command.invoke(params).Body.GetDomainInfoResponse;
     } catch (ex) {
         if (ex.code == ZmCsfeException.SVC_AUTH_EXPIRED) {
           isResend = true;
@@ -188,17 +183,16 @@ function(domain) {
     if (isResend) {
         ZaZimbraAdmin.clearCookie();
         params.resend = true;
-        resp = command.invoke(params).Body.BatchResponse;
+        resp = command.invoke(params).Body.GetDomainInfoResponse;
     }
 
-    if(resp.GetDomainInfoResponse && resp.GetDomainInfoResponse[0]) {
-        var domainInfoResponse = resp.GetDomainInfoResponse[0];
-            var obj = {};
-            ZaItem.prototype.initFromJS.call(obj, domainInfoResponse.domain[0]);
-            ZaZimbraAdmin.zimbraAdminLoginURL = obj.attrs["zimbraAdminConsoleLoginURL"] ;
+    if(resp) {
+        var obj = {};
+        ZaItem.prototype.initFromJS.call(obj, resp.domain[0]);
+        ZaZimbraAdmin.zimbraAdminLoginURL = obj.attrs["zimbraAdminConsoleLoginURL"] ;
         if(obj.attrs["zimbraSkinLogoURL"]){
             ZaSettings.LOGO_URI = obj.attrs["zimbraSkinLogoURL"];
-        }    
+        }
     }
     // Create the global app context
     var appCtxt = new ZaAppCtxt();
@@ -382,59 +376,17 @@ function() {
 
     this._appViewMgr = new ZaAppViewMgr(this._shell, this, true);
     try {
-        //if we're not logged in we will be thrown out here
-        var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);    
-        var command = new ZmCsfeCommand();
-        var params = new Object();
-        params.soapDoc = soapDoc;    
-        params.noSession = true;
-        params.noAuthToken = true;
-        ZaZimbraAdmin.isFirstRequest = true;
-        var resp = command.invoke(params);
-        ZaZimbraAdmin.isFirstRequest = false;
-        //initialize my rights
-        ZaZimbraAdmin.initInfo (resp);
-
-        ZaServerVersionInfo.load();
-
-        //check the user locale settings and reload the message is needed.
-        ZaZimbraAdmin.LOCALE_QS = "" ;
-        if (ZaZimbraAdmin.LOCALE && (ZaZimbraAdmin.LOCALE != AjxEnv.DEFAULT_LOCALE)) {
-            if (ZaZimbraAdmin.LOCALE != null) {
-                var index = ZaZimbraAdmin.LOCALE.indexOf("_");
-                if (index == -1) {
-                    ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE;
-                } else {
-                    ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE.substring(0, index) +
-                               "&country=" + ZaZimbraAdmin.LOCALE.substring(ZaZimbraAdmin.LOCALE.length - 2);
-                }
-            }
-
-            ZaZimbraAdmin.reload_msg ();
-            this.initDialogs(true) ;  //make sure all the precreated dialogs are also recreated.
+        if(!window.csrfToken) {
+            //try refreshing the AuthToken, if we're not logged in we will be thrown out here
+            this._doAuth();
         }
-
-    if(ZaZimbraAdmin.isLanguage("ja")){
-        if(ZaAccountXFormView.CONTACT_TAB_ATTRS)
-                ZaAccountXFormView.CONTACT_TAB_ATTRS.push(ZaAccount.A_zimbraPhoneticCompany);
-
-        if(ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS)
-                ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS.push(ZaAccount.A_zimbraPhoneticFirstName, 
-                ZaAccount.A_zimbraPhoneticLastName);
-    }
- 
-        if(!ZaSettings.initialized)
-            ZaSettings.init();
-        else
-            ZaZimbraAdmin._killSplash();
-
     } catch (ex) {
         if(ex && ex.code != ZmCsfeException.NO_AUTH_TOKEN && ex.code != ZmCsfeException.SVC_AUTH_EXPIRED && ex.code != ZmCsfeException.SVC_AUTH_REQUIRED) {
             if(!ZaSettings.initialized)
                 ZaSettings.init();
             else
                 ZaZimbraAdmin._killSplash();
-        }                    
+        }
         this._handleException(ex, "ZaZimbraAdmin.prototype.startup", null, true);
     }
 }

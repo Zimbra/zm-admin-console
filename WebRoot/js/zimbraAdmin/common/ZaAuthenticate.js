@@ -54,16 +54,20 @@ ZaAuthenticate.prototype.execute =
 function (uname, pword, callback) {
     var soapDoc = AjxSoapDoc.create("AuthRequest", ZaZimbraAdmin.URN, null);
     this.uname = uname;
-    soapDoc.set("name", uname);
-    soapDoc.set("password", pword);
+    var params = new Object();
+    params.noAuthToken=true;
+    params.ignoreAuthToken = true;
+    if(uname && pword) {
+        soapDoc.set("name", uname);
+        soapDoc.set("password", pword);
+    } else {
+        soapDoc.getMethod().setAttribute("refresh", "1");
+    }
     soapDoc.set("virtualHost", location.hostname);
     soapDoc.set("csrfTokenSecured", 1);
     var command = new ZmCsfeCommand();
-    var params = new Object();
     params.soapDoc = soapDoc;
     params.asyncMode = true;
-    params.noAuthToken=true;
-    params.ignoreAuthToken = true;
     params.skipExpiredToken = true;
     params.callback = callback;
     command.invoke(params);

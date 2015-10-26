@@ -338,8 +338,7 @@ function(ex, method, params, restartOnError, obj) {
                 ex.code == ZmCsfeException.NO_AUTH_TOKEN ||
                 ex.code == ZmCsfeException.AUTH_TOKEN_CHANGED
              )
-        ) 
-    {
+        ) {
         try {
             ZmCsfeCommand.noAuth = true;
             if (ZaApp.getInstance() != null) 
@@ -360,10 +359,9 @@ function(ex, method, params, restartOnError, obj) {
             if ((!ZaZimbraAdmin.isFirstRequest &&  
                   (ex.code == ZmCsfeException.NO_AUTH_TOKEN ||
                    ex.code == ZmCsfeException.SVC_AUTH_REQUIRED ||
-                   ex.code == ZmCsfeException.SVC_AUTH_EXPIRED    
+                   ex.code == ZmCsfeException.SVC_AUTH_EXPIRED
                  ))
                ) {
-                this._loginDialog.disableUnameField();
                 this._loginDialog.setError(ZaMsg.ERROR_SESSION_EXPIRED);
             }
             this._loginDialog.clearPassword();
@@ -455,11 +453,13 @@ function(username, password) {
         this._hideLoginDialog();
         //show splash screen
         ZaZimbraAdmin.showSplash(this._shell);
-        var callback = new AjxCallback(this, this.authCallback);    
+        var callback = new AjxCallback(this, this.authCallback);
         this.auth = new ZaAuthenticate(this._appCtxt);
         this.auth.execute(username, password,callback);
     } catch (ex) {
-        if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || ex.code == ZmCsfeException.SVC_PERM_DENIED || ex.code == ZmCsfeException.SVC_FAILURE ) {
+        if(ex.code == ZmCsfeException.NO_AUTH_TOKEN) {
+            throw (ex);
+        } else if (ex.code == ZmCsfeException.ACCT_AUTH_FAILED || ex.code == ZmCsfeException.SVC_PERM_DENIED || ex.code == ZmCsfeException.SVC_FAILURE) {
             this._showLoginDialog(false);
             this._loginDialog.setError(ZaMsg.ERROR_AUTH_FAILED);
             return;
@@ -537,7 +537,9 @@ function (resp) {
             } else {
                 this._showLoginDialog(true);
                 //check for a more informative message
-                if(ex && ex.msg) {
+                if(ex && ex.code == ZmCsfeException.SVC_INVALID_REQUEST) {
+                    //do nothing
+                } else if(ex && ex.msg) {
                     this._loginDialog.setError(ex.msg);
                 } else {
                     this._loginDialog.setError(ZaMsg.SERVER_ERROR);
@@ -554,6 +556,53 @@ function (resp) {
                 window.csrfToken = body.AuthResponse.csrfToken._content;
             }
             ZmCsfeCommand.noAuth = false;
+
+            var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);    
+            var command = new ZmCsfeCommand();
+            var params = new Object();
+            params.soapDoc = soapDoc;    
+            params.noSession = true;
+            params.noAuthToken = true;
+            ZaZimbraAdmin.isFirstRequest = true;
+            var resp = command.invoke(params);
+            ZaZimbraAdmin.isFirstRequest = false;
+
+            //initialize my rights
+            ZaZimbraAdmin.initInfo (resp);
+
+            ZaServerVersionInfo.load();
+
+            //check the user locale settings and reload the message is needed.
+            ZaZimbraAdmin.LOCALE_QS = "" ;
+            if (ZaZimbraAdmin.LOCALE && (ZaZimbraAdmin.LOCALE != AjxEnv.DEFAULT_LOCALE)) {
+                if (ZaZimbraAdmin.LOCALE != null) {
+                    var index = ZaZimbraAdmin.LOCALE.indexOf("_");
+                    if (index == -1) {
+                        ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE;
+                    } else {
+                        ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE.substring(0, index) +
+                                   "&country=" + ZaZimbraAdmin.LOCALE.substring(ZaZimbraAdmin.LOCALE.length - 2);
+                    }
+                }
+
+                ZaZimbraAdmin.reload_msg ();
+                this.initDialogs(true) ;  //make sure all the precreated dialogs are also recreated.
+            }
+
+            if(ZaZimbraAdmin.isLanguage("ja")){
+                if(ZaAccountXFormView.CONTACT_TAB_ATTRS)
+                        ZaAccountXFormView.CONTACT_TAB_ATTRS.push(ZaAccount.A_zimbraPhoneticCompany);
+        
+                if(ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS)
+                        ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS.push(ZaAccount.A_zimbraPhoneticFirstName, 
+                        ZaAccount.A_zimbraPhoneticLastName);
+            }
+
+            if(!ZaSettings.initialized) {
+                ZaSettings.init();
+            } else {
+                ZaZimbraAdmin._killSplash();
+            }
 
             //Instrumentation code start
             if(ZaAuthenticate.processResponseMethods) {
