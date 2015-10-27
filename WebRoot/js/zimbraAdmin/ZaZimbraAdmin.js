@@ -122,10 +122,10 @@ ZaZimbraAdmin._DL_MEMBERS_LIST_VIEW = ZaZimbraAdmin.VIEW_INDEX++;
 // do not change the name of the cookie! SoapServlet looks for it
 ZaZimbraAdmin._COOKIE_NAME = "ZM_ADMIN_AUTH_TOKEN";
 ZaZimbraAdmin.TEST_COOKIE_NAME = "ZA_TEST";
-    
+
 // Public methods
 
-ZaZimbraAdmin.prototype.toString = 
+ZaZimbraAdmin.prototype.toString =
 function() {
     return "ZaZimbraAdmin";
 }
@@ -138,7 +138,7 @@ ZaZimbraAdmin.clearCookie = function () {
         var clearCookieCommand = new ZmCsfeCommand();
         var params = new Object();
         params.soapDoc = soapDoc;
-        params.skipExpiredToken = true;    
+        params.skipExpiredToken = true;
         params.asyncMode = false;
         params.noAuthToken = true;
         clearCookieCommand.invoke(params);
@@ -190,7 +190,7 @@ function(domain) {
         var obj = {};
         ZaItem.prototype.initFromJS.call(obj, resp.domain[0]);
         ZaZimbraAdmin.zimbraAdminLoginURL = obj.attrs["zimbraAdminConsoleLoginURL"] ;
-        if(obj.attrs["zimbraSkinLogoURL"]){
+        if(obj.attrs["zimbraSkinLogoURL"]) {
             ZaSettings.LOGO_URI = obj.attrs["zimbraSkinLogoURL"];
         }
     }
@@ -200,10 +200,10 @@ function(domain) {
     // Create the shell
     var userShell = window.document.getElementById(ZaSettings.get(ZaSettings.SKIN_SHELL_ID));
     var shell = new DwtShell({userShell:userShell});
-    appCtxt.setShell(shell);    
-    
-    /* Register our keymap and global key action handler with the shell's keyboard manager 
-     * CURRENTLY use $set: kbnav. 
+    appCtxt.setShell(shell);
+
+    /* Register our keymap and global key action handler with the shell's keyboard manager
+     * CURRENTLY use $set: kbnav.
      */
     this._kbMgr = shell.getKeyboardMgr();
     this._kbMgr.enable(true);
@@ -227,24 +227,23 @@ ZaZimbraAdmin.prototype.handleKeyAction = function () {
             alert("Setting domain search limit to:" + AjxDebug.NONE);
             DBG.setDebugLevel(AjxDebug.NONE);
             break;
-            
+
         case ZaKeyMap.DBG_1:
                         alert("Setting domain search limit to:" + AjxDebug.DBG1);
             DBG.setDebugLevel(AjxDebug.DBG1);
             break;
-            
+
         case ZaKeyMap.DBG_2:
             alert("Setting domain search limit to:" + AjxDebug.DBG2);
             DBG.setDebugLevel(AjxDebug.DBG2);
             break;
-            
+
         case ZaKeyMap.DBG_3:
             alert("Setting domain search limit to:" + AjxDebug.DBG3);
             DBG.setDebugLevel(AjxDebug.DBG3);
             break;
-            
+
         default: {
-            
             if (ZaApp.getInstance() && ZaApp.getInstance().getCurrentController()) {
                 var c = ZaApp.getInstance().getCurrentController();
                 if (c && c.handleKeyAction)
@@ -273,10 +272,10 @@ ZaZimbraAdmin.getInstance = function() {
 */
 ZaZimbraAdmin.prototype.getApp =
 function() {
-    return this._app;    
+    return this._app;
 }
 
-ZaZimbraAdmin.prototype.getAdminApp = 
+ZaZimbraAdmin.prototype.getAdminApp =
 function() {
     return this._app;
 }
@@ -329,14 +328,14 @@ ZaZimbraAdmin.logOff =
 function() {
     ZmCsfeCommand.noAuth = true;
     window.onbeforeunload = null;
-    
+
     // NOTE: Mozilla sometimes handles UI events while the page is
     //       unloading which references classes and objects that no
     //       longer exist. So we put up the busy veil and reload
     //       after a short delay.
     var shell = DwtShell.getShell(window);
     shell.setBusy(true);
-    
+
     var locationStr = location.protocol + "//" + location.hostname
             + ((location.port == '80') ? "" : ":" +location.port)
             + location.pathname
@@ -353,21 +352,21 @@ function() {
 }
 
 ZaZimbraAdmin.redir =
-function(locationStr){
+function(locationStr) {
     window.location = locationStr;
 }
 // This function must be called after ZaZimbraAdmin.initInfo() is called.
 ZaZimbraAdmin.isLanguage =
-function(lang){
+function(lang) {
     var defaultLang = null;
     //if user have set its pref, just use user's seting
-    //else use brower's setting 
-    if(ZaZimbraAdmin.LOCALE == null){
-        defaultLang = AjxEnv.DEFAULT_LOCALE; 
+    //else use brower's setting
+    if(ZaZimbraAdmin.LOCALE == null) {
+        defaultLang = AjxEnv.DEFAULT_LOCALE;
     }else{
-        defaultLang = ZaZimbraAdmin.LOCALE; 
+        defaultLang = ZaZimbraAdmin.LOCALE;
     }
-    
+
     return defaultLang == lang;
 }
 // Start up the ZimbraMail application
@@ -428,10 +427,10 @@ function (resp) {
                 ZaSettings.myDomainName = emailChunks[1];
             }
         }
-        
+
         ZaZimbraAdmin.currentAdminId = resp.Body.GetInfoResponse.id;
-        
-        if (resp.Body.GetInfoResponse.attrs){
+
+        if (resp.Body.GetInfoResponse.attrs) {
             if(resp.Body.GetInfoResponse.attrs.attr && resp.Body.GetInfoResponse.attrs.attr instanceof Array) {
                 var attrsArr = resp.Body.GetInfoResponse.attrs.attr;
                 for ( var i=0; i < attrsArr.length; i ++) {
@@ -444,15 +443,15 @@ function (resp) {
                 }
             } else if (resp.Body.GetInfoResponse.attrs._attrs && typeof(resp.Body.GetInfoResponse.attrs._attrs) == "object") {
                 var attrsArr = resp.Body.GetInfoResponse.attrs._attrs;
-                if(attrsArr["displayName"] && attrsArr["displayName"].length) 
+                if(attrsArr["displayName"] && attrsArr["displayName"].length) {
                     ZaZimbraAdmin.currentUserName = attrsArr["displayName"];
-    
+                }
             }
-            //fallback to email address    
-            if (!ZaZimbraAdmin.currentUserName || ZaZimbraAdmin.currentUserName.length <=0){
+            //fallback to email address
+            if (!ZaZimbraAdmin.currentUserName || ZaZimbraAdmin.currentUserName.length <=0) {
                 ZaZimbraAdmin.currentUserName = ZaZimbraAdmin.currentUserLogin;
             }
-    
+
             if (resp && resp.Body && resp.Body.GetInfoResponse && resp.Body.GetInfoResponse.prefs) {
                 var prefs = resp.Body.GetInfoResponse.prefs._attrs ;
                 if (prefs && prefs["zimbraPrefLocale"]) {
@@ -473,19 +472,19 @@ function (resp) {
 }
 
 ZaZimbraAdmin.prototype._setLicenseStatusMessage = function () {
-    if ((typeof ZaLicense == "function") && (ZaSettings.LICENSE_ENABLED)){
+    if ((typeof ZaLicense == "function") && (ZaSettings.LICENSE_ENABLED)) {
         ZaLicense.setLicenseStatus(this);
-    } 
+    }
 }
 
-ZaZimbraAdmin.prototype.setStatusMsg = 
+ZaZimbraAdmin.prototype.setStatusMsg =
 function(msg, clear) {
     if(!ZaSettings.STATUS_ENABLED) {
         return;
     }
 }
 
-ZaZimbraAdmin.prototype.clearStatus = 
+ZaZimbraAdmin.prototype.clearStatus =
 function() {
     if(!ZaSettings.STATUS_ENABLED) {
         return;
@@ -553,23 +552,23 @@ function () {
 ZaZimbraAdmin.prototype._refreshListener =
 function(ev) {
     var curController = ZaApp.getInstance().getCurrentController();
-    if (AjxUtil.isInstance(curController, ZaHelpViewController)){
+    if (AjxUtil.isInstance(curController, ZaHelpViewController)) {
         return; //don't refresh help
     }
 
     var tree = ZaZimbraAdmin.getInstance().getOverviewPanelController().getOverviewPanel().getFolderTree();
-    if(AjxUtil.isEmpty(tree)){
+    if(AjxUtil.isEmpty(tree)) {
         return;
     }
 
     var curItems = tree.getCurrentSelectedItems().getArray();
-    if(AjxUtil.isEmpty(curItems) || AjxUtil.isEmpty(curItems[0])){
+    if(AjxUtil.isEmpty(curItems) || AjxUtil.isEmpty(curItems[0])) {
         return;
     }
 
     var curItem = curItems[0];
     var curPath = tree.getABPath(curItem.getData("dataItem"));
-    if(AjxUtil.isEmpty(curPath)){
+    if(AjxUtil.isEmpty(curPath)) {
         return;
     }
 
@@ -654,7 +653,7 @@ function(menu) {
     //assume 5.5px per letter
     var maxNumberOfLetters = Math.floor((itemW - 30)/5.5);
     var text = ZaApp.getInstance().getCurrentController()._helpButtonText;
-    if (maxNumberOfLetters < text.length){ //set the new text
+    if (maxNumberOfLetters < text.length) { //set the new text
         text = text.substring(0, (maxNumberOfLetters - 3)) + "...";
     }
 
@@ -711,30 +710,30 @@ function() {
     }
     var dwLabel = new DwtComposite (this._shell, "DWContainer", Dwt.RELATIVE_STYLE);
     var listener = new AjxListener(this, this._dwListener);
-    
+
     //AjxTK addListener doesn't seem to work
     var adminObj = this ;
-    dwLabel.getHtmlElement().onclick = function () { ZaZimbraAdmin.prototype._dwListener.call(adminObj) ;};
-    dwLabel.setCursor ("pointer") ;
-    
-    dwLabel.getHtmlElement().innerHTML = 
+    dwLabel.getHtmlElement().onclick = function () { ZaZimbraAdmin.prototype._dwListener.call(adminObj); };
+    dwLabel.setCursor("pointer");
+
+    dwLabel.getHtmlElement().innerHTML =
         this._getAppLink(null, "Migration",  ZaMsg.goToMigrationWiz, skin.skin_container_dw_max_str_length);
-    
-    dwLabel.reparentHtmlElement (ZaSettings.SKIN_DW_DOM_ID) ;
+
+    dwLabel.reparentHtmlElement (ZaSettings.SKIN_DW_DOM_ID);
 }
 
 ZaZimbraAdmin.prototype._setUserName =
 function () {
-    var userNameContainer = document.getElementById(ZaSettings.SKIN_USER_NAME_ID) ;
+    var userNameContainer = document.getElementById(ZaSettings.SKIN_USER_NAME_ID);
     if(!userNameContainer) {
         return;
     }
-        
+
     if(!ZaZimbraAdmin.currentUserName) {
         return;
     }
-    
-    var dwLabel = new DwtLabel(this._shell, "", "", Dwt.RELATIVE_STYLE);    
+
+    var dwLabel = new DwtLabel(this._shell, "", "", Dwt.RELATIVE_STYLE);
 
     var tmpName = AjxStringUtil.htmlEncode(ZaZimbraAdmin.currentUserName);
 
@@ -783,7 +782,7 @@ function () {
 
 ZaZimbraAdmin.prototype._helpListener =
 function(ev) {
-    //DBG.println(AjxDebug.DBG1, "Help is clicked ...") ;
+    //DBG.println(AjxDebug.DBG1, "Help is clicked ...");
     var acctName = ZaZimbraAdmin.currentUserLogin;
     var domainName = acctName.split('@')[1];
     var domain = ZaDomain.getDomainByName(domainName);
@@ -799,7 +798,7 @@ function(ev) {
         }
     }
     //skin takes the zimbraHelpAdminURL and put it into the skin hints
-    var helpButton = skin && skin.hints && skin.hints.helpButton;      
+    var helpButton = skin && skin.hints && skin.hints.helpButton;
     if (helpButton && helpButton.url) {
         var sep = helpButton.url.match(/\?/) ? "&" : "?";
         var url = [ helpButton.url, sep, "locid=", AjxEnv.DEFAULT_LOCALE ].join("");
@@ -809,18 +808,18 @@ function(ev) {
 
     if(ZaApp.getInstance().getCurrentController()) {
         ZaApp.getInstance().getCurrentController().switchToNextView(ZaApp.getInstance().getHelpViewController(), ZaHelpViewController.prototype.show, null);
-    } else {                    
+    } else {
         ZaApp.getInstance().getHelpViewController().show();
     }
 
 }
 
-ZaZimbraAdmin.prototype._dwListener = 
+ZaZimbraAdmin.prototype._dwListener =
 function (ev) {
-    //DBG.println(AjxDebug.DBG1, "Download is clicked ...") ;
+    //DBG.println(AjxDebug.DBG1, "Download is clicked ...");
     if(ZaApp.getInstance().getCurrentController()) {
         ZaApp.getInstance().getCurrentController().switchToNextView(ZaApp.getInstance().getMigrationWizController(), ZaMigrationWizController.prototype.show, null);
-    } else {                    
+    } else {
         ZaApp.getInstance().getMigrationWizController().show();
     }
 }
@@ -891,12 +890,12 @@ ZaZimbraAdmin.prototype._getLoginMsgPanel = function () {
 ZaZimbraAdmin.prototype.closeLoginMsg = function () {
     //hide the login msg skin component
 //    this._loginMsgPanel.setVisible(false)  ;
-    var loginMsgPanelId = this._loginMsgPanel.getHTMLElId() ;
-    Dwt.hide(loginMsgPanelId) ;
-    skin.hideLoginMsg() ;
+    var loginMsgPanelId = this._loginMsgPanel.getHTMLElId();
+    Dwt.hide(loginMsgPanelId);
+    skin.hideLoginMsg();
 
     //resize the components
-    var appViewMgr = ZaApp.getInstance ().getAppViewMgr () ;
+    var appViewMgr = ZaApp.getInstance ().getAppViewMgr ();
     /*var list = [//ZaAppViewMgr.C_LOGIN_MESSAGE,
                 ZaAppViewMgr.C_CURRENT_APP, ZaAppViewMgr.C_APP_TABS,
                 ZaAppViewMgr.C_TREE,ZaAppViewMgr.C_SASH,
@@ -905,7 +904,7 @@ ZaZimbraAdmin.prototype.closeLoginMsg = function () {
     appViewMgr._stickToGrid(list);
      */
     appViewMgr.fitAll();
-    
+
 }
 
 //set the html content for logoff, help and download
@@ -916,7 +915,7 @@ function(staticFunc, icon, lbl, max_lbl_length) {
     var html = [];
     var i = 0;
     html[i++] = "<table border=0 cellpadding=1 cellspacing=1 align=right><tr>";
-    
+
     //html[i++] = "<td align=right><a  href='javascript:;'";
     html[i++] = "<td align=right><span ";
     if (staticFunc) {
@@ -946,7 +945,7 @@ function(staticFunc, icon, lbl, max_lbl_length) {
     html[i++] = ">";
     html[i++] = lbl;
     html[i++] = "</span></td></tr></table>";
-    
+
     //var cell = document.getElementById(id);
     //if (cell) cell.innerHTML = html.join("");
     return html.join("");
@@ -1007,7 +1006,6 @@ function(shell) {
 ZaZimbraAdmin.prototype._createApp =
 function() {
     this._app = ZaApp.getInstance(this._appCtxt, this._shell);
-        
 }
 
 ZaZimbraAdmin.prototype.getHisotryMgr =
@@ -1032,7 +1030,7 @@ function() {
     ZaSettings.BANNER_ENABLED = (document.getElementById(ZaSettings.SKIN_LOGO_DOM_ID)!=null);
     ZaSettings.STATUS_ENABLED = (document.getElementById(ZaSettings.SKIN_STATUS_ID)!=null);
     ZaSettings.SEARCH_PANEL_ENABLED = (document.getElementById(ZaSettings.SKIN_SEARCH_PANEL_ID)!=null);
-    
+
     //console.log("Launching ZimbraAdmin Application ....") ;
     if (!this._app)
         this._createApp();
@@ -1044,32 +1042,32 @@ function() {
     this._appCtxt.setClientCmdHdlr(new ZaClientCmdHandler());
     //draw stuff
     var elements = new Object();
-        
+
     //elements[ZaAppViewMgr.C_APP_CHOOSER] = this._createAppChooser();
-    
+
 
 
     // the outer element of the entire skin is hidden until this point
     // so that the skin won't flash (become briefly visible) during app loading
-    if (skin && skin.show){
-        skin.show(true);    
+    if (skin && skin.show) {
+        skin.show(true);
         //hide the advanced search builder at the beginning
-        skin.showSearchBuilder(false);  
-    }    
+        skin.showSearchBuilder(false);
+    }
 
     //add logoff
     this._createLogOff();
     this._createHelpLink();
     this._createDownloadLink() ;
     this._setUserName() ;
-    
+
     if(ZaSettings.BANNER_ENABLED) {
         elements[ZaAppViewMgr.C_BANNER] = this._createBanner();
     }
     if(ZaSettings.STATUS_ENABLED) {
         elements[ZaAppViewMgr.C_STATUS] = this._statusBox = new DwtText(this._shell, "statusBox", Dwt.ABSOLUTE_STYLE);
         this.clearStatus();
-        this._setLicenseStatusMessage();    
+        this._setLicenseStatusMessage();
     }
     if(ZaSettings.SEARCH_PANEL_ENABLED) {
         this._createActionStatus();
@@ -1085,8 +1083,8 @@ function() {
     if(ZaSettings.SEARCH_PANEL_ENABLED) {
         elements[ZaAppViewMgr.C_SEARCH] = ZaApp.getInstance().getSearchListController().getSearchPanel();
     }
-       
-       if(document.getElementById (ZaSettings.SKIN_SEARCH_BUILDER_APP_SASH_ID) != null){
+
+       if(document.getElementById (ZaSettings.SKIN_SEARCH_BUILDER_APP_SASH_ID) != null) {
             elements[ZaAppViewMgr.C_SEARCH_BUILDER_SASH] = new DwtSash({parent:this._shell, style: DwtSash.VERTICAL_STYLE, className: "AppSash-vert", threshod:20, id:"z_sb_sash"});
     }
 
@@ -1097,7 +1095,7 @@ function() {
         elements[ZaAppViewMgr.C_CURRENT_APP] = new ZaCurrentAppToolBar(this._shell);
     }
     this._appViewMgr.addComponents(elements, true);
-    
+
     ZaApp.getInstance().launch();
 
      ZaZimbraAdmin._killSplash();
@@ -1119,11 +1117,11 @@ function(historyObject, isAddHistory) {
 ZaZimbraAdmin.prototype.refreshHistoryTreeByDelete = function(items) {
     var itemArray = AjxUtil.toArray(items);
     var refresh = false;
-    for(var i = 0 ; i <  itemArray.length; i++){
+    for(var i = 0 ; i <  itemArray.length; i++) {
         var itemName = itemArray[i].name;
 
         var historys = this._historyMgr.findHistoryByName(itemName);
-        for(var j = 0; j< historys.size(); j++){
+        for(var j = 0; j< historys.size(); j++) {
             historys.get(j).setEnabled(false);
             refresh = true;
         }
@@ -1168,7 +1166,7 @@ function() {
 
     // the outer element of the entire skin is hidden until this point
     // so that the skin won't flash (become briefly visible) during app loading
-    if (skin && skin.show){
+    if (skin && skin.show) {
         skin.show(true);
     }
 
@@ -1217,7 +1215,7 @@ ZaZimbraAdmin.prototype.cancelNoOp = function() {
     if(ZaZimbraAdmin.noOpHandler) {
         AjxTimedAction.cancelAction(this.noOpHandler);
         ZaZimbraAdmin.noOpHandler = null;
-    }    
+    }
 }
 
 ZaZimbraAdmin.prototype.scheduleNoOp = function() {
@@ -1232,7 +1230,7 @@ ZaZimbraAdmin.prototype.sendNoOp = function () {
         var soapDoc = AjxSoapDoc.create("NoOpRequest", ZaZimbraAdmin.URN, null);
         var noOpCommand = new ZmCsfeCommand();
         var params = new Object();
-        params.soapDoc = soapDoc;    
+        params.soapDoc = soapDoc;
         params.asyncMode = false;
         params.noAuthToken = true;
         noOpCommand.invoke(params);
@@ -1258,7 +1256,7 @@ function() {
     //check whether all the tabs are clean by close them
     var msg = ZaMsg.appExitWarning ;
     var tabTitles = ZaAppTabGroup.getDirtyTabTitles() ;
-    if ( tabTitles.length > 0 ){
+    if ( tabTitles.length > 0 ) {
         msg = ZaMsg.appExitWarningWithDirtyTab + "\n" + tabTitles.join("\n");
     }
     return msg;
@@ -1271,9 +1269,9 @@ function () {
 }
 
 
-ZaZimbraAdmin.setOnbeforeunload = 
+ZaZimbraAdmin.setOnbeforeunload =
 function(msg) {
-    if (msg){
+    if (msg) {
         window.onbeforeunload = msg;
     }else{
         window.onbeforeunload = null;
