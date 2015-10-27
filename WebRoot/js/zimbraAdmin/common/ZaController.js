@@ -650,20 +650,20 @@ function(uname, oldPass, newPass, conPass) {
     try {
         if(ZaController.changePwdCommand)
             return;
-            
+
         ZaController.changePwdCommand = new ZmCsfeCommand();
         resp = ZaController.changePwdCommand.invoke({soapDoc: soapDoc, noAuthToken: true, ignoreAuthToken: true,  noSession: true}).Body.ChangePasswordResponse;
-        
+
         if (resp) {
             this._loginDialog.clearError();
              this._loginDialog.enableUnameField();
             this._loginDialog.enablePasswordField();
             this._loginDialog.hideNewPasswordFields();
             ZaZimbraAdmin.showSplash(this._shell);
-            var callback = new AjxCallback(this, this.authCallback);    
+            var callback = new AjxCallback(this, this.authCallback);
             this.auth = new ZaAuthenticate(this._appCtxt);
             this.auth.execute(uname, newPass,callback);
-        }        
+        }
     } catch (ex) {
         ZaController.changePwdCommand = null;
         //DBG.dumpObj(ex);
