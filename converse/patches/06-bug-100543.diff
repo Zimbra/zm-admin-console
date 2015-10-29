@@ -1,0 +1,11 @@
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/converse.js	2015-08-07 23:29:13.000000000 -0500
++++ /Users/rshah/projects/p4/chat/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.1/converse.js	2015-08-07 23:29:13.000000000 -0500
+@@ -1032,7 +1032,7 @@
+                     .html(converse.templates.chatbox(
+                             _.extend(this.model.toJSON(), {
+                                     show_toolbar: converse.show_toolbar,
+-                                    label_personal_message: __('Personal message')
++                                    label_personal_message: ZmMsg.chatTypeMessage
+                                 }
+                             )
+                         )

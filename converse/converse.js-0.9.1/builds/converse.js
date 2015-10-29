@@ -12905,13 +12905,13 @@ __p+='\n                    '+
  if (url) { 
 __p+='\n                </a>\n            ';
  } 
-__p+='\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n            ';
+__p+='\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n			<div class="chat-textarea-divider"></div>\n			<textarea\n					type="text"\n					class="chat-textarea"\n					placeholder="'+
+((__t=(label_personal_message))==null?'':__t)+
+'"/>\n			';
  if (show_toolbar) { 
 __p+='\n                <ul class="chat-toolbar no-text-select"></ul>\n            ';
  } 
-__p+='\n        <textarea\n            type="text"\n            class="chat-textarea"\n            placeholder="'+
-((__t=(label_personal_message))==null?'':__t)+
-'"/>\n        </form>\n    </div>\n</div>\n';
+__p+='\n\n        </form>\n    </div>\n</div>\n';
 }
 return __p;
 }; });
@@ -13036,7 +13036,7 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<div class="box-flyout" style="height: '+
 ((__t=(height))==null?'':__t)+
-'px">\n    <div class="hidden dragresize dragresize-tm"></div>\n    <div class="chat-head controlbox-head">\n        <div id="controlbox-tabs"></div>                \n    </div>\n    <div class="controlbox-panes">\n    </div>\n    <div class="add-contact-flyout" style="display: none;">\n    	<div>\n    		<div class="flyout-heading">\n    			<span>Add Contact</span>\n    			<span class="add-contact-flyout-close">x</span>\n    		</div>    		\n    		<form class="add-contact-form">\n				<div>\n					<label for="email">Email</label>\n					<input type="email" id="email" placeholder="e.g. user@example.com"/>\n				</div>\n				<div>\n					<label for="display">Display</label>\n					<input type="text" id="display" placeholder="Alias or display name"/>\n				</div>\n				<div class="button">\n					<hr>\n					<button>Add</button>\n				</div>\n    		</form>\n    	</div>\n    </div>\n    <div class="search-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Search Contacts</span>\n                <span class="search-contact-flyout-close">x</span>\n            </div>\n            <form class="search-contact-form">\n                <div>                    \n                    <input type="text" id="search" placeholder="Type text to search"/>\n                </div>\n            </form>\n        </div>\n        \n        <dl class="search-converse-contact" style="display:none">\n            <span class="searchedContactCount group-toggle"></span>\n            <dd class="zmsearch-xmpp"></dd>\n        </dl>\n    </div>\n</div>\n';
+'px">\n    <div class="hidden dragresize dragresize-tm"></div>\n    <div class="chat-head controlbox-head">\n        <div id="controlbox-tabs"></div>                \n    </div>\n    <div class="controlbox-panes">\n    </div>\n    <div class="add-contact-flyout" style="display: none;">\n    	<div>\n    		<div class="flyout-heading">\n    			<span>Add Contact</span>\n    			<span class="add-contact-flyout-close">x</span>\n    		</div>    		\n    		<form class="add-contact-form">\n				<div>\n					<label for="email">Email</label>\n					<input type="email" id="email" placeholder="e.g. user@example.com"/>\n				</div>\n				<div>\n					<label for="display">Display</label>\n					<input type="text" id="display" placeholder="Alias or display name"/>\n				</div>\n				<div class="button">\n					<hr>\n					<button class="addContact">Add</button>\n				</div>\n    		</form>\n    	</div>\n    </div>\n    <div class="search-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Search Contacts</span>\n                <span class="search-contact-flyout-close">x</span>\n            </div>\n            <form class="search-contact-form">\n                <div>                    \n                    <input type="text" id="search" placeholder="Type text to search"/>\n                </div>\n            </form>\n        </div>\n        \n        <dl class="search-converse-contact" style="display:none">\n            <span class="searchedContactCount group-toggle"></span>\n            <dd class="zmsearch-xmpp"></dd>\n        </dl>\n    </div>\n</div>\n';
 }
 return __p;
 }; });
@@ -13595,7 +13595,7 @@ return __p;
 define('tpl!roster', [],function () { return function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<span class="input-button-group">\n    <input style="display: none;" class="roster-filter" placeholder="'+
+__p+='<span class="input-button-group" style="display: none;">\n    <input style="display: none;" class="roster-filter" placeholder="'+
 ((__t=(placeholder))==null?'':__t)+
 '">\n    <select style="display: none;" class="filter-type">\n        <option value="contacts">'+
 ((__t=(label_contacts))==null?'':__t)+
@@ -13624,11 +13624,13 @@ __p+='<a class="open-chat" title="Name: '+
 ((__t=(fullname))==null?'':__t)+
 '</a>\n';
  if (allow_contact_removal) { 
-__p+='\n<a class="remove-xmpp-contact icon-remove" title="'+
+__p+='\n<a class="alter-menu-xmpp-contact icon-more-options" title="'+
 ((__t=(desc_remove))==null?'':__t)+
 '" href="#"></a>\n';
  } 
-__p+='\n';
+__p+='\n<ul class="custom-menu" data-jid="'+
+((__t=(jid))==null?'':__t)+
+'">\n	<li class="renameContact">Rename Contact</li>\n	<li class="removeContact">Remove Contact</li>\n</ul>';
 }
 return __p;
 }; });
@@ -35737,7 +35739,7 @@ define("converse-dependencies", [
                     .html(converse.templates.chatbox(
                             _.extend(this.model.toJSON(), {
                                     show_toolbar: converse.show_toolbar,
-                                    label_personal_message: __('Personal message')
+                                    label_personal_message: ZmMsg.chatTypeMessage
                                 }
                             )
                         )
@@ -35802,7 +35804,7 @@ define("converse-dependencies", [
                 }
                 var message = template({
                     'sender': msg_dict.sender,
-                    'time': msg_time.format('hh:mm'),
+					'time': msg_time.format('hh:mma').slice(0,-1), //TODO handle locale specific formats here.
                     'username': username,
                     'message': '',
                     'extra_classes': extra_classes
@@ -36134,7 +36136,9 @@ define("converse-dependencies", [
 
             onChatStatusChanged: function (item) {
                 var chat_status = item.get('chat_status'),
-                    fullname = item.get('fullname');
+                    fullname = item.get('fullname'),
+                    elChatTitle = this.$el.find('.chat-title>span');
+                    
                 fullname = _.isEmpty(fullname)? item.get('jid'): fullname;
                 if (this.$el.is(':visible')) {
                     if (chat_status === 'offline') {
@@ -36147,8 +36151,13 @@ define("converse-dependencies", [
                         this.$el.find('div.chat-event').remove();
                     }
                 }
-				//this.$el.find('.chat-title>span').removeClass().addClass('icon-' + chat_status);
-                converse.emit('contactStatusChanged', item.attributes, item.get('chat_status'));
+
+                // Fix for Bug: 100630 - IM broken
+                /* Emit contactStatusChanged only if the chatbox is rendered. Else breaks IM functionality. */
+                if (elChatTitle) {
+				    elChatTitle.removeClass().addClass('icon-' + chat_status);
+                    converse.emit('contactStatusChanged', item.attributes, item.get('chat_status'));
+                }
             },
 
             onStatusChanged: function (item) {
@@ -36924,7 +36933,7 @@ define("converse-dependencies", [
             },
 
             /**
-             * Adds contacts to the roster based on form input.
+             * Add/Update contacts to the roster based on form input.
              * 
              * @param   {object}      ev        the event object
              */ 
@@ -36940,8 +36949,34 @@ define("converse-dependencies", [
                     $email.addClass('error');
                     return;
                 }
+
+                var addContactPanel = $('.add-contact-flyout'),
+                    button = addContactPanel.find('button'),
+                    formHeading = $('.flyout-heading').children().first();
+
                 this.closeAddContactForm();
-                this.addContact(jid, $displayName.val());
+
+                // Update display name of the already added contact
+                if (button.hasClass('renameContact')) {
+                    button.html(ZmMsg.chatAddContactButton);
+                    formHeading.html(ZmMsg.chatAddContactFormHeading);
+                    button.removeClass().addClass('addContact');
+
+                    $email.removeAttr('disabled');
+                    var connectionItem = converse.connection.roster.findItem(jid);
+                    if (connectionItem && connectionItem.subscription === "both") {
+                        converse.connection.roster.update(jid, $displayName.val(), [], null);
+
+                        var contact = converse.roster.get(jid);
+                        if (contact) {
+                            contact.attributes.fullname = $displayName.val();
+                            converse.getVCard(contact.get('jid'));
+                        }
+                    }
+                }
+                else {
+                    this.addContact(jid, $displayName.val());
+                }
             },
 
             /**
@@ -37978,6 +38013,16 @@ define("converse-dependencies", [
                      * the user, then a chat box is created here which then
                      * opens automatically :(
                      */
+
+                    /* 
+                        Fix for Bug: 100630 - This is fixed in converse version 0.9.2
+                        Note - The below if block need not be migrated as part of the
+                        refactor process since this was fixed as a part of converse v0.9.2.
+                    */
+                    if ($message.find('body').length === 0) {
+                        return true;
+                    }
+
                     var fullname = roster_item.get('fullname');
                     fullname = _.isEmpty(fullname)? contact_jid: fullname;
                     chatbox = this.create({
@@ -37986,7 +38031,8 @@ define("converse-dependencies", [
                         'fullname': fullname,
                         'image_type': roster_item.get('image_type'),
                         'image': roster_item.get('image'),
-                        'url': roster_item.get('url')
+                        'url': roster_item.get('url'),
+                        'chat_status': roster_item.get('chat_status')
                     });
                 }
                 if (msgid && chatbox.messages.findWhere({msgid: msgid})) {
@@ -39414,7 +39460,6 @@ define("converse-dependencies", [
                 "click #fancy-xmpp-status-select a.change-xmpp-status-message": "renderStatusChangeForm",
                 "submit #set-custom-xmpp-status": "setStatusMessage",
                 "click .dropdown dd ul li a": "setStatus",
-                "click span.icon-plus": "toggleContactForm", // ZCS - toggles display of add contact form
                 "click span.icon-search": "toggleSearchForm"
             },
 
@@ -39542,33 +39587,6 @@ define("converse-dependencies", [
                     }));
             },
 
-            /**
-             * Show/hide add contact form.
-             * 
-             * @param   {object}      ev        the event object
-             */
-            toggleContactForm: function (ev) {
-                ev.preventDefault();
-
-                var plusIcon = $('.icon-plus');
-
-                if (plusIcon.attr("disabled") == "disabled") {
-                    return;
-                }
-                
-                var addContactPanel = $('.add-contact-flyout'),
-                    controlboxPane = $('.controlbox-panes'),
-                    searchContactPanel = $('.search-contact-flyout'),
-                    emailField = addContactPanel.find('#email'),
-                    displayField = addContactPanel.find('#display');
-
-                controlboxPane.hide();
-                searchContactPanel.hide();
-                addContactPanel.show();
-                plusIcon.attr("disabled","disabled");
-                plusIcon.addClass('disabled');
-                emailField[0].focus();
-            },
 
             /**
              * Show/hide search contact form.
@@ -40589,10 +40607,6 @@ require.config({
         "typeahead":                "components/typeahead.js/index",
         "underscore":               "components/underscore/underscore",
         "utils":                    "src/utils",
-        "strophe.jingle":           "src/strophe.jingle",
-        "strophe.jingle.adapter":   "components/strophe.jingle/strophe.jingle.adapter",
-        "strophe.jingle.sdp":       "components/strophe.jingle/strophe.jingle.sdp",
-        "strophe.jingle.session":   "components/strophe.jingle/strophe.jingle.session",
 
         // Off-the-record-encryption
         "bigint":               "src/bigint",
@@ -40719,8 +40733,7 @@ require.config({
         'strophe.disco':        { deps: ['strophe'] },
         'strophe.register':     { deps: ['strophe'] },
         'strophe.roster':       { deps: ['strophe'] },
-        'strophe.vcard':        { deps: ['strophe'] },
-        'strophe.jingle':       { deps: ['strophe'] }
+        'strophe.vcard':        { deps: ['strophe'] }
     }
 });
 

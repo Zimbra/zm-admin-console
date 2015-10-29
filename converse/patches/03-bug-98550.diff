@@ -5,7 +5,7 @@
                  var message = template({
                      'sender': msg_dict.sender,
 -                    'time': msg_time.format('hh:mm'),
-+                    'time': msg_time.format('hh:mm a'),
++                    'time': msg_time.format('hh:mma').slice(0,-1), //TODO handle locale specific formats here.,
                      'username': username,
                      'message': '',
                      'extra_classes': extra_classes

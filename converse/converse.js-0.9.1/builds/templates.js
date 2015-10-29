@@ -124,13 +124,13 @@ __p += '\n                    ' +
  if (url) { ;
 __p += '\n                </a>\n            ';
  } ;
-__p += '\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n            ';
+__p += '\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n\t\t\t<div class="chat-textarea-divider"></div>\n\t\t\t<textarea\n\t\t\t\t\ttype="text"\n\t\t\t\t\tclass="chat-textarea"\n\t\t\t\t\tplaceholder="' +
+((__t = (label_personal_message)) == null ? '' : __t) +
+'"/>\n\t\t\t';
  if (show_toolbar) { ;
 __p += '\n                <ul class="chat-toolbar no-text-select"></ul>\n            ';
  } ;
-__p += '\n        <textarea\n            type="text"\n            class="chat-textarea"\n            placeholder="' +
-((__t = (label_personal_message)) == null ? '' : __t) +
-'"/>\n        </form>\n    </div>\n</div>\n';
+__p += '\n\n        </form>\n    </div>\n</div>\n';
 
 }
 return __p
@@ -266,7 +266,7 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<div class="box-flyout" style="height: ' +
 ((__t = (height)) == null ? '' : __t) +
-'px">\n    <div class="hidden dragresize dragresize-tm"></div>\n    <div class="chat-head controlbox-head">\n        <div id="controlbox-tabs"></div>                \n    </div>\n    <div class="controlbox-panes">\n    </div>\n    <div class="add-contact-flyout" style="display: none;">\n    \t<div>\n    \t\t<div class="flyout-heading">\n    \t\t\t<span>Add Contact</span>\n    \t\t\t<span class="add-contact-flyout-close">x</span>\n    \t\t</div>    \t\t\n    \t\t<form class="add-contact-form">\n\t\t\t\t<div>\n\t\t\t\t\t<label for="email">Email</label>\n\t\t\t\t\t<input type="email" id="email" placeholder="e.g. user@example.com"/>\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<label for="display">Display</label>\n\t\t\t\t\t<input type="text" id="display" placeholder="Alias or display name"/>\n\t\t\t\t</div>\n\t\t\t\t<div class="button">\n\t\t\t\t\t<hr>\n\t\t\t\t\t<button>Add</button>\n\t\t\t\t</div>\n    \t\t</form>\n    \t</div>\n    </div>\n    <div class="search-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Search Contacts</span>\n                <span class="search-contact-flyout-close">x</span>\n            </div>\n            <form class="search-contact-form">\n                <div>                    \n                    <input type="text" id="search" placeholder="Type text to search"/>\n                </div>\n            </form>\n        </div>\n        \n        <dl class="search-converse-contact" style="display:none">\n            <span class="searchedContactCount group-toggle"></span>\n            <dd class="zmsearch-xmpp"></dd>\n        </dl>\n    </div>\n</div>\n';
+'px">\n    <div class="hidden dragresize dragresize-tm"></div>\n    <div class="chat-head controlbox-head">\n        <div id="controlbox-tabs"></div>                \n    </div>\n    <div class="controlbox-panes">\n    </div>\n    <div class="add-contact-flyout" style="display: none;">\n    \t<div>\n    \t\t<div class="flyout-heading">\n    \t\t\t<span>Add Contact</span>\n    \t\t\t<span class="add-contact-flyout-close">x</span>\n    \t\t</div>    \t\t\n    \t\t<form class="add-contact-form">\n\t\t\t\t<div>\n\t\t\t\t\t<label for="email">Email</label>\n\t\t\t\t\t<input type="email" id="email" placeholder="e.g. user@example.com"/>\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<label for="display">Display</label>\n\t\t\t\t\t<input type="text" id="display" placeholder="Alias or display name"/>\n\t\t\t\t</div>\n\t\t\t\t<div class="button">\n\t\t\t\t\t<hr>\n\t\t\t\t\t<button class="addContact">Add</button>\n\t\t\t\t</div>\n    \t\t</form>\n    \t</div>\n    </div>\n    <div class="search-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Search Contacts</span>\n                <span class="search-contact-flyout-close">x</span>\n            </div>\n            <form class="search-contact-form">\n                <div>                    \n                    <input type="text" id="search" placeholder="Type text to search"/>\n                </div>\n            </form>\n        </div>\n        \n        <dl class="search-converse-contact" style="display:none">\n            <span class="searchedContactCount group-toggle"></span>\n            <dd class="zmsearch-xmpp"></dd>\n        </dl>\n    </div>\n</div>\n';
 
 }
 return __p
@@ -859,7 +859,7 @@ this["templates"]["roster"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<span class="input-button-group">\n    <input style="display: none;" class="roster-filter" placeholder="' +
+__p += '<span class="input-button-group" style="display: none;">\n    <input style="display: none;" class="roster-filter" placeholder="' +
 ((__t = (placeholder)) == null ? '' : __t) +
 '">\n    <select style="display: none;" class="filter-type">\n        <option value="contacts">' +
 ((__t = (label_contacts)) == null ? '' : __t) +
@@ -890,11 +890,13 @@ __p += '<a class="open-chat" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
 '</a>\n';
  if (allow_contact_removal) { ;
-__p += '\n<a class="remove-xmpp-contact icon-remove" title="' +
+__p += '\n<a class="alter-menu-xmpp-contact icon-more-options" title="' +
 ((__t = (desc_remove)) == null ? '' : __t) +
 '" href="#"></a>\n';
  } ;
-__p += '\n';
+__p += '\n<ul class="custom-menu" data-jid="' +
+((__t = (jid)) == null ? '' : __t) +
+'">\n\t<li class="renameContact">Rename Contact</li>\n\t<li class="removeContact">Remove Contact</li>\n</ul>';
 
 }
 return __p
