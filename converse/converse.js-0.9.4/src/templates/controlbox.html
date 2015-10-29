@@ -1,0 +1,65 @@
+<div class="box-flyout" style="height: {{height}}px">
+    <div class="hidden dragresize dragresize-tm"></div>
+    <div class="chat-head controlbox-head">
+        <div id="controlbox-tabs"></div>                
+    </div>
+    <div class="controlbox-panes">
+    </div>
+    <div class="add-contact-flyout" style="display: none;">
+    	<div>
+    		<div class="flyout-heading">
+    			<span>Add Contact</span>
+    			<span class="add-contact-flyout-close">x</span>
+    		</div>    		
+    		<form class="add-contact-form" novalidate>
+				<div>
+					<label for="email">Email</label>
+					<input type="email" id="email" placeholder="e.g. user@example.com"/>
+				</div>
+				<div>
+					<label for="display">Display</label>
+					<input type="text" id="display" placeholder="Alias or display name"/>
+				</div>
+				<div class="button">
+					<hr>
+					<button class="addContact">Add</button>
+				</div>
+    		</form>
+    	</div>
+    </div>
+    <div class="search-contact-flyout" style="display: none;">
+        <div>
+            <div class="flyout-heading">
+                <span>Search Contacts</span>
+                <span class="search-contact-flyout-close">x</span>
+            </div>
+            <form class="search-contact-form">
+                <div>                    
+                    <input type="text" id="search" placeholder="Type text to search"/>
+                </div>
+            </form>
+        </div>
+        
+        <dl class="search-converse-contact" style="display:none">
+            <span class="searchedContactCount group-toggle"></span>
+            <dd class="zmsearch-xmpp"></dd>
+        </dl>
+    </div>
+    <div class="remove-contact-flyout" style="display: none;">
+        <div>
+            <div class="flyout-heading">
+                <span>Remove Contact</span>
+            </div>
+            <div class="remove-contact-container">
+                <div>
+                    <p class="removeContactWarningMsg"></p>
+                </div>
+                <div class="button">
+                    <hr>
+                    <button class="removeContact">Remove</button>
+                    <button class="keepContact">Keep</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

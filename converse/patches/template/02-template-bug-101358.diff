@@ -1,0 +1,35 @@
+--- //depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/login_panel.html	2015-08-26 07:57:01.000000000 -0500
++++ /Users/achhatre/Perforce/depot/zimbra/users/achhatre/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/login_panel.html	2015-08-26 07:57:01.000000000 -0500
+@@ -1,21 +1,12 @@
+-<form id="converse-login" method="post">
+-    {[ if (auto_login) { ]}
+-        <span class="spinner login-submit"/>
+-    {[ } ]}
+-    {[ if (!auto_login) { ]}
+-        {[ if (authentication == LOGIN) { ]}
+-            <label>{{label_username}}</label>
+-            <input name="jid" placeholder="{{placeholder_username}}">
+-            <label>{{label_password}}</label>
+-            <input type="password" name="password" placeholder="{{placeholder_password}}">
+-            <input class="submit" type="submit" value="{{label_login}}">
+-            <span class="conn-feedback"></span>
+-        {[ } ]}
+-        {[ if (authentication == ANONYMOUS) { ]}
+-            <input type="submit" class="submit login-anon" value="{{label_anon_login}}"/>
+-        {[ } ]}
+-        {[ if (authentication == PREBIND) { ]}
+-            <p>Disconnected.</p>
+-        {[ } ]}
+-    {[ } ]}
++<div class="connectionSpinnerPanel">
++	<span class="spinner"></span>
++	<span class="conn-feedback"></span>
++</div>
++<form id="converse-login" method="post" style="display: none;">
++    <label>{{label_username}}</label>
++    <input type="email" name="jid" placeholder="user@server">
++    <label>{{label_password}}</label>
++    <input type="password" name="password" placeholder="password">
++    <input class="submit" type="submit" value="{{label_login}}">
++    <span class="conn-feedback"></span>
+ </form>

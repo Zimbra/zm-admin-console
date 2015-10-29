@@ -1,0 +1,60 @@
+  //START CONVERSE VARIABLES
+
+  $link-color: #005A95;
+  $inverse-link-color: white;
+  $link-shadow-color: #FAFAFA;
+  $text-shadow-color: #FAFAFA;
+  $text-color: #333333;
+  $border-color: #CCC; 
+  $warning-color: #681F2C;
+  $light-background-border-color: #F1DCD6;
+  $light-background-color: #F1E2DD;
+  $icon-color: #114327;
+  $highlight-color: #E3C9C1;
+  $chat-head-text-color: #D5D5D5;
+  $chat-head-inverse-text-color: #333333;
+  $chat-head-height: 32px;
+  $save-button-color: #436F64;
+  $chat-textarea-height: 36px;
+  $toolbar-height: 20px;
+  $message-them-color: #4B7003;
+  $roster-height: 194px;
+  $controlbox-dropdown-height: 25px;
+
+  $bottom-gutter-height: 32px;
+
+  $mobile_landscape_length: 480px;
+
+  $font-size: 14px;
+  $legend-font-size: 16px;
+
+  $chatroom-width: 300px;
+  $chat-width: 200px;
+  $chat-height: 400px;
+  $chat-gutter: 7px;
+
+  $mobile-chat-width: 100%;
+  $mobile-chat-height: 400px;
+  
+  $controlbox-color: #0a0a0a;
+
+  // START ZIMBRA VARIABLES
+
+  $zmchat-highlight-color: #ADD8E6;
+  $zmchat-xmpp-status-logo: "\25fc";
+  $zmchat-textbox-width: 175px;
+  $zmchat-textbox-height: 25px;
+  $zmchat-button-width: 115px;
+  $zmchat-font-family: "Segoe UI","Lucida Sans",sans-serif;
+  $zmchat-border-radius: 4px;
+
+  $zmchat-online-color: #00A651;
+  $zmchat-dnd-color: #ED1C24;
+  $zmchat-away-color: #F5BD00;
+  $zmchat-offline-color: #808080;
+  $zmchat-head-text-color: #939393;
+  $zmchat-accept-req-icon-color: #008000;
+  $zmchat-reject-req-icon-color: #FF0000;
+  $zmchat-send-chat-error-color: $zmchat-reject-req-icon-color;
+  
+  $input-field-border-color: #B2B2B2;
