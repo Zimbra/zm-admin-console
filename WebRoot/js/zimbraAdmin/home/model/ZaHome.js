@@ -296,7 +296,6 @@ ZaHome.loadActiveSession = function (server,rightsResp) {
                     params.asyncMode = true;
                     params.noAuthToken = true;
                     params.callback = sessionCallback;
-                    params.targetServer = currentSession.targetServer ;
 
                     var resp = getSessCmd.invoke(params);
                 } catch (ex) {
