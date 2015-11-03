@@ -439,13 +439,13 @@ function(ex, method, params, restartOnError, obj) {
                     break;
                 }
             }
-            if(!gotit)    
-                this.popupErrorDialog(ZaMsg.ERROR_UNKNOWN, ex);        
+            if(!gotit)
+                this.popupErrorDialog(ZaMsg.ERROR_UNKNOWN, ex);
         }
     }
 }
 
-ZaController.prototype._doAuth = 
+ZaController.prototype._doAuth =
 function(username, password) {
     ZmCsfeCommand.noAuth = true;
     try {
@@ -489,7 +489,7 @@ function(clear) {
 /**
 * This method is called when we receive AuthResponse
 **/
-ZaController.prototype.authCallback = 
+ZaController.prototype.authCallback =
 function (resp) {
     //auth request came back
      ZaController.changePwdCommand = null;
@@ -503,7 +503,7 @@ function (resp) {
             this._loginDialog.clearPassword();
             return;
         } else if (ex.code == ZmCsfeException.ACCT_CHANGE_PASSWORD) {
-            this._showLoginDialog(true);    
+            this._showLoginDialog(true);
             this._loginDialog.setError(ZaMsg.errorPassChange);
             this._loginDialog.disablePasswordField(true);
             this._loginDialog.disableUnameField(true);
@@ -530,15 +530,15 @@ function (resp) {
             this._showLoginDialog(true);
             this._loginDialog.setError(ZaMsg.ERROR_SESSION_EXPIRED);
             this._loginDialog.disableUnameField(true);
-            this._loginDialog.clearPassword();        
+            this._loginDialog.clearPassword();
         } else {
             if(this._msgDialog) {
                 this.popupMsgDialog(ZaMsg.SERVER_ERROR, ex);
             } else {
                 this._showLoginDialog(true);
                 //check for a more informative message
-                if(ex && ex.code == ZmCsfeException.SVC_INVALID_REQUEST) {
-                    //do nothing
+                if(ex && this._refreshing && ex.code == ZmCsfeException.SVC_AUTH_REQUIRED) {
+                    //do not show error message, we are coming back to admin UI with an expired cookie
                 } else if(ex && ex.msg) {
                     this._loginDialog.setError(ex.msg);
                 } else {
@@ -557,10 +557,10 @@ function (resp) {
             }
             ZmCsfeCommand.noAuth = false;
 
-            var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);    
+            var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);
             var command = new ZmCsfeCommand();
             var params = new Object();
-            params.soapDoc = soapDoc;    
+            params.soapDoc = soapDoc;
             params.noSession = true;
             params.noAuthToken = true;
             ZaZimbraAdmin.isFirstRequest = true;
@@ -592,9 +592,9 @@ function (resp) {
             if(ZaZimbraAdmin.isLanguage("ja")){
                 if(ZaAccountXFormView.CONTACT_TAB_ATTRS)
                         ZaAccountXFormView.CONTACT_TAB_ATTRS.push(ZaAccount.A_zimbraPhoneticCompany);
-        
+
                 if(ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS)
-                        ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS.push(ZaAccount.A_zimbraPhoneticFirstName, 
+                        ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS.push(ZaAccount.A_zimbraPhoneticFirstName,
                         ZaAccount.A_zimbraPhoneticLastName);
             }
 
@@ -612,14 +612,15 @@ function (resp) {
                         ZaAuthenticate.processResponseMethods[i].call(this,resp);
                     }
                 }
-            }    
-            //Instrumentation code end                 
+            }
+            //Instrumentation code end
             this._hideLoginDialog(true);
             this._appCtxt.getAppController().startup();
         } catch (ex) {
             this._handleException(ex, "ZaController.prototype.authCallback");
         }
     }
+    this._refreshing = false;
 }
 /*********** Login dialog Callbacks */
 

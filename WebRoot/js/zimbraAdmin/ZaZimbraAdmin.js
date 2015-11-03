@@ -363,11 +363,11 @@ function(lang){
     //if user have set its pref, just use user's seting
     //else use brower's setting 
     if(ZaZimbraAdmin.LOCALE == null){
-        defaultLang = AjxEnv.DEFAULT_LOCALE; 
+        defaultLang = AjxEnv.DEFAULT_LOCALE;
     }else{
-        defaultLang = ZaZimbraAdmin.LOCALE; 
+        defaultLang = ZaZimbraAdmin.LOCALE;
     }
-    
+
     return defaultLang == lang;
 }
 // Start up the ZimbraMail application
@@ -378,6 +378,7 @@ function() {
     try {
         if(!window.csrfToken) {
             //try refreshing the AuthToken, if we're not logged in we will be thrown out here
+            this._refreshing = true;
             this._doAuth();
         }
     } catch (ex) {
@@ -392,24 +393,24 @@ function() {
 }
 
 ZaZimbraAdmin.reload_msg = function () {
-    //if(window.console && window.console.log) console.log("Reloading the message ...") ;
+    //if(window.console && window.console.log) console.log("Reloading the message ...");
     var includes = [] ;
-    includes.push ( [appContextPath , "/res/" , "I18nMsg,AjxMsg,ZMsg,ZaMsg,ZabMsg,AjxKeys" , ".js?v=" ,
+    includes.push ( [appContextPath , "/res/" , "I18nMsg,AjxMsg,ZMsg,ZaMsg,ZabMsg,AjxKeys" , ".js?v=",
                         appVers , ZaZimbraAdmin.LOCALE_QS].join("") );
 
     //the dynamic script load is asynchronous, may need a callback to make sure all the messages are actually loaded
-    //if(window.console && window.console.log) console.log("Reload the message file: " + includes.toString()) ;
+    //if(window.console && window.console.log) console.log("Reload the message file: " + includes.toString());
 
     //reinitialize the AjxFormat after the message files are loaded
-    var callback = new AjxCallback (ZaZimbraAdmin.reinit_func); 
+    var callback = new AjxCallback (ZaZimbraAdmin.reinit_func);
 
     AjxInclude(includes, null, callback);
-    ZaZimbraAdmin._LOCALE_MSG_RELOADED = true ;
+    ZaZimbraAdmin._LOCALE_MSG_RELOADED = true;
 }
 
 ZaZimbraAdmin.reinit_func = function() {
     AjxFormat.initialize();
-    ZaItem.initDescriptionItem(); 
+    ZaItem.initDescriptionItem();
     ZaSettings.initConst();
     ZaDomain.initDomainStatus();
     Dwt_Datetime_XFormItem.initialize();
