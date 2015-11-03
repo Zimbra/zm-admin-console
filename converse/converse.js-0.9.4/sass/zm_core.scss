@@ -1,0 +1,103 @@
+/*!
+* Converse.js (Web-based XMPP instant messaging client)
+* http://conversejs.org
+*
+* Copyright (c) 2012-2014, JC Brand <jc@opkode.com>
+* Licensed under the Mozilla Public License
+*/
+
+#conversejs #converse-roster, .search-converse-contact {
+     dd {
+      a {
+        /* ZCS - decline contact request icon */
+         &.decline-xmpp-request {
+            &.icon-close {
+              margin-left: 4px;
+            }
+        }
+        /* ZCS - accept contact request icon */
+        &.accept-xmpp-request {
+          &.icon-checkmark {
+			margin-left: 4px;
+          }
+        }
+      }
+    }
+    dd {
+      a.open-chat {
+         width: 95%;
+        margin-left: 0.1rem;
+      }
+    }dd:hover{
+		a.open-chat{
+			width: 80%;
+		}
+		span.pending-contact-name{
+			width: 80%;
+		}
+	}
+    span {
+      &.pending-contact-name {
+        width: 95%;
+      }
+      &.pending-contact-name:before {
+		  font-family: 'zimbra-chat';
+		  color: $zmchat-offline-color;
+		  padding-left: 0.25rem;
+		  padding-right: 0.6rem;
+      }
+      &.req-contact-name {
+        &:before {
+		  padding-left: 0.25rem;
+		  padding-right: 0.6rem;
+        } 
+      }      
+	}
+  }
+  
+  #conversejs .chat-box {
+  	.box-flyout {
+      .add-contact-flyout, .search-contact-flyout {
+       INPUT[type=email] {
+            &::-webkit-input-placeholder { font-style: italic; }
+            &::-ms-input-placeholder { font-style: italic; }
+            &::-moz-placeholder { font-style: italic; }
+			font-size: inherit;
+	   	}
+	  }
+  	}
+  }
+  
+  #conversejs dd.available-chatroom,
+  #conversejs #converse-roster dd, #conversejs .search-converse-contact dd {
+    font-weight: normal;
+  }
+  
+  #conversejs a.open-chat span.icon-online, a.open-chat span.icon-offline, a.open-chat span.icon-dnd, a.open-chat span.icon-away{
+	margin-right:0.15rem;
+	}
+	
+	#conversejs span.icon-online, span.icon-offline, span.icon-dnd, span.icon-away{
+    font-size:1.3rem;
+	}
+	#conversejs .chatbox .dropdown span.icon-online, 
+	#conversejs .chatbox .dropdown span.icon-offline, 
+	#conversejs .chatbox .dropdown span.icon-dnd, 
+	#conversejs .chatbox .dropdown span.icon-away{
+          padding-top:0.38rem;
+	}
+	#conversejs .chat-head #controlbox-tabs li span.icon-online, 
+	.chat-head #controlbox-tabs li span.icon-offline, 
+	.chat-head #controlbox-tabs li span.icon-dnd, 
+	.chat-head #controlbox-tabs li span.icon-away{
+              
+          }
+		  
+    #conversejs .chat-title {
+		padding:0px 0px 0px 0px;
+	}
+		  
+	/*Style for the top right icons on the buddy list*/
+    #conversejs #controlbox div.xmpp-status > SPAN {
+        margin-top: 0.5rem;
+	}
