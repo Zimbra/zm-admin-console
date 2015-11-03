@@ -67,6 +67,48 @@
 	  }
   	}
   }
+
+  #conversejs #controlbox-tabs {
+    LI {
+      A.current {
+        line-height: 25px;
+      }
+    }    
+
+    .conn-disconnect {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      color: #D5D5D5;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+  }
+
+  #conversejs #login-dialog {
+    .connectionSpinnerPanel {
+      .conn-error {
+        display: block;
+        text-align: center;
+        width: 100%;
+        position: relative;
+        right: 25%;
+      }
+
+      .conn-error-retry {
+        display: block;
+        text-align: center;
+        width: 100%;
+        position: relative;
+        right: 25%;
+        top: 20px;
+      }
+
+      A.conn-retry {
+        text-decoration: underline;
+      }
+    }
+  }
   
   #conversejs dd.available-chatroom,
   #conversejs #converse-roster dd, #conversejs .search-converse-contact dd {
