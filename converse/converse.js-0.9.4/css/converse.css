@@ -5,7 +5,6 @@
  * Copyright (c) 2012-2014, JC Brand <jc@opkode.com>
  * Licensed under the Mozilla Public License
  */
-/* Use this file to override any variables from _variables.scss*/
 /*!
  * Converse.js (Web-based XMPP instant messaging client)
  * http://conversejs.org
@@ -914,7 +913,7 @@
               width: 115px;
               cursor: pointer;
               margin-top: 25px; }
-          #conversejs .chatbox .box-flyout .add-contact-flyout .add-contact-form hr, #conversejs .chatbox .box-flyout .search-contact-flyout .add-contact-form hr {
+          #conversejs .chatbox .box-flyout .add-contact-flyout .add-contact-form HR, #conversejs .chatbox .box-flyout .search-contact-flyout .add-contact-form HR {
             margin: 40px 0 5px 0;
             border: none;
             height: 1px;
@@ -1223,14 +1222,14 @@
     display: inline-block; }
     #conversejs .chat-toolbar a {
       color: #005A95; }
-    #conversejs .chat-toolbar .unencrypted,
-    #conversejs .chat-toolbar .unencrypted a {
+    #conversejs .chat-toolbar .unencrypted a,
+    #conversejs .chat-toolbar .unencrypted {
       color: #8f2831; }
-    #conversejs .chat-toolbar .unverified,
-    #conversejs .chat-toolbar .unverified a {
+    #conversejs .chat-toolbar .unverified a,
+    #conversejs .chat-toolbar .unverified {
       color: #cf5300; }
-    #conversejs .chat-toolbar .private,
-    #conversejs .chat-toolbar .private a {
+    #conversejs .chat-toolbar .private a,
+    #conversejs .chat-toolbar .private {
       color: #4b7003; }
     #conversejs .chat-toolbar .toggle-participants,
     #conversejs .chat-toolbar .toggle-clear,
@@ -1365,8 +1364,8 @@
     position: absolute;
     height: auto;
     width: 130px; }
-    #conversejs .minimized-chats-flyout .chat-head,
-    #conversejs .minimized-chats-flyout .chat-head-chatroom {
+    #conversejs .minimized-chats-flyout .chat-head-chatroom,
+    #conversejs .minimized-chats-flyout .chat-head {
       border-radius: 4px;
       width: 130px;
       height: 35px;
@@ -1411,44 +1410,3 @@
 
 .custom-menu li:hover {
   background-color: #ADD8E6; }
-
-/*!
- * Converse.js (Web-based XMPP instant messaging client)
- * http://conversejs.org
- *
- * Copyright (c) 2012-2014, JC Brand <jc@opkode.com>
- * Licensed under the Mozilla Public License
- */
-#conversejs #converse-roster dd a, .search-converse-contact dd a {
-  /* ZCS - decline contact request icon */
-  /* ZCS - accept contact request icon */ }
-  #conversejs #converse-roster dd a.decline-xmpp-request.icon-close, .search-converse-contact dd a.decline-xmpp-request.icon-close {
-    margin-left: 4px; }
-  #conversejs #converse-roster dd a.accept-xmpp-request.icon-checkmark, .search-converse-contact dd a.accept-xmpp-request.icon-checkmark {
-    margin-left: 4px; }
-#conversejs #converse-roster dd a.open-chat, .search-converse-contact dd a.open-chat {
-  width: 95%;
-  /* ZCS - New code added */ }
-#conversejs #converse-roster dd:hover a.open-chat, .search-converse-contact dd:hover a.open-chat {
-  width: 80%; }
-#conversejs #converse-roster dd:hover span.pending-contact-name, .search-converse-contact dd:hover span.pending-contact-name {
-  width: 80%; }
-#conversejs #converse-roster span.pending-contact-name, .search-converse-contact span.pending-contact-name {
-  width: 95%; }
-#conversejs #converse-roster span.pending-contact-name:before, .search-converse-contact span.pending-contact-name:before {
-  font-family: 'zimbra-chat';
-  color: #808080;
-  padding-left: 0.4rem;
-  padding-right: 0.6rem; }
-#conversejs #converse-roster span.req-contact-name:before, .search-converse-contact span.req-contact-name:before {
-  padding-left: 0.4rem;
-  padding-right: 0.6rem; }
-
-#conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email], #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email] {
-  font-size: inherit; }
-  #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email]::-webkit-input-placeholder, #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email]::-webkit-input-placeholder {
-    font-style: italic; }
-  #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email]::-ms-input-placeholder, #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email]::-ms-input-placeholder {
-    font-style: italic; }
-  #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email]::-moz-placeholder, #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email]::-moz-placeholder {
-    font-style: italic; }
