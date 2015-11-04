@@ -1,4 +1,114 @@
 /*!
+ * Converse.js (Web-based XMPP instant messaging client)
+ * http://conversejs.org
+ *
+ * Copyright (c) 2012-2014, JC Brand <jc@opkode.com>
+ * Licensed under the Mozilla Public License
+ */
+
+ #conversejs #converse-roster, .search-converse-contact {
+     dd {
+      a {
+        /* ZCS - decline contact request icon */
+         &.decline-xmpp-request {
+            &.icon-close {
+              margin-left: 4px;
+            }
+        }
+        /* ZCS - accept contact request icon */
+        &.accept-xmpp-request {
+          &.icon-checkmark {
+			margin-left: 4px;
+          }
+        }
+      }
+    }
+    dd {
+      a.open-chat {
+         width: 95%;
+        /* ZCS - New code added */
+      }
+    }dd:hover{
+		a.open-chat{
+			width: 80%;
+		}
+		span.pending-contact-name{
+			width: 80%;
+		}
+	}
+    span {
+      &.pending-contact-name {
+        width: 95%;
+      }
+      &.pending-contact-name:before {
+		  font-family: 'zimbra-chat';
+		  color: $zmchat-offline-color;
+		  padding-left: 0.4rem;
+		  padding-right: 0.6rem;
+      }
+      &.req-contact-name {
+        &:before {
+		  padding-left: 0.4rem;
+		  padding-right: 0.6rem;
+        } 
+      }      
+	}
+  }
+  
+  #conversejs .chat-box {
+  	.box-flyout {
+      .add-contact-flyout, .search-contact-flyout {
+       INPUT[type=email] {
+            &::-webkit-input-placeholder { font-style: italic; }
+            &::-ms-input-placeholder { font-style: italic; }
+            &::-moz-placeholder { font-style: italic; }
+			font-size: inherit;
+	   	}
+	  }
+  	}
+  }
+
+  #conversejs #controlbox-tabs {
+    LI {
+      A.current {
+        line-height: 25px;
+      }
+    }    
+
+    .conn-disconnect {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      color: #D5D5D5;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+  }
+
+  #conversejs #login-dialog {
+    .connectionSpinnerPanel {
+      .conn-error {
+        display: block;
+        text-align: center;
+        width: 100%;
+        position: relative;
+        right: 25%;
+      }
+
+      .conn-error-retry {
+        display: block;
+        text-align: center;
+        width: 100%;
+        position: relative;
+        right: 25%;
+        top: 20px;
+      }
+
+      A.conn-retry {
+        text-decoration: underline;
+      }
+    }
+  }
 * Converse.js (Web-based XMPP instant messaging client)
 * http://conversejs.org
 *
