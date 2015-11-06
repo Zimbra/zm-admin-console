@@ -323,23 +323,17 @@ ZaHome.prototype.updateSessionNum = function(num) {
 
 ZaHome.startLoadingMTAS = function() {
 	ZaHome.totalSession = 0;
-	var callback = new AjxCallback(this,ZaHome.startLoadingMTAsCallback);
-	ZaApp.getInstance().getMailServers(false, callback);
-}
-ZaHome.postLoadDataFunction.push(ZaHome.startLoadingMTAS);
-
-ZaHome.startLoadingMTAsCallback = function(resp) {
-	if(resp.getResponse() && resp.getResponse().Body && resp.getResponse().Body.GetAllServersResponse) {
-		var list = new ZaItemList(ZaMTA);
-		list.loadFromJS(resp.getResponse().Body.GetAllServersResponse);
-		var serverArray = list.getArray();
-		for(var i=0;i<serverArray.length;i++) {
+	var postQList = ZaApp.getInstance().getPostQList();
+	if (postQList) {
+		var serverArray = postQList.getArray();
+		for(var i = 0; i < serverArray.length; i++) {
 			var server = serverArray[i];
-			var callback = new AjxCallback(this,ZaHome.loadQueueLength,server);
-			server.loadEffectiveRights("id", server.id, true,callback);
+			var callback = ZaHome.loadQueueLength.bind(this, server);
+			server.loadEffectiveRights("id", server.id, true, callback);
 		}
 	}
 }
+ZaHome.postLoadDataFunction.push(ZaHome.startLoadingMTAS);
 
 ZaHome.totalQueueLength = 0;
 ZaHome.loadQueueLength = function (server,rightsResp) {
