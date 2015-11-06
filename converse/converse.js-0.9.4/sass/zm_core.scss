@@ -226,12 +226,14 @@
 	#conversejs span.icon-online, span.icon-offline, span.icon-dnd, span.icon-away{
     font-size:1.3rem;
 	}
+	
 	#conversejs .chatbox .dropdown span.icon-online, 
 	#conversejs .chatbox .dropdown span.icon-offline, 
 	#conversejs .chatbox .dropdown span.icon-dnd, 
 	#conversejs .chatbox .dropdown span.icon-away{
-          padding-top:0.38rem;
+          padding-top:0.3rem;
 	}
+	
 	#conversejs .chat-head #controlbox-tabs li span.icon-online, 
 	.chat-head #controlbox-tabs li span.icon-offline, 
 	.chat-head #controlbox-tabs li span.icon-dnd, 
@@ -247,3 +249,22 @@
     #conversejs #controlbox div.xmpp-status > SPAN {
         margin-top: 0.5rem;
 	}
+	
+	
+#conversejs a.close-chatbox-button
+ {
+ font-size: 1.1rem;
+ margin-top: 0.1rem;
+ }
+ 
+ #conversejs .chatbox .dropdown a {
+	 margin-top:0.1rem;
+ }
+ 
+ #conversejs .chatbox .dropdown dt a span {
+      padding-right:0.4rem;
+	  }
+ 
+ #conversejs .chat-title [class^="icon-"]{
+    padding-right: 0.2rem;
+    }
