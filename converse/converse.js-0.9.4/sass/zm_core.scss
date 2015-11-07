@@ -268,3 +268,7 @@
  #conversejs .chat-title [class^="icon-"]{
     padding-right: 0.2rem;
     }
+
+#conversejs .chat-title, #conversejs dt.fancy-dropdown, #conversejs a.close-chatbox-button {
+  margin-top: 5px;
+}
