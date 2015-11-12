@@ -389,7 +389,7 @@ ZaSearchXFormView.getCustomHeight = function () {
 		if(totalHeight<=0)
 			return "100%";
 		else
-			return totalHeight - headerHeight - 2;
+			return totalHeight - headerHeight - 2 + "px";
 	} catch (ex) {
 
 	}
@@ -408,7 +408,7 @@ ZaSearchXFormView.getCustomWidth = function () {
 		if(totalWidth<=0)
 			return "100%";
 		else
-			return totalWidth;
+			return totalWidth + "px";
 	} catch (ex) {
 
 	}
