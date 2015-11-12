@@ -942,6 +942,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                     dataFetcherClass:ZaSearch,
                     emptyText:ZaMsg.enterSearchTerm,
                     editable:true,
+					autoCompleteEnabled : true,
                     getDisplayValue:function(newValue) {
                         // dereference through the choices array, if provided
                         //newValue = this.getChoiceLabel(newValue);
