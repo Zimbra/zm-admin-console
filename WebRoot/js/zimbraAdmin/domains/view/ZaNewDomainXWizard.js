@@ -401,6 +401,13 @@ function(value, event, form) {
 	return value;
 }
 
+ZaNewDomainXWizard.onCOSFocus =
+function() {
+	if (AjxEnv.supported.input.list && !this.listCreated) {
+		this.createDataList(ZaApp.getInstance().getCosListName());
+	}
+};
+
 ZaNewDomainXWizard.testAuthSettings =
 function () {
 	var instance = this.getInstance();
@@ -747,31 +754,17 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                     label:null,txtBoxLabel:ZaMsg.Domain_zimbraDNSCheckHostname, resetToSuperLabel:ZaMsg.NAD_ResetToGlobal}/*, {type:_CELLSPACER_}*/
                             ]},
                             {ref:ZaDomain.A_description, type:_TEXTFIELD_, label:ZaMsg.NAD_Description, labelLocation:_LEFT_, width:200},
-                            {ref:ZaDomain.A_domainDefaultCOSId, type:_DYNSELECT_,
-                                toolTipContent:ZaMsg.tt_StartTypingCOSName,
-                                label:ZaMsg.Domain_DefaultCOS, labelLocation:_LEFT_,
+                            {ref:ZaDomain.A_domainDefaultCOSId,
+	                            type:_INPUT_,
+                                label:ZaMsg.Domain_DefaultCOS,
                                 onChange:ZaNewDomainXWizard.onCOSChanged,
-                                dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
-                                choices:this.cosChoices,
-                                dataFetcherClass:ZaSearch,
-                                emptyText:ZaMsg.enterSearchTerm,
-                                inputSize: 33,
-                                editable:true,
-                                getDisplayValue:function(newValue) {
-                                    // dereference through the choices array, if provided
-                                    //newValue = this.getChoiceLabel(newValue);
-                                    if(ZaItem.ID_PATTERN.test(newValue)) {
-                                        var cos = ZaCos.getCosById(newValue, this.getForm().parent._app);
-                                        if(cos)
-                                            newValue = cos.name;
-                                    }
-                                    if (newValue == null) {
-                                        newValue = "";
-                                    } else {
-                                        newValue = "" + newValue;
-                                    }
-                                    return newValue;
-                                }
+	                            onFocus:"ZaNewDomainXWizard.onCOSFocus",
+	                            getDisplayValue:function(newValue) {
+		                            if (newValue) {
+			                            var cos = ZaCos.getCosById(newValue);
+			                            return cos && cos.name;
+		                            }
+	                            }
                             },
                             {ref:ZaDomain.A_zimbraDomainStatus, type:_OSELECT1_, msgName:ZaMsg.NAD_DomainStatus,
                                 label:ZaMsg.LBL_zimbraDomainStatus,
