@@ -1709,31 +1709,20 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 				visibilityChecks:[[ZaItem.hasReadPermission,ZaAccount.A_COSId]], attributeName: ZaAccount.A_COSId,
 				id: ZaAccountXFormView.cosGroupItemId,
 				items: [
-					{ref:ZaAccount.A_COSId, type:_DYNSELECT_,label: null, choices:this.cosChoices,
-						//inputPreProcessor:ZaAccountXFormView.preProcessCOS,
-						enableDisableChecks:[ [XForm.checkInstanceValue,ZaAccount.A2_autoCos,"FALSE"],
-                            [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
-						enableDisableChangeEventSources:[ZaAccount.A2_autoCos],
-						visibilityChecks:[],
-						bmolsnr:false,
-						width:"auto",
-						toolTipContent:ZaMsg.tt_StartTypingCOSName,
-						dataFetcherMethod:ZaSearch.prototype.dynSelectSearchCoses,
+					{ref:ZaAccount.A_COSId,
+						type : _INPUT_,
 						onChange:ZaAccount.setCosChanged,
-						emptyText:ZaMsg.enterSearchTerm,
-						dataFetcherClass:ZaSearch,editable:true,getDisplayValue:function(newValue) {
-								if(ZaItem.ID_PATTERN.test(newValue)) {
-									var cos = ZaCos.getCosById(newValue);
-									if(cos)
-										newValue = cos.name;
-								} 
-								if (newValue == null) {
-									newValue = "";
-								} else {
-									newValue = "" + newValue;
-								}
-								return newValue;
+						enableDisableChecks:[[ZaNewAccountXWizard.isAutoCos], [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
+						enableDisableChangeEventSources:[ZaAccount.A2_autoCos],
+						getDisplayValue: function(newValue) {
+							if (!this.listCreated) {
+								this.createDataList(ZaApp.getInstance().getCosListName());
 							}
+							if (newValue) {
+								var cos = ZaCos.getCosById(newValue);
+								return cos && cos.name;
+							}
+						}
 					},
 					{ref:ZaAccount.A2_autoCos, type:_CHECKBOX_,
 						visibilityChecks:[], subLabel:"",
@@ -1747,9 +1736,10 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 								if(defaultCos && defaultCos.id) {
 									this.getInstance()._defaultValues = defaultCos;
 									this.getModel().setInstanceValue(this.getInstance(),ZaAccount.A_COSId,defaultCos.id);
-									//instance.attrs[ZaAccount.A_COSId] = defaultCos.id;	
-								}									
-								//ZaAccount.setDefaultCos(this.getInstance());	
+									//instance.attrs[ZaAccount.A_COSId] = defaultCos.id;
+								}
+								//ZaAccount.setDefaultCos(this.getInstance());
+								this.getParentItem().getItems()[0].updateElement(null);
 							}
 							this.getForm().itemChanged(this, elementValue, event);
 						}

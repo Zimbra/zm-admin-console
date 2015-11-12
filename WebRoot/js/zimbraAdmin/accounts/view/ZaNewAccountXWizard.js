@@ -665,7 +665,13 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 						type : _INPUT_,
 						onChange:ZaAccount.setCosChanged,
 						enableDisableChecks:[[ZaNewAccountXWizard.isAutoCos], [ZaItem.hasWritePermission,ZaAccount.A_COSId]],
-						enableDisableChangeEventSources:[ZaAccount.A2_autoCos]
+						enableDisableChangeEventSources:[ZaAccount.A2_autoCos],
+						getDisplayValue: function(newValue) {
+							if (newValue) {
+								var cos = ZaCos.getCosById(newValue);
+								return cos && cos.name;
+							}
+						}
 					},
 					{ref:ZaAccount.A2_autoCos, type:_WIZ_CHECKBOX_,
 						msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
@@ -678,17 +684,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 								ZaAccount.setDefaultCos(this.getInstance(), form.parent._app);
 							}
 							else {
-								if (AjxEnv.supported.input.list && !cositem.listCreated) {
-									var cosList = ZaApp.getInstance().getCosList();
-									var cosListArray = cosList && cosList.getArray();
-									if (cosListArray) {
-										var list = [];
-										for (var i = 0; i < cosListArray.length; i++) {
-											list.push(cosListArray[i].name);
-										}
-										cositem.createDataList(list);
-									}
-								}
+								cositem.createDataList(ZaApp.getInstance().getCosListName());
 							}
 							form.itemChanged(this, elementValue, event);
 						},
