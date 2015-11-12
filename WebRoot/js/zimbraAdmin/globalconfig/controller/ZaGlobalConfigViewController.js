@@ -71,7 +71,7 @@ function () {
 ZaController.initPopupMenuMethods["ZaGlobalConfigViewController"].push(ZaGlobalConfigViewController.initPopupMenuMethod);
 
 ZaGlobalConfigViewController.setViewMethod = function (entry) {
-    try {    	
+    try {
     	entry.load();
 	} catch (ex) {
 		this._handleException(ex, "ZaGlobalConfigViewController.prototype.show", null, false);
@@ -217,62 +217,74 @@ function () {
 		}
 		
 		//check policy service
-		var numPolicyService = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService].length;
-                if( (numPolicyService !=  this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService].length) || 
-                       (tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService].join("") != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService].join(""))) {
-                        dirty = true;
-                }
-                for(var ix=0;ix<numPolicyService;ix++) {
-                        restrictions.push("check_policy_service "+tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService][ix]);
-                }
+		var policyService = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService];
+		var currentPolicyService = this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaPolicyService];
+		var policyServiceLength = policyService.length;
+		if ((policyServiceLength != currentPolicyService.length) || (policyService.join("") != currentPolicyService.join(""))) {
+			dirty = true;
+		}
+		for (var ix = 0; ix < policyServiceLength; ix++) {
+			var policyServiceValue = policyService[ix];
+			if (policyServiceValue) {
+				restrictions.push("check_policy_service " + policyServiceValue);
+			}
+		}
 
         // Check reject_rbl_client - List of Client RBLs
-        var numRblClient = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient].length;
-        if (numRblClient != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient].length
-            ||
-            tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient].join("") != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient].join("")
-            ) {
-            dirty = true;
-        }
-        for (var ix = 0 ; ix < numRblClient; ix++) {
-            restrictions.push("reject_rbl_client " + tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient][ix]);
-        }
+		var rblClient = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient];
+		var currentRblClient = this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRblClient];
+		var rblClientLength = rblClient.length;
+		if ((rblClientLength != currentRblClient.length) || (rblClient.join("") != currentRblClient.join(""))) {
+			dirty = true;
+		}
+		for (var ix = 0 ; ix < rblClientLength; ix++) {
+			var rblClientValue = rblClient[ix];
+			if (rblClientValue) {
+				restrictions.push("reject_rbl_client " + rblClientValue);
+			}
+		}
 
         // Check reject_rhsbl_client - List of Client RHSBLs
-        var numRHSblClient = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient].length;
-        if (numRHSblClient != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient].length
-            ||
-            tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient].join("") != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient].join("")
-            ) {
-            dirty = true;
-        }
-        for (var ix = 0 ; ix < numRHSblClient; ix++) {
-            restrictions.push("reject_rhsbl_client " + tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient][ix]);
-        }
+		var RHSblClient = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient];
+		var currentRHSblClient = this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblClient];
+		var RHSblClientLength = RHSblClient.length;
+		if ((RHSblClientLength != currentRHSblClient.length) || (RHSblClient.join("") != currentRHSblClient.join(""))) {
+			dirty = true;
+		}
+		for (var ix = 0 ; ix < RHSblClientLength; ix++) {
+			var RHSblClientValue = RHSblClient[ix];
+			if (RHSblClientValue) {
+				restrictions.push("reject_rhsbl_client " + RHSblClientValue);
+			}
+		}
 
         // Check reject_rhsbl_reverse_client - List of Reverse Client RHSBLs
-        var numRHSblReverseClient = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient].length;
-        if (numRHSblReverseClient != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient].length
-            ||
-            tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient].join("") != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient].join("")
-            ) {
-            dirty = true;
-        }
-        for (var ix = 0 ; ix < numRHSblReverseClient; ix++) {
-            restrictions.push("reject_rhsbl_reverse_client " + tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient][ix]);
-        }
+		var RHSblReverseClient = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient];
+		var currentRHSblReverseClient = this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblReverseClient];
+		var RHSblReverseClientLength = RHSblReverseClient.length;
+		if ((RHSblReverseClientLength != currentRHSblReverseClient.length) || (RHSblReverseClient.join("") != currentRHSblReverseClient.join(""))) {
+			dirty = true;
+		}
+		for (var ix = 0 ; ix < RHSblReverseClientLength; ix++) {
+			var RHSblReverseClientValue = RHSblReverseClient[ix];
+			if (RHSblReverseClientValue) {
+				restrictions.push("reject_rhsbl_reverse_client " + RHSblReverseClientValue);
+			}
+		}
 
         // Check reject_rhsbl_sender - List of Sender RHSBLs
-        var numRHSblSender = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender].length;
-        if (numRHSblSender != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender].length
-            ||
-            tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender].join("") != this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender].join("")
-            ) {
-            dirty = true;
-        }
-        for (var ix = 0 ; ix < numRHSblSender; ix++) {
-            restrictions.push("reject_rhsbl_sender " + tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender][ix]);
-        }
+		var RHSblSender = tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender];
+		var currentRHSblSender = this._currentObject.attrs[ZaGlobalConfig.A_zimbraMtaRejectRHSblSender];
+		var RHSblSenderLength = RHSblSender.length;
+		if ((RHSblSenderLength != currentRHSblSender.length) || (RHSblSender.join("") != currentRHSblSender.join(""))) {
+			dirty = true;
+		}
+		for (var ix = 0 ; ix < RHSblSenderLength; ix++) {
+			var RHSblSenderValue = RHSblSender[ix];
+			if (RHSblSenderValue) {
+				restrictions.push("reject_rhsbl_sender " + RHSblSenderValue);
+			}
+		}
 
         if (dirty) {
 			tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRestriction] = restrictions;
@@ -331,11 +343,11 @@ function () {
 		
 		if ((this._currentObject.attrs[a] != tmpObj.attrs[a]) && !(this._currentObject.attrs[a] == undefined && tmpObj.attrs[a] === "")) {
 			if(tmpObj.attrs[a] instanceof Array) {
-                if (!this._currentObject.attrs[a]) 
+                if (!this._currentObject.attrs[a])
                 	this._currentObject.attrs[a] = [] ;
 		else if(!(this._currentObject.attrs[a] instanceof Array))
 			this._currentObject.attrs[a] = [this._currentObject.attrs[a]];
-                
+
                 if( tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
 					mods[a] = tmpObj.attrs[a];
 				}
