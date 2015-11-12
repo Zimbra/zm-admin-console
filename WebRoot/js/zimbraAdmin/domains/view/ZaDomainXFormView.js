@@ -781,7 +781,7 @@ ZaDomainXFormView.getCustomHeight = function() {
         if (AjxEnv.isIE)
             containerHeight = 3;
         if (totalHeight > (headHeight+containerHeight)) {
-            return totalHeight - headHeight -containerHeight ;
+            return totalHeight - headHeight -containerHeight;
         }
 
     } catch(ex) {

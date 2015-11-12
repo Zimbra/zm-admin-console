@@ -1934,9 +1934,8 @@ function() {
 	try {
 		var element = this.getElement();
 		var height = this.cacheInheritedMethod("getCustomHeight", "$getCustomHeight").call(this);
-		var width = this.cacheInheritedMethod("getCustomWidth", "$getCustomWidth").call(this);		
-		element.style.height = height;
-		element.style.width = width;
+		var width = this.cacheInheritedMethod("getCustomWidth", "$getCustomWidth").call(this);
+		Dwt.setSize(element, width, height);
 	} catch (ex) {
 		alert(ex);
 	}
