@@ -1418,7 +1418,8 @@ ZaOverviewPanelController.memberListInDLTreeListener = function(ev) {
             busyMsg : ZaMsg.BUSY_SEARCHING,
             skipCallbackIfCancelled : false
         }
-
+        controller.setQuery(query);
+        controller.setSearchTypes(types);
         ZaSearch.searchDirectory(searchParams);
     }
 
