@@ -1429,7 +1429,7 @@
     margin-left: 4px; }
 #conversejs #converse-roster dd a.open-chat, .search-converse-contact dd a.open-chat {
   width: 95%;
-  /* ZCS - New code added */ }
+  margin-left: 0.1rem; }
 #conversejs #converse-roster dd:hover a.open-chat, .search-converse-contact dd:hover a.open-chat {
   width: 80%; }
 #conversejs #converse-roster dd:hover span.pending-contact-name, .search-converse-contact dd:hover span.pending-contact-name {
@@ -1439,11 +1439,11 @@
 #conversejs #converse-roster span.pending-contact-name:before, .search-converse-contact span.pending-contact-name:before {
   font-family: 'zimbra-chat';
   color: #808080;
-  padding-left: 0.4rem;
-  padding-right: 0.6rem; }
+  padding-left: 0.2rem;
+  padding-right: 0.85rem; }
 #conversejs #converse-roster span.req-contact-name:before, .search-converse-contact span.req-contact-name:before {
-  padding-left: 0.4rem;
-  padding-right: 0.6rem; }
+  padding-left: 0.2rem;
+  padding-right: 0.85rem; }
 
 #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email], #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email] {
   font-size: inherit; }
@@ -1479,40 +1479,6 @@
   top: 20px; }
 #conversejs #login-dialog .connectionSpinnerPanel A.conn-retry {
   text-decoration: underline; }
-
-#conversejs #converse-roster dd a, .search-converse-contact dd a {
-  /* ZCS - decline contact request icon */
-  /* ZCS - accept contact request icon */ }
-  #conversejs #converse-roster dd a.decline-xmpp-request.icon-close, .search-converse-contact dd a.decline-xmpp-request.icon-close {
-    margin-left: 4px; }
-  #conversejs #converse-roster dd a.accept-xmpp-request.icon-checkmark, .search-converse-contact dd a.accept-xmpp-request.icon-checkmark {
-    margin-left: 4px; }
-#conversejs #converse-roster dd a.open-chat, .search-converse-contact dd a.open-chat {
-  width: 95%;
-  margin-left: 0.1rem; }
-#conversejs #converse-roster dd:hover a.open-chat, .search-converse-contact dd:hover a.open-chat {
-  width: 80%; }
-#conversejs #converse-roster dd:hover span.pending-contact-name, .search-converse-contact dd:hover span.pending-contact-name {
-  width: 80%; }
-#conversejs #converse-roster span.pending-contact-name, .search-converse-contact span.pending-contact-name {
-  width: 95%; }
-#conversejs #converse-roster span.pending-contact-name:before, .search-converse-contact span.pending-contact-name:before {
-  font-family: 'zimbra-chat';
-  color: #808080;
-  padding-left: 0.25rem;
-  padding-right: 0.6rem; }
-#conversejs #converse-roster span.req-contact-name:before, .search-converse-contact span.req-contact-name:before {
-  padding-left: 0.25rem;
-  padding-right: 0.6rem; }
-
-#conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email], #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email] {
-  font-size: inherit; }
-  #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email]::-webkit-input-placeholder, #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email]::-webkit-input-placeholder {
-    font-style: italic; }
-  #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email]::-ms-input-placeholder, #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email]::-ms-input-placeholder {
-    font-style: italic; }
-  #conversejs .chat-box .box-flyout .add-contact-flyout INPUT[type=email]::-moz-placeholder, #conversejs .chat-box .box-flyout .search-contact-flyout INPUT[type=email]::-moz-placeholder {
-    font-style: italic; }
 
 #conversejs #controlbox-tabs LI A.current {
   line-height: 25px; }
@@ -1544,7 +1510,10 @@
 #conversejs #converse-roster dd, #conversejs .search-converse-contact dd {
   font-weight: normal; }
 
-#conversejs a.open-chat span.icon-online, a.open-chat span.icon-offline, a.open-chat span.icon-dnd, a.open-chat span.icon-away {
+#conversejs a.open-chat span.icon-online,
+#conversejs a.open-chat span.icon-offline,
+#conversejs a.open-chat span.icon-dnd,
+#conversejs a.open-chat span.icon-away {
   margin-right: 0.15rem; }
 
 #conversejs span.icon-online, span.icon-offline, span.icon-dnd, span.icon-away {
@@ -1554,7 +1523,7 @@
 #conversejs .chatbox .dropdown span.icon-offline,
 #conversejs .chatbox .dropdown span.icon-dnd,
 #conversejs .chatbox .dropdown span.icon-away {
-  padding-top: 0.3rem; }
+  padding-top: 0.38rem; }
 
 #conversejs .chat-title {
   padding: 0px 0px 0px 0px; }

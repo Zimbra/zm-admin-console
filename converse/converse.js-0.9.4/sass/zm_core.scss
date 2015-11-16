@@ -23,12 +23,13 @@
         }
       }
     }
-    dd {
+	 dd {
       a.open-chat {
          width: 95%;
-        /* ZCS - New code added */
+         margin-left: 0.1rem;
       }
-    }dd:hover{
+    }
+	dd:hover{
 		a.open-chat{
 			width: 80%;
 		}
@@ -43,13 +44,13 @@
       &.pending-contact-name:before {
 		  font-family: 'zimbra-chat';
 		  color: $zmchat-offline-color;
-		  padding-left: 0.4rem;
-		  padding-right: 0.6rem;
+		  padding-left: 0.2rem;
+		  padding-right: 0.85rem;
       }
       &.req-contact-name {
         &:before {
-		  padding-left: 0.4rem;
-		  padding-right: 0.6rem;
+		  padding-left: 0.2rem;
+		  padding-right: 0.85rem;
         } 
       }      
 	}
@@ -108,68 +109,6 @@
         text-decoration: underline;
       }
     }
-  }
-
-#conversejs #converse-roster, .search-converse-contact {
-     dd {
-      a {
-        /* ZCS - decline contact request icon */
-         &.decline-xmpp-request {
-            &.icon-close {
-              margin-left: 4px;
-            }
-        }
-        /* ZCS - accept contact request icon */
-        &.accept-xmpp-request {
-          &.icon-checkmark {
-			margin-left: 4px;
-          }
-        }
-      }
-    }
-    dd {
-      a.open-chat {
-         width: 95%;
-        margin-left: 0.1rem;
-      }
-    }dd:hover{
-		a.open-chat{
-			width: 80%;
-		}
-		span.pending-contact-name{
-			width: 80%;
-		}
-	}
-    span {
-      &.pending-contact-name {
-        width: 95%;
-      }
-      &.pending-contact-name:before {
-		  font-family: 'zimbra-chat';
-		  color: $zmchat-offline-color;
-		  padding-left: 0.25rem;
-		  padding-right: 0.6rem;
-      }
-      &.req-contact-name {
-        &:before {
-		  padding-left: 0.25rem;
-		  padding-right: 0.6rem;
-        } 
-      }      
-	}
-  }
-  
-  #conversejs .chat-box {
-  	.box-flyout {
-      .add-contact-flyout, .search-contact-flyout {
-       INPUT[type=email] {
-            &::-webkit-input-placeholder { font-style: italic; }
-            &::-ms-input-placeholder { font-style: italic; }
-            &::-moz-placeholder { font-style: italic; }
-			font-size: inherit;
-	   	}
-	  }
-  	}
   }
 
   #conversejs #controlbox-tabs {
@@ -219,7 +158,10 @@
     font-weight: normal;
   }
   
-  #conversejs a.open-chat span.icon-online, a.open-chat span.icon-offline, a.open-chat span.icon-dnd, a.open-chat span.icon-away{
+  #conversejs a.open-chat span.icon-online, 
+  #conversejs a.open-chat span.icon-offline, 
+  #conversejs a.open-chat span.icon-dnd, 
+  #conversejs a.open-chat span.icon-away{
 	margin-right:0.15rem;
 	}
 	
@@ -268,7 +210,7 @@
  #conversejs .chat-title [class^="icon-"]{
     padding-right: 0.2rem;
     }
-
+	
 #conversejs .chat-title, #conversejs dt.fancy-dropdown, #conversejs a.close-chatbox-button {
   margin-top: 5px;
 }
