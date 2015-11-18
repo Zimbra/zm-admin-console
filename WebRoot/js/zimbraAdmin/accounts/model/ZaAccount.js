@@ -870,6 +870,16 @@ function(tmpObj) {
         }
     }
 
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraDomainAdminMaxMailQuota,tmpObj) && (tmpObj.attrs[ZaAccount.A_zimbraMailQuota] != null)) {
+        var cosMaxAccountQuota = tmpObj._defaultValues.attrs[ZaAccount.A_zimbraDomainAdminMaxMailQuota];
+        var prefAccountQuota = tmpObj.attrs[ZaAccount.A_zimbraMailQuota];
+
+        if(prefAccountQuota > cosMaxAccountQuota) {
+            ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_MAX_ACCOUNT_QUOTA);
+            return false;
+        }
+    }
+
     var forwardFields = [
         ZaAccount.A_zimbraMailForwardingAddress,
         ZaAccount.A_zimbraPrefMailForwardingAddress,
