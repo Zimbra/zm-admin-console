@@ -183,10 +183,6 @@
               
           }
 		  
-    #conversejs .chat-title {
-		padding:0px 0px 0px 0px;
-	}
-		  
 	/*Style for the top right icons on the buddy list*/
     #conversejs #controlbox div.xmpp-status > SPAN {
         margin-top: 0.5rem;
@@ -211,6 +207,8 @@
     padding-right: 0.2rem;
     }
 	
-#conversejs .chat-title, #conversejs dt.fancy-dropdown, #conversejs a.close-chatbox-button {
-  margin-top: 5px;
-}
+#conversejs	span.header-contact-name {
+		position: fixed;
+		margin-top: 0.1rem;
+       margin-left: 0.3rem;
+}	
