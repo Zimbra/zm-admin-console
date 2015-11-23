@@ -754,7 +754,7 @@ ZaDomainXFormView.getCustomWidth = function() {
         if (isNaN(totalWidth)) {
             totalWidth =  parentPage.clientWidth? parentPage.clientWidth : parentPage.offsetWidth;
         }
-        return totalWidth + "px";
+        return totalWidth;
     } catch(ex) {
 
     }
@@ -781,7 +781,7 @@ ZaDomainXFormView.getCustomHeight = function() {
         if (AjxEnv.isIE)
             containerHeight = 3;
         if (totalHeight > (headHeight+containerHeight)) {
-            return totalHeight - headHeight -containerHeight + "px";
+            return totalHeight - headHeight -containerHeight;
         }
 
     } catch(ex) {

@@ -1896,7 +1896,7 @@ ZATabCase_XFormItem.prototype.getCustomHeight = function () {
 		if(totalHeight<=0 || totalHeight < (totalHeaderHeight + totalTabBarHeight + 2))
 			return "100%";
 		else
-			return totalHeight - totalHeaderHeight - totalTabBarHeight - 2 + "px";
+			return totalHeight - totalHeaderHeight - totalTabBarHeight - 2;
 	} catch (ex) {
         
 	}
@@ -1921,7 +1921,7 @@ ZATabCase_XFormItem.prototype.getCustomWidth = function () {
                 if(paddingStyle&&!AjxEnv.isIE)
                     res = res - 15;
             }
-			return res + "px";
+			return res;
 		}
 	} catch (ex) {
         

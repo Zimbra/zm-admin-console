@@ -222,7 +222,7 @@ ZaServerMBXStatsPage.getCustomWidth = function () {
     var page = this.getForm().parent;
     if (page._rendered) {
         var bounds = page.getBounds();
-        return bounds.width + "px";
+        return bounds.width;
     }
     return "100%"
 }
