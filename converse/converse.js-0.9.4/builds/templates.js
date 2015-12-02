@@ -465,9 +465,7 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<span id="' +
 ((__t = (label_group)) == null ? '' : __t) +
-'" href="#" class="group-toggle" title="' +
-((__t = (desc_group_toggle)) == null ? '' : __t) +
-'">' +
+'" href="#" class="group-toggle">' +
 ((__t = (label_group)) == null ? '' : __t) +
 '</span>\n';
 
@@ -615,11 +613,9 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<dt id="pending-xmpp-contacts"><a href="#" class="group-toggle icon-' +
 ((__t = (toggle_state)) == null ? '' : __t) +
-'" title="' +
-((__t = (desc_group_toggle)) == null ? '' : __t) +
 '">' +
 ((__t = (label_pending_contacts)) == null ? '' : __t) +
-'</a></dt>\n';
+'</a></dt>';
 
 }
 return __p
@@ -728,8 +724,6 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<dt id="xmpp-contact-requests"><a href="#" class="group-toggle icon-' +
 ((__t = (toggle_state)) == null ? '' : __t) +
-'" title="' +
-((__t = (desc_group_toggle)) == null ? '' : __t) +
 '">' +
 ((__t = (label_contact_requests)) == null ? '' : __t) +
 '</a></dt>\n';
