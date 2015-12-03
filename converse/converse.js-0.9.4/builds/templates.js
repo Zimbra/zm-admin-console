@@ -700,8 +700,6 @@ __p += '\n<a class="open-chat"href="#">\n';
  } ;
 __p += '\n<span class="req-contact-name" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
-'\nJID: ' +
-((__t = (jid)) == null ? '' : __t) +
 '">' +
 ((__t = (fullname)) == null ? '' : __t) +
 '</span>\n';
@@ -897,8 +895,6 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<a class="open-chat" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
-'\nJID: ' +
-((__t = (jid)) == null ? '' : __t) +
 '\n' +
 ((__t = (desc_chat)) == null ? '' : __t) +
 '" href="#"><span class="icon-' +
