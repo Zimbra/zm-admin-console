@@ -75,7 +75,7 @@ ZaFp.getObject = function (entry) {
 ZaFp.getEntry = function (obj) {
     var entry = "" ;
     if (obj != null) {
-        entry = obj [ZaFp.A_prefix] + obj [ZaFp.A_name] ;
+		entry = (obj [ZaFp.A_prefix] || "") + (obj [ZaFp.A_name] || "");
     }
     return entry  ;
 }
