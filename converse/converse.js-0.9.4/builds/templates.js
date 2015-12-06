@@ -110,7 +110,7 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<div class="box-flyout" style="height: ' +
 ((__t = (height)) == null ? '' : __t) +
-'px">\n    <div class="dragresize dragresize-tm"></div>\n    <div class="chat-head chat-head-chatbox">\n        <a class="close-chatbox-button icon-close"></a>\n        <!--a class="toggle-chatbox-button icon-minus"></a-->\n        <div class="chat-title">\n\t\t\t<span class="icon-' +
+'px">\n    <div class="dragresize dragresize-tm"></div>\n    <div class="chat-head chat-head-chatbox">\n        <!--a class="toggle-chatbox-button icon-minus"></a-->\n        <div class="chat-title">\n\t\t\t<span class="icon-' +
 ((__t = (chat_status)) == null ? '' : __t) +
 '"></span>\n            ';
  if (url) { ;
@@ -124,7 +124,7 @@ __p += '\n                   <span class="header-contact-name"> ' +
  if (url) { ;
 __p += '\n                </a>\n            ';
  } ;
-__p += '\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n\t\t\t<div class="chat-textarea-divider"></div>\n\t\t\t<textarea\n\t\t\t\t\ttype="text"\n\t\t\t\t\tclass="chat-textarea"\n\t\t\t\t\tplaceholder="' +
+__p += '\n\t\t\t<a class="close-chatbox-button icon-close"></a>\n\t\t</div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n\t\t\t<div class="chat-textarea-divider"></div>\n\t\t\t<textarea\n\t\t\t\t\ttype="text"\n\t\t\t\t\tclass="chat-textarea"\n\t\t\t\t\tplaceholder="' +
 ((__t = (label_personal_message)) == null ? '' : __t) +
 '"/>\n\t\t\t';
  if (show_toolbar) { ;
