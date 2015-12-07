@@ -118,9 +118,9 @@ __p += '\n                <a href="' +
 ((__t = (url)) == null ? '' : __t) +
 '" target="_blank" class="user">\n            ';
  } ;
-__p += '\n                    ' +
+__p += '\n                    <span class="header-contact-name"> ' +
 ((__t = ( fullname )) == null ? '' : __t) +
-'\n            ';
+' </span>\n            ';
  if (url) { ;
 __p += '\n                </a>\n            ';
  } ;
@@ -439,7 +439,7 @@ __p += '\n<div class="input-group">\n    <input name="' +
 ((__t = (name)) == null ? '' : __t) +
 '" type="' +
 ((__t = (type)) == null ? '' : __t) +
-'" \n        ';
+'"\n        ';
  if (value) { ;
 __p += ' value="' +
 ((__t = (value)) == null ? '' : __t) +
@@ -449,7 +449,9 @@ __p += '\n        ';
  if (required) { ;
 __p += ' class="required" ';
  } ;
-__p += ' />\n    <span>' +
+__p += ' />\n    <span title="' +
+((__t = (domain)) == null ? '' : __t) +
+'">' +
 ((__t = (domain)) == null ? '' : __t) +
 '</span>\n</div>\n';
 
@@ -582,15 +584,24 @@ return __p
 
 this["templates"]["pending_contact"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
-__p += '<span class="pending-contact-name" title="Name: ' +
+
+ if (allow_chat_pending_contacts)  { ;
+__p += '\n<a class="open-chat"href="#">\n';
+ } ;
+__p += '\n<span class="pending-contact-name" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
 '\nJID: ' +
 ((__t = (jid)) == null ? '' : __t) +
 '">' +
 ((__t = (fullname)) == null ? '' : __t) +
-'</span> <a class="remove-xmpp-contact icon-remove" title="' +
+'</span> \n';
+ if (allow_chat_pending_contacts)  { ;
+__p += '\n</a>\n';
+ } ;
+__p += '\n<a class="remove-xmpp-contact icon-remove" title="' +
 ((__t = (desc_remove)) == null ? '' : __t) +
 '" href="#"></a>\n';
 
@@ -684,15 +695,24 @@ return __p
 
 this["templates"]["requesting_contact"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
-__p += '<span class="req-contact-name" title="Name: ' +
+
+ if (allow_chat_pending_contacts)  { ;
+__p += '\n<a class="open-chat"href="#">\n';
+ } ;
+__p += '\n<span class="req-contact-name" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
 '\nJID: ' +
 ((__t = (jid)) == null ? '' : __t) +
 '">' +
 ((__t = (fullname)) == null ? '' : __t) +
-'</span>\n<span class="request-actions">\n    <a class="accept-xmpp-request icon-checkmark" title="' +
+'</span>\n';
+ if (allow_chat_pending_contacts)  { ;
+__p += '\n</a>\n';
+ } ;
+__p += '\n<span class="request-actions">\n    <a class="accept-xmpp-request icon-checkmark" title="' +
 ((__t = (desc_accept)) == null ? '' : __t) +
 '" href="#"></a>\n    <a class="decline-xmpp-request icon-close" title="' +
 ((__t = (desc_decline)) == null ? '' : __t) +
@@ -827,7 +847,8 @@ return __p
 
 this["templates"]["room_panel"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<form class="add-chatroom" action="" method="post">\n    <label>' +
 ((__t = (label_room_name)) == null ? '' : __t) +
@@ -837,11 +858,15 @@ __p += '<form class="add-chatroom" action="" method="post">\n    <label>' +
 ((__t = (label_nickname)) == null ? '' : __t) +
 '</label>\n    <input type="text" name="nick" class="new-chatroom-nick"\n        placeholder="' +
 ((__t = (label_nickname)) == null ? '' : __t) +
-'"/>\n    <label' +
+'"/>\n    ';
+ if (server_input_type != 'hidden') { ;
+__p += '\n        <label' +
 ((__t = (server_label_global_attr)) == null ? '' : __t) +
 '>' +
 ((__t = (label_server)) == null ? '' : __t) +
-'</label>\n    <input type="' +
+'</label>\n    ';
+ } ;
+__p += '\n    <input type="' +
 ((__t = (server_input_type)) == null ? '' : __t) +
 '" name="server" class="new-chatroom-server"\n        placeholder="' +
 ((__t = (label_server)) == null ? '' : __t) +
@@ -981,7 +1006,9 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 
  if (show_emoticons)  { ;
-__p += '\n    <li class="toggle-smiley icon-happy" title="Insert a smilery">\n        <ul>\n            <li><a class="icon-smiley" href="#" data-emoticon=":)"></a></li>\n            <li><a class="icon-wink" href="#" data-emoticon=";)"></a></li>\n            <li><a class="icon-grin" href="#" data-emoticon=":D"></a></li>\n            <li><a class="icon-tongue" href="#" data-emoticon=":P"></a></li>\n            <li><a class="icon-cool" href="#" data-emoticon="8)"></a></li>\n            <li><a class="icon-evil" href="#" data-emoticon=">:)"></a></li>\n            <li><a class="icon-confused" href="#" data-emoticon=":S"></a></li>\n            <li><a class="icon-wondering" href="#" data-emoticon=":\\"></a></li>\n            <li><a class="icon-angry" href="#" data-emoticon=">:("></a></li>\n            <li><a class="icon-sad" href="#" data-emoticon=":("></a></li>\n            <li><a class="icon-shocked" href="#" data-emoticon=":O"></a></li>\n            <li><a class="icon-thumbs-up" href="#" data-emoticon="(^.^)b"></a></li>\n            <li><a class="icon-heart" href="#" data-emoticon="<3"></a></li>\n        </ul>\n    </li>\n';
+__p += '\n    <li class="toggle-smiley icon-happy" title="' +
+((__t = (label_insert_smiley)) == null ? '' : __t) +
+'">\n        <ul>\n            <li><a class="icon-smiley" href="#" data-emoticon=":)"></a></li>\n            <li><a class="icon-wink" href="#" data-emoticon=";)"></a></li>\n            <li><a class="icon-grin" href="#" data-emoticon=":D"></a></li>\n            <li><a class="icon-tongue" href="#" data-emoticon=":P"></a></li>\n            <li><a class="icon-cool" href="#" data-emoticon="8)"></a></li>\n            <li><a class="icon-evil" href="#" data-emoticon=">:)"></a></li>\n            <li><a class="icon-confused" href="#" data-emoticon=":S"></a></li>\n            <li><a class="icon-wondering" href="#" data-emoticon=":\\"></a></li>\n            <li><a class="icon-angry" href="#" data-emoticon=">:("></a></li>\n            <li><a class="icon-sad" href="#" data-emoticon=":("></a></li>\n            <li><a class="icon-shocked" href="#" data-emoticon=":O"></a></li>\n            <li><a class="icon-thumbs-up" href="#" data-emoticon="(^.^)b"></a></li>\n            <li><a class="icon-heart" href="#" data-emoticon="<3"></a></li>\n        </ul>\n    </li>\n';
  } ;
 __p += '\n';
  if (show_call_button)  { ;
