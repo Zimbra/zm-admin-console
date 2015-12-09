@@ -428,10 +428,10 @@
         var LABEL_GROUPS = __('Groups');
 
         var HEADER_WEIGHTS = {};
-        HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 0;
-        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 1;
-        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 2;
-        HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 3;
+        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 0;
+        HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 1;
+        HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 2;
+        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 3;
 
         // Module-level variables
         // ----------------------
