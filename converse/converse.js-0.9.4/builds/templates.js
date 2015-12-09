@@ -118,7 +118,7 @@ __p += '\n                <a href="' +
 ((__t = (url)) == null ? '' : __t) +
 '" target="_blank" class="user">\n            ';
  } ;
-__p += '\n                   <span class="header-contact-name"> ' +
+__p += '\n                    <span class="header-contact-name"> ' +
 ((__t = ( fullname )) == null ? '' : __t) +
 ' </span>\n            ';
  if (url) { ;
@@ -489,7 +489,7 @@ this["templates"]["login_panel"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class="connectionSpinnerPanel">\n\t<span class="spinner"></span>\n\t<span class="conn-feedback"></span>\n\t<span class="conn-error" style="display: none;"></span>\n\t<span class="conn-error-retry" style="display: none;"><a class="conn-retry" href="#"></a></span>\n</div>\n<form id="converse-login" method="post" style="display: none;">\n    <label>' +
+__p += '<div class="connectionSpinnerPanel">\n\t<span class="spinner"></span>\n\t<span class="conn-feedback"></span>\n</div>\n<form id="converse-login" method="post" style="display: none;">\n    <label>' +
 ((__t = (label_username)) == null ? '' : __t) +
 '</label>\n    <input type="email" name="jid" placeholder="user@server">\n    <label>' +
 ((__t = (label_password)) == null ? '' : __t) +
