@@ -110,7 +110,7 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<div class="box-flyout" style="height: ' +
 ((__t = (height)) == null ? '' : __t) +
-'px">\n    <div class="dragresize dragresize-tm"></div>\n    <div class="chat-head chat-head-chatbox">\n        <a class="close-chatbox-button icon-close"></a>\n        <!--a class="toggle-chatbox-button icon-minus"></a-->\n        <div class="chat-title">\n\t\t\t<span class="icon-' +
+'px">\n    <div class="dragresize dragresize-tm"></div>\n    <div class="chat-head chat-head-chatbox">\n        <!--a class="toggle-chatbox-button icon-minus"></a-->\n        <div class="chat-title">\n\t\t\t<span class="icon-' +
 ((__t = (chat_status)) == null ? '' : __t) +
 '"></span>\n            ';
  if (url) { ;
@@ -124,7 +124,7 @@ __p += '\n                    <span class="header-contact-name"> ' +
  if (url) { ;
 __p += '\n                </a>\n            ';
  } ;
-__p += '\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n\t\t\t<div class="chat-textarea-divider"></div>\n\t\t\t<textarea\n\t\t\t\t\ttype="text"\n\t\t\t\t\tclass="chat-textarea"\n\t\t\t\t\tplaceholder="' +
+__p += '\n\t\t\t<a class="close-chatbox-button icon-close"></a>\n\t\t</div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n\t\t\t<div class="chat-textarea-divider"></div>\n\t\t\t<textarea\n\t\t\t\t\ttype="text"\n\t\t\t\t\tclass="chat-textarea"\n\t\t\t\t\tplaceholder="' +
 ((__t = (label_personal_message)) == null ? '' : __t) +
 '"/>\n\t\t\t';
  if (show_toolbar) { ;
@@ -465,9 +465,7 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<span id="' +
 ((__t = (label_group)) == null ? '' : __t) +
-'" href="#" class="group-toggle" title="' +
-((__t = (desc_group_toggle)) == null ? '' : __t) +
-'">' +
+'" href="#" class="group-toggle">' +
 ((__t = (label_group)) == null ? '' : __t) +
 '</span>\n';
 
@@ -615,11 +613,9 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<dt id="pending-xmpp-contacts"><a href="#" class="group-toggle icon-' +
 ((__t = (toggle_state)) == null ? '' : __t) +
-'" title="' +
-((__t = (desc_group_toggle)) == null ? '' : __t) +
 '">' +
 ((__t = (label_pending_contacts)) == null ? '' : __t) +
-'</a></dt>\n';
+'</a></dt>';
 
 }
 return __p
@@ -704,8 +700,6 @@ __p += '\n<a class="open-chat"href="#">\n';
  } ;
 __p += '\n<span class="req-contact-name" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
-'\nJID: ' +
-((__t = (jid)) == null ? '' : __t) +
 '">' +
 ((__t = (fullname)) == null ? '' : __t) +
 '</span>\n';
@@ -728,8 +722,6 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<dt id="xmpp-contact-requests"><a href="#" class="group-toggle icon-' +
 ((__t = (toggle_state)) == null ? '' : __t) +
-'" title="' +
-((__t = (desc_group_toggle)) == null ? '' : __t) +
 '">' +
 ((__t = (label_contact_requests)) == null ? '' : __t) +
 '</a></dt>\n';
@@ -903,8 +895,6 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<a class="open-chat" title="Name: ' +
 ((__t = (fullname)) == null ? '' : __t) +
-'\nJID: ' +
-((__t = (jid)) == null ? '' : __t) +
 '\n' +
 ((__t = (desc_chat)) == null ? '' : __t) +
 '" href="#"><span class="icon-' +
