@@ -210,5 +210,8 @@
 #conversejs	span.header-contact-name {
 		position: fixed;
 		margin-top: 0.1rem;
-       margin-left: 0.3rem;
-}	
+        margin-left: 0.3rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: $chat-width - 55px;
+}
