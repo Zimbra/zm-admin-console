@@ -1,0 +1,19 @@
+--- //depot/zimbra/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/builds/templates.js	2015-12-06 08:21:50.000000000 -0600
++++ /Users/ryadav/perforce/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/builds/templates.js	2015-12-06 08:21:50.000000000 -0600
+--- //depot/zimbra/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/converse.js	2015-10-26 11:32:34.000000000 -0500
++++ /Users/ryadav/perforce/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/converse.js	2015-10-26 11:32:34.000000000 -0500
+@@ -428,10 +428,10 @@
+         var LABEL_GROUPS = __('Groups');
+ 
+         var HEADER_WEIGHTS = {};
+-        HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 0;
+-        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 1;
+-        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 2;
+-        HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 3;
++        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 0;
++        HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 1;
++        HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 2;
++        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 3;
+ 
+         // Module-level variables
+         // ----------------------

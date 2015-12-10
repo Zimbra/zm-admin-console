@@ -1,0 +1,20 @@
+--- //depot/zimbra/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/requesting_contact.html	2015-10-26 11:32:34.000000000 -0500
++++ /Users/ryadav/perforce/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/requesting_contact.html	2015-10-26 11:32:34.000000000 -0500
+@@ -1,8 +1,7 @@
+ {[ if (allow_chat_pending_contacts)  { ]}
+ <a class="open-chat"href="#">
+ {[ } ]}
+-<span class="req-contact-name" title="Name: {{fullname}}
+-JID: {{jid}}">{{fullname}}</span>
++<span class="req-contact-name" title="Name: {{fullname}}">{{fullname}}</span>
+ {[ if (allow_chat_pending_contacts)  { ]}
+ </a>
+ {[ } ]}
+--- //depot/zimbra/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/roster_item.html	2015-10-26 11:32:34.000000000 -0500
++++ /Users/ryadav/perforce/JUDASPRIEST/ZimbraWebClient/converse/converse.js-0.9.4/src/templates/roster_item.html	2015-10-26 11:32:34.000000000 -0500
+@@ -1,5 +1,4 @@
+ <a class="open-chat" title="Name: {{fullname}}
+-JID: {{jid}}
+ {{desc_chat}}" href="#"><span class="icon-{{chat_status}}" title="{{desc_status}}"></span>{{fullname}}</a>
+ {[ if (allow_contact_removal) { ]}
+ <a class="alter-menu-xmpp-contact icon-more-options" title="{{desc_remove}}" href="#"></a>
