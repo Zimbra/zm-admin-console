@@ -47,12 +47,15 @@ function() {
           {type:_GROUP_,isTabGroup:true, items: [ //allows tab key iteration
                 {ref:ZaDomain.A_domainName, type: _TEXTFIELD_, label:ZaMsg.LBL_domainAlias,
                     width: 250, visibilityChecks:[],enableDisableChecks:[]},
-                {ref:ZaDomain.A2_zimbraDomainAliasTarget, type:_DYNSELECT_,
-					inputWidth: 250,   emptyText:ZaMsg.enterSearchTerm,	
-                    label: ZaMsg.LBL_targetDomain, toolTipContent:ZaMsg.tt_StartTypingDomainName,
-                    dataFetcherMethod:ZaSearch.prototype.dynSelectSearchOnlyDomains,
-                    dataFetcherClass:ZaSearch,editable:true,
-                    visibilityChecks:[],enableDisableChecks:[]}
+				{
+					 ref : ZaDomain.A2_zimbraDomainAliasTarget,
+					 type : _INPUT_,
+					 label : ZaMsg.LBL_targetDomain,
+					 getDisplayValue : function (domainName) {
+						this.createDataList(ZaApp.getInstance().getDomainNameListByType(ZaDomain.domainTypes.local));
+						return domainName;
+					 }
+				}
             ]
           }
         ]
@@ -85,12 +88,16 @@ function() {
           {type:_GROUP_,isTabGroup:true, items: [ //allows tab key iteration
                 {ref:ZaDomain.A_domainName, type: _OUTPUT_, label:ZaMsg.LBL_domainAlias,
                     width: 250, visibilityChecks:[],enableDisableChecks:[]},
-                {ref:ZaDomain.A2_zimbraDomainAliasTarget, type:_DYNSELECT_,
-					inputWidth: 250,   emptyText:ZaMsg.enterSearchTerm,	
-                    label: ZaMsg.LBL_targetDomain, toolTipContent:ZaMsg.tt_StartTypingDomainName,
-                    dataFetcherMethod:ZaSearch.prototype.dynSelectSearchDomains,
-                    dataFetcherClass:ZaSearch,editable:true,
-                    visibilityChecks:[],enableDisableChecks:[]}
+				{
+					ref : ZaDomain.A2_zimbraDomainAliasTarget,
+					type : _INPUT_,
+					label : ZaMsg.LBL_targetDomain,
+					getDisplayValue : function(domainName) {
+						this.createDataList(ZaApp.getInstance().getDomainNameListByType(ZaDomain.domainTypes.local));
+						return domainName;
+					},
+					onChange : ZaDomainAliasEditWizard.onTargetDomainChanged
+				}
             ]
           }
         ]
@@ -126,3 +133,6 @@ ZaDomainAliasEditWizard.prototype.editDomainAlias = function (domain, reload) {
     this.popup ();
 }
 
+ZaDomainAliasEditWizard.onTargetDomainChanged = function(value) {
+	this.setInstanceValue(value);
+};

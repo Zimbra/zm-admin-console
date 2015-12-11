@@ -825,6 +825,32 @@ function() {
 	return this._cosListName;
 };
 
+/**
+ * Returns an array of domain names for the specified domainType
+ *
+ * @param {domainType}  string  "local" or "alias"
+ *
+ * @returns {Array} array of domain names for the domainType
+ */
+ZaApp.prototype.getDomainNameListByType =
+function(domainType) {
+	this._domainNameList = this._domainNameList || {};
+	if (!this._domainNameList[domainType]) {
+		this._domainNameList[domainType] = [];
+		var domainList = this.getDomainList();
+		if (domainList) {
+			var domainListArray = domainList.getArray();
+			for (var i = 0; i < domainListArray.length; i++) {
+				var domain = domainListArray[i];
+				if (domain && domain.attrs[ZaDomain.A_domainType] === domainType) {
+					this._domainNameList[domainType].push(domain.name);
+				}
+			}
+		}
+	}
+	return this._domainNameList[domainType];
+};
+
 ZaApp.prototype.getGlobalConfig =
 function(refresh) {
 	if (refresh || this._globalConfig == null) {
