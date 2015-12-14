@@ -111,7 +111,8 @@ function() {
                         } else {
                             this.setInstanceValue(value);
                         }
-                    }
+					},
+					autoCompleteEnabled : true
                 }
             ]
           }
