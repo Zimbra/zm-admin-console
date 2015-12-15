@@ -681,8 +681,7 @@
     padding: 3px 3px 2px 3px;
     text-decoration: none; }
   #conversejs a.configure-chatroom-button:active,
-  #conversejs a.toggle-chatbox-button:active,
-  #conversejs a.close-chatbox-button:active {
+  #conversejs a.toggle-chatbox-button:active {
     position: relative;
     top: 1px; }
   #conversejs .chatroom-form-container {
