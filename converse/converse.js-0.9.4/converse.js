@@ -6032,7 +6032,7 @@
         'contacts': {
             'get': function (jids) {
                 var _transform = function (jid) {
-                    var contact = converse.roster.get(Strophe.getBareJidFromJid(jid));
+                    var contact = converse.roster && converse.roster.get(Strophe.getBareJidFromJid(jid));
                     if (contact) {
                         return contact.attributes;
                     }
