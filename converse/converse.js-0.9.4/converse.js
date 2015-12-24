@@ -692,8 +692,9 @@
                 } else {
                     document.title = document.title.replace(/^Messages \(\d+\) /, "Messages (" + this.msg_counter + ") ");
                 }
-                window.blur();
-                window.focus();
+                //ZCS - Do not focus on the window. On chrome/safari the focus does not stay on html box. See bug 101949.
+                /*window.blur();
+                window.focus();*/
             } else if (document.title.search(/^Messages \(\d+\) /) != -1) {
                 document.title = document.title.replace(/^Messages \(\d+\) /, "");
             }
