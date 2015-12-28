@@ -54,7 +54,8 @@ function() {
 					 getDisplayValue : function (domainName) {
 						this.createDataList(ZaApp.getInstance().getDomainNameListByType(ZaDomain.domainTypes.local));
 						return domainName;
-					 }
+					 },
+					 onChange : ZaDomainAliasWizard.onTargetDomainChanged
 				}
             ]
           }
@@ -62,6 +63,10 @@ function() {
 	};
 	return xFormObject;
 }
+
+ZaDomainAliasWizard.onTargetDomainChanged = function(value) {
+	this.setInstanceValue(value);
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////
