@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /*!
  * Converse.js (Web-based XMPP instant messaging client)
  * http://conversejs.org
@@ -1481,6 +1480,9 @@
   top: 20px; }
 #conversejs #login-dialog .connectionSpinnerPanel A.conn-retry {
   text-decoration: underline; }
+#conversejs #login-dialog .connectionSpinnerPanel A.conn-retry-disabled {
+  color: #808080;
+  cursor: default; }
 
 #conversejs #controlbox-tabs LI A.current {
   line-height: 25px; }

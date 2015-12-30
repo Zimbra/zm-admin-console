@@ -111,6 +111,11 @@
       A.conn-retry {
         text-decoration: underline;
       }
+
+      A.conn-retry-disabled {
+        color: #808080;
+        cursor: default;
+      }
     }
   }
 
