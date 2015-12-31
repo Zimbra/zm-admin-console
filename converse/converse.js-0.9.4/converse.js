@@ -5727,6 +5727,7 @@
             $.ajax({
                 url:  this.prebind_url,
                 type: 'GET',
+                cache: false,
                 success: function (response) {
                     this.connection.attach(
                             response.jid,
