@@ -920,8 +920,11 @@ ZaSettings.getLocaleChoices = function () {
                 displayLabel += " - " + locales[i].name;
             }
 
+            // bug: 38038
+            var localeId = locales[i].id.replace(/^in/,"id");
+
             ZaSettings.localeChoices.push({
-                value: locales[i].id,
+                value: localeId,
                 label: displayLabel
             });
         }
