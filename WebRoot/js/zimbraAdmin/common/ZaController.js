@@ -540,7 +540,7 @@ function (resp) {
                 if(ex && this._refreshing && ex.code == ZmCsfeException.SVC_AUTH_REQUIRED) {
                     //do not show error message, we are coming back to admin UI with an expired cookie
                 } else if(ex && ex.msg) {
-                    this._loginDialog.setError(ex.msg);
+                    this._loginDialog.setError(ZaMsg.SERVER_ERROR + " (" + ex.msg + ")");
                 } else {
                     this._loginDialog.setError(ZaMsg.SERVER_ERROR);
                 }
