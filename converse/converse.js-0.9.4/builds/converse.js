@@ -12891,7 +12891,7 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<div class="box-flyout" style="height: '+
 ((__t=(height))==null?'':__t)+
-'px">\n    <div class="dragresize dragresize-tm"></div>\n    <div class="chat-head chat-head-chatbox">\n        <a class="close-chatbox-button icon-close"></a>\n        <!--a class="toggle-chatbox-button icon-minus"></a-->\n        <div class="chat-title">\n			<span class="icon-'+
+'px">\n    <div class="dragresize dragresize-tm"></div>\n    <div class="chat-head chat-head-chatbox">\n        <!--a class="toggle-chatbox-button icon-minus"></a-->\n        <div class="chat-title">\n			<span class="icon-'+
 ((__t=(chat_status))==null?'':__t)+
 '"></span>\n            ';
  if (url) { 
@@ -12899,13 +12899,13 @@ __p+='\n                <a href="'+
 ((__t=(url))==null?'':__t)+
 '" target="_blank" class="user">\n            ';
  } 
-__p+='\n                    '+
+__p+='\n                   <span class="header-contact-name"> '+
 ((__t=( fullname ))==null?'':__t)+
-'\n            ';
+' </span>\n            ';
  if (url) { 
 __p+='\n                </a>\n            ';
  } 
-__p+='\n        </div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n			<div class="chat-textarea-divider"></div>\n			<textarea\n					type="text"\n					class="chat-textarea"\n					placeholder="'+
+__p+='\n			<a class="close-chatbox-button icon-close"></a>\n		</div>\n        <!-- p class="user-custom-message"><p/ -->\n    </div>\n    <div class="chat-body">\n        <div class="chat-content"></div>\n        <form class="sendXMPPMessage" action="" method="post">\n			<div class="chat-textarea-divider"></div>\n			<textarea\n					type="text"\n					class="chat-textarea"\n					placeholder="'+
 ((__t=(label_personal_message))==null?'':__t)+
 '"/>\n			';
  if (show_toolbar) { 
@@ -13036,7 +13036,7 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<div class="box-flyout" style="height: '+
 ((__t=(height))==null?'':__t)+
-'px">\n    <div class="hidden dragresize dragresize-tm"></div>\n    <div class="chat-head controlbox-head">\n        <div id="controlbox-tabs"></div>                \n    </div>\n    <div class="controlbox-panes">\n    </div>\n    <div class="add-contact-flyout" style="display: none;">\n    	<div>\n    		<div class="flyout-heading">\n    			<span>Add Contact</span>\n    			<span class="add-contact-flyout-close">x</span>\n    		</div>    		\n    		<form class="add-contact-form">\n				<div>\n					<label for="email">Email</label>\n					<input type="email" id="email" placeholder="e.g. user@example.com"/>\n				</div>\n				<div>\n					<label for="display">Display</label>\n					<input type="text" id="display" placeholder="Alias or display name"/>\n				</div>\n				<div class="button">\n					<hr>\n					<button class="addContact">Add</button>\n				</div>\n    		</form>\n    	</div>\n    </div>\n    <div class="search-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Search Contacts</span>\n                <span class="search-contact-flyout-close">x</span>\n            </div>\n            <form class="search-contact-form">\n                <div>                    \n                    <input type="text" id="search" placeholder="Type text to search"/>\n                </div>\n            </form>\n        </div>\n        \n        <dl class="search-converse-contact" style="display:none">\n            <span class="searchedContactCount group-toggle"></span>\n            <dd class="zmsearch-xmpp"></dd>\n        </dl>\n    </div>\n    <div class="remove-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Remove Contact</span>\n            </div>\n            <div class="remove-contact-container">\n                <div>\n                    <p class="removeContactWarningMsg"></p>\n                </div>\n                <div class="button">\n                    <hr>\n                    <button class="removeContact">Remove</button>\n                    <button class="keepContact">Keep</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>';
+'px">\n    <div class="hidden dragresize dragresize-tm"></div>\n    <div class="chat-head controlbox-head">\n        <div id="controlbox-tabs"></div>                \n    </div>\n    <div class="controlbox-panes">\n    </div>\n    <div class="add-contact-flyout" style="display: none;">\n    	<div>\n    		<div class="flyout-heading">\n    			<span>Add Contact</span>\n    			<span class="add-contact-flyout-close">x</span>\n    		</div>    		\n    		<form class="add-contact-form" novalidate>\n				<div>\n					<label for="email">Email</label>\n					<input type="email" id="email" placeholder="e.g. user@example.com"/>\n				</div>\n				<div>\n					<label for="display">Display</label>\n					<input type="text" id="display" placeholder="Alias or display name"/>\n				</div>\n				<div class="button">\n					<hr>\n					<button class="addContact">Add</button>\n				</div>\n    		</form>\n    	</div>\n    </div>\n    <div class="search-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Search Contacts</span>\n                <span class="search-contact-flyout-close">x</span>\n            </div>\n            <form class="search-contact-form">\n                <div>                    \n                    <input type="text" id="search" placeholder="Type text to search"/>\n                </div>\n            </form>\n        </div>\n        \n        <dl class="search-converse-contact" style="display:none">\n            <span class="searchedContactCount group-toggle"></span>\n            <dd class="zmsearch-xmpp"></dd>\n        </dl>\n    </div>\n    <div class="remove-contact-flyout" style="display: none;">\n        <div>\n            <div class="flyout-heading">\n                <span>Remove Contact</span>\n            </div>\n            <div class="remove-contact-container">\n                <div>\n                    <p class="removeContactWarningMsg"></p>\n                </div>\n                <div class="button">\n                    <hr>\n                    <button class="removeContact">Remove</button>\n                    <button class="keepContact">Keep</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>';
 }
 return __p;
 }; });
@@ -13221,9 +13221,7 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<span id="'+
 ((__t=(label_group))==null?'':__t)+
-'" href="#" class="group-toggle" title="'+
-((__t=(desc_group_toggle))==null?'':__t)+
-'">'+
+'" href="#" class="group-toggle">'+
 ((__t=(label_group))==null?'':__t)+
 '</span>\n';
 }
@@ -13245,7 +13243,7 @@ return __p;
 define('tpl!login_panel', [],function () { return function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<div class="connectionSpinnerPanel">\n	<span class="spinner"></span>\n	<span class="conn-feedback"></span>\n</div>\n<form id="converse-login" method="post" style="display: none;">\n    <label>'+
+__p+='<div class="connectionSpinnerPanel">\n	<span class="spinner"></span>\n	<span class="conn-feedback"></span>\n	<span class="conn-error" style="display: none;"></span>\n	<span class="conn-error-retry" style="display: none;"><a class="conn-retry" href="#"></a></span>\n</div>\n<form id="converse-login" method="post" style="display: none;">\n    <label>'+
 ((__t=(label_username))==null?'':__t)+
 '</label>\n    <input type="email" name="jid" placeholder="user@server">\n    <label>'+
 ((__t=(label_password))==null?'':__t)+
@@ -13361,11 +13359,9 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<dt id="pending-xmpp-contacts"><a href="#" class="group-toggle icon-'+
 ((__t=(toggle_state))==null?'':__t)+
-'" title="'+
-((__t=(desc_group_toggle))==null?'':__t)+
 '">'+
 ((__t=(label_pending_contacts))==null?'':__t)+
-'</a></dt>\n';
+'</a></dt>';
 }
 return __p;
 }; });
@@ -13444,8 +13440,6 @@ __p+='\n<a class="open-chat"href="#">\n';
  } 
 __p+='\n<span class="req-contact-name" title="Name: '+
 ((__t=(fullname))==null?'':__t)+
-'\nJID: '+
-((__t=(jid))==null?'':__t)+
 '">'+
 ((__t=(fullname))==null?'':__t)+
 '</span>\n';
@@ -13467,8 +13461,6 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<dt id="xmpp-contact-requests"><a href="#" class="group-toggle icon-'+
 ((__t=(toggle_state))==null?'':__t)+
-'" title="'+
-((__t=(desc_group_toggle))==null?'':__t)+
 '">'+
 ((__t=(label_contact_requests))==null?'':__t)+
 '</a></dt>\n';
@@ -13634,8 +13626,6 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<a class="open-chat" title="Name: '+
 ((__t=(fullname))==null?'':__t)+
-'\nJID: '+
-((__t=(jid))==null?'':__t)+
 '\n'+
 ((__t=(desc_chat))==null?'':__t)+
 '" href="#"><span class="icon-'+
@@ -32278,13 +32268,18 @@ return Backbone.BrowserStorage;
  * Copyright (c) 2014, JC Brand <jc@opkode.com>
  * Licensed under the Mozilla Public License (MPL) 
  */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('backbone.overview',["underscore", "backbone"], factory);
+        define('backbone.overview',["underscore", "backbone"],
+            function(_, Backbone) {
+                return factory(_ || root._, Backbone || root.Backbone);
+            }
+        );
    } else {
       // RequireJS isn't being used.
       // Assume underscore and backbone are loaded in <script> tags
-        factory(_ || root._, Backbone || root.Backbone);
+      factory(_, Backbone);
    }
 }(this, function (_, Backbone) {
     "use strict";
@@ -33985,10 +33980,10 @@ define("converse-dependencies", [
         var LABEL_GROUPS = __('Groups');
 
         var HEADER_WEIGHTS = {};
-        HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 0;
-        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 1;
-        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 2;
-        HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 3;
+        HEADER_WEIGHTS[HEADER_REQUESTING_CONTACTS] = 0;
+        HEADER_WEIGHTS[HEADER_PENDING_CONTACTS]    = 1;
+        HEADER_WEIGHTS[HEADER_CURRENT_CONTACTS]    = 2;
+        HEADER_WEIGHTS[HEADER_UNGROUPED]           = 3;
 
         // Module-level variables
         // ----------------------
@@ -34249,8 +34244,9 @@ define("converse-dependencies", [
                 } else {
                     document.title = document.title.replace(/^Messages \(\d+\) /, "Messages (" + this.msg_counter + ") ");
                 }
-                window.blur();
-                window.focus();
+                //ZCS - Do not focus on the window. On chrome/safari the focus does not stay on html box. See bug 101949.
+                /*window.blur();
+                window.focus();*/
             } else if (document.title.search(/^Messages \(\d+\) /) != -1) {
                 document.title = document.title.replace(/^Messages \(\d+\) /, "");
             }
@@ -37463,8 +37459,8 @@ define("converse-dependencies", [
                     this.$el.addClass('requesting-xmpp-contact');
                     this.$el.html(converse.templates.requesting_contact(
                         _.extend(item.toJSON(), {
-                            'desc_accept': __("Click to accept this contact request"),
-                            'desc_decline': __("Click to decline this contact request"),
+                            'desc_accept': ZmMsg.chatAcceptContactButtonTooltip,
+                            'desc_decline': ZmMsg.chatDeclineContactButtonTooltip,
                             'allow_chat_pending_contacts': converse.allow_chat_pending_contacts
                         })
                     ));
@@ -37523,7 +37519,7 @@ define("converse-dependencies", [
 
             declineRequest: function (ev) {
                 if (ev && ev.preventDefault) { ev.preventDefault(); }
-                var result = confirm(__("Are you sure you want to decline this contact request?"));
+                var result = confirm(ZmMsg.chatDeclineContactConfirmMessage);
                 if (result === true) {
                     this.model.unauthorize().destroy();
                 }
@@ -39283,6 +39279,7 @@ define("converse-dependencies", [
             $.ajax({
                 url:  this.prebind_url,
                 type: 'GET',
+                cache: false,
                 success: function (response) {
                     this.connection.attach(
                             response.jid,
@@ -39588,7 +39585,7 @@ define("converse-dependencies", [
         'contacts': {
             'get': function (jids) {
                 var _transform = function (jid) {
-                    var contact = converse.roster.get(Strophe.getBareJidFromJid(jid));
+                    var contact = converse.roster && converse.roster.get(Strophe.getBareJidFromJid(jid));
                     if (contact) {
                         return contact.attributes;
                     }
