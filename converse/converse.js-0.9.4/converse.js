@@ -3907,8 +3907,8 @@
                     this.$el.addClass('requesting-xmpp-contact');
                     this.$el.html(converse.templates.requesting_contact(
                         _.extend(item.toJSON(), {
-                            'desc_accept': __("Click to accept this contact request"),
-                            'desc_decline': __("Click to decline this contact request"),
+                            'desc_accept': ZmMsg.chatAcceptContactButtonTooltip,
+                            'desc_decline': ZmMsg.chatDeclineContactButtonTooltip,
                             'allow_chat_pending_contacts': converse.allow_chat_pending_contacts
                         })
                     ));
@@ -3967,7 +3967,7 @@
 
             declineRequest: function (ev) {
                 if (ev && ev.preventDefault) { ev.preventDefault(); }
-                var result = confirm(__("Are you sure you want to decline this contact request?"));
+                var result = confirm(ZmMsg.chatDeclineContactConfirmMessage);
                 if (result === true) {
                     this.model.unauthorize().destroy();
                 }
