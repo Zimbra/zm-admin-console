@@ -294,7 +294,9 @@
         if (!moment.locale) { //moment.lang is deprecated after 2.8.1, use moment.locale instead
             moment.locale = moment.lang;
         }
-        moment.locale(this.detectLocale(this.isMomentLocale));
+        // ZCS - We do not set the moment.locale and let this.i18n pick up the browser settings or the one attached my ZCS language pref.
+        // This is because we are not using moment-with-locales.js, but the older version moment-with-langs.js - reason ZCS YUI compressor inconsistencies.
+        //moment.locale(this.detectLocale(this.isMomentLocale));
         this.i18n = settings.i18n ? settings.i18n : locales[this.detectLocale(this.isConverseLocale)];
 
         // Translation machinery
