@@ -246,3 +246,8 @@
 #conversejs .chat-message {
     padding-top: $vertical-spacing-chat-window;
 }
+
+/*Adjust top padding so that content is vertically center aligned in minimized Buddy List header */
+ #conversejs .toggle-controlbox {
+    padding-top: .7rem;
+ }
