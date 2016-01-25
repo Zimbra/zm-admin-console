@@ -182,26 +182,24 @@ ZaGlobalAdvancedStatsPage.plotGlobalQuickChart = function (id, group, columns, c
             return;
         }
         var data = {};
-        if (soapResponse.hostname) {
-            for (var i = 0; i < soapResponse.hostname.length; i++) {
-                if (!soapResponse.hostname[i].stats) continue;
-                var stats = soapResponse.hostname[i].stats;
-                if (!stats[0].values) continue;
-                for (var j = 0; j < stats[0].values.length; j++) {
-                    var setOrIncrement = false;
-                    if (!data[stats[0].values[j].t]) {
-                        data[stats[0].values[j].t] = {};
-                        setOrIncrement = true;
+        var hostname = soapResponse.hostname;
+        if (hostname[0] && hostname[0].stats[0] && hostname[0].stats[0].values) {
+                var timeStamp = hostname[0].stats[0].values;
+                var timeStampLength = timeStamp.length;
+                var hostNameLen = hostname.length;
+                for (var i = 0; i < timeStampLength; i++) {
+                    var valuesSumAtTs = 0;
+                    for (var j = 0; j < hostNameLen; j++) {
+                        if (hostname[j].stats[0].values[i] && hostname[j].stats[0].values[i].stat[0]) {
+                            valuesSumAtTs = valuesSumAtTs + parseFloat(hostname[j].stats[0].values[i].stat[0].value);
+                        }
                     }
-                    if (!stats[0].values[j].stat) continue;
-                    for (var m = 0; m < stats[0].values[j].stat.length; m++) {
-                        if (setOrIncrement)
-                            data[stats[0].values[j].t][stats[0].values[j].stat[m].name] = stats[0].values[j].stat[m].value;
-                        else
-                            data[stats[0].values[j].t][stats[0].values[j].stat[m].name] += stats[0].values[j].stat[m].value;
+                    var averageValueAtTs = valuesSumAtTs / hostNameLen;
+                    if (!data[hostname[0].stats[0].values[i].t]) {
+                        data[hostname[0].stats[0].values[i].t] = {};
                     }
+                    data[hostname[0].stats[0].values[i].t][hostname[0].stats[0].values[0].stat[0].name] = averageValueAtTs;
                 }
-            }
         }
         
         var newData = [];
