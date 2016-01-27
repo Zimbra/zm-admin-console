@@ -204,12 +204,11 @@ ZaGlobalAdvancedStatsPage.plotGlobalQuickChart = function (id, group, columns, c
         
         var newData = [];
         var period = 0;
-        var lastTS = 0;
+        var tsArr = Object.keys(data);
+        if (tsArr[1] != null) {
+            period = tsArr[1] - tsArr[0];
+        }
         for (var i in data) {
-            if (lastTS != 0)
-                period = i - lastTS;
-            lastTS = i;
-                
             record = { timestamp: new Date(i * 1000) };
             for (var j in data[i]) {
                 record[j] = data[i][j];
