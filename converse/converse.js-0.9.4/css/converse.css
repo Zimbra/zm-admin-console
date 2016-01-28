@@ -1556,22 +1556,3 @@
   overflow: hidden;
   text-overflow: ellipsis;
   width: 145px; }
-
-#conversejs #converse-roster, #conversejs .search-converse-contact {
-  margin-top: 0.25rem; }
-
-#conversejs .controlbox-pane {
-  padding-top: 0px; }
-
-#conversejs .chat-content {
-  padding-top: .5rem; }
-
-#conversejs .chat-event, #conversejs .chat-date, #conversejs .chat-info {
-  padding-top: 0.15rem; }
-
-#conversejs .chat-message {
-  padding-top: 0.15rem; }
-
-/*Adjust top padding so that content is vertically center aligned in minimized Buddy List header */
-#conversejs .toggle-controlbox {
-  padding-top: .7rem; }
