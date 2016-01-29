@@ -251,3 +251,19 @@
  #conversejs .toggle-controlbox {
     padding-top: .7rem;
  }
+ 
+ /*Vertical spacing between menu items in Presence menu*/
+#conversejs .xmpp-status-menu li a.online, 
+#conversejs .xmpp-status-menu li a.away, 
+#conversejs .xmpp-status-menu li a.dnd, 
+#conversejs .xmpp-status-menu li a.offline{
+  line-height:1.7rem; }
+
+/*Vertically align the presence icons and text in the Presence menu*/  
+#conversejs .xmpp-status-menu li a span.icon-online,
+#conversejs .xmpp-status-menu li a span.icon-away,
+#conversejs .xmpp-status-menu li a span.icon-dnd,
+#conversejs .xmpp-status-menu li a span.icon-offline{
+  position: relative;
+  top: 0.14rem;
+}
