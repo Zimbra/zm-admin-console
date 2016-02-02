@@ -239,7 +239,7 @@
     padding-top: .5rem;
 }
 
-#conversejs .chat-event, #conversejs .chat-date, #conversejs .chat-info {
+#conversejs .chat-event, #conversejs .chat-info {
 	padding-top: $vertical-spacing-chat-window;
 }
 
@@ -266,4 +266,13 @@
 #conversejs .xmpp-status-menu li a span.icon-offline{
   position: relative;
   top: 0.14rem;
+}
+
+/*Style for Date header in Chat Window*/
+#conversejs .chat-date{
+	text-align: center;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: $vertical-spacing-chat-window*2;
 }
