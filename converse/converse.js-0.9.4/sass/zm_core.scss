@@ -59,21 +59,26 @@
 	}
   }
   
-  #conversejs .chat-box {
-  	.box-flyout {
-      .add-contact-flyout, .search-contact-flyout {
-       INPUT[type=email] {
-            &::-webkit-input-placeholder { font-style: italic; }
-            &::-ms-input-placeholder { font-style: italic; }
-            &::-moz-placeholder { font-style: italic; }
-			font-size: inherit;
-	   	}
-	  }
-  	}
-  }
+ /*Style the hint text for add contact and search contact forms. Ideally, this should inherit from hint text class in ZCS. But doing this for now ...*/
+#conversejs .chatbox .box-flyout .add-contact-flyout INPUT[type=email], 
+#conversejs .chatbox .box-flyout .search-contact-flyout INPUT[type=email], 
+#conversejs .chatbox .box-flyout .add-contact-flyout INPUT[type=text], 
+#conversejs .chatbox .box-flyout .search-contact-flyout INPUT[type=text] {
+	font-size:1rem;
+	&::-webkit-input-placeholder { font-style: italic; }
+    &::-ms-input-placeholder { font-style: italic; }
+    &::-moz-placeholder { font-style: italic; }	
+}
+
+/*Style the hint text for chat input area.Ideally, this should inherit from hint text class in ZCS. But doing this for now ...*/
+#conversejs form.sendXMPPMessage .chat-textarea{
+	&::-webkit-input-placeholder { font-style: italic; }
+    &::-ms-input-placeholder { font-style: italic; }
+    &::-moz-placeholder { font-style: italic; }	
+}
 
   #conversejs #controlbox-tabs {
-    LI {
+    LI { 
       A.current {
         line-height: 25px;
       }
