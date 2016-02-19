@@ -1123,7 +1123,7 @@ ZaItem.getZeroIsUnlimitedItem = function () {
 ZaItem.getAboutScreenCopyright = function() {
     var version = ZaServerVersionInfo.version || 'N/A';
     var release = ZaServerVersionInfo.release || 'N/A';
-    return AjxMessageFormat.format(ZabMsg.aboutScreenCopyright, [version, release]);
+    return AjxMessageFormat.format(ZabMsg.aboutScreenCopyright, [version, release, AjxDateUtil.getYearStr()]);
 }
 
 /**
@@ -1132,7 +1132,5 @@ ZaItem.getAboutScreenCopyright = function() {
  * @return {string} copyright string with the end year information
  */
 ZaItem.getSplashScreenCopyright = function() {
-	var date = new Date();
-	var curYear = date.getFullYear() + "";
-	return AjxMessageFormat.format(ZabMsg.splashScreenCopyright, [curYear]);
+	return AjxMessageFormat.format(ZabMsg.splashScreenCopyright, [AjxDateUtil.getYearStr()]);
 }
