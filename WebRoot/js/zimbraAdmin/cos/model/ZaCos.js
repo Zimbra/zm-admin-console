@@ -204,12 +204,6 @@ ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled = "zimbraFeatureManageSMIMECe
 ZaCos.A_zimbraFeatureSMIMEEnabled = "zimbraFeatureSMIMEEnabled";
 ZaCos.A_zimbraFeatureDistributionListFolderEnabled = "zimbraFeatureDistributionListFolderEnabled";
 
-// Two Factor Authentication
-ZaCos.A_zimbraFeatureTwoFactorAuthAvailable = "zimbraFeatureTwoFactorAuthAvailable";
-ZaCos.A_zimbraFeatureTwoFactorAuthRequired = "zimbraFeatureTwoFactorAuthRequired";
-ZaCos.A_zimbraTwoFactorAuthNumScratchCodes = "zimbraTwoFactorAuthNumScratchCodes";
-ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled = "zimbraFeatureAppSpecificPasswordsEnabled";
-
 //security
 ZaCos.A_zimbraPasswordLockoutEnabled = "zimbraPasswordLockoutEnabled";
 ZaCos.A_zimbraPasswordLockoutDuration = "zimbraPasswordLockoutDuration";
@@ -804,11 +798,6 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraFeatureMailEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureGroupCalendarEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureGroupCalendarEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureFlaggingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureFlaggingEnabled, type:_ENUM_},
-		//Two Factor Authentication
-		{id:ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, type:_COS_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureTwoFactorAuthAvailable, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaCos.A_zimbraFeatureTwoFactorAuthRequired, type:_COS_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureTwoFactorAuthRequired, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaCos.A_zimbraTwoFactorAuthNumScratchCodes, type:_COS_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraTwoFactorAuthNumScratchCodes, minInclusive:1, maxInclusive:40},
-		{id:ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         //security
         {id:ZaCos.A_zimbraPasswordLockoutEnabled, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraPasswordLockoutEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaCos.A_zimbraPasswordLockoutDuration, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraPasswordLockoutDuration},

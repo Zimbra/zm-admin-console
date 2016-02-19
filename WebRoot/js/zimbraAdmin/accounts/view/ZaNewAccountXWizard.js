@@ -400,10 +400,6 @@ function(domainName, attrName) {
 	return ZaAccountXFormView.isAuthfromInternal(acctName);
 }
 
-ZaNewAccountXWizard.isTwoFactorAuthFeatureEnabled = function() {
-	return (this.getInstanceValue(ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable) == 'TRUE');
-};
-
 ZaNewAccountXWizard.isDomainLeftAccountsAlertVisible = function () {
 	var val1 = this.getInstanceValue(ZaAccount.A2_domainLeftAccounts);
 	var val2 = this.getInstanceValue(ZaAccount.A2_accountTypes);
@@ -2210,72 +2206,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
 								}
 							]
 						});
-		}
-		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_zimbraTwoFactorAuthEnabled, ZaAccount.A_zimbraFeatureTwoFactorAuthRequired, ZaAccount.A_zimbraTwoFactorAuthNumScratchCodes, ZaAccount.A_zimbraFeatureAppSpecificPasswordsEnabled],[])) {
-			advancedCaseItems.push({
-				type : _ZAWIZ_TOP_GROUPER_,
-				id: "account_two_factor_authentication_settings",
-				colSizes : ["auto"],
-				numCols : 1,
-				label : ZaMsg.Two_Factor_Authentication,
-				items : [
-					{
-						ref : ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable,
-						type : _SUPER_WIZ_CHECKBOX_,
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS,
-						checkBoxLabel : ZaMsg.LBL_Enable_Two_Factor_Authentication,
-						msgName :  ZaMsg.LBL_Enable_Two_Factor_Authentication,
-						trueValue : "TRUE",
-						falseValue : "FALSE",
-						colSizes : ["200px", "300px", "*"],
-						colSpan : 1
-					},
-					{
-						ref : ZaAccount.A_zimbraFeatureTwoFactorAuthRequired,
-						type : _SUPER_WIZ_CHECKBOX_,
-						enableDisableChecks : [[ZaNewAccountXWizard.isTwoFactorAuthFeatureEnabled], [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
-						enableDisableChangeEventSources : [ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable],
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS,
-						checkBoxLabel : ZaMsg.LBL_Require_Two_Step_Authentication,
-						trueValue : "TRUE",
-						falseValue : "FALSE",
-						colSizes : ["200px", "300px", "*"],
-						colSpan : 1,
-						checkBoxLabelLocation : _LEFT_,
-						checkboxAlign : _LEFT_,
-						labelCssStyle : "text-align:right;"
-					},
-					{
-						ref : ZaAccount.A_zimbraTwoFactorAuthNumScratchCodes,
-						type : _SUPERWIZ_TEXTFIELD_,
-						enableDisableChecks : [[ZaNewAccountXWizard.isTwoFactorAuthFeatureEnabled], [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
-						enableDisableChangeEventSources : [ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable],
-						txtBoxLabel : ZaMsg.LBL_Number_Of_One_Time_Codes,
-						toolTipContent : ZaMsg.MSG_Number_Of_One_Time_Codes,
-						msgName : ZaMsg.LBL_Number_Of_One_Time_Codes,
-						labelLocation : _LEFT_,
-						textFieldCssClass : "admin_xform_number_input",
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS,
-						colSizes : ["200px", "300px", "*"],
-						colSpan : 1
-					},
-					{
-						ref : ZaAccount.A_zimbraFeatureAppSpecificPasswordsEnabled,
-						type : _SUPER_WIZ_CHECKBOX_,
-						enableDisableChecks : [[ZaNewAccountXWizard.isTwoFactorAuthFeatureEnabled], [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, "TRUE"]],
-						enableDisableChangeEventSources : [ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable, ZaAccount.A_COSId, ZaAccount.A_zimbraFeatureTwoFactorAuthAvailable],
-						resetToSuperLabel : ZaMsg.NAD_ResetToCOS,
-						checkBoxLabel : ZaMsg.LBL_Enable_Application_Passcodes,
-						trueValue : "TRUE",
-						falseValue : "FALSE",
-						colSizes : ["200px", "300px", "*"],
-						colSpan : 1,
-						checkBoxLabelLocation : _LEFT_,
-						checkboxAlign : _LEFT_,
-						labelCssStyle : "text-align:right;"
-					}
-				]
-			});
 		}
 		if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraPasswordLockoutEnabled,ZaAccount.A_zimbraPasswordLockoutMaxFailures,
 			ZaAccount.A_zimbraPasswordLockoutDuration,ZaAccount.A_zimbraPasswordLockoutFailureLifetime],[])) {						
