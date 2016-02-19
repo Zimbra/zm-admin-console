@@ -269,10 +269,6 @@ ZaNewCosXWizard.gotNoSkins = function () {
     return !ZaNewCosXWizard.gotSkins.call(this);
 }
 
-ZaNewCosXWizard.isTwoFactorAuthFeatureEnabled = function() {
-	return (this.getInstanceValue(ZaCos.A_zimbraFeatureTwoFactorAuthAvailable) == 'TRUE');
-};
-
 ZaNewCosXWizard.isPasswordLockoutEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraPasswordLockoutEnabled) == 'TRUE');
 }
@@ -431,10 +427,6 @@ ZaNewCosXWizard.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraMinPwdAge,
     ZaCos.A_zimbraMaxPwdAge,
     ZaCos.A_zimbraEnforcePwdHistory,
-	ZaCos.A_zimbraFeatureTwoFactorAuthAvailable,
-	ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
-	ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
-	ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled,
     ZaCos.A_zimbraPasswordLockoutEnabled,
     ZaCos.A_zimbraPasswordLockoutMaxFailures,
     ZaCos.A_zimbraPasswordLockoutDuration,
@@ -1500,58 +1492,6 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
             }
                 ]
             },
-			{
-				type: _ZAWIZ_TOP_GROUPER_,
-				id: "cos_two_factor_authentication_settings",
-				label: ZaMsg.Two_Factor_Authentication,
-				items : [
-					{
-						ref : ZaCos.A_zimbraFeatureTwoFactorAuthAvailable,
-						type : _WIZ_CHECKBOX_,
-						label : ZaMsg.LBL_Enable_Two_Factor_Authentication,
-						msgName :  ZaMsg.LBL_Enable_Two_Factor_Authentication,
-						trueValue : "TRUE",
-						falseValue : "FALSE"
-					},
-					{
-						ref : ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
-						type : _WIZ_CHECKBOX_,
-						enableDisableChecks : [ZaNewCosXWizard.isTwoFactorAuthFeatureEnabled],
-						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable],
-						labelLocation : _LEFT_,
-						trueValue : "TRUE",
-						falseValue : "FALSE",
-						label : ZaMsg.LBL_Require_Two_Step_Authentication,
-						msgName : ZaMsg.LBL_Require_Two_Step_Authentication,
-						align : _LEFT_,
-						labelCssClass : "xform_label"
-					},
-					{
-						ref : ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
-						type : _TEXTFIELD_,
-						enableDisableChecks : [ZaNewCosXWizard.isTwoFactorAuthFeatureEnabled],
-						enableDisableChangeEventSources : [ZaCos.A_zimbraFeatureTwoFactorAuthAvailable],
-						label : ZaMsg.LBL_Number_Of_One_Time_Codes,
-						subLabel : ZaMsg.LBL_Number_Of_One_Time_Codes,
-						msgName : ZaMsg.MSG_Number_Of_One_Time_Codes,
-						labelLocation : _LEFT_,
-						cssClass : "admin_xform_number_input"
-					},
-					{
-						ref : ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled,
-						type : _WIZ_CHECKBOX_,
-						enableDisableChecks : [ZaNewCosXWizard.isTwoFactorAuthFeatureEnabled],
-						enableDisableChangeEventSources:[ZaCos.A_zimbraFeatureTwoFactorAuthAvailable],
-						labelLocation : _LEFT_,
-						trueValue : "TRUE",
-						falseValue : "FALSE",
-						label : ZaMsg.LBL_Enable_Application_Passcodes,
-						msgName :  ZaMsg.LBL_Enable_Application_Passcodes,
-						align : _LEFT_,
-						labelCssClass : "xform_label"
-					}
-				]
-			},
             {type:_ZAWIZ_TOP_GROUPER_, id:"cos_password_lockout_settings",
                 label:ZaMsg.NAD_FailedLoginGrouper,
                 items :[
