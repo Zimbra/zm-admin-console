@@ -1070,7 +1070,6 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     //ZaAccount.A_zimbraFeatureNotebookEnabled,
     ZaAccount.A_zimbraFeatureBriefcasesEnabled,
     //ZaAccount.A_zimbraFeatureBriefcaseDocsEnabled,
-    ZaAccount.A_zimbraFeatureChatEnabled,
     ZaAccount.A_zimbraFeatureOptionsEnabled,
     ZaAccount.A_zimbraFeatureTaggingEnabled,
     ZaAccount.A_zimbraFeatureSharingEnabled,
@@ -1100,7 +1099,6 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
     ZaAccount.A_zimbraFeatureIdentitiesEnabled,
     ZaAccount.A_zimbraFeatureGroupCalendarEnabled,
-    //ZaAccount.A_zimbraFeatureInstantNotify,
   ZaAccount.A_zimbraFeaturePeopleSearchEnabled,
   ZaAccount.A_zimbraFeatureAdvancedSearchEnabled,
     ZaAccount.A_zimbraFeatureSavedSearchesEnabled,
@@ -2083,11 +2081,6 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                 msgName:ZaMsg.LBL_zimbraFeatureBriefcasesEnabled,
                                 checkBoxLabel:ZaMsg.LBL_zimbraFeatureBriefcasesEnabled,
                                 trueValue:"TRUE", falseValue:"FALSE"},
-                            {ref:ZaAccount.A_zimbraFeatureChatEnabled, type:_SUPER_CHECKBOX_,
-                                resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                msgName:ZaMsg.LBL_zimbraFeatureChatEnabled,
-                                checkBoxLabel:ZaMsg.LBL_zimbraFeatureChatEnabled,
-                                trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeatureOptionsEnabled, type:_SUPER_CHECKBOX_,
                                 resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                 msgName:ZaMsg.LBL_zimbraFeatureOptionsEnabled,
@@ -2832,23 +2825,7 @@ textFieldCssClass:"admin_xform_number_input"}
                                 {ref:ZaAccount.A_zimbraPrefUseTimeZoneListInCalendar,
                                  colSpan:2,type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,checkBoxLabel:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,trueValue:"TRUE", falseValue:"FALSE"}
                             ]
-                        },
-                        {type:_ZA_TOP_GROUPER_, id:"account_prefs_chat_general",
-                            label:ZaMsg.NAD_ChatOptions,
-                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                [
-                                    ZaAccount.A_zimbraPrefChatPlaySound
-                                ]]
-                            ],
-                            items :[
-                                {ref:ZaAccount.A_zimbraPrefChatPlaySound, type:_SUPER_CHECKBOX_,
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-                                    msgName:ZaMsg.LBL_zimbraPrefChatPlaySound,checkBoxLabel:ZaMsg.LBL_zimbraPrefChatPlaySound,
-                                    trueValue:"TRUE", falseValue:"FALSE",
-                                    colSpan:2
-                                }
-                            ]
-                        },
+                        }
                     ];
         cases.push({type:_ZATABCASE_, id:"account_form_prefs_tab", numCols:1,
             paddingStyle:"padding-left:15px;", width:"98%", cellpadding:2,

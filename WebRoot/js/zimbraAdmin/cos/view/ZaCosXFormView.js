@@ -176,10 +176,6 @@ ZaCosXFormView.isCalendarFeatureEnabled = function () {
     return this.getInstanceValue(ZaCos.A_zimbraFeatureCalendarEnabled)=="TRUE";
 }
 
-ZaCosXFormView.isChatFeatureEnabled = function () {
-    return this.getInstanceValue(ZaCos.A_zimbraFeatureChatEnabled)=="TRUE";
-}
-
 ZaCosXFormView.isMailForwardingEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraFeatureMailForwardingEnabled) == "TRUE");
 }
@@ -200,7 +196,6 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureTasksEnabled,
     //ZaCos.A_zimbraFeatureNotebookEnabled,
     ZaCos.A_zimbraFeatureBriefcasesEnabled,
-    ZaCos.A_zimbraFeatureChatEnabled,
     ZaCos.A_zimbraFeatureOptionsEnabled,
     ZaCos.A_zimbraFeatureTaggingEnabled,
     ZaCos.A_zimbraFeatureSharingEnabled,
@@ -229,7 +224,6 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
     ZaCos.A_zimbraFeatureIdentitiesEnabled,
     ZaCos.A_zimbraFeatureGroupCalendarEnabled,
-    //ZaCos.A_zimbraFeatureInstantNotify,
     ZaCos.A_zimbraFeaturePeopleSearchEnabled,
     ZaCos.A_zimbraFeatureAdvancedSearchEnabled,
     ZaCos.A_zimbraFeatureSavedSearchesEnabled,
@@ -732,7 +726,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraFeatureTasksEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureTaskEnabled,label:ZaMsg.LBL_zimbraFeatureTaskEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                     //{ref:ZaCos.A_zimbraFeatureNotebookEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNotebookEnabled,label:ZaMsg.LBL_zimbraFeatureNotebookEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraFeatureBriefcasesEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureBriefcasesEnabled,label:ZaMsg.LBL_zimbraFeatureBriefcasesEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
-                    {ref:ZaCos.A_zimbraFeatureChatEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureChatEnabled,label:ZaMsg.LBL_zimbraFeatureChatEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraFeatureOptionsEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureOptionsEnabled,label:ZaMsg.LBL_zimbraFeatureOptionsEnabled,  trueValue:"TRUE", falseValue:"FALSE"}
                     //zimbraMobile from the extension
                 ]
@@ -867,23 +860,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
             },
-            {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraChatFeature, id:"cos_form_features_im",
-                visibilityChecks:[ZaCosXFormView.isChatFeatureEnabled],
-                visibilityChangeEventSources:[ZaCos.A_zimbraFeatureChatEnabled],
-                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                    [
-                        ZaCos.A_zimbraFeatureInstantNotify
-                    ]]
-                ],
-                items:[
-                  {ref:ZaCos.A_zimbraFeatureInstantNotify,
-                     type:_CHECKBOX_,
-                     msgName:ZaMsg.LBL_zimbraFeatureInstantNotify,
-                     label:ZaMsg.LBL_zimbraFeatureInstantNotify,
-                     trueValue:"TRUE",
-                     falseValue:"FALSE"}
-                ]
-            },
             {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraSearchFeature, id:"cos_form_features_search",
                 visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
                     [
@@ -972,10 +948,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     msgName:ZaMsg.LBL_zimbraPrefShowSelectionCheckbox,label:ZaMsg.LBL_zimbraPrefShowSelectionCheckbox,
                     trueValue:"TRUE", falseValue:"FALSE"
                 },
-                //{ref:ZaCos.A_zimbraPrefIMAutoLogin, type:_CHECKBOX_,
-                //    msgName:ZaMsg.LBL_zimbraPrefIMAutoLogin,label:ZaMsg.LBL_zimbraPrefIMAutoLogin,
-                //    trueValue:"TRUE", falseValue:"FALSE"
-                //},
                 {ref:ZaCos.A_zimbraJunkMessagesIndexingEnabled, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraJunkMessagesIndexingEnabled,
                     label:ZaMsg.LBL_zimbraJunkMessagesIndexingEnabled,
@@ -1336,19 +1308,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 {ref:ZaCos.A_zimbraPrefUseTimeZoneListInCalendar, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,
                     label:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar, trueValue:"TRUE", falseValue:"FALSE"
-                }
-            ]},
-            {type:_ZA_TOP_GROUPER_, id:"cos_prefs_chat_general", colSizes:["275px","auto"],numCols:2,
-                label: ZaMsg.NAD_ChatOptions,
-                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                    [
-                        ZaCos.A_zimbraPrefChatPlaySound
-                    ]]
-                ],
-                items :[
-                {ref:ZaCos.A_zimbraPrefChatPlaySound, type:_CHECKBOX_,
-                    msgName:ZaMsg.LBL_zimbraPrefChatPlaySound,
-                    label:ZaMsg.LBL_zimbraPrefChatPlaySound, trueValue:"TRUE", falseValue:"FALSE"
                 }
             ]}
         ];

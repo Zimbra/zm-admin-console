@@ -1117,7 +1117,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
         };
         if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureMailEnabled,ZaAccount.A_zimbraFeatureContactsEnabled,
             ZaAccount.A_zimbraFeatureCalendarEnabled,ZaAccount.A_zimbraFeatureTasksEnabled,ZaAccount.A_zimbraFeatureTasksEnabled,
-            /*ZaAccount.A_zimbraFeatureNotebookEnabled, */ ZaAccount.A_zimbraFeatureBriefcasesEnabled,ZaAccount.A_zimbraFeatureChatEnabled,
+            /*ZaAccount.A_zimbraFeatureNotebookEnabled, */ ZaAccount.A_zimbraFeatureBriefcasesEnabled,
             ZaAccount.A_zimbraFeatureOptionsEnabled],[])) {
             featuresCase.items.push({type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraMajorFeature, id:"account_wiz_features_major", colSizes:["auto"],numCols:1,
                         items:[
@@ -1142,12 +1142,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                 trueValue:"TRUE", falseValue:"FALSE"},
                             //{ref:ZaAccount.A_zimbraFeatureNotebookEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureNotebookEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureNotebookEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeatureBriefcasesEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureBriefcasesEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureBriefcasesEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
-                            {ref:ZaAccount.A_zimbraFeatureChatEnabled,
-                                type:_SUPER_WIZ_CHECKBOX_,
-                                resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                msgName:ZaMsg.LBL_zimbraFeatureChatEnabled,
-                                checkBoxLabel:ZaMsg.LBL_zimbraFeatureChatEnabled,
-                                trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeatureOptionsEnabled,
                                 type:_SUPER_WIZ_CHECKBOX_,
                                 resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
@@ -1859,21 +1853,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                         colSpan:2, colSizes:["200px", "300px", "*"],
                                         resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,checkBoxLabel:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,trueValue:"TRUE", falseValue:"FALSE"}
                             ]
-                        });
-        }
-        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraPrefChatPlaySound])) {
-            prefItems.push(
-                        {type:_ZAWIZ_TOP_GROUPER_, id:"account_prefs_chat_general",
-                            label:ZaMsg.NAD_ChatOptions,
-                            items :[
-                                    {ref:ZaAccount.A_zimbraPrefChatPlaySound, type:_SUPER_WIZ_CHECKBOX_,
-                                        colSpan:2,
-                                        colSizes:["200px", "300px", "*"],
-                                        resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                        msgName:ZaMsg.LBL_zimbraPrefChatPlaySound,checkBoxLabel:ZaMsg.LBL_zimbraPrefChatPlaySound,
-                                        trueValue:"TRUE", falseValue:"FALSE"
-                                    }
-                             ]
                         });
         }
         cases.push({type:_CASE_, caseKey:ZaNewAccountXWizard.PREFS_STEP, tabGroupKey:ZaNewAccountXWizard.PREFS_STEP,
