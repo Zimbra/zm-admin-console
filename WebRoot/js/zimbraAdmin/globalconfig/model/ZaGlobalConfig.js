@@ -54,7 +54,7 @@ ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension = "zimbraMtaCommonBlockedExtens
 // MTA
 ZaGlobalConfig.A_zimbraMtaSaslAuthEnable = "zimbraMtaSaslAuthEnable";
 ZaGlobalConfig.A_zimbraMtaTlsAuthOnly = "zimbraMtaTlsAuthOnly";
-ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled  = "zimbraMtaDnsLookupsEnabled";
+ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel  = "zimbraMtaSmtpDnsSupportLevel";
 ZaGlobalConfig.A_zimbraMtaMaxMessageSize = "zimbraMtaMaxMessageSize";
 ZaGlobalConfig.A_zimbraMtaRelayHost = "zimbraMtaRelayHost";
 ZaGlobalConfig.A_zimbraMtaFallbackRelayHost = "zimbraMtaFallbackRelayHost";
@@ -479,7 +479,7 @@ ZaGlobalConfig.myXModel = {
         { id:ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
 		{ id:ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		
-		{ id:ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id:ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel, type: _ENUM_, choices: ZaSettings.smtpDnsSupportLevel },
 		{ id:ZaGlobalConfig.A_zimbraMilterServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraMilterServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
                 { id:ZaGlobalConfig.A_zimbraMilterBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraMilterBindPort, type:_PORT_ },
 

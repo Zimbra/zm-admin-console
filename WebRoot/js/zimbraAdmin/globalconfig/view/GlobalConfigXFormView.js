@@ -333,7 +333,7 @@ GlobalConfigXFormView.ATTACHMENTS_TAB_RIGHTS = [];
 GlobalConfigXFormView.MTA_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraMtaSaslAuthEnable,
         ZaGlobalConfig.A_zimbraMtaTlsAuthOnly, ZaGlobalConfig.A_zimbraSmtpHostname, ZaGlobalConfig.A_zimbraSmtpPort,
         ZaGlobalConfig.A_zimbraMtaRelayHost, ZaGlobalConfig.A_zimbraMtaFallbackRelayHost,
-        ZaGlobalConfig.A_zimbraMtaMyNetworks, ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled,
+		ZaGlobalConfig.A_zimbraMtaMyNetworks, ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel,
         ZaGlobalConfig.A_zimbraMilterServerEnabled, ZaGlobalConfig.A_zimbraMilterBindPort ];
 GlobalConfigXFormView.MTA_TAB_RIGHTS = [];
 
@@ -774,11 +774,11 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                         ZaGlobalConfig.A_zimbraMtaRelayHost,
                                         ZaGlobalConfig.A_zimbraMtaFallbackRelayHost,
                                         ZaGlobalConfig.A_zimbraDNSCheckHostname, ZaGlobalConfig.A_zimbraMtaMyNetworks,
-                                        ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled ] ] ],
+										ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel ] ] ],
                         visibilityChangeEventSources : [ ZaGlobalConfig.A_zimbraSmtpHostname,
                                 ZaGlobalConfig.A_zimbraSmtpPort, ZaGlobalConfig.A_zimbraMtaRelayHost,
                                 ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, ZaGlobalConfig.A_zimbraDNSCheckHostname,
-                                ZaGlobalConfig.A_zimbraMtaMyNetworks, ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled ],
+								ZaGlobalConfig.A_zimbraMtaMyNetworks, ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel ],
                         items : [ {
                             ref : ZaGlobalConfig.A_zimbraSmtpHostname,
                             type : _REPEAT_,
@@ -845,11 +845,10 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         },
 
                         {
-                            ref : ZaGlobalConfig.A_zimbraMtaDnsLookupsEnabled,
-                            type : _CHECKBOX_,
-                            label : ZaMsg.NAD_MTA_DnsLookups,
-                            trueValue : "TRUE",
-                            falseValue : "FALSE"
+							ref : ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel,
+							type : _OSELECT1_,
+							label : ZaMsg.NAD_MTA_SMTP_Dns,
+							choices : ZaSettings.getSmtpDnsSupportLevel
                         } ]
                     },
 

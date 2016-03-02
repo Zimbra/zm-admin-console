@@ -629,7 +629,7 @@ ZaServerXFormView.MTA_TAB_ATTRS = [
     ZaServer.A_zimbraMtaFallbackRelayHost,
     ZaServer.A_SmtpTimeout,
     ZaServer.A_zimbraMtaMyNetworks,
-    ZaServer.A_zimbraMtaDnsLookupsEnabled
+	ZaServer.A_zimbraMtaSmtpDnsSupportLevel
 ];
 ZaServerXFormView.MTA_TAB_RIGHTS = [];
 
@@ -986,13 +986,14 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                                 textAreaWidth:"220px"
                             },
 
-					        { ref: ZaServer.A_zimbraMtaDnsLookupsEnabled,
-                              type:_SUPER_CHECKBOX_,
-                              colSpan: 2,
-					      	  checkBoxLabel:ZaMsg.NAD_MTA_DnsLookups,
-					      	  trueValue: "TRUE", falseValue: "FALSE",
-					      	  onChange: ZaServerXFormView.onFormFieldChanged,
-					      	  resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
+					        {
+								ref : ZaServer.A_zimbraMtaSmtpDnsSupportLevel,
+								type : _SUPER_SELECT1_,
+								colSpan : 2,
+								label : ZaMsg.NAD_MTA_SMTP_Dns,
+								onChange : ZaServerXFormView.onFormFieldChanged,
+								resetToSuperLabel : ZaMsg.NAD_ResetToGlobal,
+								labelLocation : _LEFT_
 				      	    }
 						]
 				      },

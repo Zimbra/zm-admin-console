@@ -940,3 +940,13 @@ ZaSettings.isNetworkVersion = function () {
 ZaSettings.isOctopus = function () {
     return (ZaSettings.IS_OCTOPUS || false);
 }
+
+ZaSettings.getSmtpDnsSupportLevel = function(){
+	return [
+		{value : "enabled", label : ZaMsg.NAD_MTA_SMTP_Dns_Enabled},
+		{value : "disabled", label : ZaMsg.NAD_MTA_SMTP_Dns_Disabled},
+		{value : "dnssec", label : ZaMsg.NAD_MTA_SMTP_Dns_Dnssec}
+	];
+};
+
+ZaSettings.smtpDnsSupportLevel = ZaSettings.getSmtpDnsSupportLevel;
