@@ -852,7 +852,7 @@ ZaSaveSearchDialog.prototype.okCallback =
 function() {
 	//if(window.console && window.console.log) console.debug("Ok button of saved search dialog is clicked.");
 	var savedSearchArr = [] ;
-	var nameValue = this._nameInput.value;
+	var nameValue = AjxStringUtil.htmlEncode(this._nameInput.value);
 	var queryValue =  this._queryInput.value ;
 
 	if(!nameValue) {

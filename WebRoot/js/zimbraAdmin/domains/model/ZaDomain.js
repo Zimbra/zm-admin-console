@@ -2360,7 +2360,7 @@ ZaDomain.myXModel = {
 		{id:ZaDomain.A_domainName, type:_STRING_, ref:"attrs/" + ZaDomain.A_domainName, maxLength:255,constraints: {type:"method", value:
                    function (value) {
                          value = value.replace(/(^\s*)/g, "");
-                                                 return value;
+                                                 return AjxStringUtil.htmlEncode(value);
                                            }
 
                            } },

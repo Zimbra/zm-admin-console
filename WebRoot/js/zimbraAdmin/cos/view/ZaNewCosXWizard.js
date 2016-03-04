@@ -100,7 +100,7 @@ function() {
         }
         var cos = ZaItem.create(this._containedObject, ZaCos, "ZaCos");
         if(cos!=null) {
-            cos.name= this._containedObject.attrs[ZaCos.A_name];
+            cos.name= AjxStringUtil.htmlEncode(this._containedObject.attrs[ZaCos.A_name]);
             cos.create(cos.name,this._containedObject.attrs);
             ZaApp.getInstance().getCosController().fireCreationEvent(cos);
             this.popdown();
