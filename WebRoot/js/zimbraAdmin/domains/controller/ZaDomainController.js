@@ -290,7 +290,7 @@ function () {
 		return false;
 	// check validation expression, which should be email-like pattern
 	if(tmpObj.attrs[ZaDomain.A_zimbraMailAddressValidationRegex]) {
-		var regList = tmpObj.attrs[ZaDomain.A_zimbraMailAddressValidationRegex];
+		var regList = AjxStringUtil.htmlEncode(tmpObj.attrs[ZaDomain.A_zimbraMailAddressValidationRegex]);
 		var islegal = true;
 		var regval = null;
 		if(regList && regList instanceof Array) {
