@@ -146,14 +146,19 @@ ZaZimletDeployXWizard.prototype.setUploadManager = function(uploadManager) {
 ZaZimletDeployXWizard.prototype.goNext = function() {
     var inputElement = document.getElementById(ZaZimletDeployXWizard.ZimletUploadAttachmentInputId);
     if (inputElement && inputElement.value) {
-        this.setUploadManager(new AjxPost(this.getUploadFrameId()));
         var zimletUploadCallback = new AjxCallback(this, this.uploadCallback);
-        var um = this.getUploadManager();
-        window._uploadManager = um;
         try {
-            um.execute(zimletUploadCallback, document.getElementById(ZaZimletDeployXWizard.ZimletUploadFormId));
+            if(AjxEnv.supportsHTML5File) {
+                var uploader = new ZaUploader();
+                uploader.upload(ZaZimletDeployXWizard.ZimletUploadAttachmentInputId, appContextPath + "/../service/upload?fmt=extended,raw",  zimletUploadCallback);
+            } else {
+                this.setUploadManager(new AjxPost(this.getUploadFrameId()));
+                var um = this.getUploadManager();
+                window._uploadManager = um;
+                um.execute(zimletUploadCallback, document.getElementById (ZaZimletDeployXWizard.ZimletUploadFormId));
+            }
         } catch (ex) {
-            ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ZMLT_zimletFileNameError);
+            ZaApp.getInstance().getCurrentController().popupErrorDialog((ex && ex.msg) ? ex.msg : ZaMsg.ZMLT_zimletFileNameError);
         }
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
