@@ -209,6 +209,8 @@ function(domain) {
     this._kbMgr.enable(true);
     this._kbMgr.registerKeyMap(new ZaKeyMap());
     this._kbMgr.pushDefaultHandler(this);
+    this._kbMgr.setTabGroup(appCtxt.getRootTabGroup());
+
     // Go!
     var lm = new ZaZimbraAdmin(appCtxt);
 }
