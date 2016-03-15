@@ -212,21 +212,19 @@ ZaXDialog.prototype.popup =
 function (loc) {
 	DwtDialog.prototype.popup.call(this, loc);
 
+    if(AjxEnv.isIE && this._supportMinimize) {
+        //reset title width in IE, when the dialog has the minimize icon
+        this.setTitleWidthForIE();
+    }
+
+	if (this._localXForm) {
+		var el = this._localXForm.focusFirst();
         var kbMgr = this._shell.getKeyboardMgr();
-        if (kbMgr.isEnabled()){
-                kbMgr.popTabGroup(this._tabGroup);
-                kbMgr.grabFocus(this._tabGroup.getFocusMember());
+        if (kbMgr && kbMgr.isEnabled()) {
+            kbMgr.grabFocus(el);
         }
-
-        if(AjxEnv.isIE && this._supportMinimize) {
-            //reset title width in IE, when the dialog has the minimize icon
-            this.setTitleWidthForIE();
-        }
-
-	if(this._localXForm) {
-		this._localXForm.focusFirst();
 	}
-}
+};
 
 /**
 * public method _initForm
