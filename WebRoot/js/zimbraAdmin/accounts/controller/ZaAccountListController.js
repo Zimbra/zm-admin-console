@@ -910,7 +910,7 @@ function (listArr) {
 				break;
 			}
 			dlgMsg += "<li>";
-			var szAccName = listArr[key].attrs[ZaAccount.A_displayname] ? listArr[key].attrs[ZaAccount.A_displayname] : listArr[key].name;
+			var szAccName = listArr[key].attrs[ZaAccount.A_displayname] ? AjxStringUtil.htmlEncode(listArr[key].attrs[ZaAccount.A_displayname]) : listArr[key].name;
             if(szAccName.length > 50) {
                 var beginIx = 0;
                 var endIx = 50;
