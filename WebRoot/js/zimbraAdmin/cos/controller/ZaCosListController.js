@@ -295,6 +295,13 @@ function(ev) {
 		for(var key =0; key < cnt; key++) {
 			var item = arrItems[key];
 			if (item) {
+				if (item.name) {
+					item.name = AjxStringUtil.htmlEncode(item.name);
+				}
+
+				if (item.attrs && item.attrs[ZaCos.A_name]) {
+					item.attrs[ZaCos.A_name] = AjxStringUtil.htmlEncode(item.attrs[ZaCos.A_name]);
+				}
 				//detect whether the deleting item is open in a tab
 				if (ZaApp.getInstance().getTabGroup() && ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
 					this._itemsInTabList.push (item) ;

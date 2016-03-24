@@ -290,6 +290,14 @@ function (by, val) {
     var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetCosResponse;
     this.initFromJS(resp.cos[0]);
 
+    if (this.name) {
+        this.name = AjxStringUtil.htmlEncode(this.name);
+    }
+
+    if (this.attrs[ZaCos.A_name]) {
+        this.attrs[ZaCos.A_name] = AjxStringUtil.htmlEncode(this.attrs[ZaCos.A_name]);
+    }
+
     if(this.attrs[ZaAccount.A_zimbraPrefMailPollingInterval]) {
         var poIntervalInS = ZaUtil.getLifeTimeInSeconds(this.attrs[ZaAccount.A_zimbraPrefMailPollingInterval]);
         if (poIntervalInS >= 1)

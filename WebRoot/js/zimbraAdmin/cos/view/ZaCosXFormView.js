@@ -74,6 +74,15 @@ function(entry) {
     if(entry.id)
         this._containedObject.id = entry.id;
 
+    if (entry.name) {
+        entry.name = AjxStringUtil.htmlEncode(entry.name);
+    }
+
+    if (entry.attrs && entry.attrs[ZaCos.A_name]) {
+        entry.attrs[ZaCos.A_name] = AjxStringUtil.htmlEncode(entry.attrs[ZaCos.A_name]);
+    }
+
+
     for (var a in entry.attrs) {
         var modelItem = this._localXForm.getModel().getItem(a) ;
         if ((modelItem != null && modelItem.type == _LIST_)
