@@ -56,8 +56,7 @@ ZaZimletDeployXWizard.ZimletUploadAttachmentInputId = null;
 ZaZimletDeployXWizard.prototype.getUploadFormHtml = function() {
     ZaZimletDeployXWizard.ZimletUploadFormId = Dwt.getNextId();
     ZaZimletDeployXWizard.ZimletUploadAttachmentInputId = Dwt.getNextId();
-    // var uri = location.protocol + "//" + document.domain + appContextPath
-    // + "/../service/upload";
+
     var uri = appContextPath + "/../service/upload";
     DBG.println("upload uri = " + uri);
     var html = new Array();
@@ -148,15 +147,7 @@ ZaZimletDeployXWizard.prototype.goNext = function() {
     if (inputElement && inputElement.value) {
         var zimletUploadCallback = new AjxCallback(this, this.uploadCallback);
         try {
-            if(AjxEnv.supportsHTML5File) {
-                var uploader = new ZaUploader();
-                uploader.upload(ZaZimletDeployXWizard.ZimletUploadAttachmentInputId, appContextPath + "/../service/upload?fmt=extended,raw",  zimletUploadCallback);
-            } else {
-                this.setUploadManager(new AjxPost(this.getUploadFrameId()));
-                var um = this.getUploadManager();
-                window._uploadManager = um;
-                um.execute(zimletUploadCallback, document.getElementById (ZaZimletDeployXWizard.ZimletUploadFormId));
-            }
+            ZaUploader.upload.call(this, zimletUploadCallback, [ZaZimletDeployXWizard.ZimletUploadAttachmentInputId], ZaZimletDeployXWizard.ZimletUploadFormId);
         } catch (ex) {
             ZaApp.getInstance().getCurrentController().popupErrorDialog((ex && ex.msg) ? ex.msg : ZaMsg.ZMLT_zimletFileNameError);
         }
@@ -196,21 +187,21 @@ ZaZimletDeployXWizard.prototype.popdown = function() {
     ZaXWizardDialog.prototype.popdown.call(this);
 }
 
-ZaZimletDeployXWizard.prototype.uploadCallback = function(status, attId) {
+ZaZimletDeployXWizard.prototype.uploadCallback = function(status, uploadResults) {
     // we use explorer's 'submit form' mechanism to upload the file, so we
     // cannot upload multi files in the same time,
     // but only one after one. thus this function will be called back in
     // sequence.
     try {
-        var instance = this._localXForm.getInstance();
-        var msgLine = null;
-        if ((status == AjxPost.SC_OK) && (attId != null)) {
-            instance[ZaZimlet.A_attachmentId] = attId;
+        if(uploadResults && uploadResults[0] && uploadResults[0].aid && status == AjxPost.SC_OK) {
+            var instance = this._localXForm.getInstance();
+            var msgLine = null;
+            instance[ZaZimlet.A_attachmentId] = uploadResults[0].aid;
             instance[ZaZimlet.A_uploadStatus] = ZaZimlet.STATUS_SUCCEEDED;
             msgLine = AjxMessageFormat.format(ZaMsg.ZMLT_UploadZimletSuccessMsg);
             ZaZimlet.deploy({
                 action : ZaZimlet.ACTION_DEPLOY_ALL,
-                attId : attId,
+                attId : uploadResults[0].aid,
                 flushCache : instance[ZaZimlet.A_flushCache]
             }, new AjxCallback(this, this.deployZimletClbck));
         } else {
