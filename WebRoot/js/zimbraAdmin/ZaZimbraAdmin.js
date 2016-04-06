@@ -374,11 +374,11 @@ function(lang){
 }
 // Start up the ZimbraMail application
 ZaZimbraAdmin.prototype.startup =
-function() {
+function(aIsAuthTokenPresent) {
 
     this._appViewMgr = new ZaAppViewMgr(this._shell, this, true);
     try {
-        if(!window.csrfToken) {
+        if (!aIsAuthTokenPresent) {
             //try refreshing the AuthToken, if we're not logged in we will be thrown out here
             this._refreshing = true;
             this._doAuth();
