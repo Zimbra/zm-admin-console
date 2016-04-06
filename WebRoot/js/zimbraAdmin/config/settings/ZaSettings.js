@@ -382,13 +382,13 @@ ZaSettings.D_INT			= 2;
 ZaSettings.D_BOOLEAN		= 3;
 ZaSettings.D_LDAP_TIME 	= 4;
 ZaSettings.D_HASH_TABLE 	= 5;
-ZaSettings.LOGO_URI = "http://www.zimbra.com";
+ZaSettings.LOGO_URI = "https://www.zimbra.com";
 ZaSettings.CSFE_SERVER_URI = (location.port == "80") ? "/service/admin/soap/" : ":" + location.port + "/service/admin/soap/";
 ZaSettings.CSFE_MSG_FETCHER_URI = (location.port == "80") ? "/service/content/get?" : ":" + location.port + "/service/content/get?";
 ZaSettings.CONFIG_PATH = location.pathname + "js/zimbraAdmin/config";
 //ZaSettings.ADMIN_NAME_COOKIE = "ZA_ADMIN_NAME_COOKIE";
 ZaSettings.myDomainName = null;
-ZaSettings.ZIMBRA_SUPPORT_URL = "http://support.zimbra.com/help/index.php";
+ZaSettings.ZIMBRA_SUPPORT_URL = "https://support.zimbra.com/help/index.php";
 ZaSettings.ZIMBRA_SUPPORT_URL_QUERY = ZaSettings.ZIMBRA_SUPPORT_URL + "?query=";
 
 //CONSTANTS FOR ROLE-BASED ACCESS
