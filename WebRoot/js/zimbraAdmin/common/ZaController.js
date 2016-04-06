@@ -555,6 +555,7 @@ function (resp) {
                     body.AuthResponse.csrfToken._content) {
                 window.csrfToken = body.AuthResponse.csrfToken._content;
             }
+            var isAuthTokenPresent = true;
             ZmCsfeCommand.noAuth = false;
 
             var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);
@@ -615,7 +616,7 @@ function (resp) {
             }
             //Instrumentation code end
             this._hideLoginDialog(true);
-            this._appCtxt.getAppController().startup();
+            this._appCtxt.getAppController().startup(isAuthTokenPresent);
         } catch (ex) {
             this._handleException(ex, "ZaController.prototype.authCallback");
         }
