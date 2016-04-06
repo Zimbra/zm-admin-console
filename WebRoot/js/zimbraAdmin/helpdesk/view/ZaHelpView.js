@@ -36,10 +36,10 @@ ZaHelpView = function(parent) {
 ZaHelpView.mainHelpPage = "administration_console_help.htm";
 
 // URL for the most latest documentation page
-ZaHelpView.RELEASE_NOTES_URL = "http://www.zimbra.com/support/documentation/zcs-ne-documentation.html";
+ZaHelpView.RELEASE_NOTES_URL = "https://www.zimbra.com/support/documentation/zcs-ne-documentation.html";
 
-ZaHelpView.HELP_FORUM_LINK = "http://www.zimbra.com/forums/";
-ZaHelpView.HELP_WIKI_LINK = "http://wiki.zimbra.com";
+ZaHelpView.HELP_FORUM_LINK = "https://www.zimbra.com/forums/";
+ZaHelpView.HELP_WIKI_LINK = "https://wiki.zimbra.com";
 ZaHelpView.prototype = new ZaTabView();
 ZaHelpView.prototype.constructor = ZaHelpView;
 ZaTabView.XFormModifiers["ZaHelpView"] = new Array();
