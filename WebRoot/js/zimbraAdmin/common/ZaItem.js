@@ -591,7 +591,7 @@ function (obj) {
 		return;
 
 	if(obj.name)	
-		this.name = obj.name;
+		this.name = AjxStringUtil.htmlEncode(obj.name);
 
 	if(obj.id)
 		this.id = obj.id;
