@@ -287,7 +287,7 @@
 		<fmt:message bundle="${zhmsg}" var="errorMessage" key="account.EXTERNAL_AUTH_FAILED"/>
 	</c:if>
     <c:if test="${errorCode eq 'account.TWO_FACTOR_SETUP_REQUIRED'}">
-        <c:url value="/public/TwoFactorSetup.jsp" var="twoFactorSetupURL">
+        <c:url value="TwoFactorSetup.jsp" var="twoFactorSetupURL">
             <c:param name="userName" value="${fullUserName}"/>
             <c:param name="skin" value="${skin}"/>
             <c:param name="version" value="${version}"/>
