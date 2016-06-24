@@ -1,23 +1,21 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2016 Synacor, Inc.
- *
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014 Zimbra, Inc.
+ * 
  * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at: https://www.zimbra.com/license
- * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15
- * have been added to cover use of software over a computer network and provide for limited attribution
- * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B.
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied.
- * See the License for the specific language governing rights and limitations under the License.
- * The Original Code is Zimbra Open Source Web Client.
- * The Initial Developer of the Original Code is Zimbra, Inc.  All rights to the Original Code were
- * transferred by Zimbra, Inc. to Synacor, Inc. on September 14, 2015.
- *
- * All portions of the code are Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2016 Synacor, Inc. All Rights Reserved.
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at: http://www.zimbra.com/license
+ * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
+ * have been added to cover use of software over a computer network and provide for limited attribution 
+ * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
+ * 
+ * Software distributed under the License is distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing rights and limitations under the License. 
+ * The Original Code is Zimbra Open Source Web Client. 
+ * The Initial Developer of the Original Code is Zimbra, Inc. 
+ * All portions of the code are Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
  */
 
@@ -46,15 +44,15 @@ ReindexMailboxXDialog.prototype.constructor = ReindexMailboxXDialog;
 ReindexMailboxXDialog.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_accounts/re-indexing_a_mailbox.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 
 ReindexMailboxXDialog.isStartEnabled = function () {
-	return (this.getInstanceValue(ZaReindexMailbox.A_status) != "running" && this.getInstanceValue(ZaReindexMailbox.A_status) != "started")	
+	return (this.getInstanceValue(ZaReindexMailbox.A_statusCode) != ZaReindexMailbox.STATUS_RUNNING)	
 }
 
 ReindexMailboxXDialog.isAbortEnabled = function () {
-	return (this.getInstanceValue(ZaReindexMailbox.A_status) == "running" || this.getInstanceValue(ZaReindexMailbox.A_status) == "started")	
+	return (this.getInstanceValue(ZaReindexMailbox.A_statusCode) == ZaReindexMailbox.STATUS_RUNNING)	
 }
 
 ReindexMailboxXDialog.isStatusNotError = function () {
-	return (this.getInstanceValue(ZaReindexMailbox.A_status) != "error");
+	return (this.getInstanceValue(ZaReindexMailbox.A_statusCode) != ZaReindexMailbox.STATUS_FAILED);
 }
 ReindexMailboxXDialog.prototype.popup = 
 function () {
@@ -64,19 +62,7 @@ function () {
 	if(this._containedObject.mbxId) {
 		var callback = new AjxCallback(this, ReindexMailboxXDialog.prototype.getReindexStatusCallBack);
 		ZaAccount.getReindexStatus(this._containedObject.mbxId,callback);
-		//ZaAccount.parseReindexResponse(ZaAccount.getReindexStatus(this._containedObject.mbxId),this._containedObject);
 	}
-		
-	
-	//this._localXForm.refresh();
-/*	if(this._containedObject.status == "running" || this._containedObject.status == "started") {
-		// schedule next poll
-		this._pollHandler = AjxTimedAction.scheduleAction(this.pollAction, this._containedObject.pollInterval);		
-	} else if(this._pollHandler) {
-		//stop polling
-		AjxTimedAction.cancelAction(this._pollHandler);
-	}
-	*/
 }
 
 ReindexMailboxXDialog.prototype.popdown = 
@@ -119,7 +105,7 @@ function(evt) {
 ReindexMailboxXDialog.prototype.getReindexStatusCallBack = 
 function (resp) {
 	ZaAccount.parseReindexResponse(resp,this._containedObject,this._localXForm);
-	if((this._containedObject.status == "running" || this._containedObject.status == "started") && this.isPoppedUp()) {
+	if((this._containedObject.statusCode == ZaReindexMailbox.STATUS_IDLE || this._containedObject.statusCode == ZaReindexMailbox.STATUS_RUNNING) && this.isPoppedUp()) {
 		// schedule next poll
 		this._pollHandler = AjxTimedAction.scheduleAction(this.pollAction, this._containedObject.pollInterval);		
 	} else if(this._pollHandler) {
@@ -127,9 +113,6 @@ function (resp) {
 		AjxTimedAction.cancelAction(this._pollHandler);
 		this._pollHandler = null;		
 	}
-	
-	//this._localXForm.setInstance(this._containedObject);
-	//this._localXForm.refresh();	
 }
 
 ReindexMailboxXDialog.prototype.getReindexStatus = 
@@ -157,15 +140,15 @@ function() {
 			 iconVisible: true, 
 			 content: null,
 			 ref:ZaReindexMailbox.A_resultMsg,
-			 visibilityChangeEventSources:[ZaReindexMailbox.A_status],
-			 visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_status,"error"],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_resultMsg]],
+			 visibilityChangeEventSources:[ZaReindexMailbox.A_statusCode],
+			 visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_statusCode,ZaReindexMailbox.STATUS_FAILED],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_resultMsg]],
 			 valueChangeEventSources:[ZaReindexMailbox.A_resultMsg],			  
 		  	 align:_CENTER_,
 		  	 colSpan:"*"
 			},	
 			{type:_TEXTAREA_,
-				visibilityChangeEventSources:[ZaReindexMailbox.A_status],
-				visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_status,"error"],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_errorDetail]],
+				visibilityChangeEventSources:[ZaReindexMailbox.A_statusCode],
+				visibilityChecks:[[XForm.checkInstanceValue,ZaReindexMailbox.A_statusCode,ZaReindexMailbox.STATUS_FAILED],[XForm.checkInstanceValueNotEmty,ZaReindexMailbox.A_errorDetail]],
 				valueChangeEventSources:[ZaReindexMailbox.A_errorDetail],
 				ref:ZaReindexMailbox.A_errorDetail, 
 				label:ZaMsg.FAILED_REINDEX_DETAILS,
@@ -190,7 +173,7 @@ function() {
 			},		
 			{type:_SPACER_,
 				visibilityChecks:[ReindexMailboxXDialog.isStatusNotError],
-				visibilityChangeEventSources:[ZaReindexMailbox.A_status], 
+				visibilityChangeEventSources:[ZaReindexMailbox.A_statusCode], 
 				height:"150px", width:"490px",colSpan:"*"
 			},
 			{type:_GROUP_, colSpan:"*", numCols:5, width:"490px",cssStyle:"text-align:center; overflow:hidden", align:_CENTER_, items: [
@@ -198,7 +181,7 @@ function() {
 				{type:_DWT_BUTTON_, 
 					onActivate:"ReindexMailboxXDialog.startReindexMailbox.call(this)", label:ZaMsg.NAD_ACC_Start_Reindexing, 
 					enableDisableChecks:[ReindexMailboxXDialog.isStartEnabled],
-					enableDisableChangeEventSources:[ZaReindexMailbox.A_status],
+					enableDisableChangeEventSources:[ZaReindexMailbox.A_statusCode],
 					visibilityChecks:[],					
 					valign:_BOTTOM_,width:"150px"
 				},
@@ -206,7 +189,7 @@ function() {
 				{type:_DWT_BUTTON_, 
 					onActivate:"ReindexMailboxXDialog.abortReindexMailbox.call(this)", label:ZaMsg.NAD_ACC_Abort_Reindexing, 
 					enableDisableChecks:[ReindexMailboxXDialog.isAbortEnabled],
-					enableDisableChangeEventSources:[ZaReindexMailbox.A_status],
+					enableDisableChangeEventSources:[ZaReindexMailbox.A_statusCode],
 					visibilityChecks:[],					
 					valign:_BOTTOM_,width:"150px"				
 				},
