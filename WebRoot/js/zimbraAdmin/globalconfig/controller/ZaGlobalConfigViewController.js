@@ -206,7 +206,7 @@ function () {
 			var prevRestrictions = AjxUtil.isString(tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRestriction])
 			                     ? [ tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRestriction] ]
 			                     : tmpObj.attrs[ZaGlobalConfig.A_zimbraMtaRestriction];
-			dirty = restrictions.length != prevRestrictions.length;
+			dirty = AjxStringUtil.getAsString(restrictions.sort()) != AjxStringUtil.getAsString(prevRestrictions.sort());
 			if (!dirty) {
 				for (var i = 0; i < prevRestrictions.length; i++) {
 					var restriction = prevRestrictions[i];
@@ -351,6 +351,11 @@ function () {
 			this._currentObject.attrs[a] = [this._currentObject.attrs[a]];
 
                 if( tmpObj.attrs[a].join(",").valueOf() !=  this._currentObject.attrs[a].join(",").valueOf()) {
+					if (a === ZaGlobalConfig.A_zimbraMtaRestriction) { // Fix for bug 104512
+						var mtaRestCustomAttrArr = ZaGlobalConfigViewController.getMTARestCustomAttributes(this._currentObject.attrs[a]);
+						tmpObj.attrs[a] =  AjxUtil.mergeArrays(tmpObj.attrs[a],mtaRestCustomAttrArr);
+						AjxUtil.dedup(tmpObj.attrs[a]);
+					}
 					mods[a] = tmpObj.attrs[a];
 				}
 			} else {
@@ -432,3 +437,32 @@ function (serverList) {
 	ZaApp.getInstance().dialogs["flushCacheDialog"].setObject(obj);
 	ZaApp.getInstance().dialogs["flushCacheDialog"].popup();
 }
+
+ZaGlobalConfigViewController.getMTARestCustomAttributes = function(savedMtaRestAttrArr) {
+
+	var zimbraMtaRestAttr = ZaGlobalConfig.MTA_RESTRICTIONS;
+	var zimbraMtaRestExtraAttr = ['policy_service','reject_rbl_client','reject_rhsbl_client','reject_rhsbl_reverse_client','reject_rhsbl_sender'];
+
+	// Get all defined zimbraMtaRestriction attributes .
+	zimbraMtaRestAttr = AjxUtil.mergeArrays(zimbraMtaRestAttr,zimbraMtaRestExtraAttr);
+	var _len = savedMtaRestAttrArr.length;
+	var zimbraMtaRestAttrStr  =   AjxStringUtil.getAsString(zimbraMtaRestAttr);
+
+	/*Get the  custom MTA Rest. attr. and add them to the request body of modifyConfigRequest.
+	 Server MTA Rest. attr. which are not in zimbra defined attr are customized one.
+	 Parse the saved attr. and compare it with zimbra defined attr, if it doesnot match, the attr. is customized one. */
+
+	var mtaRestCustomAttrArr = [];
+	for (var i = 0; i < _len; i++) {
+		var savedMtaRestAttr = savedMtaRestAttrArr[i];
+		var savedMtaRestAttrName = savedMtaRestAttr.substring(0,savedMtaRestAttr.indexOf(' ')); //  zimbra attr having array values
+		if ( zimbraMtaRestAttrStr.indexOf(savedMtaRestAttr) === -1 &&  zimbraMtaRestExtraAttr.indexOf(savedMtaRestAttrName) === -1) { // getting the customised attribute, excluding  zimbra attr which have array values
+			mtaRestCustomAttrArr.push(savedMtaRestAttr);
+		}
+	}
+	return mtaRestCustomAttrArr ;
+};
+
+
+
+
