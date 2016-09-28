@@ -29,6 +29,8 @@
 	<property name="webxml.zimbraHttpDosFilterMaxRequestsPerSec" value="30" />
 	<property name="webxml.zimbraHttpContextPathBasedThreadPoolBalancingFilterRules" value="/service:max=10%, /soap:max=40%, /zimbra:max=40%" />
 
+    <!-- zm-timezones -->
+    <property name='timezones.dir' value='${this.zwc.basedir}/../zm-timezones'/>
 	<property name='network.zwc.dir' value='${network.dir}/ZimbraWebClient' />
 	<property name='network.zwc.help.dir' value='${network.zwc.dir}/WebRoot/help' />
 
@@ -374,7 +376,7 @@
             <fileset refid="overlay.webinf.fileset" />
             <fileset refid='customer.webinf.fileset' />
         </copy>
-    <!--
+        <mkdir dir='${build.classes.dir}' />
         <copy todir='${webapp.dir}/WEB-INF/classes' verbose='${sync.verbose}'>
             <fileset refid="src.props.fileset" />
             <fileset refid="overlay.src.props.fileset" />
@@ -382,7 +384,7 @@
             <fileset refid="overlay.messages.fileset" />
             <fileset dir='${build.classes.dir}' excludes='**/build/**'/> 
         </copy>
-    -->
+
 
 
         <copy todir="${webapp.dir}/WEB-INF/lib" verbose="${sync.verbose}">
@@ -763,6 +765,34 @@
         </if>
     </target>
 
+
+    <target name='timezones' >
+        <property name='tz.data' value='${timezones.dir}/conf/timezones.ics'/>
+        <property name='tz.dir' value='${build.js.dir}/ajax/util'/>
+        <property name='tz.file' value='${tz.dir}/AjxTimezoneData.js'/>
+
+        <dependset>
+            <srcfilelist dir="." files='${tz.data}'/>
+            <targetfilelist dir='.' files='${tz.file}'/>
+        </dependset>
+
+        <if>
+            <not>
+                <available file='${tz.file}'/>
+            </not>
+            <then>
+                <taskdef name='timezones'
+                         classname='com.zimbra.kabuki.tools.tz.GenerateDataTask'
+                         classpathref='class.path'
+                        />
+
+                <mkdir dir='${tz.dir}'/>
+                <timezones src='${tz.data}' dest='${tz.file}'/>
+            </then>
+        </if>
+    </target>
+
+
     <target name='i18n' >
         <property name='i18n.msgs.dir' value='${build.classes.dir}/messages'/>
         <property name='i18n.msgs.file' value='${i18n.msgs.dir}/I18nMsg.properties'/>
@@ -995,7 +1025,7 @@
         </if>
     </target>
 
-    <target name='jam-files' depends='jquery,modernizr,templates'>
+    <target name='jam-files' depends='jquery,modernizr,templates,timezones'>
         <property name='jam.jsp.dir' value='${build.web.dir}/public/jsp'/>      
         <mkdir dir='${build.js.dir}'/>
         <mkdir dir='${jam.jsp.dir}'/>
