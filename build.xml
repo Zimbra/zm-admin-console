@@ -138,6 +138,9 @@
 
     <!-- Targets -->
 
+    <target name='jar'>
+    </target>
+
     <target name='common'>
 		<condition property='build.network'>
 			<equals arg1="${zimbra.buildinfo.type}" arg2="NETWORK" />
@@ -364,25 +367,27 @@
         </war>
     </target>
 
-    <target name='sync' depends='resolve,jquery,modernizr,tinymce,templates'>
+    <target name='sync' depends='init,resolve,jquery,modernizr,templates'>
         <!-- NOTE: Keep order in sync with list of war filesets. -->
         <copy todir='${webapp.dir}/WEB-INF' verbose='${sync.verbose}'>
             <fileset refid="webinf.fileset" />
             <fileset refid="overlay.webinf.fileset" />
             <fileset refid='customer.webinf.fileset' />
         </copy>
-
+    <!--
         <copy todir='${webapp.dir}/WEB-INF/classes' verbose='${sync.verbose}'>
             <fileset refid="src.props.fileset" />
             <fileset refid="overlay.src.props.fileset" />
             <fileset refid="messages.fileset" />
             <fileset refid="overlay.messages.fileset" />
-            <fileset dir='${build.classes.dir}' excludes='**/build/**'/>
+            <fileset dir='${build.classes.dir}' excludes='**/build/**'/> 
         </copy>
+    -->
+
 
         <copy todir="${webapp.dir}/WEB-INF/lib" verbose="${sync.verbose}">
-            <fileset dir='${common.jars.di}' includes='gifencoder.jar'/>
-            <fileset dir='${common.jars.di}' includes='zimbrasoap.jar'/>
+            <fileset dir='${common.jars.dir}' includes='gifencoder.jar'/>
+            <fileset dir='${common.jars.dir}' includes='zimbrasoap.jar'/>
             <fileset dir='${common.jars.dir}' includes='zimbraclient.jar'/>
             <fileset dir='${common.jars.dir}' includes='zimbrataglib.jar'/>
             <fileset dir='${common.jars.dir}' includes='zimbrastore.jar'/>
