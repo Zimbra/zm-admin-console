@@ -356,14 +356,10 @@ TD.DDSepInvisible DIV {
 	padding-bottom: 2px;
 #ENDIF
 
-#IFDEF MSIE_LOWER_THAN_9
-	padding-top: 2px;
-#ELSE
 	/* ensure minimum height for small UI font sizes */
 	min-height:@SmallIconHeight@;
 	/* grow with larger font sizes */
 	height:1.3rem;
-#ENDIF
 }
 
 INPUT[type="text"].search_input:focus,
@@ -601,9 +597,6 @@ INPUT[type="text"].search_input-expanded:focus {
 .Expand {
 	padding-left:5px;
 	width:16px;
-#IFDEF MSIE_LOWER_THAN_9
-	width:23px;
-#ENDIF
 }
 
 .MsgFolder {
@@ -970,11 +963,9 @@ INPUT[type="text"].search_input-expanded:focus {
 	height:100%;
 }
 
-#IFDEF MSIE_LOWER_THAN_9
 .Conv2Messages {
 	width:100%;
 }
-#ENDIF
 
 .Conv2Messages-bottom {
 	height:100%;
@@ -1046,9 +1037,6 @@ INPUT[type="text"].search_input-expanded:focus {
 	color:black;
 	margin:3px 7px;
 	opacity:.25;
-#IFDEF MSIE_LOWER_THAN_9
-	border-color:#CCC;
-#ENDIF
 }
 
 .Conv2MsgHeader {
@@ -1063,10 +1051,8 @@ INPUT[type="text"].search_input-expanded:focus {
 	position:absolute;
 	top:0px;
 	padding:0px;
-#IFNDEF MSIE_LOWER_THAN_9
 	left:2px;
 	top:5px;
-#ENDIF
 }
 
 .Conv2MsgHeader .Unread {
@@ -1131,10 +1117,6 @@ INPUT[type="text"].search_input-expanded:focus {
 	right:0px;
 	top:5px;
 	white-space:nowrap;
-#IFDEF MSIE_LOWER_THAN_9
-	right:1px;
-	top:1px;
-#ENDIF
 }
 
 .Collapsed .Conv2MsgHeader .date {
@@ -1163,8 +1145,6 @@ INPUT[type="text"].search_input-expanded:focus {
 .ZmMailMsgCapsuleView .footer {
 	clear:both;
 	padding:15px 5px 5px;
-/* IE doesn't seem to support the show/hide.  TODO:investigate why */
-#IFNDEF MSIE_LOWER_THAN_9
 	@transition@:visibility 0s linear .5s, opacity .5s linear 0s;
 	opacity:0;
 }
@@ -1177,7 +1157,6 @@ INPUT[type="text"].search_input-expanded:focus {
 .ZmMailMsgCapsuleView.Reply .footer {
 	visibility:visible;
 	opacity:1;
-#ENDIF
 }
 
 
@@ -1345,7 +1324,6 @@ INPUT[type="text"].search_input-expanded:focus {
 }
 
 .ZmSearchResultsToolBar .addrBubbleHolder {
-	max-height: 2em;
 	max-height: 2rem;
 }
 
@@ -1430,7 +1408,6 @@ INPUT[type="text"].search_input-expanded:focus {
 	position:static;
 	overflow:visible;
 	background-color:white;
-	min-height:24px;
 	min-height:2rem;
 }
 
@@ -1451,7 +1428,6 @@ INPUT[type="text"].search_input-expanded:focus {
 	@Text-hint@
 	vertical-align: middle;
 	padding: 0px 2px;
-	line-height:24px;
 	line-height:2rem;
 }
 
@@ -1705,20 +1681,9 @@ INPUT[type="text"].search_input-expanded:focus {
 	border-left-color: @SelOutsetLeftBorderColor@;
 }
 
-#IFNDEF MSIE_LOWER_THAN_9
 .AlphabetBarCell:not(:last-child) {
 	border-right-width: 0px;
 }
-#ELSE
-/* IE8 doesn't support :last-child, so use AlphabetBarLastCell, which we only add there */
-.AlphabetBarCell {
-	border-right-width: 0px;
-}
-
-.AlphabetBarCell.AlphabetBarLastCell {
-	border-right-width: 1px;
-}
-#ENDIF
 
 .AlphabetBarTable .AlphabetBarCell:first-child 	{ @ButtonRoundingLeft@	}
 .AlphabetBarTable .AlphabetBarCell:last-child	{ @ButtonRoundingRight@	}
@@ -2147,7 +2112,6 @@ INPUT[type="text"].search_input-expanded:focus {
 .ZmTaskProgress {
 	background-color:white;
 	border:1px solid #C5C5C5;
-	height:10px;
 	height:.9rem;
 	width:80px;
 }
@@ -2302,7 +2266,6 @@ INPUT[type="text"].search_input-expanded:focus {
 	@WidgetHeaderContainer@
 	@WidgetHeaderContainer-normal@
 	/* SIZE??? */
-	height:20px;
 	height:1.8rem;
 	overflow:hidden;
 }
@@ -2480,7 +2443,6 @@ INPUT[type="text"].search_input-expanded:focus {
 .miniTimeButton .ZButtonBorder,
 .ZmCompletionSelector .ZButtonBorder {
 	margin-top:-1px;
-	height:24px;
 	height:2.2rem;
 }
 
@@ -2666,7 +2628,6 @@ INPUT[type="text"].search_input-expanded:focus {
 /* Used ???*/
 .calendar_date_search {
 	@DateSearchBackground@
-	height:32px;
 	height:2.9rem;
 	margin-right:5px;
 	border-bottom:1px solid @darken(AppC,30)@;
@@ -2753,9 +2714,6 @@ INPUT[type="text"].search_input-expanded:focus {
 	border-width:0px;
 #IFDEF GECKO
 	-moz-user-select:none;
-#ENDIF
-#IFDEF MSIE_LOWER_THAN_9
-	border-width:0px 1px 1px 0px;
 #ENDIF
 	margin:0px 0px 0px -1px;
 }
@@ -3170,7 +3128,6 @@ HTML>BODY .appt-selected .appt_allday_body
 }
 
 .ZmApptEditView .ZmFreeBusySchedulerView {
-	max-height: 180px;
 	max-height: 15rem;
 }
 
@@ -3552,7 +3509,6 @@ HTML>BODY .appt-selected .appt_allday_body
 
 .prefHeaderComment {width:99%;}
 
-#IFNDEF MSIE_LOWER_THAN_9
 .ZOptionsHeaderL, .ZOptionsHeaderR {
 	display:none;
 }
@@ -3564,7 +3520,6 @@ HTML>BODY .appt-selected .appt_allday_body
 .ZOptionsSectionMain {
 	@roundCorners(0px 0px 8px 8px)@
 }
-#ENDIF
 
 .ZmPreferencesPage .Label {
 	padding-right:5px;
@@ -3720,13 +3675,11 @@ HTML>BODY .appt-selected .appt_allday_body
 }
 
 .ZmPrefZimletListView .Row-selected TD {
-	line-height:23px;
 	line-height:1.7rem;
 	white-space:normal;
 }
 
 .ZOptionsOfflineAccts {
-	font-size:14px;
 	font-size:1.1rem;
 	text-align:center;
 }
@@ -4244,7 +4197,6 @@ HTML>BODY .appt-selected .appt_allday_body
 	padding:6px;
 	width:250px;
 	background-color:white;
-	line-height:25px; /*for IE8*/
 	line-height:2.5rem;
 }
 
@@ -5156,7 +5108,6 @@ If you feel compelled to have a background color, please do so on a per skin lev
 }
 
 .ZmHtmlEditorFooter, .ZmDocsEditViewHeaderCell {
-	height:24px;
 	height:2rem;
 }
 
@@ -5165,7 +5116,6 @@ If you feel compelled to have a background color, please do so on a per skin lev
 }
 
 .ZmHtmlEditorFooter, .ZmDocsEditViewHeaderCell {
-	height:24px;
 	height:2rem;
 }
 
@@ -5281,18 +5231,12 @@ If you feel compelled to have a background color, please do so on a per skin lev
 .ZmEditContactViewAddress .DwtInputField TEXTAREA,
 .ZmEditContactViewAddress .DwtInputField INPUT[type="text"] {
 	@FontSize-normal@
-#IFDEF MSIE_LOWER_THAN_9
-	/* restricted to IE8 as it suppresses the focus border as well */
-	border-color: transparent;
-#ENDIF
 }
 
-#IFNDEF MSIE_LOWER_THAN_9
 .ZmEditContactViewAddress .DwtInputField TEXTAREA:not(:focus),
 .ZmEditContactViewAddress .DwtInputField INPUT[type="text"]:not(:focus) {
 	border-color: transparent !important;
 }
-#ENDIF
 
 .ZmEditContactViewAddress .DwtInputField TEXTAREA {
 	overflow-y:auto;
@@ -5366,8 +5310,6 @@ If you feel compelled to have a background color, please do so on a per skin lev
 }
 
 .ZmEditContactView .rowValue, .ZmContactSplitView .rowValue {
-	max-width: 840px;
-	min-width: 180px;
 	max-width: 70rem;
 	min-width: 15rem;
 	width: 1%;
@@ -5712,9 +5654,7 @@ DIV .SuggestBtn {
 	border-width:1px;
 	vertical-align:top;
 	width:180px;
-#IFNDEF MSIE_LOWER_THAN_9
 	margin: 0px 8px 8px 0px;
-#ENDIF
 }
 
 .DwtDialog .ZmSuggestView {
@@ -5880,7 +5820,6 @@ DIV.ZmSuggestLink {
 }
 
 .ZmDateFieldInput {
-	height:22px;
 	height:1.8rem;
 }
 

@@ -115,8 +115,6 @@ body									{	@ChromeBg@	}
 	background-color: #FFFFFF;
 	background-image: -moz-linear-gradient(top, #FFFFFF, @AppC@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FFFFFF),color-stop(1, @AppC@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFFFFF', EndColorStr='@AppC@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFFFFF', EndColorStr='@AppC@')"; /* IE8 */
  }
 #skin_tr_main							{				}
 
@@ -166,8 +164,6 @@ body									{	@ChromeBg@	}
 	background-color: @lighten(AppC,27)@;
 	background-image: -moz-linear-gradient(top, @lighten(AppC,27)@, @darken(AppC,3)@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @lighten(AppC,27)@),color-stop(1, @darken(AppC,3)@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='@lighten(AppC,27)@', EndColorStr='@darken(AppC,3)@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@lighten(AppC,27)@', EndColorStr='@darken(AppC,3)@')"; /* IE8 */
 }
 
 /** LoginPanel and Splash screen **/
@@ -190,8 +186,6 @@ body									{	@ChromeBg@	}
 	background-color: @SplashColor@;
 	background-image: -moz-linear-gradient(top, @SplashColor@, @darken(LoginColor,50)@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @SplashColor@),color-stop(1, @darken(LoginColor,50)@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='@SplashColor@', EndColorStr='@darken(LoginColor,50)@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@SplashColor@', EndColorStr='@darken(LoginColor,50)@')"; /* IE8 */
 }
 .SplashScreen .center { 
 	width:500px;
@@ -215,8 +209,6 @@ body									{	@ChromeBg@	}
 	background-color: @darken(LoginColor,30)@;
 	background-image: -moz-linear-gradient(top, @LoginColor@, @darken(LoginColor,50)@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @LoginColor@),color-stop(1, @darken(LoginColor,50)@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@')"; /* IE8 */
 
 	/*Radial gradient backgrounds*/
 	background-image: -moz-radial-gradient(50% 0, circle farthest-corner, @LoginColor@ 0%, @darken(LoginColor,50)@ 100%); /* FF3.6 */
@@ -280,8 +272,6 @@ body									{	@ChromeBg@	}
 	background-color: @LoginColor@;
 	background-image: -moz-linear-gradient(top, @LoginColor@, @darken(LoginColor,50)@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @LoginColor@),color-stop(1, @darken(LoginColor,50)@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@')"; /* IE8 */
 }
 
 .LoginScreen .center, .LoginScreen .center-small {
@@ -290,8 +280,6 @@ body									{	@ChromeBg@	}
 	background-color: @darken(LoginColor,30)@;
 	background-image: -moz-linear-gradient(top, @LoginColor@, @darken(LoginColor,50)@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @LoginColor@),color-stop(1, @darken(LoginColor,50)@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@')"; /* IE8 */
 
 	/*Radial gradient backgrounds*/
 	background-image: -moz-radial-gradient(50% 0, circle farthest-corner, @LoginColor@ 0%, @darken(LoginColor,50)@ 100%); /* FF3.6 */
@@ -460,8 +448,6 @@ body									{	@ChromeBg@	}
 	background-color: @darken(LoginColor,30)@;
 	background-image: -moz-linear-gradient(top, @LoginColor@, @darken(LoginColor,50)@); /* FF3.6 */
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @LoginColor@),color-stop(1, @darken(LoginColor,50)@)); /* Saf4+, Chrome */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@'); /* IE6,IE7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@LoginColor@', EndColorStr='@darken(LoginColor,50)@')"; /* IE8 */
 
 	/*Radial gradient backgrounds*/
 	background-image: -moz-radial-gradient(50% 0, circle farthest-corner, @LoginColor@ 0%, @darken(LoginColor,50)@ 100%); /* FF3.6 */
