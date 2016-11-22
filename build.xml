@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="zm-web-client" default="war">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="zm-admin-console" default="war">
     <import file="../zm-zcs/ant-global.xml"/>
     <property name="ajax.dir" location="../zm-ajax" />
     <property name="ajax.build.dir" location="${ajax.dir}/build" />  
