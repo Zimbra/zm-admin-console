@@ -21,4 +21,4 @@
 - copy following jars in the .zcs-deps folder:
     - ant-contrib-1.0b1.jar
 
-NOTE: zmmailboxdctl restart will be triggered after deploying zm-admin-console instance (jetty restarts after ant prod-deploy
+NOTE: zmmailboxdctl restart will be triggered after deploying zm-admin-console instance (jetty restarts after ant admin-prod-deploy
