@@ -1335,7 +1335,7 @@ function(tmpObj) {
 	// Fix for bug 96777
 	if (tmpObj && tmpObj[ZaDomain.A2_gal_sync_accounts] &&  tmpObj[ZaDomain.A2_gal_sync_accounts][0]) {
 
-		var currentGalMode = this.attrs[ZaDomain.A_zimbraGalMode],
+		var  currentGalMode = this.attrs[ZaDomain.A_zimbraGalMode],
 			newGalMode = tmpObj.attrs[ZaDomain.A_zimbraGalMode],
 			newGalSyncDSAccount = tmpObj[ZaDomain.A2_gal_sync_accounts][0];
 
