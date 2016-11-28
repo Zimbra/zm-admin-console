@@ -1356,7 +1356,7 @@ function(tmpObj) {
 			createInternalDSDoc.setAttribute("type", "zimbra");
 			createInternalDSDoc.setAttribute("domain", tmpObj.attrs[ZaDomain.A_domainName]);
 			soapDoc.set("account", newGalSyncDSAccount.name, createInternalDSDoc).setAttribute("by","name");
-			soapDoc.set("a", newGalSyncDSAccount[ZaDomain.A2_new_external_gal_polling_interval], createInternalDSDoc).setAttribute("n",ZaDataSource.A_zimbraDataSourcePollingInterval);
+			soapDoc.set("a", newGalSyncDSAccount[ZaDomain.A2_new_internal_gal_polling_interval], createInternalDSDoc).setAttribute("n",ZaDataSource.A_zimbraDataSourcePollingInterval);
 		}
 	}
 		
