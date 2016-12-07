@@ -1331,6 +1331,34 @@ function(tmpObj) {
 		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraGalMaxResults],modifyDomainDoc);
 		attr.setAttribute("n", ZaDomain.A_zimbraGalMaxResults);	
 	}
+
+	// Fix for bug 96777
+	if (tmpObj && tmpObj[ZaDomain.A2_gal_sync_accounts] &&  tmpObj[ZaDomain.A2_gal_sync_accounts][0]) {
+
+		var  currentGalMode = this.attrs[ZaDomain.A_zimbraGalMode],
+			newGalMode = tmpObj.attrs[ZaDomain.A_zimbraGalMode],
+			newGalSyncDSAccount = tmpObj[ZaDomain.A2_gal_sync_accounts][0];
+
+		if(currentGalMode === ZaDomain.GAL_Mode_internal && newGalMode === ZaDomain.GAL_Mode_both) {  // galmode changed from internal to both
+			// Create a new Gal Sync DS with galtype as external
+			var createExternalDSDoc = soapDoc.set("AddGalSyncDataSourceRequest", null, null, ZaZimbraAdmin.URN);
+			createExternalDSDoc.setAttribute("name", newGalSyncDSAccount[ZaDomain.A2_new_external_gal_ds_name]); // DS name
+			createExternalDSDoc.setAttribute("type", "ldap");
+			createExternalDSDoc.setAttribute("domain", tmpObj.attrs[ZaDomain.A_domainName]);
+			soapDoc.set("account", newGalSyncDSAccount.name, createExternalDSDoc).setAttribute("by","name");
+			soapDoc.set("a", newGalSyncDSAccount[ZaDomain.A2_new_external_gal_polling_interval], createExternalDSDoc).setAttribute("n",ZaDataSource.A_zimbraDataSourcePollingInterval);
+		}
+
+		if ( currentGalMode === ZaDomain.GAL_Mode_external && newGalMode === ZaDomain.GAL_Mode_both) {  // galmode changed from external to both
+			//  Create a new Gal Sync DS with galtype as internal
+			var createInternalDSDoc = soapDoc.set("AddGalSyncDataSourceRequest", null, null, ZaZimbraAdmin.URN);
+			createInternalDSDoc.setAttribute("name", newGalSyncDSAccount[ZaDomain.A2_new_internal_gal_ds_name]); // DS name
+			createInternalDSDoc.setAttribute("type", "zimbra");
+			createInternalDSDoc.setAttribute("domain", tmpObj.attrs[ZaDomain.A_domainName]);
+			soapDoc.set("account", newGalSyncDSAccount.name, createInternalDSDoc).setAttribute("by","name");
+			soapDoc.set("a", newGalSyncDSAccount[ZaDomain.A2_new_internal_gal_polling_interval], createInternalDSDoc).setAttribute("n",ZaDataSource.A_zimbraDataSourcePollingInterval);
+		}
+	}
 		
 	try {
 		params = new Object();
