@@ -255,7 +255,7 @@
 
 <!-- add build-ajax in dependency once zm-ajax built script is ivy based -->
     <target name="war"
-            depends="resolve,prod,init,templates,images,styles,settings,copy-ajax,jam-files,compress,help"
+            depends="resolve,init,templates,images,styles,settings,copy-ajax,jam-files,compress,help"
             description="Builds all dependencies and assembles the war file.">
         <if><isset property='build.network' />
             <then>
