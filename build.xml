@@ -255,7 +255,7 @@
 
 <!-- add build-ajax in dependency once zm-ajax built script is ivy based -->
     <target name="war"
-            depends="init,templates,images,styles,settings,copy-ajax,jam-files,compress,help"
+            depends="resolve,init,templates,images,styles,settings,copy-ajax,jam-files,compress,help"
             description="Builds all dependencies and assembles the war file.">
         <if><isset property='build.network' />
             <then>
@@ -458,7 +458,7 @@
         <antcall target='webxml-deploy-replace'/>
     </target>
 
-    <target name='init' depends='client,dev,customer-init'>
+    <target name='init' depends='admin,dev,customer-init'>
         <!-- properties based on props set in client/admin/prod/dev targets -->
         <property name='deploy.server' value='jetty'/>
         <property name='build.war.dir' value='${build.dist.dir}/${deploy.server}/webapps'/>
