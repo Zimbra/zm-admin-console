@@ -1185,6 +1185,10 @@ ext = BeanUtils.cook(ext);
 	             classpathref="class.path"
 	    />
 
+        <!-- copying yui jar file in build/tmp directory. -->
+        <ivy:install organisation="com.yahoo.platform.yui" module="yuicompressor" revision="2.4.2-zimbra" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
+
+
         <!-- minimize js, prepend copyright, compress -->
         <for param="var">
             <path>
@@ -1213,7 +1217,7 @@ ext = BeanUtils.cook(ext);
                         <echo>Minimizing to @{var}${jsmin.ext}</echo>
 	                    <try>
 	                        <block>
-		                        <java jar="${common.jars.dir}/yuicompressor-2.4.2-zimbra.jar" fork="true" failonerror="true"
+                                <java jar="${build.tmp.dir}/yuicompressor-2.4.2-zimbra.jar" fork="true" failonerror="true"
 		                              output="${build.dir}/yui-compress.out" error="@{var}${compresserror.ext}">
 		                            <arg value="--line-break"/>
 		                            <arg value="0"/>
@@ -1246,6 +1250,8 @@ ext = BeanUtils.cook(ext);
                 </if>
             </sequential>
         </for>
+        <!-- Delete tmp folder created with ivy-->
+        <delete dir="${build.tmp.dir}"/>
     </target>
 
 	<target name='compress-test-files'>
@@ -1261,7 +1267,7 @@ ext = BeanUtils.cook(ext);
 		<for list="${files}" param="filename">
 			<sequential>
 				<echo>Testing file: @{filename}</echo>
-				<java jar="${common.lib.dir}/yuicompressor-2.4.2-zimbra.jar" fork="true" failonerror="true">
+                <java jar="${build.tmp.dir}/yuicompressor-2.4.2-zimbra.jar" fork="true" failonerror="true">
 				    <arg value="--line-break"/>
 				    <arg value="0"/>
 				    <arg value="--type"/>
