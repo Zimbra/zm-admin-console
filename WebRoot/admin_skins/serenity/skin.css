@@ -51,9 +51,6 @@ BODY {
 #skin_outer {
 	@FullSize@
 	@grad(#57A3D5,#1D3A62)@ 	/* TODO: Derive colors from skin.properties values */
-#IFDEF MSIE_LOWER_THAN_9
-	padding:0px 5px 5px;
-#ENDIF
 }
 
 #skin_top_td				{	height:@TopHeight@;	}
@@ -70,16 +67,10 @@ BODY {
 	@SkinBorderLogo@
 	height:@AppBannerHeight@;
 	width:@AppBannerWidth@;
-#IFDEF MSIE_LOWER_THAN_9
-	height:100%;
-#ENDIF
 }
 
 .ImgAppBanner {
 	background-position:0px;
-#IFDEF MSIE_LOWER_THAN_9
-	margin-top:8px;
-#ENDIF
 }
 
 #skin_td_toaster {
@@ -110,9 +101,6 @@ BODY {
 	height:@TopHeight@;
 	padding:8px 9px;
 	width:1px;
-#IFDEF MSIE_LOWER_THAN_9
-	margin:0px 9px;
-#ENDIF
 }
 
 
@@ -323,9 +311,6 @@ BODY {
 	margin-left:-250px;
 	min-height:320px;
 	width:500px;
-#IFDEF MSIE_LOWER_THAN_9
-	height:330px;
-#ENDIF
 }
 
 .LoginScreen .center-small,
@@ -349,9 +334,6 @@ BODY {
 .SplashScreen .contentBox {
 	min-height:265px;
 	width:500px;
-#IFDEF MSIE_LOWER_THAN_9
-	height:265px;
-#ENDIF
 	@LoginContentBox@
 }
 
@@ -454,15 +436,6 @@ BODY {
 .ImgLoginBanner				{	@LoginBanner@ background-repeat:no-repeat;		}
 .ImgAboutBanner				{	@AboutBanner@ background-repeat:no-repeat;		}
 
-#IFDEF MSIE_LOWER_THAN_9
-#skin_container_logo A,
-#skin_container_logo A:hover,
-#skin_container_logo A:link {
-	background-color:transparent;
-}
-#ENDIF
-
-
 
 /** About Screen **/
 
@@ -496,9 +469,6 @@ BODY {
 .AboutScreen .Footer {
 	position:absolute;
 	bottom:0px;
-#IFDEF MSIE_LOWER_THAN_9
-	width:559px;
-#ENDIF
 }
  /*
 .AboutScreen>DIV>TABLE>TBODY>TR:first-child>TD {
@@ -515,12 +485,6 @@ BODY {
 .AboutScreen .copyright A {
 	color:#CBD9E4;
 }
-
-#IFDEF MSIE_LOWER_THAN_9
-.AboutScreen .version {
-	margin-top:-17px;
-}
-#ENDIF
 
 .ZaAboutDialog {
 	position:absolute;
@@ -931,9 +895,7 @@ TD.gridGroupBodyLabel {
 .SearchToolBar {
 	background-color:white;
 	@roundCorners(5px)@
-#IFNDEF MSIE_LOWER_THAN_9
 	border:1px solid white;
-#ENDIF
 }
 
 .SearchTBSearchField {
@@ -1074,11 +1036,6 @@ TD.gridGroupBodyLabel {
 .ZaHomeTabView .XFormCase { position:relative; }
 
 /* Hacks for lack of support for child selectors in MSIE 8 */
-#IFDEF MSIE_LOWER_THAN_9
-.ZaHomeWarningPanel { text-align:center; }
-
-.ZaHomeWarningPanel .grid_xform_table,
-#ENDIF
 .ZaHomeWarningPanel>TABLE {
 	background-color:#FFC;
 	border:1px solid;
@@ -1088,16 +1045,6 @@ TD.gridGroupBodyLabel {
 	width:98%;
 	@roundCorners(0px 0px 5px 5px)@
 }
-
-#IFDEF MSIE_LOWER_THAN_9
-.ZaHomeWarningPanel .grid_xform_table .grid_xform_table {
-	background-color:transparent;
-	border-width:0px;
-	margin:0px;
-	padding:0px;
-	width:inherit;
-}
-#ENDIF
 
 .ZaHomeWarningItem {
 	padding:1px 0px 2px;
@@ -1170,12 +1117,6 @@ TD.gridGroupBodyLabel {
 .ZaSearchOptionDialog {
 	border:1px solid black;
 }
-
-#IFDEF MSIE_LOWER_THAN_9
-.DwtDialog .WindowOuterContainer TABLE {
-	border-collapse:collapse;
-}
-#ENDIF
 
 .addrBubble {
 	background-color:#EEE;
