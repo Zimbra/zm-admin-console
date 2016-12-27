@@ -1,6 +1,7 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="zm-admin-console" default="war">
     <import file="../zm-zcs/ant-global.xml"/>
     <property name="ajax.dir" location="../zm-ajax" />
+    <property name="ajax.src.dir" location="${ajax.dir}/src" />
     <property name="ajax.build.dir" location="${ajax.dir}/build" />  
     <property name='ajax.build.classes.dir' value='${ajax.build.dir}/classes'/>
 
@@ -500,7 +501,7 @@
         </condition>
 
         <!-- common filesets -->
-        <fileset id="src.props.fileset" dir='${src.dir}' includes='**/*.properties' />
+        <fileset id="src.props.fileset" dir='${ajax.src.dir}' includes='**/*.properties' />
         <fileset id="overlay.src.props.fileset" erroronmissingdir="false"
                  dir='${overlay.dir}/${src.dir}' includes='**/*.properties' />
 
