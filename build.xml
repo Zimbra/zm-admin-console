@@ -6,11 +6,11 @@
     <property name='ajax.build.classes.dir' value='${ajax.build.dir}/classes'/>
 
     <!-- Properties -->
-    <dirname property="this.zwc.basedir" file="${ant.file.ZimbraWebClient}" />
+    <dirname property="this.zwc.basedir" file="${ant.file.zm-admin-console}" />
 
     <property file='${this.zwc.basedir}/build-custom.properties'/>
 
-    <property name="javac.target" value="1.7"/>
+    <property name="javac.target" value="1.8"/>
 
     <property environment="env"/>
 
@@ -32,10 +32,6 @@
 
     <!-- zm-timezones -->
     <property name='timezones.dir' value='${this.zwc.basedir}/../zm-timezones'/>
-	<property name='network.zwc.dir' value='${network.dir}/ZimbraWebClient' />
-	<property name='network.zwc.help.dir' value='${network.zwc.dir}/WebRoot/help' />
-
-	<property name='license.dir' value='${this.zwc.basedir}/../ZimbraLicenses'/>
 
     <property name='lib.dir' value='${this.zwc.basedir}/jars'/>
     <property name="jsdoctoolkit.dir" location="${lib.dir}/jsdoc-toolkit-2.3.0" />
@@ -61,8 +57,6 @@
     <property name='build.js.dir' value='${build.web.dir}/js'/>
     <property name='build.template.dir' value='${build.web.dir}/templates'/>
     <property name='build.skin.dir' value='${build.web.dir}/skins'/>
-    <property name='build.help.dir' value='${build.web.dir}/help'/>
-    <property name='build.adminhelp.dir' value='${build.web.dir}/adminhelp'/>
     <property name='build.dist.dir' value='${build.dir}/dist'/>
 
 	<property name='build.docs.dir' value='${build.dir}/docs'/>
@@ -92,13 +86,6 @@
     <property name="ffext.build.dir" location="ffext/build"/>
     <property name="ffext.src.dir" value="ffext/src/zimbradnd"/>
 
-    <!-- TINY_MCE INTEGRATION -->
-    <property name="tinymce.version" value="4.2.6"/>
-    <property name='tinymce.dir' value='${build.js.dir}/ajax/3rdparty/tinymce'/>
-    <property name='tinymce.root.dir' value='tiny_mce' />
-    <property name='tinymce.js.dir' value='${tinymce.root.dir}/tinymce-${tinymce.version}/js/tinymce' />
-    <property name="tinymce.custom.dir" value="tiny_mce/custom"/>
-
     <!-- MODERNIZR INTEGRATION -->
     <property name="modernizr.version" value="2.6.1"/>
     <property name="modernizr.dir" value="${build.js.dir}/ajax/3rdparty/modernizr"/>
@@ -107,16 +94,6 @@
     <property name="jquery.version" value="1.11.0"/>
     <property name="jquery.dir" value="${build.js.dir}/ajax/3rdparty/jquery"/>
 
-    <!-- ConverseJS INTEGRATION -->
-    <!--<property name="converse.version" value="0.9.4"></property>
-    <property name='converse.root.dir' value='converse' />
-    <property name='converse.js.dir' value='${converse.root.dir}/converse.js-${converse.version}' />
-    <property name='converse.js.build.dir' value='${converse.root.dir}/converse.js-${converse.version}/builds' />
-    <property name='converse.css.dir' value='${converse.root.dir}/converse.js-${converse.version}/css' />
-    <property name='converse.fonticons.dir' value='${converse.root.dir}/converse.js-${converse.version}/fonticons' />
-    <property name='converse.sounds.dir' value='${converse.root.dir}/converse.js-${converse.version}/sounds' />
-    <property name="converse.dir" value="${build.js.dir}/ajax/3rdparty/converse"/>-->
-	
 	<!-- customize admin skin -->
 	<if>
 		<isset property='adminSkin'/>
@@ -130,8 +107,6 @@
     <!-- Paths and Filesets -->
 
     <!-- pseudo-fileset so that targets that rely on it don't fail -->
-    <fileset id='help.fileset' dir='${build.dir}' excludes='**'/>
-	<fileset id='network.help.fileset' dir='${build.dir}' excludes='**' />
 	<fileset id='customer.web.fileset' dir='${build.dir}' excludes='**'/>
 	<fileset id='customer.img.fileset' dir='${build.dir}' excludes='**' />
 	<fileset id='customer.skins.img.fileset' dir='${build.dir}' excludes='**' />
@@ -158,10 +133,6 @@
         <property name='common.template.excludes' value='${custom.template.excludes}'/>
         <property name='common.jam.includes' value='${custom.jam.includes},**/package/*.js'/>
         <property name='common.jam.excludes' value='${custom.jam.excludes},'/>
-        <property name='common.help.includes' value='${custom.help.includes}'/>
-        <property name='common.help.excludes' value='${custom.help.excludes}'/>
-        <property name='common.admin.help.includes' value='${custom.admin.help.includes}'/>
-        <property name='common.admin.help.excludes' value='${custom.admin.help.excludes}'/>
         <property name='common.build.web.includes' value='${custom.build.web.includes},**'/>
         <property name='common.build.web.excludes'
                   value='${custom.build.web.excludes},js/*${depends.ext},js/*${nodebug.ext},js/*${jsmin.ext},js/*${license.ext}'/>
@@ -183,7 +154,6 @@
         <property name='template.excludes' value=''/>
         <property name='jam.includes' value='**/ajax/package/*.js'/>
         <property name='jam.excludes' value=''/>
-		<property name='help.ignore' value='true' />
         <property name='build.web.includes'
                   value='js/**,img/dwt.gif,img/images.css,skin/**,public/**,templates/**'/>
         <property name='build.web.excludes' value='${common.build.web.excludes}'/>
@@ -194,8 +164,6 @@
     <target name='client' depends='common'>
         <property name='deploy.app' value='zimbra'/>
         <property name='skins.dir' value='${web.dir}/skins'/>
-        <property name='help.dir' value='${web.dir}/help'/>
-        <property name='build.help.dir' value='${build.web.dir}/help'/>
         <property name='web.includes' value='${common.web.includes},h/**,m/**,portals/**,sounds/**,test/**,yui/2.7.0/**,qunit/**'/>
         <property name='web.excludes' value='${common.web.excludes},js/zimbraAdmin/**'/>
         <property name='jsp.includes' value='${common.jsp.includes}'/>
@@ -206,24 +174,16 @@
         <property name='template.excludes' value='${common.template.excludes},admin/**'/>
         <property name='jam.includes' value='${common.jam.includes}'/>
         <property name='jam.excludes' value='${common.jam.excludes},**/zimbraAdmin/**'/>
-        <property name='help.includes' value='${common.help.includes},*/standard/**,*/advanced/**'/>
-        <property name='help.excludes' value='${common.help.excludes}'/>
         <property name='build.web.includes' value='${common.build.web.includes}'/>
         <property name='build.web.excludes' value='${common.build.web.excludes}'/>
         <property name='webinf.includes' value='${common.webinf.includes}'/>
         <property name='webinf.excludes' value='${common.webinf.excludes}'/>
-
-        <fileset id='help.fileset'
-                 dir='${help.dir}' includes='${help.includes}' excludes='${help.excludes}'
-                />
     </target>
 
     <target name='admin' depends='common'>
         <property name='build.admin' value='true'/>
         <property name='deploy.app' value='zimbraAdmin'/>
         <property name='skins.dir' value='${web.dir}/admin_skins'/>
-        <property name='adminhelp.dir' value='${web.dir}/adminhelp'/>
-        <property name='build.adminhelp.dir' value='${build.web.dir}/adminhelp'/>
         <property name='web.includes' value='${common.web.includes},yui/2.7.0/**'/>
         <property name='web.excludes' value='${common.web.excludes},js/zimbraMail/**'/>
         <property name='jsp.includes' value='${common.jsp.includes}'/>
@@ -235,8 +195,6 @@
         <property name='template.excludes' value='${common.template.excludes}'/>
          <property name='jam.includes' value='${common.jam.includes}'/>  
         <property name='jam.excludes' value='${common.jam.excludes},**/zimbraMail/**'/>
-		    <property name='help.includes' value='${common.admin.help.includes},*/**'/>
-		    <property name='help.excludes' value='${common.admin.help.excludes},*/standard/**,*/advanced/**'/>
         <property name='build.web.includes' value='${common.build.web.includes}'/>
         <property name='build.web.excludes' value='${common.build.web.excludes}'/>
         <property name='webinf.includes' value='${common.webinf.includes}'/>
@@ -256,13 +214,8 @@
 
 <!-- add build-ajax in dependency once zm-ajax built script is ivy based -->
     <target name="war"
-            depends="resolve,init,templates,images,styles,settings,copy-ajax,jam-files,compress,help"
+            depends="resolve,init,templates,images,styles,settings,copy-ajax,jam-files,compress"
             description="Builds all dependencies and assembles the war file.">
-        <if><isset property='build.network' />
-            <then>
-                <ant dir="../zm-touch-client" target="touch"/>
-            </then>
-        </if>
         <antcall target="assemble-war"/>
     </target>
 
@@ -367,8 +320,6 @@
             <zipfileset refid='overlay.skins.fileset' prefix='skins' />
             <zipfileset refid='skins.fileset' prefix='skins' />
 
-            <!-- <zipfileset refid='help.fileset' prefix='help' />
-			      <zipfileset refid='network.help.fileset' prefix='help' />  -->
         </war>
         <!-- Delete tmp folder that may have been left over, e.g.: older versions of same libs -->
         <delete dir="${build.tmp.dir}"/>
@@ -441,10 +392,6 @@
             <fileset refid="overlay.skins.fileset" />
         </jscopy>
 
-		<!-- <copy todir='${webapp.dir}/help'>
-			<fileset refid='help.fileset' />
-			<fileset refid='network.help.fileset' />
-		</copy>  -->
 
         <!-- files from build tree -->
         <jscopy todir='${webapp.dir}' verbose='${sync.verbose}'>
@@ -1280,24 +1227,6 @@ ext = BeanUtils.cook(ext);
 		</for>
 	</target>
 
-    <target name='help' depends='init' if='build.prod' unless='help.ignore'>
-		<if><isset property='build.network' />
-			<then>
-				<fileset id='network.help.fileset' erroronmissingdir="false"
-          dir='${network.zwc.help.dir}' includes='${help.includes}' excludes='${help.excludes}' />
-				<!-- NOTE:	This allows us to exclude help dirs from the base
-							help dir that are replaced by the network help. -->
-				<dirset id='network.help.dirset' erroronmissingdir="false"
-          dir='${network.zwc.help.dir}' includes='*/*' />
-				<pathconvert property='help.excludes2' pathsep=',' refid="network.help.dirset">
-					<regexpmapper from="^.*/WebRoot/help/(.*)$$" to="\1/**"/>
-				</pathconvert>
-			</then>
-		</if>
-		<fileset id='help.fileset' erroronmissingdir="false"
-      dir='${help.dir}' includes='${help.includes}' excludes='${help.excludes},${help.excludes2}' />
-	</target>
-
     <target name="check-zimbra-identity">
       <available file="/opt/zimbra/.ssh/zimbra_identity" property="ssh.zimbra.identity.present"/>
     </target>
@@ -1352,8 +1281,6 @@ ext = BeanUtils.cook(ext);
         <delete dir='${customer.build.dir}' />
         <delete dir="${jquery.dir}"/>
         <delete dir="${modernizr.dir}"/>
-        <delete dir="${tinymce.dir}"/>
-        <!--<delete dir="${converse.dir}"/>-->
     </target>
 
 	<!-- JavaScript API Documentation Tasks -->
@@ -1571,137 +1498,6 @@ ext = BeanUtils.cook(ext);
         </delete>
     </target>
 
-    <target name="get-tinymce-version">
-        <echo message="${tinymce.version}" />
-    </target>
-
-    <target name="build-tinymce">
-        <exec executable="make" dir="${tinymce.root.dir}" failonerror="true" />
-    </target>
-
-    <target name="tinymce">
-        <copy todir='${tinymce.dir}' verbose='${sync.verbose}'>
-            <fileset dir='${tinymce.js.dir}' excludes="**/*.less"/>
-            <fileset dir='${tinymce.custom.dir}' />
-            <scriptmapper language="javascript">
-                // replace dots with underscores in JS file names, retaining the suffix
-                if (/\.js$/.test(source)) {
-                  source = source.substr(0, source.length - 3).replace(/\./g, '_') + '.js';
-                }
-                self.addMappedName(source);
-            </scriptmapper>
-        </copy>
-
-        <!-- generate an authoritative and correct list of locales -->
-        <property name="tinymce.locale.file" location="${tinymce.dir}/locales.js"/>
-
-        <fileset id="tinymce.locales.ref"
-                 dir="${tinymce.custom.dir}/langs"
-                 includes="*.js"/>
-
-        <uptodate targetfile="${tinymce.locale.file}"
-		          property="tinymce.locales.uptodate">
-            <srcresources>
-                <fileset refid="tinymce.locales.ref" />
-            </srcresources>
-        </uptodate>
-
-        <if>
-            <not>
-                <equals arg1="${tinymce.locales.uptodate}" arg2="true" />
-            </not>
-            <then>
-                <echo message="Generating ${tinymce.locale.file}" />
-
-                <pathconvert property='tinymce.locales'
-                             pathsep='", "'>
-                    <sort>
-                        <fileset refid='tinymce.locales.ref' />
-                    </sort>
-
-                    <regexpmapper from="^.*/(.*)\.js" to="\1" />
-                </pathconvert>
-
-                <echo file="${tinymce.dir}/locales.js"
-					  message='tinyMCE.locale_list = ["en", "${tinymce.locales}"];'
-                      />
-            </then>
-        </if>
-
-        <!-- generate a mapping of emoticons to their image data -->
-        <property name="tinymce.emoticon.file" location="${tinymce.dir}/plugins/zemoticons/data.js"/>
-
-        <fileset id="tinymce.emoticons.ref"
-                 dir="${tinymce.js.dir}/plugins/emoticons/img"/>
-
-        <uptodate targetfile="${tinymce.emoticon.file}"
-                  property="tinymce.emoticons.uptodate">
-            <srcresources>
-                <fileset refid="tinymce.emoticons.ref" />
-            </srcresources>
-        </uptodate>
-
-        <if>
-            <not>
-                <equals arg1="${tinymce.emoticons.uptodate}" arg2="true" />
-            </not>
-            <then>
-                <echo message="Generating ${tinymce.emoticon.file}" />
-
-                <script language="javascript">
-                    importClass(org.apache.tools.ant.util.Base64Converter);
-                    importClass(java.nio.charset.StandardCharsets);
-                    importClass(java.nio.file.Files);
-                    importClass(java.nio.file.Paths);
-                    importClass(java.nio.file.StandardOpenOption);
-
-                    var conv = new Base64Converter();
-                    var filename_patt = /smiley-(.*)\.(\w+)/;
-
-                    var mimemap = {
-                        gif: 'image/gif',
-                        png: 'image/png',
-                        jpg: 'image/jpeg',
-                    };
-
-                    var emoticons =
-                        self.getProject().getReference("tinymce.emoticons.ref");
-                    var dstfile =
-                        self.getProject().getProperty("tinymce.emoticon.file");
-                    var iter = emoticons.iterator();
-
-                    // build up a map of emoticon name -> image data URI
-                    var map = {};
-
-                    while (iter.hasNext()) {
-                        var path = iter.next().getFile().toPath();
-                        var match =
-                            String(path.getFileName()).match(filename_patt);
-
-                        var data = conv.encode(Files.readAllBytes(path));
-                        var name = match[1];
-                        var type = mimemap[match[2]];
-
-                        map[name] =
-                            String(java.lang.String.format("data:%s;base64,%s",
-                                                           [type, data]));
-                    }
-
-                    // write it to disk as a loadable JavaScript source file
-                    writer = Files.newBufferedWriter(Paths.get(dstfile, []),
-                                                     StandardCharsets.UTF_8,
-                                                     [StandardOpenOption.TRUNCATE_EXISTING,
-                                                      StandardOpenOption.CREATE]);
-
-                    writer.write("tinyMCE.emoticon_map = ");
-                    writer.write(JSON.stringify(map, null, 4));
-                    writer.write(";\n");
-                    writer.close();
-                </script>
-            </then>
-        </if>
-    </target>
-
     <target name="modernizr">
         <copy todir='${modernizr.dir}' file='${web.dir}/modernizr/${modernizr.version}/modernizr.js' verbose='${sync.verbose}'/>
     </target>
@@ -1710,58 +1506,4 @@ ext = BeanUtils.cook(ext);
         <copy todir='${jquery.dir}' file='${web.dir}/jquery/${jquery.version}/jquery.js' verbose='${sync.verbose}'/>
     </target>
 
-    <!--<target name="converse">
-        <copy todir="${converse.dir}/" file="${converse.js.build.dir}/templates.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/converse.js"/>
-        <mkdir dir="${converse.dir}/css"/>
-        <copy todir="${converse.dir}/css/" file="${converse.css.dir}/converse.css" verbose="${sync.verbose}"/>
-        <copy todir="${build.css.dir}" file="${converse.css.dir}/converse.css" verbose="${sync.verbose}"/>
-        <copy todir="${converse.dir}/fonticons" verbose="${sync.verbose}">
-            <fileset dir="${converse.fonticons.dir}" includes="**"/>
-        </copy>
-        <copy todir="${build.web.dir}/fonticons" verbose="${sync.verbose}">
-            <fileset dir="${converse.fonticons.dir}" includes="**"/>
-        </copy>
-        <copy todir="${converse.dir}/sounds" verbose="${sync.verbose}">
-            <fileset dir="${converse.sounds.dir}" includes="**" excludes="README"/>
-        </copy>
-        <copy todir="${build.web.dir}/public/sounds" verbose="${sync.verbose}">
-            <fileset dir="${converse.dir}/sounds" includes="**"/>
-        </copy>
-        <copy tofile="${converse.dir}/jquery_min.js" file="${converse.js.dir}/components/jquery/dist/jquery.min.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/build/dep/salsa20.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/src/bigint.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/core.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/enc-base64.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/crypto-js-evanvosberg/src/md5.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/crypto-js-evanvosberg/src/evpkdf.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/cipher-core.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/aes.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/sha1.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/sha256.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/hmac.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/pad-nopadding.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/vendor/cryptojs/mode-ctr.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/otr/build/dep/eventemitter.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/src/otr.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/strophejs/strophe.js"/>
-        <copy tofile="${converse.dir}/strophe_vcard.js" file="${converse.js.dir}/components/strophejs-plugins/vcard/strophe.vcard.js"/>
-        <copy tofile="${converse.dir}/strophe_disco.js" file="${converse.js.dir}/components/strophejs-plugins/disco/strophe.disco.js"/>
-        <copy tofile="${converse.dir}/strophe_ping.js" file="${converse.js.dir}/components/strophejs-plugins/ping/strophe.ping.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/underscore/underscore.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/backbone/backbone.js"/>
-        <copy tofile="${converse.dir}/backbone_browserStorage.js" file="${converse.js.dir}/components/backbone.browserStorage/backbone.browserStorage.js"/>
-        <copy tofile="${converse.dir}/backbone_overview.js" file="${converse.js.dir}/components/backbone.overview/backbone.overview.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/src/moment-with-langs.js"/>
-        <copy tofile="${converse.dir}/jquery_browser.js" file="${converse.js.dir}/components/jquery.browser/dist/jquery.browser.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/typeahead.js/index.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/components/jed/jed.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.build.dir}/locales.js"/>
-        <copy todir="${converse.dir}/" file="${converse.js.dir}/src/utils.js"/>
-    </target>
-
-    <target name="get-converse-version">
-        <echo message="${converse.version}" />
-    </target>-->
-    
 </project>
