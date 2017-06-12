@@ -68,21 +68,23 @@
 	        }
 	    }    
 	}
-	
-    Boolean isLogoff = getParameter(request, "logoff", "0").equals("1");
-    if (isLogoff) {
-        Cookie killAuthToken = new Cookie("ZM_ADMIN_AUTH_TOKEN", null);
-		killAuthToken.setMaxAge(0);
-		killAuthToken.setPath("/");
-		response.addCookie(killAuthToken);
-		String queryString = request.getQueryString();
-        queryString = queryString.replaceAll("&?logoff=1", "");
-		if (queryString.length() > 0)
-			response.sendRedirect(adminUrl + "?" + queryString);
-		else
-			response.sendRedirect(adminUrl); 
-    }	
-	
+%>
+
+<c:if test="${param.logoff eq '1'}">
+	<zm:logout isAdmin="true" />
+
+	<c:redirect url="/">
+		<c:forEach var="p" items="${paramValues}">
+			<c:forEach var='value' items='${p.value}'>
+				<c:if test="${p.key ne 'logoff'}">
+					<c:param name="${p.key}" value='${value}'/>
+				</c:if>
+			</c:forEach>
+		</c:forEach>
+	</c:redirect>
+</c:if>
+
+<%
 	Boolean isDev = getParameter(request, "dev", "0").equals("1");
 	if (isDev) {
 		request.setAttribute("mode", "mjsf");
