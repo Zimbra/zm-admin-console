@@ -192,7 +192,9 @@ ZaGlobalAdvancedStatsPage.plotGlobalQuickChart = function (id, group, columns, c
                 for (var i = 0; i < timeStampLength; i++) {
                     var valuesSumAtTs = 0;
                     for (var j = 0; j < hostNameLen; j++) {
-                        if (hostname[j].stats[0].values[i] && hostname[j].stats[0].values[i].stat[0]) {
+                        if (hostname[j].stats && hostname[j].stats.length > 0 && 
+                        	hostname[j].stats[0].values && hostname[j].stats[0].values.length > 0 && hostname[j].stats[0].values[i] &&
+                        	hostname[j].stats[0].values[i].stat && hostname[j].stats[0].values[i].stat.length > 0 && hostname[j].stats[0].values[i].stat[0]) {
                             valuesSumAtTs = valuesSumAtTs + parseFloat(hostname[j].stats[0].values[i].stat[0].value);
                         }
                     }
