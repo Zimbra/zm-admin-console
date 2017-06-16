@@ -2235,6 +2235,7 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
                         {
                             ref: ".",
                             type: _EMAILADDR_,
+                            getDisplayValue: AjxUtil.htmlEncode,
                             label: null,
                             enableDisableChecks: [],
                             visibilityChecks: []

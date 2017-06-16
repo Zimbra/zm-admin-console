@@ -1232,7 +1232,7 @@ ZaDistributionList.myXModel = {
 			   function (value, form, formItem, instance) {				   
 				   if (value){
 					  	if(AjxUtil.isValidEmailNonReg(value)) {
-						   return AjxStringUtil.htmlEncode(value);
+						   return value;
 					   } else {
 						   throw ZaMsg.ErrorInvalidEmailAddress;
 					   }

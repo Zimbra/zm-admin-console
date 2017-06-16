@@ -183,7 +183,7 @@ function() {
 		var icon = ZaActionStatusView.getImageHtml(work);
 
 		this._toast = work.toast;
-		this._toast.popup(level, work.msg, icon, null, work.transitions, work.dismissCallback, work.finishCallback);
+		this._toast.popup(level, AjxStringUtil.htmlEncode(work.msg), icon, null, work.transitions, work.dismissCallback, work.finishCallback);
 	}
 };
 
