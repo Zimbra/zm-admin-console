@@ -365,6 +365,8 @@ function (ev) {
     var arr = this.widget.getSelection();
     if(arr && arr.length) {
         arr.sort();
+        //the selection values are HTML encoded, need to decode them before saving to cache.
+        arr =  AjxUtil.htmlDecode(arr);
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_alias_selection_cache, arr);
     } else {
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_alias_selection_cache, null);
@@ -2847,7 +2849,8 @@ textFieldCssClass:"admin_xform_number_input"}
                             items :[
                                 {ref:ZaAccount.A_zimbraMailAlias, type:_DWT_LIST_, height:"200", width:"350px",
                                     forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
-                                    headerList:null,onSelection:ZaAccountXFormView.aliasSelectionListener
+                                    headerList:null,onSelection:ZaAccountXFormView.aliasSelectionListener,
+                                    getDisplayValue: AjxUtil.htmlEncode
                                 },
                                 {type:_GROUP_, numCols:5, width:"350px", colSizes:["100px","auto","100px","auto","100px"],
                                     cssStyle:"margin:10px;padding-bottom:0;",
