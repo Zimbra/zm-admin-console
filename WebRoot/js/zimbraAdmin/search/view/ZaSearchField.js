@@ -488,7 +488,7 @@ function () {
 		var n = ZaSearch.SAVED_SEARCHES[i].name ;
 		var q = ZaSearch.SAVED_SEARCHES[i].query ;
 		var mItem =  new DwtMenuItem ({parent:this._savedSearchMenu, id: (ZaId.getMenuItemId(ZaId.SEARCH_QUERY) + "_" + (i+1))}) ;
-		mItem.setText(n) ;
+		mItem.setText(AjxStringUtil.htmlEncode(n));
 		mItem.setSize(b.width) ;
 		mItem.addSelectionListener(new AjxListener(this, ZaSearchField.prototype.selectSavedSearch, [n, q]));
 		mItem.addListener(DwtEvent.ONMOUSEUP, new AjxListener(this, this._savedSearchItemMouseUpListener, [n, q] ));
@@ -854,7 +854,7 @@ ZaSaveSearchDialog.prototype.okCallback =
 function() {
 	//if(window.console && window.console.log) console.debug("Ok button of saved search dialog is clicked.");
 	var savedSearchArr = [] ;
-	var nameValue = AjxStringUtil.htmlEncode(this._nameInput.value);
+	var nameValue = this._nameInput.value;
 	var queryValue =  this._queryInput.value ;
 
 	if(!nameValue) {

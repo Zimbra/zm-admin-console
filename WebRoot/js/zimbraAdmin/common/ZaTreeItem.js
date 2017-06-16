@@ -106,10 +106,10 @@ ZaTreeItem.prototype.setText =
 function(text) {
 	if (this._initialized) {
 		if (!text) text = "";
-		this._text = this._textCell.innerHTML = text;
+		this._text = this._textCell.innerHTML = AjxStringUtil.htmlEncode(text);
         this._adjustText();
 	} else {
-		this._textParam = text;
+		this._textParam = AjxStringUtil.htmlEncode(text);
 	}
 };
 

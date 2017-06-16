@@ -1110,15 +1110,18 @@ function() {
 
 ZaZimbraAdmin.prototype.updateHistory =
 function(historyObject, isAddHistory) {
-    if(isAddHistory)
+    if(isAddHistory) {
         this._historyMgr.addHistory(historyObject);
+    }
 
-    if (historyObject.displayName)
+    if (historyObject.displayName) {
+        // Don't html encode display name as display name returned from ZaTreeItem is already encoded
         this._header.setText(historyObject);
+    }
 
-    if (historyObject.path)
+    if (historyObject.path) {
         this._currentAppBar.setText(historyObject.path);
-
+    }
 }
 
 ZaZimbraAdmin.prototype.refreshHistoryTreeByDelete = function(items) {

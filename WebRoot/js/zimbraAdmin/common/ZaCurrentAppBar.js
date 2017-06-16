@@ -98,6 +98,9 @@ ZaCurrentAppBar.prototype.clearTypeImg = function () {
 
 ZaCurrentAppBar.prototype.setText =
 function(path) {
+    // Html encode path to make sure scripts are not executed when added in dom
+    path = AjxStringUtil.htmlEncode(path);
+
     var text = "";
     var temp = path.split(ZaTree.SEPERATOR);
     this._currentPathItems = temp;

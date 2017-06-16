@@ -272,13 +272,13 @@ function(ev) {
 
 ZaSearchBubble.prototype._mouseOverAction =
 function(ev) {
-	var toolTipContent = AjxStringUtil.htmlEncode(this.getToolTip());
+	var toolTipContent = this.getToolTip();
 	this.setToolTipContent(toolTipContent);
 	return true;
 }
 
 ZaSearchBubble.prototype.getToolTip =
 function(){
-    return this.query;
+    return AjxStringUtil.htmlEncode(this.query);
 }
 

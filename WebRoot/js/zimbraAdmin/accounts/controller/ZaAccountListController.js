@@ -567,10 +567,10 @@ function(ev) {
 		item.loadEffectiveRights("id", item.id, false);
 		this._chngPwdDlg.registerCallback(DwtDialog.OK_BUTTON, ZaAccountListController._changePwdOKCallback, this, item);	
 		if (item.name != undefined && item.name.length > 80) {
-                        this._chngPwdDlg.setTitle(ZaMsg.CHNP_Title + " (" + item.name.substring(1,80) + "..." + ")");
+                        this._chngPwdDlg.setTitle(ZaMsg.CHNP_Title + " (" + AjxStringUtil.htmlEncode(item.name.substring(1,80)) + "..." + ")");
                 } else {
                       if (item.name != undefined) {
-                        this._chngPwdDlg.setTitle(ZaMsg.CHNP_Title + " (" + item.name + ")");
+                        this._chngPwdDlg.setTitle(ZaMsg.CHNP_Title + " (" + AjxStringUtil.htmlEncode(item.name) + ")");
                       } else {
                         this._chngPwdDlg.setTitle(ZaMsg.CHNP_Title);
                       }
@@ -904,37 +904,41 @@ function () {
 
 ZaAccountListController.getDlMsgFromList =
 function (listArr) {
-		var dlgMsg =  "<br><ul>";
-		var i=0;
-		for(var key in listArr) {
-			if(i > 19) {
-				dlgMsg += "<li>...</li>";
-				break;
-			}
-			dlgMsg += "<li>";
-			var szAccName = listArr[key].attrs[ZaAccount.A_displayname] ? AjxStringUtil.htmlEncode(listArr[key].attrs[ZaAccount.A_displayname]) : listArr[key].name;
-            if(szAccName.length > 50) {
-                var beginIx = 0;
-                var endIx = 50;
-				do {
-                    if (endIx >= szAccName.length) {
-                        dlgMsg +=  szAccName.slice(beginIx);     
-                    } else {
-                        dlgMsg +=  szAccName.slice(beginIx, endIx);
-                    }
-					beginIx = endIx;
-					endIx += 50 ;
-                    
-					dlgMsg +=  "<br />";	
-				} while (beginIx < szAccName.length) ;
-			} else {
-				dlgMsg += szAccName;
-			}
-			dlgMsg += "</li>";
-			i++;
+	var dlgMsg = "<br><ul>";
+	var i=0;
+
+	for(var key in listArr) {
+		if(i > 19) {
+			dlgMsg += "<li>...</li>";
+			break;
 		}
-		dlgMsg += "</ul>";	
-		return dlgMsg ;
+
+		dlgMsg += "<li>";
+		var szAccName = listArr[key].attrs[ZaAccount.A_displayname] ? listArr[key].attrs[ZaAccount.A_displayname] : listArr[key].name;
+		if(szAccName.length > 50) {
+			var beginIx = 0;
+			var endIx = 50;
+			do {
+				if (endIx >= szAccName.length) {
+					dlgMsg += AjxStringUtil.htmlEncode(szAccName.slice(beginIx));
+				} else {
+					dlgMsg += AjxStringUtil.htmlEncode(szAccName.slice(beginIx, endIx));
+				}
+				beginIx = endIx;
+				endIx += 50 ;
+
+				dlgMsg +=  "<br />";	
+			} while (beginIx < szAccName.length) ;
+		} else {
+			dlgMsg += AjxStringUtil.htmlEncode(szAccName);
+		}
+
+		dlgMsg += "</li>";
+		i++;
+	}
+
+	dlgMsg += "</ul>";
+	return dlgMsg;
 }
 
 

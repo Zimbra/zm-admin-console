@@ -186,10 +186,8 @@ function(msg, ex, style)  {
     }
 
     if (this._errorDialog) {
-        msg = AjxStringUtil.htmlEncode(msg);
         this._errorDialog.setMessage(msg, detailStr, style, ZabMsg.zimbraAdminTitle);
 
-    
         if (!this._errorDialog.isPoppedUp()) {
             this._errorDialog.popup();
         }
