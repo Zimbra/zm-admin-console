@@ -272,6 +272,11 @@ function (ev) {
 	var arr = this.widget.getSelection();
 	if(arr && arr.length) {
 		arr.sort();
+		// When retrieving data from view make sure to html decode it
+		arr = arr.map(function(item) {
+			// Clone object to break reference so we will not be modifying the original object
+			return new ZaSignature(AjxStringUtil.htmlDecode(item.name), item.id, AjxStringUtil.htmlDecode(item.content), item.type);
+		});
 		this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signature_selection_cache, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaResource.A2_signature_selection_cache, []);
@@ -522,11 +527,11 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 						 });
 	
     if (ZaItem.hasReadPermission(ZaResource.A_mailHost, entry)) {
-	    headerItems.push({type:_OUTPUT_, ref:ZaResource.A_mailHost, labelLocation:_LEFT_,label:ZaMsg.NAD_MailServer});
+	    headerItems.push({type:_OUTPUT_, ref:ZaResource.A_mailHost, labelLocation:_LEFT_,label:ZaMsg.NAD_MailServer, getDisplayValue: AjxUtil.htmlEncode});
     }
 	
     if (ZaItem.hasReadPermission(ZaResource.A_name, entry))
-    	headerItems.push({type:_OUTPUT_, ref:ZaResource.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false});
+    	headerItems.push({type:_OUTPUT_, ref:ZaResource.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false, getDisplayValue: AjxUtil.htmlEncode});
 
     if (ZaItem.hasReadPermission(ZaResource.A_accountStatus, entry))
 	    headerItems.push({type:_OUTPUT_,  ref:ZaResource.A_accountStatus, label:ZaMsg.NAD_ResourceStatus, labelLocation:_LEFT_, choices:ZaResource.accountStatusChoices});
