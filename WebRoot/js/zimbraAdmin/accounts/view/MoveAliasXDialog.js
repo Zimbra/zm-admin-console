@@ -136,7 +136,8 @@ function() {
 							{type:_DWT_ALERT_,
 								content:null,ref:"name",
 								getDisplayValue: function (itemVal) {
-									return AjxMessageFormat.format(ZaMsg.MoveAlias_HelpMsg,this.getForm().parent._alias.name);
+									var name = this.getForm().parent._alias.name;
+									return AjxMessageFormat.format(ZaMsg.MoveAlias_HelpMsg, AjxStringUtil.htmlEncode(name));
 								},
 								iconVisible: false,
 								align:_CENTER_,				

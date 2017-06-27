@@ -365,6 +365,8 @@ function (ev) {
     var arr = this.widget.getSelection();
     if(arr && arr.length) {
         arr.sort();
+        //the selection values are HTML encoded, need to decode them before saving to cache.
+        arr =  AjxUtil.htmlDecode(arr);
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_alias_selection_cache, arr);
     } else {
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_alias_selection_cache, null);
@@ -723,6 +725,8 @@ function (ev) {
     var arr = this.widget.getSelection();
     if(arr && arr.length) {
         arr.sort();
+        // When retrieving data from view make sure to html decode it
+        arr = AjxUtil.htmlDecode(arr);
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_fwdAddr_selection_cache, arr);
     } else {
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_fwdAddr_selection_cache, []);
@@ -737,6 +741,8 @@ function (ev) {
     var arr = this.widget.getSelection();
     if(arr && arr.length) {
         arr.sort();
+        // When retrieving data from view make sure to html decode it
+        arr = AjxUtil.htmlDecode(arr);
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_calFwdAddr_selection_cache, arr);
     } else {
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_calFwdAddr_selection_cache, []);
@@ -889,6 +895,8 @@ function (ev) {
     var arr = this.widget.getSelection();
     if(arr && arr.length) {
         arr.sort();
+        // When getting data from view always html decode it
+        arr = AjxUtil.htmlDecode(arr);
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_fp_selection_cache, arr);
     } else
         this.getModel().setInstanceValue(this.getInstance(), ZaAccount.A2_fp_selection_cache, []);
@@ -1301,6 +1309,7 @@ ZaAccountXFormView.getAccountNameInfoItem = function(){
         ZaAccountXFormView.accountNameInfoPool = new Object();
         ZaAccountXFormView.accountNameInfoPool[ZaAccount.A_name] = {ref:ZaAccount.A_name, type:_EMAILADDR_,
                      msgName:ZaMsg.NAD_AccountName,label:ZaMsg.NAD_AccountName, bmolsnr:false,
+                     getDisplayValue: AjxUtil.htmlEncode,
                                         labelLocation:_LEFT_,onChange:ZaAccount.setDomainChanged,forceUpdate:true,
                                         enableDisableChecks:[[ZaItem.hasRight,ZaAccount.RENAME_ACCOUNT_RIGHT]],
                                         visibilityChecks:[]
@@ -1491,7 +1500,9 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
     }
 
     if (ZaItem.hasReadPermission(ZaAccount.A_name, entry)) {
-        headerItems.push({type:_OUTPUT_,ref:ZaAccount.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false, cssStyle:"word-wrap:break-word;overflow:hidden;"});
+        headerItems.push({type:_OUTPUT_,ref:ZaAccount.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false, cssStyle:"word-wrap:break-word;overflow:hidden;",
+    		getDisplayValue: AjxUtil.htmlEncode
+    	});
     }
 
     if (ZaItem.hasReadPermission(ZaAccount.A_accountStatus, entry)) {
@@ -2847,7 +2858,8 @@ textFieldCssClass:"admin_xform_number_input"}
                             items :[
                                 {ref:ZaAccount.A_zimbraMailAlias, type:_DWT_LIST_, height:"200", width:"350px",
                                     forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
-                                    headerList:null,onSelection:ZaAccountXFormView.aliasSelectionListener
+                                    headerList:null,onSelection:ZaAccountXFormView.aliasSelectionListener,
+                                    getDisplayValue: AjxUtil.htmlEncode
                                 },
                                 {type:_GROUP_, numCols:5, width:"350px", colSizes:["100px","auto","100px","auto","100px"],
                                     cssStyle:"margin:10px;padding-bottom:0;",
@@ -2904,12 +2916,10 @@ textFieldCssClass:"admin_xform_number_input"}
                                         trueValue:"TRUE", falseValue:"FALSE"
                                     },
                                     {ref:ZaAccount.A_zimbraPrefMailForwardingAddress, type:_TEXTFIELD_,width:"350px",
-
-labelCssClass:"xform_label", cssClass:"admin_xform_name_input",
+                                        labelCssClass:"xform_label", cssClass:"admin_xform_name_input",
                                         label:ZaMsg.LBL_zimbraPrefMailForwardingAddress,
                                         msgName:ZaMsg.LBL_zimbraPrefMailForwardingAddressMsg,
-
-nowrap:false, labelWrap:true,
+                                        nowrap:false, labelWrap:true,
                                         labelLocation:_LEFT_,
                                         labelCssStyle:"text-align:left;",
                                         align:_LEFT_,
@@ -2919,6 +2929,7 @@ nowrap:false, labelWrap:true,
                                     },
                                 {type:_GROUP_, colSizes:["275px", "*"], numCols: 2, width: "100%", colSpan:2,items:[
                                 {ref:ZaAccount.A_zimbraPrefCalendarForwardInvitesTo, type:_DWT_LIST_, height:"100", width:"350px",
+                                    getDisplayValue: AjxUtil.htmlEncode,
                                     forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
                                     nowrap:false, labelWrap:true,
                                     headerList:null,onSelection:ZaAccountXFormView.calFwdAddrSelectionListener,label:ZaMsg.zimbraPrefCalendarForwardInvitesTo,
@@ -2956,6 +2967,7 @@ nowrap:false, labelWrap:true,
                                    content: ZaMsg.Alert_Bouncing_Reveal_Hidden_Adds
                                 },
                                 {ref:ZaAccount.A_zimbraMailForwardingAddress, type:_DWT_LIST_, height:"100", width:"350px",
+                                    getDisplayValue: AjxUtil.htmlEncode,
                                     forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
                                     headerList:null,onSelection:ZaAccountXFormView.fwdAddrSelectionListener,label:ZaMsg.NAD_EditFwdGroup,
                                     labelCssClass:"gridGroupBodyLabel", nowrap:false, labelWrap:true,
@@ -3003,7 +3015,8 @@ nowrap:false, labelWrap:true,
                             items :[
                                 {ref:ZaAccount.A_zimbraForeignPrincipal, type:_DWT_LIST_, height:"200", width:"350px",
                                     forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
-                                    headerList:null,onSelection:ZaAccountXFormView.fpSelectionListener
+                                    headerList:null,onSelection:ZaAccountXFormView.fpSelectionListener,
+                                    getDisplayValue: AjxUtil.htmlEncode
                                 },
                                 {type:_GROUP_, numCols:7, width:"350px", colSizes:["100px","auto","100px","auto","100px", "auto","100px"],
                                     cssStyle:"margin:10px;padding-bottom:0;",

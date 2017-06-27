@@ -2388,12 +2388,11 @@ ZaDomain.myXModel = {
         {id:ZaItem.A_zimbraDomainAliasTargetId, type:_STRING_, ref:"attrs/" + ZaItem.A_zimbraDomainAliasTargetId},                
 		{id:ZaItem.A_zimbraCreateTimestamp, ref:"attrs/" + ZaItem.A_zimbraCreateTimestamp},
 		{id:ZaDomain.A_domainName, type:_STRING_, ref:"attrs/" + ZaDomain.A_domainName, maxLength:255,constraints: {type:"method", value:
-                   function (value) {
-                         value = value.replace(/(^\s*)/g, "");
-                                                 return AjxStringUtil.htmlEncode(value);
-                                           }
-
-                           } },
+           function (value) {
+               value = value.replace(/(^\s*)/g, "");
+               return value;
+           }}
+        },
 		{id:ZaDomain.A_zimbraPublicServiceHostname, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraPublicServiceHostname, maxLength:255},
 		{id:ZaDomain.A_zimbraPublicServiceProtocol, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraPublicServiceProtocol, maxLength:255, defaultValue:"http"},
 		{id:ZaDomain.A_zimbraPublicServicePort, type:_NUMBER_, ref:"attrs/" + ZaDomain.A_zimbraPublicServicePort, minInclusive: 0, maxInclusive:65535, defaultValue:80},

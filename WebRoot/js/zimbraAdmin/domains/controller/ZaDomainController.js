@@ -292,7 +292,7 @@ function () {
 		return false;
 	// check validation expression, which should be email-like pattern
 	if(tmpObj.attrs[ZaDomain.A_zimbraMailAddressValidationRegex]) {
-		var regList = AjxStringUtil.htmlEncode(tmpObj.attrs[ZaDomain.A_zimbraMailAddressValidationRegex]);
+		var regList = tmpObj.attrs[ZaDomain.A_zimbraMailAddressValidationRegex];
 		var islegal = true;
 		var regval = null;
 		if(regList && regList instanceof Array) {
@@ -309,9 +309,9 @@ function () {
 			}
 		}
 		if(!islegal) {
-			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_MSG_EmailValidReg, regval), 
+			this._errorDialog.setMessage(AjxMessageFormat.format(ZaMsg.ERROR_MSG_EmailValidReg, regval),
 				null, DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
-                        this._errorDialog.popup();
+			this._errorDialog.popup();
 			return islegal;
 		}
 	}

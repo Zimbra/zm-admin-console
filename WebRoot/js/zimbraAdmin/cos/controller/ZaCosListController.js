@@ -297,13 +297,6 @@ function(ev) {
 		for(var key =0; key < cnt; key++) {
 			var item = arrItems[key];
 			if (item) {
-				if (item.name) {
-					item.name = AjxStringUtil.htmlEncode(item.name);
-				}
-
-				if (item.attrs && item.attrs[ZaCos.A_name]) {
-					item.attrs[ZaCos.A_name] = AjxStringUtil.htmlEncode(item.attrs[ZaCos.A_name]);
-				}
 				//detect whether the deleting item is open in a tab
 				if (ZaApp.getInstance().getTabGroup() && ZaApp.getInstance().getTabGroup().getTabByItemId (item.id)) {
 					this._itemsInTabList.push (item) ;
@@ -372,28 +365,31 @@ function () {
 ZaCosListController.getDlMsgFromList =
 function (listArr) {
 	dlgMsg =  "<br><ul>";
-	var i=0;
+	var i=0, name;
+
 	for(var key in listArr) {
 		if(i > 19) {
 			dlgMsg += "<li>...</li>";
 			break;
 		}
 		dlgMsg += "<li>";
-		if(listArr[key].name.length > 50) {
+
+		name = listArr[key].name;
+		if(name.length > 50) {
 			//split it
 			var endIx = 49;
 			var beginIx = 0; //
-			while(endIx < listArr[key].name.length) { //
-				dlgMsg +=  listArr[key].name.slice(beginIx, endIx); //
+			while(endIx < name.length) { //
+				dlgMsg +=  AjxStringUtil.htmlEncode(name.slice(beginIx, endIx)); //
 				beginIx = endIx + 1; //
-				if(beginIx >= (listArr[key].name.length) ) //
+				if(beginIx >= (name.length) ) //
 					break;
 				
-				endIx = ( listArr[key].name.length <= (endIx + 50) ) ? listArr[key].name.length-1 : (endIx + 50);
+				endIx = ( name.length <= (endIx + 50) ) ? name.length-1 : (endIx + 50);
 				dlgMsg +=  "<br>";	
 			}
 		} else {
-			dlgMsg += listArr[key].name;
+			dlgMsg += AjxStringUtil.htmlEncode(name);
 		}
 		dlgMsg += "</li>";
 		i++;
