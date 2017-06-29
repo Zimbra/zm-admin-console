@@ -5,7 +5,6 @@
  <info organisation="zimbra" module="zm-admin-console" status="integration">
  </info>
 
-
  <dependencies>
   <dependency org="org.glassfish.gmbal" name="gmbal-api-only" rev="2.2.6"/>
   <dependency org="javax.xml.bind" name="jaxb-api" rev="2.2.6"/>
