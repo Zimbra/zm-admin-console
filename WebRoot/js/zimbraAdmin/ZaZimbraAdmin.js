@@ -399,7 +399,7 @@ function(aIsAuthTokenPresent) {
 ZaZimbraAdmin.reload_msg = function () {
     //if(window.console && window.console.log) console.log("Reloading the message ...");
     var includes = [] ;
-    includes.push ( [appContextPath , "/res/" , "I18nMsg,AjxMsg,ZMsg,ZaMsg,ZabMsg,AjxKeys" , ".js?v=",
+    includes.push ( [appContextPath , "/res/" , "I18nMsg,TzMsg,AjxMsg,ZMsg,ZaMsg,ZabMsg,AjxKeys" , ".js?v=",
                         appVers , ZaZimbraAdmin.LOCALE_QS].join("") );
 
     //the dynamic script load is asynchronous, may need a callback to make sure all the messages are actually loaded
