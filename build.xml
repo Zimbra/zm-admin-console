@@ -1,6 +1,6 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="zm-admin-console" default="war">
     <import file="../zm-zcs/ant-global.xml"/>
-    <property name="ajax.dir" location="../zm-ajax" />
+    <property name="ajax.dir" location="../zm-admin-ajax" />
     <property name="ajax.src.dir" location="${ajax.dir}/src" />
     <property name="ajax.build.dir" location="${ajax.dir}/build" />  
 
@@ -207,8 +207,7 @@
         <property name='war.compress' value='true'/>
         <property name='web.excludes' value='${common.web.excludes},js/zimbraAdmin/**,test/**'/>
     </target>
-
-<!-- add build-ajax in dependency once zm-ajax built script is ivy based -->
+    
     <target name="war"
             depends="resolve,init,images,styles,settings,copy-ajax,jam-files,compress"
             description="Builds all dependencies and assembles the war file.">
@@ -262,10 +261,6 @@
         
     </target>
 
-    <target name="build-ajax">
-        <ant dir="${ajax.dir}" target="zm-ajax" inheritAll="false"/>
-    </target>
-
     <target name="assemble-war" depends="webxml-package-replace, resolve" description="Assembles the war file.  Assumes that all dependencies have been built.  Octopus/ZimbraWebClient/build.xml calls the war target, modifies files in ZimbraWebClient/build, and then calls this target.">
         <mkdir dir='${build.war.dir}'/>
 
@@ -273,7 +268,7 @@
         <ivy:install organisation="zimbra" module="zm-client" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
         <ivy:install organisation="zimbra" module="zm-taglib" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
         <ivy:install organisation="zimbra" module="zm-store" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
-        <ivy:install organisation="zimbra" module="zm-ajax" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
+        <ivy:install organisation="zimbra" module="zm-admin-ajax" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
         <ivy:install organisation="org.glassfish.gmbal" module="gmbal-api-only" revision="2.2.6" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
         <ivy:install organisation="javax.xml.bind" module="jaxb-api" revision="2.2.6" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
         <ivy:install organisation="com.sun.xml.bind" module="jaxb-impl" revision="2.2.6" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
