@@ -265,26 +265,44 @@ function (params) {
 						}
 					}
 				} else {
-					//include
+		    //include
                     validStr = chunks[i];
-                    try {
-                        cidrData = ZaIPUtil.isValidCIDR(validStr);
-                    } catch (ex) {
-                        throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[validStr]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
-                    }
-                    masks.push(cidrData);
 
-					for(var j=(IFCounter-1);j>=0;j--) {
-                        try {
-                            if(ZaIPUtil.isInSubNet(cidrData, locals[j].ipData) /*&& locals[j].iNetBits <= _obj.iNetBits*/) {
+                    // bug ZCS-1549:  allow non-CIDR inet addresses
+                    var j = 0;
+                    var ipFound = false;
+
+                    while (validStr.search("/") < 0 && j < locals.length) {
+                        if (validStr === locals[j].ipData.src) {
                                 locals.splice(j,1);
                                 IFCounter--;
-                            }
-                        } catch (ex) {
-
+                                ipFound = true;
+                                break;
                         }
-					}
-				}
+                        j++;
+                    }
+
+                    if (ipFound == false)
+                    {
+                        try {
+                            cidrData = ZaIPUtil.isValidCIDR(validStr);
+                        } catch (ex) {
+                            throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_NOT_CIDR,[validStr]),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateMyNetworks");
+                        }
+                        masks.push(cidrData);
+
+			for(var j = (IFCounter-1); j >= 0; j--) {
+                            try {
+                                if(ZaIPUtil.isInSubNet(cidrData, locals[j].ipData) /*&& locals[j].iNetBits <= _obj.iNetBits*/) {
+                                    locals.splice(j,1);
+                                    IFCounter--;
+                                }
+                            } catch (ex) {
+
+                            }
+			}
+                    }
+                }
 									
 
 			} else {
