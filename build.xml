@@ -120,7 +120,7 @@
 			<equals arg1="${zimbra.buildinfo.type}" arg2="NETWORK" />
 		</condition>
         <property name='common.web.includes' value='${custom.web.includes},js/**,css/**'/>
-        <property name='common.web.excludes' value='${custom.web.excludes},js/*/package/**'/>
+        <property name='common.web.excludes' value='${custom.web.excludes},js/*/package/**,**/AjxTimezoneData.js'/>
         <property name='common.jsp.includes' value='${custom.jsp.includes},**'/>
         <property name='common.jsp.excludes' value='${custom.jsp.excludes}'/>
         <property name='common.img.includes' value='${custom.img.includes},**'/>
@@ -720,7 +720,7 @@
 
     <target name='timezones' >
         <!-- Download timezones zip -->
-        <ivy:install organisation="zimbra" module="zm-timezones" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="zip" />
+        <ivy:install organisation="zimbra" module="zm-timezones" revision="latest.integration" settingsRef="dev.settings" from="chain-resolver-zip" to="build-tmp" overwrite="true" transitive="true" type="zip" />
 
         <unzip dest="${build.tmp.dir}/zm-timezones" overwrite="true">
             <fileset dir="${build.tmp.dir}">
