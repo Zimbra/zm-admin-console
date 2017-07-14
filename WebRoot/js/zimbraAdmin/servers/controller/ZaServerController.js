@@ -269,9 +269,9 @@ function (params) {
                     validStr = chunks[i];
 
                     // bug ZCS-1549:  allow non-CIDR inet addresses
-                    var j=0;
-                    var ipFound=false;
-                    while (validStr.search("/")<0 && j<locals.length)
+                    var j = 0;
+                    var ipFound = false;
+                    while (validStr.search("/") < 0 && j < locals.length)
                     {
 			if (validStr === locals[j].ipData.src)
 			{
@@ -290,7 +290,7 @@ function (params) {
                         }
                         masks.push(cidrData);
 
-			for(var j=(IFCounter-1);j>=0;j--) {
+			for(var j = (IFCounter-1); j >= 0; j--) {
                             try {
                                 if(ZaIPUtil.isInSubNet(cidrData, locals[j].ipData) /*&& locals[j].iNetBits <= _obj.iNetBits*/) {
                                     locals.splice(j,1);
