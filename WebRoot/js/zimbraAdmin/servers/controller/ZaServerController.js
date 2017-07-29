@@ -271,16 +271,19 @@ function (params) {
                     // bug ZCS-1549:  allow non-CIDR inet addresses
                     var j = 0;
                     var ipFound = false;
+
                     while (validStr.search("/") < 0 && j < locals.length)
                     {
 			if (validStr === locals[j].ipData.src)
 			{
+                                locals.splice(j,1);
 				IFCounter--;
 				ipFound = true;
 				break;
 			}
 			j++;
                     }
+
                     if (ipFound == false)
                     {
                         try {
