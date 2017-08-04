@@ -272,16 +272,14 @@ function (params) {
                     var j = 0;
                     var ipFound = false;
 
-                    while (validStr.search("/") < 0 && j < locals.length)
-                    {
-			if (validStr === locals[j].ipData.src)
-			{
+                    while (validStr.search("/") < 0 && j < locals.length) {
+                        if (validStr === locals[j].ipData.src) {
                                 locals.splice(j,1);
-				IFCounter--;
-				ipFound = true;
-				break;
-			}
-			j++;
+                                IFCounter--;
+                                ipFound = true;
+                                break;
+                        }
+                        j++;
                     }
 
                     if (ipFound == false)
