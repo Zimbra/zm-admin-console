@@ -750,21 +750,9 @@ ZaAccountMemberOfListView.prototype._setNoResultsHtml = function() {
 	var	div = document.createElement("div");
 	var msg = "";
 	if (this.getCurrentListId().indexOf(ZaAccount.A2_indirectMemberList) >= 0) {
-		var instance = this.parent && this.parent.getInstance();
-		if (instance && instance.memberOfLoaded) {
-			msg = ZaMsg.Account_Group_NoInDirectMember;
-		}
-		else {
-			msg = ZaMsg.MSG_HomeLoading;
-		}
+		msg = ZaMsg.Account_Group_NoInDirectMember;
 	}else if (this.getCurrentListId().indexOf(ZaAccount.A2_directMemberList) >= 0){
-		var instance = this.parent && this.parent.getInstance();
-		if (instance && instance.memberOfLoaded) {
-			msg = ZaMsg.Account_Group_NoDirectMember;
-		}
-		else {
-			msg = ZaMsg.MSG_HomeLoading;
-		}
+		msg = ZaMsg.Account_Group_NoDirectMember;
 	}
 	
 	buffer.append(

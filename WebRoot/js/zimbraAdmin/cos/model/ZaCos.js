@@ -292,14 +292,6 @@ function (by, val) {
     var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetCosResponse;
     this.initFromJS(resp.cos[0]);
 
-    if (this.name) {
-        this.name = AjxStringUtil.htmlEncode(this.name);
-    }
-
-    if (this.attrs[ZaCos.A_name]) {
-        this.attrs[ZaCos.A_name] = AjxStringUtil.htmlEncode(this.attrs[ZaCos.A_name]);
-    }
-
     if(this.attrs[ZaAccount.A_zimbraPrefMailPollingInterval]) {
         var poIntervalInS = ZaUtil.getLifeTimeInSeconds(this.attrs[ZaAccount.A_zimbraPrefMailPollingInterval]);
         if (poIntervalInS >= 1)
@@ -375,7 +367,7 @@ ZaCos.prototype.rename =
 function(newName) {
     var soapDoc = AjxSoapDoc.create("RenameCosRequest", ZaZimbraAdmin.URN, null);
     soapDoc.set("id", this.id);
-    soapDoc.set("newName", AjxStringUtil.htmlEncode(newName));
+    soapDoc.set("newName", newName);
     //var command = new ZmCsfeCommand();
     var params = new Object();
     params.soapDoc = soapDoc;
@@ -421,9 +413,6 @@ function (mods) {
     soapDoc.set("id", this.id);
     for (var aname in mods) {
         gotSomething = true;
-        if (aname === ZaCos.A_name) {
-            mods[aname] = AjxStringUtil.htmlEncode(mods[aname]);
-        }
         //multi value attribute
         if(mods[aname] instanceof Array) {
             var cnt = mods[aname].length;

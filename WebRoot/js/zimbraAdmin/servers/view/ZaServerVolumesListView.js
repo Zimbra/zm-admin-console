@@ -71,11 +71,11 @@ function(item) {
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeName) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				html[idx++] = item[ZaServer.A_VolumeName];
+				html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeName]);
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeRootPath) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				html[idx++] = item[ZaServer.A_VolumeRootPath];
+				html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeRootPath]);
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeType) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";

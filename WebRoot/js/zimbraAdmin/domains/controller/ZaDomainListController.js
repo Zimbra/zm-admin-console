@@ -485,29 +485,31 @@ function () {
 
 ZaDomainListController.getDlMsgFromList =
 function (listArr) {
-    var i = 0;
+    var i = 0, name;
 	var	dlgMsg = "<br><ul>";
+
 	for(var key in listArr) {
 		if(i > 19) {
 			dlgMsg += "<li>...</li>";
 			break;
 		}
 		dlgMsg += "<li>";
-		if(listArr[key].name.length > 50) {
+		name = listArr[key].name;
+		if(name.length > 50) {
 			//split it
 			var endIx = 49;
 			var beginIx = 0; //
-			while(endIx < listArr[key].name.length) { //
-				dlgMsg +=  listArr[key].name.slice(beginIx, endIx); //
+			while(endIx < name.length) { //
+				dlgMsg +=  AjxStringUtil.htmlEncode(name.slice(beginIx, endIx)); //
 				beginIx = endIx + 1; //
-				if(beginIx >= (listArr[key].name.length) ) //
+				if(beginIx >= (name.length) ) //
 					break;
 				
-				endIx = ( listArr[key].name.length <= (endIx + 50) ) ? listArr[key].name.length-1 : (endIx + 50);
+				endIx = ( name.length <= (endIx + 50) ) ? name.length-1 : (endIx + 50);
 				dlgMsg +=  "<br>";	
 			}
 		} else {
-			dlgMsg += listArr[key].name;
+			dlgMsg += AjxStringUtil.htmlEncode(name);
 		}
 		dlgMsg += "</li>";
 		i++;

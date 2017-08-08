@@ -182,7 +182,7 @@
         appNewUI     = ${isNewUI};
 	</script>
 <jsp:include page="Resources.jsp">
-	<jsp:param name="res" value="I18nMsg,AjxMsg,ZMsg,ZaMsg,ZabMsg,AjxKeys" />
+	<jsp:param name="res" value="I18nMsg,TzMsg,AjxMsg,ZMsg,ZaMsg,ZabMsg,AjxKeys" />
 	<jsp:param name="skin" value="${skin}" />
 </jsp:include>
 <style type="text/css">

@@ -76,15 +76,6 @@ function(entry) {
     if(entry.id)
         this._containedObject.id = entry.id;
 
-    if (entry.name) {
-        entry.name = AjxStringUtil.htmlEncode(entry.name);
-    }
-
-    if (entry.attrs && entry.attrs[ZaCos.A_name]) {
-        entry.attrs[ZaCos.A_name] = AjxStringUtil.htmlEncode(entry.attrs[ZaCos.A_name]);
-    }
-
-
     for (var a in entry.attrs) {
         var modelItem = this._localXForm.getModel().getItem(a) ;
         if ((modelItem != null && modelItem.type == _LIST_)
@@ -634,6 +625,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 
     var headerItems = [    {type:_AJX_IMAGE_, src:"COS_32", label:null,rowSpan:2},
                             {type:_OUTPUT_, ref:ZaCos.A_name, label:null,cssClass:"AdminTitle",
+                                getDisplayValue: AjxUtil.htmlEncode,
                                 visibilityChecks:[ZaItem.hasReadPermission], height: 32, rowSpan:2},
                             {type:_OUTPUT_, ref:ZaItem.A_zimbraId, label:ZaMsg.NAD_ZimbraID,visibilityChecks:[ZaItem.hasReadPermission]},
                             {type:_OUTPUT_, ref:ZaItem.A_zimbraCreateTimestamp,
