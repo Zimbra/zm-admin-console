@@ -5,7 +5,6 @@
  <info organisation="zimbra" module="zm-admin-console" status="integration">
  </info>
 
-
  <dependencies>
   <dependency org="org.glassfish.gmbal" name="gmbal-api-only" rev="2.2.6"/>
   <dependency org="javax.xml.bind" name="jaxb-api" rev="2.2.6"/>
@@ -21,7 +20,7 @@
   <dependency org="com.yahoo.platform.yui" name="yuicompressor" rev="2.4.2-zimbra"/>
   <dependency org="rhino" name="js" rev="1.6R7"/>
   <dependency org="zimbra" name="zm-soap" rev="latest.integration"/>
-  <dependency org="zimbra" name="zm-ajax" rev="latest.integration"/>
+  <dependency org="zimbra" name="zm-admin-ajax" rev="latest.integration"/>
   <dependency org="zimbra" name="zm-common" rev="latest.integration"/>
   <dependency org="zimbra" name="zm-client" rev="latest.integration"/>
   <dependency org="zimbra" name="zm-store" rev="latest.integration"/>

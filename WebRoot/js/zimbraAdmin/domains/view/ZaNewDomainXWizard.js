@@ -737,7 +737,9 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.GENERAL_STEP, colSizes:["200px","*"],numCols:2,
 					items: [{type:_ZAWIZ_TOP_GROUPER_, colSpan:"*", label:ZaMsg.TABT_GeneralPage,
                         items:[
-                            {ref:ZaDomain.A_domainName, type:_TEXTFIELD_, label:ZaMsg.Domain_DomainName,labelLocation:_LEFT_, required:true, width:200},
+                            {ref:ZaDomain.A_domainName, type:_TEXTFIELD_, label:ZaMsg.Domain_DomainName,labelLocation:_LEFT_, required:true, width:200,
+                                getDisplayValue: AjxUtil.htmlEncode
+                            },
                             {ref:ZaDomain.A_zimbraPublicServiceHostname, type:_TEXTFIELD_, label:ZaMsg.Domain_zimbraPublicServiceHostname,labelLocation:_LEFT_, width:200},
                             {ref:ZaDomain.A_zimbraPublicServiceProtocol, type:_OSELECT1_, choices:ZaDomain.protocolChoices, label:ZaMsg.Domain_zimbraPublicServiceProtocol,labelLocation:_LEFT_},
                             {ref:ZaDomain.A_zimbraPublicServicePort, type:_TEXTFIELD_, label:ZaMsg.Domain_zimbraPublicServicePort,labelLocation:_LEFT_, width:100},
@@ -830,7 +832,9 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                             items:[
                                                 {ref:ZaDomain.A2_new_gal_sync_account_name, width:130, label:null, type:_TEXTFIELD_, visibilityChecks:[],enableDisableChecks:[]},
                                                 {type:_OUTPUT_, value:"@", visibilityChecks:[],enableDisableChecks:[]},
-                                                {type:_OUTPUT_,refPath:ZaDomain.A_domainName,label:null,align:_LEFT_, visibilityChecks:[],enableDisableChecks:[]}
+                                                {type:_OUTPUT_,refPath:ZaDomain.A_domainName,label:null,align:_LEFT_, visibilityChecks:[],enableDisableChecks:[],
+                                                    getDisplayValue: AjxUtil.htmlEncode
+                                                }
                                             ],
                                             enableDisableChangeEventSources:[ZaDomain.A2_create_gal_acc],
                                             enableDisableChecks:[[XForm.checkInstanceValue,ZaDomain.A2_create_gal_acc,"TRUE"]],
@@ -1596,7 +1600,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 					items:[
 						{type:_DWT_ALERT_,content:null,ref:ZaDomain.A_domainName,
 							getDisplayValue: function (itemVal) {
-								return AjxMessageFormat.format(ZaMsg.Domain_VH_Explanation,itemVal);
+								return AjxMessageFormat.format(ZaMsg.Domain_VH_Explanation, AjxStringUtil.htmlEncode(itemVal));
 							},
 							iconVisible: false,
 							align:_CENTER_,				

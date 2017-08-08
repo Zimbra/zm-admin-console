@@ -841,9 +841,11 @@ function (rawQueryString, myName) {
 
 ZaDLXFormView.aliasSelectionListener = 
 function (ev) {
-	var arr = this.widget.getSelection();	
+	var arr = this.widget.getSelection();
 	if(arr && arr.length) {
 		arr.sort();
+		//the selection values are HTML encoded, need to decode them before saving to cache.
+		arr = AjxUtil.htmlDecode(arr);
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_alias_selection_cache, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_alias_selection_cache, null);
@@ -959,6 +961,8 @@ function (ev) {
 	var arr = this.widget.getSelection();
 	if(arr && arr.length) {
 		arr.sort();
+		// When getting data from view make sure to html decode it
+		arr = AjxUtil.htmlDecode(arr);
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_owners_selection_cache, arr);
 	} else {
 		this.getModel().setInstanceValue(this.getInstance(), ZaDistributionList.A2_owners_selection_cache, null);
@@ -2067,7 +2071,8 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 				width:"100%", numCols:1,colSizes:["auto"],
 				label:ZaMsg.NAD_EditDLAliasesGroup,
 				items :[
-					{ref:ZaAccount.A_zimbraMailAlias, type:_DWT_LIST_, height:"200", width:"350px", 
+					{ref:ZaAccount.A_zimbraMailAlias, type:_DWT_LIST_, height:"200", width:"350px",
+						getDisplayValue: AjxUtil.htmlEncode,
 						forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource", 
 						headerList:null,onSelection:ZaDLXFormView.aliasSelectionListener
 					},
@@ -2113,6 +2118,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 				label: ZaMsg.DLXV_GroupLabelDLOwners,
 				items :[
 					{ref:ZaDistributionList.A2_DLOwners, type:_DWT_LIST_, height:"200", width:"350px",
+						getDisplayValue: AjxUtil.htmlEncode,
 						forceUpdate: true, preserveSelection:false, multiselect:true,cssClass: "DLSource",
 						headerList:null,onSelection:ZaDLXFormView.ownerSelectionListener
 					},
@@ -2187,8 +2193,9 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 	}
 
     var headerItems = [{type:_AJX_IMAGE_, src:"Group_32", label:null, rowSpan:3},
-						{type:_OUTPUT_, ref:"name", label:null,cssClass:"AdminTitle", height:"auto", width:350, rowSpan:3, cssStyle:"word-wrap:break-word;overflow:hidden"}
-						] ;
+						{type:_OUTPUT_, ref:"name", label:null,cssClass:"AdminTitle", height:"auto", width:350, rowSpan:3, cssStyle:"word-wrap:break-word;overflow:hidden",
+							getDisplayValue: AjxUtil.htmlEncode
+						}] ;
 
     if (ZaItem.hasReadPermission (ZaItem.A_zimbraId, entry)) 
         headerItems.push (  {type:_OUTPUT_, ref:ZaItem.A_zimbraId, label:ZaMsg.NAD_ZimbraID}) ;
