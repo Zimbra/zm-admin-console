@@ -847,5 +847,4 @@ ZaDomainListController.prototype.searchCallback = function(params, resp) {
 	ZaListViewController.prototype.searchCallback.call(this, params, resp);
 	var app = ZaApp.getInstance();
 	app._domainList = this.getList();
-	app._domainNameList = undefined;
 };
