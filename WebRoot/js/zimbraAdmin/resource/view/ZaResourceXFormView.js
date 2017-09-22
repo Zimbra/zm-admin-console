@@ -520,7 +520,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	    headerItems.push({type:_OUTPUT_, ref:ZaResource.A_mailHost, labelLocation:_LEFT_,label:ZaMsg.NAD_MailServer});
     }
 	
-    if (ZaItem.hasReadPermission(ZaResource.A_name, entry))
+    if (entry[ZaResource.A_name])
     	headerItems.push({type:_OUTPUT_, ref:ZaResource.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false});
 
     if (ZaItem.hasReadPermission(ZaResource.A_accountStatus, entry))
