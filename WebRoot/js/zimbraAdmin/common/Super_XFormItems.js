@@ -603,7 +603,8 @@ Super_Checkbox_XFormItem.prototype.colSizes = ["275px","225px","*"];
 Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	var anchorCssStyle = this.getInheritedProperty("anchorCssStyle");
 	var checkboxSubLabel = this.getInheritedProperty("checkboxSubLabel");
-    var checkLabelCssClass = this.getInheritedProperty("labelCssClass");
+	var checkLabelCssClass = this.getInheritedProperty("labelCssClass");
+	var clearChildComponentChecks = this.getInheritedProperty("clearChildComponentChecks");
 
 	var chkBox = {
 		type:_CHECKBOX_, ref:".",  labelCssClass:checkLabelCssClass, subLabel:checkboxSubLabel,
@@ -660,7 +661,14 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 	this.items = [chkBox,anchorHlpr];
 
 	Composite_XFormItem.prototype.initializeItems.call(this);
-}	
+
+	if(clearChildComponentChecks) {
+		this.items.forEach(function(item) {
+			item.visibilityChecks = [];
+			item.enableDisableChecks = [];
+		});
+	}
+}
 
 Super_Checkbox_XFormItem.prototype.items = []; 
 
