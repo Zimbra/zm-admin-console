@@ -615,8 +615,7 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 		},
 		trueValue:this.getInheritedProperty("trueValue"),
 		falseValue:this.getInheritedProperty("falseValue"),
-		forceUpdate:true,
-
+		forceUpdate:true
 	};
 	var chkBoxElementChanged = this.getInheritedProperty("checkBoxElementChanged");
 	if(chkBoxElementChanged) {
