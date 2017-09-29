@@ -310,7 +310,6 @@ function () {
 	col2 = row2.insertCell(row2.cells.length);
 	col2.align = "left";
 	col2.vAlign = "middle";
-	col2.noWrap = true;
     if (this._contentW)
 	    col2.width = this._contentW;
 	col2.appendChild(this._pageDiv);
