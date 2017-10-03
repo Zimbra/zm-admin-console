@@ -1868,13 +1868,10 @@ ZaOverviewPanelController.xformTabTreeListener = function(ev) {
     }
 
     if (ev.refresh) {
-        var currentController = ZaApp.getInstance().getControllerById(viewId);
-        if (!AjxUtil.isEmpty(currentController)) {
-            var currentObject = currentController._currentObject;
-            if (currentObject && currentObject.refresh) {
-                currentObject.refresh(false, true);
-                currentView.setObject(currentObject);
-            }
+        var currentObject = currentView._localXForm.getInstance();
+        if (currentObject && currentObject.refresh) {
+            currentObject.refresh(false, true);
+            currentView.setObject(currentObject);
         }
     }
     if (!AjxUtil.isEmpty(currentView._localXForm)) { //some views of zimlets are created by dwt
@@ -1897,13 +1894,10 @@ ZaOverviewPanelController.xformTreeListener = function(ev) {
     }
 
     if (ev.refresh) {
-        var currentController = ZaApp.getInstance().getControllerById(viewId);
-        if (!AjxUtil.isEmpty(currentController)) {
-            var currentObject = currentController._currentObject;
-            if (currentObject && currentObject.refresh) {
-                currentObject.refresh(false, true);
-                currentView.setObject(currentObject);
-            }
+        var currentObject = currentView._localXForm.getInstance();
+        if (currentObject && currentObject.refresh) {
+            currentObject.refresh(false, true);
+            currentView.setObject(currentObject);
         }
     }
 
