@@ -36,6 +36,15 @@ ZaTaskContentView = function(parent, entry) {
         contextId:"TabContent"
     });
     this.initForm(ZaTask.myXModel,this.getMyXForm(entry), null);
+    ZaTaskContentView.showStatusPane = ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI];
+    if(!ZaTaskContentView.showStatusPane) {
+        for (var i = 0; i < ZaSettings.STATUS_PANE_ITEMS.length; i++) {
+            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.STATUS_PANE_ITEMS[i]]) {
+                ZaTaskContentView.showStatusPane = true;
+                break;
+            }
+        }
+    }
 }
 
 ZaTaskContentView.prototype = new ZaTabView();
@@ -622,11 +631,11 @@ ZaTaskContentView.prototype.canShowServerStatusIsHealthy = function () {
 }
 
 ZaTaskContentView.prototype.getCustomWidth = function () {
-    return "100%";
+    return ZaTaskContentView.showStatusPane ? "100%" : "0px";
 }
 
 ZaTaskContentView.prototype.getCustomHeight = function () {
-    return "100%";
+    return ZaTaskContentView.showStatusPane ? "100%" : "0px";
 }
 
 ZaTaskContentView.getImgText = function(imageName, label) {
