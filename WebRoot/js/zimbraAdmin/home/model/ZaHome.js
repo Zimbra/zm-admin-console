@@ -154,13 +154,14 @@ ZaHome.prototype.updateServerNum = function(resp) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(num, ZaHome.A2_serverNum);
 }
 
-ZaHome.domainStatCallback = function(accountStat) {
-	ZaApp.getInstance().getHomeViewController().setInstanceValue(accountStat[ZaItem.DOMAIN], ZaHome.A2_domainNum);
-}
-
 ZaHome.loadDomainNum = function() {
-	var callback =  new AjxCallback(ZaHome.domainStatCallback);
-	ZaSearch.getObjectCounts([ZaItem.DOMAIN],callback);
+	var callback = function(domainList) {
+		ZaApp.getInstance().getHomeViewController().setInstanceValue(domainList.size(), ZaHome.A2_domainNum);
+	}
+	try {
+		ZaApp.getInstance().getDomainList(true, {asyncMode: true, callback: callback});
+	} catch (ex) {
+	}
 }
 ZaHome.postLoadDataFunction.push(ZaHome.loadDomainNum);
 
