@@ -2336,5 +2336,5 @@ ZaDLXFormView.prototype.updateMemberList = function(entry) {
 	}
 }
 ZaDLXFormView.hasListGroupRight = function(){
-	return ZaZimbraAdmin.haveTargetRight(ZaItem.GROUP, ZaDomain.RIGHT_LIST_GROUP, this.getInstance()[ZaAccount.A_name].split("@")[1]);
+	return ZaZimbraAdmin.haveTargetRight(ZaItem.GROUP, ZaDomain.RIGHT_LIST_GROUP, ZaAccount.getDomain(this.getInstance().getName()));
 }
