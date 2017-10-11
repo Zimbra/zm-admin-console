@@ -553,9 +553,13 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
                 addButtonLabel:ZaMsg.NAD_AddSignature, removeButtonLabel: ZaMsg.NAD_RemoveSignature,  showAddOnNextRow:true,
                 addButtonCSSStyle:"margin-left:200px",
 				showAddButton:true, showRemoveButton:true,
+                visibilityChecks: [],
+                enableDisableChecks: [],
                 items: [
                     {
-                        ref:".", type:_SIGNATURE_, width:"100%"
+                        ref:".", type:_SIGNATURE_, width:"100%",
+                        visibilityChecks: [],
+                        enableDisableChecks: [ZaResourceXFormView.isSignagureSectionVisible]
                     }
                 ],
                 getDisplayValue: function(value){
@@ -571,7 +575,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
                 msgName:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
                 width: "280px",
                 label:ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId, labelLocation:_LEFT_,
-                visibilityChecks:[],
+                visibilityChecks:[ZaItem.hasWritePermission],
                 enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
                 enableDisableChangeEventSources:[ZaResource.A2_signatureList],
                 valueChangeEventSources:[ZaResource.A2_signatureList],
@@ -581,7 +585,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
                 msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
                 width: "280px",
                 label:ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId, labelLocation:_LEFT_,
-                visibilityChecks:[],
+                visibilityChecks:[ZaItem.hasWritePermission],
                 enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
                 enableDisableChangeEventSources:[ZaResource.A2_signatureList],
                 valueChangeEventSources:[ZaResource.A2_signatureList],
@@ -591,7 +595,7 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
                 msgName:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
                 width: "280px",
                 label:ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId, labelLocation:_LEFT_,
-                visibilityChecks:[],
+                visibilityChecks:[ZaItem.hasWritePermission],
                 enableDisableChecks:[ZaResourceXFormView.isSignatureSelectionEnabled],
                 enableDisableChangeEventSources:[ZaResource.A2_signatureList],
                 valueChangeEventSources:[ZaResource.A2_signatureList],

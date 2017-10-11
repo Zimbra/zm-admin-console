@@ -763,8 +763,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 					width : "280px",
 					label : ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
 					labelLocation : _LEFT_,
-					visibilityChecks : [],
-					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					visibilityChecks : [ZaItem.hasReadPermission],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled, ZaItem.hasWritePermission ],
 					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
 					valueChangeEventSources : [ ZaResource.A2_signatureList ],
 					choices : this.signatureChoices
@@ -776,8 +776,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 					width : "280px",
 					label : ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
 					labelLocation : _LEFT_,
-					visibilityChecks : [],
-					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					visibilityChecks : [ZaItem.hasReadPermission],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled, ZaItem.hasWritePermission ],
 					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
 					valueChangeEventSources : [ ZaResource.A2_signatureList ],
 					choices : this.signatureChoices
@@ -789,8 +789,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 					width : "280px",
 					label : ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
 					labelLocation : _LEFT_,
-					visibilityChecks : [],
-					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					visibilityChecks : [ZaItem.hasReadPermission],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled, ZaItem.hasWritePermission ],
 					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
 					valueChangeEventSources : [ ZaResource.A2_signatureList ],
 					choices : this.signatureChoices
