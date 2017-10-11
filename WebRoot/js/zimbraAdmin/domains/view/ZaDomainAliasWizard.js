@@ -53,6 +53,8 @@ function() {
 					 ref : ZaDomain.A2_zimbraDomainAliasTarget,
 					 type : _INPUT_,
 					 label : ZaMsg.LBL_targetDomain,
+					visibilityChecks: [],
+					enableDisableChecks: [],
 					 getDisplayValue : function (domainName) {
 						this.createDataList(ZaApp.getInstance().getDomainNameListByType(ZaDomain.domainTypes.local));
 						return domainName;
@@ -99,6 +101,8 @@ function() {
 					ref : ZaDomain.A2_zimbraDomainAliasTarget,
 					type : _INPUT_,
 					label : ZaMsg.LBL_targetDomain,
+					visibilityChecks: [],
+					enableDisableChecks: [],
 					getDisplayValue : function(domainName) {
 						this.createDataList(ZaApp.getInstance().getDomainNameListByType(ZaDomain.domainTypes.local));
 						return domainName;
