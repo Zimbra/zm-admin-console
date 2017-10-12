@@ -531,12 +531,20 @@ function (account, addArray) {
 ZaAccountMemberOfListView.removeGroupsBySoap = 
 function (account, removeArray){
 	var len = removeArray.length;
-	var addMemberSoapDoc, r, removeMemberSoapDoc;
-	var command = new ZmCsfeCommand();	
+	var addMemberSoapDoc, r, removeMemberSoapDoc, type, target;
+	var command = new ZmCsfeCommand();
+	if(account instanceof ZaDistributionList) {
+		type = "dlm";
+		target = account.toString();
+	} else {
+		type = "account";
+		target = account.id;
+	}
+	var type = account instanceof ZaDistributionList ? "dlm" : "account";
 	for (var i = 0; i < len; ++i) {
 		removeMemberSoapDoc = AjxSoapDoc.create("RemoveDistributionListMemberRequest", ZaZimbraAdmin.URN, null);
 		removeMemberSoapDoc.set("id", removeArray[i].id);
-		accountEl = removeMemberSoapDoc.set("account", account.id);
+		accountEl = removeMemberSoapDoc.set(type, target);
 		var params = new Object();
 		params.soapDoc = removeMemberSoapDoc;
 		params.noAuthToken = true;	
