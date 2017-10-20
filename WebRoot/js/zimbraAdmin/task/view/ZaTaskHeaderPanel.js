@@ -33,6 +33,18 @@ ZaTaskHeaderPanel = function(parent) {
     this._expanded = false;
     this.getHtmlElement().innerHTML = this.getImgHtml();
     this.getHtmlElement().onclick = AjxCallback.simpleClosure(ZaTaskHeaderPanel.__handleClick, this);
+    var showStatusPane = ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI];
+    if (!showStatusPane) {
+        for (var i = 0; i < ZaSettings.STATUS_PANE_ITEMS.length; i++) {
+            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.STATUS_PANE_ITEMS[i]]) {
+                showStatusPane = true;
+                break;
+            }
+        }
+    }
+    if (!showStatusPane){
+        this.getHtmlElement().style.visibility = "hidden";
+    }
 }
 
 ZaTaskHeaderPanel.expandedImg =  "ImgCollapseRight";
