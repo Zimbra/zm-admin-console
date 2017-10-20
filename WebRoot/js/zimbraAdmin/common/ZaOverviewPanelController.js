@@ -288,6 +288,7 @@ ZaOverviewPanelController.prototype._buildNewFolderTree = function() {
     var showManageAccount = ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI];
     var showAdministration = ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI];
     var showTool = ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI];
+    var showHelpCenter = ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI];
 
     if (!showMonitor) {
         for (var i = 0; i < ZaSettings.OVERVIEW_MONITORING_ITEMS.length; i++) {
@@ -324,6 +325,16 @@ ZaOverviewPanelController.prototype._buildNewFolderTree = function() {
             }
         }
     }
+
+    if (!showHelpCenter) {
+        for (var i = 0; i < ZaSettings.HELP_CENTER_ITEMS.length; i++) {
+            if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.HELP_CENTER_ITEMS[i]]) {
+                showHelpCenter = true;
+                break;
+            }
+        }
+    }
+
     //
     // There is no ACL for Download Page in the tool tree items. So tool will be shown here.
     //showTool = true;
@@ -813,26 +824,27 @@ ZaOverviewPanelController.prototype._buildNewFolderTree = function() {
         }
     }
 
-    // Always add the Help Center link
-    ti = new ZaTreeItemData({
-        parent : ZaMsg.OVP_home,
-        id : ZaId.getTreeItemId(ZaId.PANEL_APP, ZaId.PANEL_HOME, null, "helpCenter"),
-        text : ZaMsg.zimbraHelpCenter,
-        className : "AdminHomeTreeItem",
-        defaultSelectedItem : 1,
-        mappingId : ZaZimbraAdmin._HELP_CENTER_HOME_VIEW,
-        image : "Help"
-    });
-    tree.addTreeItemData(ti);
+    if (showHelpCenter) {
+        ti = new ZaTreeItemData({
+            parent : ZaMsg.OVP_home,
+            id : ZaId.getTreeItemId(ZaId.PANEL_APP, ZaId.PANEL_HOME, null, "helpCenter"),
+            text : ZaMsg.zimbraHelpCenter,
+            className : "AdminHomeTreeItem",
+            defaultSelectedItem : 1,
+            mappingId : ZaZimbraAdmin._HELP_CENTER_HOME_VIEW,
+            image : "Help"
+        });
+        tree.addTreeItemData(ti);
 
-    ti = new ZaTreeItemData({
-        parent : ZaTree.getPathByArray([ ZaMsg.OVP_home, ZaMsg.zimbraHelpCenter ]),
-        id : ZaId.getTreeItemId(ZaId.PANEL_APP, "helpCenter", null, "helpCenter"),
-        text : ZaMsg.zimbraHelpCenter,
-        mappingId : ZaZimbraAdmin._HELP_CENTER_VIEW
-    });
-    ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._HELP_CENTER_VIEW] = ZaZimbraAdmin.prototype._helpListener;
-    tree.addTreeItemData(ti);
+        ti = new ZaTreeItemData({
+            parent : ZaTree.getPathByArray([ ZaMsg.OVP_home, ZaMsg.zimbraHelpCenter ]),
+            id : ZaId.getTreeItemId(ZaId.PANEL_APP, "helpCenter", null, "helpCenter"),
+            text : ZaMsg.zimbraHelpCenter,
+            mappingId : ZaZimbraAdmin._HELP_CENTER_VIEW
+        });
+        ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._HELP_CENTER_VIEW] = ZaZimbraAdmin.prototype._helpListener;
+        tree.addTreeItemData(ti);
+    }
 
     //Instrumentation code start
     if (ZaOverviewPanelController.treeModifiers) {
