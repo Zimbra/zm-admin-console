@@ -2165,25 +2165,17 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
                             [ZaItem.hasWritePermission,ZaDistributionList.A_zimbraPrefReplyToAddress]],
                             enableDisableChangeEventSources:[ZaDistributionList.A_zimbraPrefReplyToEnabled],width:"15em"
                         },
-                        {type:_DYNSELECT_, ref:ZaDistributionList.A_zimbraPrefReplyToAddress, dataFetcherClass:ZaSearch,
-                            dataFetcherMethod:ZaSearch.prototype.dynSelectSearch,
-                            dataFetcherTypes:[ZaSearch.ACCOUNTS, ZaSearch.RESOURCES, ZaSearch.DLS],
-                            dataFetcherAttrs:[ZaItem.A_zimbraId, ZaItem.A_cn, ZaAccount.A_name, ZaAccount.A_displayname, ZaAccount.A_mail],
-                            label:ZaMsg.DLXV_ReplayToAddr,labelLocation:_LEFT_,
-                            emptyText: ZaMsg.DLXV_ReplayToAddrEmptyText,
-                            width:"24em", inputWidth:"32em", editable:true, forceUpdate:true,
-                            choices:new XFormChoices([], XFormChoices.OBJECT_LIST, "name", "name"),
+                        {ref:ZaDistributionList.A_zimbraPrefReplyToAddress,
+                            type:_TEXTFIELD_,
+                            label:ZaMsg.DLXV_ReplayToAddr,
+                            labelLocation:_LEFT_,
+                            containerCssStyle:"padding-left:3px;",
+                            width:"24em", inputWidth:"32em",
+                            nowrap:false,labelWrap:true,
                             visibilityChecks:[[ZaItem.hasReadPermission, ZaDistributionList.A_zimbraPrefReplyToAddress]],
                             enableDisableChangeEventSources:[ZaDistributionList.A_zimbraPrefReplyToEnabled],
                             enableDisableChecks:[[XForm.checkInstanceValue,ZaDistributionList.A_zimbraPrefReplyToEnabled,"TRUE"],
-                            [ZaItem.hasWritePermission,ZaDistributionList.A_zimbraPrefReplyToAddress]],
-                            onChange: function(value, event, form){
-                                if (value instanceof ZaItem ) {
-                                    this.setInstanceValue(value.name);
-                                } else {
-                                    this.setInstanceValue(value);
-                                }
-                            }
+                                [ZaItem.hasWritePermission,ZaDistributionList.A_zimbraPrefReplyToAddress]]
                         }
                    ]
                 }
