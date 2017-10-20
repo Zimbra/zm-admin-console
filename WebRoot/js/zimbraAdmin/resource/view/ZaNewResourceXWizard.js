@@ -510,14 +510,17 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
 						{type:_ZAWIZGROUP_, colSizes:["200px","300px"],
 							items:[
 								{type:_GROUP_, numCols:3, nowrap:true, width:200, msgName:ZaMsg.NAD_LocationDisplayName,label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_, 
+									visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]],
 									items: [
 										{ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, 
 											label:null,	width:defaultWidth,
-											enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname],
+											enableDisableChecks:[ZaNewResourceXWizard.isAutoDisplayname, ZaItem.hasWritePermission],
                                                                                         enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
 										},
 										{ref:ZaResource.A2_autoLocationName, type:_WIZ_CHECKBOX_, msgName:ZaMsg.NAD_Auto,label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,trueValue:"TRUE", falseValue:"FALSE",
-											elementChanged: ZaResource.setAutoLocationName
+											elementChanged: ZaResource.setAutoLocationName,
+											enableDisableChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]],
+											visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]]
 										}
 									]
 								},								

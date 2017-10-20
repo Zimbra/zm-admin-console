@@ -854,16 +854,19 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                 ]},
                 {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_LocationInfo, colSizes:["275px","*"],numCols:2, items:[
                     {type:_GROUP_, numCols:3,colSizes:["156px","22px","100px"], nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
+                        visibilityChecks:[[ZaItem.hasReadPermission,ZaResource.A_locationDisplayName]],
                         items: [
                             {ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, label:null, cssClass:"admin_xform_name_input", width:defaultWidth,
-				enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname],
+                                enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname, ZaItem.hasWritePermission],
                                 enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
                             },
                             {ref:ZaResource.A2_autoLocationName, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,
                                 subLabel:"",
                                 label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
                                 trueValue:"TRUE", falseValue:"FALSE",
-                                elementChanged: ZaResource.setAutoLocationName
+                                elementChanged: ZaResource.setAutoLocationName,
+                                enableDisableChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]],
+                                visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]]
                             }
                     ]},
                     {ref:ZaResource.A_zimbraCalResSite, type:_TEXTFIELD_, msgName:ZaMsg.NAD_Site,label:ZaMsg.NAD_Site,
