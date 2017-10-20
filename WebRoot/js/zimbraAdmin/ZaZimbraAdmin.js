@@ -1401,8 +1401,10 @@ ZaZimbraAdmin.canChangeExchangeConfig = function() {
 }
 
 ZaZimbraAdmin.haveTargetRight = function(targetType, rightName, targetName) {
-    return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[targetType][rightName] 
-            && ZaSettings.targetRights[targetType][rightName][targetName]));
+    return (ZaZimbraAdmin.isGlobalAdmin()
+        || (ZaSettings.targetRights[targetType][rightName]
+            && (ZaSettings.targetRights[targetType][rightName][targetName]
+                || ZaSettings.targetRights[targetType][rightName].all)));
 }
 
 ZaZimbraAdmin.haveAnyTargetRight = function(targetType, rightName) {
