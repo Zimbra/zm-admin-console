@@ -48,15 +48,6 @@ ZaResourceController.prototype.toString = function () {
 	return "ZaResourceController";
 };
 
-ZaResourceController.prototype.setDirty = function (isDirty) {
-    ZaZimbraAdmin.getInstance().getCurrentAppBar().enableButton(ZaOperation.SAVE, isDirty);
-}
-
-ZaResourceController.prototype.handleXFormChange = function (ev) {
-	if(ev && ev.form.hasErrors()) { 
-        ZaZimbraAdmin.getInstance().getCurrentAppBar().enableButton(ZaOperation.SAVE, false);
-	}
-}
 ZaResourceController.prototype.show =
 function(entry, openInNewTab, skipRefresh) {
 	this._setView(entry, openInNewTab, skipRefresh);
