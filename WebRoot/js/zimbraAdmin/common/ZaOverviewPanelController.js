@@ -671,15 +671,17 @@ ZaOverviewPanelController.prototype._buildNewFolderTree = function() {
         });
 
         tree.addTreeItemData(ti);
-
-        ti = new ZaTreeItemData({
-            parent : ZaTree.getPathByArray([ ZaMsg.OVP_home, ZaMsg.OVP_toolMig ]),
-            id : ZaId.getTreeItemId(ZaId.PANEL_APP, "magHV", null, "download"),
-            text : ZaMsg.goToMigrationWiz,
-            mappingId : ZaZimbraAdmin._DOWNLOAD_VIEW
-        });
-        ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._DOWNLOAD_VIEW] = ZaOverviewPanelController.downloadTreeListener;
-        tree.addTreeItemData(ti);
+        if (ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.DOWNLOADS_VIEW]
+                || ZaSettings.ENABLED_UI_COMPONENTS[ZaSettings.CARTE_BLANCHE_UI]) {
+            ti = new ZaTreeItemData({
+                parent : ZaTree.getPathByArray([ ZaMsg.OVP_home, ZaMsg.OVP_toolMig ]),
+                id : ZaId.getTreeItemId(ZaId.PANEL_APP, "magHV", null, "download"),
+                text : ZaMsg.goToMigrationWiz,
+                mappingId : ZaZimbraAdmin._DOWNLOAD_VIEW
+            });
+            ZaOverviewPanelController.overviewTreeListeners[ZaZimbraAdmin._DOWNLOAD_VIEW] = ZaOverviewPanelController.downloadTreeListener;
+            tree.addTreeItemData(ti);
+        }
     }
 
     // Section Search Start
