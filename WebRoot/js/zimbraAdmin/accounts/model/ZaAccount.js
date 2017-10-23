@@ -2533,6 +2533,11 @@ ZaAccount.isEmailRetentionPolicyEnabled = function () {
     try {
         var instance  = this.getInstance () ;
         var gc   = ZaApp.getInstance().getGlobalConfig();
+        if (!instance.attrs[ZaAccount.A_mailHost]) {
+            // GetEffectiveRightsRequest fails with an exception if a server name is blank
+            var ex = new ZmCsfeException("The request was not sent", ZmCsfeException.ACCT_INVALID_ATTR_VALUE, "GetEffectiveRightsRequest", "zimbraMailHost cannot be read");
+            throw(ex);
+        }
         var sc =  ZaApp.getInstance().getServerByName(instance.attrs[ZaAccount.A_mailHost]);
         var s_mailpurge = sc.attrs[ZaServer.A_zimbraMailPurgeSleepInterval] ;    //always end with [s,m,h,d]
         var g_mailpurge = gc.attrs[ZaGlobalConfig.A_zimbraMailPurgeSleepInterval] ;
