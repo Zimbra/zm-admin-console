@@ -863,7 +863,7 @@ function(tmpObj) {
         }
     }
 
-    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraDomainAdminMaxMailQuota,tmpObj) && (tmpObj.attrs[ZaAccount.A_zimbraMailQuota] != null)) {
+    if(!ZaZimbraAdmin.isGlobalAdmin() && ZaItem.hasWritePermission(ZaAccount.A_zimbraDomainAdminMaxMailQuota,tmpObj) && (tmpObj.attrs[ZaAccount.A_zimbraMailQuota] != null)) {
         var cosMaxAccountQuota = tmpObj._defaultValues.attrs[ZaAccount.A_zimbraDomainAdminMaxMailQuota];
         var prefAccountQuota = tmpObj.attrs[ZaAccount.A_zimbraMailQuota];
 
