@@ -866,7 +866,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                                 trueValue:"TRUE", falseValue:"FALSE",
                                 elementChanged: ZaResource.setAutoLocationName,
                                 enableDisableChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]],
-                                visibilityChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]]
+                                visibilityChecks:[[ZaItem.hasReadPermission,ZaResource.A_locationDisplayName]]
                             }
                     ]},
                     {ref:ZaResource.A_zimbraCalResSite, type:_TEXTFIELD_, msgName:ZaMsg.NAD_Site,label:ZaMsg.NAD_Site,
