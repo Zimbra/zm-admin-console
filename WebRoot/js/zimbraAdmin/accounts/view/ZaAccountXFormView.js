@@ -1499,7 +1499,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
         headerItems.push({type:_OUTPUT_, ref:ZaAccount.A_zimbraMailTransport, labelLocation:_LEFT_,label:ZabMsg.attrDesc_mailHost});
     }
 
-    if (entry[ZaAccount.A_name]) {
+    if (AjxUtil.isEmailAddress(entry[ZaAccount.A_name], false)) {
         headerItems.push({type:_OUTPUT_,ref:ZaAccount.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false, cssStyle:"word-wrap:break-word;overflow:hidden;",
     		getDisplayValue: AjxUtil.htmlEncode
     	});
