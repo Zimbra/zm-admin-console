@@ -440,7 +440,7 @@ ZaResourceXFormView.isSignatureSelectionEnabled = function() {
 	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_signatureList)));
 }
 
-ZaResourceXFormView.isSignagureSectionVisible = function () {
+ZaResourceXFormView.isSignatureSectionVisible = function () {
 	return (ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,this.getInstance().name)
 	|| ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,ZaAccount.getDomain(this.getInstance().name)));
 }
@@ -684,7 +684,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 		type : _TOP_GROUPER_,
 		label : ZaMsg.NAD_SignatureGrouper,
 		id : "resource_form_signature_group",
-		visibilityChecks:[ZaResourceXFormView.isSignagureSectionVisible],
+		visibilityChecks:[ZaResourceXFormView.isSignatureSectionVisible],
 		colSizes : [ "275px", "*" ],
 		numCols : 2,
 		items : [

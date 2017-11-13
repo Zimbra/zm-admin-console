@@ -554,13 +554,13 @@ ZaNewResourceXWizard.myXFormModifier = function(xFormObject) {
                 addButtonLabel:ZaMsg.NAD_AddSignature, removeButtonLabel: ZaMsg.NAD_RemoveSignature,  showAddOnNextRow:true,
                 addButtonCSSStyle:"margin-left:200px",
 				showAddButton:true, showRemoveButton:true,
-                visibilityChecks: [],
+                visibilityChecks: [ZaResourceXFormView.isSignatureSectionVisible],
                 enableDisableChecks: [],
                 items: [
                     {
                         ref:".", type:_SIGNATURE_, width:"100%",
                         visibilityChecks: [],
-                        enableDisableChecks: [ZaResourceXFormView.isSignagureSectionVisible]
+                        enableDisableChecks: []
                     }
                 ],
                 getDisplayValue: function(value){
