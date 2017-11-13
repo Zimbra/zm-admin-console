@@ -138,7 +138,7 @@ ZaFp.getProviders = function () {
 //@prefix: foreign principal prefixes
 ZaFp.findDupPrefixFp = function (entries, prefix) {
     for (var i =0 ; i < entries.length; i ++) {
-        // if a new provide is ZIMBRA, the prefix is empty string ""
+        // if a new provider is ZIMBRA, the prefix is empty string ""
         if ((prefix.length == 0 && entries[i].indexOf(":") == -1) || 
             (prefix.length != 0 && entries[i].indexOf(prefix) == 0)) {
             return true;
