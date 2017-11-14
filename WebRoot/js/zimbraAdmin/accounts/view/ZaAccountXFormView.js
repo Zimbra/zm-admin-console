@@ -3467,7 +3467,8 @@ textFieldCssClass:"admin_xform_number_input"}
                                     ZaAccount.A_zimbraMailTrashLifetime,
                                     ZaAccount.A_zimbraMailSpamLifetime,
                                     ZaAccount.A_zimbraMailDumpsterLifetime
-                                    ]],[XForm.checkInstanceValueNot,ZaAccount.A_zimbraIsExternalVirtualAccount,"TRUE"]],
+                                    ]],[XForm.checkInstanceValueNot,ZaAccount.A_zimbraIsExternalVirtualAccount,"TRUE"],
+                                    [ZaAccount.isEmailRetentionPolicyEnabled]],
                             label:ZaMsg.NAD_MailRetentionGrouper, id: "mailretention_settings",
                             items: [
                                 { type: _DWT_ALERT_,
