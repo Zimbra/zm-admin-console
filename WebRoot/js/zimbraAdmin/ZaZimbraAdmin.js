@@ -1308,8 +1308,8 @@ ZaZimbraAdmin.isGlobalAdmin = function () {
 ZaZimbraAdmin.hasGlobalDomainListAccess = function () {
     return (ZaZimbraAdmin.isGlobalAdmin() || 
             (ZaSettings.targetRights[ZaItem.DOMAIN] 
-                && ZaSettings.targetRights[ZaItem.DOMAIN][ZaCos.RIGHT_LIST_DOMAIN] 
-                && ZaSettings.targetRights[ZaItem.DOMAIN][ZaCos.RIGHT_LIST_DOMAIN].some));
+                && ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_LIST_DOMAIN]
+                && ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_LIST_DOMAIN].some));
 }
 
 ZaZimbraAdmin.hasGlobalCOSSListAccess = function () {

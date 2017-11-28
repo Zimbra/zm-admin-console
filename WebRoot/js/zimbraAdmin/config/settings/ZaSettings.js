@@ -147,7 +147,7 @@ ZaSettings.initGlobalRightsFromJS = function(resp) {
 		}
 	}	
 	ZaApp.getInstance()._cosNameList = cosNameList;
-	ZaApp.getInstance()._domainNameList = domainNamelist;
+	ZaApp.getInstance()._domainNameList = domainNameList;
 }
 
 ZaSettings.parseTargetsRightsFromJS = function(targetObj) {
