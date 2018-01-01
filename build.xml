@@ -1270,11 +1270,7 @@ ext = BeanUtils.cook(ext);
         <delete dir='${web.dir}/yui'/>
         <delete dir='${web.dir}/js/ajax'/>
         <delete dir='${web.dir}/js/zimbra'/>
-        <delete>
-            <fileset dir="${web.dir}/keys">
-                <include name="Ajx*.properties"/>
-            </fileset>
-        </delete>
+        <delete dir='${web.dir}/keys'/>
         <delete>
             <fileset dir="${web.dir}/messages">
                 <include name="Ajx*.properties"/>

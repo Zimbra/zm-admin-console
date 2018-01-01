@@ -2220,9 +2220,9 @@ function (value, event, form){
         var p = form.parent ;
         var newDomainName = ZaAccount.getDomain(value) ;
 
-    if( !newDomainName ){
-        return;
-    }
+        if( !newDomainName ){
+            return;
+        }
 
         var domainObj;
         try {
@@ -2240,9 +2240,9 @@ function (value, event, form){
 
         }
 
-    if (instance [ZaAccount.A2_autoCos] == "TRUE"){
-        ZaAccount.setDefaultCos(instance);
-    }
+        if (instance [ZaAccount.A2_autoCos] == "TRUE"){
+            ZaAccount.setDefaultCos(instance);
+        }
 
         if ((newDomainName != oldDomainName)
                 //set the right default cos at the account creation time
@@ -2335,10 +2335,10 @@ function (value, event, form){
                     }
                 }
             }
-                    ZaAccount.setDefaultCos(instance);
-                    instance [ZaAccount.A2_autoCos] = "TRUE";
-                    form.refresh();
 
+            ZaAccount.setDefaultCos(instance);
+            instance [ZaAccount.A2_autoCos] = "TRUE";
+            form.refresh();
         }
 
         //if domain name is not changed, we don't want to update the account type output
@@ -2350,11 +2350,9 @@ function (value, event, form){
                     form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_accountTypes,domainObj.getAccountTypes ());
                     form.parent.updateAccountType();
                 }
-
              }
 
-        }
-    if (domainObj && domainObj.attrs ){
+            if (domainObj && domainObj.attrs ){
                 var maxDomainAccounts = domainObj.attrs[ZaDomain.A_domainMaxAccounts] ;
                 var cosMaxAccounts = domainObj.attrs[ZaDomain.A_zimbraDomainCOSMaxAccounts] ;
                 if (maxDomainAccounts) {
@@ -2363,7 +2361,7 @@ function (value, event, form){
                 if (maxDomainAccounts && maxDomainAccounts > 0) {
                     var usedAccounts = domainObj.getUsedDomainAccounts(newDomainName );
                     if (maxDomainAccounts < usedAccounts && (!cosMaxAccounts || cosMaxAccounts.length <= 0)) {
-            form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_accountTypes,null);
+                        form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_accountTypes,null);
                         var msg;
                         if (usedAccounts - maxDomainAccounts > 1) {
                             msg = AjxMessageFormat.format (ZaMsg.NAD_DomainAccountLimits_p, [newDomainName, usedAccounts - maxDomainAccounts]);
@@ -2371,24 +2369,26 @@ function (value, event, form){
                             msg = AjxMessageFormat.format (ZaMsg.NAD_DomainAccountLimits_s, [newDomainName, usedAccounts - maxDomainAccounts]);
                         }
                         form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts, msg);
-            }else {
-            form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts,null);
-            }
-        } else {
+                    }else {
+                        form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts,null);
+                    }
+                } else {
                     form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_domainLeftAccounts,null);
-        }
-    }
+                }
+            }
 
-        if (domainObj && domainObj.attrs &&
-            domainObj.attrs[ZaDomain.A_AuthMech] &&
-            (domainObj.attrs[ZaDomain.A_AuthMech] != ZaDomain.AuthMech_zimbra) ) {
-            form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_isExternalAuth, true);
-        } else {
-            form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_isExternalAuth, false);
-        }
+            if (domainObj && domainObj.attrs &&
+              domainObj.attrs[ZaDomain.A_AuthMech] &&
+              (domainObj.attrs[ZaDomain.A_AuthMech] != ZaDomain.AuthMech_zimbra) ) {
+                form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_isExternalAuth, true);
+            } else {
+                form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_isExternalAuth, false);
+            }
 
-        if(form.parent.setDirty)  { //edit account view
-            form.parent.setDirty(true);
+            if(form.parent.setDirty)  { //edit account view
+                form.parent.setDirty(true);
+            }
+
         }
 
     } catch (ex) {
@@ -2590,13 +2590,13 @@ ZaAccount.getAccountTypeOutput = function (isNewAccount) {
             currentType = currentCos.id ;
         */
         var currentType = instance[ZaAccount.A2_currentAccountType] ;
-    var defaultType = ZaCos.getDefaultCos4Account(instance[ZaAccount.A_name], instance.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] == "TRUE");
-    if(!currentType && defaultType)
-        currentType = defaultType.id;
+        var defaultType = ZaCos.getDefaultCos4Account(instance[ZaAccount.A_name], instance.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] == "TRUE");
+        if(!currentType && defaultType)
+            currentType = defaultType.id;
 
         var domainName = ZaAccount.getDomain (instance.name) ;
         var domainObj =  ZaDomain.getDomainByName (domainName, form.parent._app);
-    var isFullUsed = true;
+        var isFullUsed = true;
 
         out.push("<table with=100%>");
         out.push("<colgroup><col width='200px' /><col width='200px' /><col width='200px' /></colgroup> ");
@@ -2632,18 +2632,18 @@ ZaAccount.getAccountTypeOutput = function (isNewAccount) {
                   isNewAccount = true;
 
 
-        if(availableAccounts > 0) isFullUsed = false;
+            if(availableAccounts > 0) isFullUsed = false;
             else if (currentType == acctTypes[i]) isFullUsed = false;
-        if (currentType == acctTypes[i]) {
-         //isFullUsed = false;
+            if (currentType == acctTypes[i]) {
+                 //isFullUsed = false;
                  isCheck = true;
-         if (currentType != instance.attrs[ZaAccount.A_COSId]) {
-                instance.autoCos = "FALSE" ;
-                instance.attrs[ZaAccount.A_COSId] = currentType;
-            if(isNewAccount)
-                  form.parent.updateCosGrouper();
-         }
-        }
+                 if (currentType != instance.attrs[ZaAccount.A_COSId]) {
+                     instance.autoCos = "FALSE" ;
+                     instance.attrs[ZaAccount.A_COSId] = currentType;
+                     if(isNewAccount)
+                         form.parent.updateCosGrouper();
+                 }
+            }
 
             out.push("<div>" +
                      "<label style='font-weight: bold;"
@@ -2667,14 +2667,13 @@ ZaAccount.getAccountTypeOutput = function (isNewAccount) {
 
         out.push("</tbody></table>") ;
 
-    // set warning message because of not avaliable account
-    if(isFullUsed) {
-                form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_showAccountTypeMsg,
-                        AjxMessageFormat.format (ZaMsg.MSG_AccountTypeUnavailable, [defaultType.name]));
-    }else{
-                form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_showAccountTypeMsg,null);
-    }
-
+        // set warning message because of not avaliable account
+        if(isFullUsed) {
+            form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_showAccountTypeMsg,
+                AjxMessageFormat.format (ZaMsg.MSG_AccountTypeUnavailable, [defaultType.name]));
+        }else{
+            form.getModel().setInstanceValue(form.getInstance(),ZaAccount.A2_showAccountTypeMsg,null);
+        }
     }
     return out.join("") ;
 }

@@ -614,7 +614,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                     },
                     { type: _OUTPUT_, id: ZaNewAccountXWizard.accountTypeItemId,
                         getDisplayValue: ZaAccount.getAccountTypeOutput,
-                        valueChangeEventSources:[ZaAccount.A_name,ZaAccount.A_COSId,ZaAccount.A2_accountTypes,ZaAccount.A2_currentAccountType],
+                        valueChangeEventSources:[ZaAccount.A_COSId,ZaAccount.A2_accountTypes,ZaAccount.A2_currentAccountType],
                         //center the elements
                         cssStyle: "margin-left:auto;margin-right:auto;width:600px;"
                     }
