@@ -229,6 +229,13 @@ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection = "retentionPoliciesPurge_Sel
 ZaGlobalConfig.A_zimbraHelpAdminURL = "zimbraHelpAdminURL";
 ZaGlobalConfig.A_zimbraHelpDelegatedURL = "zimbraHelpDelegatedURL";
 
+//IMAPD
+ZaGlobalConfig.A_zimbraRemoteImapServerEnabled = "zimbraRemoteImapServerEnabled";
+ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled = "zimbraRemoteImapSSLServerEnabled";
+ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers = "zimbraReverseProxyUpstreamImapServers";
+ZaGlobalConfig.A_zimbraRemoteImapBindPort = "zimbraRemoteImapBindPort";
+ZaGlobalConfig.A_zimbraRemoteImapSSLBindPort = "zimbraRemoteImapSSLBindPort";
+
 ZaGlobalConfig.__configInstance = null;
 ZaGlobalConfig.isDirty = true;
 
@@ -297,6 +304,11 @@ ZaGlobalConfig.prototype.initFromJS = function(obj) {
     if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP])) {
         this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP]];
     }
+
+    if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers])) {
+        this.attrs[ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers] = [this.attrs[ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers]];
+    }
+
 	// convert available components to hidden fields for xform binding
 	var components = this.attrs[ZaGlobalConfig.A_zimbraComponentAvailable];
 	if (components) {
@@ -635,7 +647,13 @@ ZaGlobalConfig.myXModel = {
         {id:ZaGlobalConfig.A2_retentionPoliciesKeep, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesPurge, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesKeep_Selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type:_LIST_}
+        {id:ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type:_LIST_},
 
+        //IMAPD
+        { id:ZaGlobalConfig.A_zimbraRemoteImapServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraRemoteImapServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
+        { id:ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
+        { id:ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers, ref:"attrs/" + ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers, type:_LIST_, listItem:{ type:_STRING_, maxLength: 256} },
+        { id:ZaGlobalConfig.A_zimbraRemoteImapBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraRemoteImapBindPort, type:_PORT_ },
+        { id:ZaGlobalConfig.A_zimbraRemoteImapSSLBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraRemoteImapSSLBindPort, type:_PORT_ }
     ]
 }

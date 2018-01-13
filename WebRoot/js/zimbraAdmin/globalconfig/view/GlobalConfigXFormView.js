@@ -105,6 +105,31 @@ GlobalConfigXFormView.shouldEnableAddAllButton = function() {
     return (!AjxUtil.isEmpty(this.getInstanceValue(ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension)));
 }
 
+GlobalConfigXFormView.getRemoteIMAPEnabled = function () {
+	var value = this.getModel().getInstanceValue(this.getInstance(),ZaGlobalConfig.A_zimbraRemoteImapServerEnabled);
+	return value == 'TRUE';
+}
+
+GlobalConfigXFormView.getRemoteIMAPSSLEnabled = function () {
+	var value = this.getModel().getInstanceValue(this.getInstance(),ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled);	
+	return (value == 'TRUE' && GlobalConfigXFormView.getRemoteIMAPEnabled.call(this));
+}
+
+GlobalConfigXFormView.isImapdInstalledInAnyServer = function() {
+    var isImapdInstalled = false;
+    
+    var servers = ZaServer.getAll().getArray();
+    for (var i = 0; i < servers.length; i++) {
+        var s = servers[i];
+        if (s.attrs[ZaServer.A_zimbraImapdServiceInstalled]) {
+            isImapdInstalled = true;
+            break;
+        }
+    }
+
+    return isImapdInstalled;
+}
+
 GlobalConfigXFormView.removeExt = function() {
     var blockedExtArray = this.getInstanceValue(ZaGlobalConfig.A_zimbraMtaBlockedExtension);
     var selectedExtArray = this.getInstanceValue(ZaGlobalConfig.A2_blocked_extension_selection);
@@ -385,6 +410,11 @@ GlobalConfigXFormView.AUTO_PROV_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraAutoProvNot
         ZaGlobalConfig.A_zimbraAutoProvNotificationSubject ];
 GlobalConfigXFormView.AUTO_PROV_TAB_RIGHTS = [];
 
+GlobalConfigXFormView.IMAPD_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraRemoteImapServerEnabled,
+        ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled, ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers, 
+        ZaGlobalConfig.A_zimbraRemoteImapBindPort, ZaGlobalConfig.A_zimbraRemoteImapSSLBindPort];
+GlobalConfigXFormView.IMAPD_TAB_RIGHTS = [];
+
 GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
@@ -436,7 +466,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             "auto", null, null, true, true);
 
     xFormObject.tableCssStyle = "width:100%;overflow:auto;";
-    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11;
+    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11, _tab12;
 
     var tabBarChoices = [];
     var switchItems = [];
@@ -1113,6 +1143,89 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             } ]
         };
         switchItems.push(case4);
+    }
+
+    if (GlobalConfigXFormView.isImapdInstalledInAnyServer()){
+        if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.IMAPD_TAB_ATTRS, GlobalConfigXFormView.IMAPD_TAB_RIGHTS)) {
+            _tab12 = ++this.TAB_INDEX;
+            //this.helpMap[_tab12] = [ location.pathname, ZaUtil.HELP_URL,
+            //        "managing_global_settings/.htm", "?locid=", AjxEnv.DEFAULT_LOCALE ].join("");
+            tabBarChoices.push({
+                value : _tab12,
+                label : ZaMsg.NAD_Tab_IMAPD
+            });
+            var case12 = {
+                type : _ZATABCASE_,
+                caseKey : _tab12,
+                paddingStyle : "padding-left:15px;",
+                width : "98%",
+                cellpadding : 2,
+                colSizes : [ "auto" ],
+                numCols : 1,
+                id : "global_remote_imap_tab",
+                items : [{
+                    type : _DWT_ALERT_,
+                    containerCssStyle : "padding-bottom:0px",
+                    style : DwtAlert.WARNING,
+                    iconVisible : true,
+                    content : ZaMsg.Alert_ServerRestart
+                }, {
+                    type : _ZA_TOP_GROUPER_,
+                    label : ZaMsg.Global_IMAPD_ServiceGrp,
+                    items : [{
+                        ref : ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers,
+                        type : _REPEAT_,
+                        label : ZaMsg.Reverse_Proxy_Upstream_Imap,
+                        labelLocation : _LEFT_,
+                        align : _LEFT_,
+                        repeatInstance : "",
+                        showAddButton : true,
+                        showRemoveButton : true,
+                        showAddOnNextRow : true,
+                        addButtonLabel : ZaMsg.Add_zimbraReverseProxyUpstreamImapServers,
+                        removeButtonLabel : ZaMsg.Remove_zimbraReverseProxyUpstreamImapServers,
+                        removeButtonCSSStyle : "margin-left: 50px",
+                        visibilityChecks : [ ZaItem.hasReadPermission ],
+                        items : [ {
+                            ref : ".",
+                            type : _TEXTFIELD_,
+                            label : null,
+                            labelLocation : _NONE_,
+                            width : 200,
+                            toolTipContent : ZaMsg.tt_zimbraReverseProxyUpstreamImapServers,
+                            visibilityChecks : [ ZaItem.hasReadPermission ]
+                            } ]
+                    }, {
+                        ref : ZaGlobalConfig.A_zimbraRemoteImapServerEnabled,
+                        type : _CHECKBOX_,
+                        label : ZaMsg.Remote_IMAP_Server, 
+                        trueValue : "TRUE",
+                        falseValue : "FALSE"
+                    }, {
+                        ref : ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled,
+                        type : _CHECKBOX_,
+                        label : ZaMsg.Remote_IMAP_SSLServer,
+                        trueValue : "TRUE",
+                        falseValue : "FALSE"
+                    }]
+                }, {
+                    type:_ZA_TOP_GROUPER_, 
+                    label:ZaMsg.Global_IMAPD_NetworkGrp,
+                    items: [{
+                        ref: ZaGlobalConfig.A_zimbraRemoteImapBindPort, type: _TEXTFIELD_,
+                        enableDisableChecks:[GlobalConfigXFormView.getRemoteIMAPEnabled,ZaItem.hasReadPermission],
+                        enableDisableChangeEventSources:[ZaGlobalConfig.A_zimbraRemoteImapServerEnabled],
+                        label: ZaMsg.Remote_IMAP_Bind_Port, width: "5em"
+                    }, {
+                        ref: ZaGlobalConfig.A_zimbraRemoteImapSSLBindPort, type: _TEXTFIELD_,
+                        enableDisableChecks:[GlobalConfigXFormView.getRemoteIMAPEnabled, GlobalConfigXFormView.getRemoteIMAPSSLEnabled,ZaItem.hasReadPermission],
+                        enableDisableChangeEventSources:[ZaGlobalConfig.A_zimbraRemoteImapServerEnabled, ZaGlobalConfig.A_zimbraRemoteImapSSLServerEnabled],
+                        label: ZaMsg.Remote_IMAP_SSL_Bind_Port, width: "5em"
+                    }]
+                }]
+            };
+            switchItems.push(case12);
+        }
     }
 
     if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.POP_TAB_ATTRS, GlobalConfigXFormView.POP_TAB_RIGHTS)) {

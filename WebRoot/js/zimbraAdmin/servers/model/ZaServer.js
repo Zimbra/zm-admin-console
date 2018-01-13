@@ -65,6 +65,7 @@ ZaServer.A_zimbraLoggerServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+
 ZaServer.A_zimbraMailProxyServiceInstalled = "_"+ZaServer.A_zimbraServiceInstalled+"_proxy";
 ZaServer.A_zimbraVmwareHAServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_vmwareha";
 ZaServer.A_zimbraPolicydServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_cbpolicyd";
+ZaServer.A_zimbraImapdServiceInstalled = "_"+ ZaServer.A_zimbraServiceInstalled+"_imapd";
 
 ZaServer.A_zimbraReverseProxyHttpEnabled = "zimbraReverseProxyHttpEnabled";
 ZaServer.A_zimbraServiceEnabled = "zimbraServiceEnabled";
@@ -191,6 +192,13 @@ ZaServer.A_zimbraReverseProxyMailMode = "zimbraReverseProxyMailMode";
 ZaServer.A_zimbraReverseProxyClientCertMode = "zimbraReverseProxyClientCertMode";
 ZaServer.A_zimbraReverseProxyClientCertCA = "zimbraReverseProxyClientCertCA";
 
+//IMAPD
+ZaServer.A_zimbraRemoteImapServerEnabled = "zimbraRemoteImapServerEnabled";
+ZaServer.A_zimbraRemoteImapSSLServerEnabled = "zimbraRemoteImapSSLServerEnabled";
+ZaServer.A_zimbraReverseProxyUpstreamImapServers = "zimbraReverseProxyUpstreamImapServers";
+ZaServer.A_zimbraRemoteImapBindPort = "zimbraRemoteImapBindPort";
+ZaServer.A_zimbraRemoteImapSSLBindPort = "zimbraRemoteImapSSLBindPort";
+
 // other
 ZaServer.A_zimbraScheduledTaskNumThreads = "zimbraScheduledTaskNumThreads" ;
 ZaServer.A_zimbraMailPurgeSleepInterval = "zimbraMailPurgeSleepInterval" ;
@@ -260,6 +268,8 @@ ZaServer.DEFAULT_IMAP_PORT_ZCS=7143;
 ZaServer.DEFAULT_IMAP_SSL_PORT_ZCS=7993;
 ZaServer.DEFAULT_POP3_PORT_ZCS=7110;
 ZaServer.DEFAULT_POP3_SSL_PORT_ZCS=7995;
+ZaServer.DEFAULT_REMOTE_IMAP_PORT_ZCS=8143;
+ZaServer.DEFAULT_REMOTE_IMAP_SSL_PORT_ZCS=8993;
 
 ZaServer.ERR_NOT_CIDR = 1;
 ZaServer.ERR_NOT_STARTING_ADDR = 2;
@@ -533,7 +543,7 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraSpellServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraSpellServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraLoggerServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraLoggerServiceEnabled, type: _ENUM_, choices: [false,true] },
         {id:ZaServer.A_zimbraVmwareHAServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraVmwareHAServiceEnabled, type: _ENUM_, choices: [false,true] },
-		{id:ZaServer.A_zimbraMailProxyServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMailProxyServiceEnabled, type: _ENUM_, choices: [false,true] },		
+		{id:ZaServer.A_zimbraMailProxyServiceEnabled, ref:"attrs/"+ZaServer.A_zimbraMailProxyServiceEnabled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraReverseProxyLookupTarget, ref:"attrs/"+ZaServer.A_zimbraReverseProxyLookupTarget, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
 		{id:ZaServer.A_zimbraLdapServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraLdapServiceInstalled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMailboxServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraMailboxServiceInstalled, type: _ENUM_, choices: [false,true] },
@@ -551,7 +561,9 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraLoggerServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraLoggerServiceInstalled, type: _ENUM_, choices: [false,true] },
 		{id:ZaServer.A_zimbraMailProxyServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraMailProxyServiceInstalled, type: _ENUM_, choices: [false,true] },
         {id:ZaServer.A_zimbraVmwareHAServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraVmwareHAServiceInstalled, type: _ENUM_, choices: [false,true] },
-        {id:ZaServer.A_zimbraPolicydServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraPolicydServiceInstalled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraPolicydServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraPolicydServiceInstalled, type: _ENUM_, choices: [false,true] },
+		{id:ZaServer.A_zimbraImapdServiceInstalled, ref:"attrs/"+ZaServer.A_zimbraImapdServiceInstalled, type: _ENUM_, choices: [false,true] },
+
 		// MTA
 		{id:ZaServer.A_zimbraMtaSaslAuthEnable, ref:"attrs/" +  ZaServer.A_zimbraMtaSaslAuthEnable, type: _COS_ENUM_, choices: ["yes", "no"] },
 		{id:ZaServer.A_zimbraMtaTlsAuthOnly, ref:"attrs/" +  ZaServer.A_zimbraMtaTlsAuthOnly, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
@@ -595,7 +607,14 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraImapBindPort, ref:"attrs/" + ZaServer.A_zimbraImapBindPort, type:_COS_PORT_ },
 		{id:ZaServer.A_ImapServerEnabled, ref:"attrs/" + ZaServer.A_ImapServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
 		{id:ZaServer.A_ImapSSLBindPort, ref:"attrs/" + ZaServer.A_ImapSSLBindPort, type:_COS_PORT_ },
-		{id:ZaServer.A_ImapSSLServerEnabled, ref:"attrs/" + ZaServer.A_ImapSSLServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
+		{id:ZaServer.A_ImapSSLServerEnabled, ref:"attrs/" + ZaServer.A_ImapSSLServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
+
+		//IMAPD
+		{id:ZaServer.A_zimbraRemoteImapServerEnabled, ref:"attrs/" + ZaServer.A_zimbraRemoteImapServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
+		{id:ZaServer.A_zimbraRemoteImapSSLServerEnabled, ref:"attrs/" + ZaServer.A_zimbraRemoteImapSSLServerEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
+		{id:ZaServer.A_zimbraReverseProxyUpstreamImapServers, ref:"attrs/" +  ZaServer.A_zimbraReverseProxyUpstreamImapServers, type:_COS_LIST_, listItem:{type:_STRING_, maxLength: 256} },
+		{id:ZaServer.A_zimbraRemoteImapBindPort, ref:"attrs/" + ZaServer.A_zimbraRemoteImapBindPort, type:_COS_PORT_ },
+		{id:ZaServer.A_zimbraRemoteImapSSLBindPort, ref:"attrs/" + ZaServer.A_zimbraRemoteImapSSLBindPort, type:_COS_PORT_ },
 		
 		//ip address bindings
 		{id:ZaServer.A_zimbraMailBindAddress, ref:"attrs/" +  ZaServer.A_zimbraMailBindAddress, type:_IP_},
@@ -1129,6 +1148,9 @@ ZaServer.prototype.initFromJS = function(server) {
         this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] = [this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains]];
     }
 
+    if(this.attrs[ZaServer.A_zimbraReverseProxyUpstreamImapServers] && !(this.attrs[ZaServer.A_zimbraReverseProxyUpstreamImapServers] instanceof Array)) {
+        this.attrs[ZaServer.A_zimbraReverseProxyUpstreamImapServers] = [this.attrs[ZaServer.A_zimbraReverseProxyUpstreamImapServers]];
+    }
 }
 
 ZaServer.prototype.parseCurrentVolumesResponse =
