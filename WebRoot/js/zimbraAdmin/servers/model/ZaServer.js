@@ -999,6 +999,7 @@ function(by, val) {
 		var getCurrentVols = soapDoc.set("GetCurrentVolumesRequest", null, null, ZaZimbraAdmin.URN);
 	}				
 	var getAllVols = soapDoc.set("GetServerNIfsRequest", null, null, ZaZimbraAdmin.URN);
+	getAllVols.setAttribute("type", "both");
 	var server = soapDoc.set("server", _val, getAllVols);
 	server.setAttribute("by", _by);
 	try {

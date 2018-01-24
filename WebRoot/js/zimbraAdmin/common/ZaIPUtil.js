@@ -233,6 +233,23 @@ ZaIPUtil.isIPV4 = function (ipV4Str) {
         throw ZaIPUtil.ERROR_IP_FORMAT;
     }
 
+    //Check ipV4Str has '.' at index 0 (First dot in IPv4 address)
+    if (ipV4Str[0] == ".") {
+        throw ZaIPUtil.ERROR_IP_FORMAT;
+    }
+       
+    //Check ipV4Str has '.' at the end of IP address (Last dot in IPv4 address)
+    if (ipV4Str[ipV4Str.length -1] == ".") {
+        throw ZaIPUtil.ERROR_IP_FORMAT;
+    }
+        
+    //Invalid IPv4 address that has two or more adjacent dot
+    for(var i = 0; i < ipV4Str.length - 1; i++) {
+        if (ipV4Str[i] == "." && ipV4Str[i+1] == ".") {
+            throw ZaIPUtil.ERROR_IP_FORMAT;
+        }
+    }
+
     var longValue;
     for (var i = 0; i < chunks.length; i++) {
         if (!chunks[i])
@@ -282,6 +299,23 @@ ZaIPUtil.isIPV6 = function (ipV6Str) {
             throw ZaIPUtil.ERROR_IP_FORMAT;
     }
 
+    //Invalid IPv6 address that has three or more adjacent colon
+    if (isDottedQuad != -1) {
+        if (ipCntStr[isDottedQuad + 2] == ":") {
+            throw ZaIPUtil.ERROR_IP_FORMAT;
+        }
+    }
+
+    //':' is at index 0 of IP address (not group zero "::"). Ex: :2001:db8:cafe::1
+    if (ipCntStr[0] == ":" && ipCntStr[1] != ":") {
+        throw ZaIPUtil.ERROR_IP_FORMAT;
+    }
+        
+    // ':' is at the end of IP address (not group zero "::"). Ex: 2001:db8:cafe::1: 
+    if (ipCntStr[ipCntStr.length -1] == ":" && ipCntStr[ipCntStr.length -2] != ":") {
+        throw ZaIPUtil.ERROR_IP_FORMAT;
+    }
+        
     var chunks = ipCntStr.split(":");
     if (chunks.length > 8)
         throw ZaIPUtil.ERROR_IP_FORMAT;
