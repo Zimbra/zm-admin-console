@@ -377,6 +377,68 @@ function () {
 			mods[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = "";
 		}		
 	}
+
+	//validate ephemeral backend url
+	var backendLDAP = "ldap";
+	var backendSSDB = "ssdb";
+	var defaulValue = "//default";
+
+	if (ZaItem.hasWritePermission(ZaGlobalConfig.A_zimbraEphemeralBackendURL, tmpObj)) {
+		if (tmpObj.attrs[ZaGlobalConfig.A_zimbraEphemeralBackendURL]) {
+			var backendURL = tmpObj.attrs[ZaGlobalConfig.A_zimbraEphemeralBackendURL];
+			var chunks = backendURL.split(":");
+			
+			if (chunks < 2 || chunks > 3) {
+				throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+			}
+
+			//check two or more adjacent colon, colon is at the begin/end of the URL
+			for (var i = 0; i < chunks.length; i++) {
+				if (chunks[i].length == 0) {
+					throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+				}
+			}
+
+			if (chunks.length == 2) {
+				if (chunks[0] == backendLDAP) {
+					if (chunks.length == 2 && chunks[1] != defaulValue) {
+						throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+					}
+				}
+
+				if (chunks[0] == backendSSDB) {
+					throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+				}
+			} else {	//chunks.length == 3
+				var isIPOrHostName = false;
+				//check valid ip or host name
+				if (!ZaGlobalConfigViewController.isValidHostName(chunks[1])) {
+					isIPOrHostName = false;
+				}
+
+				if (!isIPOrHostName) {
+					try {
+						var exIPData = ZaIPUtil.isIPV4(chunks[1]);
+						isIPOrHostName = true;
+					} catch (ex) {
+						isIPOrHostName = false;
+					}
+				}
+
+				if (!isIPOrHostName) {
+					throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+				}
+
+				//check valid port
+				if (!AjxUtil.isInt(chunks[2])) {
+					throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+				}
+			}
+		} else {
+			throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_EMPTY_BACKEND_URL, [backendURL]), AjxException.INVALID_PARAM, "ZaGlobalConfigViewController.prototype._saveChanges");
+		}
+	}
+
 	//save the model
     if (this._currentObject[ZaModel.currentTab]!= tmpObj[ZaModel.currentTab])
              this._currentObject[ZaModel.currentTab] = tmpObj[ZaModel.currentTab];
@@ -417,6 +479,26 @@ function () {
     }
     ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(ZaMsg.GlobalConfigModified);
 	return true;
+}
+
+ZaGlobalConfigViewController.isValidHostName =
+function (isHostNameStr) {
+	if (!isHostNameStr) {
+		return false;
+	}
+    
+	//Invalid host name that has two or more adjacent dot, dot is at index 0 or at the end of host name
+	var chunks = isHostNameStr.split(".");
+	for (var i = 0; i < isHostNameStr.length; i++) {
+		if (isHostNameStr[i].length == 0) {
+			return false;
+		}
+	}
+	
+	if(AjxUtil.isHostName(isHostNameStr)) {
+		return true;
+	}
+	return false;
 }
 
 ZaGlobalConfigViewController.prototype.validateMyNetworks = ZaServerController.prototype.validateMyNetworks;
