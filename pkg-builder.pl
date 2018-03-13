@@ -79,9 +79,11 @@ sub stage_zimbra_mbox_admin_console_war($)
 {
    my $stage_base_dir = shift;
    make_path("$stage_base_dir/opt/zimbra/jetty_base/webapps/zimbraAdmin");
+   make_path("$stage_base_dir/opt/zimbra/conf/templates_admin");
    System("cd $stage_base_dir/opt/zimbra/jetty_base/webapps/zimbraAdmin && jar -xf @{[getcwd()]}/build/dist/jetty/webapps/zimbraAdmin.war");
+   System("cp -r WebRoot/templates $stage_base_dir/opt/zimbra/conf/templates_admin");
    cpy_file( "WebRoot/WEB-INF/jetty-env.xml", "$stage_base_dir/opt/zimbra/jetty_base/etc/zimbraAdmin-jetty-env.xml.in");
-   System("cat build/web.xml | sed -e '/REDIRECTBEGIN/ s/\$/ %%comment VAR:zimbraMailMode,-->,redirect%%/' -e '/REDIRECTEND/ s/^/%%comment VAR:zimbraMailMode,<!--,redirect%% /' > $stage_base_dir/opt/zimbra/jetty_base/etc/zimbraAdmin.web.xml.in");   
+   System("cat build/WebRoot/WEB-INF/web.xml | sed -e '/REDIRECTBEGIN/ s/\$/ %%comment VAR:zimbraMailMode,-->,redirect%%/' -e '/REDIRECTEND/ s/^/%%comment VAR:zimbraMailMode,<!--,redirect%% /' > $stage_base_dir/opt/zimbra/jetty_base/etc/zimbraAdmin.web.xml.in");   
    return ["."];
 }
 

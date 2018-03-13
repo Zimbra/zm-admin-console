@@ -470,9 +470,7 @@
 
   <welcome-file-list>
     <welcome-file>login</welcome-file>
-    <welcome-file>public/login.jsp</welcome-file>
     <welcome-file>public/admin.jsp</welcome-file>
-    <welcome-file>launchTouch.jsp</welcome-file>
   </welcome-file-list>
 
   <env-entry>

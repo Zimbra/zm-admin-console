@@ -25,8 +25,7 @@
 <app:skinAndRedirect />
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <fmt:setLocale value='${pageContext.request.locale}' scope='request' />
-<fmt:setBundle basename="/messages/ZhMsg" scope="request"/>
-<fmt:setBundle basename="/messages/ZmMsg" var="zmmsg" scope="request"/>
+<fmt:setBundle basename="/messages/ZaMsg" var="zamsg" scope="request"/>
 
 <%
 	Object errorCode = request.getAttribute("javax.servlet.error.status_code");
@@ -42,7 +41,7 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 	<title>${errCode} - <fmt:message key="${errTitle}"/></title>
 	<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=8.0; user-scalable=1;">
-	<meta name="description" content="<fmt:message bundle="${zmmsg}" key="zimbraLoginMetaDesc"/>">
+	<meta name="description" content="<fmt:message bundle="${zamsg}" key="zimbraLoginMetaDesc"/>">
 	<link  rel="stylesheet" type="text/css" href="<c:url value='/css/common,login,zhtml,skin.css'>
 		<c:param name="skin" value="${param.skin}" />
 		<c:param name="v" value="${version}" />

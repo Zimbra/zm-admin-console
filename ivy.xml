@@ -6,6 +6,7 @@
  </info>
 
  <dependencies>
+  <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" />
   <dependency org="org.glassfish.gmbal" name="gmbal-api-only" rev="2.2.6"/>
   <dependency org="javax.xml.bind" name="jaxb-api" rev="2.2.6"/>
   <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="2.2.6"/>
