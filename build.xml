@@ -1506,4 +1506,12 @@ ext = BeanUtils.cook(ext);
         <copy todir='${jquery.dir}' file='${web.dir}/jquery/${jquery.version}/jquery.js' verbose='${sync.verbose}'/>
     </target>
 
+   <target name="pkg" depends="clean-pkg, admin-war">
+      <exec dir="." executable="./pkg-builder.pl" failonerror="true"/>
+   </target>
+
+   <target name="clean-pkg">
+      <delete dir="build/dist"/>
+      <delete dir="build/stage"/>
+   </target>
 </project>
