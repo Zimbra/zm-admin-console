@@ -60,7 +60,7 @@ sub git_timestamp_from_dirs($)
 
 my %PKG_GRAPH = (
 
-   "zimbra-admin-console-war" => {
+   "zimbra-mbox-admin-console-war" => {
       summary    => "Zimbra Admin Console War",
       version    => "1.0.0",
       revision   => 1,
@@ -69,13 +69,13 @@ my %PKG_GRAPH = (
       other_deps => ["zimbra-store-components"],
       replaces   => ["zimbra-store"],
       file_list  => ['/opt/zimbra/*'],
-      stage_fun  => sub { &stage_zimbra_admin_console_war(@_); },
+      stage_fun  => sub { &stage_zimbra_mbox_admin_console_war(@_); },
    },
 
 );
 
 
-sub stage_zimbra_admin_console_war($)
+sub stage_zimbra_mbox_admin_console_war($)
 {
    my $stage_base_dir = shift;
    make_path("$stage_base_dir/opt/zimbra/jetty_base/webapps/zimbraAdmin");
