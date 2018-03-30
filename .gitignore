@@ -1,11 +1,4 @@
 build
 .classpath
 .project
-WebRoot/jquery
-WebRoot/js/ajax
-WebRoot/js/zimbra
-WebRoot/keys/AjxKeys*.properties
-WebRoot/messages/AjxMsg*.properties
-WebRoot/messages/I18nMsg*.properties
-WebRoot/modernizr
-WebRoot/yui
+bin
