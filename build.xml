@@ -871,7 +871,7 @@
                  classpathref='class.path'
                 />
 
-        <fileset id='jam-files.fileset' dir='${build.js.dir}' includes='*.js' excludes='*_all.js,TinyMCE*'/>
+        <fileset id='jam-files.fileset' dir='${build.js.dir}' includes='*.js' excludes='*_all.js'/>
         <pathconvert property="jam-files.list" refid="jam-files.fileset" pathsep=','>
             <chainedmapper>
                 <flattenmapper/>
