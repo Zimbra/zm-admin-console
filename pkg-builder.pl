@@ -67,9 +67,21 @@ my %PKG_GRAPH = (
       hard_deps  => [],
       soft_deps  => [],
       other_deps => ["zimbra-store-components"],
-      replaces   => ["zimbra-store", "zimbra-mbox-admin-common"],
-      conflicts  => ["zimbra-mbox-admin-common"],
-      file_list  => ['/opt/zimbra/*'],
+      replaces   => ["zimbra-store"],
+      obsoletes  => ["zimbra-mbox-admin-common"],
+      dir_list   => ['/opt/zimbra/conf/templates/admin/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/META-INF/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/WEB-INF/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/img/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/js/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/skins/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/templates/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/yui/*'
+                    ],
+      file_list  => ['/opt/zimbra/jetty_base/webapps/zimbraAdmin/public/*',
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/css/*',
+                     '/opt/zimbra/jetty_base/etc/zimbraAdmin-jetty-env.xml.in',
+                     '/opt/zimbra/jetty_base/etc/zimbraAdmin.web.xml.in'],
       stage_fun  => sub { &stage_zimbra_mbox_admin_console_war(@_); },
    },
 
@@ -115,12 +127,38 @@ sub make_package($)
       "--pkg-version=$pkg_info->{_version_ts}",
       "--pkg-release=$pkg_info->{revision}",
       "--pkg-summary=$pkg_info->{summary}",
-      "--pkg-post-install-script=scripts/postinst.sh",
-      "--pkg-install=/opt/zimbra/*"
+      "--pkg-post-install-script=scripts/postinst.sh"
    );
 
+   if ( $pkg_info->{dir_list} )	
+   {
+      foreach my $expr ( @{ $pkg_info->{dir_list} } )
+      {
+         push( @cmd, "--pkg-installs=$expr" );
+      }
+   }
+
+   if ( $pkg_info->{file_list} )
+   {
+      foreach my $expr ( @{ $pkg_info->{file_list} } )
+      {
+         print "stage_base_dir = $stage_base_dir\n";
+         print "expr = $expr\n";
+
+         my $dir_expr = "$stage_base_dir$expr";
+
+         foreach my $entry (`find $dir_expr -type f`)
+         {
+            chomp($entry);
+            $entry =~ s@$stage_base_dir@@;
+
+            push( @cmd, "--pkg-installs=$entry" );
+         }
+      }
+   }
+
    push( @cmd, @{ [ map { "--pkg-replaces=$_"; } @{ $pkg_info->{replaces} } ] } )                                                              if ( $pkg_info->{replaces} );
-   push( @cmd, @{ [ map { "--pkg-conflicts=$_"; } @{ $pkg_info->{conflicts} } ] } )                                                            if ( $pkg_info->{conflicts} );
+   push( @cmd, @{ [ map { "--pkg-obsoletes=$_"; } @{ $pkg_info->{obsoletes} } ] } )                                                            if ( $pkg_info->{obsoletes} );
    push( @cmd, @{ [ map { "--pkg-depends=$_"; } @{ $pkg_info->{other_deps} } ] } )                                                             if ( $pkg_info->{other_deps} );
    push( @cmd, @{ [ map { "--pkg-depends=$_ (>= $PKG_GRAPH{$_}->{version})"; } @{ $pkg_info->{soft_deps} } ] } )                               if ( $pkg_info->{soft_deps} );
    push( @cmd, @{ [ map { "--pkg-depends=$_ (= $PKG_GRAPH{$_}->{_version_ts}-$PKG_GRAPH{$_}->{revision})"; } @{ $pkg_info->{hard_deps} } ] } ) if ( $pkg_info->{hard_deps} );

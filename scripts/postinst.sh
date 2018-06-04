@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "**** Fixing up the permission ****"
 /opt/zimbra/libexec/zmfixperms
 
