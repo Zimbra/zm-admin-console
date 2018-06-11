@@ -1,0 +1,8 @@
+<template id='calendar.Appointment#ApptTimeInput'>
+	<table role="presentation" class='miniTimeButton ZmSelector'>
+		<tr>
+			<td id='${id}_timeSelectInput'></td>
+			<td id='${id}_timeSelectBtn'> </td>
+		</tr>
+	</table>
+</template>
