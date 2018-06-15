@@ -377,6 +377,42 @@ function () {
 			mods[ZaGlobalConfig.A_zimbraMtaBlockedExtension] = "";
 		}		
 	}
+
+	//Check validation of reverse proxy upstream imap server: host name or IP address format
+	var invalidValues = [];
+	var isValidValue = true;
+	if(ZaItem.hasWritePermission(ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers,tmpObj)) {
+		if (!AjxUtil.isEmpty(tmpObj.attrs[ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers])) {
+			var proxies = tmpObj.attrs[ZaGlobalConfig.A_zimbraReverseProxyUpstreamImapServers];
+
+			if(proxies.length == 1 && proxies[0] == "") {
+				this.runValidationStack(params);
+				return;
+			}
+
+			for(var i = 0; i < proxies.length; i++) {
+				if(!ZaServerController.isValidHostName(proxies[i])) {
+					isValidValue = false;
+				}
+				if(!isValidValue) {
+					try {
+						var exIPData = ZaIPUtil.isValidIP(proxies[i]);
+						isValidValue = true;
+					} catch (ex) {
+						isValidValue = false;
+					}
+				}
+				if(!isValidValue) {
+					invalidValues.push(proxies[i]);
+				}
+			}
+		}
+
+		if(invalidValues.length > 0) {
+			throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_IP_OR_HOSTNAME,invalidValues.join(",")),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateReverseProxyUpstreamImapServers");
+		}
+	}
+
 	//save the model
     if (this._currentObject[ZaModel.currentTab]!= tmpObj[ZaModel.currentTab])
              this._currentObject[ZaModel.currentTab] = tmpObj[ZaModel.currentTab];

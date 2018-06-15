@@ -230,6 +230,24 @@ ZaServerXFormView.getIsReverseProxyLookupTarget = function () {
 	return (this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_zimbraReverseProxyLookupTarget) == "TRUE");
 }
 
+ZaServerXFormView.getRemoteIMAPEnabled = function () {
+	var value = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_zimbraRemoteImapServerEnabled);
+	return value == 'TRUE';
+}
+
+ZaServerXFormView.getRemoteIMAPSSLEnabled = function () {
+	var value = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_zimbraRemoteImapSSLServerEnabled);	
+	return (value == 'TRUE' && ZaServerXFormView.getRemoteIMAPEnabled.call(this));
+}
+
+ZaServerXFormView.isImapdInstalled = function(server) {
+	if(server.attrs[ZaServer.A_zimbraImapdServiceInstalled] == true) {
+		return true;
+	}
+	
+	return false;
+}
+
 ZaServerXFormView.volumeSelectionListener = 
 function (ev) {
 	//var instance = this.getInstance();
@@ -661,6 +679,11 @@ ZaServerXFormView.MTA_SERVICE_GROUP_ATTRS = [ZaServer.A_ImapServerEnabled, ZaSer
 ZaServerXFormView.BIND_IP_TAB_ATTRS = [ZaServer.A_zimbraMailBindAddress, ZaServer.A_zimbraMailSSLBindAddress,
 									ZaServer.A_zimbraMailSSLClientCertBindAddress, ZaServer.A_zimbraAdminBindAddress];
 ZaServerXFormView.BIND_IP_TAB_RIGHTS = [];
+
+ZaServerXFormView.IMAPD_TAB_ATTRS = [ZaServer.A_zimbraRemoteImapServerEnabled, ZaServer.A_zimbraRemoteImapSSLServerEnabled,
+	ZaServer.A_zimbraReverseProxyUpstreamImapServers, ZaServer.A_zimbraRemoteImapBindPort, ZaServer.A_zimbraRemoteImapSSLBindPort];
+ZaServerXFormView.IMAPD_TAB_RIGHTS = [];
+
 /**
 * This method is added to the map {@link ZaTabView#XFormModifiers}
 * @param xFormObject {Object} a definition of the form. This method adds/removes/modifies xFormObject to construct
@@ -706,6 +729,14 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
         tabBarChoices.push ({value:_tab5, label:ZaMsg.NAD_Tab_IMAP});
         this.helpMap[_tab5] = [location.pathname, ZaUtil.HELP_URL, "managing_servers/configuring_imap_settings.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
     }
+
+	if(ZaServerXFormView.isImapdInstalled(entry)) {
+		if(ZaTabView.isTAB_ENABLED(entry,ZaServerXFormView.IMAPD_TAB_ATTRS, ZaServerXFormView.IMAPD_TAB_RIGHTS)) {
+			_tab9 = ++this.TAB_INDEX;
+			tabBarChoices.push ({value:_tab9, label:ZaMsg.NAD_Tab_IMAPD});
+			//this.helpMap[_tab9] = [location.pathname, ZaUtil.HELP_URL, "managing_servers/setting_up_ip_address_binding.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
+		}
+	}
 
     if(ZaTabView.isTAB_ENABLED(entry,ZaServerXFormView.POP_TAB_ATTRS, ZaServerXFormView.POP_TAB_RIGHTS)) {
         _tab6 = ++this.TAB_INDEX;
@@ -1272,8 +1303,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 						  	},
 							{ ref: ZaServer.A_zimbraPop3BindPort, type:_TEXTFIELD_,
 						      enableDisableChangeEventSources:[ZaServer.A_Pop3ServerEnabled],
-						      enableDisableChecks:[ZaServerXFormView.getPOP3Enabled,ZaItem.hasWritePermission],
-
+							  enableDisableChecks:[ZaServerXFormView.getPOP3Enabled,ZaItem.hasWritePermission],							  
 							  label: ZaMsg.LBL_POP_Port,
 							  labelLocation:_LEFT_,
 							  textFieldCssClass:"admin_xform_number_input",
@@ -1425,6 +1455,82 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 			switchItems.push (case8) ;
 		}
 
+		if(_tab9) {
+			var case9 = {type:_ZATABCASE_, colSizes:["auto"],numCols:1, caseKey:_tab9, id:"server_remote_imap_tab",
+				items:[{ type: _DWT_ALERT_,
+					containerCssStyle: "padding-bottom:0;",
+					style: DwtAlert.INFO,
+					iconVisible: false,
+					content: ZaMsg.Alert_ServerRestart
+				}]
+			};
+
+			if(ZAGroup_XFormItem.isGroupVisible(entry,ZaServerXFormView.IMAPD_TAB_ATTRS,[])) {
+				case9.items.push({
+					type:_ZA_TOP_GROUPER_, colSizes:["275", "100%"], numCols:2,label:ZaMsg.Global_IMAPD_ServiceGrp,
+					items: [{
+						ref : ZaServer.A_zimbraReverseProxyUpstreamImapServers,
+						type : _SUPER_REPEAT_,
+						label : ZaMsg.Reverse_Proxy_Upstream_Imap,
+						labelLocation : _LEFT_,
+						align : _LEFT_,
+						resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
+						repeatInstance : "",
+						showAddButton : true,
+						showRemoveButton : true,
+						showAddOnNextRow : true,
+						addButtonLabel : ZaMsg.Add_zimbraReverseProxyUpstreamImapServers,
+						removeButtonLabel : ZaMsg.Remove_zimbraReverseProxyUpstreamImapServers,
+						removeButtonCSSStyle : "margin-left: 50px",
+						visibilityChecks : [ ZaItem.hasReadPermission ],
+						repeatItems : [{
+							ref : ".",
+							type : _TEXTFIELD_,
+							label : null,
+							labelLocation : _NONE_,
+							width : 200,
+							toolTipContent : ZaMsg.tt_zimbraReverseProxyUpstreamImapServers,
+							visibilityChecks : [ ZaItem.hasReadPermission ]
+						}]
+					},{ 
+						ref: ZaServer.A_zimbraRemoteImapServerEnabled, type: _SUPER_CHECKBOX_,
+						checkBoxLabel:ZaMsg.Remote_IMAP_Server,
+						trueValue: "TRUE", falseValue: "FALSE",
+						onChange: ZaServerXFormView.onFormFieldChanged,
+						resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
+					},{ 
+						ref: ZaServer.A_zimbraRemoteImapSSLServerEnabled, type: _SUPER_CHECKBOX_,
+						checkBoxLabel:ZaMsg.Remote_IMAP_SSLServer,
+						trueValue: "TRUE", falseValue: "FALSE",
+						onChange: ZaServerXFormView.onFormFieldChanged,
+						resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
+					}]
+				});
+			}
+			
+			if(ZAGroup_XFormItem.isGroupVisible(entry,ZaServerXFormView.IMAPD_TAB_ATTRS,[])) {
+				case9.items.push({
+					type:_ZA_TOP_GROUPER_, label:ZaMsg.Global_IMAPD_NetworkGrp,
+					items: [{
+						ref: ZaServer.A_zimbraRemoteImapBindPort, type: _SUPER_TEXTFIELD_,
+						enableDisableChecks:[ZaServerXFormView.getRemoteIMAPEnabled, ZaItem.hasReadPermission],
+						enableDisableChangeEventSources:[ZaServer.A_zimbraRemoteImapServerEnabled],
+						label: ZaMsg.Remote_IMAP_Bind_Port, textFieldWidth: "5em",
+						onChange: ZaServerXFormView.onFormFieldChanged,
+						resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
+					}, {
+						ref: ZaServer.A_zimbraRemoteImapSSLBindPort, type: _SUPER_TEXTFIELD_,
+						enableDisableChecks:[ZaServerXFormView.getRemoteIMAPEnabled, ZaServerXFormView.getRemoteIMAPSSLEnabled, ZaItem.hasReadPermission],
+						enableDisableChangeEventSources:[ZaServer.A_zimbraRemoteImapServerEnabled, ZaServer.A_zimbraRemoteImapSSLServerEnabled],
+						label: ZaMsg.Remote_IMAP_SSL_Bind_Port, textFieldWidth: "5em",
+						onChange: ZaServerXFormView.onFormFieldChanged,
+						resetToSuperLabel:ZaMsg.NAD_ResetToGlobal
+					}]
+				});
+			}
+		   
+			switchItems.push (case9) ;
+	   	}
 
     xFormObject.tableCssStyle="width:100%;position:static;overflow:auto;";
 

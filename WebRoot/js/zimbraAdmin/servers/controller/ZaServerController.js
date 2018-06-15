@@ -165,8 +165,13 @@ function () {
 ZaServerController.prototype._saveChanges =
 function () {
 	var obj = this._view.getObject();
-    if (this._currentObject[ZaModel.currentTab]!= obj[ZaModel.currentTab])
-             this._currentObject[ZaModel.currentTab] = obj[ZaModel.currentTab];
+	if (this._currentObject[ZaModel.currentTab]!= obj[ZaModel.currentTab]) {
+		this._currentObject[ZaModel.currentTab] = obj[ZaModel.currentTab];
+	}
+ 
+	//Check validation of reverse proxy upstream imap server
+	ZaServerController.prototype.validateReverseProxyUpstreamImapServers.call(this);
+	
 	this._currentObject.modify(obj);
 	this._view.setDirty(false);
     ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(AjxMessageFormat.format(ZaMsg.ServerModified,[this._currentObject.name]));
@@ -472,6 +477,60 @@ function (params) {
 }
 ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validateImapSSLBindPort);
 
+ZaServerController.prototype.validateRemoteImapBindPort =
+function (params) {
+	if(!ZaItem.hasWritePermission(ZaServer.A_zimbraRemoteImapBindPort,this._currentObject)) {
+		this.runValidationStack(params);
+		return;
+	}		
+	var obj = this._view.getObject();
+ 	var tmpObj = {selectedChoice:0, choice1Label:"",choice2Label:"",choice3Label:"",warningMsg:"",fieldRef:""};
+
+	if (obj.attrs[ZaServer.A_zimbraMailProxyServiceEnabled] != this._currentObject.attrs[ZaServer.A_zimbraMailProxyServiceEnabled] && obj.attrs[ZaServer.A_zimbraMailProxyServiceEnabled] == true) {
+		if ((obj.attrs[ZaServer.A_zimbraRemoteImapBindPort] != ZaServer.DEFAULT_REMOTE_IMAP_PORT_ZCS && (obj.attrs[ZaServer.A_zimbraRemoteImapBindPort] != null)) || (obj.attrs[ZaServer.A_zimbraRemoteImapBindPort] == null && (obj._defaultValues.attrs[ZaServer.A_zimbraRemoteImapBindPort] != ZaServer.DEFAULT_REMOTE_IMAP_PORT_ZCS))) {
+			tmpObj.defVal = ZaServer.DEFAULT_REMOTE_IMAP_PORT_ZCS;
+			tmpObj.warningMsg = AjxMessageFormat.format(ZaMsg.Server_WrongPortWarning,[ZaMsg.IMAP_Port,obj.attrs[ZaServer.A_zimbraRemoteImapBindPort]]);
+			tmpObj.choice1Label = AjxMessageFormat.format(ZaMsg.Server_WrongPortWarning_OP1,[ZaMsg.IMAP_Port,ZaServer.DEFAULT_REMOTE_IMAP_PORT_ZCS]);
+			tmpObj.choice2Label = AjxMessageFormat.format(ZaMsg.Server_WrongPortWarning_OP2,[ZaMsg.IMAP_Port,obj.attrs[ZaServer.A_zimbraRemoteImapBindPort]]);			
+			tmpObj.choice3Label = ZaMsg.Server_WrongPortWarning_OP3;		
+			tmpObj.fieldRef = ZaServer.A_zimbraRemoteImapBindPort;
+			ZaServerController.showPortWarning.call(this, params,tmpObj);
+		} else {
+			this.runValidationStack(params);
+			return;
+		}
+	} else {
+		this.runValidationStack(params);
+		return;
+	}
+}
+ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validateRemoteImapBindPort);
+
+ZaServerController.prototype.validateRemoteImapSSLBindPort =
+function (params) {
+	var obj = this._view.getObject();
+ 	var tmpObj = {selectedChoice:0, choice1Label:"",choice2Label:"",choice3Label:"",warningMsg:"",fieldRef:""};
+
+	if( (obj.attrs[ZaServer.A_zimbraMailProxyServiceEnabled] != this._currentObject.attrs[ZaServer.A_zimbraMailProxyServiceEnabled] && obj.attrs[ZaServer.A_zimbraMailProxyServiceEnabled] == true)) {
+		if ((obj.attrs[ZaServer.A_zimbraRemoteImapSSLBindPort] != ZaServer.DEFAULT_REMOTE_IMAP_SSL_PORT_ZCS && (obj.attrs[ZaServer.A_zimbraRemoteImapSSLBindPort] != null)) || (obj.attrs[ZaServer.A_zimbraRemoteImapSSLBindPort] == null && (obj._defaultValues.attrs[ZaServer.A_zimbraRemoteImapSSLBindPort] != ZaServer.DEFAULT_REMOTE_IMAP_SSL_PORT_ZCS))) { 
+			tmpObj.defVal = ZaServer.DEFAULT_REMOTE_IMAP_SSL_PORT_ZCS;
+			tmpObj.warningMsg = AjxMessageFormat.format(ZaMsg.Server_WrongPortWarning,[ZaMsg.IMAP_Port,obj.attrs[ZaServer.A_zimbraRemoteImapSSLBindPort]]);
+			tmpObj.choice1Label = AjxMessageFormat.format(ZaMsg.Server_WrongPortWarning_OP1,[ZaMsg.IMAP_SSLPort,ZaServer.DEFAULT_REMOTE_IMAP_SSL_PORT_ZCS]);
+			tmpObj.choice2Label = AjxMessageFormat.format(ZaMsg.Server_WrongPortWarning_OP2,[ZaMsg.IMAP_SSLPort,obj.attrs[ZaServer.A_zimbraRemoteImapSSLBindPort]]);			
+			tmpObj.choice3Label = ZaMsg.Server_WrongPortWarning_OP3;				
+			tmpObj.fieldRef = ZaServer.A_zimbraRemoteImapSSLBindPort;
+			ZaServerController.showPortWarning.call(this, params,tmpObj);
+		} else {
+			this.runValidationStack(params);
+			return;
+		}
+	} else {
+		this.runValidationStack(params);
+		return;
+	}
+}
+ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validateRemoteImapSSLBindPort);
+
 ZaServerController.prototype.validatePop3BindPort =
 function (params) {
 	if(!ZaItem.hasWritePermission(ZaServer.A_zimbraPop3BindPort,this._currentObject)) {
@@ -688,6 +747,81 @@ function (params) {
 	}
 }
 ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validatePop3SSLProxyBindPort);
+
+ZaServerController.prototype.validateReverseProxyUpstreamImapServers = 
+function (params) {
+	if(!ZaItem.hasWritePermission(ZaServer.A_zimbraReverseProxyUpstreamImapServers,this._currentObject)) {
+		this.runValidationStack(params);
+		return;
+	}
+	var obj = this._view.getObject();
+	var invalidValues = [];
+	var isValidValue = true;
+
+	if(obj.attrs[ZaServer.A_zimbraReverseProxyUpstreamImapServers]) {
+		var proxies = obj.attrs[ZaServer.A_zimbraReverseProxyUpstreamImapServers];
+
+		if (proxies.length == 1 && proxies[0] == "") {
+			this.runValidationStack(params);
+			return;
+		}
+
+		for(var i = 0; i < proxies.length; i++) {
+			if(!ZaServerController.isValidHostName(proxies[i])) {
+				isValidValue = false;
+			}
+			if(!isValidValue) {
+				try {
+					var exIPData = ZaIPUtil.isValidIP(proxies[i]);
+					isValidValue = true;
+				} catch (ex) {
+					isValidValue = false;
+				}
+			}
+			if(!isValidValue) {
+				invalidValues.push(proxies[i]);
+			}
+		}
+	}
+
+	if(invalidValues.length > 0) {
+		throw new AjxException(AjxMessageFormat.format(ZaMsg.ERROR_INVALID_IP_OR_HOSTNAME,invalidValues.join(",")),AjxException.INVALID_PARAM,"ZaServerController.prototype.validateReverseProxyUpstreamImapServers");
+	} else {
+		this.runValidationStack(params);
+	}	
+}
+
+ZaXFormViewController.preSaveValidationMethods["ZaServerController"].push(ZaServerController.prototype.validateReverseProxyUpstreamImapServers);
+
+ZaServerController.isValidHostName =
+function (isHostNameStr) {
+	if (!isHostNameStr) {
+		return false;
+	}
+   
+	//Check isHostNameStr has '.' at index 0 (First dot in host name)
+	if (isHostNameStr[0] == ".") {
+		return false;
+	}
+       
+	//Check isHostNameStr has '.' at the end of host name (Last dot in host name)
+	if (isHostNameStr[isHostNameStr.length -1] == ".") {
+		return false;
+	}
+        
+	//Invalid host name that has two or more adjacent dot
+	for(var i = 0; i < isHostNameStr.length - 1; i++) {
+		if (isHostNameStr[i] == "." && isHostNameStr[i+1] == ".") {
+			return false;
+		}  
+	}
+	
+	if(AjxUtil.isHostName(isHostNameStr)) {
+		return true;
+	}
+
+	return false;
+}
 
 
 ZaServerController.showPortWarning = function (params, instanceObj) {
