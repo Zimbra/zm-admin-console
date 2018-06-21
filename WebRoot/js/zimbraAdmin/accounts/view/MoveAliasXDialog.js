@@ -159,7 +159,8 @@ function() {
 										form.parent._button[MoveAliasXDialog.MOVE_BUTTON].setEnabled(true);
 									}
 									this.setInstanceValue(value);	
-								}									
+								},
+                autoCompleteEnabled : true
 							}	
 						]
 					}, 
