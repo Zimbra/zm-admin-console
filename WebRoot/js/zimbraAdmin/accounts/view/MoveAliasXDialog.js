@@ -160,7 +160,7 @@ function() {
 									}
 									this.setInstanceValue(value);	
 								},
-                autoCompleteEnabled : true
+								autoCompleteEnabled : true
 							}	
 						]
 					}, 
