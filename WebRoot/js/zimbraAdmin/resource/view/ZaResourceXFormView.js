@@ -530,8 +530,9 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 	    headerItems.push({type:_OUTPUT_, ref:ZaResource.A_mailHost, labelLocation:_LEFT_,label:ZaMsg.NAD_MailServer, getDisplayValue: AjxUtil.htmlEncode});
     }
 	
-    if (ZaItem.hasReadPermission(ZaResource.A_name, entry))
+    if (AjxUtil.isEmailAddress(entry[ZaAccount.A_name], false)) {
     	headerItems.push({type:_OUTPUT_, ref:ZaResource.A_name, label:ZaMsg.NAD_Email, labelLocation:_LEFT_, required:false, getDisplayValue: AjxUtil.htmlEncode});
+    }
 
     if (ZaItem.hasReadPermission(ZaResource.A_accountStatus, entry))
 	    headerItems.push({type:_OUTPUT_,  ref:ZaResource.A_accountStatus, label:ZaMsg.NAD_ResourceStatus, labelLocation:_LEFT_, choices:ZaResource.accountStatusChoices});

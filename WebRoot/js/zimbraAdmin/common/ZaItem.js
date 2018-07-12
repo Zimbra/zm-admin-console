@@ -912,8 +912,8 @@ ZaItem.initDescriptionItem = function () {
        //    visibilityChecks:[ZaItem.hasReadPermission],
         items: [
             {ref:".", type:_TEXTFIELD_,
-                enableDisableChecks:[ZaItem.hasWritePermission] ,
-                visibilityChecks:[ZaItem.hasReadPermission],
+                enableDisableChecks:[] ,
+                visibilityChecks:[],
                 width:"30em"}
         ]
     } ;
