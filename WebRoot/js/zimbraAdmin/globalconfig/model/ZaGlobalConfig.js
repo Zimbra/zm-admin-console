@@ -229,6 +229,9 @@ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection = "retentionPoliciesPurge_Sel
 ZaGlobalConfig.A_zimbraHelpAdminURL = "zimbraHelpAdminURL";
 ZaGlobalConfig.A_zimbraHelpDelegatedURL = "zimbraHelpDelegatedURL";
 
+//Ephemeral Backend
+ZaGlobalConfig.A_zimbraEphemeralBackendURL = "zimbraEphemeralBackendURL";
+
 ZaGlobalConfig.__configInstance = null;
 ZaGlobalConfig.isDirty = true;
 
@@ -628,14 +631,17 @@ ZaGlobalConfig.myXModel = {
             type: _ENUM_, choices: ZaSettings.authorizationScheme },
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeServerType, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeServerType,
             type: _ENUM_, choices: ZaSettings.exchangeServerType },
-	{ id:ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
+	    { id:ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
         { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ },
         {id:ZaGlobalConfig.A2_blocked_extension_selection, type:_LIST_},
         {id:ZaGlobalConfig.A2_common_extension_selection, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesKeep, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesPurge, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesKeep_Selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type:_LIST_}
+        {id:ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type:_LIST_},
+
+        //Ephemeral Backend
+        { id:ZaGlobalConfig.A_zimbraEphemeralBackendURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraEphemeralBackendURL, type:_STRING_, maxLength: 128 }
 
     ]
 }

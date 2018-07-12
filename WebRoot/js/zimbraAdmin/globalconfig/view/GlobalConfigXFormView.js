@@ -367,7 +367,7 @@ GlobalConfigXFormView.AUTH_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSpnegoAuthEnable
         ZaGlobalConfig.A_zimbraWebClientLoginURL, ZaGlobalConfig.A_zimbraWebClientLogoutURL,
         ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA,
         ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP,
-        ZaGlobalConfig.A_zimbraForceClearCookies ];
+        ZaGlobalConfig.A_zimbraForceClearCookies, ZaGlobalConfig.A_zimbraEphemeralBackendURL ];
 GlobalConfigXFormView.AUTH_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.SKIN_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSkinForegroundColor,
@@ -1572,6 +1572,16 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     msgName : ZaMsg.MSG_zimbraForceClearCookies,
                     labelLocation : _LEFT_
                 } ]
+            },
+            {
+                type : _ZA_TOP_GROUPER_,
+                label : ZaMsg.NAD_Ephemeral_Setting,
+                items : [ {
+                        ref : ZaGlobalConfig.A_zimbraEphemeralBackendURL,
+                        type : _TEXTFIELD_,
+                        width : "200px",
+                        label : ZaMsg.LBL_zimbraEphemeralBackendURL
+                    } ]
             } ]
         };
         switchItems.push(case10);
