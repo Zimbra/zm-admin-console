@@ -1589,7 +1589,8 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
         tabIx = ++this.TAB_INDEX;
         this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "managing_domains/installing_ssl_certificate_for_a_domain.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
         tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_Certificate});
-		var case9a = {type:_ZATABCASE_, numCols:1, caseKey:tabIx, colSizes: ["100%"],
+        var case9a = {type:_ZATABCASE_, numCols:1, caseKey:tabIx, colSizes: ["100%"],
+                      id:"domain_form_cert_tab",
 			items: [
 
                 {type: _DWT_ALERT_,
