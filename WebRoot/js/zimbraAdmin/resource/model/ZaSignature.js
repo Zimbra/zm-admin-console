@@ -103,6 +103,9 @@ function(by, val) {
 			&& !ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,ZaAccount.getDomain(this.name))) {
 		return;
 	}
+	if(!ZaZimbraAdmin.isGlobalAdmin() && this.attrs[ZaResource.A_accountStatus] != ZaResource.ACCOUNT_STATUS_ACTIVE) {
+		return;
+	}
 	
     var soapDoc = AjxSoapDoc.create("GetSignaturesRequest", "urn:zimbraAccount", null);
 

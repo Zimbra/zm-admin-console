@@ -1686,7 +1686,7 @@ ZaDLXFormView.myXFormModifier = function(xFormObject, entry) {
 							nowrap : false,
 							msgName : ZaMsg.LBL_DL_Type,
 							subLabel : "",
-							visibilityChecks : [],
+							visibilityChecks : [ZaDLXFormView.hasListGroupRight],
 							enableDisableChecks : false
 						}
 						,
@@ -2333,4 +2333,8 @@ ZaDLXFormView.prototype.updateMemberList = function(entry) {
 		ZaDLXFormView._copyAttrFromEntry( xform, instance, entry );
 		xform.setInstance(instance);
 	}
+}
+
+ZaDLXFormView.hasListGroupRight = function(){
+	return ZaZimbraAdmin.haveTargetRight(ZaItem.GROUP, ZaDomain.RIGHT_LIST_GROUP, ZaAccount.getDomain(this.getInstance().getName()));
 }

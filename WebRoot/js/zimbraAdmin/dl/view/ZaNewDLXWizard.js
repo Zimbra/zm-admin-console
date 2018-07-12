@@ -1376,7 +1376,7 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
                                     nowrap: false,
                                     msgName: ZaMsg.LBL_DL_Type,
                                     subLabel: "",
-                                    visibilityChecks: [],
+                                    visibilityChecks: [ZaZimbraAdmin.canCreateGroup],
                                     enableDisableChecks: [],
                                     elementChanged: function (elementValue, instanceValue, event) {
                                         var memberItem = this.getParentItem().items[2];

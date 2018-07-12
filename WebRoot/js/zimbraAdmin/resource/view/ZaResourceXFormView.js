@@ -440,7 +440,7 @@ ZaResourceXFormView.isSignatureSelectionEnabled = function() {
 	return (!AjxUtil.isEmpty(this.getInstanceValue(ZaResource.A2_signatureList)));
 }
 
-ZaResourceXFormView.isSignagureSectionVisible = function () {
+ZaResourceXFormView.isSignatureSectionVisible = function () {
 	return (ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,this.getInstance().name)
 	|| ZaZimbraAdmin.haveTargetRight(ZaItem.RESOURCE,ZaResource.VIEW_RESOURCE_MAIL_RIGHT,ZaAccount.getDomain(this.getInstance().name)));
 }
@@ -684,7 +684,7 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 		type : _TOP_GROUPER_,
 		label : ZaMsg.NAD_SignatureGrouper,
 		id : "resource_form_signature_group",
-		visibilityChecks:[ZaResourceXFormView.isSignagureSectionVisible],
+		visibilityChecks:[ZaResourceXFormView.isSignatureSectionVisible],
 		colSizes : [ "275px", "*" ],
 		numCols : 2,
 		items : [
@@ -778,8 +778,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 					width : "280px",
 					label : ZaMsg.NAD_zimbraPrefCalendarAutoAcceptSignatureId,
 					labelLocation : _LEFT_,
-					visibilityChecks : [],
-					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					visibilityChecks : [ZaItem.hasReadPermission],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled, ZaItem.hasWritePermission ],
 					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
 					valueChangeEventSources : [ ZaResource.A2_signatureList ],
 					choices : this.signatureChoices
@@ -791,8 +791,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 					width : "280px",
 					label : ZaMsg.NAD_zimbraPrefCalendarAutoDeclineSignatureId,
 					labelLocation : _LEFT_,
-					visibilityChecks : [],
-					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					visibilityChecks : [ZaItem.hasReadPermission],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled, ZaItem.hasWritePermission ],
 					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
 					valueChangeEventSources : [ ZaResource.A2_signatureList ],
 					choices : this.signatureChoices
@@ -804,8 +804,8 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
 					width : "280px",
 					label : ZaMsg.NAD_zimbraPrefCalendarAutoDenySignatureId,
 					labelLocation : _LEFT_,
-					visibilityChecks : [],
-					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled ],
+					visibilityChecks : [ZaItem.hasReadPermission],
+					enableDisableChecks : [ ZaResourceXFormView.isSignatureSelectionEnabled, ZaItem.hasWritePermission ],
 					enableDisableChangeEventSources : [ ZaResource.A2_signatureList ],
 					valueChangeEventSources : [ ZaResource.A2_signatureList ],
 					choices : this.signatureChoices
@@ -854,16 +854,19 @@ ZaResourceXFormView.myXFormModifier = function(xFormObject, entry) {
                 ]},
                 {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_LocationInfo, colSizes:["275px","*"],numCols:2, items:[
                     {type:_GROUP_, numCols:3,colSizes:["156px","22px","100px"], nowrap:true, msgName:ZaMsg.NAD_LocationDisplayName, label:ZaMsg.NAD_LocationDisplayName, labelLocation:_LEFT_,
+                        visibilityChecks:[[ZaItem.hasReadPermission,ZaResource.A_locationDisplayName]],
                         items: [
                             {ref:ZaResource.A_locationDisplayName, type:_TEXTFIELD_, label:null, cssClass:"admin_xform_name_input", width:defaultWidth,
-				enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname],
+                                enableDisableChecks:[ZaResourceXFormView.isAutoDisplayname, ZaItem.hasWritePermission],
                                 enableDisableChangeEventSources:[ZaResource.A2_autoLocationName],bmolsnr:true
                             },
                             {ref:ZaResource.A2_autoLocationName, type:_CHECKBOX_, msgName:ZaMsg.NAD_Auto,
                                 subLabel:"",
                                 label:ZaMsg.NAD_Auto,labelLocation:_RIGHT_,
                                 trueValue:"TRUE", falseValue:"FALSE",
-                                elementChanged: ZaResource.setAutoLocationName
+                                elementChanged: ZaResource.setAutoLocationName,
+                                enableDisableChecks:[[ZaItem.hasWritePermission,ZaResource.A_locationDisplayName]],
+                                visibilityChecks:[[ZaItem.hasReadPermission,ZaResource.A_locationDisplayName]]
                             }
                     ]},
                     {ref:ZaResource.A_zimbraCalResSite, type:_TEXTFIELD_, msgName:ZaMsg.NAD_Site,label:ZaMsg.NAD_Site,
