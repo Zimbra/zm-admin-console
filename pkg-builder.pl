@@ -62,7 +62,7 @@ my %PKG_GRAPH = (
 
    "zimbra-mbox-admin-console-war" => {
       summary    => "Zimbra Admin Console War",
-      version    => "1.0.0",
+      version    => "2.0.0",
       revision   => 1,
       hard_deps  => [],
       soft_deps  => [],
