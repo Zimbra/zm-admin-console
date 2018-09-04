@@ -22,6 +22,11 @@
     <property name="overlay.dir" value="${env.APP_OVERLAY}" />
     <property name="overlay.lib.dir" value="${overlay.dir}/jars" />
 
+    <!-- Property added to have the functionality of passing version as an argument  -->
+    <property name="admconsole.ext.patch.revision" value="1" />
+    <property name="admconsole.ext.patch.version"
+        value="${zimbra.buildinfo.majorversion}.${zimbra.buildinfo.minorversion}.${zimbra.buildinfo.microversion}"/>
+
     <!-- default web.xml token replacements -->
     <property name="webxml.zimbraAdminURL" value="/zimbraAdmin" />
     <property name="webxml.zimbraMailURL" value="/" />
@@ -1405,7 +1410,12 @@ ext = BeanUtils.cook(ext);
     </target>
 
     <target name="pkg" depends="clean-pkg, admin-war">
-        <exec dir="." executable="./pkg-builder.pl" failonerror="true"/>
+	<exec dir="." executable="./pkg-builder.pl" failonerror="true" >
+	<arg value="-v"/>
+	<arg value="${admconsole.ext.patch.version}"/>
+	<arg value="-r"/>
+	<arg value="${admconsole.ext.patch.revision}"/>
+	</exec>
     </target>
 
     <target name="clean-pkg">
