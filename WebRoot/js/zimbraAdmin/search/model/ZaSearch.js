@@ -653,7 +653,7 @@ ZaSearch.getObjectCounts = function(types, callback) {
             type = "userAccount"; // exclude system account
         }
         getCountDoc.setAttribute("type", type);
-        if (ZaZimbraAdmin.isGlobalAdmin() === "FALSE" && type == ZaItem.DOMAIN && ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] === "TRUE") {
+        if (ZaZimbraAdmin.isGlobalAdmin() === false && type == ZaItem.DOMAIN && ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] === "TRUE") {
             getCountDoc.setAttribute("onlyRelated", "true");
         }
     }
