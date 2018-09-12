@@ -16,7 +16,6 @@ use Term::ANSIColor;
 
 my %DEFINES = ();
 
-# Codded added to give functionality of taking version from the variables
  my $sc_name = basename("$0");
  my $usage   = "usage: $sc_name -v package_version -r package_release\n";
  our($opt_v, $opt_r);
@@ -28,7 +27,6 @@ my %DEFINES = ();
  my $version = "$opt_v";
  $version =~ s/_/./g;
  my $revision = $opt_r;
-# End of code 
 
 sub parse_defines()
 {
