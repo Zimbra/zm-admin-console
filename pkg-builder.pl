@@ -10,6 +10,7 @@ use File::Basename;
 use File::Copy;
 use File::Path qw/make_path/;
 use Getopt::Long;
+use Getopt::Std;
 use IPC::Cmd qw/run can_run/;
 use Term::ANSIColor;
 
