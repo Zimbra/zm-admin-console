@@ -1389,6 +1389,15 @@ ZaZimbraAdmin.canCreateDL = function() {
             && ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_DL].some));
 }
 
+ZaZimbraAdmin.canCreateGroup = function() {
+    return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[ZaItem.DOMAIN]
+        && ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_GROUP]
+        && ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_GROUP].some)
+        || (ZaSettings.targetRights[ZaItem.GLOBAL_GRANT]
+            && ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_GROUP]
+            && ZaSettings.targetRights[ZaItem.GLOBAL_GRANT][ZaDomain.RIGHT_CREATE_GROUP].some));
+}
+
 ZaZimbraAdmin.canCreateCalRes = function() {
     return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[ZaItem.DOMAIN]
         && ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_CALRES]
@@ -1414,8 +1423,10 @@ ZaZimbraAdmin.canChangeExchangeConfig = function() {
 }
 
 ZaZimbraAdmin.haveTargetRight = function(targetType, rightName, targetName) {
-    return (ZaZimbraAdmin.isGlobalAdmin() || (ZaSettings.targetRights[targetType][rightName] 
-            && ZaSettings.targetRights[targetType][rightName][targetName]));
+    return (ZaZimbraAdmin.isGlobalAdmin()
+        || (ZaSettings.targetRights[targetType][rightName]
+            && (ZaSettings.targetRights[targetType][rightName][targetName]
+                || ZaSettings.targetRights[targetType][rightName].all)));
 }
 
 ZaZimbraAdmin.haveAnyTargetRight = function(targetType, rightName) {

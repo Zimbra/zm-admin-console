@@ -438,6 +438,10 @@ ZaSettings.SERVER_STATS_VIEW = "perServerStatisticsView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.SERVER_STATS_VIEW, label: ZaMsg.UI_Comp_ServerStatsView });
 ZaSettings.DOWNLOADS_VIEW = "downloadsView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.DOWNLOADS_VIEW, label: ZaMsg.UI_Comp_DownloadsView });
+ZaSettings.HELP_CENTER_VIEW = "helpCenterView";
+ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.HELP_CENTER_VIEW, label: ZaMsg.UI_Comp_HelpCenterView });
+ZaSettings.STATUS_PANE = "statusPane";
+ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.STATUS_PANE, label: ZaMsg.UI_Comp_StatusPane });
 }
 ZaSettings.initConst();
 
@@ -508,7 +512,8 @@ ZaSettings.OVERVIEW_MONITORING_ITEMS = [ZaSettings.GLOBAL_STATS_VIEW,ZaSettings.
 ZaSettings.OVERVIEW_MANAGER_ACCOUNT_ITEMS = [ZaSettings.ACCOUNT_LIST_VIEW,ZaSettings.ALIAS_LIST_VIEW,ZaSettings.DL_LIST_VIEW,ZaSettings.RESOURCE_LIST_VIEW];
 ZaSettings.OVERVIEW_ADMIN_ITEMS = [ZaSettings.COS_LIST_VIEW,ZaSettings.ZIMLET_LIST_VIEW,ZaSettings.SERVER_LIST_VIEW,ZaSettings.ADMIN_ZIMLET_LIST_VIEW,
     ZaSettings.DOMAIN_LIST_VIEW,ZaSettings.GLOBAL_CONFIG_VIEW];
-ZaSettings.OVERVIEW_TOOLS_ITEMS = [ZaSettings.MAILQ_VIEW,ZaSettings.DOWNLOADS_VIEW];
+ZaSettings.HELP_CENTER_ITEMS = [ZaSettings.HELP_CENTER_VIEW];
+ZaSettings.STATUS_PANE_ITEMS = [ZaSettings.STATUS_PANE];
 ZaSettings.OVERVIEW_MONITORING_ITEMS = [ZaSettings.MAILQ_VIEW, ZaSettings.GLOBAL_STATUS_VIEW,ZaSettings.SERVER_STATS_VIEW];
 //Domain operations  - it might be duplicated to domain view tabs
 ZaSettings.DOMAIN_GAL_WIZ = "domainGALWizard";

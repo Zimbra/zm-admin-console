@@ -1376,7 +1376,7 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
                                     nowrap: false,
                                     msgName: ZaMsg.LBL_DL_Type,
                                     subLabel: "",
-                                    visibilityChecks: [],
+                                    visibilityChecks: [ZaZimbraAdmin.canCreateGroup],
                                     enableDisableChecks: [],
                                     elementChanged: function (elementValue, instanceValue, event) {
                                         var memberItem = this.getParentItem().items[2];
@@ -2311,32 +2311,11 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
                             enableDisableChangeEventSources: [ZaDistributionList.A_zimbraPrefReplyToEnabled]
                         },
                         {
-                            type: _DYNSELECT_,
+                            type: _TEXTFIELD_,
                             ref: ZaDistributionList.A_zimbraPrefReplyToAddress,
-                            dataFetcherClass: ZaSearch,
-                            dataFetcherMethod: ZaSearch.prototype.dynSelectSearch,
-                            dataFetcherTypes: [
-                                ZaSearch.ACCOUNTS,
-                                ZaSearch.RESOURCES,
-                                ZaSearch.DLS
-                            ],
-                            dataFetcherAttrs: [
-                                ZaItem.A_zimbraId,
-                                ZaItem.A_cn,
-                                ZaAccount.A_name,
-                                ZaAccount.A_displayname,
-                                ZaAccount.A_mail
-                            ],
                             label: ZaMsg.DLXV_ReplayToAddr,
-                            emptyText: ZaMsg.DLXV_ReplayToAddrEmptyText,
                             editable: true,
                             forceUpdate: true,
-                            choices: new XFormChoices(
-                                [],
-                                XFormChoices.OBJECT_LIST,
-                                "name",
-                                "name"
-                            ),
                             visibilityChecks: [
                                 [
                                     ZaItem.hasReadPermission,
@@ -2354,14 +2333,7 @@ ZaNewDLXWizard.myXFormModifier = function(xFormObject, entry) {
                                     ZaItem.hasWritePermission,
                                     ZaDistributionList.A_zimbraPrefReplyToAddress
                                 ]
-                            ],
-                            onChange: function (value, event, form) {
-                                if (value instanceof ZaItem ) {
-                                    this.setInstanceValue(value.name);
-                                } else {
-                                    this.setInstanceValue(value);
-                                }
-                            }
+                            ]
                         }
                     ]
                 }

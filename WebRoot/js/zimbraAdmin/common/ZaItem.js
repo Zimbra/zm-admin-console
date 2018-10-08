@@ -49,7 +49,7 @@ ZaItem.getRelatedMethods = new Object();
 ZaItem.ACCOUNT = "account";
 ZaItem.DATASOURCE = "dataSource";
 ZaItem.DL = "dl";
-ZaItem.GROUP = "grp";
+ZaItem.GROUP = "group";
 ZaItem.ALIAS = "alias";
 ZaItem.RESOURCE = "calresource";
 ZaItem.DOMAIN = "domain";
@@ -912,8 +912,8 @@ ZaItem.initDescriptionItem = function () {
        //    visibilityChecks:[ZaItem.hasReadPermission],
         items: [
             {ref:".", type:_TEXTFIELD_,
-                enableDisableChecks:[ZaItem.hasWritePermission] ,
-                visibilityChecks:[ZaItem.hasReadPermission],
+                enableDisableChecks:[] ,
+                visibilityChecks:[],
                 width:"30em"}
         ]
     } ;

@@ -121,7 +121,7 @@ ZaFp.getProviders = function () {
         if (providers != null) {
             for (var i=0; i < providers.length; i ++) {
                 ZaFp.INTEROP_PROVIDER_CHOICES.push (
-                    { value: providers[i].prefix,
+                    { value: providers[i].prefix || "",  // set an empty string if a provider is ZIMBRA
                       label: providers[i].name }
                 );
             }
@@ -138,10 +138,11 @@ ZaFp.getProviders = function () {
 //@prefix: foreign principal prefixes
 ZaFp.findDupPrefixFp = function (entries, prefix) {
     for (var i =0 ; i < entries.length; i ++) {
-        if (entries[i].indexOf(prefix) == 0) {
+        // if a new provider is ZIMBRA, the prefix is empty string ""
+        if ((prefix.length == 0 && entries[i].indexOf(":") == -1) || 
+            (prefix.length != 0 && entries[i].indexOf(prefix) == 0)) {
             return true;
         }
     }
-
     return false;
 }
