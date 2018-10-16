@@ -532,7 +532,7 @@ ZaMTAXFormView.myXFormModifier = function(xFormObject) {
     headerList[1] = new ZaListHeaderItem(ZaMTAQSummaryItem.A_count_col, ZaMsg.PQV_count_col, null, "38px", false, null, true, true);
 
 	var msgHeaderList = new Array();
-	msgHeaderList[0] = new ZaListHeaderItem(ZaMTAQMsgItem.A_id, ZaMsg.PQV_qid_col, null, "100px", null, null, true, true);
+	msgHeaderList[0] = new ZaListHeaderItem(ZaMTAQMsgItem.A_id, ZaMsg.PQV_qid_col, null, "132px", null, null, true, true);
 
     if(ZaZimbraAdmin.LOCALE=="en"||ZaZimbraAdmin.LOCALE=="en_AU"||ZaZimbraAdmin.LOCALE=="en_GB"){
         msgHeaderList[1] = new ZaListHeaderItem(ZaMTAQMsgItem.A_recipients, ZaMsg.PQV_recipients_col, null, "136px", null, null, true, true);
