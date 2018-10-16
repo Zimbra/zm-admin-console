@@ -595,7 +595,7 @@ function() {
 	if (!this._toolTip) {
 		var html = new Array(20);
 		var idx = 0;
-		html[idx++] = AjxStringUtil.htmlEncode(this[ZaMTAQSummaryItem.A_text]);
+		html[idx++] = AjxStringUtil.trimHtml(AjxStringUtil.wordWrap({text: AjxStringUtil.htmlEncode(this[ZaMTAQSummaryItem.A_text]), prefix: "<br/>&nbsp;&nbsp;&nbsp;"})).replace(/^&nbsp;&nbsp;&nbsp;/,"");
 		html[idx++] = "<br>";
 		html[idx++] = this[ZaMTAQSummaryItem.A_count];
 		html[idx++] = " ";
@@ -671,7 +671,7 @@ function() {
 		html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Size + " " + this[ZaMTAQMsgItem.A_size]);		
 		html[idx++] = "<br/>";
 		if(this[ZaMTAQMsgItem.A_error] !=null && this[ZaMTAQMsgItem.A_error] != undefined && this[ZaMTAQMsgItem.A_error].length>0)
-			html[idx++] = AjxStringUtil.htmlEncode(ZaMsg.PQ_Reason + " " + this[ZaMTAQMsgItem.A_error]);				
+			html[idx++] = AjxStringUtil.trimHtml(AjxStringUtil.wordWrap({text: AjxStringUtil.htmlEncode(ZaMsg.PQ_Reason + " " + this[ZaMTAQMsgItem.A_error]), prefix: "<br/>&nbsp;&nbsp;&nbsp;"})).replace(/^&nbsp;&nbsp;&nbsp;/,"");
 
 		this._toolTip = html.join("");
 	}
