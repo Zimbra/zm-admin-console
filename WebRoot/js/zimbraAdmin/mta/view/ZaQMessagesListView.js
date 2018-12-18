@@ -88,6 +88,11 @@ function(item) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
 				html[idx++] =item[ZaMTAQMsgItem.A_origin_ip];
 				html[idx++] = "</td>";
+			} else if(field == ZaMTAQMsgItem.A_fromdomain) {
+				// name
+				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+				html[idx++] =item[ZaMTAQMsgItem.A_fromdomain];
+				html[idx++] = "</td>";
 			}			
 		}
 	} else {
