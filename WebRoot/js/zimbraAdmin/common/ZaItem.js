@@ -1098,6 +1098,8 @@ ZaItem.adminHasAnyRight = function (rights) {
 
 ZaItem.formatServerTime = function(serverStr) {
 	if(serverStr) {
+		var regex = /(\d{14})\.\d{3}Z/;
+		serverStr = serverStr.replace(regex, '$1Z');
 		var ajxTKServerStr = serverStr.substring(0,8) + "T" + serverStr.substring(8) ;
 		var curDate = AjxDateUtil.parseServerDateTime(ajxTKServerStr);	
         var formatter = AjxDateFormat.getDateTimeInstance(AjxDateFormat.LONG) ;
