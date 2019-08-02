@@ -184,7 +184,7 @@ function(child, childHtmlElement) {
 ZaLoginDialog.prototype._loginSelListener =
 function() {
 	this.setCursor("wait");
-	var username = ZLoginFactory.get(ZLoginFactory.USER_ID).value;
+	var username = AjxStringUtil.htmlEncode(ZLoginFactory.get(ZLoginFactory.USER_ID).value);
 	if (!(username && username.length)) {
 		this.setError(ZaMsg.enterUsername);
 		return;
