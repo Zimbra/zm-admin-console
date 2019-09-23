@@ -697,10 +697,16 @@ function (entry) {
     ZaDLXFormView._copyAttrFromEntry( this._localXForm, this._containedObject, entry );
 
     //Utility members
-	this._containedObject[ZaDistributionList.A2_addList] = new Array(); //members to add
+	this._containedObject[ZaDistributionList.A2_addList] = entry [ZaDistributionList.A2_addList] || []; //members to add
 	this._containedObject[ZaDistributionList.A2_addList]._version = 1;
-	this._containedObject[ZaDistributionList.A2_removeList] = new Array(); //members to remove
+	this._containedObject[ZaDistributionList.A2_removeList] = entry [ZaDistributionList.A2_removeList] || [];  //members to remove
 	this._containedObject[ZaDistributionList.A2_removeList]._version = 1;
+
+	this._containedObject[ZaDistributionList.A2_memberList] = entry [ZaDistributionList.A2_memberList] || [];
+	this._containedObject[ZaDistributionList.A2_memberList]._version = 1;
+	this._containedObject[ZaDistributionList.A2_numMembers] = entry [ZaDistributionList.A2_numMembers] || 0 ;
+	this._containedObject[ZaDistributionList.A2_allMemberHash] = entry [ZaDistributionList.A2_allMemberHash] || {};
+	this._containedObject[ZaDistributionList.A2_allMemberPages] = entry [ZaDistributionList.A2_allMemberPages] || {};
 
 	this._containedObject[ZaDistributionList.A2_memberPool] = entry [ZaDistributionList.A2_memberPool] || [];
 	this._containedObject[ZaDistributionList.A2_memberPool]._version = 1;
