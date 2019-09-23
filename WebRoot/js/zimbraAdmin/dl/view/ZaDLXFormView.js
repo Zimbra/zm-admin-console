@@ -706,7 +706,7 @@ function (entry) {
 	this._containedObject[ZaDistributionList.A2_memberList]._version = 1;
 	this._containedObject[ZaDistributionList.A2_numMembers] = entry [ZaDistributionList.A2_numMembers] || 0 ;
 	this._containedObject[ZaDistributionList.A2_allMemberHash] = entry [ZaDistributionList.A2_allMemberHash] || {};
-	this._containedObject[ZaDistributionList.A2_allMemberPages] = entry [ZaDistributionList.A2_allMemberPages] || {};
+	this._containedObject[ZaDistributionList.A2_allMemberPages] = entry [ZaDistributionList.A2_allMemberPages] || [];
 
 	this._containedObject[ZaDistributionList.A2_memberPool] = entry [ZaDistributionList.A2_memberPool] || [];
 	this._containedObject[ZaDistributionList.A2_memberPool]._version = 1;
