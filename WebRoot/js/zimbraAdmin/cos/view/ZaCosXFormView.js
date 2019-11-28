@@ -489,13 +489,14 @@ ZaCosXFormView.addButtonListener = function (isPurge) {
         policy = new ZaRetentionPolicy();
     }
 
-    if(!ZaApp.getInstance().dialogs["newRetentionPolicyDialog"]) {
+    //Removing if condition for ZBUG-1138 as zimbraMailPurgeSystemPolicy is added into different CoS if it does not load new instance everytime
+    //if(!ZaApp.getInstance().dialogs["newRetentionPolicyDialog"]) {
         ZaApp.getInstance().dialogs["newRetentionPolicyDialog"] =
             new ZaRetentionPolicyDlg(ZaApp.getInstance().getAppCtxt().getShell(), "500px","100px", ZaMsg.TTL_Policy_Add);
         ZaApp.getInstance().dialogs["newRetentionPolicyDialog"].registerCallback(DwtDialog.OK_BUTTON,
             ZaCosXFormView.createRetentionPolicy,
             this, ZaApp.getInstance().dialogs["newRetentionPolicyDialog"]._localXForm);
-    }
+    //}
 
     ZaApp.getInstance().dialogs["newRetentionPolicyDialog"].setObject(policy);
     ZaApp.getInstance().dialogs["newRetentionPolicyDialog"].popup();
