@@ -88,7 +88,6 @@
 
     <property name="modernizr.version" value="2.8.3"/>
     <property name="yui.version" value="2.9.0-alfresco-20141223"/>
-    <property name="jquery.version" value="1.11.0"/>
 
 	<!-- customize admin skin -->
 	<if>
@@ -195,7 +194,6 @@
             </preserveintarget>
         </sync>
 
-        <antcall target="jquery" />
         <antcall target="modernizr" />
         <antcall target="yui" />
     </target>
@@ -1374,17 +1372,6 @@ ext = BeanUtils.cook(ext);
             <fileset dir="${jspc.src.dir}" />
             <fileset dir="${jspc.build.dir}" />
         </delete>
-    </target>
-
-    <!-- JQUERY Library -->
-    <target name="jquery" depends="resolve">
-        <ivy:install organisation="org.webjars" module="jquery" revision="${jquery.version}" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" />
-
-        <unzip src="${build.tmp.dir}/jquery-${jquery.version}.jar" dest="${build.tmp.dir}/jquery" overwrite="true" />
-
-        <copy todir="${3rdparty.dir}/jquery">
-            <fileset dir="${build.tmp.dir}/jquery/META-INF/resources/webjars/jquery/${jquery.version}" />
-        </copy>
     </target>
 
     <!-- MODERNIZR Library -->
