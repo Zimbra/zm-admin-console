@@ -88,9 +88,9 @@
     <property name="3rdparty.dir" value="${build.js.dir}/ajax/3rdparty" />
 
     <property name="modernizr.version" value="2.8.3"/>
-    <property name="yui.version" value="2.7.0"/>
     <property name="jquery.version" value="3.5.1"/>
     <property name="chartjs.version" value="2.9.3"/>
+    <property name="yui.version" value="2.9.0-alfresco-20140211"/>
 
 	<!-- customize admin skin -->
 	<if>
@@ -142,7 +142,7 @@
         <property name='build.admin' value='true'/>
         <property name='deploy.app' value='zimbraAdmin'/>
         <property name='skins.dir' value='${web.dir}/admin_skins'/>
-        <property name='web.includes' value='${common.web.includes},yui/2.7.0/**'/>
+        <property name='web.includes' value='${common.web.includes},yui/2.9.0-alfresco-20140211/**'/>
         <property name='web.excludes' value='${common.web.excludes}'/>
         <property name='jsp.includes' value='${common.jsp.includes}'/>
         <property name='jsp.excludes' value='${common.jsp.excludes}'/>
