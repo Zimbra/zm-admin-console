@@ -192,10 +192,14 @@
 </style>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-<script type="text/javascript" src="${contextPath}/yui/2.7.0/yahoo-dom-event/yahoo-dom-event.js"></script> 
-<script type="text/javascript" src="${contextPath}/yui/2.7.0/element/element-min.js"></script> 
-<script type="text/javascript" src="${contextPath}/yui/2.7.0/datasource/datasource-min.js"></script> 
-<script type="text/javascript" src="${contextPath}/yui/2.7.0/json/json-min.js"></script> 
+<script type="text/javascript" src="${contextPath}/yui/2.9.0-alfresco-20140211/yahoo-dom-event/yahoo-dom-event.js"></script> 
+<script type="text/javascript" src="${contextPath}/yui/2.9.0-alfresco-20140211/element/element-min.js"></script> 
+<script type="text/javascript" src="${contextPath}/yui/2.9.0-alfresco-20140211/datasource/datasource-min.js"></script> 
+<script type="text/javascript" src="${contextPath}/yui/2.9.0-alfresco-20140211/json/json-min.js"></script> 
+<script type="text/javascript" src="${contextPath}/yui/2.9.0-alfresco-20140211/charts/charts-min.js"></script> 
+<script type="text/javascript">
+    YAHOO.widget.Chart.SWFURL = "yui/2.9.0-alfresco-20140211/charts/assets/charts.swf";
+</script>
 
 <jsp:include page="Boot.jsp"/>
 <script>
