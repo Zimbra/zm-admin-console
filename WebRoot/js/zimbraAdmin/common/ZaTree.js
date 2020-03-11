@@ -620,7 +620,7 @@ function (dataItem) {
 
 
     var historyObject = new ZaHistory(path, text, type);
-    var historyMgr = ZaZimbraAdmin.getInstance().getHisotryMgr();
+    var historyMgr = ZaZimbraAdmin.getInstance().getHistoryMgr();
     historyMgr.addHistoryObj(historyObject);
     var objList = historyMgr.getAllHistoryObj().getArray();
     var ti = null;
