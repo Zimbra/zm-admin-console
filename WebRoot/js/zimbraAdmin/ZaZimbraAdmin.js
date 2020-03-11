@@ -1028,7 +1028,7 @@ function() {
         
 }
 
-ZaZimbraAdmin.prototype.getHisotryMgr =
+ZaZimbraAdmin.prototype.getHistoryMgr =
 function() {
     return this._historyMgr;
 }

@@ -1787,7 +1787,7 @@ ZaOverviewPanelController.prototype.addObjectItem = function(parentPath, name, c
     }
 
     var historyObject = new ZaHistory(namePath, name, relatedZaItem ? relatedZaItem.type : null);
-    ZaZimbraAdmin.getInstance().getHisotryMgr().addHistoryObj(historyObject);
+    ZaZimbraAdmin.getInstance().getHistoryMgr().addHistoryObj(historyObject);
 
     if (needToAddNameNode) {
         var parentDataItem = tree.getTreeItemDataByPath(parentPath);
@@ -1928,7 +1928,7 @@ ZaOverviewPanelController.prototype.getRelatedList = function(parentPath, item) 
 }
 
 ZaOverviewPanelController.prototype.getRecentList = function() {
-    var historyMgr = ZaZimbraAdmin.getInstance().getHisotryMgr();
+    var historyMgr = ZaZimbraAdmin.getInstance().getHistoryMgr();
     var objList = historyMgr.getAllHistoryObj().getArray();
     var Tis = [];
     var ti = null;
