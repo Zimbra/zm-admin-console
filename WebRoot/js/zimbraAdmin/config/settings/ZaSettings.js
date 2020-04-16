@@ -480,8 +480,8 @@ ZaSettings.apptVisibilityChoices = ZaSettings.getApptVisibilityChoices;
 
 ZaSettings.getClientTypeChoices = function(){
   return [
-    {value:"advanced", label:ZaMsg.clientAdvanced},
-    {value:"standard", label:ZaMsg.clientStandard}
+    {value:"advanced", label:ZaMsg.clientClassic},
+    {value:"modern", label:ZaMsg.clientModern},
     ];
 }
 ZaSettings.clientTypeChoices = ZaSettings.getClientTypeChoices;

@@ -206,7 +206,7 @@
 <jsp:include page="/js/ajax/util/AjxTimezoneData.js" />
 </script>
 <%
-    String packages = "Ajax,XForms,Zimbra,Admin";
+    String packages = "JQuery,Ajax,XForms,Zimbra,Admin";
 
     String extraPackages = request.getParameter("packages");
     if (extraPackages != null) packages += "," + BeanUtils.cook(extraPackages);
@@ -226,6 +226,7 @@
         <% } %>
     <% }
 %>
+
 <script type="text/javascript">
 AjxEnv.DEFAULT_LOCALE = "${zm:javaLocaleId(pageContext.request.locale)}";
 </script>
