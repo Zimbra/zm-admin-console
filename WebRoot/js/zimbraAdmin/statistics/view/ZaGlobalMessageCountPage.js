@@ -58,7 +58,6 @@ ZaGlobalMessageCountPage.prototype.showMe =  function(refresh) {
 	}
 	this._contentEl.style.width = this.parent.getHtmlElement().style.width;	// resize page to fit parent
 
-	ZaGlobalAdvancedStatsPage.detectFlash(document.getElementById("loggerchartglobalmc-flashdetect"));
 	if (refresh)
 	    this.setObject();
 }
@@ -77,24 +76,23 @@ function () {
 	DwtTabViewPage.prototype._createHtml.call(this);
 	var idx = 0;
 	var html = new Array(50);
-	html[idx++] = "<div style='display:none;' id='loggerchartglobalmc-flashdetect'></div>";	
 	html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_MC_Header + "</div>";	
 	html[idx++] = "<div class='StatsDiv'>";	
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-count-48hours'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-count-48hours'></canvas><div id='loggerchartglobal-message-count-48hours'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-count-30days'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-count-30days'></canvas><div id='loggerchartglobal-message-count-30days'></div>";	
 	html[idx++] = "</div>";	
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-count-60days'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-count-60days'></canvas><div id='loggerchartglobal-message-count-60days'></div>";	
 	html[idx++] = "</div>";		
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-count-year'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-count-year'></canvas><div id='loggerchartglobal-message-count-year'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "</div>";
 	this.getHtmlElement().innerHTML = html.join("");

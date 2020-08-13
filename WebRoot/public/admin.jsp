@@ -196,17 +196,13 @@
 <script type="text/javascript" src="${contextPath}/yui/2.7.0/element/element-min.js"></script> 
 <script type="text/javascript" src="${contextPath}/yui/2.7.0/datasource/datasource-min.js"></script> 
 <script type="text/javascript" src="${contextPath}/yui/2.7.0/json/json-min.js"></script> 
-<script type="text/javascript" src="${contextPath}/yui/2.7.0/charts/charts-min.js"></script> 
-<script type="text/javascript">
-    YAHOO.widget.Chart.SWFURL = "yui/2.7.0/charts/assets/charts.swf";
-</script>
 
 <jsp:include page="Boot.jsp"/>
 <script>
 <jsp:include page="/js/ajax/util/AjxTimezoneData.js" />
 </script>
 <%
-    String packages = "JQuery,Ajax,XForms,Zimbra,Admin";
+    String packages = "JQuery,Ajax,XForms,Zimbra,Admin,Chartjs";
 
     String extraPackages = request.getParameter("packages");
     if (extraPackages != null) packages += "," + BeanUtils.cook(extraPackages);
