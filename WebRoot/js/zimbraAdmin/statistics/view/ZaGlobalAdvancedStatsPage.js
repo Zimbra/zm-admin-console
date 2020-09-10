@@ -80,11 +80,10 @@ function (){
 };
 
 
-ZaGlobalAdvancedStatsPage.getDataTipText = function (item, index, series) {
-    var text = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsDataTip,
-             [ series.displayName, YAHOO.util.Date.format(item.timestamp, { format: ZaMsg.NAD_AdvStatsTipDateFormat }) ]) +
-             "\n" +
-             ZaGlobalAdvancedStatsPage.formatLabel(item[series.yField]);
+ZaGlobalAdvancedStatsPage.getDataTipText = function (item, index, displayName) {
+    var text = [AjxMessageFormat.format(ZaMsg.NAD_AdvStatsDataTip,
+             [ displayName, YAHOO.util.Date.format(item.xLabel, { format: ZaMsg.NAD_AdvStatsTipDateFormat }) ]),
+             ZaGlobalAdvancedStatsPage.formatLabel(item.value)];
     return text;
 }
 /* must be global for getDataTipText */
@@ -356,7 +355,10 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
         var dx = newData[1].timestamp.getTime() - newData[0].timestamp.getTime();
         dx = dx / 1000 / 60;
         timeAxis.title = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsIntervalFormatMinutes, [ dx ]);
+    } else {
+        timeAxis.title = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsIntervalFormatMinutes, [ 0 ]);
     }
+
     timeAxis.labelFunction = function (value) {
         var ts0 = newData[0].timestamp.getTime();
         var ts1 = newData[newData.length - 1].timestamp.getTime();
@@ -379,8 +381,8 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
 
     var new_labels = [], new_datasets = [];
     newData.forEach(function(nd){
-        new_labels.push(timeAxis.labelFunction(nd.timestamp));
-        new_datasets.push(nd.mta_count);
+        new_labels.push(nd.timestamp);
+        new_datasets.push(nd[colDef[0].yField]);
     });
     ZaGlobalAdvancedStatsPage.CHART_DATA_SOURCE = new_datasets;
 
@@ -397,6 +399,7 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
             }]
         },
         options: {
+            animation: false,
             responsive: true,
             maintainAspectRatio: false,
             legend: {
@@ -405,9 +408,17 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
             },
             tooltips: {
                 mode: 'point',
+                custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = false;
+                },
                 callbacks: {
+                    title: function() {
+                        return null;
+                    },
                     label: function (tooltipItems, data) {
-                        return data.datasets[tooltipItems.datasetIndex].label + " : " + ZaGlobalAdvancedStatsPage.formatLabel(tooltipItems.value);
+                        return ZaGlobalAdvancedStatsPage.getDataTipText(tooltipItems, undefined, data.datasets[tooltipItems.datasetIndex].label);
                     }
                 }
             },
@@ -426,7 +437,10 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
                         autoSkip: true,
                         display: true,
                         autoSkipPadding: 15,
-                        maxRotation: 0
+                        maxRotation: 0,
+                        callback: function(value) {
+                            return timeAxis.labelFunction(value);
+                        }
                     }
                 }],
                 yAxes: [{
@@ -434,14 +448,20 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
                     ticks: {
                         suggestedMin: 0,
                         suggestedMax: max + 10,
-                        maxTicksLimit: colDef[0].style.size
+                        maxTicksLimit: colDef[0].style.size,
+                        callback: function(value, index, values) {
+                            return value.toLocaleString();
+                        }
                     }
                 }]
             }
         }
     };
     var ctx = document.getElementById("loggercanvas" + id).getContext('2d');
-    new Chart(ctx, config);
+    if (window["loggercanvas" + id] && window["loggercanvas"+id].destroy !== undefined) {
+        window["loggercanvas" + id].destroy();
+    }
+    window["loggercanvas" + id] = new Chart(ctx, config);
 }
 
 ZaGlobalAdvancedStatsPage.prototype.setObject =
