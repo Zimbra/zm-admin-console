@@ -67,7 +67,6 @@ ZaServerDiskStatsPage.prototype.showMe =  function(refresh) {
 	    var item = this._currentObject;
         var serverId = this.serverId;
 
-        ZaGlobalAdvancedStatsPage.detectFlash(document.getElementById("loggerchart-flashdetect-" + serverId));
         if (!this._disks) {
             var counters = ZaGlobalAdvancedStatsPage.getCounters(item.name, 'df.csv');
             var diskKeys = {};
@@ -110,24 +109,23 @@ function () {
     var html = new Array(50);
 	DwtTabViewPage.prototype._createHtml.call(this);
 	var serverId = this.serverId;
-	html[idx++] = "<h1 style='display:none;' id='loggerchart-flashdetect-" + serverId + "'></h1>";
 	//html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_MC_Header + "</div>";	
 	html[idx++] = "<div class='StatsDiv'>";	
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-disk-stat-48hours-" + serverId + "'></div>";	
+	html[idx++] = "<canvas id='loggercanvasserver-disk-stat-48hours-" + serverId + "'><div id='loggerchartserver-disk-stat-48hours-" + serverId + "'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-disk-stat-30days-" + serverId + "'></div>";	
+	html[idx++] = "<canvas id='loggercanvasserver-disk-stat-30days-" + serverId + "'><div id='loggerchartserver-disk-stat-30days-" + serverId + "'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-disk-stat-60days-" + serverId + "'></div>";	
+	html[idx++] = "<canvas id='loggercanvasserver-disk-stat-60days-" + serverId + "'><div id='loggerchartserver-disk-stat-60days-" + serverId + "'></div>";	
 	html[idx++] = "</div>";		
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-disk-stat-year-" + serverId + "'></div>";
+	html[idx++] = "<canvas id='loggercanvasserver-disk-stat-year-" + serverId + "'><div id='loggerchartserver-disk-stat-year-" + serverId + "'></div>";
 	html[idx++] = "</div>";
 	html[idx++] = "</div>";
 	this.getHtmlElement().innerHTML = html.join("");
