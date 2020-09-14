@@ -60,7 +60,6 @@ ZaGlobalSpamActivityPage.prototype.showMe =  function(refresh) {
     }
     this._contentEl.style.width = this.parent.getHtmlElement().style.width;	// resize page to fit parent
 
-	ZaGlobalAdvancedStatsPage.detectFlash(document.getElementById("loggerchartglobalasav-flashdetect"));
 	if(refresh) {
 		this.setObject();
 	}
@@ -80,24 +79,23 @@ function () {
 	DwtTabViewPage.prototype._createHtml.call(this);
 	var idx = 0;
 	var html = new Array(50);
-	html[idx++] = "<h1 style='display:none;' id='loggerchartglobalasav-flashdetect'></h1>";		
 	html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_AV_Header + "</div>";	
 	html[idx++] = "<div class='StatsDiv'>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-asav-48hours'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-asav-48hours'><div id='loggerchartglobal-message-asav-48hours'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-asav-30days'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-asav-30days'><div id='loggerchartglobal-message-asav-30days'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-asav-60days'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-asav-60days'><div id='loggerchartglobal-message-asav-60days'></div>";	
 	html[idx++] = "</div>";	
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</div>";	
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartglobal-message-asav-year'></div>";	
+	html[idx++] = "<canvas id='loggercanvasglobal-message-asav-year'><div id='loggerchartglobal-message-asav-year'></div>";	
 	html[idx++] = "</div>";
 	html[idx++] = "</div>";
 	this.getHtmlElement().innerHTML = html.join("");
