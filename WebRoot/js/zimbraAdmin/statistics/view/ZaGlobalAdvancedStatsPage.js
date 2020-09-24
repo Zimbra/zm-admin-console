@@ -94,6 +94,13 @@ ZaGlobalAdvancedStatsPage.formatTimeLabel = function (value) {
     return YAHOO.util.Date.format(value, { format: ZaMsg.NAD_AdvStatsLabelDateFormat });
 }
 
+ZaGlobalAdvancedStatsPage.dynamicColors = function() {
+    var r = Math.floor(Math.random() * 255);
+    var g = Math.floor(Math.random() * 255);
+    var b = Math.floor(Math.random() * 255);
+    return "rgb(" + r + "," + g + "," + b + ")";
+};
+
 ZaGlobalAdvancedStatsPage.getTarget = function (evt) {
     if (evt && evt.target)
         return evt.target;
@@ -380,23 +387,41 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
     loggerCanvasEl.parentNode.style.height = "200px";
 
     var new_labels = [], new_datasets = [];
-    newData.forEach(function(nd){
-        new_labels.push(nd.timestamp);
-        new_datasets.push(nd[colDef[0].yField]);
-    });
+    if (this.lineColors === undefined) {
+        this.lineColors = { };
+    }
+
+    if (colDef.length > 1) {
+        colDef.forEach(function(cd){
+            if (!this.lineColors[cd.displayName]) {
+                this.lineColors[cd.displayName] = ZaGlobalAdvancedStatsPage.dynamicColors();
+            }
+        }, this);
+    } else {
+        this.lineColors[colDef[0].displayName] = "rgb(54, 162, 235)";
+    };
+
+    for(var data_set = 0; data_set < colDef.length; data_set++) {
+        new_datasets[data_set] = {
+            label: colDef[data_set].displayName,
+            backgroundColor: this.lineColors[colDef[data_set].displayName],
+            borderColor: this.lineColors[colDef[data_set].displayName],
+            data: [],
+            fill: false,
+        }
+        new_labels[data_set] = [];
+        newData.forEach(function(nd){
+            new_labels[data_set].push(nd.timestamp);
+            new_datasets[data_set].data.push(nd[colDef[data_set].yField]);
+        });
+    }
     ZaGlobalAdvancedStatsPage.CHART_DATA_SOURCE = new_datasets;
 
     var config = {
         type: 'line',
         data: {
-            labels: new_labels,
-            datasets: [{
-                label: colDef[0].displayName,
-                backgroundColor: "rgb(54, 162, 235)",
-                borderColor: "rgb(54, 162, 235)",
-                data: new_datasets,
-                fill: false,
-            }]
+            labels: new_labels[0],
+            datasets: new_datasets
         },
         options: {
             animation: false,

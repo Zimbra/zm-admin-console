@@ -106,7 +106,7 @@ function () {
 	DwtTabViewPage.prototype._createHtml.call(this);
 	html[idx++] = "<h1 style='display:none;' id='loggerchartservermc-no-mta-" + serverId + "'></h1>";
 	html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_MC_Header + "</div>";
-	html[idx++] = "<canvas id='loggercanvasservermc-" + serverId + "'><div class='StatsDiv' id='loggerchartservermc-" + serverId + "'>";
+	html[idx++] = "<div class='StatsDiv' id='loggerchartservermc-" + serverId + "'>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";
 	html[idx++] = "<div class='StatsImage'>";
 	html[idx++] = "<canvas id='loggercanvasserver-message-count-48hours-" + serverId + "'><div id='loggerchartserver-message-count-48hours-" + serverId + "'></div>";
