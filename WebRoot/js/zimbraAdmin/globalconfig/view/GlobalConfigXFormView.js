@@ -436,7 +436,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             "auto", null, null, true, true);
 
     xFormObject.tableCssStyle = "width:100%;overflow:auto;";
-    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11;
+    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11, _tab12;
 
     var tabBarChoices = [];
     var switchItems = [];
@@ -1739,6 +1739,123 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     } ]
         };
         switchItems.push(case11);
+    }
+
+    console.log('GlobalConfigXFormViewGlobalConfigXFormView','GlobalConfigXFormView', this);
+    if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS,
+        GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS)) {
+        _tab12 = ++this.TAB_INDEX;
+
+        var deviceHeaderList = new Array();
+        i = 0;
+//         MB_Email_Address_col = Email Address
+// MB_Last_Login_col = Last Login
+// MB_Device_col = Device
+// MB_Device_Id_col = Device ID
+// MB_Status_col = Status
+// MB_Eas_col = EAS
+// MB_Server_col = Server
+
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Email_Address, ZaMsg.MB_Email_Address_col, null, "200px",
+            sortable++, ZaRegisterDevice.RD_EmailAddress, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Last_Login, ZaMsg.MB_Last_Login_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device, ZaMsg.MB_Device_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device_ID, ZaMsg.MB_Device_Id_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Status, ZaMsg.MB_Status_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_EAS, ZaMsg.MB_Eas_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Server, ZaMsg.MB_Server_col, null,
+        "auto", null, null, true, true);
+
+        this.helpMap[_tab12] = [ location.pathname, ZaUtil.HELP_URL, "managing_global_settings/retention_policies.htm",
+            "?locid=", AjxEnv.DEFAULT_LOCALE ].join("");
+        tabBarChoices.push({
+            value : _tab12,
+            label : ZaMsg.TABT_Mobile
+        });
+        
+        var case12 = {
+            type : _SUPER_TABCASE_,
+            caseKey : _tab12,
+            paddingStyle : "padding-left:15px;",
+            width : "98%",
+            cellpadding : 2,
+            colSizes : [ "100%" ],
+            numCols : 1,
+            id : "global_retentionpolicy_tab",
+            loadDataMethods : [ GlobalConfigXFormView.prototype.loadRetentionPolicies ],
+            items : [
+                    {
+                        type : _ZA_TOP_GROUPER_,
+                        id : "global_form_purge_p_group",
+                        width : "98%",
+                        numCols : 1,
+                        colSizes : [ "auto" ],
+                        label : ZaMsg.Registered_Devices,
+                        cssStyle : "margin:10px;padding-bottom:0;",
+                        items : [
+                                {
+                                    ref : ZaGlobalConfig.A2_retentionPoliciesPurge,
+                                    type : _DWT_LIST_,
+                                    height : "200",
+                                    width : "99%",
+                                    preserveSelection : false,
+                                    multiselect : true,
+                                    cssClass : "DLSource",
+                                    headerList : deviceHeaderList,
+                                    widgetClass : ZaRegisteredDeviceListView,
+                                    onSelection : GlobalConfigXFormView.purgeSelectionListener,
+                                    valueChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge ]
+                                },
+                                {
+                                    type : _GROUP_,
+                                    numCols : 5,
+                                    colSizes : [ "100px", "auto", "100px", "auto", "100px" ],
+                                    width : "350px",
+                                    cssStyle : "margin:10px;padding-bottom:0;",
+                                    items : [
+                                            {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.TBB_Delete,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.deleteButtonListener.call(this, 1);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_retentionPoliciesPurge_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
+                                            },
+                                            {
+                                                type : _CELLSPACER_
+                                            },
+                                            {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.TBB_Edit,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.editButtonListener.call(this, 1);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_retentionPoliciesPurge_Selection);
+                                                    return sel && sel.length == 1;
+                                                } ]
+                                            }, {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.NAD_Add,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.addButtonListener.call(this,1);"
+                                            } ]
+                                } ]
+                    } ]
+        };
+        switchItems.push(case12);
     }
 
     this.tabChoices = tabBarChoices;
