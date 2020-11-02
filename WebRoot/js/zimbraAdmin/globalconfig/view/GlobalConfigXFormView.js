@@ -161,6 +161,10 @@ GlobalConfigXFormView.purgeSelectionListener = function() {
     this.getForm().setInstanceValue(this.getSelection(), ZaGlobalConfig.A2_retentionPoliciesPurge_Selection);
 }
 
+GlobalConfigXFormView.registeredDeviceSelectionListener = function() {
+    this.getForm().setInstanceValue(this.getSelection(), ZaGlobalConfig.A2_registeredDevice_Selection);
+}
+
 GlobalConfigXFormView.deleteButtonListener = function(isPurge) {
     var selected = this.getForm().getInstanceValue(ZaGlobalConfig.A2_retentionPoliciesKeep_Selection);
 
@@ -325,6 +329,62 @@ GlobalConfigXFormView.updateRetentionPolicy = function(form) {
     }
 }
 
+GlobalConfigXFormView.suspendSyncListener = function() {
+    var form = this.getForm()
+    var obj = form.getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection)[0];
+
+    var result = ZaRegisterDevice.quarantineDevice(obj)[0];
+    GlobalConfigXFormView.updateRegisteredDeviceList(obj, result, form);
+}
+
+GlobalConfigXFormView.removeDeviceListener = function() {
+    var selected = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection)[0];
+
+    var all = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice);
+
+    if (!selected) {
+        return;
+    }
+
+    ZaRegisterDevice.removeDevice(selected);
+    AjxUtil.arrayRemove(all, selected);
+
+    this.getForm().setInstanceValue([], ZaGlobalConfig.A2_registeredDevice);
+    this.getForm().setInstanceValue(all, ZaGlobalConfig.A2_registeredDevice);
+    this.getForm().setInstanceValue([], ZaGlobalConfig.A2_registeredDevice_Selection);
+}
+
+GlobalConfigXFormView.resumeSyncListener = function() {
+    var form = this.getForm();
+    var obj = form.getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection)[0];
+    var result = ZaRegisterDevice.allowDeviceSync(obj)[0];
+
+    GlobalConfigXFormView.updateRegisteredDeviceList(obj,result, form);
+}
+
+GlobalConfigXFormView.updateRegisteredDeviceList = function(obj, result, form) {
+    var all = form.getInstanceValue(ZaGlobalConfig.A2_registeredDevice);
+
+    if (result && obj && obj[ZaRegisterDevice.RD_Status] !==  result[ZaRegisterDevice.RD_Status]) {
+        var index = AjxUtil.indexOf(all, obj);
+
+        AjxUtil.arrayRemove(all, obj);
+        AjxUtil.arrayAdd(all, result, index);
+
+        form.setInstanceValue([], ZaGlobalConfig.A2_registeredDevice);
+        form.setInstanceValue(all, ZaGlobalConfig.A2_registeredDevice);
+        form.setInstanceValue([], ZaGlobalConfig.A2_registeredDevice_Selection);
+    }
+} 
+
+GlobalConfigXFormView.wipeDeviceListener = function() {
+    var form = this.getForm();
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection)[0];
+    var result = ZaRegisterDevice.wipeDevice(obj)[0];
+
+    GlobalConfigXFormView.updateRegisteredDeviceList(obj, result, form);
+}
+
 GlobalConfigXFormView.GENERAL_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraMailPurgeSleepInterval,
         ZaGlobalConfig.A_zimbraFileUploadMaxSize, ZaGlobalConfig.A_zimbraGalMaxResults,
         ZaGlobalConfig.A_zimbraDefaultDomainName, ZaGlobalConfig.A_zimbraScheduledTaskNumThreads ];
@@ -388,12 +448,23 @@ GlobalConfigXFormView.AUTO_PROV_TAB_RIGHTS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
+GlobalConfigXFormView.REGISTERED_DEVICES_TAB_ATTRS = []
+GlobalConfigXFormView.REGISTERED_DEVICES_TAB_RIGHTS = []
+
 GlobalConfigXFormView.prototype.loadRetentionPolicies = function() {
     var result = ZaRetentionPolicy.getRetentionPolicies();
 
     if (result) {
         this.getForm().setInstanceValue(result[ZaRetentionPolicy.TYPE_KEEP], ZaGlobalConfig.A2_retentionPoliciesKeep);
         this.getForm().setInstanceValue(result[ZaRetentionPolicy.TYPE_PURGE], ZaGlobalConfig.A2_retentionPoliciesPurge);
+    }
+}
+
+GlobalConfigXFormView.prototype.loadRegisteredDevices = function() {
+    var result = ZaRegisterDevice.getRegisteredDevices();
+
+    if (result) {
+        this.getForm().setInstanceValue(result, ZaGlobalConfig.A2_registeredDevice);
     }
 }
 
@@ -436,7 +507,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             "auto", null, null, true, true);
 
     xFormObject.tableCssStyle = "width:100%;overflow:auto;";
-    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11;
+    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11, _tab12;
 
     var tabBarChoices = [];
     var switchItems = [];
@@ -1610,8 +1681,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     {
                         type : _ZA_TOP_GROUPER_,
                         id : "global_form_keep_p_group",
-                        width : "98%",
                         numCols : 1,
+                        width : "98%",
                         colSizes : [ "auto" ],
                         label : ZaMsg.Glb_RetentionPolicies,
                         cssStyle : "margin:10px;padding-bottom:0;",
@@ -1739,6 +1810,168 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     } ]
         };
         switchItems.push(case11);
+    }
+
+    if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.REGISTERED_DEVICES_TAB_ATTRS,
+        GlobalConfigXFormView.REGISTERED_DEVICES_TAB_RIGHTS)) {
+        _tab12 = ++this.TAB_INDEX;
+
+        var deviceHeaderList = new Array();
+        i = 0;
+
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Email_Address, ZaMsg.MB_Email_Address_col, null, "200px",
+            sortable++, ZaRegisterDevice.RD_EmailAddress, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Last_Login, ZaMsg.MB_Last_Login_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device_Name, ZaMsg.MB_Device_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device_ID, ZaMsg.MB_Device_Id_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Status, ZaMsg.MB_Status_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_EAS_PROTOCOL, ZaMsg.MB_Eas_col, null,
+        "auto", null, null, true, true);
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Server, ZaMsg.MB_Server_col, null,
+        "auto", null, null, true, true);
+
+        tabBarChoices.push({
+            value : _tab12,
+            label : ZaMsg.TABT_Mobile
+        });
+
+        var case12 = {
+            type : _SUPER_TABCASE_,
+            caseKey : _tab12,
+            paddingStyle : "padding-left:15px;",
+            width : "98%",
+            cellpadding : 2,
+            colSizes : [ "100%" ],
+            numCols : 1,
+            id : "global_register_device_tab",
+            loadDataMethods : [ GlobalConfigXFormView.prototype.loadRegisteredDevices ],
+            items : [
+                    {
+                        type : _ZA_TOP_GROUPER_,
+                        id : "global_form_device_group",
+                        width : "100%",
+                        numCols : 1,
+                        colSizes : [ "100%" ],
+                        label : ZaMsg.MB_Registered_Devices,
+                        cssStyle : "margin:0;padding-bottom:0;",
+                        items : [
+                            {
+                                ref : ZaGlobalConfig.A2_registeredDevice_filter,
+                                type : _GROUP_,
+                                numCols : 1,
+                                colSizes : ["40px"],
+                                width : "40px",
+                                cssStyle : "margin:10px 0;padding-bottom:0;",
+                                id: "ZaGlobalConfig.A2_registeredDevice_filter",
+                                items : [ 
+                                    {
+                                        ref : "ZaGlobalConfig.A_zimbraWebClientLoginURL",
+                                        type : _INPUT_,
+                                        elementChanged:function(elementValue, instanceValue, event) {
+
+                                            if(event.charCode != 13)
+                                                return;
+
+                                            if(elementValue == instanceValue)
+                                                return;
+                                            
+                                            var result = ZaRegisterDevice.getFilteredDevices(elementValue);
+                                            
+                                            if (result) {
+                                                this.getForm().setInstanceValue(result, ZaGlobalConfig.A2_registeredDevice);
+                                            } else {
+                                                this.getForm().setInstanceValue([], ZaGlobalConfig.A2_registeredDevice);
+                                            }
+
+                                        },
+                                        label : ZaMsg.search_option_filter,
+                                        id: "ZaGlobalConfig.A2_registeredDevice_filter_child",
+                                        labelLocation : _LEFT_,
+                                        align: _LEFT_,
+                                        width: "600px"
+                                    } ]
+                                },
+                                {
+                                    ref : ZaGlobalConfig.A2_registeredDevice,
+                                    id : "global_form_device_group_child",
+                                    type : _DWT_LIST_,
+                                    height : "200",
+                                    width : "100%",
+                                    preserveSelection : false,
+                                    multiselect : false,
+                                    headerList : deviceHeaderList,
+                                    widgetClass : ZaRegisteredDeviceListView,
+                                    onSelection : GlobalConfigXFormView.registeredDeviceSelectionListener,
+                                    valueChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice ]
+                                },
+                                {
+                                    type : _GROUP_,
+                                    id : "global_form_device_group_child_2",
+                                    numCols : 7,
+                                    colSizes : ["100px", "auto", "100px", "auto", "100px",  "auto", "100px"],
+                                    width : "590px",
+                                    cssStyle : "margin:10px;padding-bottom:0;",
+                                    items : [
+                                            {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.DLXV_ButtonRemove,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.removeDeviceListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
+                                            },
+                                            {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.MB_But_Suspend,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.suspendSyncListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
+                                            }, {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.MB_But_Resume,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.resumeSyncListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
+                                            }, {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.MB_But_Wipe,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.wipeDeviceListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
+                                            } ]
+                                } ]
+                    } ]
+        };
+        switchItems.push(case12);
     }
 
     this.tabChoices = tabBarChoices;

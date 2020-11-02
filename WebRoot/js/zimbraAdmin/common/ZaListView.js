@@ -154,10 +154,21 @@ function (ev, listEv, clickedEl) {
 ZaListView.prototype._sortColumn = 
 function(columnItem, bSortAsc) {
 	if (bSortAsc) {
-		this._list.sort(ZaItem.compareNamesAsc);
+		
+		if(this.toString() === "ZaRegisteredDeviceListView") {
+			this._list.sort(ZaItem.compareEmailAddress(true));
+		} else {
+			this._list.sort(ZaItem.compareNamesAsc);
+		}
 	} else {
-    	this._list.sort(ZaItem.compareNamesDesc);
+
+		if(this.toString() === "ZaRegisteredDeviceListView") {
+			this._list.sort(ZaItem.compareEmailAddress(false));
+		} else {
+			this._list.sort(ZaItem.compareNamesDesc);
+		}
 	}
+	
 	this.setUI();
 }
 
