@@ -22,7 +22,7 @@
  */
  
  /**
- * @author Dongwei Feng
+ * @author Madhav Dhuppe
  **/
 ZaRegisteredDeviceListView = function(parent, className, posStyle, headerList) {
 	ZaListView.call(this, parent, className, posStyle, headerList);

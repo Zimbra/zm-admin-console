@@ -388,6 +388,9 @@ GlobalConfigXFormView.AUTO_PROV_TAB_RIGHTS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
+GlobalConfigXFormView.REGISTERED_DEVICES = []
+
+
 GlobalConfigXFormView.prototype.loadRetentionPolicies = function() {
     var result = ZaRetentionPolicy.getRetentionPolicies();
 
@@ -395,6 +398,12 @@ GlobalConfigXFormView.prototype.loadRetentionPolicies = function() {
         this.getForm().setInstanceValue(result[ZaRetentionPolicy.TYPE_KEEP], ZaGlobalConfig.A2_retentionPoliciesKeep);
         this.getForm().setInstanceValue(result[ZaRetentionPolicy.TYPE_PURGE], ZaGlobalConfig.A2_retentionPoliciesPurge);
     }
+}
+
+GlobalConfigXFormView.prototype.loadRegisteredDevices = function() {
+    var result = ZaRegisterDevice.getRegisteredDevices();
+
+    console.log(result,'result');
 }
 
 GlobalConfigXFormView.prototype.setObject = function(entry) {
@@ -1599,6 +1608,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
         var case11 = {
             type : _SUPER_TABCASE_,
             caseKey : _tab11,
+            id: "_SUPER_TABCASE__SUPER_TABCASE_",
             paddingStyle : "padding-left:15px;",
             width : "98%",
             cellpadding : 2,
@@ -1610,17 +1620,17 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     {
                         type : _ZA_TOP_GROUPER_,
                         id : "global_form_keep_p_group",
-                        width : "98%",
                         numCols : 1,
                         colSizes : [ "auto" ],
                         label : ZaMsg.Glb_RetentionPolicies,
-                        cssStyle : "margin:10px;padding-bottom:0;",
+                        cssStyle : "margin:10px;padding-bottom:0;max-width:1370px",
                         items : [
                                 {
                                     ref : ZaGlobalConfig.A2_retentionPoliciesKeep,
                                     type : _DWT_LIST_,
+                                    id: "DLSourceDLSourceDLSource",
                                     height : "200",
-                                    width : "99%",
+                                    width : "100%",
                                     preserveSelection : false,
                                     multiselect : true,
                                     cssClass : "DLSource",
@@ -1631,6 +1641,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                 },
                                 {
                                     type : _GROUP_,
+                                    id: "margin:10px;padding-bottom:",
                                     numCols : 5,
                                     colSizes : [ "100px", "auto", "100px", "auto", "100px" ],
                                     width : "350px",
@@ -1748,13 +1759,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
 
         var deviceHeaderList = new Array();
         i = 0;
-//         MB_Email_Address_col = Email Address
-// MB_Last_Login_col = Last Login
-// MB_Device_col = Device
-// MB_Device_Id_col = Device ID
-// MB_Status_col = Status
-// MB_Eas_col = EAS
-// MB_Server_col = Server
 
         deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Email_Address, ZaMsg.MB_Email_Address_col, null, "200px",
             sortable++, ZaRegisterDevice.RD_EmailAddress, true, true);
@@ -1789,38 +1793,42 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             id : "global_retentionpolicy_tab",
             loadDataMethods : [ GlobalConfigXFormView.prototype.loadRetentionPolicies ],
             items : [
+                    {},
                     {
                         type : _ZA_TOP_GROUPER_,
                         id : "global_form_purge_p_group",
-                        width : "98%",
+                        width : "100%",
                         numCols : 1,
                         colSizes : [ "auto" ],
                         label : ZaMsg.Registered_Devices,
-                        cssStyle : "margin:10px;padding-bottom:0;",
+                        cssStyle : "margin:0;padding-bottom:0;",
                         items : [
                                 {
                                     ref : ZaGlobalConfig.A2_retentionPoliciesPurge,
                                     type : _DWT_LIST_,
                                     height : "200",
-                                    width : "99%",
+                                    id : "global_form_purge_p_group_child",
+                                    width : "100%",
                                     preserveSelection : false,
                                     multiselect : true,
                                     cssClass : "DLSource",
+                                    cssStyle : "border:none;",
                                     headerList : deviceHeaderList,
                                     widgetClass : ZaRegisteredDeviceListView,
-                                    onSelection : GlobalConfigXFormView.purgeSelectionListener,
-                                    valueChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge ]
+                                    // onSelection : GlobalConfigXFormView.purgeSelectionListener,
+                                    // valueChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge ]
                                 },
                                 {
                                     type : _GROUP_,
-                                    numCols : 5,
-                                    colSizes : [ "100px", "auto", "100px", "auto", "100px" ],
-                                    width : "350px",
+                                    id : "global_form_purge_p_group_child_2",
+                                    numCols : 7,
+                                    colSizes : [ "100px", "auto", "100px", "auto", "100px",  "auto", "100px"],
+                                    width : "470px",
                                     cssStyle : "margin:10px;padding-bottom:0;",
                                     items : [
                                             {
                                                 type : _DWT_BUTTON_,
-                                                label : ZaMsg.TBB_Delete,
+                                                label : ZaMsg.DLXV_ButtonRemove,
                                                 width : "100px",
                                                 onActivate : "GlobalConfigXFormView.deleteButtonListener.call(this, 1);",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection ],
@@ -1835,7 +1843,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                             },
                                             {
                                                 type : _DWT_BUTTON_,
-                                                label : ZaMsg.TBB_Edit,
+                                                label : ZaMsg.bt_reset,
                                                 width : "100px",
                                                 onActivate : "GlobalConfigXFormView.editButtonListener.call(this, 1);",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection ],
@@ -1848,7 +1856,14 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 type : _CELLSPACER_
                                             }, {
                                                 type : _DWT_BUTTON_,
-                                                label : ZaMsg.NAD_Add,
+                                                label : ZaMsg.MB_But_Suspend,
+                                                width : "100px",
+                                                onActivate : "GlobalConfigXFormView.addButtonListener.call(this,1);"
+                                            }, {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.MB_But_Resume,
                                                 width : "100px",
                                                 onActivate : "GlobalConfigXFormView.addButtonListener.call(this,1);"
                                             } ]

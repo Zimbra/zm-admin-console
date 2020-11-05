@@ -341,6 +341,9 @@ INPUT.admin_xform_name_input_disabled {
 	width:auto;
 }
 
+.noBorder {
+	border: none;
+}
 .DLTarget { 
 	height:270px;
 }
