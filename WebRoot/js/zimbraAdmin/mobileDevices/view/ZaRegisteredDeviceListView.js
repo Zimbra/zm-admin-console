@@ -36,7 +36,6 @@ ZaRegisteredDeviceListView.prototype.toString = function() {
 
 ZaRegisteredDeviceListView.prototype._createItemHtml =
 function(item) {
-    console.log('_createItemHtml_createItemHtml', item);
 	var html = new Array(50);
 	var	div = document.createElement("div");
 	div[DwtListView._STYLE_CLASS] = "Row";
@@ -52,18 +51,35 @@ function(item) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			var field = this._headerList[i]._field;
-			if(field == ZaRetentionPolicy.A2_name) {
+			if(field == ZaRegisterDevice.RD_Email_Address) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-                html[idx++] = AjxStringUtil.htmlEncode(item[ZaRetentionPolicy.A2_name]);
+                html[idx++] = AjxStringUtil.htmlEncode("madhav@fjff.com");
 				html[idx++] = "</td>";
-			} else if(field == ZaRetentionPolicy.A2_lifetime) {
+			} else if(field == ZaRegisterDevice.RD_Last_Login) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-                var time = item[ZaRetentionPolicy.A2_lifetime];
-                var number = time.substr(0, time.length - 1);
-                var unit = time.substr(time.length - 1, 1);
-                html[idx++] = AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
+                html[idx++] = AjxMessageFormat.format("1 day ago");
 				html[idx++] = "</td>";
-			}
+			} else if(field == ZaRegisterDevice.RD_Device) {
+				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+                html[idx++] = "android" || AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
+				html[idx++] = "</td>";
+			} else if(field == ZaRegisterDevice.RD_Device_ID) {
+				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+                html[idx++] = "androidc2025213697"|| AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
+				html[idx++] = "</td>";
+			} else if(field == ZaRegisterDevice.RD_Status) {
+				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+				html[idx++] = "active" || AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
+				html[idx++] = "</td>";
+			} else if(field == ZaRegisterDevice.RD_EAS) {
+				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+				html[idx++] = "14.1" || AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
+				html[idx++] = "</td>";
+			} else if(field == ZaRegisterDevice.RD_Server) {
+				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+				html[idx++] = "Zdevv1" || AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
+				html[idx++] = "</td>";
+			}	
 		}
 	} else {
 		html[idx++] = "<td width=100%>";
@@ -75,7 +91,6 @@ function(item) {
 	div.innerHTML = html.join("");
 	return div;
 }
-
 
 ZaRegisteredDeviceListView.prototype._setNoResultsHtml = function() {
 	var buffer = new AjxBuffer();

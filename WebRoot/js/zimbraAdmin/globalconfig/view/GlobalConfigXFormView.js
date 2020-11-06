@@ -388,7 +388,9 @@ GlobalConfigXFormView.AUTO_PROV_TAB_RIGHTS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
-GlobalConfigXFormView.REGISTERED_DEVICES = []
+GlobalConfigXFormView.REGISTERED_DEVICES_TAB_ATTRS = []
+GlobalConfigXFormView.REGISTERED_DEVICES_TAB_RIGHTS = []
+
 
 
 GlobalConfigXFormView.prototype.loadRetentionPolicies = function() {
@@ -1608,7 +1610,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
         var case11 = {
             type : _SUPER_TABCASE_,
             caseKey : _tab11,
-            id: "_SUPER_TABCASE__SUPER_TABCASE_",
             paddingStyle : "padding-left:15px;",
             width : "98%",
             cellpadding : 2,
@@ -1621,16 +1622,16 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         type : _ZA_TOP_GROUPER_,
                         id : "global_form_keep_p_group",
                         numCols : 1,
+                        width : "98%",
                         colSizes : [ "auto" ],
                         label : ZaMsg.Glb_RetentionPolicies,
-                        cssStyle : "margin:10px;padding-bottom:0;max-width:1370px",
+                        cssStyle : "margin:10px;padding-bottom:0;",
                         items : [
                                 {
                                     ref : ZaGlobalConfig.A2_retentionPoliciesKeep,
                                     type : _DWT_LIST_,
-                                    id: "DLSourceDLSourceDLSource",
                                     height : "200",
-                                    width : "100%",
+                                    width : "99%",
                                     preserveSelection : false,
                                     multiselect : true,
                                     cssClass : "DLSource",
@@ -1641,7 +1642,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                 },
                                 {
                                     type : _GROUP_,
-                                    id: "margin:10px;padding-bottom:",
                                     numCols : 5,
                                     colSizes : [ "100px", "auto", "100px", "auto", "100px" ],
                                     width : "350px",
@@ -1753,8 +1753,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
     }
 
     console.log('GlobalConfigXFormViewGlobalConfigXFormView','GlobalConfigXFormView', this);
-    if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS,
-        GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS)) {
+    if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.REGISTERED_DEVICES_TAB_ATTRS,
+        GlobalConfigXFormView.REGISTERED_DEVICES_TAB_RIGHTS)) {
         _tab12 = ++this.TAB_INDEX;
 
         var deviceHeaderList = new Array();
@@ -1791,7 +1791,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             colSizes : [ "100%" ],
             numCols : 1,
             id : "global_retentionpolicy_tab",
-            loadDataMethods : [ GlobalConfigXFormView.prototype.loadRetentionPolicies ],
+            loadDataMethods : [ GlobalConfigXFormView.prototype.loadRegisteredDevices ],
             items : [
                     {},
                     {
@@ -1811,8 +1811,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                     width : "100%",
                                     preserveSelection : false,
                                     multiselect : true,
-                                    cssClass : "DLSource",
-                                    cssStyle : "border:none;",
                                     headerList : deviceHeaderList,
                                     widgetClass : ZaRegisteredDeviceListView,
                                     // onSelection : GlobalConfigXFormView.purgeSelectionListener,

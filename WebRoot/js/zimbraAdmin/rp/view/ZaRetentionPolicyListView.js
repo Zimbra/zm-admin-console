@@ -34,8 +34,10 @@ ZaRetentionPolicyListView.prototype.toString = function() {
 	return "ZaRetentionPolicyListView";
 };
 
+
 ZaRetentionPolicyListView.prototype._createItemHtml =
 function(item) {
+    console.log('_createItemHtml_createItemHtml', item);
 	var html = new Array(50);
 	var	div = document.createElement("div");
 	div[DwtListView._STYLE_CLASS] = "Row";
@@ -46,57 +48,23 @@ function(item) {
 	var idx = 0;
 	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
 
-// 	ZaRegisterDevice.RD_Last_Login = "Last Login";
-// ZaRegisterDevice.RD_Device = "Device";
-// ZaRegisterDevice.RD_Device_ID = "Device ID";
-// ZaRegisterDevice.RD_Status = "Status";
-// ZaRegisterDevice.RD_EAS = "EAS";
-// ZaRegisterDevice.RD_Server = "Server";
 	html[idx++] = "<tr>";
 	if(this._headerList) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			var field = this._headerList[i]._field;
-			if(field == ZaRegisterDevice.RD_Email_Address) {
+			if(field == ZaRetentionPolicy.A2_name) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-                // html[idx++] = AjxStringUtil.htmlEncode(item[ZaRetentionPolicy.A2_name]);
+                html[idx++] = AjxStringUtil.htmlEncode(item[ZaRetentionPolicy.A2_name]);
 				html[idx++] = "</td>";
-			} else if(field == ZaRegisterDevice.RD_Device) {
+			} else if(field == ZaRetentionPolicy.A2_lifetime) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-                // var time = item[ZaRegisterDevice.A2_lifetime];
-                // var number = time.substr(0, time.length - 1);
-                // var unit = time.substr(time.length - 1, 1);
+                var time = item[ZaRetentionPolicy.A2_lifetime];
+                var number = time.substr(0, time.length - 1);
+                var unit = time.substr(time.length - 1, 1);
                 html[idx++] = AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
 				html[idx++] = "</td>";
-			} else if(field == ZaRegisterDevice.RD_Device_ID) {
-				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-                // var time = item[ZaRegisterDevice.RD_Device_ID];
-                // var number = time.substr(0, time.length - 1);
-                // var unit = time.substr(time.length - 1, 1);
-                html[idx++] = AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
-				html[idx++] = "</td>";
-			} else if(field == ZaRegisterDevice.RD_Status) {
-				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				// var time = item[ZaRegisterDevice.A2_lifetime];
-				// var number = time.substr(0, time.length - 1);
-				// var unit = time.substr(time.length - 1, 1);
-				html[idx++] = AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
-				html[idx++] = "</td>";
-			} else if(field == ZaRegisterDevice.RD_EAS) {
-				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				// var time = item[ZaRegisterDevice.A2_lifetime];
-				// var number = time.substr(0, time.length - 1);
-				// var unit = time.substr(time.length - 1, 1);
-				html[idx++] = AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
-				html[idx++] = "</td>";
-			} else if(field == ZaRegisterDevice.RD_Server) {
-				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				// var time = item[ZaRegisterDevice.A2_lifetime];
-				// var number = time.substr(0, time.length - 1);
-				// var unit = time.substr(time.length - 1, 1);
-				html[idx++] = AjxMessageFormat.format(ZaMsg["TTL_Retention_Policy_" + unit], number);
-				html[idx++] = "</td>";
-			}	
+			}
 		}
 	} else {
 		html[idx++] = "<td width=100%>";
@@ -108,7 +76,6 @@ function(item) {
 	div.innerHTML = html.join("");
 	return div;
 }
-
 
 ZaRetentionPolicyListView.prototype._setNoResultsHtml = function() {
 	var buffer = new AjxBuffer();

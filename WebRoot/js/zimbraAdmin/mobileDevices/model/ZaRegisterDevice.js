@@ -34,11 +34,11 @@ function(name, id, lifetime, type) {
     // } else {
     //     var number = lifetime.substr(0, lifetime.length - 1);
     //     if (number % ZaRegisterDevice.YEAR == 0) {
-    //         this.lifetime = (number / ZaRegisterDevice.YEAR) + "y";
+    //         this.lifetime = (number / ZaRegisterDevice.YEAR)  "y";
     //     } else if (number % ZaRegisterDevice.MONTH == 0) {
-    //         this.lifetime = (number / ZaRegisterDevice.MONTH) + "m";
+    //         this.lifetime = (number / ZaRegisterDevice.MONTH)  "m";
     //     } else if (number % ZaRegisterDevice.WEEK == 0) {
-    //         this.lifetime = (number / ZaRegisterDevice.WEEK) + "w";
+    //         this.lifetime = (number / ZaRegisterDevice.WEEK)  "w";
     //     } else {
     //         this.lifetime = lifetime;
     //     }
@@ -59,13 +59,13 @@ function() {
 //     var unit = this.lifetime.substr(this.lifetime.length - 1, 1);
 //     if (unit == "y") {
     
-//         return number * ZaRegisterDevice.YEAR + "d";
+//         return number * ZaRegisterDevice.YEAR  "d";
 //     }
 //     if (unit == "m") {
-//         return number * ZaRegisterDevice.MONTH + "d";
+//         return number * ZaRegisterDevice.MONTH  "d";
 //     }
 //     if (unit == "w") {
-//         return number * ZaRegisterDevice.WEEK + "d";
+//         return number * ZaRegisterDevice.WEEK  "d";
 //     }
 //     return this.lifetime;
 // }
@@ -91,6 +91,38 @@ ZaRegisterDevice.RD_Server = "Server";
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
+
+    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraSync", null);
+    if (by && val) {
+        var el = soapDoc.set("cos", val);
+        el.setAttribute("by", by);
+    }
+
+    // var wrapper = soapDoc.set(this[ZaRetentionPolicy.A2_type], null);
+    // var policy = soapDoc.set("policy", null, wrapper, "urn:zimbraMail");
+    // policy.setAttribute("name", this[ZaRetentionPolicy.A2_name]);
+    // policy.setAttribute("lifetime", this.toDays());
+
+    var params = new Object();
+    params.soapDoc = soapDoc;
+
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+        };
+
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
+        // if( resp.policy && resp.policy[0]) {
+        //     this.id = resp.policy[0].id;
+        // }
+        console.log(resp,'ssssssssss');
+        return null;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+
 
     // var soapDoc = AjxSoapDoc.create("GetAllConfigRequest", ZaZimbraAdmin.URN, null);
     // if(!this.getAttrs.all && !AjxUtil.isEmpty(this.attrsToGet)) {
@@ -156,7 +188,7 @@ function(by, val) {
     //     //     var keeps = policies.keep[0].policy;
     //     //     var purges = policies.purge[0].policy;
     //     //     if (keeps) {
-    //     //         for (var i = 0; i < keeps.length; i++) {
+    //     //         for (var i = 0; i < keeps.length; i) {
     //     //             if (keeps[i].id) {
     //     //                 var pk = new ZaRegisterDevice(keeps[i].name, keeps[i].id, keeps[i].lifetime, ZaRegisterDevice.TYPE_KEEP);
     //     //                 result[ZaRegisterDevice.TYPE_KEEP].push(pk);
@@ -165,7 +197,7 @@ function(by, val) {
     //     //     }
 
     //     //     if (purges) {
-    //     //         for (var j = 0; j < purges.length; j++) {
+    //     //         for (var j = 0; j < purges.length; j) {
     //     //             if (purges[j].id) {
     //     //                 var pp = new ZaRegisterDevice(purges[j].name, purges[j].id, purges[j].lifetime, ZaRegisterDevice.TYPE_PURGE);
     //     //                 result[ZaRegisterDevice.TYPE_PURGE].push(pp);
@@ -256,7 +288,7 @@ function(by, val) {
 //     }
 
 //     if (list && AjxUtil.isArray(list)) {
-//         for (var i = 0; i < list.length; i++) {
+//         for (var i = 0; i < list.length; i) {
 //             if (list[i][ZaRegisterDevice.A2_name] == tmpObj[ZaRegisterDevice.A2_name] &&
 //                 list[i] != tmpObj) {
 //                 ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_RPExists, [tmpObj[ZaRegisterDevice.A2_name]])) ;
