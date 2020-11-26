@@ -183,7 +183,6 @@ function(child, childHtmlElement) {
 
 ZaLoginDialog.prototype._loginSelListener =
 function() {
-	this.setCursor("wait");
 	var username = AjxStringUtil.htmlEncode(ZLoginFactory.get(ZLoginFactory.USER_ID).value);
 	if (!(username && username.length)) {
 		this.setError(ZaMsg.enterUsername);
@@ -193,12 +192,20 @@ function() {
 		var password = ZLoginFactory.get(ZLoginFactory.PASSWORD_ID).value;
 		var newPassword = "";
 		var confPassword = "";
+		var twoFactorCode = "";
+		var trustedDevice = false;
 		if(ZLoginFactory.isShown(ZLoginFactory.NEW_PASSWORD_ID) && ZLoginFactory.isShown(ZLoginFactory.PASSWORD_CONFIRM_ID)) {
 			newPassword = ZLoginFactory.get(ZLoginFactory.NEW_PASSWORD_ID).value;
 			confPassword = ZLoginFactory.get(ZLoginFactory.PASSWORD_CONFIRM_ID).value; 
 		}
-			
-		this._callback.run(username, password,newPassword,confPassword);		
+		if(ZLoginFactory.isShown(ZLoginFactory.TWO_FACTOR_CODE_FORM)) {
+			twoFactorCode = ZLoginFactory.get(ZLoginFactory.TWO_FACTOR_CODE).value;
+		}
+		if(ZLoginFactory.isShown(ZLoginFactory.TRUST_DEVICE)) {
+			trustedDevice = ZLoginFactory.get(ZLoginFactory.TRUST_DEVICE).value;
+		}
+		
+		this._callback.run(username, password, twoFactorCode, trustedDevice, newPassword,confPassword);		
 	}
 }
 
@@ -220,3 +227,7 @@ function(ev) {
 	ZmZimbraMail.logOff();
 };
 
+ZaLoginDialog.prototype.showTwoFactorCode = 
+function() {
+	ZLoginFactory.showTwoFactorCode();
+}
