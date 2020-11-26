@@ -431,6 +431,14 @@ BODY {
 	padding-top:50px;
 }
 
+.ZTwoFactorMessage {
+	color:white;
+	font-size:14px !important;
+	font-weight:bold;
+	padding-bottom:20px !important;
+	text-align: center;
+}
+
 /** Logo Images **/
 .ImgAppBanner				{	@AppBanner@ background-repeat:no-repeat;		}
 .ImgLoginBanner				{	@LoginBanner@ background-repeat:no-repeat;		}

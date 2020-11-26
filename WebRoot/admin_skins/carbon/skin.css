@@ -250,6 +250,14 @@ body									{	@ChromeBg@	}
 	padding-top:50px;
 }
 
+.ZTwoFactorMessage {
+	color:white;
+	font-size:14px !important;
+	font-weight:bold;
+	padding-bottom:20px !important;
+	text-align: center;
+}
+
 .SplashScreen .switch{
 	margin:30px 0px 60px;
 }

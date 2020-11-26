@@ -446,7 +446,7 @@ function(ex, method, params, restartOnError, obj) {
 }
 
 ZaController.prototype._doAuth =
-function(username, password) {
+function(username, password, twoFactorCode, trustedDevice) {
     ZmCsfeCommand.noAuth = true;
     try {
         //hide login dialog
@@ -455,7 +455,7 @@ function(username, password) {
         ZaZimbraAdmin.showSplash(this._shell);
         var callback = new AjxCallback(this, this.authCallback);
         this.auth = new ZaAuthenticate(this._appCtxt);
-        this.auth.execute(username, password,callback);
+        this.auth.execute(username, password, twoFactorCode, trustedDevice, callback);
     } catch (ex) {
         if(ex.code == ZmCsfeException.NO_AUTH_TOKEN) {
             throw (ex);
@@ -551,72 +551,80 @@ function (resp) {
         try {
             var response = resp.getResponse();
             var body = response.Body;
-            if(body.AuthResponse && body.AuthResponse.csrfToken && 
-                    body.AuthResponse.csrfToken._content) {
-                window.csrfToken = body.AuthResponse.csrfToken._content;
-            }
-            var isAuthTokenPresent = true;
-            ZmCsfeCommand.noAuth = false;
-
-            var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);
-            var command = new ZmCsfeCommand();
-            var params = new Object();
-            params.soapDoc = soapDoc;
-            params.noSession = true;
-            params.noAuthToken = true;
-            ZaZimbraAdmin.isFirstRequest = true;
-            var resp = command.invoke(params);
-            ZaZimbraAdmin.isFirstRequest = false;
-
-            //initialize my rights
-            ZaZimbraAdmin.initInfo (resp);
-
-            ZaServerVersionInfo.load();
-
-            //check the user locale settings and reload the message is needed.
-            ZaZimbraAdmin.LOCALE_QS = "" ;
-            if (ZaZimbraAdmin.LOCALE && (ZaZimbraAdmin.LOCALE != AjxEnv.DEFAULT_LOCALE)) {
-                if (ZaZimbraAdmin.LOCALE != null) {
-                    var index = ZaZimbraAdmin.LOCALE.indexOf("_");
-                    if (index == -1) {
-                        ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE;
-                    } else {
-                        ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE.substring(0, index) +
-                                   "&country=" + ZaZimbraAdmin.LOCALE.substring(ZaZimbraAdmin.LOCALE.length - 2);
-                    }
-                }
-
-                ZaZimbraAdmin.reload_msg ();
-                this.initDialogs(true) ;  //make sure all the precreated dialogs are also recreated.
-            }
-
-            if(ZaZimbraAdmin.isLanguage("ja")){
-                if(ZaAccountXFormView.CONTACT_TAB_ATTRS)
-                        ZaAccountXFormView.CONTACT_TAB_ATTRS.push(ZaAccount.A_zimbraPhoneticCompany);
-
-                if(ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS)
-                        ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS.push(ZaAccount.A_zimbraPhoneticFirstName,
-                        ZaAccount.A_zimbraPhoneticLastName);
-            }
-
-            if(!ZaSettings.initialized) {
-                ZaSettings.init();
+            if (body.AuthResponse && body.AuthResponse.twoFactorAuthRequired && body.AuthResponse.twoFactorAuthRequired._content) {
+                this._showLoginDialog(true);
+                this._loginDialog.registerCallback(this.loginCallback, this);
+                this._loginDialog.clearError();
+                this._loginDialog.showTwoFactorCode();
             } else {
-                ZaZimbraAdmin._killSplash();
-            }
+                if(body.AuthResponse && body.AuthResponse.csrfToken && 
+                    body.AuthResponse.csrfToken._content) {
+                    window.csrfToken = body.AuthResponse.csrfToken._content;
+                }
+                var isAuthTokenPresent = true;
+                ZmCsfeCommand.noAuth = false;
 
-            //Instrumentation code start
-            if(ZaAuthenticate.processResponseMethods) {
-                var cnt = ZaAuthenticate.processResponseMethods.length;
-                for(var i = 0; i < cnt; i++) {
-                    if(typeof(ZaAuthenticate.processResponseMethods[i]) == "function") {
-                        ZaAuthenticate.processResponseMethods[i].call(this,resp);
+                var soapDoc = AjxSoapDoc.create("GetInfoRequest", "urn:zimbraAccount", null);
+                var command = new ZmCsfeCommand();
+                var params = new Object();
+                params.soapDoc = soapDoc;
+                params.noSession = true;
+                params.noAuthToken = true;
+                ZaZimbraAdmin.isFirstRequest = true;
+                var resp = command.invoke(params);
+                ZaZimbraAdmin.isFirstRequest = false;
+
+                //initialize my rights
+                ZaZimbraAdmin.initInfo (resp);
+
+                ZaServerVersionInfo.load();
+
+                //check the user locale settings and reload the message is needed.
+                ZaZimbraAdmin.LOCALE_QS = "" ;
+                if (ZaZimbraAdmin.LOCALE && (ZaZimbraAdmin.LOCALE != AjxEnv.DEFAULT_LOCALE)) {
+                    if (ZaZimbraAdmin.LOCALE != null) {
+                        var index = ZaZimbraAdmin.LOCALE.indexOf("_");
+                        if (index == -1) {
+                            ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE;
+                        } else {
+                            ZaZimbraAdmin.LOCALE_QS = "&language=" + ZaZimbraAdmin.LOCALE.substring(0, index) +
+                                    "&country=" + ZaZimbraAdmin.LOCALE.substring(ZaZimbraAdmin.LOCALE.length - 2);
+                        }
+                    }
+
+                    ZaZimbraAdmin.reload_msg ();
+                    this.initDialogs(true) ;  //make sure all the precreated dialogs are also recreated.
+                }
+
+                if(ZaZimbraAdmin.isLanguage("ja")){
+                    if(ZaAccountXFormView.CONTACT_TAB_ATTRS)
+                            ZaAccountXFormView.CONTACT_TAB_ATTRS.push(ZaAccount.A_zimbraPhoneticCompany);
+
+                    if(ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS)
+                            ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS.push(ZaAccount.A_zimbraPhoneticFirstName,
+                            ZaAccount.A_zimbraPhoneticLastName);
+                }
+
+                if(!ZaSettings.initialized) {
+                    ZaSettings.init();
+                } else {
+                    ZaZimbraAdmin._killSplash();
+                }
+
+                //Instrumentation code start
+                if(ZaAuthenticate.processResponseMethods) {
+                    var cnt = ZaAuthenticate.processResponseMethods.length;
+                    for(var i = 0; i < cnt; i++) {
+                        if(typeof(ZaAuthenticate.processResponseMethods[i]) == "function") {
+                            ZaAuthenticate.processResponseMethods[i].call(this,resp);
+                        }
                     }
                 }
+                //Instrumentation code end
+                this._hideLoginDialog(true);
+                this._appCtxt.getAppController().startup(isAuthTokenPresent);
             }
-            //Instrumentation code end
-            this._hideLoginDialog(true);
-            this._appCtxt.getAppController().startup(isAuthTokenPresent);
+            
         } catch (ex) {
             this._handleException(ex, "ZaController.prototype.authCallback");
         }
@@ -626,9 +634,9 @@ function (resp) {
 /*********** Login dialog Callbacks */
 
 ZaController.prototype.loginCallback =
-function(uname, password) {
+function(uname, password, twoFactorCode, trustedDevice) {
     //this._schedule(this._doAuth, {username: uname, password: password});
-    this._doAuth(uname,password);
+    this._doAuth(uname,password, twoFactorCode, trustedDevice);
 }
 
 ZaController.prototype.changePwdCallback =
