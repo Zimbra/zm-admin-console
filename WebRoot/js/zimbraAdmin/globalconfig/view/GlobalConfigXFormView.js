@@ -161,6 +161,10 @@ GlobalConfigXFormView.purgeSelectionListener = function() {
     this.getForm().setInstanceValue(this.getSelection(), ZaGlobalConfig.A2_retentionPoliciesPurge_Selection);
 }
 
+GlobalConfigXFormView.registeredDeviceSelectionListener = function() {
+    this.getForm().setInstanceValue(this.getSelection(), ZaGlobalConfig.A2_registeredDevice_Selection);
+}
+
 GlobalConfigXFormView.deleteButtonListener = function(isPurge) {
     var selected = this.getForm().getInstanceValue(ZaGlobalConfig.A2_retentionPoliciesKeep_Selection);
 
@@ -325,6 +329,30 @@ GlobalConfigXFormView.updateRetentionPolicy = function(form) {
     }
 }
 
+GlobalConfigXFormView.suspendSyncListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'suspendSyncListener');
+}
+
+GlobalConfigXFormView.removeDeviceListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'removeDeviceListener');
+}
+
+GlobalConfigXFormView.resetDeviceListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'resetDeviceListener');
+}
+
+GlobalConfigXFormView.resumeSyncListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'resumeSyncListener');
+}
+
 GlobalConfigXFormView.GENERAL_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraMailPurgeSleepInterval,
         ZaGlobalConfig.A_zimbraFileUploadMaxSize, ZaGlobalConfig.A_zimbraGalMaxResults,
         ZaGlobalConfig.A_zimbraDefaultDomainName, ZaGlobalConfig.A_zimbraScheduledTaskNumThreads ];
@@ -404,7 +432,9 @@ GlobalConfigXFormView.prototype.loadRetentionPolicies = function() {
 
 GlobalConfigXFormView.prototype.loadRegisteredDevices = function() {
     var result = ZaRegisterDevice.getRegisteredDevices();
-
+    if (result) {
+        this.getForm().setInstanceValue(result, ZaGlobalConfig.A2_registeredDevice)
+    }
     console.log(result,'result');
 }
 
@@ -1764,19 +1794,20 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             sortable++, ZaRegisterDevice.RD_EmailAddress, true, true);
         deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Last_Login, ZaMsg.MB_Last_Login_col, null,
         "auto", null, null, true, true);
-        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device, ZaMsg.MB_Device_col, null,
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device_OS, ZaMsg.MB_Device_col, null,
         "auto", null, null, true, true);
         deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Device_ID, ZaMsg.MB_Device_Id_col, null,
         "auto", null, null, true, true);
         deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Status, ZaMsg.MB_Status_col, null,
         "auto", null, null, true, true);
-        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_EAS, ZaMsg.MB_Eas_col, null,
+        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_EAS_PROTOCOL, ZaMsg.MB_Eas_col, null,
         "auto", null, null, true, true);
         deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Server, ZaMsg.MB_Server_col, null,
         "auto", null, null, true, true);
 
         this.helpMap[_tab12] = [ location.pathname, ZaUtil.HELP_URL, "managing_global_settings/retention_policies.htm",
             "?locid=", AjxEnv.DEFAULT_LOCALE ].join("");
+        
         tabBarChoices.push({
             value : _tab12,
             label : ZaMsg.TABT_Mobile
@@ -1804,7 +1835,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         cssStyle : "margin:0;padding-bottom:0;",
                         items : [
                                 {
-                                    ref : ZaGlobalConfig.A2_retentionPoliciesPurge,
+                                    ref : ZaGlobalConfig.A2_registeredDevice,
                                     type : _DWT_LIST_,
                                     height : "200",
                                     id : "global_form_purge_p_group_child",
@@ -1813,8 +1844,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                     multiselect : true,
                                     headerList : deviceHeaderList,
                                     widgetClass : ZaRegisteredDeviceListView,
-                                    // onSelection : GlobalConfigXFormView.purgeSelectionListener,
-                                    // valueChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge ]
+                                    onSelection : GlobalConfigXFormView.registeredDeviceSelectionListener,
+                                    valueChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice ]
                                 },
                                 {
                                     type : _GROUP_,
@@ -1828,11 +1859,11 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 type : _DWT_BUTTON_,
                                                 label : ZaMsg.DLXV_ButtonRemove,
                                                 width : "100px",
-                                                onActivate : "GlobalConfigXFormView.deleteButtonListener.call(this, 1);",
-                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection ],
+                                                onActivate : "GlobalConfigXFormView.removeDeviceListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
                                                     var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_retentionPoliciesPurge_Selection);
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
                                                     return sel && sel.length > 0;
                                                 } ]
                                             },
@@ -1843,11 +1874,11 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 type : _DWT_BUTTON_,
                                                 label : ZaMsg.bt_reset,
                                                 width : "100px",
-                                                onActivate : "GlobalConfigXFormView.editButtonListener.call(this, 1);",
-                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_retentionPoliciesPurge_Selection ],
+                                                onActivate : "GlobalConfigXFormView.resetDeviceListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
                                                     var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_retentionPoliciesPurge_Selection);
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
                                                     return sel && sel.length == 1;
                                                 } ]
                                             }, {
@@ -1856,14 +1887,26 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 type : _DWT_BUTTON_,
                                                 label : ZaMsg.MB_But_Suspend,
                                                 width : "100px",
-                                                onActivate : "GlobalConfigXFormView.addButtonListener.call(this,1);"
+                                                onActivate : "GlobalConfigXFormView.suspendSyncListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
                                             }, {
                                                 type : _CELLSPACER_
                                             }, {
                                                 type : _DWT_BUTTON_,
                                                 label : ZaMsg.MB_But_Resume,
                                                 width : "100px",
-                                                onActivate : "GlobalConfigXFormView.addButtonListener.call(this,1);"
+                                                onActivate : "GlobalConfigXFormView.resumeSyncListener.call(this);",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    var sel = this.getForm().getInstanceValue(
+                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
+                                                    return sel && sel.length > 0;
+                                                } ]
                                             } ]
                                 } ]
                     } ]

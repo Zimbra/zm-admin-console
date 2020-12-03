@@ -1776,7 +1776,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     ]
                 },
                 {type:_ZA_TOP_GROUPER_, id:"cos_form_keep_p_group",width:"98%",
-                    numCols:1,colSizes:["auto"],label:ZaMsg.Glb_RetentionPolicies,
+                    numCols:1,colSizes:["auto"],label:"Mobile devices",
                     cssStyle:"margin:10px;padding-bottom:0;",
                     items: [
                         {ref:ZaCos.A2_retentionPoliciesKeep, type:_DWT_LIST_, height:"200", width:"99%",

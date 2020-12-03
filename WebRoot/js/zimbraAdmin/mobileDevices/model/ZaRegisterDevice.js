@@ -70,13 +70,15 @@ function() {
 //     return this.lifetime;
 // }
 
-ZaRegisterDevice.RD_Email_Address = "Email Address";
-ZaRegisterDevice.RD_Last_Login = "Last Login";
-ZaRegisterDevice.RD_Device = "Device";
-ZaRegisterDevice.RD_Device_ID = "Device ID";
-ZaRegisterDevice.RD_Status = "Status";
-ZaRegisterDevice.RD_EAS = "EAS";
-ZaRegisterDevice.RD_Server = "Server";
+ZaRegisterDevice.RD_Email_Address = "emailAddress";
+ZaRegisterDevice.RD_Last_Login = "lastUsedDate";
+ZaRegisterDevice.RD_Device_OS = "os";
+ZaRegisterDevice.RD_Device_ID = "id";
+ZaRegisterDevice.RD_Status = "status";
+ZaRegisterDevice.RD_EAS_PROTOCOL = "protocol";
+ZaRegisterDevice.RD_Server = "server";
+ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
+
 
 
 // ZaRegisterDevice.myXModel = {
@@ -91,17 +93,42 @@ ZaRegisterDevice.RD_Server = "Server";
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
-
-    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraSync", null);
+    var result = [{"id":"androidc1628606379",
+    "type":"Android",
+    "ua":"Android-Mail/2020.11.01.342354497.Release",
+    "protocol":"14.1",
+    "model":"ONEPLUS A5000",
+    "friendly_name":"ONEPLUS A5000",
+    "os":"Android 7.1.1",
+    "server":"zmc-mailbox",
+    "provisionable":true,
+    "status":1,
+    "firstReqReceived":1606805217,
+    "lastPolicyUpdate":1606805223,
+    "lastUsedDate":"2020-12-01",
+    "mailboxId":3,
+    "emailAddress":"admin@zmc.com"},{"id":"123",
+    "type":"Android",
+    "ua":"Android-Mail/2020.11.01.342354497.Release",
+    "protocol":"14.1",
+    "model":"ONEPLUS A5000",
+    "friendly_name":"ONEPLUS A5000",
+    "os":"Android 7.1.1",
+    "server":"zmc-mailbox",
+    "provisionable":true,
+    "status":1,
+    "firstReqReceived":1606805217,
+    "lastPolicyUpdate":1606805223,
+    "lastUsedDate":"2020-12-01",
+    "mailboxId":3,
+    "emailAddress":"admin@zmc.com"}]
+     console.log(result,'ssss');
+    return result;
+    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraAdmin", null);
     if (by && val) {
         var el = soapDoc.set("cos", val);
         el.setAttribute("by", by);
     }
-
-    // var wrapper = soapDoc.set(this[ZaRetentionPolicy.A2_type], null);
-    // var policy = soapDoc.set("policy", null, wrapper, "urn:zimbraMail");
-    // policy.setAttribute("name", this[ZaRetentionPolicy.A2_name]);
-    // policy.setAttribute("lifetime", this.toDays());
 
     var params = new Object();
     params.soapDoc = soapDoc;
@@ -113,106 +140,12 @@ function(by, val) {
         };
 
         var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
-        // if( resp.policy && resp.policy[0]) {
-        //     this.id = resp.policy[0].id;
-        // }
         console.log(resp,'ssssssssss');
         return null;
     } catch(ex) {
         throw ex;
         return null;
     }
-
-
-    // var soapDoc = AjxSoapDoc.create("GetAllConfigRequest", ZaZimbraAdmin.URN, null);
-    // if(!this.getAttrs.all && !AjxUtil.isEmpty(this.attrsToGet)) {
-    // 	soapDoc.setMethodAttribute("attrs", this.attrsToGet.join(","));
-    // }	
-    // //var command = new ZmCsfeCommand();
-    // var params = new Object();
-    // params.soapDoc = soapDoc;
-    // params.noAuthToken = true;	
-    // var reqMgrParams = {
-    // 	controller : ZaApp.getInstance().getCurrentController(),
-    // 	busyMsg : ZaMsg.BUSY_GET_ALL_CONFIG
-    // }
-    // var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetAllConfigResponse;
-
-    resp = "ssss"
-    console.log(resp);
-
-    return resp;
-    
-    // var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest", "urn:zimbraSync", null);
-	// if(!this.getAttrs.all && !AjxUtil.isEmpty(this.attrsToGet)) {
-	// 	soapDoc.setMethodAttribute("attrs", this.attrsToGet.join(","));
-    // }	
-    //  if (by && val) {
-    //     var el = soapDoc.set("account", val);
-    //     el.setAttribute("by", by);
-    // }
-	//var command = new ZmCsfeCommand();
-	var params = new Object();
-	params.soapDoc = soapDoc;
-	// params.noAuthToken = true;
-	var reqMgrParams = {
-		controller : ZaApp.getInstance().getCurrentController(),
-		busyMsg : ZaMsg.BUSY_GET_ALL_CONFIG
-	}
-	var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
-
-    console.log(resp,'sssssss');
-    // var soapDoc = AjxSoapDoc.create("GetDevicesCountRequest", "urn:zimbraAdmin", null);
-
-    // // if (by && val) {
-    // //     var el = soapDoc.set("cos", val);
-    // //     el.setAttribute("by", by);
-    // // }
-
-    // var params = new Object();
-    // params.soapDoc = soapDoc;
-    // try{
-    //     var reqMgrParams = {
-    //         controller : ZaApp.getInstance().getCurrentController(),
-    //         busyMsg : ZaMsg.BUSY_GET_RETENTION_POLICIES
-    //     };
-
-    //     // var result = {};
-    //     // result[ZaRegisterDevice.TYPE_KEEP] = [];
-    //     // result[ZaRegisterDevice.TYPE_PURGE] = [];
-
-    //     var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
-    //     // if(resp.retentionPolicy && resp.retentionPolicy.length == 1) {
-    //     //     var policies = resp.retentionPolicy[0];
-
-    //     //     var keeps = policies.keep[0].policy;
-    //     //     var purges = policies.purge[0].policy;
-    //     //     if (keeps) {
-    //     //         for (var i = 0; i < keeps.length; i) {
-    //     //             if (keeps[i].id) {
-    //     //                 var pk = new ZaRegisterDevice(keeps[i].name, keeps[i].id, keeps[i].lifetime, ZaRegisterDevice.TYPE_KEEP);
-    //     //                 result[ZaRegisterDevice.TYPE_KEEP].push(pk);
-    //     //             }
-    //     //         }
-    //     //     }
-
-    //     //     if (purges) {
-    //     //         for (var j = 0; j < purges.length; j) {
-    //     //             if (purges[j].id) {
-    //     //                 var pp = new ZaRegisterDevice(purges[j].name, purges[j].id, purges[j].lifetime, ZaRegisterDevice.TYPE_PURGE);
-    //     //                 result[ZaRegisterDevice.TYPE_PURGE].push(pp);
-    //     //             }
-    //     //         }
-    //     //     }
-
-    //     // }
-    //     console.log(resp);
-    //     return resp;
-
-    // } catch(ex) {
-    //     throw ex;
-    //     return null;
-    // }
 }
 
 
