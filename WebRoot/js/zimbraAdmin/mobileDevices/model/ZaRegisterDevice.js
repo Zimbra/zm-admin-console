@@ -93,37 +93,6 @@ ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
-    var result = [{"id":"androidc1628606379",
-    "type":"Android",
-    "ua":"Android-Mail/2020.11.01.342354497.Release",
-    "protocol":"14.1",
-    "model":"ONEPLUS A5000",
-    "friendly_name":"ONEPLUS A5000",
-    "os":"Android 7.1.1",
-    "server":"zmc-mailbox",
-    "provisionable":true,
-    "status":1,
-    "firstReqReceived":1606805217,
-    "lastPolicyUpdate":1606805223,
-    "lastUsedDate":"2020-12-01",
-    "mailboxId":3,
-    "emailAddress":"admin@zmc.com"},{"id":"123",
-    "type":"Android",
-    "ua":"Android-Mail/2020.11.01.342354497.Release",
-    "protocol":"14.1",
-    "model":"ONEPLUS A5000",
-    "friendly_name":"ONEPLUS A5000",
-    "os":"Android 7.1.1",
-    "server":"zmc-mailbox",
-    "provisionable":true,
-    "status":1,
-    "firstReqReceived":1606805217,
-    "lastPolicyUpdate":1606805223,
-    "lastUsedDate":"2020-12-01",
-    "mailboxId":3,
-    "emailAddress":"admin@zmc.com"}]
-     console.log(result,'ssss');
-    return result;
     var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraAdmin", null);
     if (by && val) {
         var el = soapDoc.set("cos", val);
@@ -139,9 +108,9 @@ function(by, val) {
             busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
         console.log(resp,'ssssssssss');
-        return null;
+        return resp;
     } catch(ex) {
         throw ex;
         return null;

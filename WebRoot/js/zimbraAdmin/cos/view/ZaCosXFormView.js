@@ -347,6 +347,10 @@ ZaCosXFormView.ADVANCED_TAB_RIGHTS = [];
 ZaCosXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 ZaCosXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
+ZaCosXFormView.REGISTERED_DEVICES_TAB_ATTRS = []
+ZaCosXFormView.REGISTERED_DEVICES_TAB_RIGHTS = []
+
+
 ZaCosXFormView.prototype.loadRetentionPolicies = function () {
     var resultCos = ZaRetentionPolicy.getRetentionPolicies("id", this.getForm().getInstance().id);
     var resultGlobal = ZaRetentionPolicy.getRetentionPolicies();
@@ -594,6 +598,29 @@ ZaCosXFormView.updateRetentionPolicy = function (form) {
     }
 }
 
+ZaCosXFormView.suspendSyncListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'suspendSyncListener');
+}
+
+ZaCosXFormView.removeDeviceListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'removeDeviceListener');
+}
+
+ZaCosXFormView.resetDeviceListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'resetDeviceListener');
+}
+
+ZaCosXFormView.resumeSyncListener = function() {
+    console.log(this);
+    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'resumeSyncListener');
+}
 ZaCosXFormView.inheritCOSRetentionPolicies = function(value, event, form) {
     if (value == "TRUE") {
         this.setInstanceValue(value);
@@ -623,7 +650,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
     this.helpMap = {};
     this.tabChoices = new Array();
     var _tab1 = ++this.TAB_INDEX;
-    var _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8;
+    var _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9;
 
     var headerItems = [    {type:_AJX_IMAGE_, src:"COS_32", label:null,rowSpan:2},
                             {type:_OUTPUT_, ref:ZaCos.A_name, label:null,cssClass:"AdminTitle",
@@ -685,6 +712,12 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
         _tab8 = ++this.TAB_INDEX;
         this.tabChoices.push({value:_tab8, label:ZaMsg.TABT_RetentionPolicy});
         this.helpMap[_tab8] = [location.pathname, ZaUtil.HELP_URL, "managing_global_settings/retention_policies.htm?locid=", AjxEnv.DEFAULT_LOCALE].join("");
+    }
+
+    if(ZaTabView.isTAB_ENABLED(entry,ZaCosXFormView.REGISTERED_DEVICES_TAB_ATTRS, ZaCosXFormView.REGISTERED_DEVICES_TAB_RIGHTS)) {
+        _tab9 = ++this.TAB_INDEX;
+        this.tabChoices.push({value:_tab9, label:"Registered devices"});
+        this.helpMap[_tab9] = [location.pathname, ZaUtil.HELP_URL, "managing_global_settings/retention_policies.htm?locid=", AjxEnv.DEFAULT_LOCALE].join("");
     }
 
     var cases = [];
@@ -1870,6 +1903,79 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             ]
         };
         cases.push (case8) ;
+    }
+
+
+
+
+
+
+    if(_tab9) {
+        var case9 =
+        {type: _SUPER_TABCASE_, caseKey:_tab9,
+            paddingStyle:"padding-left:15px;", width:"98%", cellpadding:2,
+            colSizes:["100%"],numCols:1,id:"cos_mobiledevices_tab",
+            loadDataMethods: [ZaCosXFormView.prototype.loadRetentionPolicies],
+            items: [
+                {type:_GROUP_, numCols:2, colSizes:["20px","auto"], width:"600px",
+                    cssStyle:"margin-left:10px;",
+                    items: [
+                        {type:_SPACER_, height:"10px"},
+                        {ref:ZaCos.A2_retentionPoliciesKeepInherited, type:_CHECKBOX_,
+                            onChange: ZaCosXFormView.inheritCOSRetentionPolicies,
+                            msgName:ZaMsg.LBL_POLICY_COS_INHERIT_PROMPT,label:ZaMsg.LBL_POLICY_COS_INHERIT_PROMPT,
+                            trueValue:"TRUE", falseValue:"FALSE", labelLocation:_RIGHT_}
+                    ]
+                },
+                {type:_ZA_TOP_GROUPER_, id:"cos_form_keep_p_group",width:"98%",
+                    numCols:1,colSizes:["auto"],label:"Mobile devices",
+                    cssStyle:"margin:10px;padding-bottom:0;",
+                    items: [
+                        {ref:ZaCos.A2_retentionPoliciesKeep, type:_DWT_LIST_, height:"200", width:"99%",
+                            preserveSelection:false, multiselect:true,cssClass: "DLSource",
+                            headerList:headerListKeep, widgetClass:ZaRegisteredDeviceListView,
+                            onSelection:ZaCosXFormView.retentionSelectionListener,
+                            valueChangeEventSources:[ZaCos.A2_retentionPoliciesKeep]
+                        },
+                        {type:_GROUP_, numCols:5, colSizes:["100px","auto","100px","auto","100px"], width:"350px",
+                            cssStyle:"margin:10px;padding-bottom:0;",
+                            items: [
+                                {type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
+                                    onActivate:"ZaCosXFormView.deleteButtonListener.call(this);",
+                                    enableDisableChangeEventSources:[ZaCos.A2_retentionPoliciesKeep_Selection,ZaCos.A2_retentionPoliciesKeepInherited],
+                                    enableDisableChecks:[[
+                                        function() {
+                                            var sel = this.getForm().getInstanceValue(ZaCos.A2_retentionPoliciesKeep_Selection);
+                                            return sel && sel.length > 0;
+                                        }],
+                                        [XForm.checkInstanceValue, ZaCos.A2_retentionPoliciesKeepInherited, "TRUE"]
+                                    ]
+                                },
+                                {type:_CELLSPACER_},
+                                {type:_DWT_BUTTON_, label:ZaMsg.TBB_Edit,width:"100px",
+                                    onActivate:"ZaCosXFormView.editButtonListener.call(this);",
+                                    enableDisableChangeEventSources:[ZaCos.A2_retentionPoliciesKeep_Selection, ZaCos.A2_retentionPoliciesKeepInherited],
+                                    enableDisableChecks:[[
+                                        function() {
+                                            var sel = this.getForm().getInstanceValue(ZaCos.A2_retentionPoliciesKeep_Selection);
+                                            return sel && sel.length == 1;
+                                        }],
+                                        [XForm.checkInstanceValue, ZaCos.A2_retentionPoliciesKeepInherited, "TRUE"]
+                                    ]
+                                },
+                                {type:_CELLSPACER_},
+                                {type:_DWT_BUTTON_, label:ZaMsg.NAD_Add,width:"100px",
+                                    enableDisableChangeEventSources:[ZaCos.A2_retentionPoliciesKeepInherited],
+                                    enableDisableChecks:[[XForm.checkInstanceValue, ZaCos.A2_retentionPoliciesKeepInherited, "TRUE"]],
+                                    onActivate:"ZaCosXFormView.addButtonListener.call(this);"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        cases.push (case9) ;
     }
 
     xFormObject.tableCssStyle = "width:100%;overflow:auto;";

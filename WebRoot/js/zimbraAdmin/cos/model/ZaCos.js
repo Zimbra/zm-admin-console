@@ -224,6 +224,9 @@ ZaCos.A2_retentionPoliciesPurge = "retentionPolicyPurge";
 ZaCos.A2_retentionPoliciesKeep_Selection = "retentionPoliciesKeep_Selection";
 ZaCos.A2_retentionPoliciesPurge_Selection = "retentionPoliciesPurge_Selection";
 
+ZaCos.A2_registeredDevice = "registeredDevice";
+ZaCos.A2_registeredDevice_Selection = "registeredDevice_Selection";
+
 // right
 ZaCos.RIGHT_LIST_COS = "listCos";
 ZaCos.RIGHT_LIST_ZIMLET = "listZimlet";
@@ -818,7 +821,9 @@ ZaCos.myXModel = {
         {id:ZaCos.A2_retentionPoliciesKeep, type:_LIST_},
         {id:ZaCos.A2_retentionPoliciesPurge, type:_LIST_},
         {id:ZaCos.A2_retentionPoliciesKeep_Selection, type:_LIST_},
-        {id:ZaCos.A2_retentionPoliciesPurge_Selection, type:_LIST_}
+        {id:ZaCos.A2_retentionPoliciesPurge_Selection, type:_LIST_},
+        {id:ZaCos.A2_registeredDevice, type:_LIST_},
+        {id:ZaCos.A2_registeredDevice_Selection, type:_LIST_}
     ]
 };
 
