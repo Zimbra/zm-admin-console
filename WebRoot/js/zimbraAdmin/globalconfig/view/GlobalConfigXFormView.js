@@ -1831,7 +1831,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         width : "100%",
                         numCols : 1,
                         colSizes : [ "auto" ],
-                        label : ZaMsg.Registered_Devices,
+                        label : ZaMsg.MB_Registered_Devices,
                         cssStyle : "margin:0;padding-bottom:0;",
                         items : [
                                 {
