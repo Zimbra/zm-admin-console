@@ -179,13 +179,6 @@ ZaRegisterDevice.removeDevice = function(obj) {
     }
 }
 
-ZaRegisterDevice.resetDevice = function(obj) {
-    // console.log(this);
-    // var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
-    console.log(obj,'resetDeviceListener');
-    
-}
-
 ZaRegisterDevice.allowDeviceSync = function(obj) {
     var soapDoc = AjxSoapDoc.create("AllowDeviceRequest",ZaZimbraAdmin.URN, null);
 

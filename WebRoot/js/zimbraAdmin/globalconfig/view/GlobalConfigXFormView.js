@@ -343,14 +343,6 @@ GlobalConfigXFormView.removeDeviceListener = function() {
     ZaRegisterDevice.removeDevice(obj);
 }
 
-GlobalConfigXFormView.resetDeviceListener = function() {
-    console.log(this);
-    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
-    console.log(obj,'resetDeviceListener');
-    ZaRegisterDevice.resetDevice(obj);
-
-}
-
 GlobalConfigXFormView.resumeSyncListener = function() {
     console.log(this);
     var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
@@ -1863,8 +1855,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                 {
                                     type : _GROUP_,
                                     id : "global_form_purge_p_group_child_2",
-                                    numCols : 9,
-                                    colSizes : [ "100px", "auto", "100px", "auto", "100px",  "auto", "100px",  "auto", "100px"],
+                                    numCols : 7,
+                                    colSizes : [ "100px", "auto", "100px", "auto", "100px",  "auto", "100px"],
                                     width : "590px",
                                     cssStyle : "margin:10px;padding-bottom:0;",
                                     items : [
@@ -1881,20 +1873,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 } ]
                                             },
                                             {
-                                                type : _CELLSPACER_
-                                            },
-                                            {
-                                                type : _DWT_BUTTON_,
-                                                label : ZaMsg.bt_reset,
-                                                width : "100px",
-                                                onActivate : "GlobalConfigXFormView.resetDeviceListener.call(this);",
-                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
-                                                enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length == 1;
-                                                } ]
-                                            }, {
                                                 type : _CELLSPACER_
                                             }, {
                                                 type : _DWT_BUTTON_,

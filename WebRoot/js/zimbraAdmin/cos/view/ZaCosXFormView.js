@@ -610,12 +610,6 @@ ZaCosXFormView.removeDeviceListener = function() {
     console.log(obj,'removeDeviceListener');
 }
 
-ZaCosXFormView.resetDeviceListener = function() {
-    console.log(this);
-    var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
-    console.log(obj,'resetDeviceListener');
-}
-
 ZaCosXFormView.resumeSyncListener = function() {
     console.log(this);
     var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
