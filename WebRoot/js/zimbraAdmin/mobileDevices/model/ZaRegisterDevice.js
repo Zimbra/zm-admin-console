@@ -91,6 +91,12 @@ ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 //     ]
 // }
 
+// BUSY_QUARANTINE_SYNC_DEVICES = Quarantining synced devices ...
+// BUSY_RESUMING_SYNC_DEVICES = Resuming synced devices ...
+// BUSY_REMOVING_SYNC_DEVICES = Removing synced devices ...
+// BUSY_RESETING_SYNC_DEVICES = Reseting synced devices ...
+// BUSY_WIPING_SYNC_DEVICES = Wiping synced devices ...
+
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
@@ -125,7 +131,6 @@ function(by, val) {
     // "emailAddress":"admin@zmc.com"}]
     // return result;
 
-    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraAdmin", null);
     if (by && val) {
         var el = soapDoc.set("cos", val);
         el.setAttribute("by", by);
@@ -137,10 +142,10 @@ function(by, val) {
     try{
         var reqMgrParams = {
             controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+            busyMsg : ZaMsg.BUSY_GETTING_SYNC_DEVICES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
         console.log(resp,'ssssssssss');
         return resp;
     } catch(ex) {
@@ -150,9 +155,8 @@ function(by, val) {
 }
 
 
-ZaRegisterDevice.suspendDeviceSync = function(obj) {
-    console.log(obj,'suspendSyncListener');
-    var soapDoc = AjxSoapDoc.create("SuspendDeviceRequest",ZaZimbraAdmin.URN, null);
+ZaRegisterDevice.quarantineDevice = function(obj) {
+    var soapDoc = AjxSoapDoc.create("QuarantineDeviceRequest",ZaZimbraAdmin.URN, null);
 
     for (var i = 0; i < obj.length; i++) {
         var current = obj[i];
@@ -166,7 +170,7 @@ ZaRegisterDevice.suspendDeviceSync = function(obj) {
     try{
         var reqMgrParams = {
             controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+            busyMsg : ZaMsg.BUSY_QUARANTINE_SYNC_DEVICES
         };
 
         var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
@@ -179,11 +183,13 @@ ZaRegisterDevice.suspendDeviceSync = function(obj) {
 }
 
 ZaRegisterDevice.removeDevice = function(obj) {
-    console.log(obj,'removeDeviceListener');
     var soapDoc = AjxSoapDoc.create("RemoveDeviceRequest",ZaZimbraAdmin.URN, null);
 
-    var device = soapDoc.set("device", null, null, "urn:zimbraMail");
-    device.setAttribute("id", obj.id);
+    for (var i = 0; i < obj.length; i++) {
+        var current = obj[i];
+        var device = soapDoc.set("device", null, null);
+        device.setAttribute("id", current.id);
+    }    
     
     var params = new Object();
     params.soapDoc = soapDoc;
@@ -191,7 +197,7 @@ ZaRegisterDevice.removeDevice = function(obj) {
     try{
         var reqMgrParams = {
             controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+            busyMsg : ZaMsg.BUSY_REMOVING_SYNC_DEVICES
         };
 
         var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
@@ -210,10 +216,8 @@ ZaRegisterDevice.resetDevice = function(obj) {
     
 }
 
-ZaRegisterDevice.resumeDeviceSync = function(obj) {
-    console.log(obj,'resumeSyncListener');
-    console.log(obj,'removeDeviceListener');
-    var soapDoc = AjxSoapDoc.create("RemoveDeviceRequest",ZaZimbraAdmin.URN, null);
+ZaRegisterDevice.allowDeviceSync = function(obj) {
+    var soapDoc = AjxSoapDoc.create("AllowDeviceRequest",ZaZimbraAdmin.URN, null);
 
     for (var i = 0; i < obj.length; i++) {
         var current = obj[i];
@@ -227,7 +231,7 @@ ZaRegisterDevice.resumeDeviceSync = function(obj) {
     try{
         var reqMgrParams = {
             controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+            busyMsg : ZaMsg.BUSY_RESUMING_SYNC_DEVICES
         };
 
         var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;

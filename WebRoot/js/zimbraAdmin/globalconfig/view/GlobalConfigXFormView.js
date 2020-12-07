@@ -333,7 +333,7 @@ GlobalConfigXFormView.suspendSyncListener = function() {
     console.log(this);
     var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
     console.log(obj,'suspendSyncListener');
-    ZaRegisterDevice.suspendDeviceSync(obj);
+    ZaRegisterDevice.quarantineDevice(obj);
 
 }
 
@@ -355,7 +355,7 @@ GlobalConfigXFormView.resumeSyncListener = function() {
     console.log(this);
     var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
     console.log(obj,'resumeSyncListener');
-    ZaRegisterDevice.resumeDeviceSync(obj);
+    ZaRegisterDevice.allowDeviceSync(obj);
 }
 
 GlobalConfigXFormView.wipeDeviceListener = function() {
