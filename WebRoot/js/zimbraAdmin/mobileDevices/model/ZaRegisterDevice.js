@@ -29,6 +29,7 @@ function(name, id, lifetime, type) {
     this.id = id;
     this.name = name;
 
+    console.log(name,id,'ZaRegisterDeviceZaRegisterDevice');
     // if (!lifetime) {
     //     this.lifetime = "1d";
     // } else {
@@ -93,6 +94,37 @@ ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
+    // var result = [{"id":"androidc1628606379",
+    // "type":"Android",
+    // "ua":"Android-Mail/2020.11.01.342354497.Release",
+    // "protocol":"14.1",
+    // "model":"ONEPLUS A5000",
+    // "friendly_name":"ONEPLUS A5000",
+    // "os":"Android 7.1.1",
+    // "server":"zmc-mailbox",
+    // "provisionable":true,
+    // "status":1,
+    // "firstReqReceived":1606805217,
+    // "lastPolicyUpdate":1606805223,
+    // "lastUsedDate":"2020-12-01",
+    // "mailboxId":3,
+    // "emailAddress":"admin@zmc.com"},{"id":"123",
+    // "type":"Android",
+    // "ua":"Android-Mail/2020.11.01.342354497.Release",
+    // "protocol":"14.1",
+    // "model":"ONEPLUS A5000",
+    // "friendly_name":"ONEPLUS A5000",
+    // "os":"Android 7.1.1",
+    // "server":"zmc-mailbox",
+    // "provisionable":true,
+    // "status":1,
+    // "firstReqReceived":1606805217,
+    // "lastPolicyUpdate":1606805223,
+    // "lastUsedDate":"2020-12-01",
+    // "mailboxId":3,
+    // "emailAddress":"admin@zmc.com"}]
+    // return result;
+
     var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraAdmin", null);
     if (by && val) {
         var el = soapDoc.set("cos", val);
@@ -118,147 +150,119 @@ function(by, val) {
 }
 
 
+ZaRegisterDevice.suspendDeviceSync = function(obj) {
+    console.log(obj,'suspendSyncListener');
+    var soapDoc = AjxSoapDoc.create("SuspendDeviceRequest",ZaZimbraAdmin.URN, null);
 
-// ZaRegisterDevice.prototype.createPolicy =
-// function(by, val) {
-//     var soapDoc = AjxSoapDoc.create("CreateSystemRetentionPolicyRequest","urn:zimbraAdmin", null);
-//     if (by && val) {
-//         var el = soapDoc.set("cos", val);
-//         el.setAttribute("by", by);
-//     }
+    for (var i = 0; i < obj.length; i++) {
+        var current = obj[i];
+        var device = soapDoc.set("device", null, null);
+        device.setAttribute("id", current.id);
+    }    
+    
+    var params = new Object();
+    params.soapDoc = soapDoc;
 
-//     if (this[ZaRegisterDevice.A2_type] !== ZaRegisterDevice.TYPE_KEEP &&
-//         this[ZaRegisterDevice.A2_type] !== ZaRegisterDevice.TYPE_PURGE){
-//          return;
-//     }
-//     var wrapper = soapDoc.set(this[ZaRegisterDevice.A2_type], null);
-//     var policy = soapDoc.set("policy", null, wrapper, "urn:zimbraMail");
-//     policy.setAttribute("name", this[ZaRegisterDevice.A2_name]);
-//     policy.setAttribute("lifetime", this.toDays());
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+        };
 
-//     var params = new Object();
-//     params.soapDoc = soapDoc;
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
+        console.log(resp,'ssssssssss');
+        return resp;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+}
 
-//     try{
-//         var reqMgrParams = {
-//             controller : ZaApp.getInstance().getCurrentController(),
-//             busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
-//         };
+ZaRegisterDevice.removeDevice = function(obj) {
+    console.log(obj,'removeDeviceListener');
+    var soapDoc = AjxSoapDoc.create("RemoveDeviceRequest",ZaZimbraAdmin.URN, null);
 
-//         var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.CreateSystemRetentionPolicyResponse;
-//         if( resp.policy && resp.policy[0]) {
-//             this.id = resp.policy[0].id;
-//         }
-//         return this;
-//     } catch(ex) {
-//         throw ex;
-//         return null;
-//     }
-// }
+    var device = soapDoc.set("device", null, null, "urn:zimbraMail");
+    device.setAttribute("id", obj.id);
+    
+    var params = new Object();
+    params.soapDoc = soapDoc;
 
-// ZaRegisterDevice.checkLifeTime = function (lifetime) {
-//     if (!lifetime || lifetime.length < 1) {
-//         return false;
-//     }
-//     var digit = lifetime.substr(0, lifetime.length - 1);
-//     if (!digit) {
-//         return false;
-//     }
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+        };
 
-//     return AjxUtil.isPositiveInt(digit);
-// }
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
+        console.log(resp,'ssssssssss');
+        return resp;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+}
 
-// ZaRegisterDevice.checkValues = function (tmpObj, list) {
-//     if (!tmpObj) {
-//         return false;
-//     }
+ZaRegisterDevice.resetDevice = function(obj) {
+    // console.log(this);
+    // var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'resetDeviceListener');
+    
+}
 
-//     var name = AjxStringUtil.trim(tmpObj[ZaRegisterDevice.A2_name]);
-//     if (AjxUtil.isEmpty(name)) {
-//         ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_EmptyRPName) ;
-//         return false;
-//     }
+ZaRegisterDevice.resumeDeviceSync = function(obj) {
+    console.log(obj,'resumeSyncListener');
+    console.log(obj,'removeDeviceListener');
+    var soapDoc = AjxSoapDoc.create("RemoveDeviceRequest",ZaZimbraAdmin.URN, null);
 
-//     if (ZaRegisterDevice.POLICY_CUSTOM == name.toLowerCase()) {
-//         ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_RPNameCustomDisallowed, [name])) ;
-//         return false;
-//     }
+    for (var i = 0; i < obj.length; i++) {
+        var current = obj[i];
+        var device = soapDoc.set("device", null, null);
+        device.setAttribute("id", current.id);
+    }    
+    
+    var params = new Object();
+    params.soapDoc = soapDoc;
 
-//     if (!ZaRegisterDevice.checkLifeTime(tmpObj[ZaRegisterDevice.A2_lifetime])) {
-//         ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_InvalidRPLifetime);
-//         return false;
-//     }
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+        };
 
-//     if (list && AjxUtil.isArray(list)) {
-//         for (var i = 0; i < list.length; i) {
-//             if (list[i][ZaRegisterDevice.A2_name] == tmpObj[ZaRegisterDevice.A2_name] &&
-//                 list[i] != tmpObj) {
-//                 ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_RPExists, [tmpObj[ZaRegisterDevice.A2_name]])) ;
-//                 return false;
-//             }
-//         }
-//     }
-//     return true;
-// }
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
+        console.log(resp,'ssssssssss');
+        return resp;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+}
 
-// ZaRegisterDevice.prototype.modifyPolicy =
-// function(by, val) {
-//     var soapDoc = AjxSoapDoc.create("ModifySystemRetentionPolicyRequest", "urn:zimbraAdmin", null);
-//     if (by && val) {
-//         var el = soapDoc.set("cos", val);
-//         el.setAttribute("by", by);
-//     }
+ZaRegisterDevice.wipeDevice = function(obj) {
+    // console.log(this);
+    // var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+    console.log(obj,'wipeDeviceListener');
+    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraAdmin", null);
+    if (by && val) {
+        var el = soapDoc.set("cos", val);
+        el.setAttribute("by", by);
+    }
 
-//     var policy = soapDoc.set("policy", null, null, "urn:zimbraMail");
-//     policy.setAttribute("name", this[ZaRegisterDevice.A2_name]);
-//     policy.setAttribute("id", this[ZaRegisterDevice.A2_id]);
-//     policy.setAttribute("lifetime", this.toDays());
-//     policy.setAttribute("type", "system");
+    var params = new Object();
+    params.soapDoc = soapDoc;
 
-//     var params = new Object();
-//     params.soapDoc = soapDoc;
-//     params.skipAuthCheck = false;
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+        };
 
-//     try{
-//         var reqMgrParams = {
-//             controller : ZaApp.getInstance().getCurrentController(),
-//             busyMsg : ZaMsg.BUSY_MODIFY_RETENTION_POLICIES
-//         };
-
-//         ZaRequestMgr.invoke(params, reqMgrParams).Body.ModifySystemRetentionPolicyResponse;
-
-//     } catch(ex) {
-//         throw ex;
-//         return null;
-//     }
-// }
-
-
-// ZaRegisterDevice.prototype.deletePolicy =
-// function(by, val) {
-//     var soapDoc = AjxSoapDoc.create("DeleteSystemRetentionPolicyRequest", "urn:zimbraAdmin", null);
-//     if (by && val) {
-//         var el = soapDoc.set("cos", val);
-//         el.setAttribute("by", by);
-//     }
-
-//     var policy = soapDoc.set("policy", null, null, "urn:zimbraMail");
-//     policy.setAttribute("id", this.id);
-
-//     var params = new Object();
-//     params.soapDoc = soapDoc;
-//     params.skipAuthCheck = false;
-
-//     try{
-//         var reqMgrParams = {
-//             controller : ZaApp.getInstance().getCurrentController(),
-//             busyMsg : ZaMsg.BUSY_DELETE_RETENTION_POLICIES
-//         };
-
-//         var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.DeleteSystemRetentionPolicyResponse;
-
-//     } catch(ex) {
-//         throw ex;
-//         return null;
-//     }
-// }
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
+        console.log(resp,'ssssssssss');
+        return resp;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+}

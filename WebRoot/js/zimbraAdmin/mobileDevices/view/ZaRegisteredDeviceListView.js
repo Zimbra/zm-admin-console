@@ -51,8 +51,6 @@ function(item) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			var field = this._headerList[i]._field;
-			console.log(field);
-			console.log(item[field]);
 
 			if(field == ZaRegisterDevice.RD_Email_Address) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
