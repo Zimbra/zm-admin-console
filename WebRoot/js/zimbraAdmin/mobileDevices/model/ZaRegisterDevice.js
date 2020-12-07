@@ -130,6 +130,7 @@ function(by, val) {
     // "mailboxId":3,
     // "emailAddress":"admin@zmc.com"}]
     // return result;
+    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest",ZaZimbraAdmin.URN, null);
 
     if (by && val) {
         var el = soapDoc.set("cos", val);
