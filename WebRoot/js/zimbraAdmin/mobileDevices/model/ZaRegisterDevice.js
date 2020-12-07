@@ -100,36 +100,6 @@ ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
-    // var result = [{"id":"androidc1628606379",
-    // "type":"Android",
-    // "ua":"Android-Mail/2020.11.01.342354497.Release",
-    // "protocol":"14.1",
-    // "model":"ONEPLUS A5000",
-    // "friendly_name":"ONEPLUS A5000",
-    // "os":"Android 7.1.1",
-    // "server":"zmc-mailbox",
-    // "provisionable":true,
-    // "status":1,
-    // "firstReqReceived":1606805217,
-    // "lastPolicyUpdate":1606805223,
-    // "lastUsedDate":"2020-12-01",
-    // "mailboxId":3,
-    // "emailAddress":"admin@zmc.com"},{"id":"123",
-    // "type":"Android",
-    // "ua":"Android-Mail/2020.11.01.342354497.Release",
-    // "protocol":"14.1",
-    // "model":"ONEPLUS A5000",
-    // "friendly_name":"ONEPLUS A5000",
-    // "os":"Android 7.1.1",
-    // "server":"zmc-mailbox",
-    // "provisionable":true,
-    // "status":1,
-    // "firstReqReceived":1606805217,
-    // "lastPolicyUpdate":1606805223,
-    // "lastUsedDate":"2020-12-01",
-    // "mailboxId":3,
-    // "emailAddress":"admin@zmc.com"}]
-    // return result;
     var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest",ZaZimbraAdmin.URN, null);
 
     if (by && val) {
@@ -146,7 +116,7 @@ function(by, val) {
             busyMsg : ZaMsg.BUSY_GETTING_SYNC_DEVICES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body;
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
         console.log(resp,'ssssssssss');
         return resp;
     } catch(ex) {
@@ -174,7 +144,7 @@ ZaRegisterDevice.quarantineDevice = function(obj) {
             busyMsg : ZaMsg.BUSY_QUARANTINE_SYNC_DEVICES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse;
         console.log(resp,'ssssssssss');
         return resp;
     } catch(ex) {
@@ -201,8 +171,7 @@ ZaRegisterDevice.removeDevice = function(obj) {
             busyMsg : ZaMsg.BUSY_REMOVING_SYNC_DEVICES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
-        console.log(resp,'ssssssssss');
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse;
         return resp;
     } catch(ex) {
         throw ex;
@@ -235,8 +204,7 @@ ZaRegisterDevice.allowDeviceSync = function(obj) {
             busyMsg : ZaMsg.BUSY_RESUMING_SYNC_DEVICES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
-        console.log(resp,'ssssssssss');
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse;
         return resp;
     } catch(ex) {
         throw ex;
@@ -245,26 +213,24 @@ ZaRegisterDevice.allowDeviceSync = function(obj) {
 }
 
 ZaRegisterDevice.wipeDevice = function(obj) {
-    // console.log(this);
-    // var obj = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
-    console.log(obj,'wipeDeviceListener');
-    var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest","urn:zimbraAdmin", null);
-    if (by && val) {
-        var el = soapDoc.set("cos", val);
-        el.setAttribute("by", by);
-    }
+    var soapDoc = AjxSoapDoc.create("RemoteWipeRequest",ZaZimbraAdmin.URN, null);
 
+    for (var i = 0; i < obj.length; i++) {
+        var current = obj[i];
+        var device = soapDoc.set("device", null, null);
+        device.setAttribute("id", current.id);
+    }
+    
     var params = new Object();
     params.soapDoc = soapDoc;
 
     try{
         var reqMgrParams = {
             controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_CREATE_RETENTION_POLICIES
+            busyMsg : ZaMsg.BUSY_WIPING_SYNC_DEVICES
         };
 
-        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse.device;
-        console.log(resp,'ssssssssss');
+        var resp = ZaRequestMgr.invoke(params, reqMgrParams).Body.GetDeviceStatusResponse;
         return resp;
     } catch(ex) {
         throw ex;
