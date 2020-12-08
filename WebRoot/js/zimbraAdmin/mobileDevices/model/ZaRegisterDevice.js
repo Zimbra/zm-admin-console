@@ -100,6 +100,11 @@ ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 
 ZaRegisterDevice.getRegisteredDevices =
 function(by, val) {
+
+    return [
+        {"id":"androidc1628606379","type":"Android","ua":"Android-Mail/2020.11.01.342354497.Release","protocol":"14.1","model":"ONEPLUS A5000","friendly_name":"ONEPLUS A5000","os":"Android 7.1.1","server":"zmc-mailbox","provisionable":true,"status":2,"firstReqReceived":1606805217,"lastPolicyUpdate":1607345937,"lastUsedDate":"2020-12-07","mailboxId":3,"emailAddress":"admin@zmc.com"},
+        {"id":"androidc521192406","type":"Android","ua":"Android-Mail/2020.11.01.342354497.Release","protocol":"14.1","model":"Redmi Note 7 Pro","friendly_name":"Redmi Note 7 Pro","os":"Android 10","server":"zmc-mailbox","provisionable":true,"status":1,"firstReqReceived":1607339601,"lastPolicyUpdate":1607344751,"lastUsedDate":"2020-12-07","mailboxId":3,"emailAddress":"admin@zmc.com"}
+    ]
     var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest",ZaZimbraAdmin.URN, null);
 
     if (by && val) {

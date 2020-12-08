@@ -226,6 +226,7 @@ ZaCos.A2_retentionPoliciesPurge_Selection = "retentionPoliciesPurge_Selection";
 
 ZaCos.A2_registeredDevice = "registeredDevice";
 ZaCos.A2_registeredDevice_Selection = "registeredDevice_Selection";
+ZaCos.A2_registeredDeviceKeepInherited ="registeredDeviceKeepInherited"
 
 // right
 ZaCos.RIGHT_LIST_COS = "listCos";
