@@ -80,11 +80,7 @@ function(item) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(item[ZaRegisterDevice.RD_EAS_PROTOCOL]);
 				html[idx++] = "</td>";
-			} else if(field == ZaRegisterDevice.RD_Server) {
-				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				html[idx++] = AjxStringUtil.htmlEncode(item[ZaRegisterDevice.RD_Server]);
-				html[idx++] = "</td>";
-			}	
+			}
 		}
 	} else {
 		html[idx++] = "<td width=100%>";

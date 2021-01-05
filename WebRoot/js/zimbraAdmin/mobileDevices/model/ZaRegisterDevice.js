@@ -45,7 +45,6 @@ ZaRegisterDevice.RD_Device_Name = "friendly_name";
 ZaRegisterDevice.RD_Device_ID = "id";
 ZaRegisterDevice.RD_Status = "status";
 ZaRegisterDevice.RD_EAS_PROTOCOL = "protocol";
-ZaRegisterDevice.RD_Server = "server";
 ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 ZaRegisterDevice.MONTH = 31;
 
