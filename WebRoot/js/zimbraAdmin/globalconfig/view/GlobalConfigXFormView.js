@@ -1831,8 +1831,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
         "auto", null, null, true, true);
         deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_EAS_PROTOCOL, ZaMsg.MB_Eas_col, null,
         "auto", null, null, true, true);
-        deviceHeaderList[i++] = new ZaListHeaderItem(ZaRegisterDevice.RD_Server, ZaMsg.MB_Server_col, null,
-        "auto", null, null, true, true);
 
         tabBarChoices.push({
             value : _tab12,
