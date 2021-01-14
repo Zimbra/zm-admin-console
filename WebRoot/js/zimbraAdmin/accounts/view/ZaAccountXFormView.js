@@ -1099,6 +1099,7 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraFeatureFlaggingEnabled,
     ZaAccount.A_zimbraImapEnabled,
     ZaAccount.A_zimbraPop3Enabled,
+    ZaAccount.A_zimbraFeatureWebClientEnabled,
     ZaAccount.A_zimbraFeatureImapDataSourceEnabled,
     ZaAccount.A_zimbraFeaturePop3DataSourceEnabled,
     ZaAccount.A_zimbraFeatureMailSendLaterEnabled,
@@ -1183,7 +1184,9 @@ ZaAccountXFormView.PREFERENCES_TAB_ATTRS = [
     ZaAccount.A_zimbraPrefCalendarToasterEnabled,
     ZaAccount.A_zimbraPrefCalendarShowPastDueReminders,
     ZaAccount.A_zimbraPrefAppleIcalDelegationEnabled,
-    ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled
+    ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled,
+    ZaAccount.A_zimbraPrefImapEnabled,
+    ZaAccount.A_zimbraPrefPop3Enabled
 ];
 ZaAccountXFormView.PREFERENCES_TAB_RIGHTS = [];
 
@@ -2162,6 +2165,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                              ZaAccount.A_zimbraFeatureFlaggingEnabled,
                              ZaAccount.A_zimbraImapEnabled,
                              ZaAccount.A_zimbraPop3Enabled,
+                             ZaAccount.A_zimbraFeatureWebClientEnabled,
                              ZaAccount.A_zimbraFeatureImapDataSourceEnabled,
                              ZaAccount.A_zimbraFeaturePop3DataSourceEnabled,
                              ZaAccount.A_zimbraFeatureMailSendLaterEnabled,
@@ -2180,6 +2184,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                             {ref:ZaAccount.A_zimbraFeatureFlaggingEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureFlaggingEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureFlaggingEnabled, trueValue:"TRUE", falseValue:"FALSE"}    ,
                             {ref:ZaAccount.A_zimbraImapEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraImapEnabled,checkBoxLabel:ZaMsg.LBL_zimbraImapEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraPop3Enabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPop3Enabled,checkBoxLabel:ZaMsg.LBL_zimbraPop3Enabled,  trueValue:"TRUE", falseValue:"FALSE"},
+                            {ref:ZaAccount.A_zimbraFeatureWebClientEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureWebClientEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureWebClientEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeatureImapDataSourceEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraExternalImapEnabled,checkBoxLabel:ZaMsg.LBL_zimbraExternalImapEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeaturePop3DataSourceEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraExternalPop3Enabled,checkBoxLabel:ZaMsg.LBL_zimbraExternalPop3Enabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeatureMailSendLaterEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureMailSendLaterEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureMailSendLaterEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
@@ -2691,6 +2696,25 @@ textFieldCssClass:"admin_xform_number_input"}
                                     nowrap:false,labelWrap:true
                                 }
 
+                            ]
+                        },
+                        {type:_ZA_TOP_GROUPER_, id:"account_prefs_pop_imap",
+                            label:ZaMsg.NAD_PopImapOptions,
+                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                                [
+                                    ZaAccount.A_zimbraPrefImapEnabled,
+                                    ZaAccount.A_zimbraPrefPop3Enabled
+                                ]]
+                            ],
+                            items :[
+                                {ref:ZaAccount.A_zimbraPrefImapEnabled, type:_SUPER_CHECKBOX_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraPrefImapEnabled,checkBoxLabel:ZaMsg.LBL_zimbraPrefImapEnabled,
+                                    trueValue:"TRUE", falseValue:"FALSE",
+                                    colSpan:2
+                                },
+                                {ref:ZaAccount.A_zimbraPrefPop3Enabled,colSpan:2,
+                                    type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefPop3Enabled,checkBoxLabel:ZaMsg.LBL_zimbraPrefPop3Enabled, trueValue:"TRUE", falseValue:"FALSE"}
                             ]
                         },
                         {type:_ZA_TOP_GROUPER_, id:"account_prefs_contacts_general",
