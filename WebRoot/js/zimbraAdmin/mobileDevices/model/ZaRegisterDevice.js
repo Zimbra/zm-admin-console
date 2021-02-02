@@ -61,16 +61,47 @@ ZaRegisterDevice.getDateDifference = function(lastUsedDate) {
 }
 
 ZaRegisterDevice.getFilteredDevices = function (value) {
-    return ZaRegisterDevice.getRegisteredDevices("name", value);
+    return ZaRegisterDevice.getRegisteredDevices(value);
 }
 
 ZaRegisterDevice.getRegisteredDevices =
-function(by, val) {
+function(optParamValue) {
     var soapDoc = AjxSoapDoc.create("GetDeviceStatusRequest",ZaZimbraAdmin.URN, null);
 
-    if (by && val) {
-       var account = soapDoc.set("account", val);
-        account.setAttribute("by", by);
+    if (optParamValue) {
+        var account = soapDoc.set("account", optParamValue);
+        account.setAttribute("by", "name");
+        const convertedDate = new Date(optParamValue);
+        let statusValue = parseInt(optParamValue);
+
+        if (convertedDate !== "Invalid Date" && !isNaN(convertedDate)){
+            soapDoc.set("deviceLastUsed", convertedDate.toISOString().split('T')[0]);
+        } else {
+            var device = soapDoc.set("device", optParamValue);
+            device.setAttribute("by", "id");
+
+            // Try to get device status (should be integer) from the input string provided by user.
+            if (statusValue !== 0 && !statusValue) {
+                const localStringArray = [ZaMsg.MB_Need_Prov.toLowerCase(), ZaMsg.MB_Active.toLowerCase(), ZaMsg.MB_Suspended.toLowerCase(), ZaMsg.MB_Wipe_ACK.toLowerCase(), ZaMsg.MB_Wipe_Comp.toLowerCase(), ZaMsg.MB_Blocked.toLowerCase()];
+                const indexOfParam = localStringArray.indexOf(optParamValue.toLowerCase());
+
+                if (indexOfParam === -1) {
+                    const engStringArray = ["needs provisioning", "active", "suspended", "wipe pending","wipe completed", "blocked"];
+                    statusValue = engStringArray.indexOf(optParamValue.toLowerCase());
+                } else {
+                    statusValue = indexOfParam;
+                }
+            }
+        }
+
+        if (statusValue >= 0 && statusValue <= 5) {
+            soapDoc.set("status", statusValue);
+        }
+
+        soapDoc.set("deviceName", optParamValue);
+        soapDoc.set("deviceType", optParamValue);
+        soapDoc.set("deviceSyncVersion", optParamValue);
+        soapDoc.set("useAnd", false);
     }
 
     var params = new Object();
@@ -132,7 +163,7 @@ ZaRegisterDevice.removeDevice = function(obj) {
             busyMsg : ZaMsg.BUSY_REMOVING_SYNC_DEVICES
         };
 
-        ZaRequestMgr.invoke(params, reqMgrParams).Body.RemoveDeviceResponse;
+        return ZaRequestMgr.invoke(params, reqMgrParams).Body.RemoveDeviceResponse;
 
     } catch(ex) {
         throw ex;
