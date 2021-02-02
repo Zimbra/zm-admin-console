@@ -416,6 +416,11 @@ function () {
 					isIPOrHostName = false;
 				}
 
+				// In case of localhost, lets not verify IPV4
+				if (chunks[1] === 'localhost') {
+					isIPOrHostName = true;
+				}
+
 				if (!isIPOrHostName) {
 					try {
 						var exIPData = ZaIPUtil.isIPV4(chunks[1]);
