@@ -220,3 +220,53 @@ ZaRegisterDevice.wipeDevice = function(obj) {
         return null;
     }
 }
+
+ZaRegisterDevice.wipeCancelDevice = function(obj) {
+    var soapDoc = AjxSoapDoc.create("CancelPendingRemoteWipeRequest",ZaZimbraAdmin.URN, null);
+
+    var device = soapDoc.set("device", null, null);
+    device.setAttribute("id", obj.id);
+    
+    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
+    account.setAttribute("by", "name");
+    
+    var params = new Object();
+    params.soapDoc = soapDoc;
+
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_CANCELLING_WIPE
+        };
+
+        return ZaRequestMgr.invoke(params, reqMgrParams).Body.CancelPendingRemoteWipeResponse.device;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+}
+
+ZaRegisterDevice.blockDevice = function(obj) {
+    var soapDoc = AjxSoapDoc.create("BlockDeviceRequest",ZaZimbraAdmin.URN, null);
+
+    var device = soapDoc.set("device", null, null);
+    device.setAttribute("id", obj.id);
+    
+    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
+    account.setAttribute("by", "name");
+    
+    var params = new Object();
+    params.soapDoc = soapDoc;
+
+    try{
+        var reqMgrParams = {
+            controller : ZaApp.getInstance().getCurrentController(),
+            busyMsg : ZaMsg.BUSY_BLOCKING_SYNC_DEVICES
+        };
+
+        return ZaRequestMgr.invoke(params, reqMgrParams).Body.BlockDeviceResponse.device;
+    } catch(ex) {
+        throw ex;
+        return null;
+    }
+}
