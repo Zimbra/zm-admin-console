@@ -35,7 +35,8 @@ ZaGlobalConfigViewController = function(appCtxt, container) {
 	this._helpURL = location.pathname + ZaUtil.HELP_URL + "managing_global_settings/global_settings.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 	this._helpButtonText = ZaMsg.helpManageGlobalSettings;
 	this.objType = ZaEvent.S_GLOBALCONFIG;
-	this.tabConstructor = GlobalConfigXFormView;					
+	this.tabConstructor = GlobalConfigXFormView;
+	this._currentSortOrder = true;				
 }
 
 ZaGlobalConfigViewController.prototype = new ZaXFormViewController();
@@ -550,6 +551,12 @@ ZaGlobalConfigViewController.getMTARestCustomAttributes = function(savedMtaRestA
 	return mtaRestCustomAttrArr ;
 };
 
+ZaGlobalConfigViewController.prototype.setSortOrder = 
+function (sortOrder) {
+	this._currentSortOrder = sortOrder;
+}
 
-
-
+ZaGlobalConfigViewController.prototype.getSortOrder = 
+function () {
+	return this._currentSortOrder;
+}
