@@ -82,11 +82,11 @@ function(optParamValue) {
 
             // Try to get device status (should be integer) from the input string provided by user.
             if (statusValue !== 0 && !statusValue) {
-                const localStringArray = [ZaMsg.MB_Need_Prov.toLowerCase(), ZaMsg.MB_Active.toLowerCase(), ZaMsg.MB_Suspended.toLowerCase(), ZaMsg.MB_Wipe_ACK.toLowerCase(), ZaMsg.MB_Wipe_Comp.toLowerCase(), ZaMsg.MB_Blocked.toLowerCase()];
+                const localStringArray = [ZaMsg.MB_Waiting.toLowerCase(), ZaMsg.MB_Active.toLowerCase(), ZaMsg.MB_Suspended.toLowerCase(), ZaMsg.MB_Wipe_ACK.toLowerCase(), ZaMsg.MB_Wipe_Comp.toLowerCase(), ZaMsg.MB_Blocked.toLowerCase()];
                 const indexOfParam = localStringArray.indexOf(optParamValue.toLowerCase());
 
                 if (indexOfParam === -1) {
-                    const engStringArray = ["needs provisioning", "active", "suspended", "wipe pending","wipe completed", "blocked"];
+                    const engStringArray = ["waiting for device", "active", "suspended", "wipe pending","wipe completed", "blocked"];
                     statusValue = engStringArray.indexOf(optParamValue.toLowerCase());
                 } else {
                     statusValue = indexOfParam;
@@ -101,7 +101,7 @@ function(optParamValue) {
         soapDoc.set("deviceName", optParamValue);
         soapDoc.set("deviceType", optParamValue);
         soapDoc.set("deviceSyncVersion", optParamValue);
-        soapDoc.set("useAnd", false);
+        soapDoc.set("filterDevicesByAnd", false);
     }
 
     var params = new Object();
