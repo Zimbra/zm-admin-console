@@ -329,6 +329,14 @@ GlobalConfigXFormView.updateRetentionPolicy = function(form) {
     }
 }
 
+GlobalConfigXFormView.sortRegisteredDevices = function(list) {
+    var sortOrder = ZaApp.getInstance().getCurrentController().getSortOrder();
+
+    list.sort(ZaItem.compareEmailAddress(sortOrder));
+
+    return list;
+}
+
 GlobalConfigXFormView.registerDeviceListener = function(operation) {
     var form = this.getForm()
     var obj = form.getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection)[0];
@@ -374,9 +382,11 @@ GlobalConfigXFormView.registerDeviceListener = function(operation) {
             } else {
                 AjxUtil.arrayAdd(all, result, index);
             }
-    
+            
+           var sortedList = GlobalConfigXFormView.sortRegisteredDevices(all);
+
             form.setInstanceValue([], ZaGlobalConfig.A2_registeredDevice);
-            form.setInstanceValue(all, ZaGlobalConfig.A2_registeredDevice);
+            form.setInstanceValue(sortedList, ZaGlobalConfig.A2_registeredDevice);
             form.setInstanceValue([], ZaGlobalConfig.A2_registeredDevice_Selection);
         }
     }
@@ -461,7 +471,9 @@ GlobalConfigXFormView.prototype.loadRegisteredDevices = function() {
     var result = ZaRegisterDevice.getRegisteredDevices();
 
     if (result) {
-        this.getForm().setInstanceValue(result, ZaGlobalConfig.A2_registeredDevice);
+        var sortedList = GlobalConfigXFormView.sortRegisteredDevices(result);
+
+        this.getForm().setInstanceValue(sortedList, ZaGlobalConfig.A2_registeredDevice);
     }
 }
 
@@ -1877,7 +1889,9 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                             var result = ZaRegisterDevice.getFilteredDevices(elementValue);
                                             
                                             if (result) {
-                                                this.getForm().setInstanceValue(result, ZaGlobalConfig.A2_registeredDevice);
+                                                var sortedList = GlobalConfigXFormView.sortRegisteredDevices(result);
+                                                
+                                                this.getForm().setInstanceValue(sortedList, ZaGlobalConfig.A2_registeredDevice);
                                             } else {
                                                 this.getForm().setInstanceValue([], ZaGlobalConfig.A2_registeredDevice);
                                             }

@@ -104,3 +104,12 @@ ZaRegisteredDeviceListView.prototype._setNoResultsHtml = function() {
 	div.innerHTML = buffer.toString();
 	this._addRow(div);
 };
+
+ZaRegisteredDeviceListView.prototype._sortColumn = 
+function(columnItem, bSortAsc) {
+	var currentController = ZaApp.getInstance().getCurrentController();
+	currentController.setSortOrder(bSortAsc);
+
+	this._list.sort(ZaItem.compareEmailAddress(bSortAsc));
+	this.setUI();
+}
