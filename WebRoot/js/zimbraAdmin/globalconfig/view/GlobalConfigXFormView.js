@@ -165,6 +165,45 @@ GlobalConfigXFormView.registeredDeviceSelectionListener = function() {
     this.getForm().setInstanceValue(this.getSelection(), ZaGlobalConfig.A2_registeredDevice_Selection);
 }
 
+GlobalConfigXFormView.shouldEnableSyncButton = function(button) {
+    var selectedDevice = this.getForm().getInstanceValue(ZaGlobalConfig.A2_registeredDevice_Selection);
+
+    if (!selectedDevice || !selectedDevice[0]) {
+        return;
+    }
+    let statusArray = [];
+
+    switch (button) {
+        case ZaRegisterDevice.RD_BT_REMOVE:
+            statusArray = [ZaRegisterDevice.ST_NEEDS_PROVISIONING,ZaRegisterDevice.ST_WIPE_PENDING];
+            break;
+            
+        case ZaRegisterDevice.RD_BT_SUSPEND:
+            statusArray = [ZaRegisterDevice.ST_SUSPENDED,ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED,ZaRegisterDevice.ST_BLOCKED];
+            break;
+            
+        case ZaRegisterDevice.RD_BT_RESUME:
+            statusArray = [ZaRegisterDevice.ST_NEEDS_PROVISIONING,ZaRegisterDevice.ST_ACTIVE,ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED];
+            break;
+            
+        case ZaRegisterDevice.RD_BT_WIPE:
+            statusArray = [ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED];
+            break;
+
+        case ZaRegisterDevice.RD_BT_WIPE_CANCEL: 
+            statusArray = [ZaRegisterDevice.ST_NEEDS_PROVISIONING,ZaRegisterDevice.ST_ACTIVE,ZaRegisterDevice.ST_SUSPENDED,ZaRegisterDevice.ST_WIPE_COMPLETED,ZaRegisterDevice.ST_BLOCKED];
+            break;
+
+        case ZaRegisterDevice.RD_BT_BLOCK: 
+            statusArray = [ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED,ZaRegisterDevice.ST_BLOCKED];
+            break;
+    }
+
+    var selectedDeviceStatus = parseInt(selectedDevice[0][ZaRegisterDevice.RD_Status]);
+
+    return statusArray.indexOf(selectedDeviceStatus) === -1;
+}
+
 GlobalConfigXFormView.deleteButtonListener = function(isPurge) {
     var selected = this.getForm().getInstanceValue(ZaGlobalConfig.A2_retentionPoliciesKeep_Selection);
 
@@ -347,19 +386,31 @@ GlobalConfigXFormView.registerDeviceListener = function(operation) {
 
     let result, statusValue ;
 
-    if(operation === 'remove') {
-        result = ZaRegisterDevice.removeDevice(obj);
-        statusValue = 0;
-    } else if (operation === 'suspend') {
-        result = ZaRegisterDevice.quarantineDevice(obj);
-    } else if (operation === 'resume') {
-        result = ZaRegisterDevice.allowDeviceSync(obj);
-    } else if (operation === 'wipe') {
-        result = ZaRegisterDevice.wipeDevice(obj);
-    } else if (operation === 'wipeCancel') {
-        result = ZaRegisterDevice.wipeCancelDevice(obj);
-    } else if(operation === 'block') {
-        result = ZaRegisterDevice.blockDevice(obj);
+    switch (operation) {
+        case ZaRegisterDevice.RD_BT_REMOVE:
+            result = ZaRegisterDevice.removeDevice(obj);
+            statusValue = 0;
+            break;
+
+        case ZaRegisterDevice.RD_BT_SUSPEND:
+            result = ZaRegisterDevice.quarantineDevice(obj);
+            break;
+            
+        case ZaRegisterDevice.RD_BT_RESUME:
+            result = ZaRegisterDevice.allowDeviceSync(obj);
+            break;
+            
+        case ZaRegisterDevice.RD_BT_WIPE:
+            result = ZaRegisterDevice.wipeDevice(obj);
+            break;
+
+        case ZaRegisterDevice.RD_BT_WIPE_CANCEL: 
+            result = ZaRegisterDevice.wipeCancelDevice(obj);
+            break;
+
+        case ZaRegisterDevice.RD_BT_BLOCK: 
+            result = ZaRegisterDevice.blockDevice(obj);
+            break;
     }
 
     if (result && result[0]) {
@@ -1932,9 +1983,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'remove');",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length > 0;
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_REMOVE);
                                                 } ]
                                             },
                                             {
@@ -1946,9 +1995,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'suspend');",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length > 0;
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_SUSPEND);
                                                 } ]
                                             }, {
                                                 type : _CELLSPACER_
@@ -1959,9 +2006,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'resume');",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length > 0;
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_RESUME);
                                                 } ]
                                             }, {
                                                 type : _CELLSPACER_
@@ -1972,10 +2017,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'wipe');",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length > 0;
-                                                } ]
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_WIPE);
+                                                }]
                                             }, {
                                                 type : _CELLSPACER_
                                             }, {
@@ -1985,10 +2028,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'wipeCancel');",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length > 0;
-                                                } ]
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_WIPE_CANCEL);
+                                                }]
                                             }, {
                                                 type : _CELLSPACER_
                                             }, {
@@ -1998,9 +2039,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'block');",
                                                 enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
                                                 enableDisableChecks : [ function() {
-                                                    var sel = this.getForm().getInstanceValue(
-                                                            ZaGlobalConfig.A2_registeredDevice_Selection);
-                                                    return sel && sel.length > 0;
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_BLOCK);
                                                 } ]
                                             } ]
                                 } ]

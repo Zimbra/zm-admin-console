@@ -47,6 +47,20 @@ ZaRegisterDevice.RD_Status = "status";
 ZaRegisterDevice.RD_EAS_PROTOCOL = "protocol";
 ZaRegisterDevice.RD_Mailbox_Id = "mailboxId";
 ZaRegisterDevice.MONTH = 31;
+ZaRegisterDevice.RD_BT_REMOVE = 'remove';
+ZaRegisterDevice.RD_BT_SUSPEND = 'suspend';
+ZaRegisterDevice.RD_BT_RESUME = 'resume';
+ZaRegisterDevice.RD_BT_WIPE = 'wipe';
+ZaRegisterDevice.RD_BT_WIPE_CANCEL = 'wipeCancel';
+ZaRegisterDevice.RD_BT_BLOCK = 'block';
+
+ZaRegisterDevice.ST_NEEDS_PROVISIONING = 0;
+ZaRegisterDevice.ST_ACTIVE = 1;
+ZaRegisterDevice.ST_SUSPENDED = 2;
+ZaRegisterDevice.ST_WIPE_PENDING = 3;
+ZaRegisterDevice.ST_WIPE_COMPLETED = 4;
+ZaRegisterDevice.ST_BLOCKED = 5;
+
 
 ZaRegisterDevice.getDateDifference = function(lastUsedDate) {
     var lUsedDate = new Date(lastUsedDate);
