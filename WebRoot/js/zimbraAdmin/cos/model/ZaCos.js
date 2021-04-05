@@ -59,6 +59,10 @@ ZaCos.A_zimbraPasswordBlockCommonEnabled = "zimbraPasswordBlockCommonEnabled";
 ZaCos.A_name = "cn";
 ZaCos.A_description = "description";
 ZaCos.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
+ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
+ZaCos.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
+ZaCos.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
+ZaCos.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
 ZaCos.A_zimbraQuotaWarnPercent = "zimbraQuotaWarnPercent";
 ZaCos.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
 ZaCos.A_zimbraQuotaWarnMessage = "zimbraQuotaWarnMessage";
@@ -646,6 +650,10 @@ ZaCos.myXModel = {
 //        {id:ZaCos.A_description, type:_STRING_, ref:"attrs/"+ZaCos.A_description},
         ZaItem.descriptionModelItem ,
         {id:ZaCos.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraAttachmentsBlocked},
+        {id:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaCos.A_zimbraFileUploadBlockedFileTypes, type:_STRING_, ref:"attrs/" + ZaCos.A_zimbraFileUploadBlockedFileTypes},
+        {id:ZaCos.A_zimbraMailAttachmentMaxSize, type:_NUMBER_, ref:"attrs/" + ZaCos.A_zimbraMailAttachmentMaxSize},
+        {id:ZaCos.A_zimbraFileUploadMaxSizePerFile, type: _NUMBER_, ref:"attrs/" + ZaCos.A_zimbraFileUploadMaxSizePerFile},
         {id:ZaCos.A_zimbraAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAuthTokenLifetime, required: true},
         {id:ZaCos.A_zimbraAdminAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAdminAuthTokenLifetime, required: true},
         {id:ZaCos.A_zimbraMailIdleSessionTimeout, type:_MINTERVAL_, ref:"attrs/"+ZaCos.A_zimbraMailIdleSessionTimeout},
