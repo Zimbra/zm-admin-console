@@ -302,8 +302,20 @@ function () {
 	} else if(this._currentObject.attrs[ZaCos.A_zimbraZimletAvailableZimlets] != null) {
 		mods[ZaCos.A_zimbraZimletAvailableZimlets] = "";
 	}
-	
-		
+
+	//check if blocked extensions are changed
+	if(!AjxUtil.isEmpty(tmpObj.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes])) {
+		if((
+				((!this._currentObject.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes] || !this._currentObject.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes].length))
+				|| (tmpObj.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes] != this._currentObject.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes]))
+				&& !(tmpObj.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes] instanceof Array)
+			) {
+			mods[ZaCos.A_zimbraFileUploadBlockedFileTypes] = tmpObj.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes].split(',');
+		}
+	} else if (AjxUtil.isEmpty(tmpObj.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes])  && !AjxUtil.isEmpty(this._currentObject.attrs[ZaCos.A_zimbraFileUploadBlockedFileTypes])) {
+		mods[ZaCos.A_zimbraFileUploadBlockedFileTypes] = "";
+	}
+
 	//check if need to rename
 	if(!isNew) {
 		if(tmpObj.name != this._currentObject.name) {
