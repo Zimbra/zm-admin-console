@@ -71,7 +71,7 @@ function(item) {
 				html[idx++] = AjxStringUtil.htmlEncode(item[ZaRegisterDevice.RD_Device_ID]);
 				html[idx++] = "</td>";
 			} else if(field == ZaRegisterDevice.RD_Status) {
-				var stringArray = [ZaMsg.MB_Waiting, ZaMsg.MB_Active, ZaMsg.MB_Suspended, ZaMsg.MB_Wipe_ACK, ZaMsg.MB_Wipe_Comp, ZaMsg.MB_Blocked];
+				var stringArray = [ZaMsg.MB_Waiting, ZaMsg.MB_Active, ZaMsg.MB_Suspended, ZaMsg.MB_Wipe_ACK, ZaMsg.MB_Wipe_Comp, ZaMsg.MB_Blocked, ZaMsg.MB_Remove_Account_ACK, ZaMsg.MB_Remove_Account_Comp];
 				
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
 				html[idx++] = AjxStringUtil.htmlEncode(stringArray[(item[ZaRegisterDevice.RD_Status])]);
