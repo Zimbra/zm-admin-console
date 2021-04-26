@@ -190,6 +190,10 @@ ZaCosXFormView.isBriefcaseFeatureEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraFeatureBriefcasesEnabled) == "TRUE");
 }
 
+ZaCosXFormView.isAttributeDefined = function(attribute) {
+    return this.getInstanceValue(attribute) != undefined;
+}
+
 ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureReadReceiptsEnabled,
     ZaCos.A_zimbraFeatureContactsEnabled,
@@ -816,7 +820,11 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureFlaggingEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFlaggingEnabled,label:ZaMsg.LBL_zimbraFeatureFlaggingEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraImapEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraImapEnabled,label:ZaMsg.LBL_zimbraImapEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraPop3Enabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraPop3Enabled,label:ZaMsg.LBL_zimbraPop3Enabled,trueValue:"TRUE", falseValue:"FALSE"},
-                        {ref:ZaCos.A_zimbraFeatureWebClientEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureWebClientEnabled,label:ZaMsg.LBL_zimbraFeatureWebClientEnabled,trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaCos.A_zimbraFeatureWebClientEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureWebClientEnabled,label:ZaMsg.LBL_zimbraFeatureWebClientEnabled,trueValue:"TRUE", falseValue:"FALSE",
+                            visibilityChecks : [ function() {
+                                return ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraFeatureWebClientEnabled);
+                            }]
+                        },
                         {ref:ZaCos.A_zimbraFeatureImapDataSourceEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraExternalImapEnabled,label:ZaMsg.LBL_zimbraExternalImapEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeaturePop3DataSourceEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraExternalPop3Enabled,label:ZaMsg.LBL_zimbraExternalPop3Enabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureMailForwardingEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureMailForwardingEnabled,label:ZaMsg.LBL_zimbraFeatureMailForwardingEnabled, trueValue:"TRUE", falseValue:"FALSE"},
@@ -1161,20 +1169,23 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             ]},
             {type:_ZA_TOP_GROUPER_, id:"cos_prefs_pop_imap", colSizes:["275px","auto"],numCols:2,
                 label: ZaMsg.NAD_PopImapOptions,
-                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                    [
-                        ZaCos.A_zimbraPrefImapEnabled,
-                        ZaCos.A_zimbraPrefPop3Enabled
-                    ]]
-                ],
+                visibilityChecks:[function() {
+                    return (ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefImapEnabled) || ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefPop3Enabled));
+                }],
                 items :[
                 {ref:ZaCos.A_zimbraPrefImapEnabled, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraPrefImapEnabled,
-                    label:ZaMsg.LBL_zimbraPrefImapEnabled, trueValue:"TRUE", falseValue:"FALSE"
+                    label:ZaMsg.LBL_zimbraPrefImapEnabled, trueValue:"TRUE", falseValue:"FALSE",
+                    visibilityChecks:[ function() {
+                        return ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefImapEnabled);
+                    }]
                 },
                 {ref:ZaCos.A_zimbraPrefPop3Enabled, type:_CHECKBOX_,
                     msgName:ZaMsg.LBL_zimbraPrefPop3Enabled,
-                    label:ZaMsg.LBL_zimbraPrefPop3Enabled, trueValue:"TRUE", falseValue:"FALSE"
+                    label:ZaMsg.LBL_zimbraPrefPop3Enabled, trueValue:"TRUE", falseValue:"FALSE",
+                    visibilityChecks: [ function() {
+                        return ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefPop3Enabled);
+                    }]
                 }
             ]},
             {type:_ZA_TOP_GROUPER_, id:"cos_prefs_contacts_general", colSizes:["275px","auto"],numCols:2,
@@ -1904,4 +1915,3 @@ function (value, event, form) {
         form.parent.setDirty(false);
     }
 }
-
