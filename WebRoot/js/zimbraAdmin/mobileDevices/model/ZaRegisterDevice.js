@@ -52,6 +52,8 @@ ZaRegisterDevice.RD_BT_SUSPEND = 'suspend';
 ZaRegisterDevice.RD_BT_RESUME = 'resume';
 ZaRegisterDevice.RD_BT_WIPE = 'wipe';
 ZaRegisterDevice.RD_BT_WIPE_CANCEL = 'wipeCancel';
+ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT = 'removeAccount';
+ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT_CANCEL = 'removeAccountCancel';
 ZaRegisterDevice.RD_BT_BLOCK = 'block';
 
 ZaRegisterDevice.ST_NEEDS_PROVISIONING = 0;
@@ -60,7 +62,11 @@ ZaRegisterDevice.ST_SUSPENDED = 2;
 ZaRegisterDevice.ST_WIPE_PENDING = 3;
 ZaRegisterDevice.ST_WIPE_COMPLETED = 4;
 ZaRegisterDevice.ST_BLOCKED = 5;
+ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING = 6;
+ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED = 7;
 
+ZaRegisterDevice.SYNC_REQUEST = 'Request';
+ZaRegisterDevice.SYNC_RESPONSE = 'Response';
 
 ZaRegisterDevice.getDateDifference = function(lastUsedDate) {
     var lUsedDate = new Date(lastUsedDate);
@@ -96,11 +102,11 @@ function(optParamValue) {
 
             // Try to get device status (should be integer) from the input string provided by user.
             if (statusValue !== 0 && !statusValue) {
-                const localStringArray = [ZaMsg.MB_Waiting.toLowerCase(), ZaMsg.MB_Active.toLowerCase(), ZaMsg.MB_Suspended.toLowerCase(), ZaMsg.MB_Wipe_ACK.toLowerCase(), ZaMsg.MB_Wipe_Comp.toLowerCase(), ZaMsg.MB_Blocked.toLowerCase()];
+                const localStringArray = [ZaMsg.MB_Waiting.toLowerCase(), ZaMsg.MB_Active.toLowerCase(), ZaMsg.MB_Suspended.toLowerCase(), ZaMsg.MB_Wipe_ACK.toLowerCase(), ZaMsg.MB_Wipe_Comp.toLowerCase(), ZaMsg.MB_Blocked.toLowerCase(), ZaMsg.MB_Remove_Account_ACK.toLowerCase(), ZaMsg.MB_Remove_Account_Comp.toLowerCase()];
                 const indexOfParam = localStringArray.indexOf(optParamValue.toLowerCase());
 
                 if (indexOfParam === -1) {
-                    const engStringArray = ["waiting for device", "active", "suspended", "wipe pending","wipe completed", "blocked"];
+                    const engStringArray = ["waiting for device", "active", "suspended", "wipe pending","wipe completed", "blocked", "remove account pending", "account removed"];
                     statusValue = engStringArray.indexOf(optParamValue.toLowerCase());
                 } else {
                     statusValue = indexOfParam;
@@ -134,153 +140,74 @@ function(optParamValue) {
     }
 }
 
-ZaRegisterDevice.quarantineDevice = function(obj) {
-    var soapDoc = AjxSoapDoc.create("QuarantineDeviceRequest",ZaZimbraAdmin.URN, null);
-
-    var device = soapDoc.set("device", null, null);
-    device.setAttribute("id", obj.id);
+ZaRegisterDevice.processSyncRequest = function(operation, obj) {
+    let request, busyMsg;
     
-    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
-    account.setAttribute("by", "name");
+    switch (operation) {
+        case ZaRegisterDevice.RD_BT_REMOVE:
+            request = "RemoveDevice";
+            busyMsg = ZaMsg.BUSY_REMOVING_SYNC_DEVICES;
+            break;
 
-    var params = new Object();
-    params.soapDoc = soapDoc;
+        case ZaRegisterDevice.RD_BT_SUSPEND:
+            request = "QuarantineDevice";
+            busyMsg = ZaMsg.BUSY_QUARANTINE_SYNC_DEVICES;
+            break;
+            
+        case ZaRegisterDevice.RD_BT_RESUME:
+            request = "AllowDevice";
+            busyMsg = ZaMsg.BUSY_RESUMING_SYNC_DEVICES;
+            break;
+            
+        case ZaRegisterDevice.RD_BT_WIPE:
+            request = "RemoteWipe";
+            busyMsg = ZaMsg.BUSY_WIPING_SYNC_DEVICES;
+            break;
 
-    try{
-        var reqMgrParams = {
-            controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_QUARANTINE_SYNC_DEVICES
-        };
+        case ZaRegisterDevice.RD_BT_WIPE_CANCEL: 
+            request = "CancelPendingRemoteWipe";
+            busyMsg = ZaMsg.BUSY_CANCELLING_WIPE;
+            break;
 
-        return ZaRequestMgr.invoke(params, reqMgrParams).Body.QuarantineDeviceResponse.device;
-    } catch(ex) {
-        throw ex;
-        return null;
+        case ZaRegisterDevice.RD_BT_BLOCK: 
+            request = "BlockDevice";
+            busyMsg = ZaMsg.BUSY_BLOCKING_SYNC_DEVICES;
+            break;
+
+        case ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT: 
+            request = "AccountOnlyRemoteWipe";
+            busyMsg = ZaMsg.BUSY_REMOVING_SYNC_ACCOUNT;
+            break;
+
+        case ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT_CANCEL: 
+            request = "CancelPendingAccountOnlyRemoteWipe";
+            busyMsg = ZaMsg.BUSY_CANCELLING_ACCOUNT_WIPE;
+            break;
     }
-}
 
-ZaRegisterDevice.removeDevice = function(obj) {
-    var soapDoc = AjxSoapDoc.create("RemoveDeviceRequest",ZaZimbraAdmin.URN, null);
+    var soapDoc = AjxSoapDoc.create(request.concat(ZaRegisterDevice.SYNC_REQUEST),ZaZimbraAdmin.URN, null);
 
     var device = soapDoc.set("device", null, null);
     device.setAttribute("id", obj.id);
-    
+
     var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
     account.setAttribute("by", "name");
-    
+
     var params = new Object();
     params.soapDoc = soapDoc;
 
     try{
         var reqMgrParams = {
             controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_REMOVING_SYNC_DEVICES
+            busyMsg : busyMsg
         };
 
-        return ZaRequestMgr.invoke(params, reqMgrParams).Body.RemoveDeviceResponse;
+        if(operation === ZaRegisterDevice.RD_BT_REMOVE) {
+            return ZaRequestMgr.invoke(params, reqMgrParams).Body[request.concat(ZaRegisterDevice.SYNC_RESPONSE)];
+        }
 
+        return ZaRequestMgr.invoke(params, reqMgrParams).Body[request.concat(ZaRegisterDevice.SYNC_RESPONSE)].device;
     } catch(ex) {
         throw ex;
-        return null;
-    }
-}
-
-ZaRegisterDevice.allowDeviceSync = function(obj) {
-    var soapDoc = AjxSoapDoc.create("AllowDeviceRequest",ZaZimbraAdmin.URN, null);
-
-    var device = soapDoc.set("device", null, null);
-    device.setAttribute("id", obj.id);
-    
-    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
-    account.setAttribute("by", "name");
-    
-    var params = new Object();
-    params.soapDoc = soapDoc;
-
-    try{
-        var reqMgrParams = {
-            controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_RESUMING_SYNC_DEVICES
-        };
-
-        return ZaRequestMgr.invoke(params, reqMgrParams).Body.AllowDeviceResponse.device;
-    } catch(ex) {
-        throw ex;
-        return null;
-    }
-}
-
-ZaRegisterDevice.wipeDevice = function(obj) {
-    var soapDoc = AjxSoapDoc.create("RemoteWipeRequest",ZaZimbraAdmin.URN, null);
-
-    var device = soapDoc.set("device", null, null);
-    device.setAttribute("id", obj.id);
-    
-    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
-    account.setAttribute("by", "name");
-    
-    var params = new Object();
-    params.soapDoc = soapDoc;
-
-    try{
-        var reqMgrParams = {
-            controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_WIPING_SYNC_DEVICES
-        };
-
-        return ZaRequestMgr.invoke(params, reqMgrParams).Body.RemoteWipeResponse.device;
-    } catch(ex) {
-        throw ex;
-        return null;
-    }
-}
-
-ZaRegisterDevice.wipeCancelDevice = function(obj) {
-    var soapDoc = AjxSoapDoc.create("CancelPendingRemoteWipeRequest",ZaZimbraAdmin.URN, null);
-
-    var device = soapDoc.set("device", null, null);
-    device.setAttribute("id", obj.id);
-    
-    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
-    account.setAttribute("by", "name");
-    
-    var params = new Object();
-    params.soapDoc = soapDoc;
-
-    try{
-        var reqMgrParams = {
-            controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_CANCELLING_WIPE
-        };
-
-        return ZaRequestMgr.invoke(params, reqMgrParams).Body.CancelPendingRemoteWipeResponse.device;
-    } catch(ex) {
-        throw ex;
-        return null;
-    }
-}
-
-ZaRegisterDevice.blockDevice = function(obj) {
-    var soapDoc = AjxSoapDoc.create("BlockDeviceRequest",ZaZimbraAdmin.URN, null);
-
-    var device = soapDoc.set("device", null, null);
-    device.setAttribute("id", obj.id);
-    
-    var account = soapDoc.set("account", obj[ZaRegisterDevice.RD_Email_Address]);
-    account.setAttribute("by", "name");
-    
-    var params = new Object();
-    params.soapDoc = soapDoc;
-
-    try{
-        var reqMgrParams = {
-            controller : ZaApp.getInstance().getCurrentController(),
-            busyMsg : ZaMsg.BUSY_BLOCKING_SYNC_DEVICES
-        };
-
-        return ZaRequestMgr.invoke(params, reqMgrParams).Body.BlockDeviceResponse.device;
-    } catch(ex) {
-        throw ex;
-        return null;
     }
 }

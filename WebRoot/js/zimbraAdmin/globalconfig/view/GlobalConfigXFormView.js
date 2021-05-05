@@ -175,27 +175,80 @@ GlobalConfigXFormView.shouldEnableSyncButton = function(button) {
 
     switch (button) {
         case ZaRegisterDevice.RD_BT_REMOVE:
-            statusArray = [ZaRegisterDevice.ST_NEEDS_PROVISIONING,ZaRegisterDevice.ST_WIPE_PENDING];
+            statusArray = [
+                ZaRegisterDevice.ST_NEEDS_PROVISIONING,
+                ZaRegisterDevice.ST_WIPE_PENDING,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING
+            ];
             break;
-            
+
         case ZaRegisterDevice.RD_BT_SUSPEND:
-            statusArray = [ZaRegisterDevice.ST_SUSPENDED,ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED,ZaRegisterDevice.ST_BLOCKED];
+            statusArray = [
+                ZaRegisterDevice.ST_SUSPENDED,
+                ZaRegisterDevice.ST_WIPE_PENDING,
+                ZaRegisterDevice.ST_WIPE_COMPLETED,
+                ZaRegisterDevice.ST_BLOCKED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING
+            ];
             break;
-            
+
         case ZaRegisterDevice.RD_BT_RESUME:
-            statusArray = [ZaRegisterDevice.ST_NEEDS_PROVISIONING,ZaRegisterDevice.ST_ACTIVE,ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED];
+            statusArray = [
+                ZaRegisterDevice.ST_NEEDS_PROVISIONING,
+                ZaRegisterDevice.ST_ACTIVE,
+                ZaRegisterDevice.ST_WIPE_PENDING,
+                ZaRegisterDevice.ST_WIPE_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING
+            ];
             break;
-            
+
         case ZaRegisterDevice.RD_BT_WIPE:
-            statusArray = [ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED];
+            statusArray = [ZaRegisterDevice.ST_WIPE_PENDING, ZaRegisterDevice.ST_WIPE_COMPLETED];
             break;
 
-        case ZaRegisterDevice.RD_BT_WIPE_CANCEL: 
-            statusArray = [ZaRegisterDevice.ST_NEEDS_PROVISIONING,ZaRegisterDevice.ST_ACTIVE,ZaRegisterDevice.ST_SUSPENDED,ZaRegisterDevice.ST_WIPE_COMPLETED,ZaRegisterDevice.ST_BLOCKED];
+        case ZaRegisterDevice.RD_BT_WIPE_CANCEL:
+            statusArray = [
+                ZaRegisterDevice.ST_NEEDS_PROVISIONING,
+                ZaRegisterDevice.ST_ACTIVE,
+                ZaRegisterDevice.ST_SUSPENDED,
+                ZaRegisterDevice.ST_WIPE_COMPLETED,
+                ZaRegisterDevice.ST_BLOCKED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING
+            ];
             break;
 
-        case ZaRegisterDevice.RD_BT_BLOCK: 
-            statusArray = [ZaRegisterDevice.ST_WIPE_PENDING,ZaRegisterDevice.ST_WIPE_COMPLETED,ZaRegisterDevice.ST_BLOCKED];
+        case ZaRegisterDevice.RD_BT_BLOCK:
+            statusArray = [
+                ZaRegisterDevice.ST_WIPE_PENDING,
+                ZaRegisterDevice.ST_WIPE_COMPLETED,
+                ZaRegisterDevice.ST_BLOCKED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING
+            ];
+            break;
+
+        case ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT:
+            statusArray = [
+                ZaRegisterDevice.ST_WIPE_PENDING,
+                ZaRegisterDevice.ST_WIPE_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_PENDING
+            ];
+            break;
+
+        case ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT_CANCEL:
+            statusArray = [
+                ZaRegisterDevice.ST_NEEDS_PROVISIONING,
+                ZaRegisterDevice.ST_ACTIVE,
+                ZaRegisterDevice.ST_SUSPENDED,
+                ZaRegisterDevice.ST_BLOCKED,
+                ZaRegisterDevice.ST_REMOVE_ACCOUNT_COMPLETED,
+                ZaRegisterDevice.ST_WIPE_PENDING,
+                ZaRegisterDevice.ST_WIPE_COMPLETED
+            ];
             break;
     }
 
@@ -384,33 +437,12 @@ GlobalConfigXFormView.registerDeviceListener = function(operation) {
         return;
     }
 
-    let result, statusValue ;
+    let result, statusValue;
 
-    switch (operation) {
-        case ZaRegisterDevice.RD_BT_REMOVE:
-            result = ZaRegisterDevice.removeDevice(obj);
-            statusValue = 0;
-            break;
+    result = ZaRegisterDevice.processSyncRequest(operation, obj);
 
-        case ZaRegisterDevice.RD_BT_SUSPEND:
-            result = ZaRegisterDevice.quarantineDevice(obj);
-            break;
-            
-        case ZaRegisterDevice.RD_BT_RESUME:
-            result = ZaRegisterDevice.allowDeviceSync(obj);
-            break;
-            
-        case ZaRegisterDevice.RD_BT_WIPE:
-            result = ZaRegisterDevice.wipeDevice(obj);
-            break;
-
-        case ZaRegisterDevice.RD_BT_WIPE_CANCEL: 
-            result = ZaRegisterDevice.wipeCancelDevice(obj);
-            break;
-
-        case ZaRegisterDevice.RD_BT_BLOCK: 
-            result = ZaRegisterDevice.blockDevice(obj);
-            break;
+    if(operation === ZaRegisterDevice.RD_BT_REMOVE) {
+        statusValue = 0;
     }
 
     if (result && result[0]) {
@@ -424,17 +456,17 @@ GlobalConfigXFormView.registerDeviceListener = function(operation) {
 
         if ((result && (obj[ZaRegisterDevice.RD_Status] !== result[ZaRegisterDevice.RD_Status])) || obj[ZaRegisterDevice.RD_Status] !== statusValue) {
             var index = AjxUtil.indexOf(all, obj);
-    
+
             AjxUtil.arrayRemove(all, obj);
-    
+
             if (!result) {
                 obj[ZaRegisterDevice.RD_Status] = statusValue;
                 AjxUtil.arrayAdd(all, obj, index);
             } else {
                 AjxUtil.arrayAdd(all, result, index);
             }
-            
-           var sortedList = GlobalConfigXFormView.sortRegisteredDevices(all);
+
+            var sortedList = GlobalConfigXFormView.sortRegisteredDevices(all);
 
             form.setInstanceValue([], ZaGlobalConfig.A2_registeredDevice);
             form.setInstanceValue(sortedList, ZaGlobalConfig.A2_registeredDevice);
@@ -1971,9 +2003,9 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                 {
                                     type : _GROUP_,
                                     id : "global_form_device_group_child_2",
-                                    numCols : 11,
-                                    colSizes : ["100px", "auto", "100px", "auto", "100px",  "auto", "100px", "auto", "100px", "auto", "100px"],
-                                    width : "820px",
+                                    numCols : 15,
+                                    colSizes : ["100px", "auto", "100px", "auto", "100px",  "auto", "100px", "auto", "100px", "auto", "100px", "auto", "120px", "auto", "160px"],
+                                    width : "1168px",
                                     cssStyle : "margin:10px;padding-bottom:0;",
                                     items : [
                                             {
@@ -2041,7 +2073,29 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                                                 enableDisableChecks : [ function() {
                                                     return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_BLOCK);
                                                 } ]
-                                            } ]
+                                            }, {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.MB_But_Remove_Account,
+                                                width : "120px",
+                                                onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'removeAccount');",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT);
+                                                }]
+                                            }, {
+                                                type : _CELLSPACER_
+                                            }, {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.MB_But_Remove_Account_Cancel,
+                                                width : "160px",
+                                                onActivate : "GlobalConfigXFormView.registerDeviceListener.call(this, 'removeAccountCancel');",
+                                                enableDisableChangeEventSources : [ ZaGlobalConfig.A2_registeredDevice_Selection ],
+                                                enableDisableChecks : [ function() {
+                                                    return GlobalConfigXFormView.shouldEnableSyncButton.call(this, ZaRegisterDevice.RD_BT_REMOVE_ACCOUNT_CANCEL);
+                                                }]
+                                            }]
                                 } ]
                     } ]
         };
