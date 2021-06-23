@@ -613,7 +613,7 @@ ZaSearch.getObjectCountsCalback = function(params, resp) {
         } else {
             var retObj;
             retObj = {};
-            retObj[ZaItem.ACCOUNT] = 0;
+            retObj[ZaItem.ACCOUNT] = "N/A";  // The value is not used as Integer in any code. String is acceptable.
             retObj[ZaItem.ALIAS] = 0;
             retObj[ZaItem.RESOURCE] = 0;
             retObj[ZaItem.DL] = 0;
@@ -628,6 +628,7 @@ ZaSearch.getObjectCountsCalback = function(params, resp) {
                     resp = batchResp.CountObjectsResponse[i];
                     var type = resp.type;
                     if (type == "userAccount") {
+                        // It is never processed because of the change on ZaSearch.getObjectCount
                         type = ZaItem.ACCOUNT; // UI only shows number of
                                                 // non-system accounts
                     }
@@ -653,11 +654,10 @@ ZaSearch.getObjectCounts = function(types, callback) {
     soapDoc.setMethodAttribute("onerror", "continue");
     for (var i = 0; i < types.length; i++) {
         var type = types[i];
-        var getCountDoc = soapDoc.set("CountObjectsRequest", null, null, ZaZimbraAdmin.URN);
-
         if (type == ZaItem.ACCOUNT) {
-            type = "userAccount"; // exclude system account
+            continue;
         }
+        var getCountDoc = soapDoc.set("CountObjectsRequest", null, null, ZaZimbraAdmin.URN);
         getCountDoc.setAttribute("type", type);
         if (ZaZimbraAdmin.isGlobalAdmin() === false && type == ZaItem.DOMAIN && ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] === "TRUE") {
             getCountDoc.setAttribute("onlyRelated", "true");
@@ -670,6 +670,8 @@ ZaSearch.getObjectCounts = function(types, callback) {
         cmdParams.soapDoc = soapDoc;
         cmdParams.asyncMode = true;
         cmdParams.callback = dataCallback;
+        // BatchRequest with no element is sent when types array has ZaItem.ACCOUNT only.
+        // It is okay and easy way to pass default values to a callback function as a response via ZaSearch.getObjectCountsCalback.
         command.invoke(cmdParams);
     } catch (ex) {
         ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.getObjectCounts", null, false);
