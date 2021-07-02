@@ -37,7 +37,8 @@ ZaDomainController = function(appCtxt, container) {
 	this._toolbarOperations = new Array();			
 	this.deleteMsg = ZaMsg.Q_DELETE_DOMAIN;	
 	this.objType = ZaEvent.S_DOMAIN;
-	this.tabConstructor = ZaDomainXFormView;				
+	this.tabConstructor = ZaDomainXFormView;	
+	this._currentSortOrder = true;
 }
 
 ZaDomainController.prototype = new ZaXFormViewController();
@@ -767,4 +768,14 @@ function (ev) {
 			method.call(this, ev);
 		}
 	}
+}
+
+ZaDomainController.prototype.setSortOrder = 
+function (sortOrder) {
+	this._currentSortOrder = sortOrder;
+}
+
+ZaDomainController.prototype.getSortOrder = 
+function () {
+	return this._currentSortOrder;
 }

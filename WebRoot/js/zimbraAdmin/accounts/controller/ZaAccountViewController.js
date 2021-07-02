@@ -39,6 +39,7 @@ ZaAccountViewController = function(appCtxt, container) {
 	this._helpButtonText = ZaMsg.helpEditAccounts;
     this.deleteMsg = ZaMsg.Q_DELETE_ACCOUNT;
 	this.tabConstructor = ZaAccountXFormView;
+	this._currentSortOrder = true;
 }
 
 ZaAccountViewController.prototype = new ZaXFormViewController();
@@ -704,4 +705,14 @@ function(elementValue) {
 		this._errorDialog.popup();
 	}
 	return false;	
+}
+
+ZaAccountViewController.prototype.setSortOrder = 
+function (sortOrder) {
+	this._currentSortOrder = sortOrder;
+}
+
+ZaAccountViewController.prototype.getSortOrder = 
+function () {
+	return this._currentSortOrder;
 }

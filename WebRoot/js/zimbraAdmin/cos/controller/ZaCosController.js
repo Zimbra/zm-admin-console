@@ -37,6 +37,7 @@ ZaCosController = function(appCtxt, container) {
 	this.deleteMsg = ZaMsg.Q_DELETE_COS;
 	this.objType = ZaEvent.S_COS;
 	this.tabConstructor = ZaCosXFormView;
+	this._currentSortOrder = true;
 }
 ZaCosController.helpURL = "cos/creating_classes_of_service.htm";
 ZaCosController.prototype = new ZaXFormViewController();
@@ -417,4 +418,14 @@ function(openInNewTab, ev) {
 			this.newCos();
 		}	
 	}
+}
+
+ZaCosController.prototype.setSortOrder = 
+function (sortOrder) {
+	this._currentSortOrder = sortOrder;
+}
+
+ZaCosController.prototype.getSortOrder = 
+function () {
+	return this._currentSortOrder;
 }
