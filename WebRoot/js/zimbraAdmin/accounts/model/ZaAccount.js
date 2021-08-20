@@ -66,6 +66,7 @@ ZaAccount.A_displayname = "displayName";
 ZaAccount.A_country = "co"; //country
 ZaAccount.A_company = "company";
 ZaAccount.A_title = "title";
+ZaAccount.A_manager = "manager";
 ZaAccount.A_facsimileTelephoneNumber = "facsimileTelephoneNumber";
 ZaAccount.A_initials = "initials"; //middle initial
 ZaAccount.A_city = "l";
@@ -1859,6 +1860,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_country, type:_STRING_, ref:"attrs/"+ZaAccount.A_country},
         {id:ZaAccount.A_company, type:_STRING_, ref:"attrs/"+ZaAccount.A_company},
         {id:ZaAccount.A_title, type:_STRING_, ref:"attrs/"+ZaAccount.A_title},
+        {id:ZaAccount.A_manager, type:_STRING_, ref:"attrs/"+ZaAccount.A_manager},
         {id:ZaAccount.A_facsimileTelephoneNumber, type:_STRING_, ref:"attrs/"+ZaAccount.A_facsimileTelephoneNumber},
         {id:ZaAccount.A_initials, type:_STRING_, ref:"attrs/"+ZaAccount.A_initials},
         {id:ZaAccount.A_city, type:_STRING_, ref:"attrs/"+ZaAccount.A_city},

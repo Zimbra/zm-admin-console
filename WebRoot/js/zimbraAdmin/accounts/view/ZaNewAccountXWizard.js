@@ -157,6 +157,10 @@ function() {
             }
         }
 
+        if (AjxUtil.isEmailAddress(this._containedObject.attrs[ZaAccount.A_manager], false)){
+            this._containedObject.attrs[ZaAccount.A_manager] = ZaApp.getInstance().getAccountViewController()._getLDAPAttr(this._containedObject.attrs[ZaAccount.A_manager]);
+        }
+
         if(!ZaAccount.checkValues(this._containedObject)) {
             return false;
         }
@@ -822,7 +826,24 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                 items:[
                                     {ref:ZaAccount.A_zimbraPhoneticCompany, type:_TEXTFIELD_, msgName:ZaMsg.NAD_zimbraPhoneticCompany, label:ZaMsg.NAD_zimbraPhoneticCompany, labelLocation:_LEFT_, width:250, visibilityChecks:[[ZaZimbraAdmin.isLanguage, "ja"]]},
                                     {ref:ZaAccount.A_company, type:_TEXTFIELD_, msgName:ZaMsg.NAD_company,label:ZaMsg.NAD_company, labelLocation:_LEFT_, width:250} ,
-                                    {ref:ZaAccount.A_title,  type:_TEXTFIELD_, msgName:ZaMsg.NAD_title,label:ZaMsg.NAD_title, labelLocation:_LEFT_, width:250}
+                                    {ref:ZaAccount.A_title,  type:_TEXTFIELD_, msgName:ZaMsg.NAD_title,label:ZaMsg.NAD_title, labelLocation:_LEFT_, width:250},
+                                    {type:_DYNSELECT_, ref:ZaAccount.A_manager, dataFetcherClass:ZaSearch,
+                                        dataFetcherMethod:ZaSearch.prototype.dynSelectSearch,
+                                        dataFetcherTypes:[ZaSearch.ACCOUNTS, ZaSearch.RESOURCES, ZaSearch.DLS],
+                                        dataFetcherAttrs:[ZaItem.A_zimbraId, ZaItem.A_cn, ZaAccount.A_name, ZaAccount.A_displayname, ZaAccount.A_mail],
+                                        label:ZaMsg.NAD_manager,labelLocation:_LEFT_,
+                                        width:"100%", inputWidth:"250px", editable:true, forceUpdate:true,
+                                        choices:new XFormChoices([], XFormChoices.OBJECT_LIST, "name", "name"),
+                                        visibilityChecks:[],enableDisableChecks:[],
+                                        onChange: function(value, event, form){
+                                            if (value instanceof ZaItem ) {
+                                                this.setInstanceValue(value.name);
+                                            } else {
+                                                this.setInstanceValue(value);
+                                            }
+                                        },
+                                        autoCompleteEnabled : true
+                                    }
                                     /*,
                                     {ref:ZaAccount.A_orgUnit, type:_TEXTFIELD_, msgName:ZaMsg.NAD_orgUnit,label:ZaMsg.NAD_orgUnit, labelLocation:_LEFT_, width:250},
                                     {ref:ZaAccount.A_office, type:_TEXTFIELD_, msgName:ZaMsg.NAD_office,label:ZaMsg.NAD_office, labelLocation:_LEFT_, width:250}    */
