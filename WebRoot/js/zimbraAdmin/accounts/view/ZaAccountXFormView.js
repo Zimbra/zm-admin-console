@@ -175,6 +175,9 @@ function(entry) {
     if(!this._containedObject.attrs[ZaAccount.A_COSId]) {
         this._containedObject[ZaAccount.A2_autoCos] = "TRUE" ;
     }
+    if(this._containedObject.attrs[ZaAccount.A_manager]) {
+        this._containedObject.attrs[ZaAccount.A_manager] = ZaAccountXFormView.getEmailFromUid(this._containedObject.attrs[ZaAccount.A_manager]);
+    }
     if(this._containedObject.setAttrs[ZaAccount.A_COSId]) {
         var cos = ZaCos.getCosById(this._containedObject.attrs[ZaAccount.A_COSId]);
         this.cosChoices.setChoices([cos]);
@@ -1055,6 +1058,7 @@ ZaAccountXFormView.CONTACT_TAB_ATTRS = [ZaAccount.A_telephoneNumber,
         ZaAccount.A_pager ,
         ZaAccount.A_company,
         ZaAccount.A_title,
+        ZaAccount.A_manager,
         ZaAccount.A_facsimileTelephoneNumber,
         ZaAccount.A_street,
         ZaAccount.A_city,
@@ -1865,7 +1869,24 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                 {ref:ZaAccount.A_company, type:_TEXTFIELD_, msgName:ZaMsg.NAD_company,label:ZaMsg.NAD_company, labelLocation:_LEFT_,
                                  width:250} ,
                                 {ref:ZaAccount.A_title,  type:_TEXTFIELD_, msgName:ZaMsg.NAD_title,label:ZaMsg.NAD_title, labelLocation:_LEFT_,
-                                 width:250}
+                                 width:250},
+                                {type:_DYNSELECT_, ref:ZaAccount.A_manager, dataFetcherClass:ZaSearch,
+                                    dataFetcherMethod:ZaSearch.prototype.dynSelectSearch,
+                                    dataFetcherTypes:[ZaSearch.ACCOUNTS, ZaSearch.RESOURCES, ZaSearch.DLS],
+                                    dataFetcherAttrs:[ZaItem.A_zimbraId, ZaItem.A_cn, ZaAccount.A_name, ZaAccount.A_displayname, ZaAccount.A_mail],
+                                    label:ZaMsg.NAD_manager,labelLocation:_LEFT_,
+                                    width:"100%", inputWidth:"250px", editable:true, forceUpdate:true,
+                                    choices:new XFormChoices([], XFormChoices.OBJECT_LIST, "name", "name"),
+                                    visibilityChecks:[],enableDisableChecks:[],
+                                    onChange: function(value, event, form){
+                                        if (value instanceof ZaItem ) {
+                                            this.setInstanceValue(value.name);
+                                        } else {
+                                            this.setInstanceValue(value);
+                                        }
+                                    },
+                                    autoCompleteEnabled : true
+                                }
                             ]
                         },
                         {type:_ZA_TOP_GROUPER_, label:ZaMsg.LBL_address, id:"contact_form_address_group",
@@ -3616,4 +3637,24 @@ ZaTabView.XFormModifiers["ZaAccountXFormView"].push(ZaAccountXFormView.myXFormMo
 ZaAccountXFormView.prototype.getTabChoices =
 function() {
     return this.tabChoices;
+}
+
+ZaAccountXFormView.getEmailFromUid = 
+function(managerField) {
+	if (managerField) {
+		let email = '';
+		let managerLdapArray = managerField.split(',');
+		const usernameArray = managerLdapArray[0].split('uid=');
+		if (usernameArray.length !== 2) return '';
+		email = usernameArray[1];
+		managerLdapArray = managerLdapArray.filter(function(item) {
+			return item.includes('dc=');
+		});
+		managerLdapArray = managerLdapArray.map(function(item) {
+			const dcValueArray = item.split('=');
+			return dcValueArray.length === 2 ? item.split('=')[1] : '';
+		});
+		email = email + '@' + managerLdapArray.join('.');
+		return email;
+	}
 }

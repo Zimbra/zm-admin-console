@@ -181,7 +181,7 @@ function(entry) {
                     ZaApp.getInstance().popView();
                 }
 				return ;
-				
+
 			}
 		}
 
@@ -377,7 +377,11 @@ function () {
 					mods[a] = tmpObj.attrs[a];
 				}
 			} else {
-				mods[a] = tmpObj.attrs[a];
+				if(a === ZaAccount.A_manager) {
+					mods[a] = this._getLDAPAttr(tmpObj.attrs[a]);				
+				} else {
+					mods[a] = tmpObj.attrs[a];
+				}
 			}				
 		}
 	}
@@ -689,4 +693,17 @@ function(elementValue) {
 		this._errorDialog.popup();
 	}
 	return false;	
+}
+
+ZaAccountViewController.prototype._getLDAPAttr = 
+function(email) {
+	if (email) {
+		let attrString = 'uid=';
+		let emailStringArray = email.split('@');
+		attrString = attrString + emailStringArray[0] + ',ou=people';
+		emailStringArray = emailStringArray.length > 1 && emailStringArray[1].split('.');
+		const reducer = function(accumulator, currentValue) { return accumulator + ',dc=' + currentValue };
+		attrString = emailStringArray.reduce(reducer, attrString);
+		return attrString;
+	}
 }
