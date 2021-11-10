@@ -63,16 +63,19 @@ function (uname, pword, twoFactorCode, trustedDevice, callback) {
         soapDoc.set("name", uname);
         soapDoc.set("password", pword);
     } else {
-        soapDoc.getMethod().setAttribute("refresh", "1");
+        //soapDoc.getMethod().setAttribute("refresh", "1");
     }
     if(twoFactorCode) {
         soapDoc.set("twoFactorCode", twoFactorCode);
+        soapDoc.set("csrfToken", window.csrfToken);
+        soapDoc.set("authToken", window.authToken);
+    } else {
+        soapDoc.set("csrfTokenSecured", 1);
     }
     if(trustedDevice) {
         soapDoc.set("trustedDevice", trustedDevice);
     }
     soapDoc.set("virtualHost", location.hostname);
-    soapDoc.set("csrfTokenSecured", 1);
     var command = new ZmCsfeCommand();
     params.soapDoc = soapDoc;
     params.asyncMode = true;
