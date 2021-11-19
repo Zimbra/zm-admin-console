@@ -205,7 +205,7 @@ function() {
 			trustedDevice = ZLoginFactory.get(ZLoginFactory.TRUST_DEVICE).value;
 		}
 		
-		this._callback.run(username, password, twoFactorCode, trustedDevice, newPassword,confPassword);		
+		this._callback.run(username, password, newPassword, confPassword, twoFactorCode, trustedDevice);		
 	}
 }
 

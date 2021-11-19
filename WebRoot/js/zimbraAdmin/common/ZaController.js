@@ -455,7 +455,7 @@ function(username, password, twoFactorCode, trustedDevice) {
         ZaZimbraAdmin.showSplash(this._shell);
         var callback = new AjxCallback(this, this.authCallback);
         this.auth = new ZaAuthenticate(this._appCtxt);
-        this.auth.execute(username, password, twoFactorCode, trustedDevice, callback);
+        this.auth.execute(username, password, callback, twoFactorCode, trustedDevice);
     } catch (ex) {
         if(ex.code == ZmCsfeException.NO_AUTH_TOKEN) {
             throw (ex);
@@ -634,7 +634,7 @@ function (resp) {
 /*********** Login dialog Callbacks */
 
 ZaController.prototype.loginCallback =
-function(uname, password, twoFactorCode, trustedDevice) {
+function(uname, password, newPassword, confPassword, twoFactorCode, trustedDevice) {
     //this._schedule(this._doAuth, {username: uname, password: password});
     this._doAuth(uname,password, twoFactorCode, trustedDevice);
 }
@@ -672,7 +672,7 @@ function(uname, oldPass, newPass, conPass) {
             ZaZimbraAdmin.showSplash(this._shell);
             var callback = new AjxCallback(this, this.authCallback);
             this.auth = new ZaAuthenticate(this._appCtxt);
-            this.auth.execute(uname, newPass,callback);
+            this.auth.execute(uname, newPass, callback);
         }
     } catch (ex) {
         ZaController.changePwdCommand = null;
