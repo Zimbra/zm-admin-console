@@ -53,7 +53,7 @@ function (uname,oldPass,newPass,callback) {
 }
 
 ZaAuthenticate.prototype.execute =
-function (uname, pword, twoFactorCode, trustedDevice, callback) {
+function (uname, pword, callback, twoFactorCode, trustedDevice) {
     var soapDoc = AjxSoapDoc.create("AuthRequest", ZaZimbraAdmin.URN, null);
     this.uname = uname;
     var params = new Object();
