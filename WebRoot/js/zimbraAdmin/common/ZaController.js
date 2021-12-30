@@ -529,7 +529,6 @@ function (resp) {
         } else if(ex.code == ZmCsfeException.SVC_AUTH_EXPIRED) {
             this._showLoginDialog(true);
             this._loginDialog.setError(ZaMsg.ERROR_SESSION_EXPIRED);
-            this._loginDialog.disableUnameField(true);
             this._loginDialog.clearPassword();
         } else {
             if(this._msgDialog) {
