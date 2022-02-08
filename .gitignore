@@ -1,4 +1,6 @@
 build
+.gitignore
+.idea
 .classpath
 .project
 bin

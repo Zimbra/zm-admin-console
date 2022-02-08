@@ -962,7 +962,7 @@ ZaDistributionList.prototype.pageAllMembers = function ( ) {
 	var names = AjxUtil.getHashKeys(allMembers); //sorted by name
 	for ( var i = 0; i < names.length ; i+= ZaDistributionList.MEMBER_LIST_PAGE_SIZE ) {
 		var page = new Array();
-		for ( var j = 0; (i + j < names.length) && (j < ZaDistributionList.MEMBER_LIST_PAGE_SIZE); j++ ) {
+		for ( var j = 0; (i + j < names.length); j++ ) {
 			var member = allMembers[ names[i+j] ];
 			page.push(member);
 		}
