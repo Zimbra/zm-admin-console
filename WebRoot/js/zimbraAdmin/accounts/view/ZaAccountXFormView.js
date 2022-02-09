@@ -1126,9 +1126,11 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraFeatureInitialSearchPreferenceEnabled,
     ZaAccount.A_zimbraFeatureImportFolderEnabled,
     ZaAccount.A_zimbraFeatureExportFolderEnabled,
+    ZaAccount.A_zimbraFeatureDocumentEditingEnabled,
     ZaAccount.A_zimbraDumpsterEnabled,
     ZaAccount.A_zimbraDumpsterPurgeEnabled,
     ZaAccount.A_zimbraFeatureSMIMEEnabled,
+    ZaAccount.A_zimbraFeatureZulipChatEnabled,
     ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
 ];
 
@@ -2158,7 +2160,8 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                              ZaAccount.A_zimbraFeatureImportFolderEnabled,
                              ZaAccount.A_zimbraFeatureExportFolderEnabled,
                              ZaAccount.A_zimbraDumpsterEnabled,
-                             ZaAccount.A_zimbraDumpsterPurgeEnabled
+                             ZaAccount.A_zimbraDumpsterPurgeEnabled,
+                             ZaAccount.A_zimbraFeatureDocumentEditingEnabled
                              ]]
                         ],
                         items:[
@@ -2190,7 +2193,8 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                             {ref:ZaAccount.A_zimbraDumpsterEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.MSG_zimbraDumpsterEnabled, checkBoxLabel:ZaMsg.LBL_zimbraDumpsterEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraDumpsterPurgeEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.MSG_zimbraDumpsterPurgeEnabled, checkBoxLabel:ZaMsg.LBL_zimbraDumpsterPurgeEnabled, trueValue:"TRUE", falseValue:"FALSE",
                                 visibilityChecks:[[ZaItem.hasReadPermission], [XForm.checkInstanceValue, ZaAccount.A_zimbraDumpsterEnabled, "TRUE"]], visibilityChangeEventSources:[ZaAccount.A_zimbraDumpsterEnabled]
-                            }
+                            },
+                            {ref:ZaAccount.A_zimbraFeatureDocumentEditingEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
 
                         ]
                     },
@@ -2308,18 +2312,30 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                           {ref:ZaAccount.A_zimbraFeaturePeopleSearchEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeaturePeopleSearchEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeaturePeopleSearchEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                         ]
                     },
-                                        {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraSMIMEFeature, id:"account_form_features_smime", colSizes:["auto"],numCols:1,
-                                                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                              [ ZaAccount.A_zimbraFeatureSMIMEEnabled]]],
-                                                items:[
-                                                 {ref:ZaAccount.A_zimbraFeatureSMIMEEnabled,
-                                                        type:_SUPER_CHECKBOX_,
-                                                        resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                                        msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
-                                                        checkBoxLabel:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
-                                                        trueValue:"TRUE", falseValue:"FALSE"}
-                                                ]
-                                        }
+                    {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraSMIMEFeature, id:"account_form_features_smime", colSizes:["auto"],numCols:1,
+                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                            [ ZaAccount.A_zimbraFeatureSMIMEEnabled]]],
+                            items:[
+                                {ref:ZaAccount.A_zimbraFeatureSMIMEEnabled,
+                                    type:_SUPER_CHECKBOX_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
+                                    checkBoxLabel:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
+                                    trueValue:"TRUE", falseValue:"FALSE"}
+                            ]
+                    },
+                    {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraChatFeature, id:"account_form_features_chat", colSizes:["auto"],numCols:1,
+                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                            [ ZaAccount.A_zimbraFeatureZulipChatEnabled]]],
+                            items:[
+                                {ref:ZaAccount.A_zimbraFeatureZulipChatEnabled,
+                                    type:_SUPER_CHECKBOX_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
+                                    checkBoxLabel:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
+                                    trueValue:"TRUE", falseValue:"FALSE"}
+                            ]
+                    }
                 ]
             });
     }
