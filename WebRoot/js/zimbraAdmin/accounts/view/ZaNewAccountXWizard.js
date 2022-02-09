@@ -1189,6 +1189,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
             ZaAccount.A_zimbraFeatureGalAutoCompleteEnabled,
             ZaAccount.A_zimbraFeatureImportFolderEnabled,
             ZaAccount.A_zimbraFeatureExportFolderEnabled,
+            ZaAccount.A_zimbraFeatureDocumentEditingEnabled,
             ZaAccount.A_zimbraDumpsterEnabled
         ],[])) {
             featuresCase.items.push({type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraGeneralFeature, id:"account_wiz_features_general",
@@ -1225,7 +1226,8 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             {ref:ZaAccount.A_zimbraDumpsterEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.MSG_zimbraDumpsterEnabled,checkBoxLabel:ZaMsg.LBL_zimbraDumpsterEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraDumpsterPurgeEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.MSG_zimbraDumpsterPurgeEnabled,checkBoxLabel:ZaMsg.LBL_zimbraDumpsterPurgeEnabled,  trueValue:"TRUE", falseValue:"FALSE",
                                 visibilityChecks:[[ZaItem.hasReadPermission], [XForm.checkInstanceValue, ZaAccount.A_zimbraDumpsterEnabled, "TRUE"]], visibilityChangeEventSources:[ZaAccount.A_zimbraDumpsterEnabled]
-                            }
+                            },
+                            {ref:ZaAccount.A_zimbraFeatureDocumentEditingEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                         ]
                     });
 
@@ -1384,6 +1386,20 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                         }
             );
         };
+        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureZulipChatEnabled],[])) {
+            featuresCase.items.push(
+                   {type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraChatFeature, id:"account_wiz_features_chat",
+                           colSizes:["auto"],numCols:1,
+                           items:[
+                               {ref:ZaAccount.A_zimbraFeatureZulipChatEnabled, type:_SUPER_WIZ_CHECKBOX_,
+                                   resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                   msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
+                                   checkBoxLabel:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
+                                   trueValue:"TRUE", falseValue:"FALSE"}
+                           ]
+                   }
+       );
+   };
 
         cases.push(featuresCase);
     }
