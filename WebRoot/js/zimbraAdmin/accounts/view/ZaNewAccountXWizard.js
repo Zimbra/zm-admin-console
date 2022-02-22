@@ -844,9 +844,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                         },
                                         autoCompleteEnabled : true
                                     }
-                                    /*,
+                                    ,
                                     {ref:ZaAccount.A_orgUnit, type:_TEXTFIELD_, msgName:ZaMsg.NAD_orgUnit,label:ZaMsg.NAD_orgUnit, labelLocation:_LEFT_, width:250},
-                                    {ref:ZaAccount.A_office, type:_TEXTFIELD_, msgName:ZaMsg.NAD_office,label:ZaMsg.NAD_office, labelLocation:_LEFT_, width:250}    */
+                                    {ref:ZaAccount.A_office, type:_TEXTFIELD_, msgName:ZaMsg.NAD_office,label:ZaMsg.NAD_office, labelLocation:_LEFT_, width:250}
                                 ]
                             },
                             {type:_ZAWIZGROUP_,
