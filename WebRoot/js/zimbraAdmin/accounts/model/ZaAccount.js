@@ -122,6 +122,8 @@ ZaAccount.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
 ZaAccount.A_zimbraQuotaWarnMessage = "zimbraQuotaWarnMessage";
 ZaAccount.A_zimbraIsSystemResource = "zimbraIsSystemResource";
 ZaAccount.A_zimbraExcludeFromCMBSearch = "zimbraExcludeFromCMBSearch";
+ZaAccount.A_zimbraInterceptAddress = "zimbraInterceptAddress";
+ZaAccount.A_zimbraInterceptSendHeadersOnly = "zimbraInterceptSendHeadersOnly";
 
 ZaAccount.A_zimbraAdminAuthTokenLifetime  = "zimbraAdminAuthTokenLifetime";
 ZaAccount.A_zimbraAuthTokenValidityValue = "zimbraAuthTokenValidityValue";
@@ -1921,6 +1923,10 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraQuotaWarnPercent, type:_COS_NUMBER_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnPercent},
         {id:ZaAccount.A_zimbraQuotaWarnInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraQuotaWarnInterval},
         {id:ZaAccount.A_zimbraQuotaWarnMessage, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnMessage},
+
+        {id:ZaAccount.A_zimbraInterceptAddress, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraInterceptAddress, listItem:{type:_EMAIL_ADDRESS_}},
+        {id:ZaAccount.A_zimbraInterceptSendHeadersOnly, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraInterceptSendHeadersOnly, choices:ZaModel.BOOLEAN_CHOICES},
+
 
         {id:ZaAccount.A_zimbraAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAuthTokenLifetime},
         {id:ZaAccount.A_zimbraAdminAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAdminAuthTokenLifetime},
