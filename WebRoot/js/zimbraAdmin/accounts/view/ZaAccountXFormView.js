@@ -1248,7 +1248,10 @@ ZaAccountXFormView.ADVANCED_TAB_ATTRS = [ZaAccount.A_zimbraAttachmentsBlocked,
     ZaAccount.A_zimbraMailDumpsterLifetime,
     ZaAccount.A_zimbraFreebusyExchangeUserOrg,
     ZaAccount.A_zimbraMailCanonicalAddress,
-    ZaAccount.A_zimbraMailTransport
+    ZaAccount.A_zimbraMailTransport,
+    ZaAccount.A_zimbraFileUploadMaxSizePerFile,
+    ZaAccount.A_zimbraInterceptAddress,
+    ZaAccount.A_zimbraInterceptSendHeadersOnly
     ];
 ZaAccountXFormView.ADVANCED_TAB_RIGHTS = [];
 
@@ -3613,6 +3616,22 @@ textFieldCssClass:"admin_xform_number_input"}
                                         labelLocation:_LEFT_, cssClass:"admin_xform_name_input", width:220
                                     }
 
+                                ]
+                        },
+                        {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_LegalInterceptGrouper, id:"legalintercept_setting",
+                                    colSizes:["275px","*"],numCols:2,
+                                    visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                                                    [ZaAccount.A_zimbraInterceptAddress, ZaAccount.A_zimbraInterceptSendHeadersOnly]]],
+                               items:[
+                                    {ref:ZaAccount.A_zimbraInterceptAddress, type:_TEXTFIELD_,labelLocation:_LEFT_, cssClass:"admin_xform_name_input", width:220,
+                                        label:ZaMsg.LBL_zimbraInterceptAddress,
+                                        visibilityChecks:[[ZaItem.hasWritePermission,ZaAccount.A_zimbraInterceptAddress]],
+                                    },
+                                    {ref:ZaAccount.A_zimbraInterceptSendHeadersOnly,
+                                        type:_ZA_CHECKBOX_,
+                                        label:ZaMsg.LBL_zimbraInterceptSendHeadersOnly,
+                                        trueValue:"TRUE", falseValue:"FALSE"
+                                    },
                                 ]
                         },
                         {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
