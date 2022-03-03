@@ -237,7 +237,12 @@ ZaCos.RIGHT_LIST_ZIMLET = "listZimlet";
 ZaCos.RIGHT_GET_ZIMLET = "getZimlet";
 ZaCos.RIGHT_GET_HOSTNAME = "zimbraVirtualHostname";
 
-ZaCos.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg" ;
+ZaCos.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg";
+
+ZaCos.A_zimbraSieveRejectMailEnabled = "zimbraSieveRejectMailEnabled";
+ZaCos.A_zimbraSieveEditHeaderEnabled = "zimbraSieveEditHeaderEnabled";
+ZaCos.A_zimbraAdminSieveScriptBefore = "zimbraAdminSieveScriptBefore";
+
 ZaCos.cacheCounter = 0;
 ZaCos.staticCosByNameCacheTable={};
 ZaCos.staticCosByIdCacheTable = {};
@@ -818,6 +823,10 @@ ZaCos.myXModel = {
         //interop
         {id:ZaCos.A_zimbraFreebusyExchangeUserOrg ,type:_STRING_, ref:"attrs/"+ZaCos.A_zimbraFreebusyExchangeUserOrg },
 
+        //admin Sieve rules
+        {id:ZaCos.A_zimbraSieveRejectMailEnabled ,type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraSieveRejectMailEnabled, choices:ZaModel.BOOLEAN_CHOICES },
+        {id:ZaCos.A_zimbraSieveEditHeaderEnabled ,type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraSieveEditHeaderEnabled, choices:ZaModel.BOOLEAN_CHOICES },
+        {id:ZaCos.A_zimbraAdminSieveScriptBefore ,type:_STRING_, ref:"attrs/"+ZaCos.A_zimbraAdminSieveScriptBefore },
 
         //file retension
         {id:ZaCos.A_zimbraFileTrashLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraFileTrashLifetime},
