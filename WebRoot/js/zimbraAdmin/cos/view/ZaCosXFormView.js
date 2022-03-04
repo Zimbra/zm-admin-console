@@ -350,7 +350,8 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraDataSourceMinPollingInterval,
     ZaCos.A_zimbraSieveRejectMailEnabled,
     ZaCos.A_zimbraSieveEditHeaderEnabled,
-    ZaCos.A_zimbraAdminSieveScriptBefore
+    ZaCos.A_zimbraAdminSieveScriptBefore,
+    ZaCos.A_zimbraAdminSieveScriptAfter
 ];
 ZaCosXFormView.ADVANCED_TAB_RIGHTS = [];
 
@@ -1759,6 +1760,9 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraAdminSieveScriptBefore, type:_TEXTAREA_,
                         label:ZaMsg.LBL_zimbraAdminSieveScriptBefore, labelLocation:_LEFT_,
+                        labelCssStyle:"vertical-align:top;",width: "30em"},
+                    {ref:ZaCos.A_zimbraAdminSieveScriptAfter, type:_TEXTAREA_,
+                        label:ZaMsg.LBL_zimbraAdminSieveScriptAfter, labelLocation:_LEFT_,
                         labelCssStyle:"vertical-align:top;",width: "30em"}
                 ]
             },

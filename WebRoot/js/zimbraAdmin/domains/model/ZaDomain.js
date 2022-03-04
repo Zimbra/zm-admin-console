@@ -336,6 +336,13 @@ ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient = "zimbraDomainAggregate
 // regex of domain name
 ZaDomain.A_zimbraMailAddressValidationRegex = "zimbraMailAddressValidationRegex";
 
+//admin Sieve rules
+ZaDomain.A_zimbraSieveRejectMailEnabled = "zimbraSieveRejectMailEnabled";
+ZaDomain.A_zimbraSieveEditHeaderEnabled = "zimbraSieveEditHeaderEnabled";
+ZaDomain.A_zimbraAdminSieveScriptBefore = "zimbraAdminSieveScriptBefore";
+ZaDomain.A_zimbraAdminSieveScriptAfter = "zimbraAdminSieveScriptAfter";
+
+
 //email setting for auto provision
 ZaDomain.A_zimbraAutoProvNotificationSubject = "zimbraAutoProvNotificationSubject";
 ZaDomain.A_zimbraAutoProvNotificationBody = "zimbraAutoProvNotificationBody";
@@ -2406,6 +2413,11 @@ ZaDomain.myXModel = {
         {id:ZaDomain.A_zimbraAdminConsoleSkinEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminSkinAddressEnabled},
 	    // regex
 	    {id:ZaDomain.A_zimbraMailAddressValidationRegex, type:_LIST_, listItem:{type:_STRING_, maxLength:512}, ref:"attrs/" + ZaDomain.A_zimbraMailAddressValidationRegex},
+       //admin Sieve rules
+       {id:ZaDomain.A_zimbraSieveRejectMailEnabled ,type:_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraSieveRejectMailEnabled, choices:ZaModel.BOOLEAN_CHOICES },
+       {id:ZaDomain.A_zimbraSieveEditHeaderEnabled ,type:_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraSieveEditHeaderEnabled, choices:ZaModel.BOOLEAN_CHOICES },
+       {id:ZaDomain.A_zimbraAdminSieveScriptBefore ,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraAdminSieveScriptBefore },
+       {id:ZaDomain.A_zimbraAdminSieveScriptAfter ,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraAdminSieveScriptAfter },
         {id:ZaDomain.A_zimbraVirtualHostname, type:_LIST_, listItem:{type:_STRING_, maxLength:255}, ref:"attrs/" + ZaDomain.A_zimbraVirtualHostname},
          ZaItem.descriptionModelItem,  
 	    {id:ZaDomain.A_zimbraSSLCertificate, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraSSLCertificate},
