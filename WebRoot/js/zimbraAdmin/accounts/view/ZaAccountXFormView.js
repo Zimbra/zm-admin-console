@@ -1059,6 +1059,8 @@ ZaAccountXFormView.CONTACT_TAB_ATTRS = [ZaAccount.A_telephoneNumber,
         ZaAccount.A_company,
         ZaAccount.A_title,
         ZaAccount.A_manager,
+        ZaAccount.A_orgUnit,
+        ZaAccount.A_office,
         ZaAccount.A_facsimileTelephoneNumber,
         ZaAccount.A_street,
         ZaAccount.A_city,
@@ -1892,7 +1894,9 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                         }
                                     },
                                     autoCompleteEnabled : true
-                                }
+                                },
+                                {ref:ZaAccount.A_orgUnit, type:_TEXTFIELD_, msgName:ZaMsg.NAD_orgUnit,label:ZaMsg.NAD_orgUnit, labelLocation:_LEFT_, width:250},
+                                {ref:ZaAccount.A_office, type:_TEXTFIELD_, msgName:ZaMsg.NAD_office,label:ZaMsg.NAD_office, labelLocation:_LEFT_, width:250}
                             ]
                         },
                         {type:_ZA_TOP_GROUPER_, label:ZaMsg.LBL_address, id:"contact_form_address_group",
