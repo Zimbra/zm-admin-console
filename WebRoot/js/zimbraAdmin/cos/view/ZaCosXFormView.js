@@ -342,13 +342,15 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraMailDumpsterLifetime,
     ZaCos.A_zimbraDumpsterUserVisibleAge,
     ZaCos.A_zimbraFreebusyExchangeUserOrg,
-        ZaCos.A_zimbraDataSourcePop3PollingInterval,
-        ZaCos.A_zimbraDataSourceImapPollingInterval,
-        ZaCos.A_zimbraDataSourceCalendarPollingInterval,
-        ZaCos.A_zimbraDataSourceRssPollingInterval,
-        ZaCos.A_zimbraDataSourceCaldavPollingInterval,
-    ZaCos.A_zimbraDataSourceMinPollingInterval
-
+    ZaCos.A_zimbraDataSourcePop3PollingInterval,
+    ZaCos.A_zimbraDataSourceImapPollingInterval,
+    ZaCos.A_zimbraDataSourceCalendarPollingInterval,
+    ZaCos.A_zimbraDataSourceRssPollingInterval,
+    ZaCos.A_zimbraDataSourceCaldavPollingInterval,
+    ZaCos.A_zimbraDataSourceMinPollingInterval,
+    ZaCos.A_zimbraSieveRejectMailEnabled,
+    ZaCos.A_zimbraSieveEditHeaderEnabled,
+    ZaCos.A_zimbraAdminSieveScriptBefore
 ];
 ZaCosXFormView.ADVANCED_TAB_RIGHTS = [];
 
@@ -1739,7 +1741,27 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         label:ZaMsg.LBL_zimbraFreebusyExchangeUserOrg,labelLocation:_LEFT_
                     }
                 ]
-            } ,
+            },
+            {type:_ZA_TOP_GROUPER_, id:"cos_admin_sieve",
+                label:ZaMsg.NAD_AdminSieveGrouper,
+                items: [
+                    { type: _DWT_ALERT_,
+                      containerCssStyle: "padding-bottom:0;",
+                      style: DwtAlert.INFO,
+                      iconVisible: false,
+                      content: ZaMsg.Alert_Sieve
+                    },
+                    {ref:ZaCos.A_zimbraSieveRejectMailEnabled, type:_CHECKBOX_,
+                        label:ZaMsg.LBL_zimbraSieveRejectMailEnabled,
+                        trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraSieveEditHeaderEnabled, type:_CHECKBOX_,
+                        label:ZaMsg.LBL_zimbraSieveEditHeaderEnabled,
+                        trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraAdminSieveScriptBefore, type:_TEXTAREA_,
+                        label:ZaMsg.LBL_zimbraAdminSieveScriptBefore, labelLocation:_LEFT_,
+                        labelCssStyle:"vertical-align:top;",width: "30em"}
+                ]
+            },
             {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
         ];
 
