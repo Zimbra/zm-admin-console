@@ -1353,7 +1353,41 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 								choices:ZaServerXFormView.indexVolChoices,
 								label:ZaMsg.LBL_VM_CurrentIndexVolume
 							}
-						]}
+						]},
+						{type:_ZA_TOP_GROUPER_, id:"server_form_volumes_group",width:"98%",
+							numCols:1,colSizes:["auto"],label:ZaMsg.VM_VolumesGrpTitle,
+							cssStyle:"margin:10px;padding-bottom:0;",
+							items: [
+								{ref:ZaServer.A_zimbraHsmPolicy, type:_DWT_LIST_, height:"200", width:"99%",
+									 	preserveSelection:false, multiselect:true,cssClass: "DLSource",
+									 	widgetClass:ZaServerPoliciesListView,
+									 	onSelection:ZaServerXFormView.volumeSelectionListener,
+									 	valueChangeEventSources:[ZaServer.A_zimbraHsmPolicy]
+								},
+								{type:_GROUP_, numCols:5, colSizes:["100px","auto","100px","auto","100px"], width:"350px",
+									cssStyle:"margin:10px;padding-bottom:0;",
+									items: [
+										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Delete,width:"100px",
+											onActivate:"ZaServerXFormView.deleteButtonListener.call(this);",
+						      				enableDisableChangeEventSources:[ZaServer.A2_volume_selection_cache],
+						      				enableDisableChecks:[ZaServerXFormView.isDeleteVolumeEnabled]
+
+										},
+										{type:_CELLSPACER_},
+										{type:_DWT_BUTTON_, label:ZaMsg.TBB_Edit,width:"100px",
+											onActivate:"ZaServerXFormView.editButtonListener.call(this);",
+						      				enableDisableChangeEventSources:[ZaServer.A2_volume_selection_cache],
+						      				enableDisableChecks:[ZaServerXFormView.isEditVolumeEnabled]
+
+										},
+										{type:_CELLSPACER_},
+										{type:_DWT_BUTTON_, label:ZaMsg.NAD_Add,width:"100px",
+											onActivate:"ZaServerXFormView.addButtonListener.call(this);"
+										}
+									]
+								}
+							]
+						},
 
 					]
 				};
