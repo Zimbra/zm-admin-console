@@ -627,7 +627,8 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_CurrentIndexVolumeId, ref:ZaServer.A_CurrentIndexVolumeId, type:_NUMBER_},
 		{id:ZaServer.A_CurrentMsgVolumeId, ref:ZaServer.A_CurrentMsgVolumeId, type:_NUMBER_},
 		//HSM policies
-		{id:ZaServer.A_zimbraHsmPolicy, ref:"attrs/" +  ZaServer.A_zimbraHsmPolicy, type:_LIST_, listItem:{type:_STRING_, maxLength: 128} },
+		//{id:ZaServer.A_zimbraHsmPolicy, ref:"attrs/" +  ZaServer.A_zimbraHsmPolicy, type:_LIST_, listItem:{type:_STRING_} },
+		{id:ZaServer.A_zimbraHsmPolicy, ref:"attrs/" + ZaServer.A_zimbraHsmPolicy, type:_STRING_},
 		//VAMI update
 		{id:ZaServer.A_zimbraApplianceVendor, ref:"attrs/" +  ZaServer.A_zimbraApplianceVendor, type:_STRING_, maxLength: 256 },
 		{id:ZaServer.A_zimbraApplianceName, ref:"attrs/" +  ZaServer.A_zimbraApplianceName, type:_STRING_, maxLength: 256 },
@@ -1130,13 +1131,13 @@ ZaServer.prototype.initFromJS = function(server) {
                 this._defaultValues.attrs[ZaServer.A_zimbraMilterBindAddress]  = [this._defaultValues.attrs[ZaServer.A_zimbraMilterBindAddress]];
         }
 
-	if(this.attrs[ZaServer.A_zimbraHsmPolicy] && !(this.attrs[ZaServer.A_zimbraHsmPolicy] instanceof Array)) {
+	/* if(this.attrs[ZaServer.A_zimbraHsmPolicy] && !(this.attrs[ZaServer.A_zimbraHsmPolicy] instanceof Array)) {
 		this.attrs[ZaServer.A_zimbraHsmPolicy] = [this.attrs[ZaServer.A_zimbraHsmPolicy]];
 	}
 
 	if(this._defaultValues && this._defaultValues.attrs[ZaServer.A_zimbraHsmPolicy] && !(this._defaultValues.attrs[ZaServer.A_zimbraHsmPolicy]  instanceof Array)) {
 		this._defaultValues.attrs[ZaServer.A_zimbraHsmPolicy]  = [this._defaultValues.attrs[ZaServer.A_zimbraHsmPolicy]];
-	}
+	} */
 
 	if(this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] && !(this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] instanceof Array)) {
         this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains] = [this.attrs[ZaServer.A_zimbraAutoProvScheduledDomains]];

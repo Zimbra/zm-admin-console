@@ -1355,7 +1355,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 							}
 						]},
 						{type:_ZA_TOP_GROUPER_, id:"server_form_volumes_group",width:"98%",
-							numCols:1,colSizes:["auto"],label:ZaMsg.VM_VolumesGrpTitle,
+							numCols:1,colSizes:["auto"],label:ZaMsg.VM_PoliciesGrpTitle,
 							cssStyle:"margin:10px;padding-bottom:0;",
 							items: [
 								{ref:ZaServer.A_zimbraHsmPolicy, type:_DWT_LIST_, height:"200", width:"99%",
