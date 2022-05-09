@@ -157,6 +157,8 @@ ZaServer.A_isCurrent = "isCurrent";
 
 //HSM Policy Management
 ZaServer.A_zimbraHsmPolicy = "zimbraHsmPolicy";
+ZaServer.A_PolicyItems = "zimbraPolicyItems";
+ZaServer.A_PolicyOlderThan = "zimbraPolicyOlderThan";
 
 //VAMI Appliance Update
 ZaServer.A_zimbraApplianceVendor = "zimbraApplianceVendor";

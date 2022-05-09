@@ -675,6 +675,10 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 	headerList[4] = new ZaListHeaderItem(ZaServer.A_VolumeCompressionThreshold, ZaMsg.VM_VolumeCompressThreshold, null, "120px", null, null, false, true);									
 	headerList[5] = new ZaListHeaderItem(ZaServer.A_isCurrentVolume, ZaMsg.VM_CurrentVolume, null, "auto", null, null, false, true);										
 
+	var policyHeaderList = new Array();
+	policyHeaderList[0] = new ZaListHeaderItem(ZaServer.A_PolicyItems, ZaMsg.VM_PolicyItemsToMove, null, "200px", false, null, false, true);
+	policyHeaderList[1] = new ZaListHeaderItem(ZaServer.A_PolicyOlderThan, ZaMsg.VM_PolicyOlderThan, null,"200px", false, null, false, true);
+
 	var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9;
 
     var tabBarChoices = [] ;
@@ -1360,7 +1364,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
 							items: [
 								{ref:ZaServer.A_zimbraHsmPolicy, type:_DWT_LIST_, height:"200", width:"99%",
 									 	preserveSelection:false, multiselect:true,cssClass: "DLSource",
-									 	widgetClass:ZaServerPoliciesListView,
+									 	headerList:policyHeaderList, widgetClass:ZaServerPoliciesListView,
 									 	onSelection:ZaServerXFormView.volumeSelectionListener,
 									 	valueChangeEventSources:[ZaServer.A_zimbraHsmPolicy]
 								},
