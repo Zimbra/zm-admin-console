@@ -902,7 +902,7 @@ ZaServer.modifyMethod = function (tmpObj) {
 					this.attrs[a] = [];
 				}
 
-				if (! this.attrs[a] instanceof Array) {
+				if (!(this.attrs[a] instanceof Array)) {
 					this.attrs[a] = [this.attrs[a]];
 				}
 
