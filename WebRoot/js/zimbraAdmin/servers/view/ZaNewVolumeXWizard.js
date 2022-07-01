@@ -193,10 +193,26 @@ function() {
         // }
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
     }
-    this.goPage(this._containedObject[ZaModel.currentStep] + 1);
     if(this._containedObject[ZaModel.currentStep] == this._lastStep) {
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
     }
+    // Handle S3 case
+    if (this._containedObject["selectedVolumeType"] == "S3") {
+        if (this._containedObject["newBucketClicked"] == true) {
+            this.goPage(ZaNewVolumeXWizard.NEW_S3_BUCKET);
+        } else {
+            this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
+        }
+    }
+    // Handle Ceph case
+    if (this._containedObject["selectedVolumeType"] == "Ceph") {
+        if (this._containedObject["newBucketClicked"] == true) {
+            this.goPage(ZaNewVolumeXWizard.NEW_CEPH_BUCKET);
+        } else {
+            this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
+        }
+    }
+    // this.goPage(this._containedObject[ZaModel.currentStep] + 1);
 }
 
 ZaNewVolumeXWizard.prototype.goPrev =
@@ -207,7 +223,24 @@ function() {
     } else if(this._containedObject[ZaModel.currentStep] == this._lastStep) {
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
     }
-    this.goPage(this._containedObject[ZaModel.currentStep] - 1);
+    // Handle S3 case
+    if (this._containedObject["selectedVolumeType"] == "S3") {
+        if (this._containedObject["newBucketClicked"] == true) {
+            this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
+        } else {
+            this.goPage(ZaNewVolumeXWizard.GENERAL_STEP);
+        }
+    }
+    // Handle Ceph case
+    if (this._containedObject["selectedVolumeType"] == "Ceph") {
+        if (this._containedObject["newBucketClicked"] == true) {
+            this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
+        } else {
+            this.goPage(ZaNewVolumeXWizard.GENERAL_STEP);
+        }
+        
+    }
+    // this.goPage(this._containedObject[ZaModel.currentStep] - 1);
 }
 
 /**
@@ -219,6 +252,7 @@ function(entry) {
     this._containedObject = {};
     // Set the initial step
     this._containedObject[ZaModel.currentStep] = entry[ZaModel.currentStep] || 1;
+    this._containedObject["selectedVolumeType"] = null;
 	this._localXForm.setInstance(this._containedObject);
 
     // // this._containedObject = new ZaServer();
@@ -254,13 +288,14 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                     groupname:"subscription_settings",
                     msgName:"name",
                     label:"Internal (any mountpoint)",
-                    // onChange:ZaTabView.onFormFieldChanged,
-                    // updateElement:function () {
-                    //     this.getElement().checked = (this.getInstanceValue(ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy) == ZaDistributionList.A2_zimbraDLSubscriptionPolicyAccept);
-                    // },
-                    // elementChanged: function(elementValue,instanceValue, event) {
-                    //     this.getForm().itemChanged(this, ZaDistributionList.A2_zimbraDLSubscriptionPolicyAccept, event);
-                    // }
+                    onChange:ZaTabView.onFormFieldChanged,
+                    updateElement:function () {
+                        this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == null);
+                    },
+                    elementChanged: function(elementValue,instanceValue, event) {
+                        this.getForm().setInstanceValue("Internal", "selectedVolumeType");
+                        this.getForm().itemChanged(this, "selectedVolumeType", event);
+                    }
                 }
                 ,
                 {
@@ -274,6 +309,7 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == "S3");
                     },
                     elementChanged: function(elementValue,instanceValue, event) {
+                        this.getForm().setInstanceValue("S3", "selectedVolumeType");
                         this.getForm().itemChanged(this, "selectedVolumeType", event);
                     }
                 },
@@ -283,13 +319,14 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                     groupname:"subscription_settings",
                     msgName:"name1",
                     label:"Ceph",
-                    // onChange:ZaTabView.onFormFieldChanged,
-                    // updateElement:function () {
-                    //     this.getElement().checked = (this.getInstanceValue(ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy) == ZaDistributionList.A2_zimbraDLSubscriptionPolicyApproval);
-                    // },
-                    // elementChanged: function(elementValue,instanceValue, event) {
-                    //     this.getForm().itemChanged(this, ZaDistributionList.A2_zimbraDLSubscriptionPolicyApproval, event);
-                    // }
+                    onChange:ZaTabView.onFormFieldChanged,
+                    updateElement:function () {
+                        this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == "Ceph");
+                    },
+                    elementChanged: function(elementValue,instanceValue, event) {
+                        this.getForm().setInstanceValue("Ceph", "selectedVolumeType");
+                        this.getForm().itemChanged(this, "selectedVolumeType", event);
+                    }
                 },
                 {
                     ref:ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy,
@@ -355,6 +392,15 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         width:125,
                         caseKey:ZaNewAccountXWizard.SKINS_STEP, caseVarRef:ZaModel.currentStep,
                     },
+                    {
+                        type:_BUTTON_, label: "New bucket",
+                        //  width:20,
+                        onActivate:function (event) {
+                            this.getForm().setInstanceValue(true, "newBucketClicked");
+                        },
+                        // visibilityChecks:[Repeat_XFormItem.haveAnyRows],
+                        // visibilityChangeEventSources:[this.getRef()]
+                    }
                 ]
             },
             {
