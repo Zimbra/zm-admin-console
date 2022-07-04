@@ -271,6 +271,7 @@ ZaServerXFormView.updateVolume = function () {
 	if(this.parent.editVolumeDlg) {
 		this.parent.editVolumeDlg.popdown();		
 		var obj = this.parent.editVolumeDlg.getObject();
+		// SOAP ModifyVolumeRequest fired
 		var soapDoc = AjxSoapDoc.create("ModifyVolumeRequest", ZaZimbraAdmin.URN, null);		
 		soapDoc.getMethod().setAttribute(ZaServer.A_VolumeId, obj[ZaServer.A_VolumeId]);	
 		var elVolume = soapDoc.set("volume", null);
@@ -380,6 +381,7 @@ ZaServerXFormView.prototype.createVolumeCallback = function(resp) {
 
 ZaServerXFormView.prototype.doAddVolume = function(obj) {
 	ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
+	// SOAP CreateVolumeRequest fired
 	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);		
 	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", obj[ZaServer.A_VolumeType]);
@@ -588,11 +590,28 @@ ZaServerXFormView.deleteButtonListener = function () {
 
 ZaServerXFormView.addButtonListener =
 function () {
+	// var instance = this.getInstance();
+	// var formPage = this.getForm().parent;
+	// if(!formPage.addVolumeDlg) {
+	// 	formPage.addVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Add_Volume_Title);
+	// 	formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
+	// }
+	
+	var obj = {
+		selectedVolumeType: null,
+		newBucketClicked: null,
+	};
+
+	// Temporary change: we need to pass the actual volume model here...
+	var newAccount = new ZaAccount();
+		newAccount.loadNewObjectDefaults("name", ZaSettings.myDomainName);
+        newAccount.rights[ZaAccount.GET_ACCOUNT_MEMBERSHIP_RIGHT]= true;
+
 	var instance = this.getInstance();
 	var formPage = this.getForm().parent;
 	if(!formPage.addVolumeDlg) {
-		formPage.addVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Add_Volume_Title);
-		formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
+		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px", obj);
+		// formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
 	}
 	
 	var obj = {};
@@ -604,8 +623,8 @@ function () {
 	obj[ZaServer.A_VolumeType] = ZaServer.MSG;		
 	obj.current = false;		
 	
-	formPage.addVolumeDlg.setObject(obj);
-	formPage.addVolumeDlg.popup();		
+	formPage.addVolumeDlg.setObject(newAccount);
+	formPage.addVolumeDlg.popup();	
 }
 
 ZaServerXFormView.SERVICE_TAB_ATTRS = [
