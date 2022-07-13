@@ -163,6 +163,7 @@ AjxPackage.require("zimbraAdmin.accounts.view.ReindexMailboxXDialog");
 AjxPackage.require("zimbraAdmin.accounts.view.DeleteAcctsPgrsDlg");
 AjxPackage.require("zimbraAdmin.servers.view.ZaServerVolumesListView");
 AjxPackage.require("zimbraAdmin.servers.view.ZaEditVolumeXDialog");
+AjxPackage.require("zimbraAdmin.servers.view.ZaNewVolumeXWizard");
 AjxPackage.require("zimbraAdmin.servers.view.ZaProxyPortWarningXDialog");
 AjxPackage.require("zimbraAdmin.servers.view.ZaServerListView");
 AjxPackage.require("zimbraAdmin.servers.view.ZaServerMiniListView");

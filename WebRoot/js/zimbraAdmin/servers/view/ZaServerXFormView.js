@@ -271,6 +271,7 @@ ZaServerXFormView.updateVolume = function () {
 	if(this.parent.editVolumeDlg) {
 		this.parent.editVolumeDlg.popdown();		
 		var obj = this.parent.editVolumeDlg.getObject();
+		// SOAP ModifyVolumeRequest fired
 		var soapDoc = AjxSoapDoc.create("ModifyVolumeRequest", ZaZimbraAdmin.URN, null);		
 		soapDoc.getMethod().setAttribute(ZaServer.A_VolumeId, obj[ZaServer.A_VolumeId]);	
 		var elVolume = soapDoc.set("volume", null);
@@ -380,6 +381,7 @@ ZaServerXFormView.prototype.createVolumeCallback = function(resp) {
 
 ZaServerXFormView.prototype.doAddVolume = function(obj) {
 	ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
+	// SOAP CreateVolumeRequest fired
 	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);		
 	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", obj[ZaServer.A_VolumeType]);
@@ -403,8 +405,11 @@ ZaServerXFormView.prototype.doAddVolume = function(obj) {
 }
 
 ZaServerXFormView.addVolume  = function () {
+	alert("Finish button clicked");
 	if(this.parent.addVolumeDlg) {
+		// Need to change to Wizard instead of dialog
 		var obj = this.parent.addVolumeDlg.getObject();
+		console.log("addVolume obj:", obj);
 		ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null, ZaId.VIEW_STATUS + "_confirmMessage");
 		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(AjxMessageFormat.format(ZaMsg.Q_CREATE_VOLUME,[obj[ZaServer.A_VolumeRootPath]]),DwtMessageDialog.INFO_STYLE );
 		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaServerXFormView.prototype.doAddVolume, this.parent, [obj]);
@@ -588,24 +593,30 @@ ZaServerXFormView.deleteButtonListener = function () {
 
 ZaServerXFormView.addButtonListener =
 function () {
+	// var instance = this.getInstance();
+	// var formPage = this.getForm().parent;
+	// if(!formPage.addVolumeDlg) {
+	// 	formPage.addVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Add_Volume_Title);
+	// 	formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
+	// }
+
 	var instance = this.getInstance();
 	var formPage = this.getForm().parent;
 	if(!formPage.addVolumeDlg) {
-		formPage.addVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Add_Volume_Title);
-		formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
+		// Must link this to the current form so the values get saved... (WIP)
+		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
+		// formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
+		formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
 	}
 	
 	var obj = {};
 	obj[ZaServer.A_VolumeId] = instance.newVolID--;
-	obj[ZaServer.A_VolumeName] = "";
-	obj[ZaServer.A_VolumeRootPath] = "/opt/zimbra";
-	obj[ZaServer.A_VolumeCompressBlobs] = false;
-	obj[ZaServer.A_VolumeCompressionThreshold] = 4096;
-	obj[ZaServer.A_VolumeType] = ZaServer.MSG;		
+	obj["selectedVolumeType"] = "Internal";
 	obj.current = false;		
 	
+	// Set initial ZaNewVolumeXWizard form values
 	formPage.addVolumeDlg.setObject(obj);
-	formPage.addVolumeDlg.popup();		
+	formPage.addVolumeDlg.popup();	
 }
 
 ZaServerXFormView.SERVICE_TAB_ATTRS = [
@@ -669,7 +680,7 @@ ZaServerXFormView.BIND_IP_TAB_RIGHTS = [];
 ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {	
 	var headerList = new Array();
 	headerList[0] = new ZaListHeaderItem(ZaServer.A_VolumeName, ZaMsg.VM_VolumeName, null, "100px", false, null, false, true);
-	headerList[1] = new ZaListHeaderItem(ZaServer.A_VolumeRootPath, ZaMsg.VM_VolumeRootPath, null,"200px", false, null, false, true);
+	headerList[1] = new ZaListHeaderItem(ZaServer.A_VolumeRootPath, "Volume Path or S3 Prefix", null,"200px", false, null, false, true);
 	headerList[2] = new ZaListHeaderItem(ZaServer.A_VolumeType, ZaMsg.VM_VolumeType, null, "120px", null, null, false, true);							
 	headerList[3] = new ZaListHeaderItem(ZaServer.A_VolumeCompressBlobs, ZaMsg.VM_VolumeCompressBlobs, null, "120px", null, null, false, true);								
 	headerList[4] = new ZaListHeaderItem(ZaServer.A_VolumeCompressionThreshold, ZaMsg.VM_VolumeCompressThreshold, null, "120px", null, null, false, true);									
