@@ -442,6 +442,8 @@ ZaSettings.HELP_CENTER_VIEW = "helpCenterView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.HELP_CENTER_VIEW, label: ZaMsg.UI_Comp_HelpCenterView });
 ZaSettings.STATUS_PANE = "statusPane";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.STATUS_PANE, label: ZaMsg.UI_Comp_StatusPane });
+ZaSettings.CERTS_VIEW = "certificatesView";
+ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.CERTS_VIEW, label: ZaMsg.UI_Comp_CertificatesView });
 }
 ZaSettings.initConst();
 
