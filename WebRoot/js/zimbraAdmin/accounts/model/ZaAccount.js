@@ -1554,7 +1554,17 @@ function(by, val) {
         this.attrs = new Object();
         this.initFromJS(resp.account[0]);
     }
-
+    var grantParams = {
+        isAllGrants: true ,
+        grantee: {
+            type: ZaGrant.GRANTEE_TYPE.usr ,
+            all: "1",
+            val: this.name,
+            by: "name"
+        }
+    };
+    var allGrantsList = ZaGrant.load.call(this, grantParams) ;
+    console.log('allGrantsList in ZaAccount:',allGrantsList);
     if(!AjxUtil.isEmpty(this.attrs[ZaAccount.A_mailHost]) && ZaItem.hasRight(ZaAccount.GET_MAILBOX_INFO_RIGHT,this) && this.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] != "TRUE") {
         var getMailboxReq = soapDoc.set("GetMailboxRequest", null, null, ZaZimbraAdmin.URN);
         var mbox = soapDoc.set("mbox", "", getMailboxReq);
@@ -1720,6 +1730,23 @@ function(by, val) {
         this[ZaAccount.A2_autodisplayname] = "TRUE";
     } else {
         this[ZaAccount.A2_autodisplayname] = "FALSE";
+    }
+    let arr=["domainAdminZimletRights","adminLoginCalendarResourceAs","domainAdminConsoleRights"];
+    var count=0;
+    if( allGrantsList.length >= 3){
+    for(var i=0; i< allGrantsList.length; i++){
+        if(allGrantsList[i].grantee_id === this.id){
+            if((arr.includes(allGrantsList[i].right)) && (allGrantsList[i].deny === "0")){
+                count++;
+            }
+        }
+        
+    }
+}else{
+    count=0;
+}
+    if(count >= 3){
+    this[ZaAccount.A2_isAssignDefaultDARights] = "TRUE";
     }
 
 }
