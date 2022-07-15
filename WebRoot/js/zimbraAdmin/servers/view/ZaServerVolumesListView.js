@@ -83,7 +83,11 @@ function(item) {
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeRootPath) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeRootPath]);
+				if(item["volumePrefix"]) {
+					html[idx++] = AjxStringUtil.htmlEncode(item["volumePrefix"]);
+				} else {
+					html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeRootPath]);
+				}
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeType) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
