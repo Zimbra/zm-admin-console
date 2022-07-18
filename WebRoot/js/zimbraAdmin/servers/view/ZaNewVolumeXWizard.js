@@ -179,6 +179,7 @@ ZaNewVolumeXWizard.prototype.setObject = function(entry) {
     this._containedObject = {};
     // Set the initial step
     this._containedObject[ZaModel.currentStep] = entry[ZaModel.currentStep] || 1;
+    this._containedObject[ZaServer.A_VolumeId] = entry[ZaServer.A_VolumeId];
     this._containedObject["selectedVolumeType"] = entry.selectedVolumeType;
     this._containedObject["region"] = "GovCloud";
     this._containedObject[ZaServer.A_VolumeCompressionThreshold] = 4096;
@@ -202,6 +203,7 @@ ZaNewVolumeXWizard.prototype.setDefaultValues = function() {
         this._containedObject[ZaServer.A_VolumeCompressionThreshold] = 4096;
     } else {
         this._containedObject[ZaServer.A_VolumeName] = "";
+        this._containedObject[ZaServer.A_VolumeType] = "";
         delete this._containedObject[ZaServer.A_VolumeRootPath];
         delete this._containedObject[ZaServer.A_VolumeCompressBlobs];
         delete this._containedObject[ZaServer.A_VolumeCompressionThreshold];
@@ -223,8 +225,9 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
     const case1 = {type:_CASE_, tabGroupKey:ZaNewVolumeXWizard.GENERAL_STEP, caseKey:ZaNewVolumeXWizard.GENERAL_STEP, numCols:1,  align:_LEFT_, valign:_TOP_};
     const case1Items = [
         {
-            type:_OUTPUT_, label:null, value: 'Please select the type of volume you would like to create.',
-            visibilityChecks:[],
+            type: _OUTPUT_,
+            label: null,
+            value: 'Please select the type of volume you would like to create.',
         },
         {
             type : _GROUP_,
@@ -311,8 +314,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         labelLocation: _LEFT_,
                         labelCssStyle: "text-align:left;",
                         width: 150,
-                        visibilityChecks: [],
-                        enableDisableChecks: []
                     },
 					{
                         ref: ZaServer.A_VolumeRootPath,
@@ -321,8 +322,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         labelLocation: _LEFT_,
                         labelCssStyle: "text-align:left;",
                         width: 150,
-                        visibilityChecks: [],
-                        enableDisableChecks: []
                     },
 					{
                         ref: ZaServer.A_VolumeType,
@@ -331,8 +330,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         width: 155,
                         label: ZaMsg.LBL_VM_VolumeType,
                         labelCssStyle: "text-align:left;",
-                        visibilityChecks: [],
-                        enableDisableChecks: []
                     },
 					{
                         ref: ZaServer.A_VolumeCompressBlobs,
@@ -343,8 +340,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         trueValue: true,
                         falseValue: false,
                         align: _LEFT_,
-                        visibilityChecks: [],
-                        enableDisableChecks: []
                     },
 					{
                         type: _GROUP_, numCols: 3, colSpan: 2, colSizes: ["200px","*","*"],
@@ -356,8 +351,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                                 labelCssStyle: "text-align:left;",
                                 width: 50,
                                 labelLocation: _LEFT_,
-                                visibilityChecks: [],
-                                enableDisableChecks: []
                             },
 							{
                                 type: _OUTPUT_,
@@ -365,8 +358,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                                 labelLocation: _NONE_,
                                 value: ZaMsg.NAD_bytes,
                                 align: _LEFT_,
-                                visibilityChecks: [],
-                                enableDisableChecks: []
                             }
 						]
 					}
@@ -390,9 +381,7 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         type: _OSELECT1_,
                         label: ZaMsg.LBL_VM_VolumeType,
                         labelCssStyle: "text-align:left;",
-                        choices: ZaServer.volumeTypeChoices,  
-                        visibilityChecks: [], 
-                        enableDisableChecks: [],
+                        choices: ZaServer.volumeTypeChoices,
                         width: 155,
                     },
                     {
@@ -400,18 +389,17 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         label: ZaMsg.LBL_VM_VolumeName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150
                     },
                     {
-                        ref: "volumePrefix", type: _TEXTFIELD_,
-                        label: ZaMsg.LBL_VM_VolumePrefix, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                        ref: ZaServer.A_VolumePrefix, type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_VolumePrefix, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150
+                    },
                     {
                         type: _OSELECT1_,
                         label: ZaMsg.LBL_VM_S3CompatibleBucket,
                         labelCssStyle: "text-align:left;",
                         align: _LEFT_,
-                        selectRef: "compatibleS3Bucket",
-                        ref: "compatibleS3Bucket",
+                        selectRef: ZaServer.A_CompatibleS3Bucket,
+                        ref: ZaServer.A_CompatibleS3Bucket,
                         choices: ZaNewVolumeXWizard.bucketChoices,
-                        visibilityChecks: [],
-                        visibilityChangeEventSources: [],
                         width: 155,
                     },
                     {
@@ -426,8 +414,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                                     this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_S3_BUCKET);
                                     this.getForm().parent._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
                                 },
-                                // visibilityChecks:[Repeat_XFormItem.haveAnyRows],
-                                // visibilityChangeEventSources:[this.getRef()]
                             }
                         ]
                     }
@@ -438,13 +424,12 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
             },
             {
                 type:_OUTPUT_, label:null, value: 'HSM is compatible with "Amazon S3 Standard - Infrequent Access" storage class, and will set any file larger than the Infrequent Access threshold to this class. For more information about Infrequent Access, please see the official Amazon S3 documentation.',
-                visibilityChecks:[],
             },
             {type:_ZAWIZGROUP_,
                 colSizes:["200px","*"],numCols:2,
                 items:[
                     {
-                        ref: "infrequentAccess", type: _WIZ_CHECKBOX_, labelLocation: _LEFT_, align: _LEFT_, subLabel: ZaMsg.NAD_Enable,
+                        ref: ZaServer.A_InfrequentAccess, type: _WIZ_CHECKBOX_, labelLocation: _LEFT_, align: _LEFT_, subLabel: ZaMsg.NAD_Enable,
                         label: ZaMsg.LBL_VM_InfrequentAccess, labelCssStyle: "padding-left:3px;", trueValue: "TRUE", falseValue: "FALSE",
                         enableDisableChangeEventSources: ["intelligentTiering"],
                         enableDisableChecks: [function() {
@@ -452,7 +437,7 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         }],
                     },
                     {
-                        ref: "infrequentAccessThreshold", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_InfrequentAccessTreshold, 
+                        ref: ZaServer.A_InfrequentAccessThreshold, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_InfrequentAccessTreshold, 
                         labelLocation: _LEFT_, labelCssStyle: "text-align:left;", align: _LEFT_, width: 100,
                         enableDisableChangeEventSources: ["infrequentAccess"],
                         enableDisableChecks: [function() {
@@ -460,7 +445,7 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                         }],
                     },
                     {
-                        ref: "intelligentTiering", type: _WIZ_CHECKBOX_, labelLocation: _LEFT_, align: _LEFT_, subLabel: ZaMsg.NAD_Enable,
+                        ref: ZaServer.A_IntelligentTiering, type: _WIZ_CHECKBOX_, labelLocation: _LEFT_, align: _LEFT_, subLabel: ZaMsg.NAD_Enable,
                         label: ZaMsg.LBL_VM_IntelligentTiering, labelCssStyle: "padding-left:3px;", trueValue: "TRUE", falseValue: "FALSE",
                         enableDisableChangeEventSources: ["infrequentAccess"],
                         enableDisableChecks: [function() {
@@ -481,21 +466,19 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
             {type:_ZAWIZGROUP_,
                 colSizes:["200px","*"],numCols:2,
                 items:[
-                    {ref: "bucketName", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_BucketName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "accessKey", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_AccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "secretKey", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_SecretAccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "destinationPath", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_DestinationPath, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "url", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_URL, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_BucketName, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_BucketName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_AccessKey, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_AccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_SecretKey, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_SecretAccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_DestinationPath, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_DestinationPath, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_URL, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_URL, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
                     {
-                        type:_OSELECT1_,
-                        label: ZaMsg.LBL_VM_Region,
-                        align:_LEFT_,
-                        labelCssStyle:"text-align:left;",
-                        selectRef:"region",
-                        ref:"region",
+                        type: _OSELECT1_,
+                        label:  ZaMsg.LBL_VM_Region,
+                        align: _LEFT_,
+                        labelCssStyle: "text-align:left;",
+                        selectRef: ZaServer.A_Region,
+                        ref: ZaServer.A_Region,
                         choices: ZaNewVolumeXWizard.getRegionList(),
-                        visibilityChecks:[],
-                        visibilityChangeEventSources:[],
                         width:125,
                     },
                     {
@@ -509,8 +492,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                                     this.getForm().parent.deleteS3BucketRequest();
                                     // ZaNewVolumeXWizard.createS3BucketRequest(this.getForm().instance, "AWS_S3");
                                 },
-                                // visibilityChecks:[Repeat_XFormItem.haveAnyRows],
-                                // visibilityChangeEventSources:[this.getRef()]
                             }
                         ]
                     }
@@ -528,19 +509,31 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
             {type:_ZAWIZGROUP_,
                 colSizes:["200px","*"],numCols:2,
                 items:[
-                    {ref: ZaAccount.A_telephoneNumber, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_VolumeName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 250},
-                    {ref: ZaAccount.A_homePhone, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_VolumePrefix, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 250},
+                    {
+                        ref: ZaServer.A_VolumeType,
+                        type: _OSELECT1_,
+                        label: ZaMsg.LBL_VM_VolumeType,
+                        labelCssStyle: "text-align:left;",
+                        choices: ZaServer.volumeTypeChoices,
+                        width: 155,
+                    },
+                    {
+                        ref: ZaServer.A_VolumeName, type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_VolumeName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150
+                    },
+                    {
+                        ref: ZaServer.A_VolumePrefix, type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_VolumePrefix, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150
+                    },
                     {
                         type: _OSELECT1_,
                         label: ZaMsg.LBL_VM_CephBucket,
                         labelCssStyle: "text-align:left;",
                         align: _LEFT_,
-                        selectRef: ZaAccount.A_zimbraAvailableSkin,
-                        ref: ZaAccount.A_zimbraAvailableSkin,
-                        choices: ZaNewVolumeXWizard.getBucketChoices(this.bucketList, "CEPH_S3"), // bucketChoices,
-                        visibilityChecks: [],
-                        visibilityChangeEventSources: [],
-                        width: 125,
+                        selectRef: ZaServer.A_CompatibleS3Bucket,
+                        ref: ZaServer.A_CompatibleS3Bucket,
+                        choices: ZaNewVolumeXWizard.bucketChoices,
+                        width: 155,
                     },
                     {
                         type: _BUTTON_, label: ZaMsg.LBL_VM_NewCephBucket,
@@ -549,8 +542,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                             // Go to NEW_CEPH_BUCKET PAGE
                             this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_CEPH_BUCKET);
                         },
-                        // visibilityChecks:[Repeat_XFormItem.haveAnyRows],
-                        // visibilityChangeEventSources:[this.getRef()]
                     }
                 ]
             },
@@ -580,8 +571,6 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                                 // onActivate:function (event) {
                                 //     ZaNewVolumeXWizard.getBucketChoices();
                                 // },
-                                // visibilityChecks:[Repeat_XFormItem.haveAnyRows],
-                                // visibilityChangeEventSources:[this.getRef()]
                             }
                         ]
                     }
@@ -592,29 +581,21 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
 
     // Left sidebar visibility checks
     const labelVisibility = {};
-    labelVisibility[ZaNewVolumeXWizard.GENERAL_STEP] = {
-        checks:[],
-        sources:[]
-    };
+    labelVisibility[ZaNewVolumeXWizard.GENERAL_STEP] = {};
     labelVisibility[ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME] = {
         checks:[[ZaNewVolumeXWizard.isStep,"InternalVolume",true]],
-        sources:[]
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_S3_VOLUME] = {
         checks:[[ZaNewVolumeXWizard.isStep,"S3Volume",true]],
-        sources:[]
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_S3_BUCKET] = {
         checks:[[ZaNewVolumeXWizard.isStep,"S3Bucket",true]],
-        sources:[]
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_CEPH_VOLUME] = {
         checks:[[ZaNewVolumeXWizard.isStep,"CephVolume",true]],
-        sources:[]
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_CEPH_BUCKET] = {
         checks:[[ZaNewVolumeXWizard.isStep,"CephBucket",true]],
-        sources:[]
     };
 
     this._lastStep = this.stepChoices.length;
@@ -669,7 +650,7 @@ function() {
     if (!resp) {
         throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaNewVolumeXWizard.getS3BucketConfig"));
     } else {
-        const globalS3BucketConfigurations = resp.Body.GetS3BucketConfigResponse.global_external_store_config[0].globalS3BucketConfigurations;
+        const globalS3BucketConfigurations = resp.Body.GetS3BucketConfigResponse.globalS3BucketConfigurations;
         console.log("globalS3BucketConfigurations:",globalS3BucketConfigurations);
         return globalS3BucketConfigurations;
     }
