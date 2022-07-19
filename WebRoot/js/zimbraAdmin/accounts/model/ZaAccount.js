@@ -1564,7 +1564,6 @@ function(by, val) {
         }
     };
     var allGrantsList = ZaGrant.load.call(this, grantParams) ;
-    console.log('allGrantsList in ZaAccount:',allGrantsList);
     if(!AjxUtil.isEmpty(this.attrs[ZaAccount.A_mailHost]) && ZaItem.hasRight(ZaAccount.GET_MAILBOX_INFO_RIGHT,this) && this.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] != "TRUE") {
         var getMailboxReq = soapDoc.set("GetMailboxRequest", null, null, ZaZimbraAdmin.URN);
         var mbox = soapDoc.set("mbox", "", getMailboxReq);
@@ -1731,7 +1730,7 @@ function(by, val) {
     } else {
         this[ZaAccount.A2_autodisplayname] = "FALSE";
     }
-    // let arr=["domainAdminZimletRights","adminLoginCalendarResourceAs","domainAdminConsoleRights"];
+       
     var defaultRights = ZaNewAdminWizard.getDefaultDARights (this) ;
     var count=0;
     if (allGrantsList.length >= 3) {
