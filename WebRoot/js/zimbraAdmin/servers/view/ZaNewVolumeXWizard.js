@@ -100,25 +100,7 @@ function (loc) {
 
 ZaNewVolumeXWizard.prototype.finishWizard =
 function() {
-    try {
-        // if(!ZaAccount.checkValues(this._containedObject)) {
-        //     return false;
-        // }
-        // var account = ZaItem.create(this._containedObject,ZaAccount,"ZaAccount");
-        // if(account != null) {
-        //     //ZaApp.getInstance().getCurrentController().popupMsgDialog(AjxMessageFormat.format(ZaMsg.AccountCreated,[account.name]));
-        // }
-    } catch (ex) {
-        switch(ex.code) {
-            case ZmCsfeException.ACCT_INVALID_PASSWORD:
-                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_INVALID, ex);
-                ZaApp.getInstance().getAppCtxt().getErrorDialog().showDetail(true);
-            break;
-            default:
-                ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaNewVolumeXWizard.prototype.finishWizard", null, false);
-            break;
-        }
-    }
+    // Place final validations here if necessary
 }
 
 ZaNewVolumeXWizard.prototype.goNext =
@@ -127,25 +109,28 @@ function() {
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
     }
     // Handle Internal volume case
-    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.GENERAL_STEP && this._containedObject["selectedVolumeType"] == "Internal") {
+    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.GENERAL_STEP && this._containedObject[ZaServer.A_VolumeStorageType] == "Internal") {
         this.goPage(ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME);
         this.setDefaultValues();
     }
     // Handle S3 volume case
-    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.GENERAL_STEP && this._containedObject["selectedVolumeType"] == "S3") {
+    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.GENERAL_STEP && this._containedObject[ZaServer.A_VolumeStorageType] == "S3") {
         ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, "AWS_S3"));
+        ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
         this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
         this.setDefaultValues();
     }
     // Handle Ceph volume case
-    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.GENERAL_STEP && this._containedObject["selectedVolumeType"] == "Ceph") {
+    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.GENERAL_STEP && this._containedObject[ZaServer.A_VolumeStorageType] == "Ceph") {
         ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, "CEPH_S3"));
+        ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
         this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
+        this.setDefaultValues();
     }
     // Handle new S3 bucket case
     if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_S3_BUCKET) {
         // Handle create bucket (callback will take care of going to next step...)
-        this.createS3BucketRequest(this._containedObject); 
+        this.createS3BucketRequest(this._containedObject);
     }
     // Handle new Ceph bucket case
     if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
@@ -180,9 +165,11 @@ ZaNewVolumeXWizard.prototype.setObject = function(entry) {
     // Set the initial step
     this._containedObject[ZaModel.currentStep] = entry[ZaModel.currentStep] || 1;
     this._containedObject[ZaServer.A_VolumeId] = entry[ZaServer.A_VolumeId];
-    this._containedObject["selectedVolumeType"] = entry.selectedVolumeType;
-    this._containedObject["region"] = "GovCloud";
-    this._containedObject[ZaServer.A_VolumeCompressionThreshold] = 4096;
+    this._containedObject[ZaServer.A_VolumeStoreType] = entry[ZaServer.A_VolumeStoreType];
+    this._containedObject[ZaServer.A_isCurrent] = entry[ZaServer.A_isCurrent];
+    this._containedObject[ZaServer.A_VolumeStorageType] = entry[ZaServer.A_VolumeStorageType];
+    this._containedObject[ZaServer.A_Region] = "GovCloud";
+    this._containedObject[ZaServer.A_VolumeCompressionThreshold] = entry[ZaServer.A_VolumeCompressionThreshold];
 	this._localXForm.setInstance(this._containedObject);
 
     // Fetch bucket list (includes all storeProviders)
@@ -196,17 +183,18 @@ ZaNewVolumeXWizard.prototype.setDefaultValues = function() {
     // Check current step
     const currentStep = this._containedObject[ZaModel.currentStep] || 1;
 
+    this._containedObject[ZaServer.A_VolumeName] = "";
+    this._containedObject[ZaServer.A_VolumeType] = "";
+
     if (currentStep === ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME) {
-        this._containedObject[ZaServer.A_VolumeName] = "";
+        this._containedObject[ZaServer.A_VolumeStoreType] = 1;
         this._containedObject[ZaServer.A_VolumeRootPath] = "/opt/zimbra";
         this._containedObject[ZaServer.A_VolumeCompressBlobs] = false;
-        this._containedObject[ZaServer.A_VolumeCompressionThreshold] = 4096;
     } else {
-        this._containedObject[ZaServer.A_VolumeName] = "";
-        this._containedObject[ZaServer.A_VolumeType] = "";
-        delete this._containedObject[ZaServer.A_VolumeRootPath];
-        delete this._containedObject[ZaServer.A_VolumeCompressBlobs];
-        delete this._containedObject[ZaServer.A_VolumeCompressionThreshold];
+        this._containedObject[ZaServer.A_VolumeStoreType] = 2;
+        delete this._containedObject[ZaServer.A_CompatibleS3Bucket];
+        // delete this._containedObject[ZaServer.A_VolumeRootPath];
+        // delete this._containedObject[ZaServer.A_VolumeCompressBlobs];
     }
 
     this._localXForm.refresh();
@@ -237,60 +225,61 @@ ZaNewVolumeXWizard.myXFormModifier = function(xFormObject, entry) {
                     type:_SPACER_, height:"15"
                 },
                 {
-                    ref: ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy,
+                    ref: ZaServer.A_VolumeStorageType,
                     type: _RADIO_,
-                    groupname: "subscription_settings",
+                    groupname: ZaServer.A_VolumeStorageType,
                     label: ZaMsg.LBL_VM_VolumeTypeInternal,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == "Internal");
+                        this.getElement().checked = (this.getInstanceValue(ZaServer.A_VolumeStorageType) == "Internal");
                     },
-                    elementChanged: function(elementValue,instanceValue, event) {
-                        this.getForm().setInstanceValue("Internal", "selectedVolumeType");
+                    elementChanged: function(_,__,event) {
+                        this.getForm().setInstanceValue("Internal", ZaServer.A_VolumeStorageType);
                         this.getForm().itemChanged(this, "Internal", event);
                     }
                 }
                 ,
                 {
-                    ref: ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy,
+                    ref: ZaServer.A_VolumeStorageType,
                     type: _RADIO_,
-                    groupname: "subscription_settings",
+                    groupname: ZaServer.A_VolumeStorageType,
                     label: ZaMsg.LBL_VM_VolumeTypeS3,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == "S3");
+                        this.getElement().checked = (this.getInstanceValue(ZaServer.A_VolumeStorageType) == "S3");
                     },
-                    elementChanged: function(elementValue,instanceValue, event) {
-                        this.getForm().setInstanceValue("S3", "selectedVolumeType");
+                    elementChanged: function(_,__,event) {
+                        this.getForm().setInstanceValue("S3", ZaServer.A_VolumeStorageType);
                         this.getForm().itemChanged(this, "S3", event);
                     }
                 },
                 {
-                    ref: ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy,
+                    ref: ZaServer.A_VolumeStorageType,
                     type: _RADIO_,
-                    groupname: "subscription_settings",
+                    groupname: ZaServer.A_VolumeStorageType,
                     label: ZaMsg.LBL_VM_VolumeTypeCeph,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == "Ceph");
+                        this.getElement().checked = (this.getInstanceValue(ZaServer.A_VolumeStorageType) == "Ceph");
                     },
-                    elementChanged: function(elementValue,instanceValue, event) {
-                        this.getForm().setInstanceValue("Ceph", "selectedVolumeType");
+                    elementChanged: function(_,__,event) {
+                        this.getForm().setInstanceValue("Ceph", ZaServer.A_VolumeStorageType);
                         this.getForm().itemChanged(this, "Ceph", event);
                     }
                 },
                 {
-                    ref: ZaDistributionList.A_zimbraDistributionListSubscriptionPolicy,
+                    ref: ZaServer.A_VolumeStorageType,
                     type: _RADIO_,
-                    groupname: "subscription_settings",
+                    groupname: ZaServer.A_VolumeStorageType,
                     label: ZaMsg.LBL_VM_VolumeTypeNASG,
-                    // onChange:ZaTabView.onFormFieldChanged,
+                    onChange:ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = (this.getInstanceValue("selectedVolumeType") == "NetApp");
+                        this.getElement().checked = (this.getInstanceValue(ZaServer.A_VolumeStorageType) == "NetApp");
                     },
-                    // elementChanged: function(elementValue,instanceValue, event) {
-                    //     this.getForm().itemChanged(this, ZaDistributionList.A2_zimbraDLSubscriptionPolicyApproval, event);
-                    // }
+                    elementChanged: function(_,__,event) {
+                        this.getForm().setInstanceValue("NetApp", ZaServer.A_VolumeStorageType);
+                        this.getForm().itemChanged(this, "NetApp", event);
+                    }
                 }]
         },
     ];

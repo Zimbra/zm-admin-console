@@ -385,9 +385,9 @@ ZaServerXFormView.prototype.doAddVolume = function(obj) {
 	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);		
 	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", obj[ZaServer.A_VolumeType]);
-	elVolume.setAttribute("name", obj[ZaServer.A_VolumeName]);	
-	elVolume.setAttribute("rootpath", obj[ZaServer.A_VolumeRootPath]);		
-	elVolume.setAttribute("compressBlobs", obj[ZaServer.A_VolumeCompressBlobs]);		
+	elVolume.setAttribute("name", obj[ZaServer.A_VolumeName]);
+	elVolume.setAttribute("rootpath", obj[ZaServer.A_VolumeRootPath]);
+	elVolume.setAttribute("compressBlobs", obj[ZaServer.A_VolumeCompressBlobs]);
 	elVolume.setAttribute("compressionThreshold", obj[ZaServer.A_VolumeCompressionThreshold]);
 	var callback = new AjxCallback(this,ZaServerXFormView.prototype.createVolumeCallback);
 	var params = {
@@ -611,8 +611,10 @@ function () {
 	
 	var obj = {};
 	obj[ZaServer.A_VolumeId] = instance.newVolID--;
-	obj["selectedVolumeType"] = "Internal";
-	obj.current = false;		
+	obj[ZaServer.A_VolumeStoreType] = 1;
+	obj[ZaServer.A_VolumeStorageType] = "Internal";
+	obj[ZaServer.A_VolumeCompressionThreshold] = 4096;
+	obj[ZaServer.A_isCurrent] = false;	
 	
 	// Set initial ZaNewVolumeXWizard form values
 	formPage.addVolumeDlg.setObject(obj);

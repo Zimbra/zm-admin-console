@@ -72,8 +72,10 @@ function(item) {
 			} else if(field == ZaServer.A_VolumeName) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
 				html[idx++] = "<span title='";
-				if(item["selectedVolumeType"]) {
-					html[idx++] = item["selectedVolumeType"];
+				if(item["volumeExternalInfo"]) {
+					html[idx++] = item["volumeExternalInfo"][0][ZaServer.A_VolumeStorageType];
+				} else if(item[ZaServer.A_VolumeStorageType]) {
+					html[idx++] = item[ZaServer.A_VolumeStorageType];
 				} else {
 					html[idx++] = "Internal";
 				}
@@ -83,8 +85,10 @@ function(item) {
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeRootPath) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				if(item["volumePrefix"]) {
-					html[idx++] = AjxStringUtil.htmlEncode(item["volumePrefix"]);
+				if(item["volumeExternalInfo"]) {
+					html[idx++] = item["volumeExternalInfo"][0][ZaServer.A_VolumePrefix];
+				} else if(item[ZaServer.A_VolumePrefix]) {
+					html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumePrefix]);
 				} else {
 					html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeRootPath]);
 				}
