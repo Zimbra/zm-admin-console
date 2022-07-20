@@ -381,13 +381,12 @@ ZaServerXFormView.prototype.createVolumeCallback = function(resp) {
 
 ZaServerXFormView.prototype.doAddVolume = function(obj) {
 	ZaApp.getInstance().dialogs["confirmMessageDialog"].popdown();
-	// SOAP CreateVolumeRequest fired
 	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);		
 	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", obj[ZaServer.A_VolumeType]);
-	elVolume.setAttribute("name", obj[ZaServer.A_VolumeName]);
-	elVolume.setAttribute("rootpath", obj[ZaServer.A_VolumeRootPath]);
-	elVolume.setAttribute("compressBlobs", obj[ZaServer.A_VolumeCompressBlobs]);
+	elVolume.setAttribute("name", obj[ZaServer.A_VolumeName]);	
+	elVolume.setAttribute("rootpath", obj[ZaServer.A_VolumeRootPath]);		
+	elVolume.setAttribute("compressBlobs", obj[ZaServer.A_VolumeCompressBlobs]);		
 	elVolume.setAttribute("compressionThreshold", obj[ZaServer.A_VolumeCompressionThreshold]);
 	var callback = new AjxCallback(this,ZaServerXFormView.prototype.createVolumeCallback);
 	var params = {
@@ -405,11 +404,8 @@ ZaServerXFormView.prototype.doAddVolume = function(obj) {
 }
 
 ZaServerXFormView.addVolume  = function () {
-	alert("Finish button clicked");
 	if(this.parent.addVolumeDlg) {
-		// Need to change to Wizard instead of dialog
 		var obj = this.parent.addVolumeDlg.getObject();
-		console.log("addVolume obj:", obj);
 		ZaApp.getInstance().dialogs["confirmMessageDialog"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null, ZaId.VIEW_STATUS + "_confirmMessage");
 		ZaApp.getInstance().dialogs["confirmMessageDialog"].setMessage(AjxMessageFormat.format(ZaMsg.Q_CREATE_VOLUME,[obj[ZaServer.A_VolumeRootPath]]),DwtMessageDialog.INFO_STYLE );
 		ZaApp.getInstance().dialogs["confirmMessageDialog"].registerCallback(DwtDialog.YES_BUTTON, ZaServerXFormView.prototype.doAddVolume, this.parent, [obj]);
@@ -452,14 +448,17 @@ ZaServerXFormView.addVolume  = function () {
 
 ZaServerXFormView.editButtonListener =
 function () {
-	var instance = this.getInstance();
+	const instance = this.getInstance();
 	if(instance.volume_selection_cache && instance.volume_selection_cache[0]) {	
-		var formPage = this.getForm().parent;
+		const formPage = this.getForm().parent;
 		if(!formPage.editVolumeDlg) {
+			// Out of scope: edit volume
+			// formPage.editVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
+			// formPage.editVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.updateVolume, this.getForm(), null);
 			formPage.editVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Edit_Volume_Title);
 			formPage.editVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.updateVolume, this.getForm(), null);						
 		}
-		var obj = {};
+		const obj = {};
 		obj[ZaServer.A_VolumeId] = instance.volume_selection_cache[0][ZaServer.A_VolumeId];
 		obj[ZaServer.A_VolumeName] = instance.volume_selection_cache[0][ZaServer.A_VolumeName];
 		obj[ZaServer.A_VolumeRootPath] = instance.volume_selection_cache[0][ZaServer.A_VolumeRootPath];
@@ -467,9 +466,9 @@ function () {
 		obj[ZaServer.A_VolumeCompressionThreshold] = instance.volume_selection_cache[0][ZaServer.A_VolumeCompressionThreshold];
 		obj[ZaServer.A_VolumeType] = instance.volume_selection_cache[0][ZaServer.A_VolumeType];		
 		
-		var volArr = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_Volumes);
+		const volArr = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_Volumes);
 		
-		var cnt = volArr.length;
+		const cnt = volArr.length;
 		for(var i=0; i < cnt; i++) {
 			if(volArr[i][ZaServer.A_VolumeId]==obj[ZaServer.A_VolumeId] || 
 				(!volArr[i][ZaServer.A_VolumeId] && (volArr[i][ZaServer.A_VolumeName] == obj[ZaServer.A_VolumeName])
@@ -478,9 +477,6 @@ function () {
 				break;
 			}
 		}
-		
-
-
 		formPage.editVolumeDlg.setObject(obj);
 		formPage.editVolumeDlg.popup();		
 	}
@@ -593,30 +589,22 @@ ZaServerXFormView.deleteButtonListener = function () {
 
 ZaServerXFormView.addButtonListener =
 function () {
-	// var instance = this.getInstance();
-	// var formPage = this.getForm().parent;
-	// if(!formPage.addVolumeDlg) {
-	// 	formPage.addVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Add_Volume_Title);
-	// 	formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
-	// }
-
-	var instance = this.getInstance();
-	var formPage = this.getForm().parent;
+	const instance = this.getInstance();
+	const formPage = this.getForm().parent;
 	if(!formPage.addVolumeDlg) {
-		// Must link this to the current form so the values get saved... (WIP)
 		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
-		// formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
 		formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
 	}
-	
-	var obj = {};
+	// Set initial ZaNewVolumeXWizard form values
+	const obj = {};
 	obj[ZaServer.A_VolumeId] = instance.newVolID--;
 	obj[ZaServer.A_VolumeStoreType] = 1;
 	obj[ZaServer.A_VolumeStorageType] = "Internal";
+	obj[ZaServer.A_VolumeCompressBlobs] = false;
 	obj[ZaServer.A_VolumeCompressionThreshold] = 4096;
+	obj[ZaServer.A_InfrequentAccessThreshold] = 65536;
 	obj[ZaServer.A_isCurrent] = false;	
-	
-	// Set initial ZaNewVolumeXWizard form values
+
 	formPage.addVolumeDlg.setObject(obj);
 	formPage.addVolumeDlg.popup();	
 }
