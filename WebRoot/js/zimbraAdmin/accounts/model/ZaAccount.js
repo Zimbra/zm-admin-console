@@ -1554,16 +1554,7 @@ function(by, val) {
         this.attrs = new Object();
         this.initFromJS(resp.account[0]);
     }
-    var grantParams = {
-        isAllGrants: true ,
-        grantee: {
-            type: ZaGrant.GRANTEE_TYPE.usr ,
-            all: "1",
-            val: this.name,
-            by: "name"
-        }
-    };
-    var allGrantsList = ZaGrant.load.call(this, grantParams) ;
+    
     if(!AjxUtil.isEmpty(this.attrs[ZaAccount.A_mailHost]) && ZaItem.hasRight(ZaAccount.GET_MAILBOX_INFO_RIGHT,this) && this.attrs[ZaAccount.A_zimbraIsExternalVirtualAccount] != "TRUE") {
         var getMailboxReq = soapDoc.set("GetMailboxRequest", null, null, ZaZimbraAdmin.URN);
         var mbox = soapDoc.set("mbox", "", getMailboxReq);
@@ -1731,29 +1722,6 @@ function(by, val) {
         this[ZaAccount.A2_autodisplayname] = "FALSE";
     }
        
-    var defaultRights = ZaNewAdminWizard.getDefaultDARights (this) ;
-    var count=0;
-    if (allGrantsList.length >= 3) {
-      for (var i = 0; i < allGrantsList.length; i++) {
-        if (allGrantsList[i].grantee_id === this.id) {
-        for (var j = 0; j < defaultRights.length; j++) {
-            if (
-              allGrantsList[i].right == defaultRights[j].right &&
-              allGrantsList[i].deny == "0"
-            ) {
-              count++;
-              break;
-            }
-          }
-        }
-      }
-    }
-    if (count >= 3) {
-      this[ZaAccount.A2_isAssignDefaultDARights] = "TRUE";
-    } else {
-      this[ZaAccount.A2_isAssignDefaultDARights] = "FALSE";
-    }
-
 }
 
 ZaItem.loadMethods["ZaAccount"].push(ZaAccount.loadMethod);
