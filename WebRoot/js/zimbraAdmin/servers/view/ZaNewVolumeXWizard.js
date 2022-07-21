@@ -54,9 +54,9 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
     } else {
         // Validate new volume step fields
         if(this._containedObject[ZaModel.currentStep] != ZaNewVolumeXWizard.GENERAL_STEP) {
-            const areCommonVolumeFieldsEmpty = this.hasEmptyFields([ZaServer.A_VolumeName, ZaServer.A_VolumeType]);
-            const areInternalVolumeFieldsEmpty = this.hasEmptyFields([ZaServer.A_VolumeRootPath, ZaServer.A_VolumeCompressionThreshold]);
-            const areExternalVolumeFieldsEmpty = this.hasEmptyFields([ZaServer.A_VolumePrefix, ZaServer.A_CompatibleS3Bucket]);
+            var areCommonVolumeFieldsEmpty = this.hasEmptyFields([ZaServer.A_VolumeName, ZaServer.A_VolumeType]);
+            var areInternalVolumeFieldsEmpty = this.hasEmptyFields([ZaServer.A_VolumeRootPath, ZaServer.A_VolumeCompressionThreshold]);
+            var areExternalVolumeFieldsEmpty = this.hasEmptyFields([ZaServer.A_VolumePrefix, ZaServer.A_CompatibleS3Bucket]);
 
             if (areCommonVolumeFieldsEmpty || (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME && areInternalVolumeFieldsEmpty) || (this._containedObject[ZaModel.currentStep] != ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME &&areExternalVolumeFieldsEmpty)) {
                 this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
@@ -180,7 +180,7 @@ ZaNewVolumeXWizard.prototype.setDefaultValues = function () {
 }
 
 ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
-    const cases = new Array();
+    var cases = new Array();
     this.bucketList = ZaNewVolumeXWizard.getS3BucketConfig();
 
     this.stepChoices = [];
@@ -189,8 +189,8 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     // Initial step
     ZaNewVolumeXWizard.GENERAL_STEP = ++this.TAB_INDEX;
     this.stepChoices.push({value: ZaNewVolumeXWizard.GENERAL_STEP, label: ZaMsg.TABT_VolumeTypePage});
-    const case1 = {type: _CASE_, tabGroupKey: ZaNewVolumeXWizard.GENERAL_STEP, caseKey: ZaNewVolumeXWizard.GENERAL_STEP, numCols: 1,  align: _LEFT_, valign: _TOP_};
-    const case1Items = [
+    var case1 = {type: _CASE_, tabGroupKey: ZaNewVolumeXWizard.GENERAL_STEP, caseKey: ZaNewVolumeXWizard.GENERAL_STEP, numCols: 1,  align: _LEFT_, valign: _TOP_};
+    var case1Items = [
         {
             type: _OUTPUT_,
             label: null,
@@ -556,7 +556,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     });
 
     // Left sidebar visibility checks
-    const labelVisibility = {};
+    var labelVisibility = {};
     labelVisibility[ZaNewVolumeXWizard.GENERAL_STEP] = {};
     labelVisibility[ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME] = {
         checks:[[ZaNewVolumeXWizard.isStep, "InternalVolume", true]],
@@ -590,8 +590,8 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
 };
 
 ZaNewVolumeXWizard.isStep = function (step) {
-    const localForm = this.getForm();
-    const currentStep = localForm ? localForm.instance.currentStep : 1;
+    var localForm = this.getForm();
+    var currentStep = localForm ? localForm.instance.currentStep : 1;
     if (step === "InternalVolume") {
         return currentStep == ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME;
     } else if (step == "S3Volume") {
@@ -618,17 +618,17 @@ ZaNewVolumeXWizard.getBucketChoices = function (globalS3BucketConfigurations, st
 
 ZaNewVolumeXWizard.getS3BucketConfig =
 function () {
-	const soapDoc = AjxSoapDoc.create("GetS3BucketConfigRequest", ZaZimbraAdmin.URN, null);
-	const params = new Object();
+	var soapDoc = AjxSoapDoc.create("GetS3BucketConfigRequest", ZaZimbraAdmin.URN, null);
+	var params = new Object();
 	params.soapDoc = soapDoc;
 	params.asyncMode = false;
 	
-	const reqMgrParams = {
+	var reqMgrParams = {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
 
-    const resp = ZaRequestMgr.invoke(params, reqMgrParams);
+    var resp = ZaRequestMgr.invoke(params, reqMgrParams);
 
     if (!resp) {
         throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaNewVolumeXWizard.getS3BucketConfig"));
@@ -643,13 +643,13 @@ ZaNewVolumeXWizard.prototype.createS3BucketCallback = function (resp) {
     } else if(resp.isException()) {
         ZaApp.getInstance().getCurrentController().popupErrorDialog("S3 Bucket is not valid");
 	} else {
-        const respAttrs = resp.getResponse().Body.CreateS3BucketConfigResponse._attrs;
+        var respAttrs = resp.getResponse().Body.CreateS3BucketConfigResponse._attrs;
         // Fetch updated bucket list and reset choices
         this.bucketList = ZaNewVolumeXWizard.getS3BucketConfig();
         ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, respAttrs.storeProvider));
         ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
         // Get created bucket UUID and make it the selected option
-        const newUUID = respAttrs.globalBucketUUID;
+        var newUUID = respAttrs.globalBucketUUID;
         this._containedObject[ZaServer.A_CompatibleS3Bucket] = newUUID;
         // Finally, go to the next step
         this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
@@ -658,7 +658,7 @@ ZaNewVolumeXWizard.prototype.createS3BucketCallback = function (resp) {
 
 ZaNewVolumeXWizard.prototype.createS3BucketRequest =
 function (attrs) {
-	const soapDoc = AjxSoapDoc.create("CreateS3BucketConfigRequest", ZaZimbraAdmin.URN, null);
+	var soapDoc = AjxSoapDoc.create("CreateS3BucketConfigRequest", ZaZimbraAdmin.URN, null);
 
     var attr = soapDoc.set("a", attrs[ZaServer.A_StoreProvider]);
     attr.setAttribute("n", "storeProvider");
@@ -684,12 +684,12 @@ function (attrs) {
     attr = soapDoc.set("a", attrs[ZaServer.A_URL]);
     attr.setAttribute("n", "url");
 
-	const params = new Object();
+	var params = new Object();
 	params.soapDoc = soapDoc;
 	params.asyncMode = true;
     params.callback = new AjxCallback(this, this.createS3BucketCallback);
 
-	const reqMgrParams = {
+	var reqMgrParams = {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
@@ -713,7 +713,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
 
 ZaNewVolumeXWizard.prototype.validateS3BucketRequest =
 function (attrs) {
-	const soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
+	var soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
 
     var attr = soapDoc.set("a", attrs[ZaServer.A_StoreProvider]);
     attr.setAttribute("n", "storeProvider");
@@ -739,12 +739,12 @@ function (attrs) {
     attr = soapDoc.set("a", attrs[ZaServer.A_URL]);
     attr.setAttribute("n", "url");
 
-	const params = new Object();
+	var params = new Object();
 	params.soapDoc = soapDoc;
 	params.asyncMode = true;
     params.callback = new AjxCallback(this, this.validateS3BucketCallback);
 
-	const reqMgrParams = {
+	var reqMgrParams = {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
@@ -766,19 +766,19 @@ ZaNewVolumeXWizard.prototype.deleteS3BucketCallback = function () {
 
 ZaNewVolumeXWizard.prototype.deleteS3BucketRequest =
 function () {
-	const soapDoc = AjxSoapDoc.create("DeleteS3BucketConfigRequest", ZaZimbraAdmin.URN, null);
-    const bucketList = ZaNewVolumeXWizard.getS3BucketConfig();
-    const lastBucket = bucketList.length - 1;
+	var soapDoc = AjxSoapDoc.create("DeleteS3BucketConfigRequest", ZaZimbraAdmin.URN, null);
+    var bucketList = ZaNewVolumeXWizard.getS3BucketConfig();
+    var lastBucket = bucketList.length - 1;
 
-    const attr = soapDoc.set("a", bucketList[lastBucket]["globalBucketUUID"]);
+    var attr = soapDoc.set("a", bucketList[lastBucket]["globalBucketUUID"]);
     attr.setAttribute("n", "globalBucketUUID");
 
-	const params = new Object();
+	var params = new Object();
 	params.soapDoc = soapDoc;
 	params.asyncMode = true;
     params.callback = new AjxCallback(this, this.deleteS3BucketCallback);
 
-	const reqMgrParams = {
+	var reqMgrParams = {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
 	}
@@ -792,7 +792,7 @@ function () {
 
 // Constants
 ZaNewVolumeXWizard.getRegionList = function () {
-    const regionArray = [
+    var regionArray = [
         "GovCloud",
         "us-ashburn-1",
         "us-gov-east-1",

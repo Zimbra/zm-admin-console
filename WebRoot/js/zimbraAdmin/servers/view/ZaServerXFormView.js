@@ -448,9 +448,9 @@ ZaServerXFormView.addVolume  = function () {
 
 ZaServerXFormView.editButtonListener =
 function () {
-	const instance = this.getInstance();
+	var instance = this.getInstance();
 	if(instance.volume_selection_cache && instance.volume_selection_cache[0]) {	
-		const formPage = this.getForm().parent;
+		var formPage = this.getForm().parent;
 		if(!formPage.editVolumeDlg) {
 			// Out of scope: edit volume
 			// formPage.editVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
@@ -458,7 +458,7 @@ function () {
 			formPage.editVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Edit_Volume_Title);
 			formPage.editVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.updateVolume, this.getForm(), null);						
 		}
-		const obj = {};
+		var obj = {};
 		obj[ZaServer.A_VolumeId] = instance.volume_selection_cache[0][ZaServer.A_VolumeId];
 		obj[ZaServer.A_VolumeName] = instance.volume_selection_cache[0][ZaServer.A_VolumeName];
 		obj[ZaServer.A_VolumeRootPath] = instance.volume_selection_cache[0][ZaServer.A_VolumeRootPath];
@@ -466,9 +466,9 @@ function () {
 		obj[ZaServer.A_VolumeCompressionThreshold] = instance.volume_selection_cache[0][ZaServer.A_VolumeCompressionThreshold];
 		obj[ZaServer.A_VolumeType] = instance.volume_selection_cache[0][ZaServer.A_VolumeType];		
 		
-		const volArr = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_Volumes);
+		var volArr = this.getModel().getInstanceValue(this.getInstance(),ZaServer.A_Volumes);
 		
-		const cnt = volArr.length;
+		var cnt = volArr.length;
 		for(var i=0; i < cnt; i++) {
 			if(volArr[i][ZaServer.A_VolumeId]==obj[ZaServer.A_VolumeId] || 
 				(!volArr[i][ZaServer.A_VolumeId] && (volArr[i][ZaServer.A_VolumeName] == obj[ZaServer.A_VolumeName])
@@ -589,14 +589,14 @@ ZaServerXFormView.deleteButtonListener = function () {
 
 ZaServerXFormView.addButtonListener =
 function () {
-	const instance = this.getInstance();
-	const formPage = this.getForm().parent;
+	var instance = this.getInstance();
+	var formPage = this.getForm().parent;
 	if(!formPage.addVolumeDlg) {
 		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
 		formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
 	}
 	// Set initial ZaNewVolumeXWizard form values
-	const obj = {};
+	var obj = {};
 	obj[ZaServer.A_VolumeId] = instance.newVolID--;
 	obj[ZaServer.A_VolumeStoreType] = 1;
 	obj[ZaServer.A_VolumeStorageType] = "Internal";

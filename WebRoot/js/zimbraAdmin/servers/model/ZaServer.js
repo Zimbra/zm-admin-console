@@ -1226,8 +1226,8 @@ ZaServer.prototype.createVolume =
 function (volume) {
 	if(!volume)
 		return false;
-	const soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);	
-	const elVolume = soapDoc.set("volume", null);
+	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);	
+	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
 	elVolume.setAttribute("name", volume[ZaServer.A_VolumeName]);
 	elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);
@@ -1236,7 +1236,7 @@ function (volume) {
 	elVolume.setAttribute("storeType", volume[ZaServer.A_VolumeStoreType]);
 
 	if(volume[ZaServer.A_VolumeStoreType] === 2) {
-		const elVolumeOpt = soapDoc.set("volumeExternalInfo", null, elVolume);
+		var elVolumeOpt = soapDoc.set("volumeExternalInfo", null, elVolume);
 		elVolumeOpt.setAttribute("volumePrefix", volume[ZaServer.A_VolumePrefix]);
 		elVolumeOpt.setAttribute("storageType", "S3");
 		elVolumeOpt.setAttribute("globalBucketConfigId", volume[ZaServer.A_CompatibleS3Bucket]);
