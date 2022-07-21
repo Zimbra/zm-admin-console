@@ -154,14 +154,24 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
         }
-    } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_S3_BUCKET) {
-        // Handle new S3 bucket case
+        else if (this._containedObject[ZaServer.A_VolumeStorageType] === "NetApp") {
+            // Handle NetApp StorageGrid volume case
+            ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_NetApp_StoreProvider));
+            this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
+        }
+    }
+    // Handle new S3 bucket case
+    if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_S3_BUCKET) {
         this.createS3BucketRequest(this._containedObject);
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         // Handle new Ceph bucket case
         console.log("To be implemented in ZCS-11472");
     }
-};
+    else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET) {
+        // Handle new NetApp StorageGrid bucket case
+        this.createS3BucketRequest(this._containedObject);
+    }
+}
 
 ZaNewVolumeXWizard.prototype.goPrev = function () {
     if (
@@ -856,10 +866,9 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                             {type: _CELLSPACER_},
                             {
                                 type:_BUTTON_, label: ZaMsg.LBL_VM_TestBucket,
-                                //  width:20,
-                                // onActivate:function (event) {
-                                //     ZaNewVolumeXWizard.getBucketChoices();
-                                // },
+                                onActivate: function () {
+                                    this.getForm().parent.validateS3BucketRequest(this.getForm().instance);
+                                },
                             }
                         ]
                     }
