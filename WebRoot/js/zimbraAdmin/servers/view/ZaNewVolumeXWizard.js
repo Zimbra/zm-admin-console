@@ -67,12 +67,7 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
 
         // Validate new bucket step fields
         if(this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_S3_BUCKET) {
-            if (this.hasEmptyFields([ZaServer.A_BucketName, ZaServer.A_AccessKey, ZaServer.A_SecretKey, ZaServer.A_DestinationPath, ZaServer.A_URL])) {
-                this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-            } else {
-                this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
-            }
-            
+            this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         }
     }
 }
@@ -475,8 +470,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                             {
                                 type: _BUTTON_, label: ZaMsg.LBL_VM_TestBucket,
                                 onActivate: function () {
-                                    // In development (backend)
-                                    alert("This functionality is yet to be implemented");
+                                    this.getForm().parent.validateS3BucketRequest(this.getForm().instance);
                                 },
                             }
                         ]
@@ -704,6 +698,61 @@ function (attrs) {
         ZaRequestMgr.invoke(params, reqMgrParams);
     } catch (e) {
         ZaApp.getInstance().getCurrentController().popupErrorDialog("Could not create S3 bucket", e);
+    }
+}
+
+ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
+    if (!resp) {
+        throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaNewVolumeXWizard.prototype.validateS3BucketCallback"));
+    } else if(resp.isException()) {
+        ZaApp.getInstance().getCurrentController().popupErrorDialog("Bucket is not valid");
+	} else {
+        this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
+    }
+}
+
+ZaNewVolumeXWizard.prototype.validateS3BucketRequest =
+function (attrs) {
+	const soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
+
+    var attr = soapDoc.set("a", attrs[ZaServer.A_StoreProvider]);
+    attr.setAttribute("n", "storeProvider");
+
+    attr = soapDoc.set("a", attrs[ZaServer.A_BucketName]);
+    attr.setAttribute("n", "bucketName");
+
+    attr = soapDoc.set("a", "HTTPS");
+    attr.setAttribute("n", "protocol");
+
+    attr = soapDoc.set("a", attrs[ZaServer.A_AccessKey]);
+    attr.setAttribute("n", "accessKey");
+
+    attr = soapDoc.set("a", attrs[ZaServer.A_SecretKey]);
+    attr.setAttribute("n", "secretKey");
+
+    attr = soapDoc.set("a", attrs[ZaServer.A_DestinationPath]);
+    attr.setAttribute("n", "destinationPath");
+
+    attr = soapDoc.set("a", attrs[ZaServer.A_Region]);
+    attr.setAttribute("n", "region");
+
+    attr = soapDoc.set("a", attrs[ZaServer.A_URL]);
+    attr.setAttribute("n", "url");
+
+	const params = new Object();
+	params.soapDoc = soapDoc;
+	params.asyncMode = true;
+    params.callback = new AjxCallback(this, this.validateS3BucketCallback);
+
+	const reqMgrParams = {
+		controller : ZaApp.getInstance().getCurrentController(),
+		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
+	}
+
+    try {
+        ZaRequestMgr.invoke(params, reqMgrParams);
+    } catch (e) {
+        ZaApp.getInstance().getCurrentController().popupErrorDialog("Could not test S3 bucket", e);
     }
 }
 
