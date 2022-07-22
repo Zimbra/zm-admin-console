@@ -811,7 +811,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         type: _OSELECT1_,
                         label: ZaMsg.LBL_VM_VolumeType,
                         labelCssStyle: "text-align:left;",
-                        choices: ZaServer.volumeTypeChoices,
+                        choices: ZaServer.externalVolumeTypeChoices,
                         width: 155,
                     },
                     {
@@ -833,15 +833,20 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         width: 155,
                     },
                     {
-                        type: _BUTTON_, label: ZaMsg.LBL_VM_NewNetAppStorageGridBucket,
-                        //  width:20,
-                        onActivate:function () {
-                            // Set selected storeProvider
-                            this.getForm().setInstanceValue(ZaServer.A_NetApp_StoreProvider, ZaServer.A_StoreProvider);
-                            // Go to NEW_NETAPP_STORAGEGRID_BUCKET page
-                            this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET);
-                            this.getForm().parent._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-                        },
+                        type: _GROUP_, numCols: 2, colSizes: ["200px","*"], colSpan: 2, items: [
+                            {type: _CELLSPACER_},
+                            {
+                                type: _BUTTON_, label: ZaMsg.LBL_VM_NewNetAppStorageGridBucket,
+                                //  width:20,
+                                onActivate:function () {
+                                    // Set selected storeProvider
+                                    this.getForm().setInstanceValue(ZaServer.A_NetApp_StoreProvider, ZaServer.A_StoreProvider);
+                                    // Go to NEW_NETAPP_STORAGEGRID_BUCKET page
+                                    this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET);
+                                    this.getForm().parent._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
+                                },
+                            }
+                        ]
                     }
                 ]
             },
@@ -856,11 +861,11 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
             {type: _ZAWIZGROUP_,
                 colSizes: ["200px","*"], numCols: 2,
                 items: [
-                    {ref: "bucketName", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_BucketName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "accessKey", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_AccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "secretKey", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_SecretAccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "destinationPath", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_DestinationPath, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
-                    {ref: "url", type: _TEXTFIELD_, label: ZaMsg.LBL_VM_URL, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_BucketName, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_BucketName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_AccessKey, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_AccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_SecretKey, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_SecretAccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_DestinationPath, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_DestinationPath, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_URL, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_URL, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
                     {
                         type: _GROUP_, colSizes: ["200px", "*"], colSpan: 2, items: [
                             {type: _CELLSPACER_},
