@@ -145,12 +145,28 @@ ZaServer.A_zimbraUserServicesEnabled = "zimbraUserServicesEnabled";
 //Volume Management
 ZaServer.A_RemovedVolumes = "removed_volumes";
 ZaServer.A_Volumes = "volumes";
+ZaServer.A_S3_StoreProvider = "AWS_S3";
+ZaServer.A_S3_CephStoreProvider = "CEPH_S3"
 ZaServer.A_VolumeId = "id";
 ZaServer.A_VolumeName = "name";
 ZaServer.A_VolumeRootPath = "rootpath";
+ZaServer.A_VolumeStoreType = "storeType";
+ZaServer.A_VolumeStorageType = "storageType";
+ZaServer.A_VolumePrefix = "volumePrefix";
 ZaServer.A_VolumeCompressBlobs = "compressBlobs";
 ZaServer.A_VolumeCompressionThreshold = "compressionThreshold";
 ZaServer.A_VolumeType = "type";
+ZaServer.A_CompatibleS3Bucket = "compatibleS3Bucket";
+ZaServer.A_InfrequentAccess = "infrequentAccess";
+ZaServer.A_InfrequentAccessThreshold = "infrequentAccessThreshold";
+ZaServer.A_IntelligentTiering = "intelligentTiering";
+ZaServer.A_StoreProvider = "storeProvider";
+ZaServer.A_BucketName = "bucketName";
+ZaServer.A_AccessKey = "accessKey";
+ZaServer.A_SecretKey = "secretKey";
+ZaServer.A_URL = "url";
+ZaServer.A_Region = "region";
+ZaServer.A_DestinationPath = "destinationPath";
 ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
 ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
 ZaServer.A_isCurrent = "isCurrent";
@@ -488,6 +504,7 @@ ZaServer.longToOctets = function(addrNumber) {
 }
 
 ZaServer.volumeTypeChoices = new XFormChoices({1:ZaMsg.VM_VOLUME_Msg, 10:ZaMsg.VM_VOLUME_Index}, XFormChoices.HASH);
+ZaServer.externalVolumeTypeChoices = new XFormChoices({1:ZaMsg.VM_HSM_PrimaryMsg, 2:ZaMsg.VM_HSM_SecMsg}, XFormChoices.HASH);
 ZaServer.volumeObjModel = {
 	items: [
 		{id:ZaServer.A_isCurrentVolume, type: _ENUM_, choices: [false,true]	},
@@ -497,6 +514,7 @@ ZaServer.volumeObjModel = {
 		{id:ZaServer.A_VolumeRootPath, type:_STRING_},
 		{id:ZaServer.A_VolumeCompressBlobs, type:_ENUM_, choices:[false,true], defaultValue:true},
 		{id:ZaServer.A_VolumeCompressionThreshold, type:_NUMBER_,defaultValue:4096},
+		{id:ZaServer.A_InfrequentAccessThreshold, type:_NUMBER_,defaultValue:64},
 		{id:"_index", type:_NUMBER_}				
 	],
 	type:_OBJECT_
@@ -828,15 +846,15 @@ ZaServer.modifyMethod = function (tmpObj) {
 		
 			//create new Volumes
 			cnt = tmpVolumeMap.length;
-			for(var i = 0; i < cnt; i++) {
+			for (var i = 0; i < cnt; i++) {
 				//consider only new rows (no VolumeID)
 				//ignore empty rows, Bug 4425
-				if(!(tmpVolumeMap[i][ZaServer.A_VolumeId]>0) && tmpVolumeMap[i][ZaServer.A_VolumeName] && tmpVolumeMap[i][ZaServer.A_VolumeRootPath]) {
+				if (!(tmpVolumeMap[i][ZaServer.A_VolumeId]>0) && tmpVolumeMap[i][ZaServer.A_VolumeName] && (tmpVolumeMap[i][ZaServer.A_VolumeRootPath] || tmpVolumeMap[i][ZaServer.A_VolumePrefix])) {
 					var newId = this.createVolume(tmpVolumeMap[i]);	
-					if(newId>0) {
+					if (newId > 0) {
 						//find if we assigned this volume to current volumes
-						for(var key in ZaServer.currentkeys) {
-							if(tmpObj[ZaServer.currentkeys[key]] == tmpVolumeMap[i][ZaServer.A_VolumeId]) {
+						for (var key in ZaServer.currentkeys) {
+							if (tmpObj[ZaServer.currentkeys[key]] == tmpVolumeMap[i][ZaServer.A_VolumeId]) {
 								tmpObj[ZaServer.currentkeys[key]] = newId;
 							}
 						}
@@ -1209,13 +1227,25 @@ ZaServer.prototype.createVolume =
 function (volume) {
 	if(!volume)
 		return false;
-	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);		
+	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);	
 	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
-	elVolume.setAttribute("name", volume[ZaServer.A_VolumeName]);	
-	elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);		
-	elVolume.setAttribute("compressBlobs", volume[ZaServer.A_VolumeCompressBlobs]);		
-	elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);			
+	elVolume.setAttribute("name", volume[ZaServer.A_VolumeName]);
+	elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);
+	elVolume.setAttribute("compressBlobs", volume[ZaServer.A_VolumeCompressBlobs]);
+	elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);
+	elVolume.setAttribute("storeType", volume[ZaServer.A_VolumeStoreType]);
+
+	if(volume[ZaServer.A_VolumeStoreType] === 2) {
+		var elVolumeOpt = soapDoc.set("volumeExternalInfo", null, elVolume);
+		elVolumeOpt.setAttribute("volumePrefix", volume[ZaServer.A_VolumePrefix]);
+		elVolumeOpt.setAttribute("storageType", "S3");
+		elVolumeOpt.setAttribute("globalBucketConfigId", volume[ZaServer.A_CompatibleS3Bucket]);
+		elVolumeOpt.setAttribute("useInfrequentAccess", volume[ZaServer.A_InfrequentAccess]);
+		elVolumeOpt.setAttribute("useIntelligentTiering", volume[ZaServer.A_IntelligentTiering]);
+		elVolumeOpt.setAttribute("infrequentAccessThreshold", volume[ZaServer.A_InfrequentAccessThreshold]);
+	}
+
 	var params = {
 		soapDoc: soapDoc,
 		targetServer: this.id,

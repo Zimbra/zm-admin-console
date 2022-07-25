@@ -453,6 +453,9 @@ function () {
 	if(instance.volume_selection_cache && instance.volume_selection_cache[0]) {	
 		var formPage = this.getForm().parent;
 		if(!formPage.editVolumeDlg) {
+			// Out of scope: edit volume
+			// formPage.editVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
+			// formPage.editVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.updateVolume, this.getForm(), null);
 			formPage.editVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Edit_Volume_Title);
 			formPage.editVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.updateVolume, this.getForm(), null);						
 		}
@@ -475,9 +478,6 @@ function () {
 				break;
 			}
 		}
-		
-
-
 		formPage.editVolumeDlg.setObject(obj);
 		formPage.editVolumeDlg.popup();		
 	}
@@ -610,20 +610,20 @@ function () {
 	var instance = this.getInstance();
 	var formPage = this.getForm().parent;
 	if(!formPage.addVolumeDlg) {
-		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px", obj);
-		// formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);						
+		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
+		formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
 	}
-	
+	// Set initial ZaNewVolumeXWizard form values
 	var obj = {};
 	obj[ZaServer.A_VolumeId] = instance.newVolID--;
-	obj[ZaServer.A_VolumeName] = "";
-	obj[ZaServer.A_VolumeRootPath] = "/opt/zimbra";
+	obj[ZaServer.A_VolumeStoreType] = 1;
+	obj[ZaServer.A_VolumeStorageType] = "Internal";
 	obj[ZaServer.A_VolumeCompressBlobs] = false;
 	obj[ZaServer.A_VolumeCompressionThreshold] = 4096;
-	obj[ZaServer.A_VolumeType] = ZaServer.MSG;		
-	obj.current = false;		
-	
-	formPage.addVolumeDlg.setObject(newAccount);
+	obj[ZaServer.A_InfrequentAccessThreshold] = 65536;
+	obj[ZaServer.A_isCurrent] = false;	
+
+	formPage.addVolumeDlg.setObject(obj);
 	formPage.addVolumeDlg.popup();	
 }
 
@@ -688,7 +688,7 @@ ZaServerXFormView.BIND_IP_TAB_RIGHTS = [];
 ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {	
 	var headerList = new Array();
 	headerList[0] = new ZaListHeaderItem(ZaServer.A_VolumeName, ZaMsg.VM_VolumeName, null, "100px", false, null, false, true);
-	headerList[1] = new ZaListHeaderItem(ZaServer.A_VolumeRootPath, ZaMsg.VM_VolumeRootPath, null,"200px", false, null, false, true);
+	headerList[1] = new ZaListHeaderItem(ZaServer.A_VolumeRootPath, "Volume Path or S3 Prefix", null,"200px", false, null, false, true);
 	headerList[2] = new ZaListHeaderItem(ZaServer.A_VolumeType, ZaMsg.VM_VolumeType, null, "120px", null, null, false, true);							
 	headerList[3] = new ZaListHeaderItem(ZaServer.A_VolumeCompressBlobs, ZaMsg.VM_VolumeCompressBlobs, null, "120px", null, null, false, true);								
 	headerList[4] = new ZaListHeaderItem(ZaServer.A_VolumeCompressionThreshold, ZaMsg.VM_VolumeCompressThreshold, null, "120px", null, null, false, true);									
