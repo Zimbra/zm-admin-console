@@ -71,11 +71,27 @@ function(item) {
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeName) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
+				html[idx++] = "<span title='";
+				if(item["volumeExternalInfo"]) {
+					html[idx++] = item["volumeExternalInfo"][0][ZaServer.A_VolumeStorageType];
+				} else if(item[ZaServer.A_VolumeStorageType]) {
+					html[idx++] = item[ZaServer.A_VolumeStorageType];
+				} else {
+					html[idx++] = "Internal";
+				}
+				html[idx++] = "'>";
 				html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeName]);
+				html[idx++] = "</span>";
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeRootPath) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeRootPath]);
+				if(item["volumeExternalInfo"]) {
+					html[idx++] = item["volumeExternalInfo"][0][ZaServer.A_VolumePrefix];
+				} else if(item[ZaServer.A_VolumePrefix]) {
+					html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumePrefix]);
+				} else {
+					html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeRootPath]);
+				}
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeType) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
@@ -83,15 +99,17 @@ function(item) {
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeCompressBlobs) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				if(item[ZaServer.A_VolumeCompressBlobs])
+				if(item[ZaServer.A_VolumeCompressBlobs]) {
 					html[idx++] = ZaMsg.Yes;
-				else
+				} else if(item[ZaServer.A_VolumeCompressBlobs] === false) {
 					html[idx++] = ZaMsg.No;
-					
+				}
 				html[idx++] = "</td>";
 			} else if(field == ZaServer.A_VolumeCompressionThreshold) {
 				html[idx++] = "<td align=left height=20px width=" + this._headerList[i]._width + ">";
-				html[idx++] = AjxMessageFormat.format (ZaMsg.VM_VolumeCompressThresholdBytes, [item[ZaServer.A_VolumeCompressionThreshold]]);
+				if(item[ZaServer.A_VolumeCompressionThreshold]) {
+					html[idx++] = AjxMessageFormat.format (ZaMsg.VM_VolumeCompressThresholdBytes, [item[ZaServer.A_VolumeCompressionThreshold]]);
+				}
 				html[idx++] = "</td>";
 			}
 		}

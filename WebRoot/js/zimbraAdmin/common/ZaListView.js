@@ -156,8 +156,9 @@ function(columnItem, bSortAsc) {
 	if (bSortAsc) {
 		this._list.sort(ZaItem.compareNamesAsc);
 	} else {
-    	this._list.sort(ZaItem.compareNamesDesc);
+		this._list.sort(ZaItem.compareNamesDesc);
 	}
+	
 	this.setUI();
 }
 

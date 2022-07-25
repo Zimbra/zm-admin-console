@@ -113,11 +113,17 @@ ZaAccount.A_zimbraContactMaxNumEntries = "zimbraContactMaxNumEntries";
 ZaAccount.A_zimbraMailForwardingAddressMaxLength = "zimbraMailForwardingAddressMaxLength";
 ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs = "zimbraMailForwardingAddressMaxNumAddrs";
 ZaAccount.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
+ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
+ZaAccount.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
+ZaAccount.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
+ZaAccount.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
 ZaAccount.A_zimbraQuotaWarnPercent = "zimbraQuotaWarnPercent";
 ZaAccount.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
 ZaAccount.A_zimbraQuotaWarnMessage = "zimbraQuotaWarnMessage";
 ZaAccount.A_zimbraIsSystemResource = "zimbraIsSystemResource";
 ZaAccount.A_zimbraExcludeFromCMBSearch = "zimbraExcludeFromCMBSearch";
+ZaAccount.A_zimbraInterceptAddress = "zimbraInterceptAddress";
+ZaAccount.A_zimbraInterceptSendHeadersOnly = "zimbraInterceptSendHeadersOnly";
 
 ZaAccount.A_zimbraAdminAuthTokenLifetime  = "zimbraAdminAuthTokenLifetime";
 ZaAccount.A_zimbraAuthTokenValidityValue = "zimbraAuthTokenValidityValue";
@@ -222,6 +228,7 @@ ZaAccount.A_zimbraPrefPop3Enabled = "zimbraPrefPop3Enabled";
 ZaAccount.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
 ZaAccount.A_zimbraFeatureImportFolderEnabled = "zimbraFeatureImportFolderEnabled";
 ZaAccount.A_zimbraFeatureExportFolderEnabled = "zimbraFeatureExportFolderEnabled";
+ZaAccount.A_zimbraFeatureDocumentEditingEnabled = "zimbraFeatureDocumentEditingEnabled";
 ZaAccount.A_zimbraDumpsterEnabled = "zimbraDumpsterEnabled";
 ZaAccount.A_zimbraMailDumpsterLifetime = "zimbraMailDumpsterLifetime";
 ZaAccount.A_zimbraDumpsterUserVisibleAge = "zimbraDumpsterUserVisibleAge";
@@ -285,6 +292,7 @@ ZaAccount.A_zimbraAuthLdapExternalDn = "zimbraAuthLdapExternalDn";
 ZaAccount.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg" ;
 ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled = "zimbraFeatureManageSMIMECertificateEnabled";
 ZaAccount.A_zimbraFeatureSMIMEEnabled = "zimbraFeatureSMIMEEnabled";
+ZaAccount.A_zimbraFeatureZulipChatEnabled = "zimbraFeatureZulipChatEnabled";
 ZaAccount.A_zimbraFeatureEwsEnabled = "zimbraFeatureEwsEnabled";
 ZaAccount.A_zimbraFeatureTouchClientEnabled = "zimbraFeatureTouchClientEnabled";
 ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled = "zimbraFeatureWebClientOfflineAccessEnabled";
@@ -1909,10 +1917,18 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraProxyAllowedDomains, type:_COS_LIST_, ref:"attrs/"+ZaAccount.A_zimbraProxyAllowedDomains, listItem:{ type: _STRING_}},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraAttachmentsBlocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraAttachmentsBlocked, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraFileUploadBlockedFileTypes},
+        {id:ZaAccount.A_zimbraMailAttachmentMaxSize, ref:"attrs/" + ZaAccount.A_zimbraMailAttachmentMaxSize, type: _COS_NUMBER_},
+        {id:ZaAccount.A_zimbraFileUploadMaxSizePerFile, ref:"attrs/" + ZaAccount.A_zimbraFileUploadMaxSizePerFile, type: _COS_NUMBER_},
 
         {id:ZaAccount.A_zimbraQuotaWarnPercent, type:_COS_NUMBER_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnPercent},
         {id:ZaAccount.A_zimbraQuotaWarnInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraQuotaWarnInterval},
         {id:ZaAccount.A_zimbraQuotaWarnMessage, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnMessage},
+
+        {id:ZaAccount.A_zimbraInterceptAddress, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraInterceptAddress, listItem:{type:_EMAIL_ADDRESS_}},
+        {id:ZaAccount.A_zimbraInterceptSendHeadersOnly, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraInterceptSendHeadersOnly, choices:ZaModel.BOOLEAN_CHOICES},
+
 
         {id:ZaAccount.A_zimbraAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAuthTokenLifetime},
         {id:ZaAccount.A_zimbraAdminAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAdminAuthTokenLifetime},
@@ -2047,6 +2063,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraFeatureManageZimlets, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureManageZimlets, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureImportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureImportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureExportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureExportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureDocumentEditingEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureDocumentEditingEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraDumpsterEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraDumpsterEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraDumpsterUserVisibleAge, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDumpsterUserVisibleAge },
         {id:ZaAccount.A_zimbraDumpsterPurgeEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraDumpsterPurgeEnabled, choices:ZaModel.BOOLEAN_CHOICES},
@@ -2100,6 +2117,7 @@ ZaAccount.myXModel = {
 
         {id:ZaAccount.A_zimbraFeatureSMIMEEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureSMIMEEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureManageSMIMECertificateEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureZulipChatEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureZulipChatEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureEwsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureEwsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureTouchClientEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureTouchClientEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled, choices:ZaModel.BOOLEAN_CHOICES},

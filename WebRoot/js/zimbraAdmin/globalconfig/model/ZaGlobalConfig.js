@@ -224,6 +224,8 @@ ZaGlobalConfig.A2_retentionPoliciesKeep = "retentionPolicyKeep";
 ZaGlobalConfig.A2_retentionPoliciesPurge = "retentionPolicyPurge";
 ZaGlobalConfig.A2_retentionPoliciesKeep_Selection = "retentionPoliciesKeep_Selection";
 ZaGlobalConfig.A2_retentionPoliciesPurge_Selection = "retentionPoliciesPurge_Selection";
+ZaGlobalConfig.A2_registeredDevice = "registeredDevice";
+ZaGlobalConfig.A2_registeredDevice_Selection = "registeredDevice_Selection";
 
 // help URL
 ZaGlobalConfig.A_zimbraHelpAdminURL = "zimbraHelpAdminURL";
@@ -639,6 +641,8 @@ ZaGlobalConfig.myXModel = {
         {id:ZaGlobalConfig.A2_retentionPoliciesPurge, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesKeep_Selection, type:_LIST_},
         {id:ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type:_LIST_},
+        {id:ZaGlobalConfig.A2_registeredDevice, type:_LIST_},
+        {id:ZaGlobalConfig.A2_registeredDevice_Selection, type:_LIST_},
 
         //Ephemeral Backend
         { id:ZaGlobalConfig.A_zimbraEphemeralBackendURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraEphemeralBackendURL, type:_STRING_, maxLength: 128 }

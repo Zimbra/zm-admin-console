@@ -115,6 +115,24 @@ function(a,b) {
 	return ZaItem.compareAttr(a,b,"description");
 }
 
+ZaItem.compareEmailAddress = 
+function(isAsc) {
+	return function(object1, object2) {
+		var object1Email = object1.emailAddress.toLowerCase();
+		var object2Email = object2.emailAddress.toLowerCase();
+	
+		if (object1Email < object2Email) {
+			return isAsc ? -1 : 1;
+		}
+	
+		if (object1Email > object2Email) {
+			return isAsc ? 1 : -1;
+		}
+
+		return 0;
+	}
+}
+
 ZaItem.compareAttr = 
 function(a, b, attr) {
     if (a.attrs[attr] == null) {

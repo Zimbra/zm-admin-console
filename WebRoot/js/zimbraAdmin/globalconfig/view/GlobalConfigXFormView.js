@@ -436,7 +436,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
             "auto", null, null, true, true);
 
     xFormObject.tableCssStyle = "width:100%;overflow:auto;";
-    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11;
+    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11, _tab12;
 
     var tabBarChoices = [];
     var switchItems = [];
@@ -1610,8 +1610,8 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     {
                         type : _ZA_TOP_GROUPER_,
                         id : "global_form_keep_p_group",
-                        width : "98%",
                         numCols : 1,
+                        width : "98%",
                         colSizes : [ "auto" ],
                         label : ZaMsg.Glb_RetentionPolicies,
                         cssStyle : "margin:10px;padding-bottom:0;",

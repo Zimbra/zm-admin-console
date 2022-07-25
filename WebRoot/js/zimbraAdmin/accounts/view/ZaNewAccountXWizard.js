@@ -843,10 +843,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                             }
                                         },
                                         autoCompleteEnabled : true
-                                    }
-                                    /*,
+                                    },
                                     {ref:ZaAccount.A_orgUnit, type:_TEXTFIELD_, msgName:ZaMsg.NAD_orgUnit,label:ZaMsg.NAD_orgUnit, labelLocation:_LEFT_, width:250},
-                                    {ref:ZaAccount.A_office, type:_TEXTFIELD_, msgName:ZaMsg.NAD_office,label:ZaMsg.NAD_office, labelLocation:_LEFT_, width:250}    */
+                                    {ref:ZaAccount.A_office, type:_TEXTFIELD_, msgName:ZaMsg.NAD_office,label:ZaMsg.NAD_office, labelLocation:_LEFT_, width:250}
                                 ]
                             },
                             {type:_ZAWIZGROUP_,
@@ -1190,6 +1189,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
             ZaAccount.A_zimbraFeatureGalAutoCompleteEnabled,
             ZaAccount.A_zimbraFeatureImportFolderEnabled,
             ZaAccount.A_zimbraFeatureExportFolderEnabled,
+            ZaAccount.A_zimbraFeatureDocumentEditingEnabled,
             ZaAccount.A_zimbraDumpsterEnabled
         ],[])) {
             featuresCase.items.push({type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraGeneralFeature, id:"account_wiz_features_general",
@@ -1226,7 +1226,8 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             {ref:ZaAccount.A_zimbraDumpsterEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.MSG_zimbraDumpsterEnabled,checkBoxLabel:ZaMsg.LBL_zimbraDumpsterEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraDumpsterPurgeEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.MSG_zimbraDumpsterPurgeEnabled,checkBoxLabel:ZaMsg.LBL_zimbraDumpsterPurgeEnabled,  trueValue:"TRUE", falseValue:"FALSE",
                                 visibilityChecks:[[ZaItem.hasReadPermission], [XForm.checkInstanceValue, ZaAccount.A_zimbraDumpsterEnabled, "TRUE"]], visibilityChangeEventSources:[ZaAccount.A_zimbraDumpsterEnabled]
-                            }
+                            },
+                            {ref:ZaAccount.A_zimbraFeatureDocumentEditingEnabled, type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                         ]
                     });
 
@@ -1385,6 +1386,20 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                         }
             );
         };
+        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureZulipChatEnabled],[])) {
+            featuresCase.items.push(
+                   {type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraChatFeature, id:"account_wiz_features_chat",
+                           colSizes:["auto"],numCols:1,
+                           items:[
+                               {ref:ZaAccount.A_zimbraFeatureZulipChatEnabled, type:_SUPER_WIZ_CHECKBOX_,
+                                   resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                   msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
+                                   checkBoxLabel:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
+                                   trueValue:"TRUE", falseValue:"FALSE"}
+                           ]
+                   }
+       );
+   };
 
         cases.push(featuresCase);
     }
@@ -1972,7 +1987,8 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
         ZaNewAccountXWizard.ADVANCED_STEP = ++this.TAB_INDEX;
         this.stepChoices.push({value:ZaNewAccountXWizard.ADVANCED_STEP, label:ZaMsg.TABT_Advanced});
         advancedCaseItems = [];
-        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraAttachmentsBlocked],[])) {
+        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraAttachmentsBlocked,
+            ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,ZaAccount.A_zimbraFileUploadBlockedFileTypes, ZaAccount.A_zimbraMailAttachmentMaxSize, ZaAccount.A_zimbraFileUploadMaxSizePerFile],[])) {
             advancedCaseItems.push({type:_ZAWIZ_TOP_GROUPER_, id:"account_attachment_settings",colSizes:["auto"],numCols:1,
                             label:ZaMsg.NAD_AttachmentsGrouper,
                             items :[
@@ -1982,6 +1998,31 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                     msgName:ZaMsg.NAD_RemoveAllAttachments,
                                     checkBoxLabel:ZaMsg.NAD_RemoveAllAttachments,
                                     trueValue:"TRUE", falseValue:"FALSE"
+                                },
+                                {ref:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
+                                    type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                                    checkBoxLabel:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                                    trueValue:"TRUE", falseValue:"FALSE"
+                                },
+                                {ref:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_SUPER_TEXTAREA_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    txtBoxLabel:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                                    msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                                    labelCssStyle:"vertical-align:top;", textAreaWidth:"250px",
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS
+                                },
+                                {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                                    txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
+                                    textFieldCssClass:"admin_xform_number_input"
+                                },
+                                {ref:ZaAccount.A_zimbraFileUploadMaxSizePerFile, type:_SUPER_TEXTFIELD_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_FileUploadMaxSizePerFile,
+                                    txtBoxLabel:ZaMsg.LBL_FileUploadMaxSizePerFile, labelLocation:_LEFT_,
+                                    textFieldCssClass:"admin_xform_number_input"
                                 }
                             ]
                         });
