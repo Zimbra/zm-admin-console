@@ -41,6 +41,7 @@ ZaNewVolumeXWizard = function (parent) {
 }
 
 ZaNewVolumeXWizard.bucketChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "globalBucketUUID", "bucketName");
+ZaNewVolumeXWizard.stepObject = new Object();
 ZaNewVolumeXWizard.prototype = new ZaXWizardDialog;
 ZaNewVolumeXWizard.prototype.constructor = ZaNewVolumeXWizard;
 ZaNewVolumeXWizard.prototype.toString = function () {
@@ -122,6 +123,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         // Handle NetApp StorageGrid volume case
         if (this._containedObject[ZaServer.A_VolumeStorageType] == "NetApp") {
             ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_NetApp_StoreProvider));
+            ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
         }
     }
@@ -354,7 +356,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     });
 
     // New S3 volume step
-    ZaNewVolumeXWizard.NEW_S3_VOLUME = ++this.TAB_INDEX;
+    ZaNewVolumeXWizard.NEW_S3_VOLUME = ZaNewVolumeXWizard.stepObject[ZaServer.A_S3_StoreProvider] = ++this.TAB_INDEX;
     this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_S3_VOLUME, label: ZaMsg.TABT_S3VolumePage});
 
     cases.push({type: _CASE_, caseKey: ZaNewVolumeXWizard.NEW_S3_VOLUME, tabGroupKey: ZaNewVolumeXWizard.NEW_S3_VOLUME, numCols: 1,
@@ -575,7 +577,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     });
 
     // New NetApp StorageGrid volume step
-    ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME = ++this.TAB_INDEX;
+    ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME = ZaNewVolumeXWizard.stepObject[ZaServer.A_NetApp_StoreProvider] = ++this.TAB_INDEX;
     this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, label: ZaMsg.TABT_NetAppStorageGridVolumePage});
     cases.push({type:_CASE_, caseKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, tabGroupKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, numCols:1,
         items: [
@@ -712,7 +714,7 @@ ZaNewVolumeXWizard.isStep = function (step) {
     } else if (step == "CephBucket") {
         return currentStep == ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
     } else if (step == "NetAppStorageGridVolume") {
-        return currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME || currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;;
+        return currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME || currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;
     } else if (step == "NetAppStorageGridBucket") {
         return currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;
     } else {
@@ -765,7 +767,7 @@ ZaNewVolumeXWizard.prototype.createS3BucketCallback = function (resp) {
         var newUUID = respAttrs.globalBucketUUID;
         this._containedObject[ZaServer.A_CompatibleS3Bucket] = newUUID;
         // Finally, go to the next step
-        this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
+        this.goPage(ZaNewVolumeXWizard.stepObject[this._containedObject[ZaServer.A_StoreProvider]]);
     }
 }
 
