@@ -41,6 +41,7 @@ ZaNewVolumeXWizard = function (parent) {
 }
 
 ZaNewVolumeXWizard.bucketChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "globalBucketUUID", "bucketName");
+ZaNewVolumeXWizard.stepObject = new Object();
 ZaNewVolumeXWizard.prototype = new ZaXWizardDialog;
 ZaNewVolumeXWizard.prototype.constructor = ZaNewVolumeXWizard;
 ZaNewVolumeXWizard.prototype.toString = function () {
@@ -335,7 +336,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     });
 
     // New S3 volume step
-    ZaNewVolumeXWizard.NEW_S3_VOLUME = ++this.TAB_INDEX;
+    ZaNewVolumeXWizard.NEW_S3_VOLUME = ZaNewVolumeXWizard.stepObject[ZaServer.A_S3_StoreProvider] = ++this.TAB_INDEX;
     this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_S3_VOLUME, label: ZaMsg.TABT_S3VolumePage});
 
     cases.push({type: _CASE_, caseKey: ZaNewVolumeXWizard.NEW_S3_VOLUME, tabGroupKey: ZaNewVolumeXWizard.NEW_S3_VOLUME, numCols: 1,
@@ -652,7 +653,7 @@ ZaNewVolumeXWizard.prototype.createS3BucketCallback = function (resp) {
         var newUUID = respAttrs.globalBucketUUID;
         this._containedObject[ZaServer.A_CompatibleS3Bucket] = newUUID;
         // Finally, go to the next step
-        this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
+        this.goPage(ZaNewVolumeXWizard.stepObject[this._containedObject[ZaServer.A_StoreProvider]]);
     }
 }
 
