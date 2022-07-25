@@ -157,6 +157,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         else if (this._containedObject[ZaServer.A_VolumeStorageType] === "NetApp") {
             // Handle NetApp StorageGrid volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_NetApp_StoreProvider));
+            ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
         }
     }
@@ -799,7 +800,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     });
 
     // New NetApp StorageGrid volume step
-    ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME = ++this.TAB_INDEX;
+    ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME = ZaNewVolumeXWizard.stepObject[ZaServer.A_NetApp_StoreProvider] = ++this.TAB_INDEX;
     this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, label: ZaMsg.TABT_NetAppStorageGridVolumePage});
     cases.push({type:_CASE_, caseKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, tabGroupKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, numCols:1,
         items: [
