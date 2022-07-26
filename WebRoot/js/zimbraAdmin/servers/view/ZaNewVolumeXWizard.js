@@ -273,7 +273,7 @@ ZaNewVolumeXWizard.prototype.setObject = function (entry) {
         entry[ZaServer.A_VolumeCompressionThreshold];
     this._containedObject[ZaServer.A_InfrequentAccessThreshold] =
         entry[ZaServer.A_InfrequentAccessThreshold];
-    this._containedObject[ZaServer.A_Region] = "GovCloud";
+    this._containedObject[ZaServer.A_Region] = ZaNewVolumeXWizard.defaultRegion;
     this._containedObject[ZaServer.A_isCurrent] = entry[ZaServer.A_isCurrent];
     this._localXForm.setInstance(this._containedObject);
     // Fetch bucket list (includes all storeProviders)
@@ -291,6 +291,12 @@ ZaNewVolumeXWizard.prototype.setDefaultValues = function () {
     } else {
         this._containedObject[ZaServer.A_VolumeStoreType] = 2;
         delete this._containedObject[ZaServer.A_CompatibleS3Bucket];
+        delete this._containedObject[ZaServer.A_BucketName];
+        delete this._containedObject[ZaServer.A_SecretKey];
+        delete this._containedObject[ZaServer.A_DestinationPath];
+        delete this._containedObject[ZaServer.A_AccessKey];
+        delete this._containedObject[ZaServer.A_URL];
+        this._containedObject[ZaServer.A_Region] = ZaNewVolumeXWizard.defaultRegion;
     }
     this._localXForm.refresh();
 };
@@ -1414,6 +1420,8 @@ ZaNewVolumeXWizard.getRegionList = function () {
         return { value: region, label: region };
     });
 };
+
+ZaNewVolumeXWizard.defaultRegion = "GovCloud";
 
 ZaXDialog.XFormModifiers["ZaNewVolumeXWizard"].push(
     ZaNewVolumeXWizard.myXFormModifier
