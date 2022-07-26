@@ -823,6 +823,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
         ZaApp.getInstance().getCurrentController().popupErrorDialog("Bucket is not valid");
 	} else {
+        ZaApp.getInstance().getCurrentController().popupMsgDialog("Bucket connection successfull");
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
     }
 }
@@ -830,30 +831,14 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
 ZaNewVolumeXWizard.prototype.validateS3BucketRequest =
 function (attrs) {
 	var soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
-
-    var attr = soapDoc.set("a", attrs[ZaServer.A_StoreProvider]);
-    attr.setAttribute("n", "storeProvider");
-
-    attr = soapDoc.set("a", attrs[ZaServer.A_BucketName]);
-    attr.setAttribute("n", "bucketName");
-
-    attr = soapDoc.set("a", "HTTPS");
-    attr.setAttribute("n", "protocol");
-
-    attr = soapDoc.set("a", attrs[ZaServer.A_AccessKey]);
-    attr.setAttribute("n", "accessKey");
-
-    attr = soapDoc.set("a", attrs[ZaServer.A_SecretKey]);
-    attr.setAttribute("n", "secretKey");
-
-    attr = soapDoc.set("a", attrs[ZaServer.A_DestinationPath]);
-    attr.setAttribute("n", "destinationPath");
-
-    attr = soapDoc.set("a", attrs[ZaServer.A_Region]);
-    attr.setAttribute("n", "region");
-
-    attr = soapDoc.set("a", attrs[ZaServer.A_URL]);
-    attr.setAttribute("n", "url");
+    soapDoc.set("storeProvider", attrs[ZaServer.A_StoreProvider]);
+    soapDoc.set("bucketName", attrs[ZaServer.A_BucketName]);
+    soapDoc.set("protocol", "HTTPS");
+    soapDoc.set("accessKey", attrs[ZaServer.A_AccessKey]);
+    soapDoc.set("secrateKey", attrs[ZaServer.A_SecretKey]);
+    soapDoc.set("destinationPath", attrs[ZaServer.A_DestinationPath]);
+    soapDoc.set("region", attrs[ZaServer.A_Region]);
+    soapDoc.set("url", attrs[ZaServer.A_URL]);
 
 	var params = new Object();
 	params.soapDoc = soapDoc;
