@@ -820,7 +820,6 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
     if (!resp) {
         throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaNewVolumeXWizard.prototype.validateS3BucketCallback"));
     } else if(resp.isException()) {
-        this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
         ZaApp.getInstance().getCurrentController().popupErrorDialog("Bucket is not valid");
 	} else {
         ZaApp.getInstance().getCurrentController().popupMsgDialog("Bucket connection successfull");
