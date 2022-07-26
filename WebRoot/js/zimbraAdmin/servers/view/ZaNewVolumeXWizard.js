@@ -84,7 +84,7 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
     } else {
         // Validate new volume step fields
         if (
-            this._containedObject[ZaModel.currentStep] !=
+            this._containedObject[ZaModel.currentStep] !==
             ZaNewVolumeXWizard.GENERAL_STEP
         ) {
             var areCommonVolumeFieldsEmpty = this.hasEmptyFields([
@@ -102,10 +102,10 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
 
             if (
                 areCommonVolumeFieldsEmpty ||
-                (this._containedObject[ZaModel.currentStep] ==
+                (this._containedObject[ZaModel.currentStep] ===
                     ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME &&
                     areInternalVolumeFieldsEmpty) ||
-                (this._containedObject[ZaModel.currentStep] !=
+                (this._containedObject[ZaModel.currentStep] !==
                     ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME &&
                     areExternalVolumeFieldsEmpty)
             ) {
@@ -117,10 +117,8 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
 
         // Validate new bucket step fields
         if (
-            this._containedObject[ZaModel.currentStep] ==
-                ZaNewVolumeXWizard.NEW_S3_BUCKET ||
-            this._containedObject[ZaModel.currentStep] ==
-                ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
+            this._containedObject[ZaModel.currentStep] ===
+            ZaNewVolumeXWizard.NEW_S3_BUCKET
         ) {
             this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         }
@@ -132,7 +130,7 @@ ZaNewVolumeXWizard.prototype.hasEmptyFields = function (fieldArray) {
     for (var i in fieldArray) {
         if (
             !this._containedObject[fieldArray[i]] ||
-            this._containedObject[fieldArray[i]] == ""
+            this._containedObject[fieldArray[i]] === ""
         ) {
             result = true;
             break;
@@ -152,21 +150,21 @@ ZaNewVolumeXWizard.prototype.popup = function (loc) {
 };
 
 ZaNewVolumeXWizard.prototype.goNext = function () {
-    if (this._containedObject[ZaModel.currentStep] == 1) {
+    if (this._containedObject[ZaModel.currentStep] === 1) {
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
     }
     if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.GENERAL_STEP
     ) {
         this.setDefaultValues();
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         // Handle Internal volume case
-        if (this._containedObject[ZaServer.A_VolumeStorageType] == "Internal") {
+        if (this._containedObject[ZaServer.A_VolumeStorageType] === "Internal") {
             this.goPage(ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME);
         }
         // Handle S3 volume case
-        if (this._containedObject[ZaServer.A_VolumeStorageType] == "S3") {
+        if (this._containedObject[ZaServer.A_VolumeStorageType] === "S3") {
             ZaNewVolumeXWizard.bucketChoices.setChoices(
                 ZaNewVolumeXWizard.getBucketChoices(
                     this.bucketList,
@@ -177,7 +175,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
             this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
         }
         // Handle Ceph volume case
-        if (this._containedObject[ZaServer.A_VolumeStorageType] == "Ceph") {
+        if (this._containedObject[ZaServer.A_VolumeStorageType] === "Ceph") {
             ZaNewVolumeXWizard.bucketChoices.setChoices(
                 ZaNewVolumeXWizard.getBucketChoices(this.bucketList, "CEPH_S3")
             );
@@ -185,7 +183,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
         }
         // Handle NetApp StorageGrid volume case
-        if (this._containedObject[ZaServer.A_VolumeStorageType] == "NetApp") {
+        if (this._containedObject[ZaServer.A_VolumeStorageType] === "NetApp") {
             ZaNewVolumeXWizard.bucketChoices.setChoices(
                 ZaNewVolumeXWizard.getBucketChoices(
                     this.bucketList,
@@ -198,21 +196,21 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
     }
     // Handle new S3 bucket case
     if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_S3_BUCKET
     ) {
         this.createS3BucketRequest(this._containedObject);
     }
     // Handle new Ceph bucket case
     if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_CEPH_BUCKET
     ) {
         console.log("To be implemented in ZCS-11472");
     }
     // Handle new NetApp StorageGrid bucket case
     if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
     ) {
         this.createS3BucketRequest(this._containedObject);
@@ -221,13 +219,13 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
 
 ZaNewVolumeXWizard.prototype.goPrev = function () {
     if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
             ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME ||
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
             ZaNewVolumeXWizard.NEW_S3_VOLUME ||
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
             ZaNewVolumeXWizard.NEW_CEPH_VOLUME ||
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
             ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME
     ) {
         this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
@@ -236,17 +234,17 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
     }
 
     if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_S3_BUCKET
     ) {
         this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
     } else if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_CEPH_BUCKET
     ) {
         this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
     } else if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
     ) {
         this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
@@ -342,7 +340,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         this.getElement().checked =
                             this.getInstanceValue(
                                 ZaServer.A_VolumeStorageType
-                            ) == "Internal";
+                            ) === "Internal";
                     },
                     elementChanged: function (_, __, event) {
                         this.getForm().setInstanceValue(
@@ -362,7 +360,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         this.getElement().checked =
                             this.getInstanceValue(
                                 ZaServer.A_VolumeStorageType
-                            ) == "S3";
+                            ) === "S3";
                     },
                     elementChanged: function (_, __, event) {
                         this.getForm().setInstanceValue(
@@ -382,7 +380,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         this.getElement().checked =
                             this.getInstanceValue(
                                 ZaServer.A_VolumeStorageType
-                            ) == "Ceph";
+                            ) === "Ceph";
                     },
                     elementChanged: function (_, __, event) {
                         this.getForm().setInstanceValue(
@@ -402,7 +400,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         this.getElement().checked =
                             this.getInstanceValue(
                                 ZaServer.A_VolumeStorageType
-                            ) == "NetApp";
+                            ) === "NetApp";
                     },
                     elementChanged: function (_, __, event) {
                         this.getForm().setInstanceValue(
@@ -1133,28 +1131,28 @@ ZaNewVolumeXWizard.isStep = function (step) {
     var localForm = this.getForm();
     var currentStep = localForm ? localForm.instance.currentStep : 1;
     if (step === "InternalVolume") {
-        return currentStep == ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME;
-    } else if (step == "S3Volume") {
+        return currentStep === ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME;
+    } else if (step === "S3Volume") {
         return (
-            currentStep == ZaNewVolumeXWizard.NEW_S3_VOLUME ||
-            currentStep == ZaNewVolumeXWizard.NEW_S3_BUCKET
+            currentStep === ZaNewVolumeXWizard.NEW_S3_VOLUME ||
+            currentStep === ZaNewVolumeXWizard.NEW_S3_BUCKET
         );
-    } else if (step == "S3Bucket") {
-        return currentStep == ZaNewVolumeXWizard.NEW_S3_BUCKET;
-    } else if (step == "CephVolume") {
+    } else if (step === "S3Bucket") {
+        return currentStep === ZaNewVolumeXWizard.NEW_S3_BUCKET;
+    } else if (step === "CephVolume") {
         return (
-            currentStep == ZaNewVolumeXWizard.NEW_CEPH_VOLUME ||
-            currentStep == ZaNewVolumeXWizard.NEW_CEPH_BUCKET
+            currentStep === ZaNewVolumeXWizard.NEW_CEPH_VOLUME ||
+            currentStep === ZaNewVolumeXWizard.NEW_CEPH_BUCKET
         );
-    } else if (step == "CephBucket") {
-        return currentStep == ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
-    } else if (step == "NetAppStorageGridVolume") {
+    } else if (step === "CephBucket") {
+        return currentStep === ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
+    } else if (step === "NetAppStorageGridVolume") {
         return (
-            currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME ||
-            currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
+            currentStep === ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME ||
+            currentStep === ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
         );
-    } else if (step == "NetAppStorageGridBucket") {
-        return currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;
+    } else if (step === "NetAppStorageGridBucket") {
+        return currentStep === ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;
     } else {
         return false;
     }
@@ -1367,7 +1365,7 @@ ZaNewVolumeXWizard.prototype.deleteS3BucketRequest = function () {
     params.soapDoc = soapDoc;
     params.asyncMode = true;
     params.callback = new AjxCallback(this, this.deleteS3BucketCallback);
-    // Validate new bucket step fields
+    
     var reqMgrParams = {
         controller: ZaApp.getInstance().getCurrentController(),
         busyMsg: ZaMsg.BUSY_GET_ALL_SERVER,
