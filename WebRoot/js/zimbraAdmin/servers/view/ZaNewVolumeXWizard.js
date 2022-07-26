@@ -41,6 +41,7 @@ ZaNewVolumeXWizard = function (parent) {
 }
 
 ZaNewVolumeXWizard.bucketChoices = new XFormChoices([], XFormChoices.OBJECT_LIST, "globalBucketUUID", "bucketName");
+ZaNewVolumeXWizard.stepObject = new Object();
 ZaNewVolumeXWizard.prototype = new ZaXWizardDialog;
 ZaNewVolumeXWizard.prototype.constructor = ZaNewVolumeXWizard;
 ZaNewVolumeXWizard.prototype.toString = function () {
@@ -66,7 +67,11 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
         }
 
         // Validate new bucket step fields
-        if(this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_S3_BUCKET) {
+        if(
+            this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_S3_BUCKET ||
+            this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_CEPH_BUCKET ||
+            this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
+        ) {
             this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         }
     }
@@ -112,9 +117,15 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         }
         // Handle Ceph volume case
         if (this._containedObject[ZaServer.A_VolumeStorageType] == "Ceph") {
-            ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_S3_CephStoreProvider));
+            ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, "CEPH_S3"));
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
+        }
+        // Handle NetApp StorageGrid volume case
+        if (this._containedObject[ZaServer.A_VolumeStorageType] == "NetApp") {
+            ZaNewVolumeXWizard.bucketChoices.setChoices(ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_NetApp_StoreProvider));
+            ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
+            this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
         }
     }
     // Handle new S3 bucket case
@@ -126,10 +137,19 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         console.log("To be implemented in ZCS-11472");
         this.createS3BucketRequest(this._containedObject);
     }
+    // Handle new NetApp StorageGrid bucket case
+    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET) {
+        this.createS3BucketRequest(this._containedObject);
+    }
 }
 
 ZaNewVolumeXWizard.prototype.goPrev = function () {
-    if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME || this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_S3_VOLUME || this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_CEPH_VOLUME) {
+    if (
+        this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME || 
+        this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_S3_VOLUME || 
+        this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_CEPH_VOLUME || 
+        this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME
+    ) {
         this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
@@ -139,6 +159,8 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
         this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
     } else if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
+    } else if (this._containedObject[ZaModel.currentStep] == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET) {
+        this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
     } else {
         this.goPage(ZaNewVolumeXWizard.GENERAL_STEP);
     }
@@ -336,7 +358,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     });
 
     // New S3 volume step
-    ZaNewVolumeXWizard.NEW_S3_VOLUME = ++this.TAB_INDEX;
+    ZaNewVolumeXWizard.NEW_S3_VOLUME = ZaNewVolumeXWizard.stepObject[ZaServer.A_S3_StoreProvider] = ++this.TAB_INDEX;
     this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_S3_VOLUME, label: ZaMsg.TABT_S3VolumePage});
 
     cases.push({type: _CASE_, caseKey: ZaNewVolumeXWizard.NEW_S3_VOLUME, tabGroupKey: ZaNewVolumeXWizard.NEW_S3_VOLUME, numCols: 1,
@@ -556,6 +578,90 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
         ]
     });
 
+    // New NetApp StorageGrid volume step
+    ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME = ZaNewVolumeXWizard.stepObject[ZaServer.A_NetApp_StoreProvider] = ++this.TAB_INDEX;
+    this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, label: ZaMsg.TABT_NetAppStorageGridVolumePage});
+    cases.push({type:_CASE_, caseKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, tabGroupKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME, numCols:1,
+        items: [
+            {type:_ZAWIZGROUP_,
+                colSizes:["200px","*"],numCols:2,
+                items:[
+                    {
+                        ref: ZaServer.A_VolumeType,
+                        type: _OSELECT1_,
+                        label: ZaMsg.LBL_VM_VolumeType,
+                        labelCssStyle: "text-align:left;",
+                        choices: ZaServer.externalVolumeTypeChoices,
+                        width: 155,
+                    },
+                    {
+                        ref: ZaServer.A_VolumeName, type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_VolumeName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150
+                    },
+                    {
+                        ref: ZaServer.A_VolumePrefix, type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_VolumePrefix, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150
+                    },
+                    {
+                        type: _OSELECT1_,
+                        label: "Bucket",
+                        labelCssStyle: "text-align:left;",
+                        align: _LEFT_,
+                        selectRef: ZaServer.A_CompatibleS3Bucket,
+                        ref: ZaServer.A_CompatibleS3Bucket,
+                        choices: ZaNewVolumeXWizard.bucketChoices,
+                        width: 155,
+                    },
+                    {
+                        type: _GROUP_, numCols: 2, colSizes: ["200px","*"], colSpan: 2, items: [
+                            {type: _CELLSPACER_},
+                            {
+                                type: _BUTTON_, label: ZaMsg.LBL_VM_NewNetAppStorageGridBucket,
+                                //  width:20,
+                                onActivate:function () {
+                                    // Set selected storeProvider
+                                    this.getForm().setInstanceValue(ZaServer.A_NetApp_StoreProvider, ZaServer.A_StoreProvider);
+                                    // Go to NEW_NETAPP_STORAGEGRID_BUCKET page
+                                    this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET);
+                                    this.getForm().parent._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
+                                },
+                            }
+                        ]
+                    }
+                ]
+            },
+        ]
+    });
+
+    // New NetApp StorageGrid bucket step
+    ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET = ++this.TAB_INDEX;
+    this.stepChoices.push({value: ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET, label: ZaMsg.TABT_NetAppStorageGridBucketPage});
+    cases.push({type:_CASE_, tabGroupKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET, caseKey:ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET, numCols:1,
+        items: [
+            {type: _ZAWIZGROUP_,
+                colSizes: ["200px","*"], numCols: 2,
+                items: [
+                    {ref: ZaServer.A_BucketName, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_BucketName, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_AccessKey, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_AccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_SecretKey, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_SecretAccessKey, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_DestinationPath, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_DestinationPath, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {ref: ZaServer.A_URL, type: _TEXTFIELD_, label: ZaMsg.LBL_VM_URL, labelLocation: _LEFT_, labelCssStyle: "text-align:left;", width: 150},
+                    {
+                        type: _GROUP_, colSizes: ["200px", "*"], colSpan: 2, items: [
+                            {type: _CELLSPACER_},
+                            {
+                                type:_BUTTON_, label: ZaMsg.LBL_VM_TestBucket,
+                                onActivate: function () {
+                                    this.getForm().parent.validateS3BucketRequest(this.getForm().instance);
+                                },
+                            }
+                        ]
+                    }
+                ]
+            },
+        ]
+    });
+
     // Left sidebar visibility checks
     var labelVisibility = {};
     labelVisibility[ZaNewVolumeXWizard.GENERAL_STEP] = {};
@@ -573,6 +679,12 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_CEPH_BUCKET] = {
         checks:[[ZaNewVolumeXWizard.isStep, "CephBucket", true]],
+    };
+    labelVisibility[ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME] = {
+        checks:[[ZaNewVolumeXWizard.isStep,"NetAppStorageGridVolume",true]],
+    };
+    labelVisibility[ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET] = {
+        checks:[[ZaNewVolumeXWizard.isStep,"NetAppStorageGridBucket",true]],
     };
 
     this._lastStep = this.stepChoices.length;
@@ -603,6 +715,10 @@ ZaNewVolumeXWizard.isStep = function (step) {
         return currentStep == ZaNewVolumeXWizard.NEW_CEPH_VOLUME || currentStep == ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
     } else if (step == "CephBucket") {
         return currentStep == ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
+    } else if (step == "NetAppStorageGridVolume") {
+        return currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME || currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;
+    } else if (step == "NetAppStorageGridBucket") {
+        return currentStep == ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET;
     } else {
         return false;
     }
@@ -653,7 +769,7 @@ ZaNewVolumeXWizard.prototype.createS3BucketCallback = function (resp) {
         var newUUID = respAttrs.globalBucketUUID;
         this._containedObject[ZaServer.A_CompatibleS3Bucket] = newUUID;
         // Finally, go to the next step
-        this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
+        this.goPage(ZaNewVolumeXWizard.stepObject[this._containedObject[ZaServer.A_StoreProvider]]);
     }
 }
 
@@ -707,6 +823,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
     if (!resp) {
         throw(new AjxException(ZaMsg.ERROR_EMPTY_RESPONSE_ARG, AjxException.UNKNOWN, "ZaNewVolumeXWizard.prototype.validateS3BucketCallback"));
     } else if(resp.isException()) {
+        this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
         ZaApp.getInstance().getCurrentController().popupErrorDialog("Bucket is not valid");
 	} else {
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
@@ -779,7 +896,7 @@ function () {
 	params.soapDoc = soapDoc;
 	params.asyncMode = true;
     params.callback = new AjxCallback(this, this.deleteS3BucketCallback);
-
+// Validate new bucket step fields
 	var reqMgrParams = {
 		controller : ZaApp.getInstance().getCurrentController(),
 		busyMsg : ZaMsg.BUSY_GET_ALL_SERVER
