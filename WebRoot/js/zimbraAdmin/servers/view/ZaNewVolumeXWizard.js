@@ -811,6 +811,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
             ref: ZaModel.currentStep,
             choices: this.stepChoices,
             labelVisibility: labelVisibility,
+            labelClickMethod: null,
             valueChangeEventSources: [ZaModel.currentStep],
         },
         { type: _SEPARATOR_, align: _CENTER_, valign: _TOP_ },
