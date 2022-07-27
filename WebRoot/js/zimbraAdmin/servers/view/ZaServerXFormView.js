@@ -591,18 +591,25 @@ ZaServerXFormView.addButtonListener =
 function () {
 	var instance = this.getInstance();
 	var formPage = this.getForm().parent;
-	if(!formPage.addVolumeDlg) {
-		formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
-		formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
+	if (!formPage.addVolumeDlg) {
+		if (ZaSettings && ZaSettings.EnabledZimlet["com_zimbra_hsm"]) {
+			formPage.addVolumeDlg = new ZaNewVolumeXWizard(ZaApp.getInstance().getAppCtxt().getShell(), null);
+			formPage.addVolumeDlg.registerCallback(DwtWizardDialog.FINISH_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
+		} else {
+			formPage.addVolumeDlg = new ZaEditVolumeXDialog(ZaApp.getInstance().getAppCtxt().getShell(), "550px", "150px",ZaMsg.VM_Add_Volume_Title);
+			formPage.addVolumeDlg.registerCallback(DwtDialog.OK_BUTTON, ZaServerXFormView.addVolume, this.getForm(), null);
+		}
 	}
-	// Set initial ZaNewVolumeXWizard form values
+	// Set initial form values
 	var obj = {};
 	obj[ZaServer.A_VolumeId] = instance.newVolID--;
 	obj[ZaServer.A_VolumeStoreType] = 1;
 	obj[ZaServer.A_VolumeStorageType] = "Internal";
+	obj[ZaServer.A_VolumeRootPath] = "/opt/zimbra";
 	obj[ZaServer.A_VolumeCompressBlobs] = false;
 	obj[ZaServer.A_VolumeCompressionThreshold] = 4096;
 	obj[ZaServer.A_InfrequentAccessThreshold] = 65536;
+	obj[ZaServer.A_VolumeType] = ZaServer.MSG;
 	obj[ZaServer.A_isCurrent] = false;	
 
 	formPage.addVolumeDlg.setObject(obj);
