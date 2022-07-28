@@ -194,7 +194,7 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
     } else if (
-        this._containedObject[ZaModel.currentStep] ==
+        this._containedObject[ZaModel.currentStep] ===
         ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
     ) {
         this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
@@ -950,46 +950,6 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         width: 150,
                     },
                     {
-                        ref: "bucketName",
-                        type: _TEXTFIELD_,
-                        label: ZaMsg.LBL_VM_BucketName,
-                        labelLocation: _LEFT_,
-                        labelCssStyle: "text-align:left;",
-                        width: 150,
-                    },
-                    {
-                        ref: "accessKey",
-                        type: _TEXTFIELD_,
-                        label: ZaMsg.LBL_VM_AccessKey,
-                        labelLocation: _LEFT_,
-                        labelCssStyle: "text-align:left;",
-                        width: 150,
-                    },
-                    {
-                        ref: "secretKey",
-                        type: _TEXTFIELD_,
-                        label: ZaMsg.LBL_VM_SecretAccessKey,
-                        labelLocation: _LEFT_,
-                        labelCssStyle: "text-align:left;",
-                        width: 150,
-                    },
-                    {
-                        ref: "destinationPath",
-                        type: _TEXTFIELD_,
-                        label: ZaMsg.LBL_VM_DestinationPath,
-                        labelLocation: _LEFT_,
-                        labelCssStyle: "text-align:left;",
-                        width: 150,
-                    },
-                    {
-                        ref: "url",
-                        type: _TEXTFIELD_,
-                        label: ZaMsg.LBL_VM_URL,
-                        labelLocation: _LEFT_,
-                        labelCssStyle: "text-align:left;",
-                        width: 150,
-                    },
-                    {
                         type: _GROUP_,
                         colSizes: ["200px", "*"],
                         colSpan: 2,
@@ -1211,6 +1171,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
     soapDoc.set("destinationPath", attrs[ZaServer.A_DestinationPath]);
     soapDoc.set("region", attrs[ZaServer.A_Region]);
     soapDoc.set("url", attrs[ZaServer.A_URL]);
+}
 
 ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
     var soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
