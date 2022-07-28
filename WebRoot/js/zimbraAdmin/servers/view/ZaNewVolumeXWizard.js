@@ -143,7 +143,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         } else if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeCeph) {
             // Handle Ceph volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(
-                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_Ceph_StoreProvider)
+                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_CephStoreProvider)
             );
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
@@ -665,7 +665,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         type: _OSELECT1_,
                         label: ZaMsg.LBL_VM_VolumeType,
                         labelCssStyle: "text-align:left;",
-                        choices: ZaServer.volumeTypeChoices,
+                        choices: ZaServer.externalVolumeTypeChoices,
                         width: 155,
                     },
                     {
@@ -695,11 +695,26 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                         width: 155,
                     },
                     {
-                        type: _BUTTON_,
-                        label: ZaMsg.LBL_VM_NewCephBucket,
-                        onActivate: function () {
-                            this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_CEPH_BUCKET);
-                        },
+                        type: _GROUP_,
+                        colSizes: ["200px", "*"],
+                        colSpan: 2,
+                        items: [
+                            { type: _CELLSPACER_ },
+                            {
+                                type: _BUTTON_,
+                                label: ZaMsg.LBL_VM_NewCephBucket,
+                                onActivate: function () {
+                                      // Set selected storeProvider
+                                      this.getForm().setInstanceValue(
+                                        ZaServer.A_CephStoreProvider,
+                                        ZaServer.A_StoreProvider
+                                    );
+                                    // Go to NEW_CEPH_BUCKET page
+                                    this.getForm().parent.goPage(ZaNewVolumeXWizard.NEW_CEPH_BUCKET);
+                                    this.getForm().parent._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
+                                },
+                            },
+                        ],
                     },
                 ],
             },
@@ -773,6 +788,9 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                             {
                                 type: _BUTTON_,
                                 label: ZaMsg.LBL_VM_TestBucket,
+                                onActivate: function () {
+                                    this.getForm().parent.validateS3BucketRequest(this.getForm().instance);
+                                },
                             },
                         ],
                     },
@@ -955,7 +973,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
     } else if (resp.isException()) {
         ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.VM_Error_InvalidBucket);
     } else {
-        ZaApp.getInstance().getCurrentController().popupMsgDialog(ZaMsg.VM_Info_BucketConnectionSuccessful);
+        ZaApp.getInstance().getCurrentController().popupMsgDialog("Bucket connected successfully");
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
     }
 };
@@ -966,7 +984,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
     soapDoc.set("bucketName", attrs[ZaServer.A_BucketName]);
     soapDoc.set("protocol", "HTTPS");
     soapDoc.set("accessKey", attrs[ZaServer.A_AccessKey]);
-    soapDoc.set("secrateKey", attrs[ZaServer.A_SecretKey]);
+    soapDoc.set("secretKey", attrs[ZaServer.A_SecretKey]);
     soapDoc.set("destinationPath", attrs[ZaServer.A_DestinationPath]);
     soapDoc.set("region", attrs[ZaServer.A_Region]);
     soapDoc.set("url", attrs[ZaServer.A_URL]);
