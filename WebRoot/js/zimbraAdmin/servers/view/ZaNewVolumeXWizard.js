@@ -172,8 +172,10 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
     }
 
     if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_S3_BUCKET) {
+        this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
+        this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
         this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
     } else {
         this.goPage(ZaNewVolumeXWizard.GENERAL_STEP);
