@@ -193,10 +193,7 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
         this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
-    } else if (
-        this._containedObject[ZaModel.currentStep] ===
-        ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET
-    ) {
+    } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_BUCKET) {
         this.goPage(ZaNewVolumeXWizard.NEW_NETAPP_STORAGEGRID_VOLUME);
     } else {
         this.goPage(ZaNewVolumeXWizard.GENERAL_STEP);
@@ -1155,7 +1152,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
         );
     } else if (resp.isException()) {
         ZaApp.getInstance().getCurrentController().popupErrorDialog("Bucket is not valid");
-	} else {
+    } else {
         ZaApp.getInstance().getCurrentController().popupMsgDialog("Bucket connection successfull");
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
     }
@@ -1171,7 +1168,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
     soapDoc.set("destinationPath", attrs[ZaServer.A_DestinationPath]);
     soapDoc.set("region", attrs[ZaServer.A_Region]);
     soapDoc.set("url", attrs[ZaServer.A_URL]);
-}
+};
 
 ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
     var soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
