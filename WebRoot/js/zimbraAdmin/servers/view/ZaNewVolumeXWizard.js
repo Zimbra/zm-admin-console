@@ -131,9 +131,6 @@ ZaNewVolumeXWizard.prototype.popup = function (loc) {
 };
 
 ZaNewVolumeXWizard.prototype.goNext = function () {
-    if (this._containedObject[ZaModel.currentStep] === 1) {
-        this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
-    }
     if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.GENERAL_STEP) {
         this.setDefaultValues();
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
@@ -1156,18 +1153,6 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
         ZaApp.getInstance().getCurrentController().popupMsgDialog("Bucket connection successfull");
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
     }
-};
-
-ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
-    var soapDoc = AjxSoapDoc.create("ValidateS3BucketReachableRequest", ZaZimbraAdmin.URN, null);
-    soapDoc.set("storeProvider", attrs[ZaServer.A_StoreProvider]);
-    soapDoc.set("bucketName", attrs[ZaServer.A_BucketName]);
-    soapDoc.set("protocol", "HTTPS");
-    soapDoc.set("accessKey", attrs[ZaServer.A_AccessKey]);
-    soapDoc.set("secrateKey", attrs[ZaServer.A_SecretKey]);
-    soapDoc.set("destinationPath", attrs[ZaServer.A_DestinationPath]);
-    soapDoc.set("region", attrs[ZaServer.A_Region]);
-    soapDoc.set("url", attrs[ZaServer.A_URL]);
 };
 
 ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
