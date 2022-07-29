@@ -154,6 +154,7 @@ ZaServer.A_VolumeType = "type";
 ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
 ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
 ZaServer.A_isCurrent = "isCurrent";
+ZaServer.LBL_VolumeRootPath = ZaMsg.VM_VolumeRootPath;
 
 //VAMI Appliance Update
 ZaServer.A_zimbraApplianceVendor = "zimbraApplianceVendor";
@@ -831,7 +832,7 @@ ZaServer.modifyMethod = function (tmpObj) {
 			for(var i = 0; i < cnt; i++) {
 				//consider only new rows (no VolumeID)
 				//ignore empty rows, Bug 4425
-				if(!(tmpVolumeMap[i][ZaServer.A_VolumeId]>0) && tmpVolumeMap[i][ZaServer.A_VolumeName] && tmpVolumeMap[i][ZaServer.A_VolumeRootPath]) {
+				if(!(tmpVolumeMap[i][ZaServer.A_VolumeId]>0) && tmpVolumeMap[i][ZaServer.A_VolumeName] && (tmpVolumeMap[i][ZaServer.A_VolumeRootPath] || tmpVolumeMap[i][ZaServer.A_VolumePrefix])) {
 					var newId = this.createVolume(tmpVolumeMap[i]);	
 					if(newId>0) {
 						//find if we assigned this volume to current volumes
