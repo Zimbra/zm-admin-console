@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2022 Synacor, Inc.
+ * Copyright (C) 2022 Synacor, Inc.
  *
  * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * The Initial Developer of the Original Code is Zimbra, Inc.  All rights to the Original Code were
  * transferred by Zimbra, Inc. to Synacor, Inc. on September 14, 2015.
  *
- * All portions of the code are Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2022 Synacor, Inc. All Rights Reserved.
+ * All portions of the code are Copyright (C) 2022 Synacor, Inc. All Rights Reserved.
  * ***** END LICENSE BLOCK *****
  */
 
@@ -107,14 +107,12 @@ ZaNewVolumeXWizard.prototype.handleXFormChange = function () {
 };
 
 ZaNewVolumeXWizard.prototype.hasEmptyFields = function (fieldArray) {
-    var result = false;
-    for (var i in fieldArray) {
+    for (var i = 0; i < fieldArray.length; i++) {
         if (!this._containedObject[fieldArray[i]] || this._containedObject[fieldArray[i]] === "") {
-            result = true;
-            break;
+            return true;
         }
     }
-    return result;
+    return false;
 };
 
 /**
@@ -132,21 +130,20 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         this.setDefaultValues();
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-
-        if (this._containedObject[ZaServer.A_VolumeStorageType] === "Internal") {
+        if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeInternal) {
             // Handle Internal volume case
             this.goPage(ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME);
-        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === "S3") {
+        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeS3) {
             // Handle S3 volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(
                 ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_S3_StoreProvider)
             );
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
-        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === "Ceph") {
+        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeCeph) {
             // Handle Ceph volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(
-                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, "CEPH_S3")
+                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_Ceph_StoreProvider)
             );
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
@@ -155,8 +152,8 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         // Handle new S3 bucket case
         this.createS3BucketRequest(this._containedObject);
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
-        // Handle new Ceph bucket case
-        console.log("To be implemented in ZCS-11472");
+        // TODO: Handle new Ceph bucket case
+        // To be implemented in ZCS-11472
     }
 };
 
@@ -189,14 +186,14 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
 ZaNewVolumeXWizard.prototype.setObject = function (entry) {
     this._containedObject = {};
     // Set the initial step
-    this._containedObject[ZaModel.currentStep] = entry[ZaModel.currentStep] || 1;
+    this._containedObject[ZaModel.currentStep] = entry[ZaModel.currentStep] || ZaServer.A_NewVolumeInitialStep;
     this._containedObject[ZaServer.A_VolumeId] = entry[ZaServer.A_VolumeId];
     this._containedObject[ZaServer.A_VolumeStoreType] = entry[ZaServer.A_VolumeStoreType];
     this._containedObject[ZaServer.A_VolumeStorageType] = entry[ZaServer.A_VolumeStorageType];
     this._containedObject[ZaServer.A_VolumeCompressBlobs] = entry[ZaServer.A_VolumeCompressBlobs];
     this._containedObject[ZaServer.A_VolumeCompressionThreshold] = entry[ZaServer.A_VolumeCompressionThreshold];
     this._containedObject[ZaServer.A_InfrequentAccessThreshold] = entry[ZaServer.A_InfrequentAccessThreshold];
-    this._containedObject[ZaServer.A_Region] = "GovCloud";
+    this._containedObject[ZaServer.A_Region] = entry[ZaServer.A_Region];
     this._containedObject[ZaServer.A_isCurrent] = entry[ZaServer.A_isCurrent];
     this._localXForm.setInstance(this._containedObject);
     // Fetch bucket list (includes all storeProviders)
@@ -207,12 +204,12 @@ ZaNewVolumeXWizard.prototype.setDefaultValues = function () {
     this._containedObject[ZaServer.A_VolumeName] = "";
     this._containedObject[ZaServer.A_VolumeType] = "";
 
-    if (this._containedObject[ZaServer.A_VolumeStorageType] === "Internal") {
-        this._containedObject[ZaServer.A_VolumeStoreType] = 1;
+    if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeInternal) {
+        this._containedObject[ZaServer.A_VolumeStoreType] = ZaServer.A_VolumeStoreTypeInternal;
         this._containedObject[ZaServer.A_VolumeRootPath] = "/opt/zimbra";
         this._containedObject[ZaServer.A_VolumeCompressBlobs] = false;
     } else {
-        this._containedObject[ZaServer.A_VolumeStoreType] = 2;
+        this._containedObject[ZaServer.A_VolumeStoreType] = ZaServer.A_VolumeStoreTypeExternal;
         delete this._containedObject[ZaServer.A_CompatibleS3Bucket];
     }
     this._localXForm.refresh();
@@ -260,11 +257,11 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                     label: ZaMsg.LBL_VM_VolumeTypeInternal,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === "Internal";
+                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === ZaServer.A_VolumeStorageTypeInternal;
                     },
                     elementChanged: function (_, __, event) {
-                        this.getForm().setInstanceValue("Internal", ZaServer.A_VolumeStorageType);
-                        this.getForm().itemChanged(this, "Internal", event);
+                        this.getForm().setInstanceValue(ZaServer.A_VolumeStorageTypeInternal, ZaServer.A_VolumeStorageType);
+                        this.getForm().itemChanged(this, ZaServer.A_VolumeStorageTypeInternal, event);
                     },
                 },
                 {
@@ -274,11 +271,11 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                     label: ZaMsg.LBL_VM_VolumeTypeS3,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === "S3";
+                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === ZaServer.A_VolumeStorageTypeS3;
                     },
                     elementChanged: function (_, __, event) {
-                        this.getForm().setInstanceValue("S3", ZaServer.A_VolumeStorageType);
-                        this.getForm().itemChanged(this, "S3", event);
+                        this.getForm().setInstanceValue(ZaServer.A_VolumeStorageTypeS3, ZaServer.A_VolumeStorageType);
+                        this.getForm().itemChanged(this, ZaServer.A_VolumeStorageTypeS3, event);
                     },
                 },
                 {
@@ -288,11 +285,11 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                     label: ZaMsg.LBL_VM_VolumeTypeCeph,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === "Ceph";
+                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === ZaServer.A_VolumeStorageTypeCeph;
                     },
                     elementChanged: function (_, __, event) {
-                        this.getForm().setInstanceValue("Ceph", ZaServer.A_VolumeStorageType);
-                        this.getForm().itemChanged(this, "Ceph", event);
+                        this.getForm().setInstanceValue(ZaServer.A_VolumeStorageTypeCeph, ZaServer.A_VolumeStorageType);
+                        this.getForm().itemChanged(this, ZaServer.A_VolumeStorageTypeCeph, event);
                     },
                 },
                 {
@@ -302,11 +299,11 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                     label: ZaMsg.LBL_VM_VolumeTypeNASG,
                     onChange: ZaTabView.onFormFieldChanged,
                     updateElement: function () {
-                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === "NetApp";
+                        this.getElement().checked = this.getInstanceValue(ZaServer.A_VolumeStorageType) === ZaServer.A_VolumeStorageTypeNetApp;
                     },
                     elementChanged: function (_, __, event) {
-                        this.getForm().setInstanceValue("NetApp", ZaServer.A_VolumeStorageType);
-                        this.getForm().itemChanged(this, "NetApp", event);
+                        this.getForm().setInstanceValue(ZaServer.A_VolumeStorageTypeNetApp, ZaServer.A_VolumeStorageType);
+                        this.getForm().itemChanged(this, ZaServer.A_VolumeStorageTypeNetApp, event);
                     },
                 },
             ],
@@ -788,19 +785,19 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     var labelVisibility = {};
     labelVisibility[ZaNewVolumeXWizard.GENERAL_STEP] = {};
     labelVisibility[ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME] = {
-        checks: [[ZaNewVolumeXWizard.isStep, "InternalVolume", true]],
+        checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME, true]],
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_S3_VOLUME] = {
-        checks: [[ZaNewVolumeXWizard.isStep, "S3Volume", true]],
+        checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_S3_VOLUME, true]],
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_S3_BUCKET] = {
-        checks: [[ZaNewVolumeXWizard.isStep, "S3Bucket", true]],
+        checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_S3_BUCKET, true]],
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_CEPH_VOLUME] = {
-        checks: [[ZaNewVolumeXWizard.isStep, "CephVolume", true]],
+        checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_CEPH_VOLUME, true]],
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_CEPH_BUCKET] = {
-        checks: [[ZaNewVolumeXWizard.isStep, "CephBucket", true]],
+        checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_CEPH_BUCKET, true]],
     };
 
     this._lastStep = this.stepChoices.length;
@@ -831,15 +828,15 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
 ZaNewVolumeXWizard.isStep = function (step) {
     var localForm = this.getForm();
     var currentStep = localForm ? localForm.instance.currentStep : 1;
-    if (step === "InternalVolume") {
+    if (step === ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME) {
         return currentStep === ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME;
-    } else if (step === "S3Volume") {
+    } else if (step === ZaNewVolumeXWizard.NEW_S3_VOLUME) {
         return currentStep === ZaNewVolumeXWizard.NEW_S3_VOLUME || currentStep === ZaNewVolumeXWizard.NEW_S3_BUCKET;
-    } else if (step === "S3Bucket") {
+    } else if (step === ZaNewVolumeXWizard.NEW_S3_BUCKET) {
         return currentStep === ZaNewVolumeXWizard.NEW_S3_BUCKET;
-    } else if (step === "CephVolume") {
+    } else if (step === ZaNewVolumeXWizard.NEW_CEPH_VOLUME ) {
         return currentStep === ZaNewVolumeXWizard.NEW_CEPH_VOLUME || currentStep === ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
-    } else if (step === "CephBucket") {
+    } else if (step === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         return currentStep === ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
     } else {
         return false;
@@ -887,7 +884,7 @@ ZaNewVolumeXWizard.prototype.createS3BucketCallback = function (resp) {
             "ZaNewVolumeXWizard.prototype.createS3BucketCallback"
         );
     } else if (resp.isException()) {
-        ZaApp.getInstance().getCurrentController().popupErrorDialog("S3 Bucket is not valid");
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.VM_Error_InvalidBucket);
     } else {
         var respAttrs = resp.getResponse().Body.CreateS3BucketConfigResponse._attrs;
         // Fetch updated bucket list and reset choices
@@ -944,7 +941,7 @@ ZaNewVolumeXWizard.prototype.createS3BucketRequest = function (attrs) {
     try {
         ZaRequestMgr.invoke(params, reqMgrParams);
     } catch (e) {
-        ZaApp.getInstance().getCurrentController().popupErrorDialog("Could not create S3 bucket", e);
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_UNKNOWN, e);
     }
 };
 
@@ -956,9 +953,9 @@ ZaNewVolumeXWizard.prototype.validateS3BucketCallback = function (resp) {
             "ZaNewVolumeXWizard.prototype.validateS3BucketCallback"
         );
     } else if (resp.isException()) {
-        ZaApp.getInstance().getCurrentController().popupErrorDialog("Bucket is not valid");
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.VM_Error_InvalidBucket);
     } else {
-        ZaApp.getInstance().getCurrentController().popupMsgDialog("Bucket connection successfull");
+        ZaApp.getInstance().getCurrentController().popupMsgDialog(ZaMsg.VM_Info_BucketConnectionSuccessful);
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
     }
 };
@@ -987,7 +984,7 @@ ZaNewVolumeXWizard.prototype.validateS3BucketRequest = function (attrs) {
     try {
         ZaRequestMgr.invoke(params, reqMgrParams);
     } catch (e) {
-        ZaApp.getInstance().getCurrentController().popupErrorDialog("Could not test S3 bucket", e);
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_UNKNOWN, e);
     }
 };
 
@@ -1022,7 +1019,7 @@ ZaNewVolumeXWizard.prototype.deleteS3BucketRequest = function () {
     try {
         ZaRequestMgr.invoke(params, reqMgrParams);
     } catch (e) {
-        ZaApp.getInstance().getCurrentController().popupErrorDialog("Could not delete S3 bucket", e);
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_UNKNOWN, e);
     }
 };
 

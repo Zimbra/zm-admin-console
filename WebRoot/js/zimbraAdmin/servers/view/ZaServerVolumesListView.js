@@ -77,7 +77,7 @@ function(item) {
 				} else if(item[ZaServer.A_VolumeStorageType]) {
 					html[idx++] = item[ZaServer.A_VolumeStorageType];
 				} else {
-					html[idx++] = "Internal";
+					html[idx++] = ZaMsg.VM_VolumeTypeInternal;
 				}
 				html[idx++] = "'>";
 				html[idx++] = AjxStringUtil.htmlEncode(item[ZaServer.A_VolumeName]);

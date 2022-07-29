@@ -145,12 +145,20 @@ ZaServer.A_zimbraUserServicesEnabled = "zimbraUserServicesEnabled";
 //Volume Management
 ZaServer.A_RemovedVolumes = "removed_volumes";
 ZaServer.A_Volumes = "volumes";
+ZaServer.A_NewVolumeInitialStep = 1;
 ZaServer.A_S3_StoreProvider = "AWS_S3";
+ZaServer.A_Ceph_StoreProvider = "CEPH_S3";
 ZaServer.A_VolumeId = "id";
 ZaServer.A_VolumeName = "name";
 ZaServer.A_VolumeRootPath = "rootpath";
 ZaServer.A_VolumeStoreType = "storeType";
+ZaServer.A_VolumeStoreTypeInternal = 1;
+ZaServer.A_VolumeStoreTypeExternal = 2;
 ZaServer.A_VolumeStorageType = "storageType";
+ZaServer.A_VolumeStorageTypeInternal = "Internal";
+ZaServer.A_VolumeStorageTypeS3 = "S3";
+ZaServer.A_VolumeStorageTypeCeph = "Ceph";
+ZaServer.A_VolumeStorageTypeNetApp = "NetApp";
 ZaServer.A_VolumePrefix = "volumePrefix";
 ZaServer.A_VolumeCompressBlobs = "compressBlobs";
 ZaServer.A_VolumeCompressionThreshold = "compressionThreshold";
@@ -169,6 +177,7 @@ ZaServer.A_DestinationPath = "destinationPath";
 ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
 ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
 ZaServer.A_isCurrent = "isCurrent";
+ZaServer.A_DefaultRegion = "GovCloud";
 
 //VAMI Appliance Update
 ZaServer.A_zimbraApplianceVendor = "zimbraApplianceVendor";
@@ -1226,7 +1235,7 @@ ZaServer.prototype.createVolume =
 function (volume) {
 	if(!volume)
 		return false;
-	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);	
+	var soapDoc = AjxSoapDoc.create("CreateVolumeRequest", ZaZimbraAdmin.URN, null);
 	var elVolume = soapDoc.set("volume", null);
 	elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
 	elVolume.setAttribute("name", volume[ZaServer.A_VolumeName]);
@@ -1235,10 +1244,10 @@ function (volume) {
 	elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);
 	elVolume.setAttribute("storeType", volume[ZaServer.A_VolumeStoreType]);
 
-	if(volume[ZaServer.A_VolumeStoreType] === 2) {
+	if (volume[ZaServer.A_VolumeStoreType] === ZaServer.A_VolumeStoreTypeExternal) {
 		var elVolumeOpt = soapDoc.set("volumeExternalInfo", null, elVolume);
 		elVolumeOpt.setAttribute("volumePrefix", volume[ZaServer.A_VolumePrefix]);
-		elVolumeOpt.setAttribute("storageType", "S3");
+		elVolumeOpt.setAttribute("storageType", ZaServer.A_VolumeStorageTypeS3);
 		elVolumeOpt.setAttribute("globalBucketConfigId", volume[ZaServer.A_CompatibleS3Bucket]);
 		elVolumeOpt.setAttribute("useInfrequentAccess", volume[ZaServer.A_InfrequentAccess]);
 		elVolumeOpt.setAttribute("useIntelligentTiering", volume[ZaServer.A_IntelligentTiering]);
