@@ -143,7 +143,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         } else if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeCeph) {
             // Handle Ceph volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(
-                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_CephStoreProvider)
+                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_Ceph_StoreProvider)
             );
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
@@ -153,7 +153,7 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         this.createS3BucketRequest(this._containedObject);
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         // TODO: Handle new Ceph bucket case
-        // To be implemented in ZCS-11472
+        this.createS3BucketRequest(this._containedObject);
     }
 };
 
@@ -706,7 +706,7 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
                                 onActivate: function () {
                                       // Set selected storeProvider
                                       this.getForm().setInstanceValue(
-                                        ZaServer.A_CephStoreProvider,
+                                        ZaServer.A_Ceph_StoreProvider,
                                         ZaServer.A_StoreProvider
                                     );
                                     // Go to NEW_CEPH_BUCKET page
