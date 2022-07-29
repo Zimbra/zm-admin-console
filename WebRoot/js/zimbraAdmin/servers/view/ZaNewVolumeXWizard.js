@@ -130,23 +130,31 @@ ZaNewVolumeXWizard.prototype.goNext = function () {
         this.setDefaultValues();
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
         this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-        if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeInternal) {
+        if (this._containedObject[ZaServer.A_VolumeStorageType] === "Internal") {
             // Handle Internal volume case
             this.goPage(ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME);
-        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeS3) {
+        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === "S3") {
             // Handle S3 volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(
                 ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_S3_StoreProvider)
             );
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_S3_VOLUME);
-        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === ZaServer.A_VolumeStorageTypeCeph) {
+        } else if (this._containedObject[ZaServer.A_VolumeStorageType] === "Ceph") {
             // Handle Ceph volume case
             ZaNewVolumeXWizard.bucketChoices.setChoices(
                 ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_Ceph_StoreProvider)
             );
             ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
             this.goPage(ZaNewVolumeXWizard.NEW_CEPH_VOLUME);
+        }
+        else if (this._containedObject[ZaServer.A_VolumeStorageType] === "OpenIO") {
+            // Handle Ceph volume case
+            ZaNewVolumeXWizard.bucketChoices.setChoices(
+                ZaNewVolumeXWizard.getBucketChoices(this.bucketList, ZaServer.A_OpenIO_StoreProvider)
+            );
+            ZaNewVolumeXWizard.bucketChoices.dirtyChoices();
+            this.goPage(ZaNewVolumeXWizard.NEW_OPENIO_VOLUME);
         }
     } else if (this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_S3_BUCKET) {
         // Handle new S3 bucket case
@@ -161,7 +169,8 @@ ZaNewVolumeXWizard.prototype.goPrev = function () {
     if (
         this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_INTERNAL_VOLUME ||
         this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_S3_VOLUME ||
-        this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_VOLUME
+        this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_CEPH_VOLUME ||
+        this._containedObject[ZaModel.currentStep] === ZaNewVolumeXWizard.NEW_OPENIO_VOLUME
     ) {
         this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
         this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);
@@ -799,6 +808,101 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
         ],
     });
 
+    // New OpenIO Volume
+    ZaNewVolumeXWizard.NEW_OPENIO_VOLUME = ++this.TAB_INDEX;
+    this.stepChoices.push({
+        value: ZaNewVolumeXWizard.NEW_OPENIO_VOLUME,
+        label: ZaMsg.TABT_CephVolumePage,
+    });
+
+    cases.push({
+        type: _CASE_,
+        caseKey: ZaNewVolumeXWizard.NEW_OPENIO_VOLUME,
+        tabGroupKey: ZaNewVolumeXWizard.NEW_OPENIO_VOLUME,
+        numCols: 1,
+        items: [
+            {
+                type: _ZAWIZGROUP_,
+                colSizes: ["200px", "*"],
+                numCols: 2,
+                items: [
+                    {
+                        ref: ZaServer.A_VolumeType,
+                        type: _OSELECT1_,
+                        label: ZaMsg.LBL_VM_VolumeType,
+                        labelCssStyle: "text-align:left;",
+                        choices: ZaServer.externalVolumeTypeChoices,
+                        width: 155,
+                    },
+                    {
+                        ref: ZaServer.A_VolumeName,
+                        type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_VolumeName,
+                        labelLocation: _LEFT_,
+                        labelCssStyle: "text-align:left;",
+                        width: 150,
+                    },
+                    {
+                        ref: ZaServer.A_URL,
+                        type: _TEXTFIELD_,
+                        label: ZaMsg.LBL_VM_URL,
+                        labelLocation: _LEFT_,
+                        labelCssStyle: "text-align:left;",
+                        width: 150,
+                    },
+                    {
+                        ref: ZaServer.A_URL,
+                        type: _TEXTFIELD_,
+                        label: 'Namespace',
+                        labelLocation: _LEFT_,
+                        labelCssStyle: "text-align:left;",
+                        width: 150,
+                    },
+                    {
+                        ref: ZaServer.A_URL,
+                        type: _TEXTFIELD_,
+                        label: 'Proxy Port',
+                        labelLocation: _LEFT_,
+                        labelCssStyle: "text-align:left;",
+                        width: 150,
+                    },
+                    {
+                        ref: ZaServer.A_URL,
+                        type: _TEXTFIELD_,
+                        label: 'Account Port',
+                        labelLocation: _LEFT_,
+                        labelCssStyle: "text-align:left;",
+                        width: 150,
+                    },
+                    {
+                        type: _OSELECT1_,
+                        label: ZaMsg.LBL_VM_CephBucket,
+                        labelCssStyle: "text-align:left;",
+                        align: _LEFT_,
+                        selectRef: ZaServer.A_CompatibleS3Bucket,
+                        ref: ZaServer.A_CompatibleS3Bucket,
+                        choices: ZaNewVolumeXWizard.bucketChoices,
+                        width: 155,
+                    },
+                    {
+                        type: _GROUP_,
+                        colSizes: ["200px", "*"],
+                        colSpan: 2,
+                        items: [
+                            { type: _CELLSPACER_ },
+                            {
+                                type: _BUTTON_,
+                                label: ZaMsg.LBL_VM_TestBucket,
+                                onActivate: function () {
+                                    //this.getForm().parent.validateS3BucketRequest(this.getForm().instance);
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
     // Left sidebar visibility checks
     var labelVisibility = {};
     labelVisibility[ZaNewVolumeXWizard.GENERAL_STEP] = {};
@@ -816,6 +920,9 @@ ZaNewVolumeXWizard.myXFormModifier = function (xFormObject) {
     };
     labelVisibility[ZaNewVolumeXWizard.NEW_CEPH_BUCKET] = {
         checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_CEPH_BUCKET, true]],
+    };
+    labelVisibility[ZaNewVolumeXWizard.NEW_OPENIO_VOLUME] = {
+        checks: [[ZaNewVolumeXWizard.isStep, ZaNewVolumeXWizard.NEW_OPENIO_VOLUME, true]],
     };
 
     this._lastStep = this.stepChoices.length;
@@ -856,7 +963,9 @@ ZaNewVolumeXWizard.isStep = function (step) {
         return currentStep === ZaNewVolumeXWizard.NEW_CEPH_VOLUME || currentStep === ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
     } else if (step === ZaNewVolumeXWizard.NEW_CEPH_BUCKET) {
         return currentStep === ZaNewVolumeXWizard.NEW_CEPH_BUCKET;
-    } else {
+    } else if (step === ZaNewVolumeXWizard.NEW_OPENIO_VOLUME ) {
+        return currentStep === ZaNewVolumeXWizard.NEW_OPENIO_VOLUME;
+    }else {
         return false;
     }
 };
