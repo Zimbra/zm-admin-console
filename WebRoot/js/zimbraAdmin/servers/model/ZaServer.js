@@ -178,6 +178,7 @@ ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
 ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
 ZaServer.A_isCurrent = "isCurrent";
 ZaServer.A_DefaultRegion = "GovCloud";
+ZaServer.LBL_VolumeRootPath = ZaMsg.VM_VolumeRootPath;
 
 //VAMI Appliance Update
 ZaServer.A_zimbraApplianceVendor = "zimbraApplianceVendor";
