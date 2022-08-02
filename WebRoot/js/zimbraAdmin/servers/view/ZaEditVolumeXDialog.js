@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Web Client
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2016 Synacor, Inc.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2016, 2022 Synacor, Inc.
  *
  * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * The Initial Developer of the Original Code is Zimbra, Inc.  All rights to the Original Code were
  * transferred by Zimbra, Inc. to Synacor, Inc. on September 14, 2015.
  *
- * All portions of the code are Copyright (C) 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2016 Synacor, Inc. All Rights Reserved.
+ * All portions of the code are Copyright (C) 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2016, 2022 Synacor, Inc. All Rights Reserved.
  * ***** END LICENSE BLOCK *****
  */
 
@@ -41,30 +41,70 @@ ZaEditVolumeXDialog.prototype = new ZaXDialog;
 ZaEditVolumeXDialog.prototype.constructor = ZaEditVolumeXDialog;
 ZaEditVolumeXDialog.helpURL = location.pathname + ZaUtil.HELP_URL + "managing_servers/adding_a_new_storage_volume_to_the_server.htm?locid="+AjxEnv.DEFAULT_LOCALE;
 
-ZaEditVolumeXDialog.prototype.getMyXForm = 
-function() {	
+ZaEditVolumeXDialog.prototype.getMyXForm = function (params) {
 	var xFormObject = {
-		numCols:1,
-		items:[
-			{type:_ZAWIZGROUP_, isTabGroup:true,
-				items:[
-					{ref:ZaServer.A_VolumeName, type:_TEXTFIELD_, label:ZaMsg.LBL_VM_VolumeName, labelLocation:_LEFT_, width:250, visibilityChecks:[],enableDisableChecks:[]},
-					{ref:ZaServer.A_VolumeRootPath, type:_TEXTFIELD_, label:ZaMsg.LBL_VM_VolumeRootPath, labelLocation:_LEFT_, width:250, visibilityChecks:[],enableDisableChecks:[]},
-					{ref:ZaServer.A_VolumeType, type:_OSELECT1_, choices:ZaServer.volumeTypeChoices,width:250, label:ZaMsg.LBL_VM_VolumeType, visibilityChecks:[],enableDisableChecks:[]},
-					{ref:ZaServer.A_VolumeCompressBlobs,
-						type:_WIZ_CHECKBOX_, label:ZaMsg.VM_VolumeCompressBlobs,
-						trueValue:true, falseValue:false, visibilityChecks:[],enableDisableChecks:[]
+		numCols: 1,
+		items: [
+			{
+				type: _ZAWIZGROUP_,
+				isTabGroup: true,
+				items: [
+					{
+						ref: ZaServer.A_VolumeName,
+						type: _TEXTFIELD_,
+						label: ZaMsg.LBL_VM_VolumeName,
+						labelLocation: _LEFT_,
+						width: 250,
 					},
-					{type:_GROUP_,numCols:3,colSpan:2,colSizes:["200px","150px","125px"],
-						items:[
-							{ref:ZaServer.A_VolumeCompressionThreshold, type:_TEXTFIELD_, label:ZaMsg.LBL_VM_VolumeCompressThreshold, labelLocation:_LEFT_, visibilityChecks:[],enableDisableChecks:[]},
-							{type:_OUTPUT_,label:null,labelLocation:_NONE_,value:ZaMsg.NAD_bytes,align:_LEFT_, visibilityChecks:[],enableDisableChecks:[]}
-						]
-					}
-					
-				]
-			}
-		]
+					{
+						ref: ZaServer.A_VolumeRootPath,
+						type: _TEXTFIELD_,
+						label: ZaMsg.LBL_VM_VolumeRootPath,
+						labelLocation: _LEFT_,
+						width: 250,
+						enableDisableChecks: !params || params.isVolumeTypeInternal,
+					},
+					{
+						ref: ZaServer.A_VolumeType,
+						type: _OSELECT1_,
+						choices: ZaServer.volumeTypeChoices,
+						width: 250,
+						label: ZaMsg.LBL_VM_VolumeType,
+						enableDisableChecks: !params || params.isVolumeTypeInternal,
+					},
+					{
+						ref: ZaServer.A_VolumeCompressBlobs,
+						type: _WIZ_CHECKBOX_,
+						label: ZaMsg.VM_VolumeCompressBlobs,
+						trueValue: true,
+						falseValue: false,
+						enableDisableChecks: !params || params.isVolumeTypeInternal,
+					},
+					{
+						type: _GROUP_,
+						numCols: 3,
+						colSpan: 2,
+						colSizes: ["200px", "150px", "125px"],
+						items: [
+							{
+								ref: ZaServer.A_VolumeCompressionThreshold,
+								type: _TEXTFIELD_,
+								label: ZaMsg.LBL_VM_VolumeCompressThreshold,
+								labelLocation: _LEFT_,
+								enableDisableChecks: !params || params.isVolumeTypeInternal,
+							},
+							{
+								type: _OUTPUT_,
+								label: null,
+								labelLocation: _NONE_,
+								value: ZaMsg.NAD_bytes,
+								align: _LEFT_,
+							},
+						],
+					},
+				],
+			},
+		],
 	};
 	return xFormObject;
 }
