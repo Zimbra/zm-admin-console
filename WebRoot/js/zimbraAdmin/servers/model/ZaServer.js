@@ -1235,16 +1235,19 @@ function (volume) {
 
 ZaServer.prototype.modifyVolume =
 function (volume) {
-	if(!volume)
+	if (!volume) {
 		return false;
+	}
 	var soapDoc = AjxSoapDoc.create("ModifyVolumeRequest", ZaZimbraAdmin.URN, null);		
 	soapDoc.getMethod().setAttribute(ZaServer.A_VolumeId, volume[ZaServer.A_VolumeId]);	
 	var elVolume = soapDoc.set("volume", null);
-	elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
 	elVolume.setAttribute("name", volume[ZaServer.A_VolumeName]);	
-	elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);		
-	elVolume.setAttribute("compressBlobs", volume[ZaServer.A_VolumeCompressBlobs]);		
-	elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);			
+	if (!volume[ZaServer.A_VolumeStoreType] || volume[ZaServer.A_VolumeStoreType] === ZaServer.A_VolumeStoreTypeInternal) {
+		elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
+		elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);
+		elVolume.setAttribute("compressBlobs", volume[ZaServer.A_VolumeCompressBlobs]);
+		elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);
+	}			
 	var params = {
 		soapDoc: soapDoc,
 		targetServer: this.id,
