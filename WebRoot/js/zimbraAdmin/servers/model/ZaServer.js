@@ -39,6 +39,7 @@ ZaServer.prototype = new ZaItem;
 ZaServer.prototype.constructor = ZaServer;
 ZaItem.loadMethods["ZaServer"] = new Array();
 ZaItem.initMethods["ZaServer"] = new Array();
+ZaItem.modifyMethodsExt["ZaServer"] = new Array();
 ZaItem.modifyMethods["ZaServer"] = new Array();
 ZaItem.modelExtensions["ZaServer"] = new Array();
 //attribute name constants, this values are taken from zimbra.schema
@@ -878,8 +879,18 @@ ZaServer.modifyMethod = function (tmpObj) {
 			}
 			
 		}
-	}	
+	}
 	
+	if(ZaItem.modifyMethodsExt["ZaServer"]) {
+		var methods = ZaItem.modifyMethodsExt["ZaServer"];
+		var cnt = methods.length;
+		for(var i = 0; i < cnt; i++) {
+			if(typeof(methods[i]) == "function") {
+				methods[i].call(this, tmpObj, soapDoc);
+			}
+		}
+	}	
+
 	var hasSomething = false;	
 	//create a ModifyServerRequest SOAP request
 	var soapDoc = AjxSoapDoc.create("ModifyServerRequest", ZaZimbraAdmin.URN, null);
