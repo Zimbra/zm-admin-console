@@ -881,11 +881,11 @@ ZaServer.modifyMethod = function (tmpObj) {
 		}
 	}
 	
-	if(ZaItem.modifyMethodsExt["ZaServer"]) {
+	if (ZaItem.modifyMethodsExt["ZaServer"]) {
 		var methods = ZaItem.modifyMethodsExt["ZaServer"];
 		var cnt = methods.length;
-		for(var i = 0; i < cnt; i++) {
-			if(typeof(methods[i]) == "function") {
+		for (var i = 0; i < cnt; i++) {
+			if (typeof(methods[i]) == "function") {
 				methods[i].call(this, tmpObj, soapDoc);
 			}
 		}
