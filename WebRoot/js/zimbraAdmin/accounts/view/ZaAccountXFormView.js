@@ -1253,10 +1253,11 @@ ZaAccountXFormView.ADVANCED_TAB_ATTRS = [ZaAccount.A_zimbraAttachmentsBlocked,
     ZaAccount.A_zimbraFreebusyExchangeUserOrg,
     ZaAccount.A_zimbraMailCanonicalAddress,
     ZaAccount.A_zimbraMailTransport,
-    ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
-    ZaAccount.A_zimbraFileUploadBlockedFileTypes,
-    ZaAccount.A_zimbraMailAttachmentMaxSize,
-    ZaAccount.A_zimbraFileUploadMaxSizePerFile,
+    // TODO: We will use below code in ZCS-11977
+    // ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
+    // ZaAccount.A_zimbraFileUploadBlockedFileTypes,
+    // ZaAccount.A_zimbraMailAttachmentMaxSize,
+    // ZaAccount.A_zimbraFileUploadMaxSizePerFile,
     ZaAccount.A_zimbraInterceptAddress,
     ZaAccount.A_zimbraInterceptSendHeadersOnly
     ];
@@ -3201,40 +3202,48 @@ textFieldCssClass:"admin_xform_number_input"}
                     items: [
                         {type:_ZA_TOP_GROUPER_, id:"account_attachment_settings",colSizes:["auto"],numCols:1,
                             label:ZaMsg.NAD_AttachmentsGrouper,
-                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                    [ZaAccount.A_zimbraAttachmentsBlocked, ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, ZaAccount.A_zimbraFileUploadBlockedFileTypes, ZaAccount.A_zimbraMailAttachmentMaxSize, ZaAccount.A_zimbraFileUploadMaxSizePerFile]]],
+                            visibilityChecks:[
+                                [ZATopGrouper_XFormItem.isGroupVisible,
+                                    [
+                                        // TODO: We will use below code in ZCS-11977
+                                        //ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, ZaAccount.A_zimbraFileUploadBlockedFileTypes, ZaAccount.A_zimbraMailAttachmentMaxSize, ZaAccount.A_zimbraFileUploadMaxSizePerFile, 
+                                        ZaAccount.A_zimbraAttachmentsBlocked 
+                                    ]
+                                ]
+                            ],
                             items :[
                                 {ref:ZaAccount.A_zimbraAttachmentsBlocked, type:_SUPER_CHECKBOX_,
                                     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                     msgName:ZaMsg.NAD_RemoveAllAttachments,
                                     checkBoxLabel:ZaMsg.NAD_RemoveAllAttachments,
                                     trueValue:"TRUE", falseValue:"FALSE"
-                                },
-                                {ref:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
-                                    type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                    msgName:ZaMsg.LBL_AttachmentRestrictionsEnabled,
-                                    checkBoxLabel:ZaMsg.LBL_AttachmentRestrictionsEnabled,
-                                    trueValue:"TRUE", falseValue:"FALSE"
-                                },
-                                {ref:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_SUPER_TEXTAREA_,
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                    txtBoxLabel:ZaMsg.LBL_AttachmentBlockedFileTypes,
-                                    msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
-                                    labelCssStyle:"vertical-align:top;", textAreaWidth:"250px",
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS
-                                },
-                                {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                    msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
-                                    txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
-                                    textFieldCssClass:"admin_xform_number_input"
-                                },
-                                {ref:ZaAccount.A_zimbraFileUploadMaxSizePerFile, type:_SUPER_TEXTFIELD_,
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                    msgName:ZaMsg.LBL_FileUploadMaxSizePerFile,
-                                    txtBoxLabel:ZaMsg.LBL_FileUploadMaxSizePerFile, labelLocation:_LEFT_,
-                                    textFieldCssClass:"admin_xform_number_input"
                                 }
+                                // TODO: We will use below code in ZCS-11977
+                                // {ref:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
+                                //     type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                //     msgName:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                                //     checkBoxLabel:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                                //     trueValue:"TRUE", falseValue:"FALSE"
+                                // },
+                                // {ref:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_SUPER_TEXTAREA_,
+                                //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                //     txtBoxLabel:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                                //     msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                                //     labelCssStyle:"vertical-align:top;", textAreaWidth:"250px",
+                                //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS
+                                // },
+                                // {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
+                                //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                //     msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                                //     txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
+                                //     textFieldCssClass:"admin_xform_number_input"
+                                // },
+                                // {ref:ZaAccount.A_zimbraFileUploadMaxSizePerFile, type:_SUPER_TEXTFIELD_,
+                                //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                //     msgName:ZaMsg.LBL_FileUploadMaxSizePerFile,
+                                //     txtBoxLabel:ZaMsg.LBL_FileUploadMaxSizePerFile, labelLocation:_LEFT_,
+                                //     textFieldCssClass:"admin_xform_number_input"
+                                // }
                             ]
                         },
 

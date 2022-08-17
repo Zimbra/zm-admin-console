@@ -113,10 +113,11 @@ ZaAccount.A_zimbraContactMaxNumEntries = "zimbraContactMaxNumEntries";
 ZaAccount.A_zimbraMailForwardingAddressMaxLength = "zimbraMailForwardingAddressMaxLength";
 ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs = "zimbraMailForwardingAddressMaxNumAddrs";
 ZaAccount.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
-ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
-ZaAccount.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
-ZaAccount.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
-ZaAccount.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
+// TODO: We will use below code in ZCS-11977
+// ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
+// ZaAccount.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
+// ZaAccount.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
+// ZaAccount.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
 ZaAccount.A_zimbraQuotaWarnPercent = "zimbraQuotaWarnPercent";
 ZaAccount.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
 ZaAccount.A_zimbraQuotaWarnMessage = "zimbraQuotaWarnMessage";
@@ -1917,10 +1918,11 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraProxyAllowedDomains, type:_COS_LIST_, ref:"attrs/"+ZaAccount.A_zimbraProxyAllowedDomains, listItem:{ type: _STRING_}},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraAttachmentsBlocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraAttachmentsBlocked, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraFileUploadBlockedFileTypes},
-        {id:ZaAccount.A_zimbraMailAttachmentMaxSize, ref:"attrs/" + ZaAccount.A_zimbraMailAttachmentMaxSize, type: _COS_NUMBER_},
-        {id:ZaAccount.A_zimbraFileUploadMaxSizePerFile, ref:"attrs/" + ZaAccount.A_zimbraFileUploadMaxSizePerFile, type: _COS_NUMBER_},
+        // TODO: We will use below code in ZCS-11977
+        // {id:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        // {id:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraFileUploadBlockedFileTypes},
+        // {id:ZaAccount.A_zimbraMailAttachmentMaxSize, ref:"attrs/" + ZaAccount.A_zimbraMailAttachmentMaxSize, type: _COS_NUMBER_},
+        // {id:ZaAccount.A_zimbraFileUploadMaxSizePerFile, ref:"attrs/" + ZaAccount.A_zimbraFileUploadMaxSizePerFile, type: _COS_NUMBER_},
 
         {id:ZaAccount.A_zimbraQuotaWarnPercent, type:_COS_NUMBER_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnPercent},
         {id:ZaAccount.A_zimbraQuotaWarnInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraQuotaWarnInterval},
