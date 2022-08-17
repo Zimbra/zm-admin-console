@@ -446,11 +446,12 @@ ZaNewCosXWizard.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraDataSourceCalendarPollingInterval,
     ZaCos.A_zimbraDataSourceRssPollingInterval,
     ZaCos.A_zimbraDataSourceCaldavPollingInterval,
-    ZaCos.A_zimbraDataSourceMinPollingInterval,
-    ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
-    ZaCos.A_zimbraFileUploadBlockedFileTypes,
-    ZaCos.A_zimbraMailAttachmentMaxSize,
-    ZaCos.A_zimbraFileUploadMaxSizePerFile
+    ZaCos.A_zimbraDataSourceMinPollingInterval
+    // TODO: We will use below code in ZCS-11977
+    // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
+    // ZaCos.A_zimbraFileUploadBlockedFileTypes,
+    // ZaCos.A_zimbraMailAttachmentMaxSize,
+    // ZaCos.A_zimbraFileUploadMaxSizePerFile
 ];
 ZaNewCosXWizard.ADVANCED_TAB_RIGHTS = [];
 
@@ -1274,32 +1275,40 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
           content: ZaMsg.NAD_ZERO_UNLIMETED
         },      
             {type:_ZAWIZ_TOP_GROUPER_, id:"cos_attachment_settings",
-                label:ZaMsg.NAD_AttachmentsGrouper,visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                                                      [ZaCos.A_zimbraAttachmentsBlocked, ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, ZaCos.A_zimbraFileUploadBlockedFileTypes, ZaCos.A_zimbraMailAttachmentMaxSize, ZaCos.A_zimbraFileUploadMaxSizePerFile]]],
+                label:ZaMsg.NAD_AttachmentsGrouper,visibilityChecks:[[
+                    ZATopGrouper_XFormItem.isGroupVisible,
+                    [
+                        // TODO: We will use below code in ZCS-11977
+                        // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, ZaCos.A_zimbraFileUploadBlockedFileTypes, ZaCos.A_zimbraMailAttachmentMaxSize, ZaCos.A_zimbraFileUploadMaxSizePerFile, 
+                        ZaCos.A_zimbraAttachmentsBlocked
+                    ]
+                ]],
                 items :[
-                    {ref:ZaCos.A_zimbraAttachmentsBlocked, type:_WIZ_CHECKBOX_,  msgName:ZaMsg.NAD_RemoveAllAttachments,label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label",  align:_LEFT_},
-                    {ref:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_CHECKBOX_,
-                        msgName:ZaMsg.LBL_AttachmentRestrictionsEnabled,
-                        label:ZaMsg.LBL_AttachmentRestrictionsEnabled,
-                        trueValue:"TRUE", falseValue:"FALSE"
-                    },
-                    {ref:ZaCos.A_zimbraFileUploadBlockedFileTypes, type:_TEXTAREA_,
-                        msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
-                        label:ZaMsg.LBL_AttachmentBlockedFileTypes,
-                        labelLocation:_LEFT_,
-                        labelCssStyle:"vertical-align:top;",
-                        width: "30em"
-                    },
-                    {ref:ZaCos.A_zimbraMailAttachmentMaxSize, type:_TEXTFIELD_,
-                        label:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
-                        labelLocation:_LEFT_,
-                        cssClass:"admin_xform_number_input"
-                    },
-                    {ref:ZaCos.A_zimbraFileUploadMaxSizePerFile, type:_TEXTFIELD_,
-                        label:ZaMsg.LBL_FileUploadMaxSizePerFile,
-                        labelLocation:_LEFT_,
-                        cssClass:"admin_xform_number_input"
-                    }
+                    {ref:ZaCos.A_zimbraAttachmentsBlocked, type:_WIZ_CHECKBOX_,  msgName:ZaMsg.NAD_RemoveAllAttachments,label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label",  align:_LEFT_}
+                    // TODO: We will use below code in ZCS-11977
+                    // {ref:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, 
+                    //     type:_CHECKBOX_,
+                    //     msgName:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                    //     label:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                    //     trueValue:"TRUE", falseValue:"FALSE"
+                    // },
+                    // {ref:ZaCos.A_zimbraFileUploadBlockedFileTypes, type:_TEXTAREA_,
+                    //     msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                    //     label:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                    //     labelLocation:_LEFT_,
+                    //     labelCssStyle:"vertical-align:top;",
+                    //     width: "30em"
+                    // },
+                    // {ref:ZaCos.A_zimbraMailAttachmentMaxSize, type:_TEXTFIELD_,
+                    //     label:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                    //     labelLocation:_LEFT_,
+                    //     cssClass:"admin_xform_number_input"
+                    // },
+                    // {ref:ZaCos.A_zimbraFileUploadMaxSizePerFile, type:_TEXTFIELD_,
+                    //     label:ZaMsg.LBL_FileUploadMaxSizePerFile,
+                    //     labelLocation:_LEFT_,
+                    //     cssClass:"admin_xform_number_input"
+                    // }
                 ]
             },
             {type:_ZAWIZ_TOP_GROUPER_, id:"cos_quota_settings",
