@@ -1386,25 +1386,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                         }
             );
         };
-        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureZulipChatEnabled],[])) {
-            featuresCase.items.push(
-                   {type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraChatFeature, id:"account_wiz_features_chat",
-                           colSizes:["auto"],numCols:1,
-                           items:[
-                               {ref:ZaAccount.A_zimbraFeatureZulipChatEnabled, type:_SUPER_WIZ_CHECKBOX_,
-                                   resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                   msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
-                                   checkBoxLabel:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
-                                   trueValue:"TRUE", falseValue:"FALSE"}
-                           ]
-                   }
-       );
-   };
 
         cases.push(featuresCase);
     }
-
-
 
     if(ZaTabView.isTAB_ENABLED(entry,ZaAccountXFormView.PREFERENCES_TAB_ATTRS, ZaAccountXFormView.PREFERENCES_TAB_RIGHTS)) {
         ZaNewAccountXWizard.PREFS_STEP = ++this.TAB_INDEX;
