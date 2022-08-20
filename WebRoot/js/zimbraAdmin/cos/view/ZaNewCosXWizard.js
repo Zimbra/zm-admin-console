@@ -346,8 +346,7 @@ ZaNewCosXWizard.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureMailSendLaterEnabled,
     //ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
     ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-    ZaCos.A_zimbraFeatureSMIMEEnabled,
-    ZaCos.A_zimbraFeatureZulipChatEnabled
+    ZaCos.A_zimbraFeatureSMIMEEnabled
 ];
 
 ZaNewCosXWizard.FEATURE_TAB_RIGHTS = [];
@@ -729,19 +728,7 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                 items:[
                     {ref:ZaCos.A_zimbraFeatureSMIMEEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,label:ZaMsg.LBL_zimbraFeatureSMIMEEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
-            },
-            {type:_ZAWIZ_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraChatFeature, id:"cos_form_features_chat",
-                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                    [
-                        ZaCos.A_zimbraFeatureZulipChatEnabled
-                    ]]
-                ],
-                items:[
-                    {ref:ZaCos.A_zimbraFeatureZulipChatEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,label:ZaMsg.LBL_zimbraFeatureZulipChatEnabled, trueValue:"TRUE", falseValue:"FALSE"}
-                ]
             }
-
-
         ];
 
         case2.items = case2Items;

@@ -1120,8 +1120,8 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
     ZaAccount.A_zimbraFeatureIdentitiesEnabled,
     ZaAccount.A_zimbraFeatureGroupCalendarEnabled,
-  ZaAccount.A_zimbraFeaturePeopleSearchEnabled,
-  ZaAccount.A_zimbraFeatureAdvancedSearchEnabled,
+    ZaAccount.A_zimbraFeaturePeopleSearchEnabled,
+    ZaAccount.A_zimbraFeatureAdvancedSearchEnabled,
     ZaAccount.A_zimbraFeatureSavedSearchesEnabled,
     ZaAccount.A_zimbraFeatureInitialSearchPreferenceEnabled,
     ZaAccount.A_zimbraFeatureImportFolderEnabled,
@@ -1130,7 +1130,6 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraDumpsterEnabled,
     ZaAccount.A_zimbraDumpsterPurgeEnabled,
     ZaAccount.A_zimbraFeatureSMIMEEnabled,
-    ZaAccount.A_zimbraFeatureZulipChatEnabled,
     ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
 ];
 
@@ -2321,18 +2320,6 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                     msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
                                     checkBoxLabel:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
-                                    trueValue:"TRUE", falseValue:"FALSE"}
-                            ]
-                    },
-                    {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraChatFeature, id:"account_form_features_chat", colSizes:["auto"],numCols:1,
-                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                            [ ZaAccount.A_zimbraFeatureZulipChatEnabled]]],
-                            items:[
-                                {ref:ZaAccount.A_zimbraFeatureZulipChatEnabled,
-                                    type:_SUPER_CHECKBOX_,
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                    msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
-                                    checkBoxLabel:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,
                                     trueValue:"TRUE", falseValue:"FALSE"}
                             ]
                     }

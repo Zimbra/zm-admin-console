@@ -243,8 +243,7 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureMailSendLaterEnabled,
     //ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
     ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-    ZaCos.A_zimbraFeatureSMIMEEnabled,
-    ZaCos.A_zimbraFeatureZulipChatEnabled
+    ZaCos.A_zimbraFeatureSMIMEEnabled
 ];
 
 ZaCosXFormView.FEATURE_TAB_RIGHTS = [];
@@ -916,19 +915,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 items:[
                     {ref:ZaCos.A_zimbraFeatureSMIMEEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,label:ZaMsg.LBL_zimbraFeatureSMIMEEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
-            },
-            {type:_ZA_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraChatFeature, id:"cos_form_features_chat",
-                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                    [
-                        ZaCos.A_zimbraFeatureZulipChatEnabled
-                    ]]
-                ],
-                items:[
-                    {ref:ZaCos.A_zimbraFeatureZulipChatEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureZulipChatEnabled,label:ZaMsg.LBL_zimbraFeatureZulipChatEnabled, trueValue:"TRUE", falseValue:"FALSE"}
-                ]
             }
-
-
         ];
 
         case2.items = case2Items;
