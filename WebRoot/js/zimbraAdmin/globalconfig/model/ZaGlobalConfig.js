@@ -27,6 +27,7 @@ ZaGlobalConfig = function() {
 	this.type = ZaItem.GLOBAL_CONFIG;
 //	this.attrsInternal = new Object();	
 	this.load();
+    this._init();
 }
 
 ZaGlobalConfig.prototype = new ZaItem;
@@ -34,6 +35,7 @@ ZaGlobalConfig.prototype.constructor = ZaGlobalConfig;
 ZaItem.loadMethods["ZaGlobalConfig"] = new Array();
 ZaItem.modifyMethods["ZaGlobalConfig"] = new Array();
 ZaItem.modifyMethodsExt["ZaGlobalConfig"] = new Array();
+ZaItem.initMethods["ZaGlobalConfig"] = new Array();
 
 ZaGlobalConfig.MTA_RESTRICTIONS = [
 	"reject_invalid_helo_hostname", "reject_non_fqdn_helo_hostname", "reject_non_fqdn_sender",
