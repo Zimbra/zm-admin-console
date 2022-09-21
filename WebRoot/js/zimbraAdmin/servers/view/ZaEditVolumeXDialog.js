@@ -78,20 +78,28 @@ ZaEditVolumeXDialog.prototype.getMyXForm = function (params) {
 						label: ZaMsg.VM_VolumeCompressBlobs,
 						trueValue: true,
 						falseValue: false,
-						enableDisableChecks: !params || params.isVolumeTypeInternal,
+						visibilityChecks: [
+							function () {
+								return !params || params.isVolumeTypeInternal;
+							},
+						],
 					},
 					{
 						type: _GROUP_,
 						numCols: 3,
 						colSpan: 2,
 						colSizes: ["200px", "150px", "125px"],
+						visibilityChecks: [
+							function () {
+								return !params || params.isVolumeTypeInternal;
+							},
+						],
 						items: [
 							{
 								ref: ZaServer.A_VolumeCompressionThreshold,
 								type: _TEXTFIELD_,
 								label: ZaMsg.LBL_VM_VolumeCompressThreshold,
 								labelLocation: _LEFT_,
-								enableDisableChecks: !params || params.isVolumeTypeInternal,
 							},
 							{
 								type: _OUTPUT_,
