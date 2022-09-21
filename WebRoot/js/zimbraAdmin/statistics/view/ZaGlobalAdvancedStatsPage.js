@@ -80,11 +80,10 @@ function (){
 };
 
 
-ZaGlobalAdvancedStatsPage.getDataTipText = function (item, index, series) {
-    var text = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsDataTip,
-             [ series.displayName, YAHOO.util.Date.format(item.timestamp, { format: ZaMsg.NAD_AdvStatsTipDateFormat }) ]) +
-             "\n" +
-             ZaGlobalAdvancedStatsPage.formatLabel(item[series.yField]);
+ZaGlobalAdvancedStatsPage.getDataTipText = function (item, index, displayName) {
+    var text = [AjxMessageFormat.format(ZaMsg.NAD_AdvStatsDataTip,
+             [ displayName, YAHOO.util.Date.format(item.xLabel, { format: ZaMsg.NAD_AdvStatsTipDateFormat }) ]),
+             ZaGlobalAdvancedStatsPage.formatLabel(item.value)];
     return text;
 }
 /* must be global for getDataTipText */
@@ -94,6 +93,13 @@ ZaGlobalAdvancedStatsPage.formatLabel = function (value) {
 ZaGlobalAdvancedStatsPage.formatTimeLabel = function (value) {
     return YAHOO.util.Date.format(value, { format: ZaMsg.NAD_AdvStatsLabelDateFormat });
 }
+
+ZaGlobalAdvancedStatsPage.dynamicColors = function() {
+    var r = Math.floor(Math.random() * 255);
+    var g = Math.floor(Math.random() * 255);
+    var b = Math.floor(Math.random() * 255);
+    return "rgb(" + r + "," + g + "," + b + ")";
+};
 
 ZaGlobalAdvancedStatsPage.getTarget = function (evt) {
     if (evt && evt.target)
@@ -115,33 +121,6 @@ ZaGlobalAdvancedStatsPage.indexOf = function (ary, item) {
     }
 }
 
-ZaGlobalAdvancedStatsPage.detectFlash = function(e) {
-    var hasFlash = false;
-    var version = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
-    
-    if (version.major == 9 && version.minor == 0 && version.rev >= 45)
-        hasFlash = true;
-    else if (version.major == 9 && version.minor > 0)
-        hasFlash = true;
-    else if (version.major > 9)
-        hasFlash = true;
-    if (!hasFlash) {
-        e.style.display = "block";
-        var msg = ZaMsg.NAD_AdvStatsFlashRequired;
-        if (version.major > 0)
-            msg = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsFlashOld, [ version.major, version.minor, version.rev ]);
-            
-        for (var i = e.childNodes.length; i > 0; i--)
-            e.removeChild(e.childNodes.item(i - 1));
-        
-        var a = document.createElement("a");
-        ZaGlobalAdvancedStatsPage.setText(a, msg);
-        a.href = "http://get.adobe.com/flashplayer";
-        
-        e.appendChild(a);
-    }
-}
-
 ZaGlobalAdvancedStatsPage.setText = function (e, text) {
     var hasInnerText = (document.getElementsByTagName("body")[0].innerText != undefined);
 
@@ -152,9 +131,12 @@ ZaGlobalAdvancedStatsPage.setText = function (e, text) {
     }
 }
 ZaGlobalAdvancedStatsPage.plotGlobalQuickChart = function (id, group, columns, column_units, start, end, options) {
-    var chartdiv = document.getElementById("loggerchart" + id);
-    ZaGlobalAdvancedStatsPage.setText(chartdiv, ZaMsg.NAD_AdvStatsLoadingDataLabel);
-    
+    var loggerChartEl = document.getElementById("loggerchart" + id);
+    var loggerCanvasEl = document.getElementById("loggercanvas" + id);
+
+    ZaGlobalAdvancedStatsPage.setText(loggerChartEl, ZaMsg.NAD_AdvStatsLoadingDataLabel);
+    loggerCanvasEl.style.display = "none";
+
     var soapRequest = AjxSoapDoc.create("GetLoggerStatsRequest", ZaZimbraAdmin.URN, null);
     soapRequest.set("startTime", { "!time": start });
     soapRequest.set("endTime", { "!time": end });
@@ -227,12 +209,16 @@ ZaGlobalAdvancedStatsPage.plotGlobalQuickChart = function (id, group, columns, c
             }
             newData.push(record);
         }
+
         if (newData.length < 1) {
-            var e = document.getElementById("loggerchart" + id);
-            ZaGlobalAdvancedStatsPage.setText(e, ZaMsg.NAD_AdvStatsNoDataLabel);
+            ZaGlobalAdvancedStatsPage.setText(loggerChartEl, ZaMsg.NAD_AdvStatsNoDataLabel);
+            loggerCanvasEl.style.display = "none";
             return;
+        } else {
+            ZaGlobalAdvancedStatsPage.setText(loggerChartEl, "");
+            loggerCanvasEl.style.display = "block";
         }
-    
+
         var colDef = [];
         for (var i = 0; i < columns.length; i++) {
             var legend = columns[i];
@@ -255,10 +241,12 @@ ZaGlobalAdvancedStatsPage.plotGlobalQuickChart = function (id, group, columns, c
 }
 
 ZaGlobalAdvancedStatsPage.plotQuickChart = function (id, hostname, group, columns, column_units, start, end, options) {
-    var chartdiv = document.getElementById("loggerchart" + id);
-    chartdiv.style.display = "block";
-    ZaGlobalAdvancedStatsPage.setText(chartdiv, ZaMsg.NAD_AdvStatsLoadingDataLabel);
-    
+    var loggerChartEl = document.getElementById("loggerchart" + id);
+    var loggerCanvasEl = document.getElementById("loggercanvas" + id);
+    loggerChartEl.style.display = "block";
+    ZaGlobalAdvancedStatsPage.setText(loggerChartEl, ZaMsg.NAD_AdvStatsLoadingDataLabel);
+    loggerCanvasEl.style.display = "none";
+
     var soapRequest = AjxSoapDoc.create("GetLoggerStatsRequest", ZaZimbraAdmin.URN, null);
     soapRequest.set("hostname", { "!hn": hostname });
     soapRequest.set("startTime", { "!time": start });
@@ -323,11 +311,16 @@ ZaGlobalAdvancedStatsPage.plotQuickChart = function (id, hostname, group, column
             }
             newData.push(record);
         }
+
         if (newData.length < 1) {
-            var e = document.getElementById("loggerchart" + id);
-            ZaGlobalAdvancedStatsPage.setText(e, ZaMsg.NAD_AdvStatsNoDataLabel);
+            ZaGlobalAdvancedStatsPage.setText(loggerChartEl, ZaMsg.NAD_AdvStatsNoDataLabel);
+            loggerCanvasEl.style.display = "none";
             return;
+        } else {
+            ZaGlobalAdvancedStatsPage.setText(loggerChartEl, "");
+            loggerCanvasEl.style.display = "block";
         }
+
         var colDef = [];
         for (var i = 0; i < columns.length; i++) {
             var legend = columns[i];
@@ -353,7 +346,6 @@ ZaGlobalAdvancedStatsPage.plotQuickChart = function (id, hostname, group, column
 
 
 ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
-    var yAxis = new YAHOO.widget.NumericAxis();
     var max = 0;
     for (var i = 0; i < colDef.length; i++) {
         colDef[i].style = { size: 4, lineSize: 1 };
@@ -363,18 +355,17 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
             max = Math.max(max, newData[i][colDef[j].yField]);
         }
     }
-    // doesn't work right in 2.7.0
-    //yAxis.scale = "logarithmic";
-    yAxis.maximum = max + 10;
-    yAxis.minimum = 0;
-    yAxis.labelFunction = ZaGlobalAdvancedStatsPage.formatLabel;
-    var timeAxis = new YAHOO.widget.TimeAxis();
+
+    var timeAxis = {};
     
     if (newData.length > 1) {
         var dx = newData[1].timestamp.getTime() - newData[0].timestamp.getTime();
         dx = dx / 1000 / 60;
         timeAxis.title = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsIntervalFormatMinutes, [ dx ]);
+    } else {
+        timeAxis.title = AjxMessageFormat.format(ZaMsg.NAD_AdvStatsIntervalFormatMinutes, [ 0 ]);
     }
+
     timeAxis.labelFunction = function (value) {
         var ts0 = newData[0].timestamp.getTime();
         var ts1 = newData[newData.length - 1].timestamp.getTime();
@@ -383,9 +374,7 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
         var formatter;
         if (delta > 2 * 24 * 60 * 60) { //2 days
             formatter = AjxDateFormat.getDateInstance(AjxDateFormat.SHORT);
-
         } else {
-
             formatter = AjxDateFormat.getTimeInstance(AjxDateFormat.SHORT); 
         }
         return formatter.format(value);
@@ -393,24 +382,111 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
     
     timeAxis.maximum = newData[newData.length - 1].timestamp;
     timeAxis.minimum = newData[0].timestamp;
-    var seriesDef = colDef;
-    var data_source = new YAHOO.util.DataSource(newData);
-    ZaGlobalAdvancedStatsPage.CHART_DATA_SOURCE = data_source;
-    data_source.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-    data_source.responseSchema = { fields: fields };
-    var div = document.getElementById("loggerchart" + id);
-    div.style.height = "200px";
-    new YAHOO.widget.LineChart("loggerchart" + id, data_source,
-            { xField: "timestamp",
-              wmode: "transparent",
-              series: seriesDef,
-              yAxis: yAxis,
-              xAxis: timeAxis,
-              dataTipFunction: ZaGlobalAdvancedStatsPage.getDataTipText,
-              style: { legend: { display: "bottom" } }
+
+    var loggerCanvasEl = document.getElementById("loggercanvas" + id);
+    loggerCanvasEl.parentNode.style.height = "200px";
+
+    var new_labels = [], new_datasets = [];
+    if (this.lineColors === undefined) {
+        this.lineColors = { };
+    }
+
+    if (colDef.length > 1) {
+        colDef.forEach(function(cd){
+            if (!this.lineColors[cd.displayName]) {
+                this.lineColors[cd.displayName] = ZaGlobalAdvancedStatsPage.dynamicColors();
             }
-    );
-    
+        }, this);
+    } else {
+        this.lineColors[colDef[0].displayName] = "rgb(54, 162, 235)";
+    };
+
+    for(var data_set = 0; data_set < colDef.length; data_set++) {
+        new_datasets[data_set] = {
+            label: colDef[data_set].displayName,
+            backgroundColor: this.lineColors[colDef[data_set].displayName],
+            borderColor: this.lineColors[colDef[data_set].displayName],
+            data: [],
+            fill: false,
+        }
+        new_labels[data_set] = [];
+        newData.forEach(function(nd){
+            new_labels[data_set].push(nd.timestamp);
+            new_datasets[data_set].data.push(nd[colDef[data_set].yField]);
+        });
+    }
+    ZaGlobalAdvancedStatsPage.CHART_DATA_SOURCE = new_datasets;
+
+    var config = {
+        type: 'line',
+        data: {
+            labels: new_labels[0],
+            datasets: new_datasets
+        },
+        options: {
+            animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            tooltips: {
+                mode: 'point',
+                custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = false;
+                },
+                callbacks: {
+                    title: function() {
+                        return null;
+                    },
+                    label: function (tooltipItems, data) {
+                        return ZaGlobalAdvancedStatsPage.getDataTipText(tooltipItems, undefined, data.datasets[tooltipItems.datasetIndex].label);
+                    }
+                }
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: timeAxis.title
+                    },
+                    ticks : {
+                        autoSkip: true,
+                        display: true,
+                        autoSkipPadding: 15,
+                        maxRotation: 0,
+                        callback: function(value) {
+                            return timeAxis.labelFunction(value);
+                        }
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: max + 10,
+                        maxTicksLimit: colDef[0].style.size,
+                        callback: function(value, index, values) {
+                            return value.toLocaleString();
+                        }
+                    }
+                }]
+            }
+        }
+    };
+    var ctx = document.getElementById("loggercanvas" + id).getContext('2d');
+    if (window["loggercanvas" + id] && window["loggercanvas"+id].destroy !== undefined) {
+        window["loggercanvas" + id].destroy();
+    }
+    window["loggercanvas" + id] = new Chart(ctx, config);
 }
 
 ZaGlobalAdvancedStatsPage.prototype.setObject =
@@ -776,7 +852,8 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	a.className = "LinkButton";
 	a.onclick = function () {
 		ZaGlobalAdvancedStatsPage.removeChild("loggerform" + id);
-		ZaGlobalAdvancedStatsPage.removeChild("loggerchart" + id);
+        ZaGlobalAdvancedStatsPage.removeChild("loggerchart" + id);
+        ZaGlobalAdvancedStatsPage.removeChild("loggercanvas" + id);
 		return false; //disable the default action from broswer, such as jumping to other page
 	}
 	ZaGlobalAdvancedStatsPage.setText(a, ZaMsg.NAD_AdvStatsRemoveChartLabel);
@@ -787,7 +864,15 @@ ZaGlobalAdvancedStatsPage.insertChartHTML = function(element) {
 	div.id = "loggerchart" + id;
 	element.appendChild(form);
 	element.appendChild(div);
+    
+    var canvasDiv = document.createElement("div");
+    canvasDiv.style.height = "200px";
 	
+    var canvas = document.createElement("canvas");
+    canvas.id = "loggercanvas" + id;
+    canvasDiv.appendChild(canvas);
+    element.appendChild(canvasDiv);
+
     var serversSelect = document.getElementById("select-servers" + id);
     var soapRequest = AjxSoapDoc.create("GetLoggerStatsRequest", ZaZimbraAdmin.URN, null);
     var cb = function(response) {

@@ -53,7 +53,7 @@ function (uname,oldPass,newPass,callback) {
 }
 
 ZaAuthenticate.prototype.execute =
-function (uname, pword, callback) {
+function (uname, pword, callback, twoFactorCode, trustedDevice) {
     var soapDoc = AjxSoapDoc.create("AuthRequest", ZaZimbraAdmin.URN, null);
     this.uname = uname;
     var params = new Object();
@@ -64,6 +64,12 @@ function (uname, pword, callback) {
         soapDoc.set("password", pword);
     } else {
         soapDoc.getMethod().setAttribute("refresh", "1");
+    }
+    if(twoFactorCode) {
+        soapDoc.set("twoFactorCode", twoFactorCode);
+    }
+    if(trustedDevice) {
+        soapDoc.set("trustedDevice", trustedDevice);
     }
     soapDoc.set("virtualHost", location.hostname);
     soapDoc.set("csrfTokenSecured", 1);

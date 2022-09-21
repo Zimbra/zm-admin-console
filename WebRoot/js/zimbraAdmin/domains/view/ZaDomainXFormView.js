@@ -1434,7 +1434,31 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                            onChange:ZaDomainXFormView.onFormFieldChanged
                         }
                     ]
-                }
+                },
+                {type:_ZA_TOP_GROUPER_, id:"domain_admin_sieve",
+                    label:ZaMsg.NAD_AdminSieveGrouper,
+                    items: [
+                        { type: _DWT_ALERT_,
+                          containerCssStyle: "padding-bottom:0;",
+                          style: DwtAlert.INFO,
+                          iconVisible: false,
+                          content: ZaMsg.Alert_Sieve
+                        },
+                        {ref:ZaDomain.A_zimbraSieveRejectMailEnabled, type:_CHECKBOX_,
+                            label:ZaMsg.LBL_zimbraSieveRejectMailEnabled,
+                            trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaDomain.A_zimbraSieveEditHeaderEnabled, type:_CHECKBOX_,
+                            label:ZaMsg.LBL_zimbraSieveEditHeaderEnabled,
+                            trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaDomain.A_zimbraAdminSieveScriptBefore, type:_TEXTAREA_,
+                            label:ZaMsg.LBL_zimbraAdminSieveScriptBefore, labelLocation:_LEFT_,
+                            labelCssStyle:"vertical-align:top;",width: "30em"},
+                        {ref:ZaDomain.A_zimbraAdminSieveScriptAfter, type:_TEXTAREA_,
+                            label:ZaMsg.LBL_zimbraAdminSieveScriptAfter, labelLocation:_LEFT_,
+                            labelCssStyle:"vertical-align:top;",width: "30em"}
+                    ]
+                },
+                {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
 			]
 		};
 		switchGroup.items.push(case5);

@@ -66,6 +66,7 @@ ZaAccount.A_displayname = "displayName";
 ZaAccount.A_country = "co"; //country
 ZaAccount.A_company = "company";
 ZaAccount.A_title = "title";
+ZaAccount.A_manager = "manager";
 ZaAccount.A_facsimileTelephoneNumber = "facsimileTelephoneNumber";
 ZaAccount.A_initials = "initials"; //middle initial
 ZaAccount.A_city = "l";
@@ -103,6 +104,7 @@ ZaAccount.A_zimbraPasswordMinDigitsOrPuncs = "zimbraPasswordMinDigitsOrPuncs";
 ZaAccount.A_zimbraMinPwdAge="zimbraPasswordMinAge";
 ZaAccount.A_zimbraMaxPwdAge="zimbraPasswordMaxAge";
 ZaAccount.A_zimbraEnforcePwdHistory="zimbraPasswordEnforceHistory";
+ZaAccount.A_zimbraPasswordBlockCommonEnabled="zimbraPasswordBlockCommonEnabled";
 ZaAccount.A_zimbraMailAlias="zimbraMailAlias";
 ZaAccount.A_zimbraMailForwardingAddress="zimbraMailForwardingAddress";
 ZaAccount.A_zimbraPasswordMustChange="zimbraPasswordMustChange";
@@ -111,11 +113,18 @@ ZaAccount.A_zimbraContactMaxNumEntries = "zimbraContactMaxNumEntries";
 ZaAccount.A_zimbraMailForwardingAddressMaxLength = "zimbraMailForwardingAddressMaxLength";
 ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs = "zimbraMailForwardingAddressMaxNumAddrs";
 ZaAccount.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
+// TODO: We will use below code in ZCS-11977
+// ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
+// ZaAccount.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
+// ZaAccount.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
+// ZaAccount.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
 ZaAccount.A_zimbraQuotaWarnPercent = "zimbraQuotaWarnPercent";
 ZaAccount.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
 ZaAccount.A_zimbraQuotaWarnMessage = "zimbraQuotaWarnMessage";
 ZaAccount.A_zimbraIsSystemResource = "zimbraIsSystemResource";
 ZaAccount.A_zimbraExcludeFromCMBSearch = "zimbraExcludeFromCMBSearch";
+ZaAccount.A_zimbraInterceptAddress = "zimbraInterceptAddress";
+ZaAccount.A_zimbraInterceptSendHeadersOnly = "zimbraInterceptSendHeadersOnly";
 
 ZaAccount.A_zimbraAdminAuthTokenLifetime  = "zimbraAdminAuthTokenLifetime";
 ZaAccount.A_zimbraAuthTokenValidityValue = "zimbraAuthTokenValidityValue";
@@ -212,12 +221,15 @@ ZaAccount.A_zimbraPrefReadReceiptsToAddress = "zimbraPrefReadReceiptsToAddress";
 ZaAccount.A_zimbraPrefAdminConsoleWarnOnExit = "zimbraPrefAdminConsoleWarnOnExit" ;
 ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled = "zimbraPrefMandatorySpellCheckEnabled";
 ZaAccount.A_zimbraPrefMessageIdDedupingEnabled = "zimbraPrefMessageIdDedupingEnabled";
-ZaAccount.A_zimbraPrefItemsPerVirtualPage="zimbraPrefItemsPerVirtualPage",
+ZaAccount.A_zimbraPrefItemsPerVirtualPage="zimbraPrefItemsPerVirtualPage";
+ZaAccount.A_zimbraPrefImapEnabled = "zimbraPrefImapEnabled";
+ZaAccount.A_zimbraPrefPop3Enabled = "zimbraPrefPop3Enabled";
 
 //features
 ZaAccount.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
 ZaAccount.A_zimbraFeatureImportFolderEnabled = "zimbraFeatureImportFolderEnabled";
 ZaAccount.A_zimbraFeatureExportFolderEnabled = "zimbraFeatureExportFolderEnabled";
+ZaAccount.A_zimbraFeatureDocumentEditingEnabled = "zimbraFeatureDocumentEditingEnabled";
 ZaAccount.A_zimbraDumpsterEnabled = "zimbraDumpsterEnabled";
 ZaAccount.A_zimbraMailDumpsterLifetime = "zimbraMailDumpsterLifetime";
 ZaAccount.A_zimbraDumpsterUserVisibleAge = "zimbraDumpsterUserVisibleAge";
@@ -256,6 +268,7 @@ ZaAccount.A_zimbraFeatureHtmlComposeEnabled = "zimbraFeatureHtmlComposeEnabled";
 ZaAccount.A_zimbraFeatureGalAutoCompleteEnabled = "zimbraFeatureGalAutoCompleteEnabled";
 ZaAccount.A_zimbraImapEnabled = "zimbraImapEnabled";
 ZaAccount.A_zimbraPop3Enabled = "zimbraPop3Enabled";
+ZaAccount.A_zimbraFeatureWebClientEnabled = "zimbraFeatureWebClientEnabled";
 ZaAccount.A_zimbraFeatureSkinChangeEnabled = "zimbraFeatureSkinChangeEnabled";
 ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled = "zimbraFeatureOutOfOfficeReplyEnabled";
 ZaAccount.A_zimbraFeatureNewMailNotificationEnabled = "zimbraFeatureNewMailNotificationEnabled";
@@ -1851,6 +1864,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_country, type:_STRING_, ref:"attrs/"+ZaAccount.A_country},
         {id:ZaAccount.A_company, type:_STRING_, ref:"attrs/"+ZaAccount.A_company},
         {id:ZaAccount.A_title, type:_STRING_, ref:"attrs/"+ZaAccount.A_title},
+        {id:ZaAccount.A_manager, type:_STRING_, ref:"attrs/"+ZaAccount.A_manager},
         {id:ZaAccount.A_facsimileTelephoneNumber, type:_STRING_, ref:"attrs/"+ZaAccount.A_facsimileTelephoneNumber},
         {id:ZaAccount.A_initials, type:_STRING_, ref:"attrs/"+ZaAccount.A_initials},
         {id:ZaAccount.A_city, type:_STRING_, ref:"attrs/"+ZaAccount.A_city},
@@ -1890,6 +1904,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefCalendarForwardInvitesTo, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraPrefCalendarForwardInvitesTo, listItem:{type:_EMAIL_ADDRESS_}},
         {id:ZaAccount.A_zimbraPasswordMustChange, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPasswordMustChange},
         {id:ZaAccount.A_zimbraPasswordLocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordLocked, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraPasswordBlockCommonEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordBlockCommonEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraContactMaxNumEntries, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraContactMaxNumEntries, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxLength, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraDataSourcePop3PollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDataSourcePop3PollingInterval},
@@ -1902,10 +1917,19 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraProxyAllowedDomains, type:_COS_LIST_, ref:"attrs/"+ZaAccount.A_zimbraProxyAllowedDomains, listItem:{ type: _STRING_}},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraAttachmentsBlocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraAttachmentsBlocked, choices:ZaModel.BOOLEAN_CHOICES},
+        // TODO: We will use below code in ZCS-11977
+        // {id:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        // {id:ZaAccount.A_zimbraFileUploadBlockedFileTypes, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraFileUploadBlockedFileTypes},
+        // {id:ZaAccount.A_zimbraMailAttachmentMaxSize, ref:"attrs/" + ZaAccount.A_zimbraMailAttachmentMaxSize, type: _COS_NUMBER_},
+        // {id:ZaAccount.A_zimbraFileUploadMaxSizePerFile, ref:"attrs/" + ZaAccount.A_zimbraFileUploadMaxSizePerFile, type: _COS_NUMBER_},
 
         {id:ZaAccount.A_zimbraQuotaWarnPercent, type:_COS_NUMBER_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnPercent},
         {id:ZaAccount.A_zimbraQuotaWarnInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraQuotaWarnInterval},
         {id:ZaAccount.A_zimbraQuotaWarnMessage, type:_COS_STRING_, ref:"attrs/" + ZaAccount.A_zimbraQuotaWarnMessage},
+
+        {id:ZaAccount.A_zimbraInterceptAddress, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraInterceptAddress, listItem:{type:_EMAIL_ADDRESS_}},
+        {id:ZaAccount.A_zimbraInterceptSendHeadersOnly, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraInterceptSendHeadersOnly, choices:ZaModel.BOOLEAN_CHOICES},
+
 
         {id:ZaAccount.A_zimbraAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAuthTokenLifetime},
         {id:ZaAccount.A_zimbraAdminAuthTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraAdminAuthTokenLifetime},
@@ -2034,10 +2058,13 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefReadReceiptsToAddress, type:_EMAIL_ADDRESS_, ref:"attrs/"+ZaAccount.A_zimbraPrefReadReceiptsToAddress},
         {id:ZaAccount.A_zimbraPrefCalendarAutoAddInvites, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefCalendarAutoAddInvites, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraPrefCalendarApptVisibility, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefCalendarApptVisibility, choices:ZaSettings.apptVisibilityChoices},
+        {id:ZaAccount.A_zimbraPrefImapEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefImapEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraPrefPop3Enabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefPop3Enabled, choices:ZaModel.BOOLEAN_CHOICES},
         //features
         {id:ZaAccount.A_zimbraFeatureManageZimlets, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureManageZimlets, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureImportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureImportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureExportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureExportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureDocumentEditingEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureDocumentEditingEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraDumpsterEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraDumpsterEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraDumpsterUserVisibleAge, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDumpsterUserVisibleAge },
         {id:ZaAccount.A_zimbraDumpsterPurgeEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraDumpsterPurgeEnabled, choices:ZaModel.BOOLEAN_CHOICES},
@@ -2081,6 +2108,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraFeatureFlaggingEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureFlaggingEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraImapEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraImapEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraPop3Enabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPop3Enabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureWebClientEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureWebClientEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {
             id: ZaAccount.A_zimbraFeatureDistributionListFolderEnabled,
             choices: ZaModel.BOOLEAN_CHOICES,

@@ -39,6 +39,7 @@ ZaServer.prototype = new ZaItem;
 ZaServer.prototype.constructor = ZaServer;
 ZaItem.loadMethods["ZaServer"] = new Array();
 ZaItem.initMethods["ZaServer"] = new Array();
+ZaItem.modifyMethodsExt["ZaServer"] = new Array();
 ZaItem.modifyMethods["ZaServer"] = new Array();
 ZaItem.modelExtensions["ZaServer"] = new Array();
 //attribute name constants, this values are taken from zimbra.schema
@@ -154,6 +155,7 @@ ZaServer.A_VolumeType = "type";
 ZaServer.A_CurrentIndexVolumeId = "current_index_volume_id";
 ZaServer.A_CurrentMsgVolumeId = "current_msg_volume_id";
 ZaServer.A_isCurrent = "isCurrent";
+ZaServer.LBL_VolumeRootPath = ZaMsg.VM_VolumeRootPath;
 
 //VAMI Appliance Update
 ZaServer.A_zimbraApplianceVendor = "zimbraApplianceVendor";
@@ -831,7 +833,7 @@ ZaServer.modifyMethod = function (tmpObj) {
 			for(var i = 0; i < cnt; i++) {
 				//consider only new rows (no VolumeID)
 				//ignore empty rows, Bug 4425
-				if(!(tmpVolumeMap[i][ZaServer.A_VolumeId]>0) && tmpVolumeMap[i][ZaServer.A_VolumeName] && tmpVolumeMap[i][ZaServer.A_VolumeRootPath]) {
+				if(!(tmpVolumeMap[i][ZaServer.A_VolumeId]>0) && tmpVolumeMap[i][ZaServer.A_VolumeName] && (tmpVolumeMap[i][ZaServer.A_VolumeRootPath] || tmpVolumeMap[i][ZaServer.A_VolumePrefix])) {
 					var newId = this.createVolume(tmpVolumeMap[i]);	
 					if(newId>0) {
 						//find if we assigned this volume to current volumes
@@ -878,8 +880,18 @@ ZaServer.modifyMethod = function (tmpObj) {
 			}
 			
 		}
-	}	
+	}
 	
+	if (ZaItem.modifyMethodsExt["ZaServer"]) {
+		var methods = ZaItem.modifyMethodsExt["ZaServer"];
+		var cnt = methods.length;
+		for (var i = 0; i < cnt; i++) {
+			if (typeof(methods[i]) == "function") {
+				methods[i].call(this, tmpObj, soapDoc);
+			}
+		}
+	}	
+
 	var hasSomething = false;	
 	//create a ModifyServerRequest SOAP request
 	var soapDoc = AjxSoapDoc.create("ModifyServerRequest", ZaZimbraAdmin.URN, null);
@@ -902,7 +914,7 @@ ZaServer.modifyMethod = function (tmpObj) {
 					this.attrs[a] = [];
 				}
 
-				if (! this.attrs[a] instanceof Array) {
+				if (!(this.attrs[a] instanceof Array)) {
 					this.attrs[a] = [this.attrs[a]];
 				}
 
@@ -1235,16 +1247,19 @@ function (volume) {
 
 ZaServer.prototype.modifyVolume =
 function (volume) {
-	if(!volume)
+	if (!volume) {
 		return false;
+	}
 	var soapDoc = AjxSoapDoc.create("ModifyVolumeRequest", ZaZimbraAdmin.URN, null);		
 	soapDoc.getMethod().setAttribute(ZaServer.A_VolumeId, volume[ZaServer.A_VolumeId]);	
 	var elVolume = soapDoc.set("volume", null);
-	elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
 	elVolume.setAttribute("name", volume[ZaServer.A_VolumeName]);	
-	elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);		
-	elVolume.setAttribute("compressBlobs", volume[ZaServer.A_VolumeCompressBlobs]);		
-	elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);			
+	if (!volume[ZaServer.A_VolumeStoreType] || volume[ZaServer.A_VolumeStoreType] === ZaServer.A_VolumeStoreTypeInternal) {
+		elVolume.setAttribute("type", volume[ZaServer.A_VolumeType]);
+		elVolume.setAttribute("rootpath", volume[ZaServer.A_VolumeRootPath]);
+		elVolume.setAttribute("compressBlobs", volume[ZaServer.A_VolumeCompressBlobs]);
+		elVolume.setAttribute("compressionThreshold", volume[ZaServer.A_VolumeCompressionThreshold]);
+	}			
 	var params = {
 		soapDoc: soapDoc,
 		targetServer: this.id,

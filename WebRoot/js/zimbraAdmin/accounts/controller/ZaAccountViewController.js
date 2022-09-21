@@ -181,7 +181,7 @@ function(entry) {
                     ZaApp.getInstance().popView();
                 }
 				return ;
-				
+
 			}
 		}
 
@@ -377,10 +377,30 @@ function () {
 					mods[a] = tmpObj.attrs[a];
 				}
 			} else {
-				mods[a] = tmpObj.attrs[a];
+				if(a === ZaAccount.A_manager) {
+					mods[a] = this._getLDAPAttr(tmpObj.attrs[a]);				
+				} else {
+					mods[a] = tmpObj.attrs[a];
+				}
 			}				
 		}
 	}
+
+	// TODO: We will use below code in ZCS-11977
+	//check if blocked extensions are changed
+	// if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFileUploadBlockedFileTypes,tmpObj)) {
+	// 	if(!AjxUtil.isEmpty(tmpObj.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes])) {
+	// 		if((
+	// 				((!this._currentObject.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes] || !this._currentObject.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes].length))
+	// 				|| (tmpObj.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes] != this._currentObject.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes]))
+	// 				&& !(tmpObj.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes] instanceof Array)
+	// 			) {
+	// 			mods[ZaAccount.A_zimbraFileUploadBlockedFileTypes] = tmpObj.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes].split(',');
+	// 		}
+	// 	} else if (AjxUtil.isEmpty(tmpObj.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes])  && !AjxUtil.isEmpty(this._currentObject.attrs[ZaAccount.A_zimbraFileUploadBlockedFileTypes])) {
+	// 		mods[ZaAccount.A_zimbraFileUploadBlockedFileTypes] = "";
+	// 	}
+	// }
 
 	if(ZaTabView.isTAB_ENABLED(this._currentObject,ZaAccountXFormView.SKIN_TAB_ATTRS, ZaAccountXFormView.SKIN_TAB_RIGHTS)) {
 		if(tmpObj.attrs[ZaAccount.A_zimbraAvailableSkin] != null) {
@@ -689,4 +709,17 @@ function(elementValue) {
 		this._errorDialog.popup();
 	}
 	return false;	
+}
+
+ZaAccountViewController.prototype._getLDAPAttr = 
+function(email) {
+	if (email) {
+		let attrString = 'uid=';
+		let emailStringArray = email.split('@');
+		attrString = attrString + emailStringArray[0] + ',ou=people';
+		emailStringArray = emailStringArray.length > 1 && emailStringArray[1].split('.');
+		const reducer = function(accumulator, currentValue) { return accumulator + ',dc=' + currentValue };
+		attrString = emailStringArray.reduce(reducer, attrString);
+		return attrString;
+	}
 }

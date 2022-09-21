@@ -190,6 +190,10 @@ ZaCosXFormView.isBriefcaseFeatureEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraFeatureBriefcasesEnabled) == "TRUE");
 }
 
+ZaCosXFormView.isAttributeDefined = function(attribute) {
+    return this.getInstanceValue(attribute) != undefined;
+}
+
 ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureReadReceiptsEnabled,
     ZaCos.A_zimbraFeatureContactsEnabled,
@@ -218,6 +222,7 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureFlaggingEnabled,
     ZaCos.A_zimbraImapEnabled,
     ZaCos.A_zimbraPop3Enabled,
+    ZaCos.A_zimbraFeatureWebClientEnabled,
     ZaCos.A_zimbraFeatureImapDataSourceEnabled,
     ZaCos.A_zimbraFeaturePop3DataSourceEnabled,
     ZaCos.A_zimbraFeatureConversationsEnabled,
@@ -232,6 +237,7 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureInitialSearchPreferenceEnabled,
     ZaCos.A_zimbraFeatureImportFolderEnabled,
     ZaCos.A_zimbraFeatureExportFolderEnabled,
+    ZaCos.A_zimbraFeatureDocumentEditingEnabled,
     ZaCos.A_zimbraDumpsterEnabled,
     ZaCos.A_zimbraDumpsterPurgeEnabled,
     ZaCos.A_zimbraFeatureMailSendLaterEnabled,
@@ -286,7 +292,10 @@ ZaCosXFormView.PREFERENCES_TAB_ATTRS = [
     ZaCos.A_zimbraPrefCalendarToasterEnabled,
     ZaCos.A_zimbraPrefCalendarShowPastDueReminders,
     ZaCos.A_zimbraPrefAppleIcalDelegationEnabled,
-    ZaCos.A_zimbraPrefMandatorySpellCheckEnabled
+    ZaCos.A_zimbraPrefMandatorySpellCheckEnabled,
+    ZaCos.A_zimbraPrefImapEnabled,
+    ZaCos.A_zimbraPrefPop3Enabled
+
 ];
 ZaCosXFormView.PREFERENCES_TAB_RIGHTS = [];
 
@@ -306,6 +315,7 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
 	ZaCos.A_zimbraQuotaWarnInterval,
 	ZaCos.A_zimbraQuotaWarnMessage,
 	ZaCos.A_zimbraPasswordLocked,
+	ZaCos.A_zimbraPasswordBlockCommonEnabled,
 	ZaCos.A_zimbraMinPwdLength,
 	ZaCos.A_zimbraMaxPwdLength,
 	ZaCos.A_zimbraPasswordMinUpperCaseChars,
@@ -333,13 +343,22 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraMailDumpsterLifetime,
     ZaCos.A_zimbraDumpsterUserVisibleAge,
     ZaCos.A_zimbraFreebusyExchangeUserOrg,
-        ZaCos.A_zimbraDataSourcePop3PollingInterval,
-        ZaCos.A_zimbraDataSourceImapPollingInterval,
-        ZaCos.A_zimbraDataSourceCalendarPollingInterval,
-        ZaCos.A_zimbraDataSourceRssPollingInterval,
-        ZaCos.A_zimbraDataSourceCaldavPollingInterval,
-    ZaCos.A_zimbraDataSourceMinPollingInterval
+    ZaCos.A_zimbraSieveRejectMailEnabled,
+    ZaCos.A_zimbraSieveEditHeaderEnabled,
+    ZaCos.A_zimbraAdminSieveScriptBefore,
+    ZaCos.A_zimbraAdminSieveScriptAfter,
 
+    ZaCos.A_zimbraDataSourcePop3PollingInterval,
+    ZaCos.A_zimbraDataSourceImapPollingInterval,
+    ZaCos.A_zimbraDataSourceCalendarPollingInterval,
+    ZaCos.A_zimbraDataSourceRssPollingInterval,
+    ZaCos.A_zimbraDataSourceCaldavPollingInterval,
+    ZaCos.A_zimbraDataSourceMinPollingInterval
+    // TODO: We will use below code in ZCS-11977
+    // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
+    // ZaCos.A_zimbraFileUploadBlockedFileTypes,
+    // ZaCos.A_zimbraMailAttachmentMaxSize,
+    // ZaCos.A_zimbraFileUploadMaxSizePerFile
 ];
 ZaCosXFormView.ADVANCED_TAB_RIGHTS = [];
 
@@ -752,7 +771,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         ZaCos.A_zimbraFeatureImportFolderEnabled,
                         ZaCos.A_zimbraFeatureExportFolderEnabled,
                         ZaCos.A_zimbraDumpsterEnabled,
-                        ZaCos.A_zimbraDumpsterPurgeEnabled
+                        ZaCos.A_zimbraDumpsterPurgeEnabled,
+                        ZaCos.A_zimbraFeatureDocumentEditingEnabled
                     ]]
                 ],
                 items:[
@@ -780,7 +800,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraDumpsterEnabled, type:_CHECKBOX_, msgName:ZaMsg.MSG_zimbraDumpsterEnabled,label:ZaMsg.LBL_zimbraDumpsterEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                     {ref:ZaCos.A_zimbraDumpsterPurgeEnabled, type:_CHECKBOX_, msgName:ZaMsg.MSG_zimbraDumpsterPurgeEnabled,label:ZaMsg.LBL_zimbraDumpsterPurgeEnabled, trueValue:"TRUE", falseValue:"FALSE",
                         visibilityChecks:[[ZaItem.hasReadPermission], [XForm.checkInstanceValue, ZaCos.A_zimbraDumpsterEnabled, "TRUE"]], visibilityChangeEventSources:[ZaCos.A_zimbraDumpsterEnabled]
-                    }
+                    },
+                    {ref:ZaCos.A_zimbraFeatureDocumentEditingEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled,label:ZaMsg.LBL_zimbraFeatureDocumentEditingEnabled, trueValue:"TRUE", falseValue:"FALSE"},
 
                 ]
             },
@@ -793,6 +814,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         ZaCos.A_zimbraFeatureFlaggingEnabled,
                         ZaCos.A_zimbraImapEnabled,
                         ZaCos.A_zimbraPop3Enabled,
+                        ZaCos.A_zimbraFeatureWebClientEnabled,
                         ZaCos.A_zimbraFeatureImapDataSourceEnabled,
                         ZaCos.A_zimbraFeaturePop3DataSourceEnabled,
                         ZaCos.A_zimbraFeatureMailForwardingEnabled,
@@ -810,6 +832,11 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureFlaggingEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureFlaggingEnabled,label:ZaMsg.LBL_zimbraFeatureFlaggingEnabled,  trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraImapEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraImapEnabled,label:ZaMsg.LBL_zimbraImapEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraPop3Enabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraPop3Enabled,label:ZaMsg.LBL_zimbraPop3Enabled,trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaCos.A_zimbraFeatureWebClientEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureWebClientEnabled,label:ZaMsg.LBL_zimbraFeatureWebClientEnabled,trueValue:"TRUE", falseValue:"FALSE",
+                            visibilityChecks : [ function() {
+                                return ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraFeatureWebClientEnabled);
+                            }]
+                        },
                         {ref:ZaCos.A_zimbraFeatureImapDataSourceEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraExternalImapEnabled,label:ZaMsg.LBL_zimbraExternalImapEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeaturePop3DataSourceEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraExternalPop3Enabled,label:ZaMsg.LBL_zimbraExternalPop3Enabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureMailForwardingEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureMailForwardingEnabled,label:ZaMsg.LBL_zimbraFeatureMailForwardingEnabled, trueValue:"TRUE", falseValue:"FALSE"},
@@ -890,8 +917,6 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraFeatureSMIMEEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,label:ZaMsg.LBL_zimbraFeatureSMIMEEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
             }
-
-
         ];
 
         case2.items = case2Items;
@@ -1150,6 +1175,27 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     label:ZaMsg.LBL_zimbraPrefAutoSaveDraftInterval, labelLocation:_LEFT_,
                     onChange:ZaCosXFormView.validatePollingInterval,
                     labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
+                }
+            ]},
+            {type:_ZA_TOP_GROUPER_, id:"cos_prefs_pop_imap", colSizes:["275px","auto"],numCols:2,
+                label: ZaMsg.NAD_PopImapOptions,
+                visibilityChecks:[function() {
+                    return (ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefImapEnabled) || ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefPop3Enabled));
+                }],
+                items :[
+                {ref:ZaCos.A_zimbraPrefImapEnabled, type:_CHECKBOX_,
+                    msgName:ZaMsg.LBL_zimbraPrefImapEnabled,
+                    label:ZaMsg.LBL_zimbraPrefImapEnabled, trueValue:"TRUE", falseValue:"FALSE",
+                    visibilityChecks:[ function() {
+                        return ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefImapEnabled);
+                    }]
+                },
+                {ref:ZaCos.A_zimbraPrefPop3Enabled, type:_CHECKBOX_,
+                    msgName:ZaMsg.LBL_zimbraPrefPop3Enabled,
+                    label:ZaMsg.LBL_zimbraPrefPop3Enabled, trueValue:"TRUE", falseValue:"FALSE",
+                    visibilityChecks: [ function() {
+                        return ZaCosXFormView.isAttributeDefined.call(this, ZaCos.A_zimbraPrefPop3Enabled);
+                    }]
                 }
             ]},
             {type:_ZA_TOP_GROUPER_, id:"cos_prefs_contacts_general", colSizes:["275px","auto"],numCols:2,
@@ -1432,10 +1478,41 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
           content: ZaMsg.NAD_ZERO_UNLIMETED
         },
             {type:_ZA_TOP_GROUPER_, id:"cos_attachment_settings",
-                label:ZaMsg.NAD_AttachmentsGrouper,visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
-                                                                      [ZaCos.A_zimbraAttachmentsBlocked]]],
+                label:ZaMsg.NAD_AttachmentsGrouper,visibilityChecks:[
+                    [
+                        ZATopGrouper_XFormItem.isGroupVisible,
+                        [
+                            // TODO: We will use below code in ZCS-11977
+                            // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, ZaCos.A_zimbraFileUploadBlockedFileTypes, ZaCos.A_zimbraMailAttachmentMaxSize, ZaCos.A_zimbraFileUploadMaxSizePerFile, 
+                            ZaCos.A_zimbraAttachmentsBlocked 
+                        ]
+                    ]
+                ],
                 items :[
                     {ref:ZaCos.A_zimbraAttachmentsBlocked, type:_CHECKBOX_,  msgName:ZaMsg.NAD_RemoveAllAttachments,label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label",  align:_LEFT_}
+                    // TODO: We will use below code in ZCS-11977
+                    // {ref:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_CHECKBOX_,
+                    //     msgName:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                    //     label:ZaMsg.LBL_AttachmentRestrictionsEnabled,
+                    //     trueValue:"TRUE", falseValue:"FALSE"
+                    // },
+                    // {ref:ZaCos.A_zimbraFileUploadBlockedFileTypes, type:_TEXTAREA_,
+                    //     msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                    //     label:ZaMsg.LBL_AttachmentBlockedFileTypes,
+                    //     labelLocation:_LEFT_,
+                    //     labelCssStyle:"vertical-align:top;",
+                    //     width: "30em"
+                    // },
+                    // {ref:ZaCos.A_zimbraMailAttachmentMaxSize, type:_TEXTFIELD_,
+                    //     label:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                    //     labelLocation:_LEFT_,
+                    //     cssClass:"admin_xform_number_input"
+                    // },
+                    // {ref:ZaCos.A_zimbraFileUploadMaxSizePerFile, type:_TEXTFIELD_,
+                    //     label:ZaMsg.LBL_FileUploadMaxSizePerFile,
+                    //     labelLocation:_LEFT_,
+                    //     cssClass:"admin_xform_number_input"
+                    // }
                 ]
             },
             {type:_ZA_TOP_GROUPER_, id:"cos_quota_settings",
@@ -1616,7 +1693,13 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraEnforcePwdHistory,
             label:ZaMsg.LBL_zimbraEnforcePwdHistory, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
             visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
-            }
+            },
+                    {ref:ZaCos.A_zimbraPasswordBlockCommonEnabled, type:_CHECKBOX_,
+            msgName:ZaMsg.NAD_RejectCommonPwd,
+            label:ZaMsg.NAD_RejectCommonPwd,
+            trueValue:"TRUE", falseValue:"FALSE",
+            visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
+            },
                 ]
             },
             {type:_ZA_TOP_GROUPER_, id:"cos_password_lockout_settings",
@@ -1697,7 +1780,30 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         label:ZaMsg.LBL_zimbraFreebusyExchangeUserOrg,labelLocation:_LEFT_
                     }
                 ]
-            } ,
+            },
+            {type:_ZA_TOP_GROUPER_, id:"cos_admin_sieve",
+                label:ZaMsg.NAD_AdminSieveGrouper,
+                items: [
+                    { type: _DWT_ALERT_,
+                      containerCssStyle: "padding-bottom:0;",
+                      style: DwtAlert.INFO,
+                      iconVisible: false,
+                      content: ZaMsg.Alert_Sieve
+                    },
+                    {ref:ZaCos.A_zimbraSieveRejectMailEnabled, type:_CHECKBOX_,
+                        label:ZaMsg.LBL_zimbraSieveRejectMailEnabled,
+                        trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraSieveEditHeaderEnabled, type:_CHECKBOX_,
+                        label:ZaMsg.LBL_zimbraSieveEditHeaderEnabled,
+                        trueValue:"TRUE", falseValue:"FALSE"},
+                    {ref:ZaCos.A_zimbraAdminSieveScriptBefore, type:_TEXTAREA_,
+                        label:ZaMsg.LBL_zimbraAdminSieveScriptBefore, labelLocation:_LEFT_,
+                        labelCssStyle:"vertical-align:top;",width: "30em"},
+                    {ref:ZaCos.A_zimbraAdminSieveScriptAfter, type:_TEXTAREA_,
+                        label:ZaMsg.LBL_zimbraAdminSieveScriptAfter, labelLocation:_LEFT_,
+                        labelCssStyle:"vertical-align:top;",width: "30em"}
+                ]
+            },
             {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
         ];
 
@@ -1873,4 +1979,3 @@ function (value, event, form) {
         form.parent.setDirty(false);
     }
 }
-

@@ -442,6 +442,8 @@ ZaSettings.HELP_CENTER_VIEW = "helpCenterView";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.HELP_CENTER_VIEW, label: ZaMsg.UI_Comp_HelpCenterView });
 ZaSettings.STATUS_PANE = "statusPane";
 ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.STATUS_PANE, label: ZaMsg.UI_Comp_StatusPane });
+ZaSettings.CERTS_VIEW = "certificatesView";
+ZaSettings.ALL_UI_COMPONENTS.push({ value: ZaSettings.CERTS_VIEW, label: ZaMsg.UI_Comp_CertificatesView });
 }
 ZaSettings.initConst();
 
@@ -832,8 +834,8 @@ ZaSettings.mailCharsetChoices = [
 	{ value: "windows-1256" , label: "windows-1256" } ,
 	{ value: "windows-1257" , label: "windows-1257" } ,
 	{ value: "windows-1258" , label: "windows-1258" } ,
-	{ value: "windows-31j" , label: "windows-31j" }/* ,
-	{ value: "x-Big5-Solaris" , label: "x-Big5-Solaris" } ,
+	{ value: "windows-31j" , label: "windows-31j" } ,
+	{ value: "x-Big5-Solaris" , label: "x-Big5-Solaris" }/* ,
 	{ value: "x-euc-jp-linux" , label: "x-euc-jp-linux" } ,
 	{ value: "x-EUC-TW" , label: "x-EUC-TW" } ,
 	{ value: "x-eucJP-Open" , label: "x-eucJP-Open" } ,

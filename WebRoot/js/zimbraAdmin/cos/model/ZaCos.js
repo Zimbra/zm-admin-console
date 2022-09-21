@@ -55,9 +55,15 @@ ZaCos.A_zimbraMinPwdAge = "zimbraPasswordMinAge";
 ZaCos.A_zimbraMaxPwdAge = "zimbraPasswordMaxAge";
 ZaCos.A_zimbraEnforcePwdHistory ="zimbraPasswordEnforceHistory";
 ZaCos.A_zimbraPasswordLocked = "zimbraPasswordLocked";
+ZaCos.A_zimbraPasswordBlockCommonEnabled = "zimbraPasswordBlockCommonEnabled";
 ZaCos.A_name = "cn";
 ZaCos.A_description = "description";
 ZaCos.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
+// TODO: We will use below code in ZCS-11977
+// ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
+// ZaCos.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
+// ZaCos.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
+// ZaCos.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
 ZaCos.A_zimbraQuotaWarnPercent = "zimbraQuotaWarnPercent";
 ZaCos.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
 ZaCos.A_zimbraQuotaWarnMessage = "zimbraQuotaWarnMessage";
@@ -147,10 +153,13 @@ ZaCos.A_zimbraPrefLocale = "zimbraPrefLocale" ;
 ZaCos.A_zimbraJunkMessagesIndexingEnabled = "zimbraJunkMessagesIndexingEnabled";
 ZaCos.A_zimbraPrefMailSendReadReceipts = "zimbraPrefMailSendReadReceipts";
 ZaCos.A_zimbraPrefAdminConsoleWarnOnExit = "zimbraPrefAdminConsoleWarnOnExit" ;
+ZaCos.A_zimbraPrefImapEnabled = "zimbraPrefImapEnabled";
+ZaCos.A_zimbraPrefPop3Enabled = "zimbraPrefPop3Enabled";
 
 //features
 ZaCos.A_zimbraFeatureExportFolderEnabled = "zimbraFeatureExportFolderEnabled";
 ZaCos.A_zimbraFeatureImportFolderEnabled = "zimbraFeatureImportFolderEnabled";
+ZaCos.A_zimbraFeatureDocumentEditingEnabled = "zimbraFeatureDocumentEditingEnabled";
 ZaCos.A_zimbraDumpsterEnabled = "zimbraDumpsterEnabled";
 ZaCos.A_zimbraMailDumpsterLifetime = "zimbraMailDumpsterLifetime";
 ZaCos.A_zimbraDumpsterUserVisibleAge = "zimbraDumpsterUserVisibleAge";
@@ -189,6 +198,7 @@ ZaCos.A_zimbraFeatureBriefcasesEnabled="zimbraFeatureBriefcasesEnabled";
 ZaCos.A_zimbraFeatureBriefcaseDocsEnabled = "zimbraFeatureBriefcaseDocsEnabled";
 ZaCos.A_zimbraImapEnabled = "zimbraImapEnabled";
 ZaCos.A_zimbraPop3Enabled = "zimbraPop3Enabled";
+ZaCos.A_zimbraFeatureWebClientEnabled = "zimbraFeatureWebClientEnabled";
 ZaCos.A_zimbraFeatureHtmlComposeEnabled = "zimbraFeatureHtmlComposeEnabled";
 ZaCos.A_zimbraFeatureGalAutoCompleteEnabled = "zimbraFeatureGalAutoCompleteEnabled";
 ZaCos.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
@@ -229,7 +239,13 @@ ZaCos.RIGHT_LIST_ZIMLET = "listZimlet";
 ZaCos.RIGHT_GET_ZIMLET = "getZimlet";
 ZaCos.RIGHT_GET_HOSTNAME = "zimbraVirtualHostname";
 
-ZaCos.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg" ;
+ZaCos.A_zimbraFreebusyExchangeUserOrg = "zimbraFreebusyExchangeUserOrg";
+
+ZaCos.A_zimbraSieveRejectMailEnabled = "zimbraSieveRejectMailEnabled";
+ZaCos.A_zimbraSieveEditHeaderEnabled = "zimbraSieveEditHeaderEnabled";
+ZaCos.A_zimbraAdminSieveScriptBefore = "zimbraAdminSieveScriptBefore";
+ZaCos.A_zimbraAdminSieveScriptAfter = "zimbraAdminSieveScriptAfter";
+
 ZaCos.cacheCounter = 0;
 ZaCos.staticCosByNameCacheTable={};
 ZaCos.staticCosByIdCacheTable = {};
@@ -637,10 +653,16 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraMaxPwdAge, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraMaxPwdAge, maxInclusive:2147483647, minInclusive:0},
         {id:ZaCos.A_zimbraEnforcePwdHistory, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraEnforcePwdHistory, maxInclusive:2147483647, minInclusive:0},
         {id:ZaCos.A_zimbraPasswordLocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPasswordLocked},
+        {id:ZaCos.A_zimbraPasswordBlockCommonEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPasswordBlockCommonEnabled},
         {id:ZaCos.A_name, type:_STRING_, ref:"attrs/"+ZaCos.A_name},
 //        {id:ZaCos.A_description, type:_STRING_, ref:"attrs/"+ZaCos.A_description},
         ZaItem.descriptionModelItem ,
         {id:ZaCos.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraAttachmentsBlocked},
+        // TODO: We will use below code in ZCS-11977
+        // {id:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        // {id:ZaCos.A_zimbraFileUploadBlockedFileTypes, type:_STRING_, ref:"attrs/" + ZaCos.A_zimbraFileUploadBlockedFileTypes},
+        // {id:ZaCos.A_zimbraMailAttachmentMaxSize, type:_NUMBER_, ref:"attrs/" + ZaCos.A_zimbraMailAttachmentMaxSize},
+        // {id:ZaCos.A_zimbraFileUploadMaxSizePerFile, type: _NUMBER_, ref:"attrs/" + ZaCos.A_zimbraFileUploadMaxSizePerFile},
         {id:ZaCos.A_zimbraAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAuthTokenLifetime, required: true},
         {id:ZaCos.A_zimbraAdminAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAdminAuthTokenLifetime, required: true},
         {id:ZaCos.A_zimbraMailIdleSessionTimeout, type:_MINTERVAL_, ref:"attrs/"+ZaCos.A_zimbraMailIdleSessionTimeout},
@@ -733,8 +755,11 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraPrefLocale, type: _STRING_, ref: "attrs/" + ZaCos.A_zimbraPrefLocale  },
         {id:ZaCos.A_zimbraJunkMessagesIndexingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraJunkMessagesIndexingEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraPrefMailSendReadReceipts, choices:ZaModel.SEND_READ_RECEPIT_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailSendReadReceipts, type:_ENUM_},
+        {id:ZaCos.A_zimbraPrefImapEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefImapEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraPrefPop3Enabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefPop3Enabled, type:_ENUM_},
 //features
         {id:ZaCos.A_zimbraFeatureExportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureExportFolderEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureDocumentEditingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureDocumentEditingEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureImportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureImportFolderEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraDumpsterEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraDumpsterEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraDumpsterUserVisibleAge, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraDumpsterUserVisibleAge },
@@ -771,18 +796,18 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraFeatureWebClientOfflineAccessEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureWebClientOfflineAccessEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureSMIMEEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureSMIMEEnabled, type:_ENUM_},
-    {id:ZaCos.A_zimbraFeatureMailForwardingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailForwardingEnabled, type:_ENUM_},
-    {id:ZaCos.A_zimbraFeatureMailSendLaterEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailSendLaterEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureMailForwardingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailForwardingEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureMailSendLaterEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailSendLaterEnabled, type:_ENUM_},
         //{id:ZaCos.A_zimbraFeatureFreeBusyViewEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureFreeBusyViewEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_ENUM_},
-    //{id:ZaCos.A_zimbraFeatureNotebookEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureNotebookEnabled, type:_ENUM_},
+        //{id:ZaCos.A_zimbraFeatureNotebookEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureNotebookEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureBriefcasesEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureBriefcasesEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureBriefcaseDocsEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureBriefcaseDocsEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureGalAutoCompleteEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureGalAutoCompleteEnabled, type:_ENUM_},
-        {id:ZaCos.A_zimbraImapEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraImapEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureHtmlComposeEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureHtmlComposeEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraImapEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraImapEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraPop3Enabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPop3Enabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureWebClientEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureWebClientEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureSharingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureSharingEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraExternalSharingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraExternalSharingEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraPublicSharingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPublicSharingEnabled, type:_ENUM_},
@@ -803,6 +828,11 @@ ZaCos.myXModel = {
         //interop
         {id:ZaCos.A_zimbraFreebusyExchangeUserOrg ,type:_STRING_, ref:"attrs/"+ZaCos.A_zimbraFreebusyExchangeUserOrg },
 
+        //admin Sieve rules
+        {id:ZaCos.A_zimbraSieveRejectMailEnabled ,type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraSieveRejectMailEnabled, choices:ZaModel.BOOLEAN_CHOICES },
+        {id:ZaCos.A_zimbraSieveEditHeaderEnabled ,type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraSieveEditHeaderEnabled, choices:ZaModel.BOOLEAN_CHOICES },
+        {id:ZaCos.A_zimbraAdminSieveScriptBefore ,type:_STRING_, ref:"attrs/"+ZaCos.A_zimbraAdminSieveScriptBefore },
+        {id:ZaCos.A_zimbraAdminSieveScriptAfter ,type:_STRING_, ref:"attrs/"+ZaCos.A_zimbraAdminSieveScriptAfter },
 
         //file retension
         {id:ZaCos.A_zimbraFileTrashLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraFileTrashLifetime},

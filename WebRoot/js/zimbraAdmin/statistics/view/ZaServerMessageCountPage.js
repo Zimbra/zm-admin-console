@@ -78,7 +78,6 @@ ZaServerMessageCountPage.prototype.showMe =  function(refresh) {
 
 	    var hosts = ZaGlobalAdvancedStatsPage.getMTAHosts();
 	    if (ZaGlobalAdvancedStatsPage.indexOf(hosts, item.name) != -1) {
-	        ZaGlobalAdvancedStatsPage.detectFlash(document.getElementById('loggerchartservermc-flashdetect-' + serverId));
             var startTimes = [null, 'now-48h', 'now-30d', 'now-60d', 'now-1y'];
             for (var i=1; i < divIds.length; i++){ //skip divId[0] -- servermv-no-mta
                 ZaGlobalAdvancedStatsPage.plotQuickChart( divIds[i], item.name, 'zmmtastats', ['mta_count'], ['msgs'], startTimes[i], 'now', { convertToCount: 1 });
@@ -105,25 +104,24 @@ function () {
 	var html = new Array(50);
 	var serverId = this.serverId;
 	DwtTabViewPage.prototype._createHtml.call(this);
-	html[idx++] = "<h1 style='display:none;' id='loggerchartservermc-flashdetect-" + serverId + "'></h1>";
 	html[idx++] = "<h1 style='display:none;' id='loggerchartservermc-no-mta-" + serverId + "'></h1>";
 	html[idx++] = "<div class='StatsHeader'>" + ZaMsg.Stats_MC_Header + "</div>";
 	html[idx++] = "<div class='StatsDiv' id='loggerchartservermc-" + serverId + "'>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsHour) + "</div>";
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-message-count-48hours-" + serverId + "'></div>";
+	html[idx++] = "<canvas id='loggercanvasserver-message-count-48hours-" + serverId + "'><div id='loggerchartserver-message-count-48hours-" + serverId + "'></div>";
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsDay) + "</div>";
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-message-count-30days-" + serverId + "'></div>";
+	html[idx++] = "<canvas id='loggercanvasserver-message-count-30days-" + serverId + "'><div id='loggerchartserver-message-count-30days-" + serverId + "'></div>";
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsMonth) + "</div>";
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-message-count-60days-" + serverId + "'></div>";
+	html[idx++] = "<canvas id='loggercanvasserver-message-count-60days-" + serverId + "'><div id='loggerchartserver-message-count-60days-" + serverId + "'></div>";
 	html[idx++] = "</div>";
 	html[idx++] = "<div class='StatsImageTitle'>" + AjxStringUtil.htmlEncode(ZaMsg.NAD_StatsYear) + "</div>";
 	html[idx++] = "<div class='StatsImage'>";
-	html[idx++] = "<div id='loggerchartserver-message-count-year-" + serverId + "'></div>";
+	html[idx++] = "<canvas id='loggercanvasserver-message-count-year-" + serverId + "'><div id='loggerchartserver-message-count-year-" + serverId + "'></div>";
 	html[idx++] = "</div>";
 	html[idx++] = "</div>";
 	this.getHtmlElement().innerHTML = html.join("");
