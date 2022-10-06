@@ -75,7 +75,10 @@ ZaEditVolumeXDialog.prototype.getMyXForm = function (params) {
 					{
 						ref: ZaServer.A_VolumeCompressBlobs,
 						type: _WIZ_CHECKBOX_,
+						labelLocation: _LEFT_,
+						align: _LEFT_,
 						label: ZaMsg.VM_VolumeCompressBlobs,
+						labelCssStyle: "padding-left:25px;",
 						trueValue: true,
 						falseValue: false,
 						visibilityChecks: [
@@ -88,7 +91,7 @@ ZaEditVolumeXDialog.prototype.getMyXForm = function (params) {
 						type: _GROUP_,
 						numCols: 3,
 						colSpan: 2,
-						colSizes: ["200px", "150px", "125px"],
+						colSizes: ["140px", "100px", "*"],
 						visibilityChecks: [
 							function () {
 								return !params || params.isVolumeTypeInternal;
@@ -98,15 +101,17 @@ ZaEditVolumeXDialog.prototype.getMyXForm = function (params) {
 							{
 								ref: ZaServer.A_VolumeCompressionThreshold,
 								type: _TEXTFIELD_,
-								label: ZaMsg.LBL_VM_VolumeCompressThreshold,
+								label: ZaMsg.VM_VolumeCompressThreshold,
 								labelLocation: _LEFT_,
+								align: _LEFT_,
+								width: 100,
+								enableDisableChangeEventSources: [ZaServer.A_VolumeCompressBlobs],
+								enableDisableChecks: [[XForm.checkInstanceValue, ZaServer.A_VolumeCompressBlobs, true]],
 							},
 							{
 								type: _OUTPUT_,
-								label: null,
-								labelLocation: _NONE_,
-								value: ZaMsg.NAD_bytes,
-								align: _LEFT_,
+								label: ZaMsg.NAD_bytes,
+								labelCssStyle: "text-align:left;",
 							},
 						],
 					},
