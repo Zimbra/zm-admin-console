@@ -90,7 +90,6 @@
     <property name="modernizr.version" value="2.8.3"/>
     <property name="jquery.version" value="3.5.1"/>
     <property name="chartjs.version" value="2.9.3"/>
-    <property name="yui.version" value="2.9.0-alfresco-20140211"/>
 
 	<!-- customize admin skin -->
 	<if>
@@ -142,7 +141,7 @@
         <property name='build.admin' value='true'/>
         <property name='deploy.app' value='zimbraAdmin'/>
         <property name='skins.dir' value='${web.dir}/admin_skins'/>
-        <property name='web.includes' value='${common.web.includes},yui/2.9.0-alfresco-20140211/**'/>
+        <property name='web.includes' value='${common.web.includes}'/>
         <property name='web.excludes' value='${common.web.excludes}'/>
         <property name='jsp.includes' value='${common.jsp.includes}'/>
         <property name='jsp.excludes' value='${common.jsp.excludes}'/>
@@ -200,7 +199,6 @@
         <antcall target="jquery" />
         <antcall target="chartjs" />
         <antcall target="modernizr" />
-        <antcall target="yui" />
     </target>
 
     <target name="assemble-war" depends="webxml-package-replace, resolve" description="Assembles the war file.  Assumes that all dependencies have been built.  Octopus/ZimbraWebClient/build.xml calls the war target, modifies files in ZimbraWebClient/build, and then calls this target.">
@@ -1009,7 +1007,7 @@ ext = BeanUtils.cook(ext);
 	             classpathref="class.path"
 	    />
 
-        <!-- copying yui jar file in build/tmp directory. -->
+        <!-- copying yuicompressor jar file in build/tmp directory. -->
         <ivy:install organisation="com.yahoo.platform.yui" module="yuicompressor" revision="2.4.8" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
 
 
