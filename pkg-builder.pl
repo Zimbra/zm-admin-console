@@ -88,8 +88,7 @@ my %PKG_GRAPH = (
                      '/opt/zimbra/jetty_base/webapps/zimbraAdmin/img/*',
                      '/opt/zimbra/jetty_base/webapps/zimbraAdmin/js/*',
                      '/opt/zimbra/jetty_base/webapps/zimbraAdmin/skins/*',
-                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/templates/*',
-                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/yui/*'
+                     '/opt/zimbra/jetty_base/webapps/zimbraAdmin/templates/*'
                     ],
       file_list  => ['/opt/zimbra/jetty_base/webapps/zimbraAdmin/public/*',
                      '/opt/zimbra/jetty_base/webapps/zimbraAdmin/css/*',
