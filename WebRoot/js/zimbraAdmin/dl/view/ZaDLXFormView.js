@@ -639,7 +639,7 @@ ZaDLXFormView.addFreeFormAddressToMembers = function (event) {
 			if (result != null) {
 				address = result[2];
 			}
-			if(!AjxEmailAddress.isValid(address)) {
+			if(!AjxUtil.isEmailAddress(address)) {
 				//handle invalid email address
 				var msg = AjxMessageFormat.format(ZaMsg.WARNING_DL_INVALID_EMAIL, [address]);
 				ZaApp.getInstance().getCurrentController().popupErrorDialog(msg,null,DwtMessageDialog.WARNING_STYLE);
