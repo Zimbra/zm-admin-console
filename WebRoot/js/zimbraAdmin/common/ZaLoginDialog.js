@@ -173,6 +173,8 @@ function(visible, transparentBg) {
 		var userIdEl = ZLoginFactory.get(ZLoginFactory.USER_ID);
 		if(!userIdEl.disabled)
 			userIdEl.focus();		
+	} else if(window["onkeypress"]) {
+		window["onkeypress"] = null;
 	}
 }
 
