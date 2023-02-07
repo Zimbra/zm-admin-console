@@ -74,27 +74,28 @@ ZaAccountListController.prototype.show = function (doPush, refresh) {
 	// hide the system account
 	this._currentQuery = "(&" + this._currentQuery + "(!("+ ZaAccount.A_zimbraIsSystemAccount +"=TRUE)))"	
 	var searchParams = {
-        query: this._currentQuery,
-        types: this.searchTypes,
-        sortBy: this._currentSortField,
-        offset: this.RESULTSPERPAGE * (this._currentPageNum - 1),
-        sortAscending: this._currentSortOrder,
-        limit: this.RESULTSPERPAGE,
-        maxResults: 0,
-        attrs: [
-            this.fetchAttrs,
-            ZaAccount.A_zimbraIsDelegatedAdminAccount,
-            ZaAccount.A_zimbraIsAdminAccount,
-            ZaAccount.A_zimbraIsSystemResource,
-            ZaAccount.A_zimbraIsSystemAccount,
-            ZaAccount.A_zimbraIsExternalVirtualAccount
-        ].join(),
-        callback: callback,
-        controller: this,
-        showBusy: true,
-        busyId: busyId,
-        busyMsg: ZaMsg.BUSY_SEARCHING,
-        skipCallbackIfCancelled: false
+		query: this._currentQuery,
+		types: this.searchTypes,
+		sortBy: this._currentSortField,
+		offset: this.RESULTSPERPAGE * (this._currentPageNum - 1),
+		sortAscending: this._currentSortOrder,
+		limit: this.RESULTSPERPAGE,
+		maxResults: 0,
+		attrs: [
+			this.fetchAttrs,
+			ZaAccount.A_zimbraIsDelegatedAdminAccount,
+			ZaAccount.A_zimbraIsAdminAccount,
+			ZaAccount.A_zimbraIsSystemResource,
+			ZaAccount.A_zimbraIsSystemAccount,
+			ZaAccount.A_zimbraIsExternalVirtualAccount
+		].join(),
+		callback: callback,
+		controller: this,
+		showBusy: true,
+		busyId: busyId,
+		busyMsg: ZaMsg.BUSY_SEARCHING,
+		skipCallbackIfCancelled: false,
+		isInitialRequest: true
     };
 
 	this.scrollSearchParams = {

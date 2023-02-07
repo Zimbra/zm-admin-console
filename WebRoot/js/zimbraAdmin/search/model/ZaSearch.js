@@ -146,8 +146,14 @@ ZaSearch.searchDirectory = function(params) {
         ZaSearch._currentQuery = "";
     }
 
+    var customResultValue;
+    if(params.isInitialRequest) {
+        var multiplier = 1 + Math.floor((document.documentElement.clientHeight - 100)/1000);
+        customResultValue = multiplier * (params.limit || ZaAccount.RESULTSPERPAGE);
+    }
+
     var sortBy = (params.sortBy != undefined) ? params.sortBy : ZaAccount.A_name;
-    var limit = (params.limit != undefined) ? params.limit : ZaAccount.RESULTSPERPAGE;
+    var limit = customResultValue || (params.limit != undefined ? params.limit : ZaAccount.RESULTSPERPAGE);
     var offset = (params.offset != undefined) ? params.offset : "0";
     var sortAscending = (params.sortAscending != null) ? params.sortAscending : "1";
 

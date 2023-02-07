@@ -67,30 +67,31 @@ ZaCosListController.prototype.show = function (doPush,openInNewTab) {
 	var callback = new AjxCallback(this, this.searchCallback, {openInNewTab:openInNewTab,limit:this.RESULTSPERPAGE,CONS:null,show:doPush,busyId:busyId});
 	
 	var searchParams = {
-			query:this._currentQuery ,
-			types:[ZaSearch.COSES],
-			sortBy:this._currentSortField,
-			offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
-			sortAscending:this._currentSortOrder,
-			limit:this.RESULTSPERPAGE,
-			callback:callback,
-			attrs:this.fetchAttrs,
-			controller: this,
-			showBusy:true,
-			busyId:busyId,
-			busyMsg:ZaMsg.BUSY_SEARCHING_COSES,
-			skipCallbackIfCancelled:false			
+		query:this._currentQuery ,
+		types:[ZaSearch.COSES],
+		sortBy:this._currentSortField,
+		offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
+		sortAscending:this._currentSortOrder,
+		limit:this.RESULTSPERPAGE,
+		callback:callback,
+		attrs:this.fetchAttrs,
+		controller: this,
+		showBusy:true,
+		busyId:busyId,
+		busyMsg:ZaMsg.BUSY_SEARCHING_COSES,
+		skipCallbackIfCancelled:false,
+		isInitialRequest: true
 	}
     this.scrollSearchParams={
         query:this._currentQuery ,
-			types:[ZaSearch.COSES],
-			sortBy:this._currentSortField,
-			sortAscending:this._currentSortOrder,
-			attrs:this.fetchAttrs,
-			controller: this,
-			showBusy:true,
-			busyMsg:ZaMsg.BUSY_SEARCHING_COSES,
-			skipCallbackIfCancelled:false
+		types:[ZaSearch.COSES],
+		sortBy:this._currentSortField,
+		sortAscending:this._currentSortOrder,
+		attrs:this.fetchAttrs,
+		controller: this,
+		showBusy:true,
+		busyMsg:ZaMsg.BUSY_SEARCHING_COSES,
+		skipCallbackIfCancelled:false
     };
 	ZaSearch.searchDirectory(searchParams);
 }

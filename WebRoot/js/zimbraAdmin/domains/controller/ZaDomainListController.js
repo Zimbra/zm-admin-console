@@ -68,31 +68,32 @@ ZaDomainListController.prototype.show = function (doPush,openInNewTab) {
 	var busyId = Dwt.getNextId();
 	var callback = new AjxCallback(this, this.searchCallback, {openInNewTab:openInNewTab,limit:ZaDomain.RESULTSPERPAGE,CONS:ZaDomain,show:doPush, busyId:busyId});
 	var searchParams = {
-			query:this._currentQuery, 
-			types:[ZaSearch.DOMAINS],
-			sortBy:ZaDomain.A_domainName,
-			offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
-			sortAscending:"1",
-			limit:this.RESULTSPERPAGE,
-			callback:callback,
-			controller: this,
-			showBusy:true,
-			busyId:busyId,
-			busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
-			skipCallbackIfCancelled:false,
-			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]		
+		query:this._currentQuery, 
+		types:[ZaSearch.DOMAINS],
+		sortBy:ZaDomain.A_domainName,
+		offset:this.RESULTSPERPAGE*(this._currentPageNum-1),
+		sortAscending:"1",
+		limit:this.RESULTSPERPAGE,
+		callback:callback,
+		controller: this,
+		showBusy:true,
+		busyId:busyId,
+		busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
+		skipCallbackIfCancelled:false,
+		attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType],
+		isInitialRequest: true
 	}
-    this.scrollSearchParams={
-        query:this._currentQuery,
-			types:[ZaSearch.DOMAINS],
-			sortBy:ZaDomain.A_domainName,
-			sortAscending:"1",
-			controller: this,
-			showBusy:true,
-			busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
-			skipCallbackIfCancelled:false,
-			attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]
-    };
+	this.scrollSearchParams={
+		query:this._currentQuery,
+		types:[ZaSearch.DOMAINS],
+		sortBy:ZaDomain.A_domainName,
+		sortAscending:"1",
+		controller: this,
+		showBusy:true,
+		busyMsg:ZaMsg.BUSY_SEARCHING_DOMAINS,
+		skipCallbackIfCancelled:false,
+		attrs:[ZaDomain.A_description, ZaDomain.A_domainName,ZaDomain.A_zimbraDomainStatus,ZaItem.A_zimbraId, ZaDomain.A_domainType]
+	};
 	ZaSearch.searchDirectory(searchParams);
 }
 
