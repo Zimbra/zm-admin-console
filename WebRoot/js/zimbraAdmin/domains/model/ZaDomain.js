@@ -2901,26 +2901,27 @@ function (domainName) {
 	controller._currentPageNum = 1;
 
         var searchParams = {
-                query:controller._currentQuery,
-                domain: controller._currentDomain,
-                types:searchTypes,
-                attrs:controller.fetchAttrs,
-                callback:callback,
-                controller: controller,
-                                showBusy:true,
-                                busyId:busyId,
-                                busyMsg:ZaMsg.BUSY_SEARCHING,
-                                skipCallbackIfCancelled:false                
+			query:controller._currentQuery,
+			domain: controller._currentDomain,
+			types:searchTypes,
+			attrs:controller.fetchAttrs,
+			callback:callback,
+			controller: controller,
+			showBusy:true,
+			busyId:busyId,
+			busyMsg:ZaMsg.BUSY_SEARCHING,
+			skipCallbackIfCancelled:false,
+			isInitialRequest: true
         }
          controller.scrollSearchParams={
-                query:controller._currentQuery,
-                domain: controller._currentDomain,
-                types:searchTypes,
-                attrs:controller.fetchAttrs,
-                controller: controller,
-                                showBusy:true,
-                                busyMsg:ZaMsg.BUSY_SEARCHING,
-                                skipCallbackIfCancelled:false
+			query:controller._currentQuery,
+			domain: controller._currentDomain,
+			types:searchTypes,
+			attrs:controller.fetchAttrs,
+			controller: controller,
+			showBusy:true,
+			busyMsg:ZaMsg.BUSY_SEARCHING,
+			skipCallbackIfCancelled:false
          }
         ZaSearch.searchDirectory(searchParams);
     }else {
