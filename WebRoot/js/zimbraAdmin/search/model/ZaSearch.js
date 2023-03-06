@@ -650,12 +650,16 @@ ZaSearch.getObjectCounts = function(types, callback) {
         callback : callback
     });
 
+    var isCountAccountsEnabled = ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraCountAccountsEnabled];
     var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
     soapDoc.setMethodAttribute("onerror", "continue");
     for (var i = 0; i < types.length; i++) {
         var type = types[i];
         if (type == ZaItem.ACCOUNT) {
-            continue;
+            if (isCountAccountsEnabled === "FALSE") {
+                continue;
+            }
+            type = "userAccount"; // exclude system account
         }
         var getCountDoc = soapDoc.set("CountObjectsRequest", null, null, ZaZimbraAdmin.URN);
         getCountDoc.setAttribute("type", type);
@@ -663,6 +667,20 @@ ZaSearch.getObjectCounts = function(types, callback) {
             getCountDoc.setAttribute("onlyRelated", "true");
         }
     }
+
+    if (soapDoc.getDoc().getElementsByTagName('CountObjectsRequest').length === 0) {
+        var retObj;
+        retObj = {};
+        retObj[ZaItem.ACCOUNT] = "N/A";  // The value is not used as Integer in any code. String is acceptable.
+        retObj[ZaItem.ALIAS] = 0;
+        retObj[ZaItem.RESOURCE] = 0;
+        retObj[ZaItem.DL] = 0;
+        retObj[ZaItem.DOMAIN] = 0;
+        retObj[ZaItem.SERVER] = 0;
+        callback.run(retObj);
+        return;
+    }
+
     try {
         var command = new ZmCsfeCommand();
         var cmdParams = new Object();
@@ -670,8 +688,6 @@ ZaSearch.getObjectCounts = function(types, callback) {
         cmdParams.soapDoc = soapDoc;
         cmdParams.asyncMode = true;
         cmdParams.callback = dataCallback;
-        // BatchRequest with no element is sent when types array has ZaItem.ACCOUNT only.
-        // It is okay and easy way to pass default values to a callback function as a response via ZaSearch.getObjectCountsCalback.
         command.invoke(cmdParams);
     } catch (ex) {
         ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaSearch.getObjectCounts", null, false);
