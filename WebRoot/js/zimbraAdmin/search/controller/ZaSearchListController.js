@@ -365,37 +365,38 @@ function(params) {
 	}
 
 	if(isAliasSpec) {
-          this.scrollSearchParams={
-                        query:this._currentQuery,//params.query,
-                        types:params.types,
-                        showBusy:true,
-                        busyId:busyId,
-                        busyMsg:ZaMsg.BUSY_SEARCHING,
-                        skipCallbackIfCancelled:false,
-                        sortBy:params.sortBy,
-                        sortAscending:this._currentSortOrder,
-                        attrs:ZaSearch.standardAttributes,
-                        controller:this,
-                        scrollType:"isAliasSearch",
-                        postCallback: postCallback
-         }
+		this.scrollSearchParams={
+			query:this._currentQuery,//params.query,
+			types:params.types,
+			showBusy:true,
+			busyId:busyId,
+			busyMsg:ZaMsg.BUSY_SEARCHING,
+			skipCallbackIfCancelled:false,
+			sortBy:params.sortBy,
+			sortAscending:this._currentSortOrder,
+			attrs:ZaSearch.standardAttributes,
+			controller:this,
+			scrollType:"isAliasSearch",
+			postCallback: postCallback
+		}
 		searchQueryList.push(searchParams);
 		var keyword = ZaSearchListController._getSearchKeyWord(params.query);
 		ZaSearchListController.searchAliasDomain(keyword,this,searchQueryList, params.isShowBubble);
-	}else {
-        this.scrollSearchParams={
-                        query:this._currentQuery,//params.query,
-                        types:params.types,
-                        showBusy:true,
-                        busyId:busyId,
-                        busyMsg:ZaMsg.BUSY_SEARCHING,
-                        skipCallbackIfCancelled:false,
-                        sortBy:params.sortBy,
-                        sortAscending:this._currentSortOrder,
-                        attrs:ZaSearch.standardAttributes,
-                        controller:this,
-                        postCallback: postCallback
-        }
+	} else {
+		this.scrollSearchParams={
+			query:this._currentQuery,//params.query,
+			types:params.types,
+			showBusy:true,
+			busyId:busyId,
+			busyMsg:ZaMsg.BUSY_SEARCHING,
+			skipCallbackIfCancelled:false,
+			sortBy:params.sortBy,
+			sortAscending:this._currentSortOrder,
+			attrs:ZaSearch.standardAttributes,
+			controller:this,
+			postCallback: postCallback,
+			isInitialRequest: true
+		}
 		ZaSearch.searchDirectory(searchParams);
     }
 }
