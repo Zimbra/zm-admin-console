@@ -166,6 +166,10 @@ ZaCosXFormView.isPasswordLockoutEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraPasswordLockoutEnabled) == 'TRUE');
 }
 
+ZaCosXFormView.isMailRecallEnabled = function () {
+    return (this.getInstanceValue(ZaCos.A_zimbraFeatureMailRecallEnabled) == 'TRUE');
+}
+
 ZaCosXFormView.isMailFeatureEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraFeatureMailEnabled) == "TRUE");
 }
@@ -243,7 +247,9 @@ ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureMailSendLaterEnabled,
     //ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
     ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-    ZaCos.A_zimbraFeatureSMIMEEnabled
+    ZaCos.A_zimbraFeatureSMIMEEnabled,
+    ZaCos.A_zimbraFeatureMailRecallEnabled,
+    ZaCos.A_zimbraFeatureMailRecallTime
 ];
 
 ZaCosXFormView.FEATURE_TAB_RIGHTS = [];
@@ -824,7 +830,9 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
                         ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
                         ZaCos.A_zimbraFeatureIdentitiesEnabled,
-                        ZaCos.A_zimbraFeatureReadReceiptsEnabled
+                        ZaCos.A_zimbraFeatureReadReceiptsEnabled,
+                        ZaCos.A_zimbraFeatureMailRecallEnabled,
+                        ZaCos.A_zimbraFeatureMailRecallTime
                     ]]
                 ],
                 items:[
@@ -846,8 +854,13 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled,label:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
-                        {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"}
-
+                        {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"},
+                        { ref: ZaCos.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+                        {
+                            ref: ZaCos.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaCosXFormView.isMailRecallEnabled],
+                            enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_
+                        }
+    
                 ]
             },
             {

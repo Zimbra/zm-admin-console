@@ -437,6 +437,22 @@ ZaModel.getMailPollingIntervalChoices = function () {
 
 ZaModel.MAIL_POLLING_INTERVAL_CHOICES = ZaModel.getMailPollingIntervalChoices;
 
+ZaModel.getMailRecallChoices = function () {
+    var recallTime = [];
+    var labelValue;
+    for (var index = 1; index <= 30; index++) {
+        if (index == 1) {
+            labelValue = AjxMessageFormat.format(ZaMsg.LBL_recallminute, [index]);
+        } else {
+            labelValue = AjxMessageFormat.format(ZaMsg.LBL_recallminutes, [index]);
+        }
+        recallTime.push({ value: index, label: labelValue });
+    }
+    return recallTime;
+}
+
+ZaModel.MAIL_RECALL_CHOICES = ZaModel.getMailRecallChoices;
+
 ZaModel.prototype.toString = function() {
     return "ZaModel";
 }

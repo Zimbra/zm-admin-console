@@ -125,6 +125,10 @@ function () {
 	this.changeButtonStateForStep(this._containedObject[ZaModel.currentStep]);	
 }
 
+ZaNewDomainXWizard.isMailRecallEnabled = function () {
+    return (this.getInstanceValue(ZaDomain.A_zimbraFeatureMailRecallEnabled) == 'TRUE');
+}
+
 ZaNewDomainXWizard.prototype.changeButtonStateForStep = 
 function(stepNum) {
 	if(this.lastErrorStep == stepNum) {
@@ -1618,18 +1622,38 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 						}
 					]
 				},
-				{type:_CASE_, caseKey:ZaNewDomainXWizard.FEATURE_STEP,
+				{
+					type: _CASE_, caseKey: ZaNewDomainXWizard.FEATURE_STEP, numCols: 1,
 					items: [
-						{ type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraCalendarFeature,
-                                  		  items :[
-                                                  {ref:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      type:_CHECKBOX_,
-                                                      msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      trueValue:"TRUE", falseValue:"FALSE"
-                                                  }
-                                         	 ]
-                                		}
+						{
+							type: _ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_zimbraCalendarFeature,
+							items: [
+								{
+									ref: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+									type: _CHECKBOX_,
+									msgName: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+									label: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+									trueValue: "TRUE", falseValue: "FALSE"
+								}
+							]
+						},
+						{
+							type: _ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_zimbraMailFeature, colSizes: ["200px", "*"],
+							visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible,
+							[
+								ZaDomain.A_zimbraFeatureMailRecallEnabled,
+								ZaDomain.A_zimbraFeatureMailRecallTime
+							]]
+							],
+							items: [
+								{ ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+								{
+									ref: ZaDomain.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaNewDomainXWizard.isMailRecallEnabled],
+									enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, cssClass: "admin_xform_number_input", labelCssStyle: "text-align:left;", nowrap: false, labelWrap: true
+								}
+
+							]
+						}
 
 					]
 				},
