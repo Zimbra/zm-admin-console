@@ -1618,18 +1618,33 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 						}
 					]
 				},
-				{type:_CASE_, caseKey:ZaNewDomainXWizard.FEATURE_STEP,
+				{
+					type: _CASE_, caseKey: ZaNewDomainXWizard.FEATURE_STEP, numCols:1,
 					items: [
-						{ type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraCalendarFeature,
-                                  		  items :[
-                                                  {ref:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      type:_CHECKBOX_,
-                                                      msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                                      trueValue:"TRUE", falseValue:"FALSE"
-                                                  }
-                                         	 ]
-                                		}
+						{
+							type: _ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_zimbraCalendarFeature,
+							items: [
+								{
+									ref: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+									type: _CHECKBOX_,
+									msgName: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+									label: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+									trueValue: "TRUE", falseValue: "FALSE"
+								}
+							]
+						},
+						{
+							type: _ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_Password,
+							items: [
+								{
+									ref: ZaDomain.A_zimbraFeatureAllowUsernameInPassword,
+									type: _CHECKBOX_,
+									msgName: ZaMsg.NAD_AllowUsernameInPassword,
+									label: ZaMsg.NAD_AllowUsernameInPassword,
+									trueValue: "TRUE", falseValue: "FALSE"
+								}
+							]
+						},
 
 					]
 				},

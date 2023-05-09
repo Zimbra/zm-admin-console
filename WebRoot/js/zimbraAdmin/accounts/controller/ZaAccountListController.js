@@ -975,14 +975,19 @@ function (item) {
 	//check the passwords, if they are ok then save the password, else show error
 	if(this._chngPwdDlg) {
 		try {
-			if(!this._chngPwdDlg.getPassword() || this._chngPwdDlg.getPassword().length < 1) {
-				ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON],null,ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");							
+			var userName = item.name.split('@')[0];
+			if (!this._chngPwdDlg.getPassword() || this._chngPwdDlg.getPassword().length < 1) {
+				ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");
 				ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_REQUIRED, null, DwtMessageDialog.TITLE[DwtMessageDialog.CRITICAL_STYLE]);
-				ZaApp.getInstance().dialogs["errorMsgDlg"].popup();				
-			} else if(this._chngPwdDlg.getPassword() != this._chngPwdDlg.getConfirmPassword()) {
-				ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");							
-				ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_MISMATCH, null,DwtMessageDialog.TITLE[DwtMessageDialog.CRITICAL_STYLE]);
-				ZaApp.getInstance().dialogs["errorMsgDlg"].popup();				
+				ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
+			} else if (item.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] === "FALSE" && this._chngPwdDlg.getPassword().includes(userName)) {
+				ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");
+				ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_CONTAIN_USERNAME, null, DwtMessageDialog.TITLE[DwtMessageDialog.CRITICAL_STYLE]);
+				ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
+			} else if (this._chngPwdDlg.getPassword() != this._chngPwdDlg.getConfirmPassword()) {
+				ZaApp.getInstance().dialogs["errorMsgDlg"] = new ZaMsgDialog(ZaApp.getInstance().getAppCtxt().getShell(), null, [DwtDialog.OK_BUTTON], null, ZaId.CTR_PREFIX + ZaId.VIEW_ACCTLIST + "_errorMsg");
+				ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_MISMATCH, null, DwtMessageDialog.TITLE[DwtMessageDialog.CRITICAL_STYLE]);
+				ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
 			} else {
 				//check password
 				var myCos = null;

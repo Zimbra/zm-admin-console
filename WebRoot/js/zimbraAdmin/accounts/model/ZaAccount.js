@@ -105,6 +105,7 @@ ZaAccount.A_zimbraMinPwdAge="zimbraPasswordMinAge";
 ZaAccount.A_zimbraMaxPwdAge="zimbraPasswordMaxAge";
 ZaAccount.A_zimbraEnforcePwdHistory="zimbraPasswordEnforceHistory";
 ZaAccount.A_zimbraPasswordBlockCommonEnabled="zimbraPasswordBlockCommonEnabled";
+ZaAccount.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
 ZaAccount.A_zimbraMailAlias="zimbraMailAlias";
 ZaAccount.A_zimbraMailForwardingAddress="zimbraMailForwardingAddress";
 ZaAccount.A_zimbraPasswordMustChange="zimbraPasswordMustChange";
@@ -500,6 +501,13 @@ function(tmpObj) {
            
         }
     }
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj)) {
+        if(tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != null) {
+            tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword];
+        } else {
+            tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = tmpObj._defaultValues.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword];
+        }
+    }
 
     //validate password age settings
     //if the account did not have a valid cos id - pick the first COS
@@ -535,6 +543,11 @@ function(tmpObj) {
     //if there is a password - validate it
     if(ZaItem.hasAnyRight([ZaAccount.SET_PASSWORD_RIGHT, ZaAccount.CHANGE_PASSWORD_RIGHT],tmpObj)) {
         if(!AjxUtil.isEmpty(tmpObj.attrs[ZaAccount.A_password]) || !AjxUtil.isEmpty(tmpObj[ZaAccount.A2_confirmPassword])) {
+            var userName = tmpObj.name.split('@')[0];
+            if (tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] === "FALSE" && tmpObj.attrs[ZaAccount.A_password].includes(userName)) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_CONTAIN_USERNAME);
+                return false;
+            }
             if(tmpObj.attrs[ZaAccount.A_password] != tmpObj[ZaAccount.A2_confirmPassword]) {
                 //show error msg
                 ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
@@ -1947,6 +1960,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPasswordMustChange, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPasswordMustChange},
         {id:ZaAccount.A_zimbraPasswordLocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordLocked, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraPasswordBlockCommonEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordBlockCommonEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureAllowUsernameInPassword, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureAllowUsernameInPassword, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraContactMaxNumEntries, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraContactMaxNumEntries, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxLength, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraDataSourcePop3PollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDataSourcePop3PollingInterval},
