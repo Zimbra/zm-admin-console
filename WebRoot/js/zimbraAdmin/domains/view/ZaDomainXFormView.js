@@ -716,7 +716,7 @@ ZaDomainXFormView.ADV_TAB_ATTRS = [ZaDomain.A_zimbraBasicAuthRealm, ZaDomain.A_z
 
 ZaDomainXFormView.ADV_TAB_RIGHTS = [];
 
-ZaDomainXFormView.Feature_TAB_ATTRS = [ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled];
+ZaDomainXFormView.Feature_TAB_ATTRS = [ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, ZaDomain.A_zimbraFeatureAllowUsernameInPassword];
 ZaDomainXFormView.Feature_TAB_RIGHTS = [];
 
 ZaDomainXFormView.CERT_TAB_ATTRS = [ZaDomain.A_zimbraSSLCertificate];
@@ -1339,20 +1339,34 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
 		tabIx = ++this.TAB_INDEX;
 		this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "setting_up_sms_reminders_feature.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
 		tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_Features});
-		var caseFeature = {type:_ZATABCASE_, caseKey:tabIx,
+		var caseFeature = {type:_ZATABCASE_, caseKey:tabIx, colSizes:["auto"], numCols:1,
                         cssStyle:"padding-left:10px;",
-			items : [
-				{ type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_zimbraCalendarFeature,
-				  items :[
-                      {ref:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                          type:_CHECKBOX_,labelLocation:_RIGHT_,
-                          msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                          label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                          trueValue:"TRUE", falseValue:"FALSE"
-                      }
-		         ]
-				}
-			]
+                        items: [
+                            {
+                                type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraCalendarFeature,
+                                items: [
+                                    {
+                                        ref: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+                                        type: _CHECKBOX_, labelLocation: _RIGHT_,
+                                        msgName: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+                                        label: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+                                        trueValue: "TRUE", falseValue: "FALSE"
+                                    }
+                                ]
+                            },
+                            {
+                                type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_Password,
+                                items: [
+                                    {
+                                        ref: ZaDomain.A_zimbraFeatureAllowUsernameInPassword,
+                                        type: _CHECKBOX_, labelLocation: _RIGHT_,
+                                        msgName: ZaMsg.NAD_AllowUsernameInPassword,
+                                        label: ZaMsg.NAD_AllowUsernameInPassword,
+                                        trueValue: "TRUE", falseValue: "FALSE"
+                                    }
+                                ]
+                            },
+                        ]
 		};
 		switchGroup.items.push(caseFeature);
 	}
