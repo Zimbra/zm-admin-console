@@ -437,6 +437,16 @@ ZaModel.getMailPollingIntervalChoices = function () {
 
 ZaModel.MAIL_POLLING_INTERVAL_CHOICES = ZaModel.getMailPollingIntervalChoices;
 
+ZaModel.getMailRecallChoices = function () {
+    let recallTime = [];
+    for (let index = 1; index <= 30; index++) {
+        recallTime.push({ value: index, label: index + " " + ZaMsg.LBL_minute })
+    }
+    return recallTime;
+}
+
+ZaModel.MAIL_RECALL_CHOICES = ZaModel.getMailRecallChoices;
+
 ZaModel.prototype.toString = function() {
     return "ZaModel";
 }

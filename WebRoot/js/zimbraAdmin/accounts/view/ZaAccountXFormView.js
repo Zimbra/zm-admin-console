@@ -922,6 +922,10 @@ ZaAccountXFormView.isPushFpEnabled = function () {
     return (!AjxUtil.isEmpty(this.getInstanceValue(ZaAccount.A_zimbraForeignPrincipal)));
 }
 
+ZaAccountXFormView.isMailRecallEnabled = function () {
+    return (this.getInstanceValue(ZaAccount.A_zimbraFeatureMailRecallEnabled) == 'TRUE');
+}
+
 ZaAccountXFormView.deleteFpButtonListener = function () {
     var instance = this.getInstance();
     if(!AjxUtil.isEmpty(instance.fp_selection_cache)) {
@@ -1130,7 +1134,9 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraDumpsterEnabled,
     ZaAccount.A_zimbraDumpsterPurgeEnabled,
     ZaAccount.A_zimbraFeatureSMIMEEnabled,
-    ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
+    ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+    ZaAccount.A_zimbraFeatureMailRecallEnabled,
+    ZaAccount.A_zimbraFeatureMailRecallTime
 ];
 
 ZaAccountXFormView.FEATURE_TAB_RIGHTS = [];
@@ -2213,7 +2219,9 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                              ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,
                              ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
                              ZaAccount.A_zimbraFeatureIdentitiesEnabled,
-                             ZaAccount.A_zimbraFeatureReadReceiptsEnabled
+                             ZaAccount.A_zimbraFeatureReadReceiptsEnabled,
+                             ZaAccount.A_zimbraFeatureMailRecallEnabled,
+                             ZaAccount.A_zimbraFeatureMailRecallTime
                              ]]
                         ],
                         enableDisableChecks:[[XForm.checkInstanceValue,ZaAccount.A_zimbraFeatureMailEnabled,"TRUE"]],
@@ -2247,6 +2255,11 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                 resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                 checkBoxLabel:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,
                                 trueValue:"TRUE", falseValue:"FALSE"
+                            },
+                            { ref: ZaAccount.A_zimbraFeatureMailRecallEnabled, type: _SUPER_CHECKBOX_, checkBoxLabel: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+                            {
+                                ref: ZaAccount.A_zimbraFeatureMailRecallTime, type: _SUPER_SELECT1_, enableDisableChecks: [ZaAccountXFormView.isMailRecallEnabled],
+                                enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, editable: true, cssClass: "admin_xform_number_input"
                             }
                         ]
                     },

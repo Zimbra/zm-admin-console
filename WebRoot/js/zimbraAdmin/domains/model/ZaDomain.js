@@ -137,6 +137,9 @@ ZaDomain.A_zimbraPublicServiceProtocol = "zimbraPublicServiceProtocol";
 ZaDomain.A_zimbraDNSCheckHostname = "zimbraDNSCheckHostname";
 ZaDomain.A_zimbraBasicAuthRealm = "zimbraBasicAuthRealm";
 
+ZaDomain.A_zimbraFeatureMailRecallEnabled = "zimbraFeatureMailRecallEnabled";
+ZaDomain.A_zimbraFeatureMailRecallTime = "zimbraFeatureMailRecallTime";
+
 //GAL search
 ZaDomain.A_zimbraGalMaxResults = "zimbraGalMaxResults";
 ZaDomain.A_zimbraGalMode = "zimbraGalMode";
@@ -2694,7 +2697,9 @@ ZaDomain.myXModel = {
        {id:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled},
 
        {id:ZaDomain.A_zimbraAutoProvNotificationSubject, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject},
-       {id:ZaDomain.A_zimbraAutoProvNotificationBody, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody}
+       {id:ZaDomain.A_zimbraAutoProvNotificationBody, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody},
+	   {id:ZaDomain.A_zimbraFeatureMailRecallEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaDomain.A_zimbraFeatureMailRecallEnabled, type:_ENUM_},
+	   {id:ZaDomain.A_zimbraFeatureMailRecallTime, type:_COS_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraFeatureMailRecallTime,choices: ZaModel.MAIL_RECALL_CHOICES}
     ]
 };
 

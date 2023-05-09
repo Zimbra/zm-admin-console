@@ -668,6 +668,10 @@ ZaDomainXFormView.getUserQuota = function () {
     ZaDomain.getAccountQuota(params.domainName , 0, 50, params.sortBy, params.sortAscending, cb);
 }
 
+ZaDomainXFormView.isMailRecallEnabled = function () {
+    return (this.getInstanceValue(ZaDomain.A_zimbraFeatureMailRecallEnabled) == 'TRUE');
+}
+
 ZaDomainXFormView.updateUserQuota = function(params, resp) {
     if (resp && !resp.isException()) {
         resp = resp.getResponse().Body.GetQuotaUsageResponse;
@@ -1339,20 +1343,39 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
 		tabIx = ++this.TAB_INDEX;
 		this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "setting_up_sms_reminders_feature.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
 		tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_Features});
-		var caseFeature = {type:_ZATABCASE_, caseKey:tabIx,
+		var caseFeature = {type:_ZATABCASE_, caseKey:tabIx,colSizes:["auto"],numCols:1,
                         cssStyle:"padding-left:10px;",
-			items : [
-				{ type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_zimbraCalendarFeature,
-				  items :[
-                      {ref:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                          type:_CHECKBOX_,labelLocation:_RIGHT_,
-                          msgName:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                          label:ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                          trueValue:"TRUE", falseValue:"FALSE"
-                      }
-		         ]
-				}
-			]
+                        items: [
+                            {
+                                type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraCalendarFeature,
+                                items: [
+                                    {
+                                        ref: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+                                        type: _CHECKBOX_, labelLocation: _RIGHT_,
+                                        msgName: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+                                        label: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+                                        trueValue: "TRUE", falseValue: "FALSE"
+                                    }
+                                ]
+                            },
+                            {
+                                type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraMailFeature, colSpan: "*", containerCssStyle: "padding-bottom:0;",
+                                visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible,
+                                [
+                                    ZaDomain.A_zimbraFeatureMailRecallEnabled,
+                                    ZaDomain.A_zimbraFeatureMailRecallTime
+                                ]]
+                                ],
+                                items: [
+                                    { ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+                                    {
+                                        ref: ZaDomain.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaDomainXFormView.isMailRecallEnabled],
+                                        enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, editable: true, cssClass: "admin_xform_number_input"
+                                    }
+
+                                ]
+                            }
+                        ]
 		};
 		switchGroup.items.push(caseFeature);
 	}
