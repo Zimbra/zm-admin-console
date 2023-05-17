@@ -625,6 +625,7 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                 ]
             },
             {type:_ZAWIZ_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraMailFeature, id:"cos_form_features_mail",
+                colSizes:["200px","auto"], numCols:2,
                 enableDisableChecks:[ZaNewCosXWizard.isMailFeatureEnabled],
                 enableDisableChangeEventSources:[ZaCos.A_zimbraFeatureMailEnabled],
                 visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
@@ -664,10 +665,8 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_WIZ_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"},
-                        {ref:ZaCos.A_zimbraFeatureMailRecallEnabled, type:_WIZ_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureEnableMailRecall,trueValue:"TRUE", falseValue:"FALSE"},
-                        {ref:ZaCos.A_zimbraFeatureMailRecallTime,type:_OSELECT1_,enableDisableChecks: [ZaCosXFormView.isMailRecallEnabled],
-                            enableDisableChangeEventSources:[ZaCos.A_zimbraFeatureMailRecallEnabled],label:ZaMsg.LBL_zimbraFeatureMailRecallInterval,labelLocation:_LEFT_,editable:true,cssClass:"admin_xform_number_input"}
-
+                        {ref:ZaCos.A_zimbraFeatureMailRecallEnabled, type:_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, label:ZaMsg.LBL_zimbraFeatureEnableMailRecall,trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref: ZaCos.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaCosXFormView.isMailRecallEnabled], enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, cssClass: "admin_xform_number_input", nowrap: false, labelWrap: true}
                 ]
             },
             {

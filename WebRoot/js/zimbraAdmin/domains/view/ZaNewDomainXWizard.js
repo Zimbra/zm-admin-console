@@ -1646,10 +1646,10 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 							]]
 							],
 							items: [
-								{ ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+								{ ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, resetToSuperLabel: ZaMsg.NAD_ResetToCOS, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
 								{
 									ref: ZaDomain.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaNewDomainXWizard.isMailRecallEnabled],
-									enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, editable: true, cssClass: "admin_xform_number_input"
+									enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, cssClass: "admin_xform_number_input", labelCssStyle: "text-align:left;", nowrap: false, labelWrap: true
 								}
 
 							]

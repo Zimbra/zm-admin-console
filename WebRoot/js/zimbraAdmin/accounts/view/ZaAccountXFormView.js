@@ -2204,7 +2204,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
 
                         ]
                     },
-                    {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraMailFeature, id:"account_form_features_mail", colSizes:["auto"],numCols:1,
+                    {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraMailFeature, id:"account_form_features_mail", colSizes:["275px","auto"], numCols:2,
                         visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
                             [ZaAccount.A_zimbraFeatureMailPriorityEnabled,
                              ZaAccount.A_zimbraFeatureFlaggingEnabled,
@@ -2256,10 +2256,10 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                 checkBoxLabel:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,
                                 trueValue:"TRUE", falseValue:"FALSE"
                             },
-                            { ref: ZaAccount.A_zimbraFeatureMailRecallEnabled, type: _SUPER_CHECKBOX_, checkBoxLabel: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+                            { ref: ZaAccount.A_zimbraFeatureMailRecallEnabled, type: _SUPER_CHECKBOX_, resetToSuperLabel: ZaMsg.NAD_ResetToCOS, checkBoxLabel: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
                             {
                                 ref: ZaAccount.A_zimbraFeatureMailRecallTime, type: _SUPER_SELECT1_, enableDisableChecks: [ZaAccountXFormView.isMailRecallEnabled],
-                                enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, editable: true, cssClass: "admin_xform_number_input"
+                                enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_
                             }
                         ]
                     },

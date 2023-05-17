@@ -1343,7 +1343,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
 		tabIx = ++this.TAB_INDEX;
 		this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "setting_up_sms_reminders_feature.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
 		tabBar.choices.push({value:tabIx, label:ZaMsg.TABT_Features});
-		var caseFeature = {type:_ZATABCASE_, caseKey:tabIx,colSizes:["auto"],numCols:1,
+		var caseFeature = {type:_ZATABCASE_, caseKey:tabIx, colSizes:["auto"], numCols:1,
                         cssStyle:"padding-left:10px;",
                         items: [
                             {
@@ -1367,10 +1367,10 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                                 ]]
                                 ],
                                 items: [
-                                    { ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+                                    { ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, resetToSuperLabel: ZaMsg.NAD_ResetToCOS, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
                                     {
                                         ref: ZaDomain.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaDomainXFormView.isMailRecallEnabled],
-                                        enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, editable: true, cssClass: "admin_xform_number_input"
+                                        enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, cssClass: "admin_xform_number_input"
                                     }
 
                                 ]

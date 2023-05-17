@@ -855,10 +855,10 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"},
-                        { ref: ZaCos.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
+                        { ref: ZaCos.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, resetToSuperLabel: ZaMsg.NAD_ResetToCOS, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
                         {
                             ref: ZaCos.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaCosXFormView.isMailRecallEnabled],
-                            enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, editable: true, cssClass: "admin_xform_number_input"
+                            enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_
                         }
     
                 ]
