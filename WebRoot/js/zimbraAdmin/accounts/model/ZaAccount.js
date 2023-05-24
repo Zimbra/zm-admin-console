@@ -2074,7 +2074,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraFeatureMailPriorityEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureMailPriorityEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureReadReceiptsEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureReadReceiptsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureMailRecallEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraFeatureMailRecallEnabled, type:_COS_ENUM_},
-        {id:ZaAccount.A_zimbraFeatureMailRecallTime, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureMailRecallTime,choices: ZaModel.MAIL_RECALL_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureMailRecallTime, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureMailRecallTime, choices:ZaModel.MAIL_RECALL_CHOICES},
         {id:ZaAccount.A_zimbraFeatureImapDataSourceEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureImapDataSourceEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeaturePop3DataSourceEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeaturePop3DataSourceEnabled, choices:ZaModel.BOOLEAN_CHOICES},
            {id:ZaAccount.A_zimbraFeatureMailSendLaterEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureMailSendLaterEnabled, choices:ZaModel.BOOLEAN_CHOICES},

@@ -1296,8 +1296,19 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             },
                             { ref: ZaAccount.A_zimbraFeatureMailRecallEnabled, type: _SUPER_WIZ_CHECKBOX_, resetToSuperLabel: ZaMsg.NAD_ResetToCOS, checkBoxLabel: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
                             {
-                                ref: ZaAccount.A_zimbraFeatureMailRecallTime, type: _SUPERWIZ_SELECT1_, enableDisableChecks: [ZaAccountXFormView.isMailRecallEnabled],
-                                enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, nowrap: false, labelWrap: true, cssClass: "admin_xform_name_input"
+                                type:_GROUP_,
+                                numCols:2,
+                                colSizes:["auto", "*"], 
+                                nowrap: true, label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_,
+                                items: [
+                                    {
+                                        ref: ZaAccount.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaAccountXFormView.isMailRecallEnabled],
+                                        enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureMailRecallEnabled], labelLocation: _LEFT_
+                                    },
+                                    {
+                                        type: _OUTPUT_, label: ZaMsg.LBL_minute, valign: _LEFT_
+                                    }
+                                ]
                             }
                         ]
                     });

@@ -706,7 +706,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraAllowAnyFromAddress, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraAllowAnyFromAddress, type:_ENUM_},
         {id:ZaCos.A_zimbraPrefSaveToSent, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefSaveToSent, type:_ENUM_},
         {id:ZaCos.A_zimbraMaxMailItemsPerPage, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraMaxMailItemsPerPage,maxInclusive:2147483647, minInclusive:0},
-        {id:ZaCos.A_zimbraFeatureMailRecallTime, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureMailRecallTime,choices: ZaModel.MAIL_RECALL_CHOICES},
+        {id:ZaCos.A_zimbraFeatureMailRecallTime, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureMailRecallTime, choices:ZaModel.MAIL_RECALL_CHOICES},
         {id:ZaCos.A_zimbraPrefMailItemsPerPage, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraPrefMailItemsPerPage, choices:[10,25,50,100]},
         {id:ZaCos.A_zimbraPrefHtmlEditorDefaultFontFamily, choices:ZaModel.FONT_FAMILY_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefHtmlEditorDefaultFontFamily, type:_ENUM_},
         {id:ZaCos.A_zimbraPrefHtmlEditorDefaultFontSize, choices:ZaModel.FONT_SIZE_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefHtmlEditorDefaultFontSize, type:_ENUM_},

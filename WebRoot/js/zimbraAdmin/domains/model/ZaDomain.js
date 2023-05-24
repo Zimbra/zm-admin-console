@@ -2699,7 +2699,7 @@ ZaDomain.myXModel = {
        {id:ZaDomain.A_zimbraAutoProvNotificationSubject, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject},
        {id:ZaDomain.A_zimbraAutoProvNotificationBody, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody},
 	   {id:ZaDomain.A_zimbraFeatureMailRecallEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaDomain.A_zimbraFeatureMailRecallEnabled, type:_ENUM_},
-	   {id:ZaDomain.A_zimbraFeatureMailRecallTime, type:_COS_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraFeatureMailRecallTime,choices: ZaModel.MAIL_RECALL_CHOICES}
+	   {id:ZaDomain.A_zimbraFeatureMailRecallTime, type:_COS_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraFeatureMailRecallTime, choices:ZaModel.MAIL_RECALL_CHOICES}
     ]
 };
 

@@ -1369,8 +1369,19 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                                 items: [
                                     { ref: ZaDomain.A_zimbraFeatureMailRecallEnabled, type: _CHECKBOX_, label: ZaMsg.LBL_zimbraFeatureEnableMailRecall, trueValue: "TRUE", falseValue: "FALSE" },
                                     {
-                                        ref: ZaDomain.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaDomainXFormView.isMailRecallEnabled],
-                                        enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureMailRecallEnabled], label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_, cssClass: "admin_xform_number_input"
+                                        type:_GROUP_,
+                                        numCols:2,
+                                        colSizes:["auto", "*"], 
+                                        nowrap: true, label: ZaMsg.LBL_zimbraFeatureMailRecallInterval, labelLocation: _LEFT_,
+                                        items: [
+                                            {
+                                                ref: ZaAccount.A_zimbraFeatureMailRecallTime, type: _OSELECT1_, enableDisableChecks: [ZaAccountXFormView.isMailRecallEnabled],
+                                                enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureMailRecallEnabled], labelLocation: _LEFT_
+                                            },
+                                            {
+                                                type: _OUTPUT_, label: ZaMsg.LBL_minute, valign: _LEFT_
+                                            }
+                                        ]
                                     }
 
                                 ]
