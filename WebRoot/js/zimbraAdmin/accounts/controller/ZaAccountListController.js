@@ -987,7 +987,8 @@ function (item) {
 				//check password
 				var myCos = null;
 				var maxPwdLen = null;
-				var minPwdLen = null;	
+				var minPwdLen = null;
+				var checkUsernameinPassword;	
 				item.refresh(true,false);
 				if(item.attrs[ZaAccount.A_zimbraMinPwdLength] != null) {
 					minPwdLen = item.attrs[ZaAccount.A_zimbraMinPwdLength];
@@ -995,6 +996,10 @@ function (item) {
 				
 				if(item.attrs[ZaAccount.A_zimbraMaxPwdLength] != null) {
 					maxPwdLen = item.attrs[ZaAccount.A_zimbraMaxPwdLength];
+				} 
+
+				if(item.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != null) {
+					checkUsernameinPassword = Boolean(item.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword]);
 				} 
 				
 				if (minPwdLen == null) {
@@ -1038,6 +1043,12 @@ function (item) {
                     }
 					ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + maxpassMsg, null, DwtMessageDialog.CRITICAL_STYLE, null);
 					ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
+				} else if(checkUsernameinPassword === false){	
+					var username = this._localXForm.getInstance().attrs[ZaAccount.A_mail].split('@')[0];
+					if (szPwd.includes(username)){
+						ZaApp.getInstance().dialogs["errorMsgDlg"].setMessage(ZaMsg.ERROR_USERNAME_IN_PASSWORD, null, DwtMessageDialog.CRITICAL_STYLE, null);
+						ZaApp.getInstance().dialogs["errorMsgDlg"].popup();
+					}
 				} else {		
 					item.changePassword(szPwd);
 					this._chngPwdDlg.popdown();	//close the dialog

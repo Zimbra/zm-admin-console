@@ -113,6 +113,7 @@ ZaAccount.A_zimbraContactMaxNumEntries = "zimbraContactMaxNumEntries";
 ZaAccount.A_zimbraMailForwardingAddressMaxLength = "zimbraMailForwardingAddressMaxLength";
 ZaAccount.A_zimbraMailForwardingAddressMaxNumAddrs = "zimbraMailForwardingAddressMaxNumAddrs";
 ZaAccount.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
+ZaAccount.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
 // TODO: We will use below code in ZCS-11977
 // ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
 // ZaAccount.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
@@ -411,6 +412,7 @@ function(tmpObj) {
     var minPwdLen = 0;
     var maxPwdAge = Number.POSITIVE_INFINITY;
     var minPwdAge = 0;
+    var checkUsernameinPassword;
 
 
     //validate this account's password constraints
@@ -426,11 +428,20 @@ function(tmpObj) {
         return false;
     }
 
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj) && tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != "" && tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != null) {
+        //show error msg
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_USERNAME_IN_PASSWORD)) ;
+        return false;
+    }
+
     if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMaxPwdLength,tmpObj) && tmpObj.attrs[ZaAccount.A_zimbraMaxPwdLength])
         tmpObj.attrs[ZaAccount.A_zimbraMaxPwdLength] = parseInt(tmpObj.attrs[ZaAccount.A_zimbraMaxPwdLength]);
 
     if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMinPwdLength,tmpObj) && tmpObj.attrs[ZaAccount.A_zimbraMinPwdLength])
         tmpObj.attrs[ZaAccount.A_zimbraMinPwdLength] = parseInt(tmpObj.attrs[ZaAccount.A_zimbraMinPwdLength]);
+    
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj) && tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword])
+        tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = Boolean(tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword]);
 
     if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMinPwdAge,tmpObj) && tmpObj.attrs[ZaAccount.A_zimbraMinPwdAge] != "" && tmpObj.attrs[ZaAccount.A_zimbraMinPwdAge] !=null && !AjxUtil.isNonNegativeLong(tmpObj.attrs[ZaAccount.A_zimbraMinPwdAge])) {
         //show error msg
@@ -466,11 +477,27 @@ function(tmpObj) {
             maxPwdLen = parseInt (tmpObj._defaultValues.attrs[ZaAccount.A_zimbraMaxPwdLength]);
         }
     }
-    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMaxPwdLength,tmpObj) || ZaItem.hasWritePermission(ZaAccount.A_zimbraMinPwdLength,tmpObj)) {
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj)) {
+        if(tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != null) {
+            checkUsernameinPassword = Boolean(tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword]);
+        } else {
+            checkUsernameinPassword = Boolean(tmpObj._defaultValues.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword]);
+        }
+    }
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMaxPwdLength,tmpObj) || ZaItem.hasWritePermission(ZaAccount.A_zimbraMinPwdLength,tmpObj) || ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj)) {
         if(maxPwdLen < minPwdLen) {
             //show error msg
             ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_MAX_MIN_PWDLENGTH);
             return false;
+        } else if (checkUsernameinPassword == false){
+            //show error msg
+            var currentPassword = tmpObj.attrs[ZaAccount.A_password];
+            var username = tmpObj.attrs[ZaAccount.A_mail].split('@')[0];
+            if (currentPassword.includes({username})) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_USERNAME_IN_PASSWORD);
+                return false;
+            }
+           
         }
     }
 
@@ -490,11 +517,19 @@ function(tmpObj) {
             minPwdAge = parseInt (tmpObj._defaultValues.attrs[ZaCos.A_zimbraMinPwdAge]);
         }
     }
-    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMaxPwdLength,tmpObj) || ZaItem.hasWritePermission(ZaAccount.A_zimbraMinPwdLength,tmpObj)) {
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraMaxPwdLength,tmpObj) || ZaItem.hasWritePermission(ZaAccount.A_zimbraMinPwdLength,tmpObj) || ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj)) {
         if(maxPwdAge < minPwdAge) {
             //show error msg
             ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_MAX_MIN_PWDAGE);
             return false;
+        } else if (checkUsernameinPassword == false){
+            //show error msg
+            var currentPassword = tmpObj.attrs[ZaAccount.A_password];
+            var username = tmpObj.attrs[ZaAccount.A_mail].split('@')[0];
+            if (currentPassword.includes({username})){
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_USERNAME_IN_PASSWORD);
+                return false;
+            }
         }
     }
     //if there is a password - validate it
@@ -527,6 +562,12 @@ function(tmpObj) {
                     maxpassMsg =  String(ZaMsg.NAD_passMaxLengthMsg_s).replace("{0}",maxPwdLen);
                 }
                 ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_TOOLONG+ "<br>" + maxpassMsg);
+                return false;
+            }
+            if(currentPassword.includes({username})) {
+                //show error msg
+                //show error msg
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_USERNAME_IN_PASSWORD);
                 return false;
             }
         }
@@ -1889,6 +1930,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraMinPwdLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMinPwdLength, maxInclusive:2147483647, minInclusive:0},
 
         {id:ZaAccount.A_zimbraPasswordMinUpperCaseChars, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPasswordMinUpperCaseChars, maxInclusive:2147483647, minInclusive:0},
+        {id:ZaAccount.A_zimbraFeatureAllowUsernameInPassword, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraFeatureAllowUsernameInPassword},
         {id:ZaAccount.A_zimbraPasswordMinLowerCaseChars, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPasswordMinLowerCaseChars, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraPasswordMinPunctuationChars, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPasswordMinPunctuationChars, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraPasswordMinNumericChars, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraPasswordMinNumericChars, maxInclusive:2147483647, minInclusive:0},

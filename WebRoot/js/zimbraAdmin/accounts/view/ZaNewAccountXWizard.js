@@ -2158,7 +2158,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
         if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraPasswordLocked,ZaAccount.A_zimbraMinPwdLength,
             ZaAccount.A_zimbraMaxPwdLength,ZaAccount.A_zimbraPasswordMinUpperCaseChars,ZaAccount.A_zimbraPasswordMinLowerCaseChars,
             ZaAccount.A_zimbraPasswordMinPunctuationChars,ZaAccount.A_zimbraPasswordMinNumericChars,ZaAccount.A_zimbraPasswordMinDigitsOrPuncs,
-            ZaAccount.A_zimbraMinPwdAge,ZaAccount.A_zimbraMaxPwdAge,ZaAccount.A_zimbraEnforcePwdHistory, ZaAccount.A_zimbraPasswordBlockCommonEnabled],[])) {
+            ZaAccount.A_zimbraMinPwdAge,ZaAccount.A_zimbraMaxPwdAge,ZaAccount.A_zimbraEnforcePwdHistory, ZaAccount.A_zimbraPasswordBlockCommonEnabled, ZaAccount.A_zimbraFeatureAllowUsernameInPassword],[])) {
             advancedCaseItems.push({type:_ZAWIZ_TOP_GROUPER_,id:"account_password_settings",colSizes:["auto"],numCols:1,
                             label:ZaMsg.NAD_PasswordGrouper,
                             items: [
@@ -2265,6 +2265,13 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                     trueValue:"TRUE", falseValue:"FALSE",
                                     colSizes:["200px", "300px", "*"],
                                     visibilityChecks:[],enableDisableChecks:[[ZaNewAccountXWizard.isAuthfromInternal, domainName,ZaAccount.A_name]]
+                                },
+                                {ref:ZaAccount.A_zimbraFeatureAllowUsernameInPassword,
+                                    type:_SUPER_WIZ_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.NAD_AllowusernameInPassword,checkBoxLabel:ZaMsg.NAD_AllowusernameInPassword,
+                                    trueValue:"TRUE", falseValue:"FALSE",
+                                    colSizes:["200px", "300px", "*"],
+                                    visibilityChecks:[]
                                 }
                             ]
                         });
