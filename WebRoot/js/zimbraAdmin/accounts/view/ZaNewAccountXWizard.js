@@ -41,6 +41,13 @@ ZaNewAccountXWizard = function(parent, entry) {
     this._domains = {} ;
 }
 
+ZaNewAccountXWizard.MAIL_FEATURE_ATTRS = [ZaAccount.A_zimbraFeatureMailPriorityEnabled,ZaAccount.A_zimbraFeatureFlaggingEnabled,
+    ZaAccount.A_zimbraImapEnabled,ZaAccount.A_zimbraPop3Enabled,
+    ZaAccount.A_zimbraFeatureWebClientEnabled,
+    ZaAccount.A_zimbraFeatureImapDataSourceEnabled,
+    ZaAccount.A_zimbraFeaturePop3DataSourceEnabled,ZaAccount.A_zimbraFeatureConversationsEnabled,ZaAccount.A_zimbraFeatureFiltersEnabled,
+    ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
+    ZaAccount.A_zimbraFeatureMailSendLaterEnabled,ZaAccount.A_zimbraFeatureIdentitiesEnabled,ZaAccount.A_zimbraFeatureReadReceiptsEnabled]
 
 ZaNewAccountXWizard.zimletChoices = new XFormChoices([], XFormChoices.SIMPLE_LIST);
 ZaNewAccountXWizard.themeChoices = new XFormChoices([], XFormChoices.OBJECT_LIST);
@@ -1237,13 +1244,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                     });
 
         };
-        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureMailPriorityEnabled,ZaAccount.A_zimbraFeatureFlaggingEnabled,
-            ZaAccount.A_zimbraImapEnabled,ZaAccount.A_zimbraPop3Enabled,
-            ZaAccount.A_zimbraFeatureWebClientEnabled,
-            ZaAccount.A_zimbraFeatureImapDataSourceEnabled,
-            ZaAccount.A_zimbraFeaturePop3DataSourceEnabled,ZaAccount.A_zimbraFeatureConversationsEnabled,ZaAccount.A_zimbraFeatureFiltersEnabled,
-            ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
-            ZaAccount.A_zimbraFeatureMailSendLaterEnabled,ZaAccount.A_zimbraFeatureIdentitiesEnabled,ZaAccount.A_zimbraFeatureReadReceiptsEnabled],[])) {
+        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,ZaNewAccountXWizard.MAIL_FEATURE_ATTRS,[])) {
             featuresCase.items.push({type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraMailFeature, id:"account_wiz_features_mail",
                         colSizes:["auto"],numCols:1,
                          enableDisableChecks:[ZaAccountXFormView.isMailFeatureEnabled],
