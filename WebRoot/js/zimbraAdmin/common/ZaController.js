@@ -555,6 +555,15 @@ function (resp) {
                 this._loginDialog.registerCallback(this.loginCallback, this);
                 this._loginDialog.clearError();
                 this._loginDialog.showTwoFactorCode();
+                if(body.AuthResponse && body.AuthResponse.csrfToken && 
+                    body.AuthResponse.csrfToken._content) {
+                    window.csrfToken = body.AuthResponse.csrfToken._content;
+                }
+
+                if(body.AuthResponse && body.AuthResponse.authToken && 
+                    body.AuthResponse.authToken[0]._content) {
+                    window.authToken = body.AuthResponse.authToken[0]._content;
+                }
             } else {
                 if(body.AuthResponse && body.AuthResponse.csrfToken && 
                     body.AuthResponse.csrfToken._content) {

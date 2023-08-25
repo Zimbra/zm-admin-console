@@ -202,6 +202,8 @@ function() {
 		}
 		if(ZLoginFactory.isShown(ZLoginFactory.TWO_FACTOR_CODE_FORM)) {
 			twoFactorCode = ZLoginFactory.get(ZLoginFactory.TWO_FACTOR_CODE).value;
+			username = "";
+			password = "";
 		}
 		if(ZLoginFactory.isShown(ZLoginFactory.TRUST_DEVICE)) {
 			trustedDevice = ZLoginFactory.get(ZLoginFactory.TRUST_DEVICE).value;
