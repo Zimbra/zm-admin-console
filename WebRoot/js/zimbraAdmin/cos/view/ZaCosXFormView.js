@@ -314,7 +314,6 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
 	ZaCos.A_zimbraQuotaWarnInterval,
 	ZaCos.A_zimbraQuotaWarnMessage,
 	ZaCos.A_zimbraPasswordLocked,
-	ZaCos.A_zimbraPasswordBlockCommonEnabled,
 	ZaCos.A_zimbraMinPwdLength,
 	ZaCos.A_zimbraMaxPwdLength,
 	ZaCos.A_zimbraPasswordMinUpperCaseChars,
@@ -1655,13 +1654,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             type:_TEXTFIELD_, msgName:ZaMsg.MSG_zimbraEnforcePwdHistory,
             label:ZaMsg.LBL_zimbraEnforcePwdHistory, labelLocation:_LEFT_, cssClass:"admin_xform_number_input",
             visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
-            },
-                    {ref:ZaCos.A_zimbraPasswordBlockCommonEnabled, type:_CHECKBOX_,
-            msgName:ZaMsg.NAD_RejectCommonPwd,
-            label:ZaMsg.NAD_RejectCommonPwd,
-            trueValue:"TRUE", falseValue:"FALSE",
-            visibilityChecks:[],enableDisableChecks:[[ZaCosXFormView.isAllAuthfromInternal]]
-            },
+            }
                 ]
             },
             {type:_ZA_TOP_GROUPER_, id:"cos_password_lockout_settings",
