@@ -104,7 +104,6 @@ ZaAccount.A_zimbraPasswordMinDigitsOrPuncs = "zimbraPasswordMinDigitsOrPuncs";
 ZaAccount.A_zimbraMinPwdAge="zimbraPasswordMinAge";
 ZaAccount.A_zimbraMaxPwdAge="zimbraPasswordMaxAge";
 ZaAccount.A_zimbraEnforcePwdHistory="zimbraPasswordEnforceHistory";
-ZaAccount.A_zimbraPasswordBlockCommonEnabled="zimbraPasswordBlockCommonEnabled";
 ZaAccount.A_zimbraMailAlias="zimbraMailAlias";
 ZaAccount.A_zimbraMailForwardingAddress="zimbraMailForwardingAddress";
 ZaAccount.A_zimbraPasswordMustChange="zimbraPasswordMustChange";
@@ -1898,7 +1897,6 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefCalendarForwardInvitesTo, type:_LIST_, ref:"attrs/"+ZaAccount.A_zimbraPrefCalendarForwardInvitesTo, listItem:{type:_EMAIL_ADDRESS_}},
         {id:ZaAccount.A_zimbraPasswordMustChange, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPasswordMustChange},
         {id:ZaAccount.A_zimbraPasswordLocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordLocked, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraPasswordBlockCommonEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordBlockCommonEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraContactMaxNumEntries, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraContactMaxNumEntries, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxLength, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraDataSourcePop3PollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDataSourcePop3PollingInterval},

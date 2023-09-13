@@ -1225,7 +1225,6 @@ ZaAccountXFormView.ADVANCED_TAB_ATTRS = [ZaAccount.A_zimbraAttachmentsBlocked,
     ZaAccount.A_zimbraQuotaWarnInterval,
     ZaAccount.A_zimbraQuotaWarnMessage,
     ZaAccount.A_zimbraPasswordLocked,
-    ZaAccount.A_zimbraPasswordBlockCommonEnabled,
     ZaAccount.A_zimbraMinPwdLength,
     ZaAccount.A_zimbraMaxPwdLength,
     ZaAccount.A_zimbraPasswordMinUpperCaseChars,
@@ -3350,8 +3349,7 @@ textFieldCssClass:"admin_xform_number_input"}
                         			ZaAccount.A_zimbraPasswordMinDigitsOrPuncs,
                         			ZaAccount.A_zimbraMinPwdAge,
                         			ZaAccount.A_zimbraMaxPwdAge,
-                        			ZaAccount.A_zimbraEnforcePwdHistory,
-                        			ZaAccount.A_zimbraPasswordBlockCommonEnabled]]],
+                        			ZaAccount.A_zimbraEnforcePwdHistory]]],
 							items: [ 
 						                { type: _DWT_ALERT_, containerCssStyle: "padding-bottom:0;", colSpan:3,
 						                      style: DwtAlert.INFO,iconVisible: (!ZaAccountXFormView.isAuthfromInternal(entry.name)),
@@ -3435,13 +3433,6 @@ textFieldCssClass:"admin_xform_number_input"}
 									msgName:ZaMsg.MSG_zimbraEnforcePwdHistory,
 									txtBoxLabel:ZaMsg.LBL_zimbraEnforcePwdHistory, labelLocation:_LEFT_, 
 									textFieldCssClass:"admin_xform_number_input",
-									visibilityChecks:[],enableDisableChecks:[[ZaAccountXFormView.isAuthfromInternalSync, entry.name, ZaAccount.A_name]]
-								},
-								{ref:ZaAccount.A_zimbraPasswordBlockCommonEnabled, type:_SUPER_CHECKBOX_, 
-									resetToSuperLabel:ZaMsg.NAD_ResetToCOS, 
-									msgName:ZaMsg.NAD_RejectCommonPwd,
-									checkBoxLabel:ZaMsg.NAD_RejectCommonPwd, 
-									trueValue:"TRUE", falseValue:"FALSE",
 									visibilityChecks:[],enableDisableChecks:[[ZaAccountXFormView.isAuthfromInternalSync, entry.name, ZaAccount.A_name]]
 								}
 							]
