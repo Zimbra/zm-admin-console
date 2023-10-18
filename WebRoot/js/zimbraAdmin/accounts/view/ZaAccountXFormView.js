@@ -1074,7 +1074,8 @@ ZaAccountXFormView.ACCOUNT_NAME_GROUP_ATTRS = [ZaAccount.A_name,
         ZaAccount.A_initials,
         ZaAccount.A_lastName,
         ZaAccount.A_displayname,
-    ZaAccount.A_zimbraHideInGal
+        ZaAccount.A_zimbraHideInGal,
+        ZaAccount.A_zimbraHideAliasesInGal
 ];
 
 ZaAccountXFormView.MEMBEROF_TAB_ATTRS = [];
@@ -1397,6 +1398,10 @@ ZaAccountXFormView.getAccountNameInfoItem = function(){
                               msgName:ZaMsg.LBL_zimbraHideInGal,
                               label:ZaMsg.LBL_zimbraHideInGal, trueValue:"TRUE", falseValue:"FALSE"
                 },
+        ZaAccountXFormView.accountNameInfoPool[ZaAccount.A_zimbraHideAliasesInGal]={ref:ZaAccount.A_zimbraHideAliasesInGal, type:_CHECKBOX_,
+                    msgName:ZaMsg.LBL_zimbraHideAliasesInGal,
+                    label:ZaMsg.LBL_zimbraHideAliasesInGal, trueValue:"TRUE", falseValue:"FALSE"
+                },
         ZaAccountXFormView.accountNameInfoPool[ZaAccount.A_zimbraPhoneticFirstName] = {
                     ref:ZaAccount.A_zimbraPhoneticFirstName, type:_TEXTFIELD_,
                     msgName:ZaMsg.NAD_zimbraPhoneticFirstName,label:ZaMsg.NAD_zimbraPhoneticFirstName,
@@ -1413,10 +1418,10 @@ ZaAccountXFormView.getAccountNameInfoItem = function(){
     var accountNameFormItems = new Array();
         var accountNameItemsOrders = new Array();
         if(ZaZimbraAdmin.isLanguage("ja")){
-        accountNameItemsOrders = [ZaAccount.A_name, ZaAccount.A_zimbraPhoneticLastName, ZaAccount.A_lastName, ZaAccount.A_initials, ZaAccount.A_zimbraPhoneticFirstName, ZaAccount.A_firstName, "ZaAccountDisplayInfoGroup", ZaAccount.A_zimbraHideInGal];
+        accountNameItemsOrders = [ZaAccount.A_name, ZaAccount.A_zimbraPhoneticLastName, ZaAccount.A_lastName, ZaAccount.A_initials, ZaAccount.A_zimbraPhoneticFirstName, ZaAccount.A_firstName, "ZaAccountDisplayInfoGroup", ZaAccount.A_zimbraHideInGal, ZaAccount.A_zimbraHideAliasesInGal];
         }
         else{
-        accountNameItemsOrders = [ZaAccount.A_name, ZaAccount.A_firstName, ZaAccount.A_initials, ZaAccount.A_lastName,"ZaAccountDisplayInfoGroup", ZaAccount.A_zimbraHideInGal];
+        accountNameItemsOrders = [ZaAccount.A_name, ZaAccount.A_firstName, ZaAccount.A_initials, ZaAccount.A_lastName,"ZaAccountDisplayInfoGroup", ZaAccount.A_zimbraHideInGal, ZaAccount.A_zimbraHideAliasesInGal];
         }
 
         for(var i = 0; i < accountNameItemsOrders.length; i++){
