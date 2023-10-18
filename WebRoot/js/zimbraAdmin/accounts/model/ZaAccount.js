@@ -274,6 +274,7 @@ ZaAccount.A_zimbraFeatureSkinChangeEnabled = "zimbraFeatureSkinChangeEnabled";
 ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled = "zimbraFeatureOutOfOfficeReplyEnabled";
 ZaAccount.A_zimbraFeatureNewMailNotificationEnabled = "zimbraFeatureNewMailNotificationEnabled";
 ZaAccount.A_zimbraHideInGal = "zimbraHideInGal";
+ZaAccount.A_zimbraHideAliasesInGal = "zimbraHideAliasesInGal";
 ZaAccount.A_zimbraMailCanonicalAddress = "zimbraMailCanonicalAddress";
 ZaAccount.A_zimbraMailCatchAllAddress = "zimbraMailCatchAllAddress" ;
 ZaAccount.A_zimbraFeatureOptionsEnabled = "zimbraFeatureOptionsEnabled";
@@ -2150,6 +2151,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A2_calFwdAddr_selection_cache, type:_LIST_},
         {id:ZaAccount.A2_fp_selection_cache, type:_LIST_},
         {id:ZaAccount.A_zimbraHideInGal, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideInGal, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraHideAliasesInGal, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraHideAliasesInGal, choices:ZaModel.BOOLEAN_CHOICES},
 
         {id:ZaAccount.A_zimbraMailTransport, type:_STRING_, ref:"attrs/"+ZaAccount.A_zimbraMailTransport},
 
