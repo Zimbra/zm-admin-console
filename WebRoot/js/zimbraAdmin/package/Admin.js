@@ -66,6 +66,7 @@ AjxPackage.require("zimbraAdmin.common.LDAPURL_XFormItem");
 AjxPackage.require("zimbraAdmin.common.HostPort_XFormItem");
 AjxPackage.require("zimbraAdmin.common.MailQuota_XModelItem");
 AjxPackage.require("zimbraAdmin.common.ZaSelectRadioXFormItem");
+AjxPackage.require("zimbraAdmin.common.ZaSelectMultipleCheckboxXFormItem");
 AjxPackage.require("zimbraAdmin.common.ZaZimletSelectXFormItem");
 AjxPackage.require("zimbraAdmin.common.ZaCheckBoxListXFormItem");
 AjxPackage.require("zimbraAdmin.common.Signature_XFormItem");
