@@ -514,6 +514,10 @@ ZaDomain._getAllCallback = function(callback, response) {
 	return list;
 };
 
+
+// array of function(s) to set additional attribute(s) to CreateDomainRequest
+ZaDomain.functionsToAddAttributesToCreateDomain = new Array();
+
 /**
 * Creates a new ZaDomain. This method makes SOAP request (CreateDomainRequest) to create a new domain record in LDAP. 
 * @param attrs
@@ -909,6 +913,14 @@ function(tmpObj, newDomain) {
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraDomainAggregateQuotaPolicy]);
         attr.setAttribute("n", ZaDomain.A_zimbraDomainAggregateQuotaPolicy);
     }
+
+    // set additional attribute(s) via admin zimlet
+    for (var i = 0; i < ZaDomain.functionsToAddAttributesToCreateDomain.length; i++) {
+        if (ZaDomain.functionsToAddAttributesToCreateDomain[i] && typeof ZaDomain.functionsToAddAttributesToCreateDomain[i] === "function") {
+            ZaDomain.functionsToAddAttributesToCreateDomain[i].call(window, tmpObj, soapDoc);
+        }
+    }
+
 	//var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;	

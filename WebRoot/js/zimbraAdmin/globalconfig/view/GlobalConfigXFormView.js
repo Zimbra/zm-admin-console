@@ -1423,6 +1423,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                 } ]
             }, {
                 type : _ZA_TOP_GROUPER_,
+                id: "global_mail_address_validation_regex_setting",
                 label : ZaMsg.Domain_AD_EmailValidate,
                 visibilityChecks : [ [ ZaItem.hasReadPermission, ZaGlobalConfig.A_zimbraMailAddressValidationRegex ] ],
                 visibilityChangeEventSources : [ ZaGlobalConfig.A_zimbraMailAddressValidationRegex ],

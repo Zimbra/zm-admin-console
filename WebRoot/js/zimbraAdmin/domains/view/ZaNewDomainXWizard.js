@@ -1658,7 +1658,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 						}
 					]
 				},
-				{type:_CASE_, caseKey:ZaNewDomainXWizard.ADVANCED_STEP, numCols:1, 
+				{type:_CASE_, caseKey:ZaNewDomainXWizard.ADVANCED_STEP, numCols:1, id:"domain_form_advanced_tab",
 					items: [
 						{ type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.Domain_BC_ShareConf,
                             items :[
@@ -1685,7 +1685,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                     }
 						   ]
                         },
-                        {type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.Domain_QUOTA_Configuration,
+                        {type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.Domain_QUOTA_Configuration, id:"domain_form_domain_quota_settings",
                             colSizes:["200px","*"],
                             items:[
                                 {ref:ZaDomain.A_zimbraMailDomainQuota, type:_TEXTFIELD_,
