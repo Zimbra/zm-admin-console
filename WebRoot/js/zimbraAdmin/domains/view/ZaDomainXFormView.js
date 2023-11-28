@@ -716,7 +716,7 @@ ZaDomainXFormView.ADV_TAB_ATTRS = [ZaDomain.A_zimbraBasicAuthRealm, ZaDomain.A_z
 
 ZaDomainXFormView.ADV_TAB_RIGHTS = [];
 
-ZaDomainXFormView.Feature_TAB_ATTRS = [ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, ZaDomain.A_zimbraFeatureAllowUsernameInPassword];
+ZaDomainXFormView.Feature_TAB_ATTRS = [ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, ZaDomain.A_zimbraFeatureAllowUsernameInPassword, ZaDomain.A_zimbraFeatureResetPasswordStatus];
 ZaDomainXFormView.Feature_TAB_RIGHTS = [];
 
 ZaDomainXFormView.CERT_TAB_ATTRS = [ZaDomain.A_zimbraSSLCertificate];
@@ -1344,10 +1344,11 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                         items: [
                             {
                                 type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraCalendarFeature,
+                                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, [ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled]]],
                                 items: [
                                     {
                                         ref: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-                                        type: _CHECKBOX_, labelLocation: _RIGHT_,
+                                        type: _CHECKBOX_, labelLocation: _LEFT_,
                                         msgName: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
                                         label: ZaMsg.LBL_zimbraFeatureCalendarReminderDeviceEmailEnabled,
                                         trueValue: "TRUE", falseValue: "FALSE"
@@ -1356,16 +1357,30 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             },
                             {
                                 type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_Password,
+                                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, [ZaAccount.A_zimbraFeatureAllowUsernameInPassword]]],
                                 items: [
                                     {
                                         ref: ZaDomain.A_zimbraFeatureAllowUsernameInPassword,
-                                        type: _CHECKBOX_, labelLocation: _RIGHT_,
+                                        type: _CHECKBOX_, labelLocation: _LEFT_,
                                         msgName: ZaMsg.NAD_AllowUsernameInPassword,
                                         label: ZaMsg.NAD_AllowUsernameInPassword,
                                         trueValue: "TRUE", falseValue: "FALSE"
                                     }
                                 ]
                             },
+                            {
+                                type: _ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraResetPasswordFeature,
+                                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, [ZaAccount.A_zimbraFeatureResetPasswordStatus]]],
+                                items: [
+                                    {
+                                        ref: ZaDomain.A_zimbraFeatureResetPasswordStatus,
+                                        type: _OSELECT1_,
+                                        labelLocation: _LEFT_,
+                                        msgName: ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                                        label: ZaMsg.LBL_zimbraFeatureResetPasswordStatus
+                                    }
+                                ]
+                            }
                         ]
 		};
 		switchGroup.items.push(caseFeature);

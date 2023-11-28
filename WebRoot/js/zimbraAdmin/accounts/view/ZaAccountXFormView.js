@@ -1130,7 +1130,8 @@ ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraDumpsterEnabled,
     ZaAccount.A_zimbraDumpsterPurgeEnabled,
     ZaAccount.A_zimbraFeatureSMIMEEnabled,
-    ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled
+    ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
+    ZaAccount.A_zimbraFeatureResetPasswordStatus
 ];
 
 ZaAccountXFormView.FEATURE_TAB_RIGHTS = [];
@@ -1197,7 +1198,9 @@ ZaAccountXFormView.PREFERENCES_TAB_ATTRS = [
     ZaAccount.A_zimbraPrefAppleIcalDelegationEnabled,
     ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled,
     ZaAccount.A_zimbraPrefImapEnabled,
-    ZaAccount.A_zimbraPrefPop3Enabled
+    ZaAccount.A_zimbraPrefPop3Enabled,
+    ZaAccount.A_zimbraPrefPasswordRecoveryAddress,
+    ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus
 ];
 ZaAccountXFormView.PREFERENCES_TAB_RIGHTS = [];
 
@@ -2324,6 +2327,20 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                     checkBoxLabel:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,
                                     trueValue:"TRUE", falseValue:"FALSE"}
                             ]
+                    },
+                    {type:_ZA_TOP_GROUPER_, label: ZaMsg.NAD_zimbraResetPasswordFeature, id:"account_form_features_reset_password", colSizes:["275px","auto"],numCols:2,
+                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                            [ ZaAccount.A_zimbraFeatureResetPasswordStatus]]],
+                            items:[
+                                {ref:ZaAccount.A_zimbraFeatureResetPasswordStatus,
+                                    type:_SUPER_SELECT1_,
+                                    colSpan:2,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    label:ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                                    msgName:ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                                    labelLocation:_LEFT_
+                                }
+                            ]
                     }
                 ]
             });
@@ -2908,6 +2925,38 @@ textFieldCssClass:"admin_xform_number_input"}
                                  colSpan:2,type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefCalendarUseQuickAdd,checkBoxLabel:ZaMsg.LBL_zimbraPrefCalendarUseQuickAdd, trueValue:"TRUE", falseValue:"FALSE"},
                                 {ref:ZaAccount.A_zimbraPrefUseTimeZoneListInCalendar,
                                  colSpan:2,type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,checkBoxLabel:ZaMsg.LBL_zimbraPrefUseTimeZoneListInCalendar,trueValue:"TRUE", falseValue:"FALSE"}
+                            ]
+                        },
+                        {type:_ZA_TOP_GROUPER_, id:"account_prefs_recovery_account",
+                            label:ZaMsg.NAD_AccountRecoveryOptions,
+                            visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                                [
+                                    ZaAccount.A_zimbraPrefPasswordRecoveryAddress,
+                                    ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus
+                                ]]
+                            ],
+                            items :[
+                                {ref:ZaAccount.A_zimbraPrefPasswordRecoveryAddress,
+                                    type:_TEXTFIELD_,
+                                    msgName:ZaMsg.MSG_zimbraPrefPasswordRecoveryAddress,
+                                    label:ZaMsg.LBL_zimbraPrefPasswordRecoveryAddress,
+                                    labelLocation:_LEFT_,
+                                    width:"200px",
+                                    nowrap:false,
+                                    labelWrap:true,
+                                    elementChanged: ZaAccountXFormView.validatePrefPasswordRecoveryAddress,
+                                    enableDisableChecks:[[ZaItem.hasWritePermission, ZaAccount.A_zimbraPrefPasswordRecoveryAddress]]
+                                },
+                                {ref:ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus,
+                                    type:_OSELECT1_,
+                                    msgName:ZaMsg.MSG_zimbraPrefPasswordRecoveryAddressStatus,
+                                    label:ZaMsg.LBL_zimbraPrefPasswordRecoveryAddressStatus,
+                                    labelLocation:_LEFT_,
+                                    nowrap:false,
+                                    labelWrap:true,
+                                    elementChanged: ZaAccountXFormView.validatePrefPasswordRecoveryAddressStatus,
+                                    enableDisableChecks:[[ZaItem.hasWritePermission, ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus]]
+                                }
                             ]
                         }
                     ];
@@ -3751,3 +3800,65 @@ function(managerField) {
 		return email;
 	}
 }
+
+ZaAccountXFormView.validatePrefPasswordRecoveryAddress = function(elementValue, instanceValue, event) {
+    var form = this.getForm();
+    var prefPasswordRecoveryAddressStatusItem = form.getItemsById(ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus)[0];
+    var status = prefPasswordRecoveryAddressStatusItem.getInstanceValue();
+    var hasError = false;
+
+    this.setInstanceValue(elementValue);
+    if (elementValue && !status) {
+        this.setError(ZaMsg.recoveryAddressNotEmptyError);
+        hasError = true;
+    } else if (!elementValue && status === "verified") {
+        this.setError(ZaMsg.recoveryAddressRequiredError);
+        hasError = true;
+    } else {
+        this.clearError();
+    }
+
+    if (hasError) {
+        // Reference: XForm.prototype.itemChanged
+        var event = new DwtXFormsEvent(form, this, elementValue);
+        form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+    } else {
+        form.itemChanged(this.getId(), elementValue, event, false);
+        form.setIsDirty(true, this);
+    }
+};
+
+ZaAccountXFormView.validatePrefPasswordRecoveryAddressStatus = function(elementValue, instanceValue, event) {
+    var form = this.getForm();
+    var prefRecoveryEmailAddressItem = form.getItemsById(ZaAccount.A_zimbraPrefPasswordRecoveryAddress)[0];
+
+    if (elementValue === instanceValue) {
+        return;
+    }
+    if (elementValue === "pending" && instanceValue !== "pending") {
+        this.setError(ZaMsg.recoveryAddressStatusPendingNotAllowedError);
+        this.setInstanceValue(elementValue);
+
+        // Reference: XForm.prototype.itemChanged
+        var event = new DwtXFormsEvent(form, this, elementValue);
+        form.notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+
+        prefRecoveryEmailAddressItem.clearError();
+        // call itemChanged to check if it is a valid email address
+        form.itemChanged(prefRecoveryEmailAddressItem.getId(), prefRecoveryEmailAddressItem.getInstanceValue(), event, true);
+    } else {
+        this.clearError();
+        if (!elementValue) {
+            prefRecoveryEmailAddressItem.updateElement("");
+            prefRecoveryEmailAddressItem.setInstanceValue("");
+            prefRecoveryEmailAddressItem.clearError();
+        } else if (elementValue === "verified" && !prefRecoveryEmailAddressItem.getInstanceValue()) {
+            prefRecoveryEmailAddressItem.setError(ZaMsg.recoveryAddressRequiredError);
+        } else {
+            prefRecoveryEmailAddressItem.clearError();
+            // call itemChanged to check if it is a valid email address
+            form.itemChanged(prefRecoveryEmailAddressItem.getId(), prefRecoveryEmailAddressItem.getInstanceValue(), event, true);
+        }
+        form.itemChanged(this.getId(), elementValue, event, false);
+    }
+};

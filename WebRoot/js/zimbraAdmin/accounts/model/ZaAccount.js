@@ -225,6 +225,8 @@ ZaAccount.A_zimbraPrefMessageIdDedupingEnabled = "zimbraPrefMessageIdDedupingEna
 ZaAccount.A_zimbraPrefItemsPerVirtualPage="zimbraPrefItemsPerVirtualPage";
 ZaAccount.A_zimbraPrefImapEnabled = "zimbraPrefImapEnabled";
 ZaAccount.A_zimbraPrefPop3Enabled = "zimbraPrefPop3Enabled";
+ZaAccount.A_zimbraPrefPasswordRecoveryAddress = "zimbraPrefPasswordRecoveryAddress";
+ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus = "zimbraPrefPasswordRecoveryAddressStatus";
 
 //features
 ZaAccount.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
@@ -282,6 +284,7 @@ ZaAccount.A_zimbraFeatureMailEnabled = "zimbraFeatureMailEnabled" ;
 ZaAccount.A_zimbraFeatureGroupCalendarEnabled = "zimbraFeatureGroupCalendarEnabled" ;
 ZaAccount.A_zimbraFeatureFlaggingEnabled = "zimbraFeatureFlaggingEnabled" ;
 ZaAccount.A_zimbraForeignPrincipal = "zimbraForeignPrincipal" ;
+ZaAccount.A_zimbraFeatureResetPasswordStatus = "zimbraFeatureResetPasswordStatus";
 
 //security
 ZaAccount.A_zimbraPasswordLockoutEnabled = "zimbraPasswordLockoutEnabled";
@@ -2074,6 +2077,8 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefCalendarApptVisibility, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefCalendarApptVisibility, choices:ZaSettings.apptVisibilityChoices},
         {id:ZaAccount.A_zimbraPrefImapEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefImapEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraPrefPop3Enabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefPop3Enabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraPrefPasswordRecoveryAddress, type:_EMAIL_ADDRESS_, ref:"attrs/"+ZaAccount.A_zimbraPrefPasswordRecoveryAddress},
+        {id:ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus, choices:ZaSettings.passwordRecoveryAddressStatusChoices},
         //features
         {id:ZaAccount.A_zimbraFeatureManageZimlets, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureManageZimlets, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureImportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureImportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
@@ -2136,6 +2141,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraFeatureTouchClientEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureTouchClientEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureResetPasswordStatus, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureResetPasswordStatus, choices:ZaSettings.resetPasswordStatusChoices},
         {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep},
         {id:ZaAccount.A2_newAlias, type:_STRING_},
         {id:ZaAccount.A2_aliases, type:_LIST_,listItem:{type:_STRING_}},

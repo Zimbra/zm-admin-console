@@ -346,7 +346,8 @@ ZaNewCosXWizard.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureMailSendLaterEnabled,
     //ZaCos.A_zimbraFeatureFreeBusyViewEnabled,
     ZaCos.A_zimbraFeatureCalendarReminderDeviceEmailEnabled,
-    ZaCos.A_zimbraFeatureSMIMEEnabled
+    ZaCos.A_zimbraFeatureSMIMEEnabled,
+    ZaCos.A_zimbraFeatureResetPasswordStatus
 ];
 
 ZaNewCosXWizard.FEATURE_TAB_RIGHTS = [];
@@ -729,6 +730,21 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                 ],
                 items:[
                     {ref:ZaCos.A_zimbraFeatureSMIMEEnabled, type:_WIZ_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureSMIMEEnabled,label:ZaMsg.LBL_zimbraFeatureSMIMEEnabled, trueValue:"TRUE", falseValue:"FALSE"}
+                ]
+            },
+            {type:_ZAWIZ_TOP_GROUPER_,  label:ZaMsg.NAD_zimbraResetPasswordFeature, id:"cos_form_features_reset_password",
+                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                    [
+                        ZaCos.A_zimbraFeatureResetPasswordStatus
+                    ]]
+                ],
+                items:[
+                    {ref:ZaCos.A_zimbraFeatureResetPasswordStatus,
+                        type:_OSELECT1_,
+                        msgName:ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                        label:ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                        labelLocation:_LEFT_
+                    }
                 ]
             }
         ];

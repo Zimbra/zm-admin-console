@@ -1645,7 +1645,17 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 								}
 							]
 						},
-
+						{
+							type: _ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_zimbraResetPasswordFeature,
+							items: [
+								{
+									ref: ZaDomain.A_zimbraFeatureResetPasswordStatus,
+									type: _OSELECT1_,
+									msgName: ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+									label: ZaMsg.LBL_zimbraFeatureResetPasswordStatus
+								}
+							]
+						}
 					]
 				},
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.ADVANCED_STEP, numCols:1, 

@@ -1391,7 +1391,23 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                         }
             );
         };
-
+        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraFeatureResetPasswordStatus],[])) {
+            featuresCase.items.push(
+                {type:_ZAWIZ_TOP_GROUPER_, label:ZaMsg.NAD_zimbraResetPasswordFeature, id:"account_wiz_features_reset_password",
+                    colSizes:["200px","auto"],numCols:2,
+                    items:[
+                        {ref:ZaAccount.A_zimbraFeatureResetPasswordStatus,
+                            type:_SUPERWIZ_SELECT1_,
+                            colSizes:["300px", "*"],
+                            resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                            msgName:ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                            label:ZaMsg.LBL_zimbraFeatureResetPasswordStatus,
+                            labelLocation:_LEFT_
+                        }
+                    ]
+                }
+            );
+        };
         cases.push(featuresCase);
     }
 
@@ -1909,6 +1925,35 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             ]
                         });
         }
+        if(ZAWizTopGrouper_XFormItem.isGroupVisible(entry,[ZaAccount.A_zimbraPrefPasswordRecoveryAddress,ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus],[])) {
+            prefItems.push({type:_ZAWIZ_TOP_GROUPER_, id:"account_prefs_recovery_account",borderCssClass:"LowPaddedTopGrouperBorder",
+                            label:ZaMsg.NAD_AccountRecoveryOptions,
+                            items :[
+                                {ref:ZaAccount.A_zimbraPrefPasswordRecoveryAddress,
+                                    type:_TEXTFIELD_,
+                                    msgName:ZaMsg.MSG_zimbraPrefPasswordRecoveryAddress,
+                                    label:ZaMsg.LBL_zimbraPrefPasswordRecoveryAddress,
+                                    labelLocation:_LEFT_,
+                                    width:"200px",
+                                    nowrap:false,
+                                    labelWrap:true,
+                                    elementChanged: ZaAccountXFormView.validatePrefPasswordRecoveryAddress,
+                                    enableDisableChecks:[[ZaItem.hasWritePermission, ZaAccount.A_zimbraPrefPasswordRecoveryAddress]]
+                                },
+                                {ref:ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus,
+                                    type:_OSELECT1_,
+                                    msgName:ZaMsg.MSG_zimbraPrefPasswordRecoveryAddressStatus,
+                                    label:ZaMsg.LBL_zimbraPrefPasswordRecoveryAddressStatus,
+                                    labelLocation:_LEFT_,
+                                    nowrap:false,
+                                    labelWrap:true,
+                                    elementChanged: ZaAccountXFormView.validatePrefPasswordRecoveryAddressStatus,
+                                    enableDisableChecks:[[ZaItem.hasWritePermission, ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus]]
+                                }
+                            ]
+                        });
+        }
+
         cases.push({type:_CASE_, caseKey:ZaNewAccountXWizard.PREFS_STEP, tabGroupKey:ZaNewAccountXWizard.PREFS_STEP,
                     numCols:1, width:"680", items :prefItems});
     }

@@ -161,6 +161,7 @@ ZaDomain.A_zimbraGalAccountId = "zimbraGalAccountId";
 ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled = "zimbraFeatureCalendarReminderDeviceEmailEnabled";
 
 ZaDomain.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
+ZaDomain.A_zimbraFeatureResetPasswordStatus = "zimbraFeatureResetPasswordStatus";
 
 ZaDomain.A_mailHost = "zimbraMailHost";
 //Auth
@@ -744,6 +745,11 @@ function(tmpObj, newDomain) {
 	if(tmpObj.attrs[ZaDomain.A_zimbraFeatureAllowUsernameInPassword]) {
 		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraFeatureAllowUsernameInPassword]);
 		attr.setAttribute("n", ZaDomain.A_zimbraFeatureAllowUsernameInPassword);
+	}
+
+	if(tmpObj.attrs[ZaDomain.A_zimbraFeatureResetPasswordStatus]) {
+		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraFeatureResetPasswordStatus]);
+		attr.setAttribute("n", ZaDomain.A_zimbraFeatureResetPasswordStatus);
 	}
 
     if(tmpObj.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]) {
@@ -2708,6 +2714,7 @@ ZaDomain.myXModel = {
 		{ id: ZaDomain.A2_isTestingAuth, ref: ZaDomain.A2_isTestingAuth, type: _NUMBER_ },
 		{ id: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled },
 		{ id: ZaDomain.A_zimbraFeatureAllowUsernameInPassword, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraFeatureAllowUsernameInPassword },
+		{ id: ZaDomain.A_zimbraFeatureResetPasswordStatus, type: _ENUM_, choices: ZaSettings.resetPasswordStatusChoices, ref: "attrs/" + ZaDomain.A_zimbraFeatureResetPasswordStatus },
 
 		{ id: ZaDomain.A_zimbraAutoProvNotificationSubject, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject },
 		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody }

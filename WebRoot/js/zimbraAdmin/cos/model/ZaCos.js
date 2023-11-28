@@ -214,6 +214,7 @@ ZaCos.A_zimbraFeatureFlaggingEnabled = "zimbraFeatureFlaggingEnabled" ;
 ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled = "zimbraFeatureManageSMIMECertificateEnabled";
 ZaCos.A_zimbraFeatureSMIMEEnabled = "zimbraFeatureSMIMEEnabled";
 ZaCos.A_zimbraFeatureDistributionListFolderEnabled = "zimbraFeatureDistributionListFolderEnabled";
+ZaCos.A_zimbraFeatureResetPasswordStatus = "zimbraFeatureResetPasswordStatus";
 
 //security
 ZaCos.A_zimbraPasswordLockoutEnabled = "zimbraPasswordLockoutEnabled";
@@ -822,6 +823,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraFeatureMailEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureGroupCalendarEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureGroupCalendarEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureFlaggingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureFlaggingEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureResetPasswordStatus, choices:ZaSettings.resetPasswordStatusChoices, ref:"attrs/"+ZaCos.A_zimbraFeatureResetPasswordStatus, type:_ENUM_},
         //security
         {id:ZaCos.A_zimbraPasswordLockoutEnabled, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraPasswordLockoutEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaCos.A_zimbraPasswordLockoutDuration, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraPasswordLockoutDuration},
