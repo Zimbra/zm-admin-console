@@ -35,12 +35,12 @@ ZaSelectMultipleCheckbox_XFormItem.prototype.labelWidth = "275px";
 ZaSelectMultipleCheckbox_XFormItem.prototype.labelCssStyle = "";
 ZaSelectMultipleCheckbox_XFormItem.prototype.labelCssClass = "gridGroupBodyLabel xform_multiple_checkbox";
 ZaSelectMultipleCheckbox_XFormItem.prototype.tableCssClass = "grid_composite_table";
+ZaSelectMultipleCheckbox_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
+ZaSelectMultipleCheckbox_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 
 ZaSelectWiz_MultipleCheckbox_XFormItem = function () {}
 XFormItemFactory.createItemType("_ZASELECT_WIZ_MULTIPLE_CHECKBOX_", "zaselect_wiz_multiple_checkbox", ZaSelectWiz_MultipleCheckbox_XFormItem, ZaSelectMultipleCheckbox_XFormItem);
 ZaSelectWiz_MultipleCheckbox_XFormItem.prototype.colSizes = ["200px","300px","150px"];
-ZaSelectWiz_MultipleCheckbox_XFormItem.prototype.visibilityChecks = [ZaItem.hasWritePermission];
-ZaSelectWiz_MultipleCheckbox_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 ZaSelectWiz_MultipleCheckbox_XFormItem.prototype.labelCssStyle = "";
 ZaSelectWiz_MultipleCheckbox_XFormItem.prototype.labelCssClass = "";
 ZaSelectWiz_MultipleCheckbox_XFormItem.prototype.checkBoxLabelLocation = _RIGHT_;

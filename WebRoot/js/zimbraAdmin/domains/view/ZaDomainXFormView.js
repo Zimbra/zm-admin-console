@@ -1418,7 +1418,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                     ]
                 },
 
-                {type:_ZA_TOP_GROUPER_, label:ZaMsg.Domain_QUOTA_Configuration,
+                {type:_ZA_TOP_GROUPER_, label:ZaMsg.Domain_QUOTA_Configuration, id:"domain_quota",
                     visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, [
                             ZaDomain.A_zimbraMailDomainQuota,
                             ZaDomain.A_zimbraDomainAggregateQuota,
@@ -1451,6 +1451,12 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                 },
                 {type:_ZA_TOP_GROUPER_, id:"domain_admin_sieve",
                     label:ZaMsg.NAD_AdminSieveGrouper,
+                    visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, [
+                            ZaDomain.A_zimbraSieveRejectMailEnabled,
+                            ZaDomain.A_zimbraSieveEditHeaderEnabled,
+                            ZaDomain.A_zimbraAdminSieveScriptBefore,
+                            ZaDomain.A_zimbraAdminSieveScriptAfter
+                        ]]],
                     items: [
                         { type: _DWT_ALERT_,
                           containerCssStyle: "padding-bottom:0;",
