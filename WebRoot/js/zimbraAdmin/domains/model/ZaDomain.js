@@ -514,6 +514,9 @@ ZaDomain._getAllCallback = function(callback, response) {
 	return list;
 };
 
+// extendedAttrs can be used to add attribute(s) from admim zimlet in the future.
+ZaDomain.extendedAttrs = [];
+
 /**
 * Creates a new ZaDomain. This method makes SOAP request (CreateDomainRequest) to create a new domain record in LDAP. 
 * @param attrs
@@ -740,6 +743,16 @@ function(tmpObj, newDomain) {
 	if(tmpObj.attrs[ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled]) {
 		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled]);
 		attr.setAttribute("n", ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled);
+	}
+
+	for (var i = 0; i < ZaDomain.extendedAttrs.length; i++) {
+		var attrName = ZaDomain.extendedAttrs[i];
+		var attrValue = tmpObj.attrs[attrName];
+
+		if (attrValue) {
+			var attr = soapDoc.set("a", attrValue);
+			attr.setAttribute("n", attrName);
+		}
 	}
 
 	if(tmpObj.attrs[ZaDomain.A_zimbraFeatureAllowUsernameInPassword]) {
