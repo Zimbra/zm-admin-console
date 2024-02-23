@@ -524,10 +524,19 @@ function(item, ev) {
 
         this._selectedItems.add(item);
 
-		if (item._setSelected(true)) {
-            this._updateHistory(item, true, isShowInHistory);
-			this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
-		}
+        if (item._setSelected(true)) {
+            if (item._text === ZaMsg.NAD_Tab_HSM) {
+                if (ZaHSM && ZaHSM.checkstoragefeaturenabled()) {
+                    this._updateHistory(item, true, isShowInHistory);
+                    this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
+                } else {
+                    ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_Feature_Not_Licensed + "<br>" + ZaMsg.INFO_goToLicense);
+                }
+            } else {
+                this._updateHistory(item, true, isShowInHistory);
+                this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
+            }
+        }
 	} else {
         var buildDataItem;
         if (!currentDataItem.isLeaf())
