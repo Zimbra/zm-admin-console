@@ -530,7 +530,7 @@ function(item, ev) {
                     this._updateHistory(item, true, isShowInHistory);
                     this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
                 } else {
-                    ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_Feature_Not_Licensed + "<br>" + ZaMsg.INFO_goToLicense);
+                    ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_Feature_Not_Licensed);
                 }
             } else {
                 this._updateHistory(item, true, isShowInHistory);
