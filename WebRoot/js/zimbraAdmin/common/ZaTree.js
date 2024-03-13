@@ -525,16 +525,12 @@ function(item, ev) {
         this._selectedItems.add(item);
 
         if (item._setSelected(true)) {
-            if (item._text === ZaMsg.NAD_Tab_HSM) {
-                if (ZaHSM && ZaHSM.checkstoragefeaturenabled()) {
-                    this._updateHistory(item, true, isShowInHistory);
-                    this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
-                } else {
-                    ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_Feature_Not_Licensed);
-                }
-            } else {
+            if ((item._text === ZaMsg.NAD_Tab_HSM && typeof ZaHSM !== 'undefined' && ZaHSM.checkstoragefeaturenabled()) ||
+                item._text !== ZaMsg.NAD_Tab_HSM) {
                 this._updateHistory(item, true, isShowInHistory);
                 this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
+            } else {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_FEATURE_NOT_LICENSED);
             }
         }
 	} else {
