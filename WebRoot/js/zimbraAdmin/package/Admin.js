@@ -43,6 +43,7 @@ AjxPackage.require("zimbraAdmin.common.ZaAppCtxt");
 AjxPackage.require("zimbraAdmin.common.ZaAuthenticate");
 AjxPackage.require("zimbraAdmin.common.ZaPopupMenu");
 AjxPackage.require("zimbraAdmin.common.ZaAppViewMgr");
+AjxPackage.require("zimbraAdmin.common.ZaTwoFactorAuth");
 AjxPackage.require("zimbraAdmin.common.ZaLoginDialog");
 AjxPackage.require("zimbraAdmin.common.ZaController");
 AjxPackage.require("zimbraAdmin.common.ZaXFormViewController");

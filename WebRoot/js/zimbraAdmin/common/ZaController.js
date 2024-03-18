@@ -554,7 +554,7 @@ function (resp) {
                 this._showLoginDialog(true);
                 this._loginDialog.registerCallback(this.loginCallback, this);
                 this._loginDialog.clearError();
-                this._loginDialog.showTwoFactorCode();
+                this._loginDialog.showTwoFactorCode(body.AuthResponse);
             } else {
                 if(body.AuthResponse && body.AuthResponse.csrfToken && 
                     body.AuthResponse.csrfToken._content) {
