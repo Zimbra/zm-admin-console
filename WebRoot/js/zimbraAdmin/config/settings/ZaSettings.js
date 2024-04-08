@@ -959,3 +959,23 @@ ZaSettings.getSmtpDnsSupportLevel = function(){
 };
 
 ZaSettings.smtpDnsSupportLevel = ZaSettings.getSmtpDnsSupportLevel;
+
+ZaSettings.getFeatureResetPasswordStatus = function(){
+    return [
+        {value: "enabled", label: ZaMsg.LBL_enabled},
+        {value: "suspended", label: ZaMsg.LBL_suspended},
+        {value: "disabled", label: ZaMsg.LBL_disabled}
+    ];
+};
+
+ZaSettings.resetPasswordStatusChoices = ZaSettings.getFeatureResetPasswordStatus;
+
+ZaSettings.getPasswordRecoveryAddressStatus = function(){
+    return [
+        {value: "", label: ZaMsg.LBL_unset},
+        {value: "verified", label: ZaMsg.LBL_verified},
+        {value: "pending", label: ZaMsg.LBL_pending}
+    ];
+};
+
+ZaSettings.passwordRecoveryAddressStatusChoices = ZaSettings.getPasswordRecoveryAddressStatus;

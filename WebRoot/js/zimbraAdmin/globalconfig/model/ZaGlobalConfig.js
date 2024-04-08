@@ -44,6 +44,7 @@ ZaGlobalConfig.MTA_RESTRICTIONS = [
 //general
 ZaGlobalConfig.A_zimbraLastLogonTimestampFrequency = "zimbraLastLogonTimestampFrequency";
 ZaGlobalConfig.A_zimbraDefaultDomainName = "zimbraDefaultDomainName";
+ZaGlobalConfig.A_zimbraCountAccountsEnabled = "zimbraCountAccountsEnabled";
 ZaGlobalConfig.A_zimbraScheduledTaskNumThreads = "zimbraScheduledTaskNumThreads" ;
 ZaGlobalConfig.A_zimbraMailPurgeSleepInterval = "zimbraMailPurgeSleepInterval" ;
 		
@@ -463,6 +464,7 @@ ZaGlobalConfig.myXModel = {
             maxInclusive: 2147483647,
             defaultValue: 100
         },
+		{ id:ZaGlobalConfig.A_zimbraCountAccountsEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraCountAccountsEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
 		{ id:ZaGlobalConfig.A_zimbraDefaultDomainName, ref:"attrs/" + ZaGlobalConfig.A_zimbraDefaultDomainName, type:_STRING_, maxLength: 256},
 		{ id:ZaGlobalConfig.A_zimbraScheduledTaskNumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraScheduledTaskNumThreads , type:_NUMBER_, minInclusive: 1 },
 		{ id:ZaGlobalConfig.A_zimbraMailPurgeSleepInterval, type:_MINTERVAL_, ref:"attrs/"+ZaGlobalConfig.A_zimbraMailPurgeSleepInterval},

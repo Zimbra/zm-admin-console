@@ -129,6 +129,28 @@ FORM {
 	@cssShadow@:0px 0px 2px black;
 }
 
+.LoginScreen .ZTwoFactorMethodLabel {
+	font-size: 11px;
+}
+
+.LoginScreen .ZTwoFactorResendCode,
+.LoginScreen .ZTwoFactorChooseMethodLink {
+	font-size: 11px;
+	color: @LoginLabelColor@;
+}
+
+.LoginScreen .ZTwoFactorBackButton {
+	width: 25%;
+}
+
+.LoginScreen .ZTwoFactorMethodInput {
+	margin-top: 0;
+	vertical-align: top;
+}
+
+.LoginScreen .ZTwoFactorMethodLabel {
+	display: inline-block;
+}
 
 /*DWT Buttons*/
 .DwtButton					{	@Button@ @ButtonBorder-normal@ 		}

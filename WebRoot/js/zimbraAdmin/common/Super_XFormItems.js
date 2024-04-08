@@ -673,6 +673,192 @@ Super_Checkbox_XFormItem.prototype.initializeItems = function() {
 Super_Checkbox_XFormItem.prototype.items = []; 
 
 
+/**
+*	_SUPER_MULTIPLE_CHECKBOX_ form item type
+**/
+SuperSelect_MultipleCheckbox_XFormItem = function () {}
+XFormItemFactory.createItemType("_SUPER_MULTIPLE_CHECKBOX_", "super_multiple_checkbox", SuperSelect_MultipleCheckbox_XFormItem, Super_XFormItem);
+SuperSelect_MultipleCheckbox_XFormItem.prototype.numCols = 3;
+SuperSelect_MultipleCheckbox_XFormItem.prototype.colSpan = 3;
+SuperSelect_MultipleCheckbox_XFormItem.prototype.colSizes = ["275px","225px", "*"];
+SuperSelect_MultipleCheckbox_XFormItem.prototype.nowrap = false;
+SuperSelect_MultipleCheckbox_XFormItem.prototype.labelWrap = true;
+SuperSelect_MultipleCheckbox_XFormItem.prototype.items = [];
+SuperSelect_MultipleCheckbox_XFormItem.prototype.labelCssStyle = "border-right: 1px solid black;";
+SuperSelect_MultipleCheckbox_XFormItem.prototype.labelCssClass = "gridGroupBodyLabel";
+SuperSelect_MultipleCheckbox_XFormItem.prototype.tableCssClass = "grid_composite_table";
+
+/**
+*	_SUPER_WIZ_MULTIPLE_CHECKBOX_ form item type
+**/
+SuperWiz_MultipleCheck_XFormItem = function () {}
+XFormItemFactory.createItemType("_SUPER_WIZ_MULTIPLE_CHECKBOX_", "super_wiz_multiple_checkbox", SuperWiz_MultipleCheck_XFormItem, SuperSelect_MultipleCheckbox_XFormItem);
+
+SuperWiz_MultipleCheck_XFormItem.prototype.colSizes = ["200px","300px","150px"];
+SuperWiz_MultipleCheck_XFormItem.prototype.visibilityChecks = [ZaItem.hasWritePermission];
+SuperWiz_MultipleCheck_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
+SuperWiz_MultipleCheck_XFormItem.prototype.labelCssStyle = "";
+SuperWiz_MultipleCheck_XFormItem.prototype.labelCssClass = "";
+SuperWiz_MultipleCheck_XFormItem.prototype.checkBoxLabelLocation = _RIGHT_;
+SuperWiz_MultipleCheck_XFormItem.prototype.checkboxSubLabel = "";
+SuperWiz_MultipleCheck_XFormItem.prototype.checkboxAlign = _RIGHT_;
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.initializeItems = function() {
+	var choices = this.getInheritedProperty("choices");
+	var label = this.getInheritedProperty("groupLabel");
+
+	var selectChck = {
+		type: _OSELECT_CHECK_,
+		choices: choices,
+		ref: ".",
+		width: "225px",
+		onChange: function(value, event, form) {
+			if (this.getParentItem() && this.getParentItem().getParentItem() && this.getParentItem().getParentItem().getOnChangeMethod()) {
+				return this.getParentItem().getParentItem().getOnChangeMethod().call(this, value, event, form);
+			} else {
+				return this.setInstanceValue(value);
+			}
+		},
+		forceUpdate: true,
+		updateElement: function(value) {
+			Super_XFormItem.updateCss.call(this, 9);
+			if (!(value instanceof Array)) {
+				value = [value];
+			}
+			OSelect_XFormItem.prototype.updateElement.call(this, value);
+		},
+		cssStyle: "border:none;"
+	};
+
+	var selectChckGrp = {
+		type: _GROUP_,
+		ref: ".",
+		items: [selectChck]
+	};
+
+	selectChckGrp.label = label;
+	selectChckGrp.labelCssClass = this.getInheritedProperty("labelCssClass");
+	selectChckGrp.labelCssStyle = this.getInheritedProperty("labelCssStyle");
+	selectChckGrp.cssClass = "";
+
+	var anchorHlpr = {
+		type: _SUPER_ANCHOR_HELPER_, ref:".",
+		visibilityChecks: [Super_XFormItem.checkIfOverWriten],
+		visibilityChangeEventSources: [this.getRefPath()],
+		onChange: Composite_XFormItem.onFieldChange,
+		cssStyle: "width:150px"
+	};
+
+	this.items = [selectChckGrp, anchorHlpr];
+
+	Composite_XFormItem.prototype.initializeItems.call(this);
+
+	// replace class name and functions defined in OSelect_Check_XFormItem
+	this.containerCssClass = "xform_container";
+	this.items[0].items[0].cssClass = this.containerCssClass;
+	this.items[0].items[0].getChoiceSelectedCssClass = this.__getChoiceSelectedCssClass;
+	this.items[0].items[0].getChoiceCssClass = this.__getChoiceCssClass;
+	this.items[0].items[0].getChoiceHTML = this.__getChoiceHTML;
+	this.items[0].items[0].setElementEnabled = this.__setElementEnabled;
+
+	this.items[0].items[0].onChoiceOverOriginal = this.items[0].items[0].onChoiceOver;
+	this.items[0].items[0].onChoiceOver = this.__onChoiceOver;
+
+	this.items[0].items[0].onChoiceOutOriginal = this.items[0].items[0].onChoiceOut;
+	this.items[0].items[0].onChoiceOut = this.__onChoiceOut;
+
+	this.items[0].items[0].onChoiceClickOriginal = this.items[0].items[0].onChoiceClick;
+	this.items[0].items[0].onChoiceClick = this.__onChoiceClick;
+
+	this.items[0].items[0].onChoiceDoubleClickOriginal = this.items[0].items[0].onChoiceDoubleClick;
+	this.items[0].items[0].onChoiceDoubleClick = this.__onChoiceDoubleClick;
+};
+
+// functions to replace the ones defined in OSelect_Check_XFormItem
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__getChoiceSelectedCssClass =
+function() {
+	return this.containerCssClass;
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__getChoiceCssClass =
+function() {
+	return this.containerCssClass;
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__getChoiceHTML =
+function(itemNum, value, label, cssClass) {
+	var ref = this.getFormGlobalRef() + ".getItemById('"+ this.getId()+ "')";
+	var id = this.getId();
+	return AjxBuffer.concat(
+		"<tr><td class=", cssClass,
+			" onmouseover=\"" + ref + ".onChoiceOver(" + itemNum + ", event||window.event)\"",
+			" onmouseout=\"" + ref +  ".onChoiceOut(" + itemNum + ", event||window.event)\"",
+			" onclick=\"" + ref + ".onChoiceClick(" + itemNum + ", event||window.event)\"",
+			" ondblclick=\"" + ref + ".onChoiceDoubleClick(" + itemNum + ", event||window.event)\"",
+		">",
+		"<table cellspacing=0 cellpadding=0><tr><td><input type=checkbox id='",id,"_choiceitem_",itemNum,"'></td><td>",
+		        "<font id=", id, "_label_", itemNum, ">", AjxStringUtil.htmlEncode(label), "</font>",
+		"</td></tr></table></td></tr>"
+	);
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__setElementEnabled =
+function(enabled) {
+	var choices = this.getNormalizedChoices();
+	if (!choices) {
+		return;
+	}
+	var values = choices.values;
+	if (!values) {
+		return;
+	}
+	var cnt = values.length;
+	for (var i = 0; i < cnt; i++) {
+		var checkbox = this.getElement(this.getId() + "_choiceitem_" + i);
+		var label = this.getElement(this.getId() + "_label_" + i);
+		if (checkbox) {
+			if (enabled) {
+				checkbox.className = this.getChoiceCssClass();
+				checkbox.disabled = false;
+				label.style.color ="";
+			} else {
+				checkbox.className = this.getChoiceCssClass() + "_disabled";
+				checkbox.disabled = true;
+				label.style.color ="#808080";
+			}
+		}
+	}
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__onChoiceOver =
+function(itemNum) {
+	if (this.getIsEnabled()) {
+		this.onChoiceOverOriginal(itemNum);
+	}
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__onChoiceOut =
+function(itemNum) {
+	if (this.getIsEnabled()) {
+		this.onChoiceOutOriginal(itemNum);
+	}
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__onChoiceClick =
+function(itemNum, event) {
+	if (this.getIsEnabled()) {
+		this.onChoiceClickOriginal(itemNum, event);
+	}
+};
+
+SuperSelect_MultipleCheckbox_XFormItem.prototype.__onChoiceDoubleClick =
+function(itemNum, event) {
+	// address double click as a single click
+	if (this.getIsEnabled()) {
+		this.onChoiceClickOriginal(itemNum, event);
+	}
+};
+
 
 /**
 *	SUPER__HOSTPORT_ form item type

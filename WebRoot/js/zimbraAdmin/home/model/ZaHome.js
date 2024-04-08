@@ -338,7 +338,6 @@ ZaHome.startLoadingMTAS = function() {
 }
 ZaHome.postLoadDataFunction.push(ZaHome.startLoadingMTAS);
 
-ZaHome.totalQueueLength = 0;
 ZaHome.loadQueueLength = function (server,rightsResp) {
 	if(rightsResp && rightsResp.getResponse() && rightsResp.getResponse().Body && rightsResp.getResponse().Body.GetEffectiveRightsResponse && server) {
 		
@@ -368,16 +367,17 @@ ZaHome.loadOneQueueNumber = function (resp) {
     if(resp && resp.getException && !resp.getException()) {
     	resp = resp.getResponse();
         var body = resp.Body;
+        var totalQueueLength = 0;
         if(body && body.GetMailQueueInfoResponse.server && body.GetMailQueueInfoResponse.server[0]) {
             var queue =  body.GetMailQueueInfoResponse.server[0].queue;
             for ( var j in queue) {
                 if (queue[j].n) {
-                	ZaHome.totalQueueLength += parseInt(queue[j].n);
+                	totalQueueLength += parseInt(queue[j].n);
                 }
             }
         }
     }
-    this.updateQueueLength(ZaHome.totalQueueLength);
+    this.updateQueueLength(totalQueueLength);
 }
 ZaHome.prototype.updateQueueLength = function(queueLength) {
     ZaApp.getInstance().getHomeViewController().setInstanceValue(queueLength, ZaHome.A2_queueLength);

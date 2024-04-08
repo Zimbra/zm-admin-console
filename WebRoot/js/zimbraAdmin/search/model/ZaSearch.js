@@ -613,7 +613,7 @@ ZaSearch.getObjectCountsCalback = function(params, resp) {
         } else {
             var retObj;
             retObj = {};
-            retObj[ZaItem.ACCOUNT] = 0;
+            retObj[ZaItem.ACCOUNT] = "N/A";  // The value is not used as Integer in any code. String is acceptable.
             retObj[ZaItem.ALIAS] = 0;
             retObj[ZaItem.RESOURCE] = 0;
             retObj[ZaItem.DL] = 0;
@@ -628,6 +628,7 @@ ZaSearch.getObjectCountsCalback = function(params, resp) {
                     resp = batchResp.CountObjectsResponse[i];
                     var type = resp.type;
                     if (type == "userAccount") {
+                        // It is never processed because of the change on ZaSearch.getObjectCount
                         type = ZaItem.ACCOUNT; // UI only shows number of
                                                 // non-system accounts
                     }
@@ -649,20 +650,37 @@ ZaSearch.getObjectCounts = function(types, callback) {
         callback : callback
     });
 
+    var isCountAccountsEnabled = ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraCountAccountsEnabled];
     var soapDoc = AjxSoapDoc.create("BatchRequest", "urn:zimbra");
     soapDoc.setMethodAttribute("onerror", "continue");
     for (var i = 0; i < types.length; i++) {
         var type = types[i];
-        var getCountDoc = soapDoc.set("CountObjectsRequest", null, null, ZaZimbraAdmin.URN);
-
         if (type == ZaItem.ACCOUNT) {
+            if (isCountAccountsEnabled === "FALSE") {
+                continue;
+            }
             type = "userAccount"; // exclude system account
         }
+        var getCountDoc = soapDoc.set("CountObjectsRequest", null, null, ZaZimbraAdmin.URN);
         getCountDoc.setAttribute("type", type);
         if (ZaZimbraAdmin.isGlobalAdmin() === false && type == ZaItem.DOMAIN && ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsDelegatedAdminAccount] === "TRUE") {
             getCountDoc.setAttribute("onlyRelated", "true");
         }
     }
+
+    if (soapDoc.getDoc().getElementsByTagName('CountObjectsRequest').length === 0) {
+        var retObj;
+        retObj = {};
+        retObj[ZaItem.ACCOUNT] = "N/A";  // The value is not used as Integer in any code. String is acceptable.
+        retObj[ZaItem.ALIAS] = 0;
+        retObj[ZaItem.RESOURCE] = 0;
+        retObj[ZaItem.DL] = 0;
+        retObj[ZaItem.DOMAIN] = 0;
+        retObj[ZaItem.SERVER] = 0;
+        callback.run(retObj);
+        return;
+    }
+
     try {
         var command = new ZmCsfeCommand();
         var cmdParams = new Object();

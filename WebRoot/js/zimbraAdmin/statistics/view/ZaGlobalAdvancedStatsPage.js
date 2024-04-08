@@ -79,19 +79,19 @@ function (){
     controller._helpButtonText = ZaMsg.helpCheckStatistics;
 };
 
-
-ZaGlobalAdvancedStatsPage.getDataTipText = function (item, index, displayName) {
-    var text = [AjxMessageFormat.format(ZaMsg.NAD_AdvStatsDataTip,
-             [ displayName, YAHOO.util.Date.format(item.xLabel, { format: ZaMsg.NAD_AdvStatsTipDateFormat }) ]),
-             ZaGlobalAdvancedStatsPage.formatLabel(item.value)];
-    return text;
+ZaGlobalAdvancedStatsPage.getDataTipText = function (item) {
+    return AjxMessageFormat.format(
+        ZaMsg.NAD_AdvStatsDataTip,
+        [
+            ZaGlobalAdvancedStatsPage.formatLabel(item.formattedValue),
+            AjxDateFormat.format(ZaMsg.NAD_AdvStatsTipDateFormat, new Date(item.label))
+        ]
+    );
 }
+
 /* must be global for getDataTipText */
 ZaGlobalAdvancedStatsPage.formatLabel = function (value) {
-    return YAHOO.util.Number.format(value, { thousandsSeparator: ",", decimalPlaces: 0});
-}
-ZaGlobalAdvancedStatsPage.formatTimeLabel = function (value) {
-    return YAHOO.util.Date.format(value, { format: ZaMsg.NAD_AdvStatsLabelDateFormat });
+    return value.split(".")[0].toString();
 }
 
 ZaGlobalAdvancedStatsPage.dynamicColors = function() {
@@ -427,58 +427,69 @@ ZaGlobalAdvancedStatsPage.plotChart = function (id, fields, colDef, newData) {
             animation: false,
             responsive: true,
             maintainAspectRatio: false,
-            legend: {
-                display: true,
-                position: 'bottom'
-            },
-            tooltips: {
-                mode: 'point',
-                custom: function(tooltip) {
-                    if (!tooltip) return;
-                    // disable displaying the color box;
-                    tooltip.displayColors = false;
-                },
-                callbacks: {
-                    title: function() {
-                        return null;
-                    },
-                    label: function (tooltipItems, data) {
-                        return ZaGlobalAdvancedStatsPage.getDataTipText(tooltipItems, undefined, data.datasets[tooltipItems.datasetIndex].label);
-                    }
+            datasets: {
+                line: {
+                    tension: 0.4
                 }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                },
+                tooltip: {
+                    enabled: true,
+                    mode: 'point',
+                    external: function(tooltip) {
+                        if (!tooltip) return;
+                        // disable displaying the color box;
+                        tooltip.displayColors = false;
+                    },
+                    callbacks: {
+                        title: function() {
+                            return null;
+                        },
+                        label: function (context) {
+                            return ZaGlobalAdvancedStatsPage.getDataTipText(context);
+                        }
+                    }
+                },
             },
             hover: {
                 mode: 'nearest',
                 intersect: true
             },
             scales: {
-                xAxes: [{
+                x: {
                     display: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: timeAxis.title
+                        text: timeAxis.title
                     },
                     ticks : {
-                        autoSkip: true,
                         display: true,
+                        autoSkip: true,
                         autoSkipPadding: 15,
                         maxRotation: 0,
-                        callback: function(value) {
-                            return timeAxis.labelFunction(value);
+                        callback: function(value, index, values) {
+                            // The category axis, which is the default x-axis for line charts, uses the index as internal data format.
+                            // For accessing the label, use this.getLabelForValue(value)
+                            var label = this.getLabelForValue(value);
+                            return timeAxis.labelFunction(label);
                         }
                     }
-                }],
-                yAxes: [{
+                },
+                y: {
                     display: true,
+                    suggestedMin: 0,
+                    suggestedMax: max + 10,
                     ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: max + 10,
                         maxTicksLimit: colDef[0].style.size,
                         callback: function(value, index, values) {
                             return value.toLocaleString();
                         }
                     }
-                }]
+                }
             }
         }
     };

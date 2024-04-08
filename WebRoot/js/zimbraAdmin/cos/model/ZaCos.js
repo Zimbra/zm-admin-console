@@ -56,6 +56,7 @@ ZaCos.A_zimbraMaxPwdAge = "zimbraPasswordMaxAge";
 ZaCos.A_zimbraEnforcePwdHistory ="zimbraPasswordEnforceHistory";
 ZaCos.A_zimbraPasswordLocked = "zimbraPasswordLocked";
 ZaCos.A_zimbraPasswordBlockCommonEnabled = "zimbraPasswordBlockCommonEnabled";
+ZaCos.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
 ZaCos.A_name = "cn";
 ZaCos.A_description = "description";
 ZaCos.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
@@ -213,6 +214,7 @@ ZaCos.A_zimbraFeatureFlaggingEnabled = "zimbraFeatureFlaggingEnabled" ;
 ZaCos.A_zimbraFeatureManageSMIMECertificateEnabled = "zimbraFeatureManageSMIMECertificateEnabled";
 ZaCos.A_zimbraFeatureSMIMEEnabled = "zimbraFeatureSMIMEEnabled";
 ZaCos.A_zimbraFeatureDistributionListFolderEnabled = "zimbraFeatureDistributionListFolderEnabled";
+ZaCos.A_zimbraFeatureResetPasswordStatus = "zimbraFeatureResetPasswordStatus";
 
 //security
 ZaCos.A_zimbraPasswordLockoutEnabled = "zimbraPasswordLockoutEnabled";
@@ -654,6 +656,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraEnforcePwdHistory, type:_NUMBER_, ref:"attrs/"+ZaCos.A_zimbraEnforcePwdHistory, maxInclusive:2147483647, minInclusive:0},
         {id:ZaCos.A_zimbraPasswordLocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPasswordLocked},
         {id:ZaCos.A_zimbraPasswordBlockCommonEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPasswordBlockCommonEnabled},
+        {id:ZaCos.A_zimbraFeatureAllowUsernameInPassword, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureAllowUsernameInPassword},
         {id:ZaCos.A_name, type:_STRING_, ref:"attrs/"+ZaCos.A_name},
 //        {id:ZaCos.A_description, type:_STRING_, ref:"attrs/"+ZaCos.A_description},
         ZaItem.descriptionModelItem ,
@@ -820,6 +823,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraFeatureMailEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureMailEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureGroupCalendarEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureGroupCalendarEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraFeatureFlaggingEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureFlaggingEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraFeatureResetPasswordStatus, choices:ZaSettings.resetPasswordStatusChoices, ref:"attrs/"+ZaCos.A_zimbraFeatureResetPasswordStatus, type:_ENUM_},
         //security
         {id:ZaCos.A_zimbraPasswordLockoutEnabled, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraPasswordLockoutEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaCos.A_zimbraPasswordLockoutDuration, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraPasswordLockoutDuration},

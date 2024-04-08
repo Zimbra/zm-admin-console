@@ -105,6 +105,7 @@ ZaAccount.A_zimbraMinPwdAge="zimbraPasswordMinAge";
 ZaAccount.A_zimbraMaxPwdAge="zimbraPasswordMaxAge";
 ZaAccount.A_zimbraEnforcePwdHistory="zimbraPasswordEnforceHistory";
 ZaAccount.A_zimbraPasswordBlockCommonEnabled="zimbraPasswordBlockCommonEnabled";
+ZaAccount.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
 ZaAccount.A_zimbraMailAlias="zimbraMailAlias";
 ZaAccount.A_zimbraMailForwardingAddress="zimbraMailForwardingAddress";
 ZaAccount.A_zimbraPasswordMustChange="zimbraPasswordMustChange";
@@ -224,6 +225,8 @@ ZaAccount.A_zimbraPrefMessageIdDedupingEnabled = "zimbraPrefMessageIdDedupingEna
 ZaAccount.A_zimbraPrefItemsPerVirtualPage="zimbraPrefItemsPerVirtualPage";
 ZaAccount.A_zimbraPrefImapEnabled = "zimbraPrefImapEnabled";
 ZaAccount.A_zimbraPrefPop3Enabled = "zimbraPrefPop3Enabled";
+ZaAccount.A_zimbraPrefPasswordRecoveryAddress = "zimbraPrefPasswordRecoveryAddress";
+ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus = "zimbraPrefPasswordRecoveryAddressStatus";
 
 //features
 ZaAccount.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
@@ -281,6 +284,7 @@ ZaAccount.A_zimbraFeatureMailEnabled = "zimbraFeatureMailEnabled" ;
 ZaAccount.A_zimbraFeatureGroupCalendarEnabled = "zimbraFeatureGroupCalendarEnabled" ;
 ZaAccount.A_zimbraFeatureFlaggingEnabled = "zimbraFeatureFlaggingEnabled" ;
 ZaAccount.A_zimbraForeignPrincipal = "zimbraForeignPrincipal" ;
+ZaAccount.A_zimbraFeatureResetPasswordStatus = "zimbraFeatureResetPasswordStatus";
 
 //security
 ZaAccount.A_zimbraPasswordLockoutEnabled = "zimbraPasswordLockoutEnabled";
@@ -473,6 +477,13 @@ function(tmpObj) {
             return false;
         }
     }
+    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj)) {
+        if(tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != null) {
+            tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword];
+        } else {
+            tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = tmpObj._defaultValues.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword];
+        }
+    }
 
     //validate password age settings
     //if the account did not have a valid cos id - pick the first COS
@@ -500,6 +511,11 @@ function(tmpObj) {
     //if there is a password - validate it
     if(ZaItem.hasAnyRight([ZaAccount.SET_PASSWORD_RIGHT, ZaAccount.CHANGE_PASSWORD_RIGHT],tmpObj)) {
         if(!AjxUtil.isEmpty(tmpObj.attrs[ZaAccount.A_password]) || !AjxUtil.isEmpty(tmpObj[ZaAccount.A2_confirmPassword])) {
+            var userName = tmpObj.name.split('@')[0];
+            if (tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] === "FALSE" && tmpObj.attrs[ZaAccount.A_password].includes(userName)) {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_CONTAIN_USERNAME);
+                return false;
+            }
             if(tmpObj.attrs[ZaAccount.A_password] != tmpObj[ZaAccount.A2_confirmPassword]) {
                 //show error msg
                 ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_PASSWORD_MISMATCH);
@@ -1905,6 +1921,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPasswordMustChange, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaAccount.A_zimbraPasswordMustChange},
         {id:ZaAccount.A_zimbraPasswordLocked, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordLocked, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraPasswordBlockCommonEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPasswordBlockCommonEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureAllowUsernameInPassword, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureAllowUsernameInPassword, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraContactMaxNumEntries, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraContactMaxNumEntries, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraMailForwardingAddressMaxLength, type:_COS_NUMBER_, ref:"attrs/"+ZaAccount.A_zimbraMailForwardingAddressMaxLength, maxInclusive:2147483647, minInclusive:0},
         {id:ZaAccount.A_zimbraDataSourcePop3PollingInterval, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDataSourcePop3PollingInterval},
@@ -2060,6 +2077,8 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraPrefCalendarApptVisibility, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefCalendarApptVisibility, choices:ZaSettings.apptVisibilityChoices},
         {id:ZaAccount.A_zimbraPrefImapEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefImapEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraPrefPop3Enabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefPop3Enabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraPrefPasswordRecoveryAddress, type:_EMAIL_ADDRESS_, ref:"attrs/"+ZaAccount.A_zimbraPrefPasswordRecoveryAddress},
+        {id:ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus, type:_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus, choices:ZaSettings.passwordRecoveryAddressStatusChoices},
         //features
         {id:ZaAccount.A_zimbraFeatureManageZimlets, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureManageZimlets, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureImportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureImportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
@@ -2122,6 +2141,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraFeatureTouchClientEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureTouchClientEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureWebClientOfflineAccessEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureResetPasswordStatus, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureResetPasswordStatus, choices:ZaSettings.resetPasswordStatusChoices},
         {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep},
         {id:ZaAccount.A2_newAlias, type:_STRING_},
         {id:ZaAccount.A2_aliases, type:_LIST_,listItem:{type:_STRING_}},

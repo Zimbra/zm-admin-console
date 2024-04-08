@@ -160,6 +160,9 @@ ZaDomain.A_zimbraGalAccountId = "zimbraGalAccountId";
 
 ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled = "zimbraFeatureCalendarReminderDeviceEmailEnabled";
 
+ZaDomain.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
+ZaDomain.A_zimbraFeatureResetPasswordStatus = "zimbraFeatureResetPasswordStatus";
+
 ZaDomain.A_mailHost = "zimbraMailHost";
 //Auth
 ZaDomain.A_AuthMech = "zimbraAuthMech";
@@ -511,6 +514,10 @@ ZaDomain._getAllCallback = function(callback, response) {
 	return list;
 };
 
+
+// array of function(s) to set additional attribute(s) to CreateDomainRequest
+ZaDomain.functionsToAddAttributesToCreateDomain = new Array();
+
 /**
 * Creates a new ZaDomain. This method makes SOAP request (CreateDomainRequest) to create a new domain record in LDAP. 
 * @param attrs
@@ -739,6 +746,16 @@ function(tmpObj, newDomain) {
 		attr.setAttribute("n", ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled);
 	}
 
+	if(tmpObj.attrs[ZaDomain.A_zimbraFeatureAllowUsernameInPassword]) {
+		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraFeatureAllowUsernameInPassword]);
+		attr.setAttribute("n", ZaDomain.A_zimbraFeatureAllowUsernameInPassword);
+	}
+
+	if(tmpObj.attrs[ZaDomain.A_zimbraFeatureResetPasswordStatus]) {
+		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraFeatureResetPasswordStatus]);
+		attr.setAttribute("n", ZaDomain.A_zimbraFeatureResetPasswordStatus);
+	}
+
     if(tmpObj.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]) {
 		attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled]);
 		attr.setAttribute("n", ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled);
@@ -896,6 +913,14 @@ function(tmpObj, newDomain) {
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraDomainAggregateQuotaPolicy]);
         attr.setAttribute("n", ZaDomain.A_zimbraDomainAggregateQuotaPolicy);
     }
+
+    // set additional attribute(s) via admin zimlet
+    for (var i = 0; i < ZaDomain.functionsToAddAttributesToCreateDomain.length; i++) {
+        if (ZaDomain.functionsToAddAttributesToCreateDomain[i] && typeof ZaDomain.functionsToAddAttributesToCreateDomain[i] === "function") {
+            ZaDomain.functionsToAddAttributesToCreateDomain[i].call(window, tmpObj, soapDoc);
+        }
+    }
+
 	//var command = new ZmCsfeCommand();
 	var params = new Object();
 	params.soapDoc = soapDoc;	
@@ -2636,65 +2661,75 @@ ZaDomain.myXModel = {
         {id:ZaDomain.A_zimbraZimletDomainAvailableZimlets, type:_LIST_,
             ref:"attrs/" + ZaDomain.A_zimbraZimletDomainAvailableZimlets,
             dataType: _STRING_ ,outputType:_LIST_},
-      { id:ZaAccount.A_zimbraMailCatchAllAddress, ref:ZaAccount.A_zimbraMailCatchAllAddress , type:_OBJECT_,items:[ {id:"id", type:_STRING_},{id:"name", type:_STRING_}] },
-      { id:ZaDomain.A_zimbraDomainCOSMaxAccounts, ref:"attrs/" + ZaDomain.A_zimbraDomainCOSMaxAccounts ,
-                 type:_LIST_ , dataType: _STRING_ ,outputType:_LIST_ },
-      { id:ZaDomain.A_zimbraDomainFeatureMaxAccounts, ref:"attrs/" + ZaDomain.A_zimbraDomainFeatureMaxAccounts ,
-                        type:_LIST_ , dataType: _STRING_ ,outputType:_LIST_ },
-      // domain account quota
-      { id:ZaDomain.A2_domain_account_quota, ref: ZaDomain.A2_domain_account_quota, type:_LIST_, listItem: {type:_OBJECT_} },
-       //skin properties
-      { id:ZaDomain.A_zimbraSkinForegroundColor, ref:"attrs/" + ZaDomain.A_zimbraSkinForegroundColor, type: _COS_STRING_ },
-      { id:ZaDomain.A_zimbraSkinBackgroundColor, ref:"attrs/" + ZaDomain.A_zimbraSkinBackgroundColor, type: _COS_STRING_ },
-      { id:ZaDomain.A_zimbraSkinSecondaryColor, ref:"attrs/" + ZaDomain.A_zimbraSkinSecondaryColor, type: _COS_STRING_ },
-      { id:ZaDomain.A_zimbraSkinSelectionColor, ref:"attrs/" + ZaDomain.A_zimbraSkinSelectionColor, type: _COS_STRING_ },
+		{ id: ZaAccount.A_zimbraMailCatchAllAddress, ref: ZaAccount.A_zimbraMailCatchAllAddress, type: _OBJECT_, items: [{ id: "id", type: _STRING_ }, { id: "name", type: _STRING_ }] },
+		{
+			id: ZaDomain.A_zimbraDomainCOSMaxAccounts, ref: "attrs/" + ZaDomain.A_zimbraDomainCOSMaxAccounts,
+			type: _LIST_, dataType: _STRING_, outputType: _LIST_
+		},
+		{
+			id: ZaDomain.A_zimbraDomainFeatureMaxAccounts, ref: "attrs/" + ZaDomain.A_zimbraDomainFeatureMaxAccounts,
+			type: _LIST_, dataType: _STRING_, outputType: _LIST_
+		},
+		// domain account quota
+		{ id: ZaDomain.A2_domain_account_quota, ref: ZaDomain.A2_domain_account_quota, type: _LIST_, listItem: { type: _OBJECT_ } },
+		//skin properties
+		{ id: ZaDomain.A_zimbraSkinForegroundColor, ref: "attrs/" + ZaDomain.A_zimbraSkinForegroundColor, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSkinBackgroundColor, ref: "attrs/" + ZaDomain.A_zimbraSkinBackgroundColor, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSkinSecondaryColor, ref: "attrs/" + ZaDomain.A_zimbraSkinSecondaryColor, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSkinSelectionColor, ref: "attrs/" + ZaDomain.A_zimbraSkinSelectionColor, type: _COS_STRING_ },
 
-      { id:ZaDomain.A_zimbraSkinLogoURL, ref:"attrs/" + ZaDomain.A_zimbraSkinLogoURL, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraSkinLogoLoginBanner, ref:"attrs/" + ZaDomain.A_zimbraSkinLogoLoginBanner, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraSkinLogoAppBanner, ref:"attrs/" + ZaDomain.A_zimbraSkinLogoAppBanner, type:_COS_STRING_ },
-      // web client redirect
-      { id:ZaDomain.A_zimbraWebClientLoginURL, ref:"attrs/" + ZaDomain.A_zimbraWebClientLoginURL, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraWebClientLogoutURL, ref:"attrs/" + ZaDomain.A_zimbraWebClientLogoutURL, type:_COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSkinLogoURL, ref: "attrs/" + ZaDomain.A_zimbraSkinLogoURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSkinLogoLoginBanner, ref: "attrs/" + ZaDomain.A_zimbraSkinLogoLoginBanner, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSkinLogoAppBanner, ref: "attrs/" + ZaDomain.A_zimbraSkinLogoAppBanner, type: _COS_STRING_ },
+		// web client redirect
+		{ id: ZaDomain.A_zimbraWebClientLoginURL, ref: "attrs/" + ZaDomain.A_zimbraWebClientLoginURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraWebClientLogoutURL, ref: "attrs/" + ZaDomain.A_zimbraWebClientLogoutURL, type: _COS_STRING_ },
 
-        // Clear Cookies
-        {
-            id: ZaDomain.A_zimbraForceClearCookies,
-            ref: "attrs/" + ZaDomain.A_zimbraForceClearCookies,
-            type: _ENUM_,
-            choices: ZaModel.BOOLEAN_CHOICES
-        },
-    // web client authentication
-      { id:ZaDomain.A_zimbraReverseProxyClientCertMode, ref:"attrs/" + ZaDomain.A_zimbraReverseProxyClientCertMode, type:_COS_STRING_, choices:["on","off","optional"]},
-      { id:ZaDomain.A_zimbraMailSSLClientCertPrincipalMap, ref:"attrs/" + ZaDomain.A_zimbraMailSSLClientCertPrincipalMap, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraReverseProxyClientCertCA, ref:"attrs/" + ZaDomain.A_zimbraReverseProxyClientCertCA, type:_COS_STRING_ },
-	// help URL
-      { id:ZaDomain.A_zimbraHelpAdminURL, ref:"attrs/" + ZaDomain.A_zimbraHelpAdminURL, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraHelpDelegatedURL, ref:"attrs/" + ZaDomain.A_zimbraHelpDelegatedURL, type:_COS_STRING_ },
-	// login/out URL
-      { id:ZaDomain.A_zimbraAdminConsoleLoginURL, ref:"attrs/" + ZaDomain.A_zimbraAdminConsoleLoginURL, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraAdminConsoleLogoutURL, ref:"attrs/" + ZaDomain.A_zimbraAdminConsoleLogoutURL, type:_COS_STRING_ },
-      { id:ZaDomain.A_zimbraWebClientLoginURLAllowedUA, type:_COS_LIST_, ref:"attrs/"+ZaDomain.A_zimbraWebClientLoginURLAllowedUA, listItem:{ type: _STRING_}},
-      { id:ZaDomain.A_zimbraWebClientLogoutURLAllowedUA, type:_COS_LIST_, ref:"attrs/"+ZaDomain.A_zimbraWebClientLogoutURLAllowedUA, listItem:{ type: _STRING_}},
-      { id:ZaDomain.A_zimbraWebClientLoginURLAllowedIP, type:_COS_LIST_, ref:"attrs/"+ZaDomain.A_zimbraWebClientLoginURLAllowedIP, listItem:{ type: _STRING_}},
-      { id:ZaDomain.A_zimbraWebClientLogoutURLAllowedIP, type:_COS_LIST_, ref:"attrs/"+ZaDomain.A_zimbraWebClientLogoutURLAllowedIP, listItem:{ type: _STRING_}},
-    //kerberos
-      { id:ZaDomain.A_zimbraAuthKerberos5Realm, type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraAuthKerberos5Realm},
-        //interop
-       { id:ZaDomain.A_zimbraFreebusyExchangeAuthUsername, ref:"attrs/" + ZaDomain.A_zimbraFreebusyExchangeAuthUsername, type: _COS_STRING_ },
-       { id:ZaDomain.A_zimbraFreebusyExchangeAuthPassword, ref:"attrs/" + ZaDomain.A_zimbraFreebusyExchangeAuthPassword, type: _COS_STRING_ },
-       { id:ZaDomain.A_zimbraFreebusyExchangeAuthScheme, ref:"attrs/" + ZaDomain.A_zimbraFreebusyExchangeAuthScheme,
-             type: _COS_ENUM_ , choices: ZaSettings.authorizationScheme },
-       { id:ZaDomain.A_zimbraFreebusyExchangeServerType, ref:"attrs/" + ZaDomain.A_zimbraFreebusyExchangeServerType,
-             type: _COS_ENUM_ , choices: ZaSettings.exchangeServerType },
-       { id:ZaDomain.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaDomain.A_zimbraFreebusyExchangeURL, type: _COS_STRING_ } ,
-       { id:ZaDomain.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaDomain.A_zimbraFreebusyExchangeUserOrg, type: _COS_STRING_ },
-       {id:ZaDomain.A2_isTestingGAL, ref:ZaDomain.A2_isTestingGAL, type:_NUMBER_},
-       {id:ZaDomain.A2_isTestingSync, ref:ZaDomain.A2_isTestingSync, type:_NUMBER_},
-       {id:ZaDomain.A2_isTestingAuth, ref:ZaDomain.A2_isTestingAuth, type:_NUMBER_},
-       {id:ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled},
+		// Clear Cookies
+		{
+			id: ZaDomain.A_zimbraForceClearCookies,
+			ref: "attrs/" + ZaDomain.A_zimbraForceClearCookies,
+			type: _ENUM_,
+			choices: ZaModel.BOOLEAN_CHOICES
+		},
+		// web client authentication
+		{ id: ZaDomain.A_zimbraReverseProxyClientCertMode, ref: "attrs/" + ZaDomain.A_zimbraReverseProxyClientCertMode, type: _COS_STRING_, choices: ["on", "off", "optional"] },
+		{ id: ZaDomain.A_zimbraMailSSLClientCertPrincipalMap, ref: "attrs/" + ZaDomain.A_zimbraMailSSLClientCertPrincipalMap, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraReverseProxyClientCertCA, ref: "attrs/" + ZaDomain.A_zimbraReverseProxyClientCertCA, type: _COS_STRING_ },
+		// help URL
+		{ id: ZaDomain.A_zimbraHelpAdminURL, ref: "attrs/" + ZaDomain.A_zimbraHelpAdminURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraHelpDelegatedURL, ref: "attrs/" + ZaDomain.A_zimbraHelpDelegatedURL, type: _COS_STRING_ },
+		// login/out URL
+		{ id: ZaDomain.A_zimbraAdminConsoleLoginURL, ref: "attrs/" + ZaDomain.A_zimbraAdminConsoleLoginURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraAdminConsoleLogoutURL, ref: "attrs/" + ZaDomain.A_zimbraAdminConsoleLogoutURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraWebClientLoginURLAllowedUA, type: _COS_LIST_, ref: "attrs/" + ZaDomain.A_zimbraWebClientLoginURLAllowedUA, listItem: { type: _STRING_ } },
+		{ id: ZaDomain.A_zimbraWebClientLogoutURLAllowedUA, type: _COS_LIST_, ref: "attrs/" + ZaDomain.A_zimbraWebClientLogoutURLAllowedUA, listItem: { type: _STRING_ } },
+		{ id: ZaDomain.A_zimbraWebClientLoginURLAllowedIP, type: _COS_LIST_, ref: "attrs/" + ZaDomain.A_zimbraWebClientLoginURLAllowedIP, listItem: { type: _STRING_ } },
+		{ id: ZaDomain.A_zimbraWebClientLogoutURLAllowedIP, type: _COS_LIST_, ref: "attrs/" + ZaDomain.A_zimbraWebClientLogoutURLAllowedIP, listItem: { type: _STRING_ } },
+		//kerberos
+		{ id: ZaDomain.A_zimbraAuthKerberos5Realm, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAuthKerberos5Realm },
+		//interop
+		{ id: ZaDomain.A_zimbraFreebusyExchangeAuthUsername, ref: "attrs/" + ZaDomain.A_zimbraFreebusyExchangeAuthUsername, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraFreebusyExchangeAuthPassword, ref: "attrs/" + ZaDomain.A_zimbraFreebusyExchangeAuthPassword, type: _COS_STRING_ },
+		{
+			id: ZaDomain.A_zimbraFreebusyExchangeAuthScheme, ref: "attrs/" + ZaDomain.A_zimbraFreebusyExchangeAuthScheme,
+			type: _COS_ENUM_, choices: ZaSettings.authorizationScheme
+		},
+		{
+			id: ZaDomain.A_zimbraFreebusyExchangeServerType, ref: "attrs/" + ZaDomain.A_zimbraFreebusyExchangeServerType,
+			type: _COS_ENUM_, choices: ZaSettings.exchangeServerType
+		},
+		{ id: ZaDomain.A_zimbraFreebusyExchangeURL, ref: "attrs/" + ZaDomain.A_zimbraFreebusyExchangeURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraFreebusyExchangeUserOrg, ref: "attrs/" + ZaDomain.A_zimbraFreebusyExchangeUserOrg, type: _COS_STRING_ },
+		{ id: ZaDomain.A2_isTestingGAL, ref: ZaDomain.A2_isTestingGAL, type: _NUMBER_ },
+		{ id: ZaDomain.A2_isTestingSync, ref: ZaDomain.A2_isTestingSync, type: _NUMBER_ },
+		{ id: ZaDomain.A2_isTestingAuth, ref: ZaDomain.A2_isTestingAuth, type: _NUMBER_ },
+		{ id: ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraFeatureCalendarReminderDeviceEmailEnabled },
+		{ id: ZaDomain.A_zimbraFeatureAllowUsernameInPassword, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraFeatureAllowUsernameInPassword },
+		{ id: ZaDomain.A_zimbraFeatureResetPasswordStatus, type: _ENUM_, choices: ZaSettings.resetPasswordStatusChoices, ref: "attrs/" + ZaDomain.A_zimbraFeatureResetPasswordStatus },
 
-       {id:ZaDomain.A_zimbraAutoProvNotificationSubject, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject},
-       {id:ZaDomain.A_zimbraAutoProvNotificationBody, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody}
+		{ id: ZaDomain.A_zimbraAutoProvNotificationSubject, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject },
+		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody }
     ]
 };
 
