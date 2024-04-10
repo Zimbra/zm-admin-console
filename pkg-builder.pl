@@ -140,7 +140,9 @@ sub make_package($)
       "--pkg-release=$pkg_info->{revision}",
       "--pkg-summary=$pkg_info->{summary}",
       "--pkg-post-install-script=scripts/postinst.sh",
-      "--pkg-pre-install-script=scripts/preinst.sh"
+      "--pkg-pre-install-script=scripts/preinst.sh",
+      "--pkg-pre-uninstall-script=scripts/preuninst.sh",
+      "--pkg-post-uninstall-script=scripts/postuninst.sh"
    );
 
    if ( $pkg_info->{dir_list} )	
