@@ -525,7 +525,7 @@ function(item, ev) {
         this._selectedItems.add(item);
 
         if (item._setSelected(true)) {
-            if ((item._text === ZaMsg.NAD_Tab_HSM && typeof ZaHSM !== 'undefined' && ZaHSM.checkstoragefeaturenabled()) ||
+            if ((item._text === ZaMsg.NAD_Tab_HSM && typeof ZaHSM !== 'undefined' && ZaHSM.checkStorageFeatureEnabled()) ||
                 item._text !== ZaMsg.NAD_Tab_HSM) {
                 this._updateHistory(item, true, isShowInHistory);
                 this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
