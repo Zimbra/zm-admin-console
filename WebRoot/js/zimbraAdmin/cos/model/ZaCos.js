@@ -336,6 +336,9 @@ function (obj) {
     }
 }
 
+// array of attributes to allow an empty value in CreateCosRequest
+ZaCos.attrsEmptyValueAllowed = new Array();
+
 /**
 * public ZaCos.rename
 * @param name - name for the new COS
@@ -360,6 +363,9 @@ function(name, mods) {
 
                     attr.setAttribute("n", aname);
                 }
+            } else if (ZaCos.attrsEmptyValueAllowed.indexOf(aname) != -1) {
+                var attr = soapDoc.set("a", "");
+                attr.setAttribute("n", aname);
             }
         } else if(mods[aname] && (mods[aname].length || !isNaN(mods[aname]) )) {
             var attr = soapDoc.set("a", mods[aname]);
