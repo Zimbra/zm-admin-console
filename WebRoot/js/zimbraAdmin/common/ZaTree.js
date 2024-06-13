@@ -38,6 +38,7 @@ ZaTree = function(params) {
 };
 
 ZaTree.PARAMS = ["parent", "style", "className", "posStyle"];
+ZaTree.licenseCheckArray = [];
 
 ZaTree.prototype = new DwtTree;
 ZaTree.prototype.constructor = ZaTree;
@@ -505,6 +506,15 @@ function(item, ev) {
     var currentDataItem =  item.getData("dataItem");
     var isShowInHistory = currentDataItem.isShowHistory;
     var isAlias = currentDataItem.isAlias();
+	var isLicensedItem = false;
+    var isLicenseValid = false;
+    for (var i = 0; i < ZaTree.licenseCheckArray.length; i++) {
+        if (item._text === ZaTree.licenseCheckArray[i].label) {
+            isLicenseValid = ZaTree.licenseCheckArray[i].licenseCheckFuncion.call();
+            isLicensedItem = true;
+            break;
+        }
+    }
     if (isAlias) {
         var aliasImage = currentDataItem.image;
         currentDataItem = this.getTreeItemDataByPath(currentDataItem.getRealPath());
@@ -525,17 +535,16 @@ function(item, ev) {
         this._selectedItems.add(item);
 
         if (item._setSelected(true)) {
-            if ((item._text === ZaMsg.NAD_Tab_HSM && typeof ZaHSM !== 'undefined' && ZaHSM.checkStorageFeatureEnabled()) ||
-                item._text !== ZaMsg.NAD_Tab_HSM) {
+            if (!isLicensedItem || isLicenseValid) {
                 this._updateHistory(item, true, isShowInHistory);
                 this._notifyListeners(DwtEvent.SELECTION, [item], DwtTree.ITEM_SELECTED, ev, this._selEv);
             } else {
                 ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_FEATURE_NOT_LICENSED);
             }
         }
-	} else {
+    } else {
         var buildDataItem;
-        if (!currentDataItem.isLeaf())
+        if (!currentDataItem.isLeaf() && (!isLicensedItem || isLicenseValid))
             buildDataItem = currentDataItem;
         else
             buildDataItem = currentDataItem.parentObject;
@@ -550,15 +559,19 @@ function(item, ev) {
         }
 
         this._selectedItems.add(selectedItem);
-		if (selectedItem._setSelected(true)) {
-            if (!isAlias) {
-                if (currentDataItem.isLeaf())
-                    this._updateHistory(selectedItem, true, isShowInHistory);
-                else
-                    this._updateHistory(this.getCurrentRootItem(), true, isShowInHistory);
-            } else
-                this._updateHistory(item, true, isShowInHistory);
-			this._notifyListeners(DwtEvent.SELECTION, [selectedItem], DwtTree.ITEM_SELECTED, ev, this._selEv);
+        if (selectedItem._setSelected(true)) {
+            if (!isLicensedItem || isLicenseValid) {
+                if (!isAlias) {
+                    if (currentDataItem.isLeaf())
+                        this._updateHistory(selectedItem, true, isShowInHistory);
+                    else
+                        this._updateHistory(this.getCurrentRootItem(), true, isShowInHistory);
+                } else
+                    this._updateHistory(item, true, isShowInHistory);
+                this._notifyListeners(DwtEvent.SELECTION, [selectedItem], DwtTree.ITEM_SELECTED, ev, this._selEv);
+            } else {
+                ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_FEATURE_NOT_LICENSED);
+            }
 		}
 
         if (buildDataItem.callback && buildDataItem.callback instanceof AjxCallback) {
