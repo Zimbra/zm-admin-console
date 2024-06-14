@@ -506,7 +506,7 @@ function(item, ev) {
     var currentDataItem =  item.getData("dataItem");
     var isShowInHistory = currentDataItem.isShowHistory;
     var isAlias = currentDataItem.isAlias();
-	var isLicensedItem = false;
+    var isLicensedItem = false;
     var isLicenseValid = false;
     for (var i = 0; i < ZaTree.licenseCheckArray.length; i++) {
         if (item._text === ZaTree.licenseCheckArray[i].label) {
