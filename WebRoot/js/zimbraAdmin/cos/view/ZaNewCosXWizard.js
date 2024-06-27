@@ -1668,7 +1668,7 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
         },
         {
             type: _SWITCH_,
-            width: 635,
+            width: 680,
             align: _LEFT_,
             valign: _TOP_,
             cssStyle: "white-space: normal",
