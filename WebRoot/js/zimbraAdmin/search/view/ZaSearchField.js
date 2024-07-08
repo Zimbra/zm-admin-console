@@ -29,6 +29,14 @@ ZaSearchField = function(parent, className, size, posStyle, id) {
 	this._localXForm.setInstance(this._containedObject);
 	this._app = ZaApp.getInstance();
 	this._searchFieldId = id;
+
+	// enable Ctrl+A key
+	var queryXFormItem = this._localXForm.getItemsById(ZaSearch.A_query)[0];
+	var searchFieldDivId = queryXFormItem.getId();
+	var divElement = document.getElementById(searchFieldDivId);
+	if (divElement && divElement.onselectstart) {
+		divElement.onselectstart = null;
+	}
 }
 
 ZaSearchField.prototype = new DwtComposite;
