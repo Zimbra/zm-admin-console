@@ -238,7 +238,7 @@ function(authResponse) {
 		this.maskedEmailAddress = authResponse.zimbraPrefPasswordRecoveryAddress && authResponse.zimbraPrefPasswordRecoveryAddress._content;
 		this._twoFactorAuthToken = authResponse.authToken[0]._content;
 		this._isResent = false;
-		this._controlLinksInTFALogin();
+		this._controlLabelsInTFALogin();
 		this._invokeSendTwoFactorAuthCode();
 		Dwt.setHandler(ZLoginFactory.TWO_FACTOR_RESEND_CODE_LINK_A_ID, DwtEvent.ONCLICK, this._resendTFACode.bind(this));
 		Dwt.setHandler(ZLoginFactory.TWO_FACTOR_CHOOSE_METHOD_LINK_A_ID, DwtEvent.ONCLICK, this._chooseTFAMethodLinkHandler.bind(this));
@@ -247,14 +247,14 @@ function(authResponse) {
 };
 
 
-ZaLoginDialog.prototype._controlLinksInTFALogin =
+ZaLoginDialog.prototype._controlLabelsInTFALogin =
 function() {
+	document.getElementById(ZLoginFactory.TWO_FACTOR_CODE_TR_ID).style.display = "";
+	document.getElementById(ZLoginFactory.TWO_FACTOR_CODE_LABEL).textContent = ZaMsg["twoFactorCodeLabel_" + this.tfaMethod];
 	if (this.tfaMethod === ZaTwoFactorAuth.EMAIL) {
-		document.getElementById(ZLoginFactory.TWO_FACTOR_RESEND_CODE_TR_ID).style.display = "";
 		document.getElementById(ZLoginFactory.TWO_FACTOR_RESEND_CODE_LINK_A_ID).style.display = this._isResent ? "none" : "";
 		document.getElementById(ZLoginFactory.TWO_FACTOR_CODE_RESENT_STATUS_SPAN_ID).style.display = this._isResent ? "" : "none";
 	} else {
-		document.getElementById(ZLoginFactory.TWO_FACTOR_RESEND_CODE_TR_ID).style.display = "none";
 		document.getElementById(ZLoginFactory.TWO_FACTOR_RESEND_CODE_LINK_A_ID).style.display = "none";
 		document.getElementById(ZLoginFactory.TWO_FACTOR_CODE_RESENT_STATUS_SPAN_ID).style.display = "none";
 	}
@@ -397,6 +397,6 @@ function() {
 ZaLoginDialog.prototype._goBackToTwoFactorCodePage =
 function() {
 	ZLoginFactory.hideTwoFactorChooseMethod();
-	this._controlLinksInTFALogin();
+	this._controlLabelsInTFALogin();
 	ZLoginFactory.showTwoFactorCodeForm();
 };

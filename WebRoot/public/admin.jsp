@@ -200,9 +200,6 @@
 <%
     String packages = "JQuery,Ajax,XForms,Zimbra,Admin,Chartjs";
 
-    String extraPackages = request.getParameter("packages");
-    if (extraPackages != null) packages += "," + BeanUtils.cook(extraPackages);
-
     String pprefix = isDevMode ? "public/jsp" : "js";
     String psuffix = isDevMode ? ".jsp" : "_all.js";
 
