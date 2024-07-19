@@ -188,6 +188,27 @@ function(treeItem, skipNotify, kbNavEvent, noFocus) {
 	}
 };
 
+ZaTree.prototype.setEnterSelection =
+function (treeItem, kbNavEvent) {
+    var isLicensedItem = false;
+    var isLicenseValid = false;
+    for (var i = 0; i < ZaTree.licenseCheckArray.length; i++) {
+        if (treeItem._text === ZaTree.licenseCheckArray[i].label) {
+            isLicenseValid = ZaTree.licenseCheckArray[i].licenseCheckFuncion.call();
+            isLicensedItem = true;
+            break;
+        }
+    }
+    if (!treeItem) {
+        return;
+    }
+    if (!isLicensedItem || isLicenseValid) {
+        this._notifyListeners(DwtEvent.SELECTION, [treeItem], DwtTree.ITEM_SELECTED, null, this._selByEnterEv, kbNavEvent);
+    } else {
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_FEATURE_NOT_LICENSED);
+    }
+};
+
 /*
  * Remove isAddHistory Now(By ming@zimbra.com).
  * Currenty, we won't add history in this function.
