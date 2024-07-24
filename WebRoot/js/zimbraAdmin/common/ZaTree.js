@@ -190,6 +190,9 @@ function(treeItem, skipNotify, kbNavEvent, noFocus) {
 
 ZaTree.prototype.setEnterSelection =
 function (treeItem, kbNavEvent) {
+    if (!treeItem) {
+        return;
+    }
     var isLicensedItem = false;
     var isLicenseValid = false;
     for (var i = 0; i < ZaTree.licenseCheckArray.length; i++) {
@@ -198,9 +201,6 @@ function (treeItem, kbNavEvent) {
             isLicensedItem = true;
             break;
         }
-    }
-    if (!treeItem) {
-        return;
     }
     if (!isLicensedItem || isLicenseValid) {
         this._notifyListeners(DwtEvent.SELECTION, [treeItem], DwtTree.ITEM_SELECTED, null, this._selByEnterEv, kbNavEvent);
