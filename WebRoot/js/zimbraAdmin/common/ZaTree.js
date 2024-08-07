@@ -147,6 +147,15 @@ function(treeItem, skipNotify, kbNavEvent, noFocus) {
 	var da;
 	var j = 0;
 	var alreadySelected = false;
+	var isLicensedItem = false;
+	var isLicenseValid = false;
+	for (var i = 0; i < ZaTree.licenseCheckArray.length; i++) {
+		if (treeItem._text === ZaTree.licenseCheckArray[i].label) {
+			isLicenseValid = ZaTree.licenseCheckArray[i].licenseCheckFuncion.call();
+			isLicensedItem = true;
+			break;
+		}
+	}
 	for (var i = 0; i < sz; i++) {
 		if (a[i] == treeItem) {
 			alreadySelected = true;
@@ -171,8 +180,33 @@ function(treeItem, skipNotify, kbNavEvent, noFocus) {
 
 	//this._expandUp(treeItem);
 	if (treeItem._setSelected(true, noFocus) && !skipNotify) {
-    	this._notifyListeners(DwtEvent.SELECTION, [treeItem], DwtTree.ITEM_SELECTED, null, this._selEv, kbNavEvent);
+        if (!isLicensedItem || isLicenseValid) {
+            this._notifyListeners(DwtEvent.SELECTION, [treeItem], DwtTree.ITEM_SELECTED, null, this._selEv, kbNavEvent);
+        } else {
+            ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_FEATURE_NOT_LICENSED);
+        }
 	}
+};
+
+ZaTree.prototype.setEnterSelection =
+function (treeItem, kbNavEvent) {
+    if (!treeItem) {
+        return;
+    }
+    var isLicensedItem = false;
+    var isLicenseValid = false;
+    for (var i = 0; i < ZaTree.licenseCheckArray.length; i++) {
+        if (treeItem._text === ZaTree.licenseCheckArray[i].label) {
+            isLicenseValid = ZaTree.licenseCheckArray[i].licenseCheckFuncion.call();
+            isLicensedItem = true;
+            break;
+        }
+    }
+    if (!isLicensedItem || isLicenseValid) {
+        this._notifyListeners(DwtEvent.SELECTION, [treeItem], DwtTree.ITEM_SELECTED, null, this._selByEnterEv, kbNavEvent);
+    } else {
+        ZaApp.getInstance().getCurrentController().popupErrorDialog(ZaMsg.ERROR_FEATURE_NOT_LICENSED);
+    }
 };
 
 /*
