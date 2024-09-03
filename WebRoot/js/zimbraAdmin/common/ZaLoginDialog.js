@@ -81,8 +81,8 @@ ZaLoginDialog.prototype.getLoginURL = function () {
 }
 
 ZaLoginDialog.prototype.registerCallback =
-function(func, obj) {
-	this._callback = new AjxCallback(obj, func);
+function(func, obj, args) {
+	this._callback = new AjxCallback(obj, func, args);
 }
 
 ZaLoginDialog.prototype.clearPassword =
