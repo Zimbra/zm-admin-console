@@ -463,12 +463,6 @@ function(username, password, twoFactorCode, trustedDevice) {
             this._showLoginDialog(false);
             this._loginDialog.setError(ZaMsg.ERROR_AUTH_FAILED);
             return;
-        } else if (ex.code == ZmCsfeException.ACCT_CHANGE_PASSWORD) {
-            this._showLoginDialog(true);
-            this._loginDialog.disablePasswordField(true);
-            this._loginDialog.disableUnameField(true);
-            this._loginDialog.showNewPasswordFields();
-            this._loginDialog.registerCallback(this.changePwdCallback, this);
         } else {
             this._showLoginDialog(false);
             this.popupMsgDialog(ZaMsg.SERVER_ERROR, ex); 
@@ -502,13 +496,6 @@ function (resp) {
             this._loginDialog.setError(ZaMsg.ERROR_AUTH_FAILED);
             this._loginDialog.clearPassword();
             return;
-        } else if (ex.code == ZmCsfeException.ACCT_CHANGE_PASSWORD) {
-            this._showLoginDialog(true);
-            this._loginDialog.setError(ZaMsg.errorPassChange);
-            this._loginDialog.disablePasswordField(true);
-            this._loginDialog.disableUnameField(true);
-            this._loginDialog.showNewPasswordFields();
-            this._loginDialog.registerCallback(this.changePwdCallback, this);
         } else if (ex.code == ZmCsfeException.PASSWORD_RECENTLY_USED ||
             ex.code == ZmCsfeException.PASSWORD_CHANGE_TOO_SOON) {
             this._showLoginDialog(true);
@@ -555,6 +542,15 @@ function (resp) {
                 this._loginDialog.registerCallback(this.loginCallback, this);
                 this._loginDialog.clearError();
                 this._loginDialog.showTwoFactorCode(body.AuthResponse);
+            } else if (body.AuthResponse && body.AuthResponse.resetPassword && body.AuthResponse.resetPassword._content === "true") {
+                this._showLoginDialog(true);
+                this._loginDialog.setError(ZaMsg.errorPassChange);
+                this._loginDialog.disablePasswordField(true);
+                this._loginDialog.disableUnameField(true);
+                this._loginDialog.showNewPasswordFields();
+                var authToken = body.AuthResponse && body.AuthResponse.authToken && body.AuthResponse.authToken[0] && body.AuthResponse.authToken[0]._content || "";
+                var csrfToken = body.AuthResponse && body.AuthResponse.csrfToken && body.AuthResponse.csrfToken._content || "";
+                this._loginDialog.registerCallback(this.changePwdCallback, this, [authToken, csrfToken]);
             } else {
                 if(body.AuthResponse && body.AuthResponse.csrfToken && 
                     body.AuthResponse.csrfToken._content) {
@@ -639,7 +635,7 @@ function(uname, password, newPassword, confPassword, twoFactorCode, trustedDevic
 }
 
 ZaController.prototype.changePwdCallback =
-function(uname, oldPass, newPass, conPass) {
+function(authToken, csrfToken, uname, oldPass, newPass, conPass) {
     if (newPass == null || newPass == "" || conPass == null || conPass == "") {
         this._loginDialog.setError(ZaMsg.enterNewPassword);
         return;
@@ -650,11 +646,13 @@ function(uname, oldPass, newPass, conPass) {
         return;
     }
 
-    var soapDoc = AjxSoapDoc.create("ChangePasswordRequest", "urn:zimbraAccount");
+    var soapDoc = AjxSoapDoc.create("ChangePasswordRequest", "urn:zimbraAdmin");
     var el = soapDoc.set("account", uname);
     el.setAttribute("by", "name");
     soapDoc.set("oldPassword", oldPass);
     soapDoc.set("password", newPass);
+    soapDoc.set("authToken", authToken);
+    soapDoc.set("csrfToken", csrfToken);
     var resp = null;
     try {
         if(ZaController.changePwdCommand)
@@ -684,13 +682,23 @@ function(uname, oldPass, newPass, conPass) {
                 : (ZaMsg.errorPassChangeTooSoon);
             this._loginDialog.setError(msg);
             this._loginDialog.setFocus(null);
-        } else if (ex.code == ZmCsfeException.ACCT_PASS_LOCKED)    {
+        } else if (ex.code == ZmCsfeException.ACCT_PASS_LOCKED) {
             // re-enable username and password fields
             this._loginDialog.disablePasswordField(false);
             this._loginDialog.disableUnameField(false);
             this._loginDialog.setError(ZaMsg.errorPassLocked);
+        } else if (ex.code == ZmCsfeException.ACCT_INVALID_PASSWORD) {
+            var failedAttr;
+            if (ex.data && Object.keys(ex.data) && Object.keys(ex.data).length) {
+                failedAttr = Object.keys(ex.data)[0];
+            }
+            var msg = (failedAttr && ZaMsg["account.INVALID_PASSWORD." + failedAttr])
+                ? AjxMessageFormat.format(ZaMsg["account.INVALID_PASSWORD." + failedAttr], [ex.data[failedAttr]])
+                : ZaMsg["account.INVALID_PASSWORD"];
+            this._loginDialog.setError(msg);
+            this._loginDialog.setFocus(null);
         } else {
-            this._handleException(ex, "ZaController.prototype.changePwdCallback");    
+            this._handleException(ex, "ZaController.prototype.changePwdCallback");
         }
     }
 }
