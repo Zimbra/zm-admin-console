@@ -631,7 +631,7 @@ function (resp) {
 ZaController.prototype.loginCallback =
 function(uname, password, newPassword, confPassword, twoFactorCode, trustedDevice) {
     //this._schedule(this._doAuth, {username: uname, password: password});
-    this._doAuth(uname,password, twoFactorCode, trustedDevice);
+    this._doAuth(uname, newPassword || password, twoFactorCode, trustedDevice);
 }
 
 ZaController.prototype.changePwdCallback =
