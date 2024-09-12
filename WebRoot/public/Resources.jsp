@@ -67,7 +67,7 @@ If not, see <https://www.gnu.org/licenses/>.
 	if (resources == null) {
 		resources = request.getParameter("res");
 	}
-    List<String> whitelistResources = Arrays.asList("I18nMsg","TzMsg","AjxMsg","ZMsg","ZaMsg","ZabMsg","AjxKeys");
+    List<String> whitelistResources = Arrays.asList("I18nMsg","TzMsg","AjxMsg","ZMsg","ZmMsg","AjxKeys","ZmKeys","ZdMsg","AjxTemplateMsg","ZmSMS","ZhMsg","ZtMsg","ZbMsg","ZaMsg","ZabMsg","ZhKeys");
     String[] resourceArray = resources.split(",");
     
     StringBuilder filteredResources = new StringBuilder();
