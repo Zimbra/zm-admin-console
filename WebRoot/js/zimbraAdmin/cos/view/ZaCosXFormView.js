@@ -1506,7 +1506,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     ]
                 ],
                 items :[
-                    {ref:ZaCos.A_zimbraAttachmentsBlocked, type:_CHECKBOX_,  msgName:ZaMsg.NAD_RemoveAllAttachments,label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE",labelCssClass:"xform_label",  align:_LEFT_},
+                    {ref:ZaCos.A_zimbraAttachmentsBlocked, type:_CHECKBOX_, msgName:ZaMsg.NAD_RemoveAllAttachments, label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE", labelCssClass:"xform_label", align:_LEFT_},
                     {ref:ZaCos.A_zimbraMailAttachmentMaxSize, type:_TEXTFIELD_,
                         label:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
                         labelLocation:_LEFT_,
