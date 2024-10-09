@@ -2038,6 +2038,12 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                     msgName:ZaMsg.NAD_RemoveAllAttachments,
                                     checkBoxLabel:ZaMsg.NAD_RemoveAllAttachments,
                                     trueValue:"TRUE", falseValue:"FALSE"
+                                },
+                                {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                                    txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
+                                    textFieldCssClass:"admin_xform_number_input"
                                 }
                                 // TODO: We will use below code in ZCS-11977
                                 // {ref:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
@@ -2052,12 +2058,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                 //     msgName:ZaMsg.LBL_AttachmentBlockedFileTypes,
                                 //     labelCssStyle:"vertical-align:top;", textAreaWidth:"250px",
                                 //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS
-                                // },
-                                // {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
-                                //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                //     msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
-                                //     txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
-                                //     textFieldCssClass:"admin_xform_number_input"
                                 // },
                                 // {ref:ZaAccount.A_zimbraFileUploadMaxSizePerFile, type:_SUPER_TEXTFIELD_,
                                 //     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,

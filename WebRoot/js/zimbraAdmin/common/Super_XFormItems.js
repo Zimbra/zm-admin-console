@@ -282,6 +282,11 @@ Cos_MailQuota_XModelItem.prototype.setLocalValue = function(value, instance, cur
 }
 
 /**
+* _COS_MailAttachmentSize_ XModel item type
+**/
+Cos_MailAttachmentSize_XModelItem = function (){}
+XModelItemFactory.createItemType("_COS_MailAttachmentSize_", "cos_mailattachmentsize", Cos_MailAttachmentSize_XModelItem, Cos_MailQuota_XModelItem);
+/**
 * COS_MLIFETIME XModelItem
 **/
 
