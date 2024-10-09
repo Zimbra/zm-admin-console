@@ -60,10 +60,10 @@ ZaCos.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPass
 ZaCos.A_name = "cn";
 ZaCos.A_description = "description";
 ZaCos.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
+ZaCos.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
 // TODO: We will use below code in ZCS-11977
 // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled = "zimbraFeatureFileTypeUploadRestrictionsEnabled";
 // ZaCos.A_zimbraFileUploadBlockedFileTypes = "zimbraFileUploadBlockedFileTypes";
-// ZaCos.A_zimbraMailAttachmentMaxSize = "zimbraMailAttachmentMaxSize";
 // ZaCos.A_zimbraFileUploadMaxSizePerFile = "zimbraFileUploadMaxSizePerFile";
 ZaCos.A_zimbraQuotaWarnPercent = "zimbraQuotaWarnPercent";
 ZaCos.A_zimbraQuotaWarnInterval = "zimbraQuotaWarnInterval";
@@ -667,10 +667,10 @@ ZaCos.myXModel = {
 //        {id:ZaCos.A_description, type:_STRING_, ref:"attrs/"+ZaCos.A_description},
         ZaItem.descriptionModelItem ,
         {id:ZaCos.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraAttachmentsBlocked},
+        {id:ZaCos.A_zimbraMailAttachmentMaxSize, type:_COS_MailAttachmentSize_, ref:"attrs/" + ZaCos.A_zimbraMailAttachmentMaxSize},
         // TODO: We will use below code in ZCS-11977
         // {id:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, type:_ENUM_, ref:"attrs/"+ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         // {id:ZaCos.A_zimbraFileUploadBlockedFileTypes, type:_STRING_, ref:"attrs/" + ZaCos.A_zimbraFileUploadBlockedFileTypes},
-        // {id:ZaCos.A_zimbraMailAttachmentMaxSize, type:_NUMBER_, ref:"attrs/" + ZaCos.A_zimbraMailAttachmentMaxSize},
         // {id:ZaCos.A_zimbraFileUploadMaxSizePerFile, type: _NUMBER_, ref:"attrs/" + ZaCos.A_zimbraFileUploadMaxSizePerFile},
         {id:ZaCos.A_zimbraAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAuthTokenLifetime, required: true},
         {id:ZaCos.A_zimbraAdminAuthTokenLifetime, type:_MLIFETIME_, ref:"attrs/"+ZaCos.A_zimbraAdminAuthTokenLifetime, required: true},
@@ -1382,6 +1382,18 @@ ZaCos.checkValues = function(tmpObj){
             }
         }
     }
+
+    if(tmpObj.attrs[ZaCos.A_zimbraMailAttachmentMaxSize] != null) {
+        var maxMessageSize = parseInt(ZaApp.getInstance().getGlobalConfig().attrs[ZaGlobalConfig.A_zimbraMtaMaxMessageSize]);
+        var prefMailAttachmentMaxSize = tmpObj.attrs[ZaCos.A_zimbraMailAttachmentMaxSize];
+        var maxMessageSizeMb = Number(maxMessageSize / 1048576).toFixed(2);
+
+        if(prefMailAttachmentMaxSize > maxMessageSize) {
+            ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_MAX_ATTCHMENT_SIZE,[maxMessageSizeMb]));
+            return false;
+        }
+    }
+
     return true;
 }
 
