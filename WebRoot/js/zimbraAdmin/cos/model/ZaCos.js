@@ -1389,7 +1389,7 @@ ZaCos.checkValues = function(tmpObj){
         var maxMessageSizeMb = Number(maxMessageSize / 1048576).toFixed(2);
 
         if(prefMailAttachmentMaxSize > maxMessageSize) {
-            ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_MAX_ATTCHMENT_SIZE,[maxMessageSizeMb]));
+            ZaApp.getInstance().getCurrentController().popupErrorDialog(AjxMessageFormat.format(ZaMsg.ERROR_MAX_MAIL_SIZE,[maxMessageSizeMb]));
             return false;
         }
     }
