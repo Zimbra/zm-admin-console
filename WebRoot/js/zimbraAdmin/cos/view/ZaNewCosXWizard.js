@@ -398,7 +398,8 @@ ZaNewCosXWizard.PREFERENCES_TAB_ATTRS = [
     ZaCos.A_zimbraPrefAppleIcalDelegationEnabled,
     ZaCos.A_zimbraPrefMandatorySpellCheckEnabled,
     ZaCos.A_zimbraPrefImapEnabled,
-    ZaCos.A_zimbraPrefPop3Enabled
+    ZaCos.A_zimbraPrefPop3Enabled,
+    ZaCos.A_zimbraMailAttachmentMaxSize
 ];
 ZaNewCosXWizard.PREFERENCES_TAB_RIGHTS = [];
 
@@ -448,8 +449,7 @@ ZaNewCosXWizard.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraDataSourceCalendarPollingInterval,
     ZaCos.A_zimbraDataSourceRssPollingInterval,
     ZaCos.A_zimbraDataSourceCaldavPollingInterval,
-    ZaCos.A_zimbraDataSourceMinPollingInterval,
-    ZaCos.A_zimbraMailAttachmentMaxSize
+    ZaCos.A_zimbraDataSourceMinPollingInterval
     // TODO: We will use below code in ZCS-11977
     // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
     // ZaCos.A_zimbraFileUploadBlockedFileTypes,
@@ -1004,6 +1004,11 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                     label:ZaMsg.LBL_zimbraPrefAutoSaveDraftInterval, labelLocation:_LEFT_,
                     onChange:ZaNewCosXWizard.validatePollingInterval,
                     labelCssStyle:"white-space:normal;",nowrap:false,labelWrap:true
+                },
+                {ref:ZaCos.A_zimbraMailAttachmentMaxSize, type:_TEXTFIELD_,
+                    label:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                    labelLocation:_LEFT_,
+                    cssClass:"admin_xform_number_input"
                 }
             ]},
             {type:_ZAWIZ_TOP_GROUPER_, id:"cos_prefs_pop_imap",
@@ -1297,17 +1302,11 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                     [
                         // TODO: We will use below code in ZCS-11977
                         // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, ZaCos.A_zimbraFileUploadBlockedFileTypes, ZaCos.A_zimbraMailAttachmentMaxSize, ZaCos.A_zimbraFileUploadMaxSizePerFile, 
-                        ZaCos.A_zimbraMailAttachmentMaxSize,
                         ZaCos.A_zimbraAttachmentsBlocked
                     ]
                 ]],
                 items :[
                     {ref:ZaCos.A_zimbraAttachmentsBlocked, type:_WIZ_CHECKBOX_, msgName:ZaMsg.NAD_RemoveAllAttachments, label:ZaMsg.NAD_RemoveAllAttachments, labelLocation:_LEFT_, trueValue:"TRUE", falseValue:"FALSE", labelCssClass:"xform_label", align:_LEFT_},
-                    {ref:ZaCos.A_zimbraMailAttachmentMaxSize, type:_TEXTFIELD_,
-                        label:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
-                        labelLocation:_LEFT_,
-                        cssClass:"admin_xform_number_input"
-                    }
                     // TODO: We will use below code in ZCS-11977
                     // {ref:ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled, 
                     //     type:_CHECKBOX_,

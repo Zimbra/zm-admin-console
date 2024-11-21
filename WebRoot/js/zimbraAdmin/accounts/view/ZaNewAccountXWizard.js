@@ -1675,7 +1675,8 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
             ZaAccount.A_zimbraPrefHtmlEditorDefaultFontColor,ZaAccount.A_zimbraPrefForwardReplyInOriginalFormat,
             ZaAccount.A_zimbraPrefMailSignatureEnabled,/*ZaAccount.A_zimbraPrefMailSignatureStyle,*/
             ZaAccount.A_zimbraMailSignatureMaxLength,ZaAccount.A_zimbraPrefMailSignature,
-            ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled, ZaAccount.A_zimbraPrefAutoSaveDraftInterval],[])) {
+            ZaAccount.A_zimbraPrefMandatorySpellCheckEnabled, ZaAccount.A_zimbraPrefAutoSaveDraftInterval,
+            ZaAccount.A_zimbraMailAttachmentMaxSize],[])) {
             prefItems.push({type:_ZAWIZ_TOP_GROUPER_, id:"account_prefs_mail_composing",borderCssClass:"LowPaddedTopGrouperBorder",
                             label:ZaMsg.NAD_MailOptionsComposing,
                             items :[
@@ -1758,6 +1759,12 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                     txtBoxLabel:ZaMsg.LBL_zimbraPrefAutoSaveDraftInterval,
                                     resetToSuperLabel:ZaMsg.NAD_ResetToCOS,colSpan:2,
                                     nowrap:false,labelWrap:true
+                                },
+                                {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
+                                    txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
+                                    textFieldCssClass:"admin_xform_number_input"
                                 }
                             ]
                         });
@@ -2038,12 +2045,6 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                     msgName:ZaMsg.NAD_RemoveAllAttachments,
                                     checkBoxLabel:ZaMsg.NAD_RemoveAllAttachments,
                                     trueValue:"TRUE", falseValue:"FALSE"
-                                },
-                                {ref:ZaAccount.A_zimbraMailAttachmentMaxSize, type:_SUPER_TEXTFIELD_,
-                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
-                                    msgName:ZaMsg.LBL_zimbraMailAttachmentMaxSize,
-                                    txtBoxLabel:ZaMsg.LBL_zimbraMailAttachmentMaxSize, labelLocation:_LEFT_,
-                                    textFieldCssClass:"admin_xform_number_input"
                                 }
                                 // TODO: We will use below code in ZCS-11977
                                 // {ref:ZaAccount.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
