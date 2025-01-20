@@ -57,6 +57,7 @@ ZaCos.A_zimbraEnforcePwdHistory ="zimbraPasswordEnforceHistory";
 ZaCos.A_zimbraPasswordLocked = "zimbraPasswordLocked";
 ZaCos.A_zimbraPasswordBlockCommonEnabled = "zimbraPasswordBlockCommonEnabled";
 ZaCos.A_zimbraFeatureAllowUsernameInPassword = "zimbraFeatureAllowUsernameInPassword";
+ZaCos.A_zimbraFeaturePasswordExpiryReminderEnabled = "zimbraFeaturePasswordExpiryReminderEnabled";
 ZaCos.A_name = "cn";
 ZaCos.A_description = "description";
 ZaCos.A_zimbraAttachmentsBlocked = "zimbraAttachmentsBlocked";
@@ -665,6 +666,7 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraPasswordLocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPasswordLocked},
         {id:ZaCos.A_zimbraPasswordBlockCommonEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPasswordBlockCommonEnabled},
         {id:ZaCos.A_zimbraFeatureAllowUsernameInPassword, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureAllowUsernameInPassword},
+        {id:ZaCos.A_zimbraFeaturePasswordExpiryReminderEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeaturePasswordExpiryReminderEnabled},
         {id:ZaCos.A_name, type:_STRING_, ref:"attrs/"+ZaCos.A_name},
 //        {id:ZaCos.A_description, type:_STRING_, ref:"attrs/"+ZaCos.A_description},
         ZaItem.descriptionModelItem ,

@@ -422,6 +422,7 @@ ZaNewCosXWizard.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraPasswordLocked,
     ZaCos.A_zimbraPasswordBlockCommonEnabled,
     ZaCos.A_zimbraFeatureAllowUsernameInPassword,
+    ZaCos.A_zimbraFeaturePasswordExpiryReminderEnabled,
     ZaCos.A_zimbraMinPwdLength,
     ZaCos.A_zimbraMaxPwdLength,
     ZaCos.A_zimbraPasswordMinUpperCaseChars,
@@ -1559,6 +1560,13 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         trueValue: "TRUE", falseValue: "FALSE",
                         visibilityChecks: [], enableDisableChecks: [[ZaNewCosXWizard.isAllAuthfromInternal]]
                     },
+                    {
+                        ref: ZaCos.A_zimbraFeaturePasswordExpiryReminderEnabled, type: _WIZ_CHECKBOX_,
+                        msgName: ZaMsg.NAD_PasswordExpiryReminder,
+                        label: ZaMsg.NAD_PasswordExpiryReminder,
+                        trueValue: "TRUE", falseValue: "FALSE",
+                        visibilityChecks: [], enableDisableChecks: [[ZaNewCosXWizard.isAllAuthfromInternal]]
+                    }
                 ]
             },
             {type:_ZAWIZ_TOP_GROUPER_, id:"cos_password_lockout_settings",
