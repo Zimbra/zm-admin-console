@@ -1233,6 +1233,7 @@ ZaAccountXFormView.ADVANCED_TAB_ATTRS = [ZaAccount.A_zimbraAttachmentsBlocked,
     ZaAccount.A_zimbraPasswordLocked,
     ZaAccount.A_zimbraPasswordBlockCommonEnabled,
     ZaAccount.A_zimbraFeatureAllowUsernameInPassword,
+    ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled,
     ZaAccount.A_zimbraMinPwdLength,
     ZaAccount.A_zimbraMaxPwdLength,
     ZaAccount.A_zimbraPasswordMinUpperCaseChars,
@@ -3452,7 +3453,8 @@ textFieldCssClass:"admin_xform_number_input"}
                                         ZaAccount.A_zimbraMaxPwdAge,
                                         ZaAccount.A_zimbraEnforcePwdHistory,
                                         ZaAccount.A_zimbraPasswordBlockCommonEnabled,
-                                        ZaAccount.A_zimbraFeatureAllowUsernameInPassword
+                                        ZaAccount.A_zimbraFeatureAllowUsernameInPassword,
+                                        ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled
                                     ]
                                 ]
                             ],
@@ -3566,6 +3568,14 @@ textFieldCssClass:"admin_xform_number_input"}
                                     resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                                     msgName: ZaMsg.NAD_AllowUsernameInPassword,
                                     checkBoxLabel: ZaMsg.NAD_AllowUsernameInPassword,
+                                    trueValue: "TRUE", falseValue: "FALSE",
+                                    visibilityChecks: [], enableDisableChecks: [[ZaAccountXFormView.isAuthfromInternalSync, entry.name, ZaAccount.A_name]]
+                                },
+                                {
+                                    ref: ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled, type: _SUPER_CHECKBOX_,
+                                    resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                                    msgName: ZaMsg.NAD_PasswordExpiryReminder,
+                                    checkBoxLabel: ZaMsg.NAD_PasswordExpiryReminder,
                                     trueValue: "TRUE", falseValue: "FALSE",
                                     visibilityChecks: [], enableDisableChecks: [[ZaAccountXFormView.isAuthfromInternalSync, entry.name, ZaAccount.A_name]]
                                 }
