@@ -196,6 +196,7 @@ ZaCosXFormView.isAttributeDefined = function(attribute) {
 
 ZaCosXFormView.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureReadReceiptsEnabled,
+    ZaCos.A_zimbraFeatureDeliveryStatusNotificationEnabled,
     ZaCos.A_zimbraFeatureContactsEnabled,
     ZaCos.A_zimbraFeatureDistributionListFolderEnabled,
     ZaCos.A_zimbraFeatureCalendarEnabled,
@@ -826,7 +827,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled,
                         ZaCos.A_zimbraFeatureNewMailNotificationEnabled,
                         ZaCos.A_zimbraFeatureIdentitiesEnabled,
-                        ZaCos.A_zimbraFeatureReadReceiptsEnabled
+                        ZaCos.A_zimbraFeatureReadReceiptsEnabled,
+                        ZaCos.A_zimbraFeatureDeliveryStatusNotificationEnabled
                     ]]
                 ],
                 items:[
@@ -848,7 +850,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         {ref:ZaCos.A_zimbraFeatureOutOfOfficeReplyEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled,label:ZaMsg.LBL_zimbraFeatureOutOfOfficeReplyEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureNewMailNotificationEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled,label:ZaMsg.LBL_zimbraFeatureNewMailNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"},
                         {ref:ZaCos.A_zimbraFeatureIdentitiesEnabled, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,label:ZaMsg.LBL_zimbraFeatureIdentitiesEnabled,trueValue:"TRUE", falseValue:"FALSE"},
-                        {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"}
+                        {ref:ZaCos.A_zimbraFeatureReadReceiptsEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,trueValue:"TRUE", falseValue:"FALSE"},
+                        {ref:ZaCos.A_zimbraFeatureDeliveryStatusNotificationEnabled, type:_CHECKBOX_,label:ZaMsg.LBL_zimbraDeliveryStatusNotificationEnabled, trueValue:"TRUE", falseValue:"FALSE"}
                 ]
             },
             {
@@ -1126,7 +1129,8 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
                     [
                         ZaCos.A_zimbraPrefSaveToSent,
-                        ZaCos.A_zimbraAllowAnyFromAddress
+                        ZaCos.A_zimbraAllowAnyFromAddress,
+                        ZaCos.A_zimbraPrefMailDeliveryStatusNotification
                     ]]
                 ],
                 items :[
@@ -1136,7 +1140,10 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                 {ref:ZaCos.A_zimbraAllowAnyFromAddress, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraAllowAnyFromAddress,
                     label:ZaMsg.LBL_zimbraAllowAnyFromAddress,
                     trueValue:"TRUE", falseValue:"FALSE"
-                }
+                },
+                {ref:ZaCos.A_zimbraPrefMailDeliveryStatusNotification, type:_CHECKBOX_, msgName:ZaMsg.LBL_zimbraDeliveryStatusNotificationEnabled,label:ZaMsg.LBL_zimbraDeliveryStatusNotificationEnabled,
+                    trueValue:"TRUE", falseValue:"FALSE"
+                },
             ]},
             {type:_ZA_TOP_GROUPER_, id:"cos_prefs_mail_sending",borderCssClass:"LowPaddedTopGrouperBorder",label:ZaMsg.NAD_MailOptionsComposing,
                 visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,

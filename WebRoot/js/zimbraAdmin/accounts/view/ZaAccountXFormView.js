@@ -1083,6 +1083,7 @@ ZaAccountXFormView.MEMBEROF_TAB_RIGHTS = [ZaAccount.GET_ACCOUNT_MEMBERSHIP_RIGHT
 
 ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
     ZaAccount.A_zimbraFeatureReadReceiptsEnabled,
+    ZaAccount.A_zimbraFeatureDeliveryStatusNotificationEnabled,
     ZaAccount.A_zimbraFeatureMailEnabled,
     ZaAccount.A_zimbraFeatureContactsEnabled,
     ZaAccount.A_zimbraFeatureDistributionListFolderEnabled,
@@ -1202,7 +1203,8 @@ ZaAccountXFormView.PREFERENCES_TAB_ATTRS = [
     ZaAccount.A_zimbraPrefPop3Enabled,
     ZaAccount.A_zimbraPrefPasswordRecoveryAddress,
     ZaAccount.A_zimbraPrefPasswordRecoveryAddressStatus,
-    ZaAccount.A_zimbraMailAttachmentMaxSize
+    ZaAccount.A_zimbraMailAttachmentMaxSize,
+    ZaAccount.A_zimbraPrefMailDeliveryStatusNotification
 ];
 ZaAccountXFormView.PREFERENCES_TAB_RIGHTS = [];
 
@@ -2222,7 +2224,8 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                              ZaAccount.A_zimbraFeatureOutOfOfficeReplyEnabled,
                              ZaAccount.A_zimbraFeatureNewMailNotificationEnabled,
                              ZaAccount.A_zimbraFeatureIdentitiesEnabled,
-                             ZaAccount.A_zimbraFeatureReadReceiptsEnabled
+                             ZaAccount.A_zimbraFeatureReadReceiptsEnabled,
+                             ZaAccount.A_zimbraFeatureDeliveryStatusNotificationEnabled
                              ]]
                         ],
                         enableDisableChecks:[[XForm.checkInstanceValue,ZaAccount.A_zimbraFeatureMailEnabled,"TRUE"]],
@@ -2255,6 +2258,12 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                 type:_SUPER_CHECKBOX_,
                                 resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                 checkBoxLabel:ZaMsg.LBL_zimbraFeatureReadReceiptsEnabled,
+                                trueValue:"TRUE", falseValue:"FALSE"
+                            },
+                            {ref:ZaAccount.A_zimbraFeatureDeliveryStatusNotificationEnabled,
+                                type:_SUPER_CHECKBOX_,
+                                resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                checkBoxLabel:ZaMsg.LBL_zimbraDeliveryStatusNotificationEnabled,
                                 trueValue:"TRUE", falseValue:"FALSE"
                             }
                         ]
@@ -2619,7 +2628,8 @@ textFieldCssClass:"admin_xform_number_input"}
                             visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
                                 [ZaAccount.A_zimbraPrefSaveToSent,
                                  ZaAccount.A_zimbraAllowAnyFromAddress,
-                                 ZaAccount.A_zimbraAllowFromAddress
+                                 ZaAccount.A_zimbraAllowFromAddress,
+                                 ZaAccount.A_zimbraPrefMailDeliveryStatusNotification
                                 ]]
                             ],
                             items :[
@@ -2661,6 +2671,14 @@ textFieldCssClass:"admin_xform_number_input"}
                                     //onRemove:ZaAccountXFormView.onRepeatRemove,
                                     visibilityChecks:[ZaAccountXFormView.isSendingFromAnyAddressDisAllowed,[ZaItem.hasReadPermission,ZaAccount.A_zimbraAllowFromAddress]],
                                     visibilityChangeEventSources:[ZaAccount.A_zimbraAllowAnyFromAddress, ZaAccount.A_zimbraAllowFromAddress, ZaAccount.A_COSId]
+                                },
+                                {ref:ZaAccount.A_zimbraPrefMailDeliveryStatusNotification,
+                                    colSpan:2,
+                                    type:_SUPER_CHECKBOX_,
+                                    resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                    msgName:ZaMsg.LBL_zimbraDeliveryStatusNotificationEnabled,
+                                    checkBoxLabel:ZaMsg.LBL_zimbraDeliveryStatusNotificationEnabled,
+                                    trueValue:"TRUE", falseValue:"FALSE"
                                 }
                             ]
                         },
