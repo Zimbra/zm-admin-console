@@ -481,21 +481,6 @@ function(tmpObj) {
             return false;
         }
     }
-    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeatureAllowUsernameInPassword,tmpObj)) {
-        if(tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] != null) {
-            tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword];
-        } else {
-            tmpObj.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword] = tmpObj._defaultValues.attrs[ZaAccount.A_zimbraFeatureAllowUsernameInPassword];
-        }
-    }
-
-    if(ZaItem.hasWritePermission(ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled,tmpObj)) {
-        if(tmpObj.attrs[ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled] != null) {
-            tmpObj.attrs[ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled] = tmpObj.attrs[ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled];
-        } else {
-            tmpObj.attrs[ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled] = tmpObj._defaultValues.attrs[ZaAccount.A_zimbraFeaturePasswordExpiryReminderEnabled];
-        }
-    }
 
     //validate password age settings
     //if the account did not have a valid cos id - pick the first COS
