@@ -345,6 +345,9 @@ ZaDomain.A_zimbraSieveEditHeaderEnabled = "zimbraSieveEditHeaderEnabled";
 ZaDomain.A_zimbraAdminSieveScriptBefore = "zimbraAdminSieveScriptBefore";
 ZaDomain.A_zimbraAdminSieveScriptAfter = "zimbraAdminSieveScriptAfter";
 
+// external email warning message
+ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled = "zimbraFeatureExternalEmailWarningEnabled";
+ZaDomain.A_zimbraExternalEmailWarningMessage = "zimbraExternalEmailWarningMessage";
 
 //email setting for auto provision
 ZaDomain.A_zimbraAutoProvNotificationSubject = "zimbraAutoProvNotificationSubject";
@@ -2414,253 +2417,276 @@ ZaDomain.aclXModel = {
 
 ZaDomain.myXModel = {
 	items: [
-    	{id:"getAttrs",type:_LIST_},
-    	{id:"setAttrs",type:_LIST_},
-    	{id:"rights",type:_LIST_},	
-		{id:"name", type:_STRING_, ref:"name"},
-		{id:ZaItem.A_zimbraId, type:_STRING_, ref:"attrs/" + ZaItem.A_zimbraId},
-        {id:ZaItem.A_zimbraDomainAliasTargetId, type:_STRING_, ref:"attrs/" + ZaItem.A_zimbraDomainAliasTargetId},                
-		{id:ZaItem.A_zimbraCreateTimestamp, ref:"attrs/" + ZaItem.A_zimbraCreateTimestamp},
-		{id:ZaDomain.A_domainName, type:_STRING_, ref:"attrs/" + ZaDomain.A_domainName, maxLength:255,constraints: {type:"method", value:
-           function (value) {
-               value = value.replace(/(^\s*)/g, "");
-               return value;
-           }}
-        },
-		{id:ZaDomain.A_zimbraPublicServiceHostname, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraPublicServiceHostname, maxLength:255},
-		{id:ZaDomain.A_zimbraPublicServiceProtocol, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraPublicServiceProtocol, maxLength:255, defaultValue:"http"},
-		{id:ZaDomain.A_zimbraPublicServicePort, type:_NUMBER_, ref:"attrs/" + ZaDomain.A_zimbraPublicServicePort, minInclusive: 0, maxInclusive:65535, defaultValue:80},
-		{id:ZaDomain.A_zimbraDNSCheckHostname, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraDNSCheckHostname, maxLength:255},
-		{id:ZaDomain.A_zimbraBasicAuthRealm, type:_COS_STRING_, ref:"attrs/" + ZaDomain.A_zimbraBasicAuthRealm, maxLength:255},		
-		{id:ZaDomain.A_zimbraAdminConsoleDNSCheckEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminConsoleDNSCheckEnabled},
-        {id:ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled},
-        {id:ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled},    
-        {id:ZaDomain.A_zimbraAdminConsoleSkinEnabled, type:_COS_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAdminSkinAddressEnabled},
-	    // regex
-	    {id:ZaDomain.A_zimbraMailAddressValidationRegex, type:_LIST_, listItem:{type:_STRING_, maxLength:512}, ref:"attrs/" + ZaDomain.A_zimbraMailAddressValidationRegex},
-       //admin Sieve rules
-       {id:ZaDomain.A_zimbraSieveRejectMailEnabled ,type:_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraSieveRejectMailEnabled, choices:ZaModel.BOOLEAN_CHOICES },
-       {id:ZaDomain.A_zimbraSieveEditHeaderEnabled ,type:_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraSieveEditHeaderEnabled, choices:ZaModel.BOOLEAN_CHOICES },
-       {id:ZaDomain.A_zimbraAdminSieveScriptBefore ,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraAdminSieveScriptBefore },
-       {id:ZaDomain.A_zimbraAdminSieveScriptAfter ,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraAdminSieveScriptAfter },
-        {id:ZaDomain.A_zimbraVirtualHostname, type:_LIST_, listItem:{type:_STRING_, maxLength:255}, ref:"attrs/" + ZaDomain.A_zimbraVirtualHostname},
-         ZaItem.descriptionModelItem,  
-	    {id:ZaDomain.A_zimbraSSLCertificate, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraSSLCertificate},
-	    {id:ZaDomain.A_zimbraSSLPrivateKey, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraSSLPrivateKey},
-        {id:ZaDomain.A_notes, type:_STRING_, ref:"attrs/" + ZaDomain.A_notes},
-		{id:ZaDomain.A_domainDefaultCOSId, type:_STRING_, ref:"attrs/" + ZaDomain.A_domainDefaultCOSId},		
-		{id:ZaDomain.A_zimbraGalMode, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraGalMode},
-        {id:ZaDomain.A_mailHost, type:_STRING_, ref:"attrs/" + ZaDomain.A_mailHost},
-		{id:ZaDomain.A_zimbraGalMaxResults, type:_NUMBER_, ref:"attrs/" + ZaDomain.A_zimbraGalMaxResults, maxInclusive:2147483647, minInclusive:1},					
-		{id:ZaDomain.A_GALServerType, type:_STRING_, ref:"attrs/" + ZaDomain.A_GALServerType},
-		{id:ZaDomain.A_GALSyncServerType, type:_STRING_, ref:"attrs/" + ZaDomain.A_GALSyncServerType},
-		{id:ZaDomain.A_GALSyncUseGALSearch, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_GALSyncUseGALSearch},
-		{id:ZaDomain.A_zimbraGalSyncLdapBindDn, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraGalSyncLdapBindDn},
-        {id:ZaDomain.A_zimbraGalSyncLdapBindPassword, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraGalSyncLdapBindPassword},
-		{id:ZaDomain.A_zimbraGalSyncLdapSearchBase, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraGalSyncLdapSearchBase},
-		{id:ZaDomain.A_zimbraGalSyncLdapFilter, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraGalSyncLdapFilter,required:true},
-		{id:ZaDomain.A_GalLdapFilter, type:_STRING_, ref:"attrs/" + ZaDomain.A_GalLdapFilter,required:true},
-		{id:ZaDomain.A_zimbraGalAutoCompleteLdapFilter, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraGalAutoCompleteLdapFilter},		
-		{id:ZaDomain.A_GalLdapSearchBase, type:_STRING_, ref:"attrs/" + ZaDomain.A_GalLdapSearchBase},
-		{id:ZaDomain.A_UseBindPassword, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_UseBindPassword},
-		{id:ZaDomain.A_SyncUseBindPassword, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_SyncUseBindPassword},
-		{id:ZaDomain.A_GalLdapURL, type:_LIST_,  listItem:{type:_SHORT_URL_}, ref:"attrs/" + ZaDomain.A_GalLdapURL},
-		{id:ZaDomain.A_zimbraGalSyncLdapURL, type:_LIST_,  listItem:{type:_SHORT_URL_}, ref:"attrs/" + ZaDomain.A_zimbraGalSyncLdapURL},
-		{id:ZaDomain.A_GalLdapBindDn, type:_STRING_, ref:"attrs/" + ZaDomain.A_GalLdapBindDn},
-		{id:ZaDomain.A_GalLdapBindPassword, type:_STRING_, ref:"attrs/" + ZaDomain.A_GalLdapBindPassword},
-		{id:ZaDomain.A_GalLdapBindPasswordConfirm, type:_STRING_, ref:"attrs/" + ZaDomain.A_GalLdapBindPasswordConfirm},
+		{ id: "getAttrs", type: _LIST_ },
+		{ id: "setAttrs", type: _LIST_ },
+		{ id: "rights", type: _LIST_ },
+		{ id: "name", type: _STRING_, ref: "name" },
+		{ id: ZaItem.A_zimbraId, type: _STRING_, ref: "attrs/" + ZaItem.A_zimbraId },
+		{ id: ZaItem.A_zimbraDomainAliasTargetId, type: _STRING_, ref: "attrs/" + ZaItem.A_zimbraDomainAliasTargetId },
+		{ id: ZaItem.A_zimbraCreateTimestamp, ref: "attrs/" + ZaItem.A_zimbraCreateTimestamp },
+		{
+			id: ZaDomain.A_domainName, type: _STRING_, ref: "attrs/" + ZaDomain.A_domainName, maxLength: 255, constraints: {
+				type: "method", value:
+					function (value) {
+						value = value.replace(/(^\s*)/g, "");
+						return value;
+					}
+			}
+		},
+		{ id: ZaDomain.A_zimbraPublicServiceHostname, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraPublicServiceHostname, maxLength: 255 },
+		{ id: ZaDomain.A_zimbraPublicServiceProtocol, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraPublicServiceProtocol, maxLength: 255, defaultValue: "http" },
+		{ id: ZaDomain.A_zimbraPublicServicePort, type: _NUMBER_, ref: "attrs/" + ZaDomain.A_zimbraPublicServicePort, minInclusive: 0, maxInclusive: 65535, defaultValue: 80 },
+		{ id: ZaDomain.A_zimbraDNSCheckHostname, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraDNSCheckHostname, maxLength: 255 },
+		{ id: ZaDomain.A_zimbraBasicAuthRealm, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraBasicAuthRealm, maxLength: 255 },
+		{ id: ZaDomain.A_zimbraAdminConsoleDNSCheckEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAdminConsoleDNSCheckEnabled },
+		{ id: ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAdminConsoleCatchAllAddressEnabled },
+		{ id: ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAdminConsoleLDAPAuthEnabled },
+		{ id: ZaDomain.A_zimbraAdminConsoleSkinEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAdminSkinAddressEnabled },
+		// regex
+		{ id: ZaDomain.A_zimbraMailAddressValidationRegex, type: _LIST_, listItem: { type: _STRING_, maxLength: 512 }, ref: "attrs/" + ZaDomain.A_zimbraMailAddressValidationRegex },
+		//admin Sieve rules
+		{ id: ZaDomain.A_zimbraSieveRejectMailEnabled, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraSieveRejectMailEnabled, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_zimbraSieveEditHeaderEnabled, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraSieveEditHeaderEnabled, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_zimbraAdminSieveScriptBefore, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAdminSieveScriptBefore },
+		{ id: ZaDomain.A_zimbraAdminSieveScriptAfter, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAdminSieveScriptAfter },
+		{ id: ZaDomain.A_zimbraExternalEmailWarningMessage, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraExternalEmailWarningMessage, maxLength: 255 },
+		{ id: ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_zimbraVirtualHostname, type: _LIST_, listItem: { type: _STRING_, maxLength: 255 }, ref: "attrs/" + ZaDomain.A_zimbraVirtualHostname },
+		ZaItem.descriptionModelItem,
+		{ id: ZaDomain.A_zimbraSSLCertificate, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraSSLCertificate },
+		{ id: ZaDomain.A_zimbraSSLPrivateKey, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraSSLPrivateKey },
+		{ id: ZaDomain.A_notes, type: _STRING_, ref: "attrs/" + ZaDomain.A_notes },
+		{ id: ZaDomain.A_domainDefaultCOSId, type: _STRING_, ref: "attrs/" + ZaDomain.A_domainDefaultCOSId },
+		{ id: ZaDomain.A_zimbraGalMode, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraGalMode },
+		{ id: ZaDomain.A_mailHost, type: _STRING_, ref: "attrs/" + ZaDomain.A_mailHost },
+		{ id: ZaDomain.A_zimbraGalMaxResults, type: _NUMBER_, ref: "attrs/" + ZaDomain.A_zimbraGalMaxResults, maxInclusive: 2147483647, minInclusive: 1 },
+		{ id: ZaDomain.A_GALServerType, type: _STRING_, ref: "attrs/" + ZaDomain.A_GALServerType },
+		{ id: ZaDomain.A_GALSyncServerType, type: _STRING_, ref: "attrs/" + ZaDomain.A_GALSyncServerType },
+		{ id: ZaDomain.A_GALSyncUseGALSearch, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_GALSyncUseGALSearch },
+		{ id: ZaDomain.A_zimbraGalSyncLdapBindDn, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraGalSyncLdapBindDn },
+		{ id: ZaDomain.A_zimbraGalSyncLdapBindPassword, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraGalSyncLdapBindPassword },
+		{ id: ZaDomain.A_zimbraGalSyncLdapSearchBase, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraGalSyncLdapSearchBase },
+		{ id: ZaDomain.A_zimbraGalSyncLdapFilter, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraGalSyncLdapFilter, required: true },
+		{ id: ZaDomain.A_GalLdapFilter, type: _STRING_, ref: "attrs/" + ZaDomain.A_GalLdapFilter, required: true },
+		{ id: ZaDomain.A_zimbraGalAutoCompleteLdapFilter, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraGalAutoCompleteLdapFilter },
+		{ id: ZaDomain.A_GalLdapSearchBase, type: _STRING_, ref: "attrs/" + ZaDomain.A_GalLdapSearchBase },
+		{ id: ZaDomain.A_UseBindPassword, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_UseBindPassword },
+		{ id: ZaDomain.A_SyncUseBindPassword, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_SyncUseBindPassword },
+		{ id: ZaDomain.A_GalLdapURL, type: _LIST_, listItem: { type: _SHORT_URL_ }, ref: "attrs/" + ZaDomain.A_GalLdapURL },
+		{ id: ZaDomain.A_zimbraGalSyncLdapURL, type: _LIST_, listItem: { type: _SHORT_URL_ }, ref: "attrs/" + ZaDomain.A_zimbraGalSyncLdapURL },
+		{ id: ZaDomain.A_GalLdapBindDn, type: _STRING_, ref: "attrs/" + ZaDomain.A_GalLdapBindDn },
+		{ id: ZaDomain.A_GalLdapBindPassword, type: _STRING_, ref: "attrs/" + ZaDomain.A_GalLdapBindPassword },
+		{ id: ZaDomain.A_GalLdapBindPasswordConfirm, type: _STRING_, ref: "attrs/" + ZaDomain.A_GalLdapBindPasswordConfirm },
 		//GAL Account
-        {id:ZaDomain.A_zimbraGalAccountId, type:_LIST_, listItem:{type:_STRING_}, ref:"attrs/" + ZaDomain.A_zimbraGalAccountId},
-        {id:ZaDomain.A2_create_gal_acc, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_create_gal_acc},
-        {id:ZaDomain.A2_gal_sync_accounts_set, type:_LIST_, ref:ZaDomain.A2_gal_sync_accounts_set, listItem:{
-            type:_OBJECT_, ref:".", items:[
-                {id:ZaDomain.A2_new_gal_sync_account_name, type:_STRING_, ref:ZaDomain.A2_new_gal_sync_account_name, defaultValue: "galsync"},
-                {id:ZaDomain.A2_new_internal_gal_ds_name, type:_STRING_, ref:ZaDomain.A2_new_internal_gal_ds_name, defaultValue: "zimbra"},
-                {id:ZaDomain.A2_new_external_gal_ds_name, type:_STRING_, ref:ZaDomain.A2_new_external_gal_ds_name, defaultValue: "ldap"},
-                {id:ZaDomain.A2_new_internal_gal_polling_interval, type:_MINTERVAL_, ref:ZaDomain.A2_new_internal_gal_polling_interval, defaultValue: "1d"},
-                {id:ZaDomain.A2_new_external_gal_polling_interval, type:_MINTERVAL_, ref:ZaDomain.A2_new_external_gal_polling_interval, defaultValue: "1d"}
-            ]
-        }},
-		{id:ZaDomain.A2_gal_sync_accounts, type:_LIST_, listItem:{type:_OBJECT_, items:ZaAccount.myXModel.items}, ref:ZaDomain.A2_gal_sync_accounts},
-		{id:ZaDomain.A_AuthLdapUserDn, type:_STRING_,ref:"attrs/" + ZaDomain.A_AuthLdapUserDn},
-		{id:ZaDomain.A_zimbraAuthLdapStartTlsEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAuthLdapStartTlsEnabled},
+		{ id: ZaDomain.A_zimbraGalAccountId, type: _LIST_, listItem: { type: _STRING_ }, ref: "attrs/" + ZaDomain.A_zimbraGalAccountId },
+		{ id: ZaDomain.A2_create_gal_acc, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_create_gal_acc },
+		{
+			id: ZaDomain.A2_gal_sync_accounts_set, type: _LIST_, ref: ZaDomain.A2_gal_sync_accounts_set, listItem: {
+				type: _OBJECT_, ref: ".", items: [
+					{ id: ZaDomain.A2_new_gal_sync_account_name, type: _STRING_, ref: ZaDomain.A2_new_gal_sync_account_name, defaultValue: "galsync" },
+					{ id: ZaDomain.A2_new_internal_gal_ds_name, type: _STRING_, ref: ZaDomain.A2_new_internal_gal_ds_name, defaultValue: "zimbra" },
+					{ id: ZaDomain.A2_new_external_gal_ds_name, type: _STRING_, ref: ZaDomain.A2_new_external_gal_ds_name, defaultValue: "ldap" },
+					{ id: ZaDomain.A2_new_internal_gal_polling_interval, type: _MINTERVAL_, ref: ZaDomain.A2_new_internal_gal_polling_interval, defaultValue: "1d" },
+					{ id: ZaDomain.A2_new_external_gal_polling_interval, type: _MINTERVAL_, ref: ZaDomain.A2_new_external_gal_polling_interval, defaultValue: "1d" }
+				]
+			}
+		},
+		{ id: ZaDomain.A2_gal_sync_accounts, type: _LIST_, listItem: { type: _OBJECT_, items: ZaAccount.myXModel.items }, ref: ZaDomain.A2_gal_sync_accounts },
+		{ id: ZaDomain.A_AuthLdapUserDn, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthLdapUserDn },
+		{ id: ZaDomain.A_zimbraAuthLdapStartTlsEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAuthLdapStartTlsEnabled },
 		//{id:ZaDomain.A_AuthLDAPServerName, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthLDAPServerName},
-		{id:ZaDomain.A_AuthLDAPSearchBase, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthLDAPSearchBase},
+		{ id: ZaDomain.A_AuthLDAPSearchBase, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthLDAPSearchBase },
 		//{id:ZaDomain.A_AuthLDAPServerPort, type:_NUMBER_, ref:"attrs/" + ZaDomain.A_AuthLDAPServerPort, maxInclusive:2147483647},
-		{id:ZaDomain.A_AuthMech, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthMech},
-		{id:ZaDomain.A_AuthLdapURL, type:_LIST_,  listItem:{type:_SHORT_URL_}, ref:"attrs/" + ZaDomain.A_AuthLdapURL},
-		{id:ZaDomain.A_AuthADDomainName, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthADDomainName},
-		{id:ZaDomain.A_AuthLdapSearchBase, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthLdapSearchBase},		
-		{id:ZaDomain.A_AuthLdapSearchFilter, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthLdapSearchFilter},		
-		{id:ZaDomain.A_AuthLdapSearchBindDn, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthLdapSearchBindDn},		
-		{id:ZaDomain.A_AuthLdapSearchBindPassword, type:_STRING_, ref:"attrs/" + ZaDomain.A_AuthLdapSearchBindPassword},		
-		{id:ZaDomain.A_zimbraDomainStatus, type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraDomainStatus},
-		{id:ZaDomain.A_AuthTestUserName, type:_STRING_},
-		{id:ZaDomain.A_AuthTestPassword, type:_STRING_},
-		{id:ZaDomain.A_AuthTestMessage, type:_STRING_},
-		{id:ZaDomain.A_AuthTestResultCode, type:_STRING_},
-		{id:ZaDomain.A_AuthTestMessage, type:_STRING_},
-		{id:ZaDomain.A_AuthComputedBindDn, type:_STRING_},
-		{id:ZaDomain.A_zimbraPasswordChangeListener, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraPasswordChangeListener},
-		{id:ZaDomain.A_zimbraAuthFallbackToLocal, type:_ENUM_, ref:"attrs/" + ZaDomain.A_zimbraAuthFallbackToLocal, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaDomain.A_GALSearchTestMessage, type:_STRING_},
-		{id:ZaDomain.A_GALSyncTestMessage, type:_STRING_},
-		{id:ZaDomain.A_GALSearchTestResultCode, type:_STRING_},
-		{id:ZaDomain.A_GALSyncTestResultCode, type:_STRING_},		
-		{id:ZaDomain.A_GALSampleQuery, type:_STRING_,required:true},
-		{id:ZaDomain.A_AuthUseBindPassword, type:_STRING_,type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
-		{id:ZaDomain.A_AuthLdapSearchBindPasswordConfirm, type:_STRING_},
-        // provision
-		{id:ZaDomain.A_zimbraAutoProvLdapURL, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapURL, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvLdapStartTlsEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapStartTlsEnabled},
-        {id:ZaDomain.A_zimbraAutoProvLdapAdminBindDn, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapAdminBindDn, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvLdapAdminBindPassword, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapAdminBindPassword, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvLdapSearchBase, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapSearchBase, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvLdapSearchFilter, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapSearchFilter, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvLdapBindDn, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLdapBindDn, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvAccountNameMap, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvAccountNameMap, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvNotificationFromAddress, type:_EMAIL_ADDRESS_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvNotificationFromAddress, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvBatchSize, type:_NUMBER_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvBatchSize, maxInclusive:2147483647, minInclusive:0},
-        {id:ZaDomain.A_zimbraAutoProvLastPolledTimestamp, type:_STRING_, ref:"attrs/" + ZaDomain.A_zimbraAutoProvLastPolledTimestamp, maxLength:256},
-        {id:ZaDomain.A_zimbraAutoProvAttrMap, type:_LIST_, listItem:{type:_STRING_, maxLength:255}, ref:"attrs/" + ZaDomain.A_zimbraAutoProvAttrMap},
-		{id:ZaDomain.A2_zimbraAutoProvModeEAGEREnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvModeEAGEREnabled},
-		{id:ZaDomain.A2_zimbraAutoProvModeLAZYEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvModeLAZYEnabled},
-		{id:ZaDomain.A2_zimbraAutoProvModeMANUALEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvModeMANUALEnabled},
-		{id:ZaDomain.A2_zimbraAutoProvAuthMechLDAPEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvAuthMechLDAPEnabled},
-		{id:ZaDomain.A2_zimbraAutoProvAuthMechPREAUTHEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvAuthMechPREAUTHEnabled},
-		{id:ZaDomain.A2_zimbraAutoProvAuthMechKRB5Enabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvAuthMechKRB5Enabled},
-		{id:ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled},
-        {id:ZaDomain.A2_zimbraAutoProvServerList, type:_LIST_, ref:ZaDomain.A2_zimbraAutoProvServerList},
-        {id:ZaDomain.A2_zimbraAutoProvSelectedServerList, type:_LIST_},
-        {id:ZaDomain.A2_zimbraAutoProvPollingInterval, ref: ZaDomain.A2_zimbraAutoProvPollingInterval, type: _MINTERVAL_, minInclusive: 0 },
-        {id:ZaDomain.A2_zimbraAutoProvSearchActivated, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:ZaDomain.A2_zimbraAutoProvSearchActivated},
-        {id:ZaDomain.A2_zimbraAutoProvAccountPool,type:_LIST_,ref:ZaDomain.A2_zimbraAutoProvAccountPool},
-        {id:ZaDomain.A2_zimbraAutoProvAccountPoolPageNum,ref:ZaDomain.A2_zimbraAutoProvAccountPoolPageNum, type:_NUMBER_,defaultValue:1},
-        {id:ZaDomain.A2_zimbraAutoProvAccountSrcSelectedPool,type:_LIST_,ref:ZaDomain.A2_zimbraAutoProvAccountSrcSelectedPool},
-        {id:ZaDomain.A2_zimbraAutoProvAccountTargetPool,type:_LIST_,ref:ZaDomain.A2_zimbraAutoProvAccountTargetPool},
-        {id:ZaDomain.A2_zimbraAutoProvAccountTgtSelectedPool,type:_LIST_,ref:ZaDomain.A2_zimbraAutoProvAccountTgtSelectedPool},
-        {id:ZaDomain.A2_zimbraAutoProvAccountPoolPageTotal,ref:ZaDomain.A2_zimbraAutoProvAccountPoolPageTotal, type:_NUMBER_,defaultValue:1},
-        {id:ZaDomain.A2_zimbraAutoProvAccountPassword	, type:_STRING_, ref:ZaDomain.A2_zimbraAutoProvAccountPassword, maxLength:256},
-        // Domain Quota
-    	{id:ZaDomain.A_domainMaxAccounts, type:_INT_, ref:"attrs/" + ZaDomain.A_domainMaxAccounts,minInclusive:0},
-        {id:ZaDomain.A_zimbraMailDomainQuota, type:_NUMBER_, ref: "attrs/"+ZaDomain.A_zimbraMailDomainQuota, minInclusive:0},
-        {id:ZaDomain.A_zimbraDomainAggregateQuota, type:_NUMBER_, ref: "attrs/"+ZaDomain.A_zimbraDomainAggregateQuota, minInclusive:0},
-        {id:ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent, type:_NUMBER_, ref:"attrs/"+ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent, maxInclusive:100, minInclusive:0},
-        {id:ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, type:_EMAIL_ADDRESS_, ref:"attrs/"+ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient},
-        {id:ZaDomain.A_zimbraDomainAggregateQuotaPolicy, type:_ENUM_, ref:"attrs/"+ZaDomain.A_zimbraDomainAggregateQuotaPolicy, choices:ZaDomain.aggregateQuotaPolicyChoices},
-		{id:ZaDomain.A_zimbraPrefTimeZoneId,type:_STRING_, ref:"attrs/"+ZaDomain.A_zimbraPrefTimeZoneId, choices:ZaSettings.timeZoneChoices},
-        {id:ZaModel.currentStep, type:_NUMBER_, ref:ZaModel.currentStep, maxInclusive:2147483647},
-		{id:ZaDomain.A2_acl_selection_cache, type:_LIST_},
-		{id:ZaDomain.A_GALTestSearchResults, ref:ZaDomain.A_GALTestSearchResults, type:_LIST_, 
-			listItem: {type:_OBJECT_, 
-				items:[
-					{id:"email", type:_STRING_},
-					{id:"fullName", type:_STRING_},					
-					{id:"firstName", type:_STRING_},										
-					{id:"lastName", type:_STRING_}														
+		{ id: ZaDomain.A_AuthMech, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthMech },
+		{ id: ZaDomain.A_AuthLdapURL, type: _LIST_, listItem: { type: _SHORT_URL_ }, ref: "attrs/" + ZaDomain.A_AuthLdapURL },
+		{ id: ZaDomain.A_AuthADDomainName, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthADDomainName },
+		{ id: ZaDomain.A_AuthLdapSearchBase, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthLdapSearchBase },
+		{ id: ZaDomain.A_AuthLdapSearchFilter, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthLdapSearchFilter },
+		{ id: ZaDomain.A_AuthLdapSearchBindDn, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthLdapSearchBindDn },
+		{ id: ZaDomain.A_AuthLdapSearchBindPassword, type: _STRING_, ref: "attrs/" + ZaDomain.A_AuthLdapSearchBindPassword },
+		{ id: ZaDomain.A_zimbraDomainStatus, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraDomainStatus },
+		{ id: ZaDomain.A_AuthTestUserName, type: _STRING_ },
+		{ id: ZaDomain.A_AuthTestPassword, type: _STRING_ },
+		{ id: ZaDomain.A_AuthTestMessage, type: _STRING_ },
+		{ id: ZaDomain.A_AuthTestResultCode, type: _STRING_ },
+		{ id: ZaDomain.A_AuthTestMessage, type: _STRING_ },
+		{ id: ZaDomain.A_AuthComputedBindDn, type: _STRING_ },
+		{ id: ZaDomain.A_zimbraPasswordChangeListener, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraPasswordChangeListener },
+		{ id: ZaDomain.A_zimbraAuthFallbackToLocal, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraAuthFallbackToLocal, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_GALSearchTestMessage, type: _STRING_ },
+		{ id: ZaDomain.A_GALSyncTestMessage, type: _STRING_ },
+		{ id: ZaDomain.A_GALSearchTestResultCode, type: _STRING_ },
+		{ id: ZaDomain.A_GALSyncTestResultCode, type: _STRING_ },
+		{ id: ZaDomain.A_GALSampleQuery, type: _STRING_, required: true },
+		{ id: ZaDomain.A_AuthUseBindPassword, type: _STRING_, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_AuthLdapSearchBindPasswordConfirm, type: _STRING_ },
+		// provision
+		{ id: ZaDomain.A_zimbraAutoProvLdapURL, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapURL, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvLdapStartTlsEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapStartTlsEnabled },
+		{ id: ZaDomain.A_zimbraAutoProvLdapAdminBindDn, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapAdminBindDn, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvLdapAdminBindPassword, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapAdminBindPassword, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvLdapSearchBase, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapSearchBase, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvLdapSearchFilter, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapSearchFilter, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvLdapBindDn, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLdapBindDn, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvAccountNameMap, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvAccountNameMap, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvNotificationFromAddress, type: _EMAIL_ADDRESS_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationFromAddress, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvBatchSize, type: _NUMBER_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvBatchSize, maxInclusive: 2147483647, minInclusive: 0 },
+		{ id: ZaDomain.A_zimbraAutoProvLastPolledTimestamp, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvLastPolledTimestamp, maxLength: 256 },
+		{ id: ZaDomain.A_zimbraAutoProvAttrMap, type: _LIST_, listItem: { type: _STRING_, maxLength: 255 }, ref: "attrs/" + ZaDomain.A_zimbraAutoProvAttrMap },
+		{ id: ZaDomain.A2_zimbraAutoProvModeEAGEREnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvModeEAGEREnabled },
+		{ id: ZaDomain.A2_zimbraAutoProvModeLAZYEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvModeLAZYEnabled },
+		{ id: ZaDomain.A2_zimbraAutoProvModeMANUALEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvModeMANUALEnabled },
+		{ id: ZaDomain.A2_zimbraAutoProvAuthMechLDAPEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvAuthMechLDAPEnabled },
+		{ id: ZaDomain.A2_zimbraAutoProvAuthMechPREAUTHEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvAuthMechPREAUTHEnabled },
+		{ id: ZaDomain.A2_zimbraAutoProvAuthMechKRB5Enabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvAuthMechKRB5Enabled },
+		{ id: ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvAuthMechSPNEGOEnabled },
+		{ id: ZaDomain.A2_zimbraAutoProvServerList, type: _LIST_, ref: ZaDomain.A2_zimbraAutoProvServerList },
+		{ id: ZaDomain.A2_zimbraAutoProvSelectedServerList, type: _LIST_ },
+		{ id: ZaDomain.A2_zimbraAutoProvPollingInterval, ref: ZaDomain.A2_zimbraAutoProvPollingInterval, type: _MINTERVAL_, minInclusive: 0 },
+		{ id: ZaDomain.A2_zimbraAutoProvSearchActivated, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: ZaDomain.A2_zimbraAutoProvSearchActivated },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountPool, type: _LIST_, ref: ZaDomain.A2_zimbraAutoProvAccountPool },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountPoolPageNum, ref: ZaDomain.A2_zimbraAutoProvAccountPoolPageNum, type: _NUMBER_, defaultValue: 1 },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountSrcSelectedPool, type: _LIST_, ref: ZaDomain.A2_zimbraAutoProvAccountSrcSelectedPool },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountTargetPool, type: _LIST_, ref: ZaDomain.A2_zimbraAutoProvAccountTargetPool },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountTgtSelectedPool, type: _LIST_, ref: ZaDomain.A2_zimbraAutoProvAccountTgtSelectedPool },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountPoolPageTotal, ref: ZaDomain.A2_zimbraAutoProvAccountPoolPageTotal, type: _NUMBER_, defaultValue: 1 },
+		{ id: ZaDomain.A2_zimbraAutoProvAccountPassword, type: _STRING_, ref: ZaDomain.A2_zimbraAutoProvAccountPassword, maxLength: 256 },
+		// Domain Quota
+		{ id: ZaDomain.A_domainMaxAccounts, type: _INT_, ref: "attrs/" + ZaDomain.A_domainMaxAccounts, minInclusive: 0 },
+		{ id: ZaDomain.A_zimbraMailDomainQuota, type: _NUMBER_, ref: "attrs/" + ZaDomain.A_zimbraMailDomainQuota, minInclusive: 0 },
+		{ id: ZaDomain.A_zimbraDomainAggregateQuota, type: _NUMBER_, ref: "attrs/" + ZaDomain.A_zimbraDomainAggregateQuota, minInclusive: 0 },
+		{ id: ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent, type: _NUMBER_, ref: "attrs/" + ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent, maxInclusive: 100, minInclusive: 0 },
+		{ id: ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, type: _EMAIL_ADDRESS_, ref: "attrs/" + ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient },
+		{ id: ZaDomain.A_zimbraDomainAggregateQuotaPolicy, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraDomainAggregateQuotaPolicy, choices: ZaDomain.aggregateQuotaPolicyChoices },
+		{ id: ZaDomain.A_zimbraPrefTimeZoneId, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraPrefTimeZoneId, choices: ZaSettings.timeZoneChoices },
+		{ id: ZaModel.currentStep, type: _NUMBER_, ref: ZaModel.currentStep, maxInclusive: 2147483647 },
+		{ id: ZaDomain.A2_acl_selection_cache, type: _LIST_ },
+		{
+			id: ZaDomain.A_GALTestSearchResults, ref: ZaDomain.A_GALTestSearchResults, type: _LIST_,
+			listItem: {
+				type: _OBJECT_,
+				items: [
+					{ id: "email", type: _STRING_ },
+					{ id: "fullName", type: _STRING_ },
+					{ id: "firstName", type: _STRING_ },
+					{ id: "lastName", type: _STRING_ }
 				]
 			}
-		},		
-		{id:ZaDomain.A_NotebookTemplateDir, type:_STRING_, ref:ZaDomain.A_NotebookTemplateDir},
-		{id:ZaDomain.A_NotebookTemplateFolder, type:_STRING_, ref:ZaDomain.A_NotebookTemplateFolder},
-		{id:ZaDomain.A_NotebookAccountPassword, type:_STRING_},
-		{id:ZaDomain.A_NotebookAccountPassword2, type:_STRING_},		
-		{id:ZaDomain.A_CreateNotebook, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaDomain.A_OverwriteTemplates, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{id:ZaDomain.A_zimbraNotebookAccount, type:_STRING_, ref:"attrs/" +ZaDomain.A_zimbraNotebookAccount},
-		{id:ZaDomain.A_NotebookAllACLs, ref:"notebookAcls/"+ZaDomain.A_NotebookAllACLs, type:_OBJECT_,
+		},
+		{ id: ZaDomain.A_NotebookTemplateDir, type: _STRING_, ref: ZaDomain.A_NotebookTemplateDir },
+		{ id: ZaDomain.A_NotebookTemplateFolder, type: _STRING_, ref: ZaDomain.A_NotebookTemplateFolder },
+		{ id: ZaDomain.A_NotebookAccountPassword, type: _STRING_ },
+		{ id: ZaDomain.A_NotebookAccountPassword2, type: _STRING_ },
+		{ id: ZaDomain.A_CreateNotebook, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_OverwriteTemplates, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaDomain.A_zimbraNotebookAccount, type: _STRING_, ref: "attrs/" + ZaDomain.A_zimbraNotebookAccount },
+		{
+			id: ZaDomain.A_NotebookAllACLs, ref: "notebookAcls/" + ZaDomain.A_NotebookAllACLs, type: _OBJECT_,
 			items: [
-				{id:"r", type:_NUMBER_},
-				{id:"w", type:_NUMBER_},
-				{id:"d", type:_NUMBER_},
-				{id:"i", type:_NUMBER_},
-				{id:"a", type:_NUMBER_},				
-				{id:"x", type:_NUMBER_}
+				{ id: "r", type: _NUMBER_ },
+				{ id: "w", type: _NUMBER_ },
+				{ id: "d", type: _NUMBER_ },
+				{ id: "i", type: _NUMBER_ },
+				{ id: "a", type: _NUMBER_ },
+				{ id: "x", type: _NUMBER_ }
 			]
 		},
-		{id:ZaDomain.A_NotebookDomainACLs, ref:"notebookAcls/"+ZaDomain.A_NotebookDomainACLs, type:_OBJECT_,
+		{
+			id: ZaDomain.A_NotebookDomainACLs, ref: "notebookAcls/" + ZaDomain.A_NotebookDomainACLs, type: _OBJECT_,
 			items: [
-				{id:"r", type:_NUMBER_},
-				{id:"w", type:_NUMBER_},
-				{id:"d", type:_NUMBER_},
-				{id:"i", type:_NUMBER_},
-				{id:"a", type:_NUMBER_},				
-				{id:"x", type:_NUMBER_}
+				{ id: "r", type: _NUMBER_ },
+				{ id: "w", type: _NUMBER_ },
+				{ id: "d", type: _NUMBER_ },
+				{ id: "i", type: _NUMBER_ },
+				{ id: "a", type: _NUMBER_ },
+				{ id: "x", type: _NUMBER_ }
 			]
 		},
-		{id:ZaDomain.A_NotebookPublicACLs, ref:"notebookAcls/"+ZaDomain.A_NotebookPublicACLs, type:_OBJECT_,
+		{
+			id: ZaDomain.A_NotebookPublicACLs, ref: "notebookAcls/" + ZaDomain.A_NotebookPublicACLs, type: _OBJECT_,
 			items: [
-				{id:"r", type:_NUMBER_},
-				{id:"w", type:_NUMBER_},
-				{id:"d", type:_NUMBER_},
-				{id:"i", type:_NUMBER_},
-				{id:"a", type:_NUMBER_},				
-				{id:"x", type:_NUMBER_}
+				{ id: "r", type: _NUMBER_ },
+				{ id: "w", type: _NUMBER_ },
+				{ id: "d", type: _NUMBER_ },
+				{ id: "i", type: _NUMBER_ },
+				{ id: "a", type: _NUMBER_ },
+				{ id: "x", type: _NUMBER_ }
 			]
-		}, 
-		{id:ZaDomain.A_NotebookGroupACLs, ref:"notebookAcls/"+ZaDomain.A_NotebookGroupACLs, type:_LIST_,
-			listItem:{type:_OBJECT_,
+		},
+		{
+			id: ZaDomain.A_NotebookGroupACLs, ref: "notebookAcls/" + ZaDomain.A_NotebookGroupACLs, type: _LIST_,
+			listItem: {
+				type: _OBJECT_,
 				items: [
-					{id:"acl", /*type:_LIST_, 
+					{
+						id: "acl", /*type:_LIST_, 
 						listItem:{*/
-							type:_OBJECT_,
-							items: [
-								{id:"r", type:_NUMBER_},
-								{id:"w", type:_NUMBER_},
-								{id:"d", type:_NUMBER_},
-								{id:"i", type:_NUMBER_},
-								{id:"a", type:_NUMBER_},				
-								{id:"x", type:_NUMBER_}
-							]
-//						}
+						type: _OBJECT_,
+						items: [
+							{ id: "r", type: _NUMBER_ },
+							{ id: "w", type: _NUMBER_ },
+							{ id: "d", type: _NUMBER_ },
+							{ id: "i", type: _NUMBER_ },
+							{ id: "a", type: _NUMBER_ },
+							{ id: "x", type: _NUMBER_ }
+						]
+						//						}
 					},
-					{id:"name", type:_STRING_},
-					{id:"gt",  type:_STRING_}
+					{ id: "name", type: _STRING_ },
+					{ id: "gt", type: _STRING_ }
 				]
 			}
-		}, 
-		{id:ZaDomain.A_NotebookUserACLs, ref:"notebookAcls/"+ZaDomain.A_NotebookUserACLs, type:_LIST_,
-			listItem:{type:_OBJECT_,
+		},
+		{
+			id: ZaDomain.A_NotebookUserACLs, ref: "notebookAcls/" + ZaDomain.A_NotebookUserACLs, type: _LIST_,
+			listItem: {
+				type: _OBJECT_,
 				items: [
-					{id:"acl",/* type:_LIST_, 
+					{
+						id: "acl",/* type:_LIST_, 
 						listItem:{*/
-							type:_OBJECT_,
-							items: [
-								{id:"r", type:_NUMBER_},
-								{id:"w", type:_NUMBER_},
-								{id:"d", type:_NUMBER_},
-								{id:"i", type:_NUMBER_},
-								{id:"a", type:_NUMBER_},				
-								{id:"x", type:_NUMBER_}
-							]
+						type: _OBJECT_,
+						items: [
+							{ id: "r", type: _NUMBER_ },
+							{ id: "w", type: _NUMBER_ },
+							{ id: "d", type: _NUMBER_ },
+							{ id: "i", type: _NUMBER_ },
+							{ id: "a", type: _NUMBER_ },
+							{ id: "x", type: _NUMBER_ }
+						]
 						//}
 					},
-					{id:"name", type:_STRING_},
-					{id:"gt",  type:_STRING_}
+					{ id: "name", type: _STRING_ },
+					{ id: "gt", type: _STRING_ }
 				]
 			}
 		},
-		{id:ZaDomain.A_allNotebookACLS, ref:ZaDomain.A_allNotebookACLS, type:_LIST_,
-			listItem:{type:_OBJECT_,
+		{
+			id: ZaDomain.A_allNotebookACLS, ref: ZaDomain.A_allNotebookACLS, type: _LIST_,
+			listItem: {
+				type: _OBJECT_,
 				items: [
-					{id:"acl", type:_OBJECT_,
+					{
+						id: "acl", type: _OBJECT_,
 						items: [
-							{id:"r", type:_NUMBER_},
-							{id:"w", type:_NUMBER_},
-							{id:"d", type:_NUMBER_},
-							{id:"i", type:_NUMBER_},
-							{id:"a", type:_NUMBER_},				
-							{id:"x", type:_NUMBER_}
+							{ id: "r", type: _NUMBER_ },
+							{ id: "w", type: _NUMBER_ },
+							{ id: "d", type: _NUMBER_ },
+							{ id: "i", type: _NUMBER_ },
+							{ id: "a", type: _NUMBER_ },
+							{ id: "x", type: _NUMBER_ }
 						]
 					},
-					{id:"name", type:_STRING_}, //null, domain name, group name, user name
-					{id:"gt",  type:_STRING_} //grp, usr, dom, pub, all, guest
+					{ id: "name", type: _STRING_ }, //null, domain name, group name, user name
+					{ id: "gt", type: _STRING_ } //grp, usr, dom, pub, all, guest
 				]
 			}
 		},
-        {id:ZaDomain.A_zimbraZimletDomainAvailableZimlets, type:_LIST_,
-            ref:"attrs/" + ZaDomain.A_zimbraZimletDomainAvailableZimlets,
-            dataType: _STRING_ ,outputType:_LIST_},
+		{
+			id: ZaDomain.A_zimbraZimletDomainAvailableZimlets, type: _LIST_,
+			ref: "attrs/" + ZaDomain.A_zimbraZimletDomainAvailableZimlets,
+			dataType: _STRING_, outputType: _LIST_
+		},
 		{ id: ZaAccount.A_zimbraMailCatchAllAddress, ref: ZaAccount.A_zimbraMailCatchAllAddress, type: _OBJECT_, items: [{ id: "id", type: _STRING_ }, { id: "name", type: _STRING_ }] },
 		{
 			id: ZaDomain.A_zimbraDomainCOSMaxAccounts, ref: "attrs/" + ZaDomain.A_zimbraDomainCOSMaxAccounts,
@@ -2730,7 +2756,7 @@ ZaDomain.myXModel = {
 
 		{ id: ZaDomain.A_zimbraAutoProvNotificationSubject, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject },
 		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody }
-    ]
+	]
 };
 
 /**

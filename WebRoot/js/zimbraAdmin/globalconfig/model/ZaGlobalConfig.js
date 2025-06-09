@@ -100,6 +100,9 @@ ZaGlobalConfig.A_zimbraMtaRejectRHSblSender = "_"+ZaGlobalConfig.A_zimbraMtaRest
 ZaGlobalConfig.A_zimbraGalLdapFilterDef = "zimbraGalLdapFilterDef";
 ZaGlobalConfig.A_zimbraGalMaxResults = "zimbraGalMaxResults";
 ZaGlobalConfig.A_zimbraNotebookAccount = "zimbraNotebookAccount";
+ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled = "zimbraFeatureExternalEmailWarningEnabled";
+ZaGlobalConfig.A_zimbraExternalEmailWarningMessage = "zimbraExternalEmailWarningMessage";
+
 //Server
 ZaGlobalConfig.A_zimbraLmtpNumThreads = "zimbraLmtpNumThreads";
 ZaGlobalConfig.A_zimbraLmtpBindPort = "zimbraLmtpBindPort";
@@ -464,52 +467,55 @@ ZaGlobalConfig.myXModel = {
             maxInclusive: 2147483647,
             defaultValue: 100
         },
-		{ id:ZaGlobalConfig.A_zimbraCountAccountsEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraCountAccountsEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{ id:ZaGlobalConfig.A_zimbraDefaultDomainName, ref:"attrs/" + ZaGlobalConfig.A_zimbraDefaultDomainName, type:_STRING_, maxLength: 256},
-		{ id:ZaGlobalConfig.A_zimbraScheduledTaskNumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraScheduledTaskNumThreads , type:_NUMBER_, minInclusive: 1 },
-		{ id:ZaGlobalConfig.A_zimbraMailPurgeSleepInterval, type:_MINTERVAL_, ref:"attrs/"+ZaGlobalConfig.A_zimbraMailPurgeSleepInterval},
-		
-		{ id:ZaGlobalConfig.A_currentMonitorHost, ref: "attrs/"+ZaGlobalConfig.A_currentMonitorHost, type: _STRING_ },
-		// attachments
-		{ id:ZaGlobalConfig.A_zimbraAttachmentsBlocked, ref:"attrs/" + ZaGlobalConfig.A_zimbraAttachmentsBlocked, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{ id:ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
-		{ id:ZaGlobalConfig.A_zimbraMtaBlockedExtension, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaBlockedExtension, type: _LIST_, dataType: _STRING_ },
-		{ id:ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension, type: _LIST_, dataType: _STRING_ },
-		// MTA
-		{ id:ZaGlobalConfig.A_zimbraMtaSaslAuthEnable, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaSaslAuthEnable, type: _ENUM_, choices: ["yes", "no"] },
-		{ id:ZaGlobalConfig.A_zimbraMtaTlsAuthOnly, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaTlsAuthOnly, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-                { id:ZaGlobalConfig.A_zimbraMailAddressValidationRegex, ref:"attrs/" + ZaGlobalConfig.A_zimbraMailAddressValidationRegex, type:_LIST_, listItem:{ type:_STRING_, maxLength: 512} },
-		{ id:ZaGlobalConfig.A_zimbraSmtpHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraSmtpHostname, type:_LIST_, listItem:{ type:_HOSTNAME_OR_IP_, maxLength: 256} },
-		{ id:ZaGlobalConfig.A_zimbraSmtpPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraSmtpPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraMtaMaxMessageSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaMaxMessageSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES, required: true },
-		{ id:ZaGlobalConfig.A_zimbraFileUploadMaxSize, ref:"attrs/" + ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES },
-		{id:ZaGlobalConfig.A_zimbraMtaMyNetworks, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMtaMyNetworks, type:_STRING_, maxLength: 10240 },
-		{ id:ZaGlobalConfig.A_zimbraMtaRelayHost, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
-        { id:ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
-		{ id:ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		
-		{ id:ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel, type: _ENUM_, choices: ZaSettings.smtpDnsSupportLevel },
-		{ id:ZaGlobalConfig.A_zimbraMilterServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraMilterServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-                { id:ZaGlobalConfig.A_zimbraMilterBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraMilterBindPort, type:_PORT_ },
+        { id: ZaGlobalConfig.A_zimbraCountAccountsEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraCountAccountsEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraDefaultDomainName, ref: "attrs/" + ZaGlobalConfig.A_zimbraDefaultDomainName, type: _STRING_, maxLength: 256 },
+        { id: ZaGlobalConfig.A_zimbraScheduledTaskNumThreads, ref: "attrs/" + ZaGlobalConfig.A_zimbraScheduledTaskNumThreads, type: _NUMBER_, minInclusive: 1 },
+        { id: ZaGlobalConfig.A_zimbraMailPurgeSleepInterval, type: _MINTERVAL_, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailPurgeSleepInterval },
 
-		// -- protocol checks
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, type: _ENUM_, choices: [false,true] },
-		// -- dns checks
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain, type: _ENUM_, choices: [false,true] },
-		{ id:ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname, type: _ENUM_, choices: [false,true] },
-		{id:ZaGlobalConfig.A_zimbraDNSCheckHostname, type:_STRING_, ref:"attrs/" + ZaGlobalConfig.A_zimbraDNSCheckHostname, maxLength:255},		
-		{id:ZaGlobalConfig.A_zimbraBasicAuthRealm, type:_STRING_, ref:"attrs/" + ZaGlobalConfig.A_zimbraBasicAuthRealm, maxLength:255},
-		{id:ZaGlobalConfig.A_zimbraAdminConsoleDNSCheckEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleDNSCheckEnabled},
+        { id: ZaGlobalConfig.A_currentMonitorHost, ref: "attrs/" + ZaGlobalConfig.A_currentMonitorHost, type: _STRING_ },
+        // attachments
+        { id: ZaGlobalConfig.A_zimbraAttachmentsBlocked, ref: "attrs/" + ZaGlobalConfig.A_zimbraAttachmentsBlocked, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaBlockedExtensionWarnRecipient, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraMtaBlockedExtension, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaBlockedExtension, type: _LIST_, dataType: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension, type: _LIST_, dataType: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled, type: _ENUM_, ref: "attrs/" + ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraExternalEmailWarningMessage, type: _STRING_, ref: "attrs/" + ZaGlobalConfig.A_zimbraExternalEmailWarningMessage, maxLength: 255 },
 
-        {id:ZaGlobalConfig.A_zimbraAdminConsoleCatchAllAddressEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleCatchAllAddressEnabled},
-		{id:ZaGlobalConfig.A_zimbraAdminConsoleSkinEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleSkinEnabled},
-        {id:ZaGlobalConfig.A_zimbraAdminConsoleLDAPAuthEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleLDAPAuthEnabled},    
-                //check policy service
-                { id:ZaGlobalConfig.A_zimbraMtaPolicyService, ref:"attrs/" + ZaGlobalConfig.A_zimbraMtaPolicyService, type: _LIST_, listItem:{type:_STRING_}},
+        // MTA
+        { id: ZaGlobalConfig.A_zimbraMtaSaslAuthEnable, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaSaslAuthEnable, type: _ENUM_, choices: ["yes", "no"] },
+        { id: ZaGlobalConfig.A_zimbraMtaTlsAuthOnly, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaTlsAuthOnly, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraMailAddressValidationRegex, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailAddressValidationRegex, type: _LIST_, listItem: { type: _STRING_, maxLength: 512 } },
+        { id: ZaGlobalConfig.A_zimbraSmtpHostname, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpHostname, type: _LIST_, listItem: { type: _HOSTNAME_OR_IP_, maxLength: 256 } },
+        { id: ZaGlobalConfig.A_zimbraSmtpPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraMtaMaxMessageSize, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaMaxMessageSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES, required: true },
+        { id: ZaGlobalConfig.A_zimbraFileUploadMaxSize, ref: "attrs/" + ZaGlobalConfig.A_zimbraFileUploadMaxSize, type: _FILE_SIZE_, units: AjxUtil.SIZE_KILOBYTES },
+        { id: ZaGlobalConfig.A_zimbraMtaMyNetworks, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaMyNetworks, type: _STRING_, maxLength: 10240 },
+        { id: ZaGlobalConfig.A_zimbraMtaRelayHost, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
+        { id: ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaFallbackRelayHost, type: _HOSTNAME_OR_IP_, maxLength: 256 },
+        { id: ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpSendAddOriginatingIP, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+
+        { id: ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaSmtpDnsSupportLevel, type: _ENUM_, choices: ZaSettings.smtpDnsSupportLevel },
+        { id: ZaGlobalConfig.A_zimbraMilterServerEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraMilterServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraMilterBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraMilterBindPort, type: _PORT_ },
+
+        // -- protocol checks
+        { id: ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectInvalidHeloHostname, type: _ENUM_, choices: [false, true] },
+        { id: ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnHeloHostname, type: _ENUM_, choices: [false, true] },
+        { id: ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectNonFqdnSender, type: _ENUM_, choices: [false, true] },
+        // -- dns checks
+        { id: ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownClientHostname, type: _ENUM_, choices: [false, true] },
+        { id: ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownReverseClientHostname, type: _ENUM_, choices: [false, true] },
+        { id: ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownSenderDomain, type: _ENUM_, choices: [false, true] },
+        { id: ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaRejectUnknownHeloHostname, type: _ENUM_, choices: [false, true] },
+        { id: ZaGlobalConfig.A_zimbraDNSCheckHostname, type: _STRING_, ref: "attrs/" + ZaGlobalConfig.A_zimbraDNSCheckHostname, maxLength: 255 },
+        { id: ZaGlobalConfig.A_zimbraBasicAuthRealm, type: _STRING_, ref: "attrs/" + ZaGlobalConfig.A_zimbraBasicAuthRealm, maxLength: 255 },
+        { id: ZaGlobalConfig.A_zimbraAdminConsoleDNSCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleDNSCheckEnabled },
+
+        { id: ZaGlobalConfig.A_zimbraAdminConsoleCatchAllAddressEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleCatchAllAddressEnabled },
+        { id: ZaGlobalConfig.A_zimbraAdminConsoleSkinEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleSkinEnabled },
+        { id: ZaGlobalConfig.A_zimbraAdminConsoleLDAPAuthEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaGlobalConfig.A_zimbraAdminConsoleLDAPAuthEnabled },
+        //check policy service
+        { id: ZaGlobalConfig.A_zimbraMtaPolicyService, ref: "attrs/" + ZaGlobalConfig.A_zimbraMtaPolicyService, type: _LIST_, listItem: { type: _STRING_ } },
 
         // reject_rbl_client - List of Client RBLs
         {
@@ -548,51 +554,51 @@ ZaGlobalConfig.myXModel = {
             }
         },
 
-		// smtp
-		{ id:ZaGlobalConfig.A_zimbraSmtpTimeout, ref:"attrs/" + ZaGlobalConfig.A_zimbraSmtpTimeout, type:_NUMBER_, minInclusive: 0 },
-		// pop
-		{ id:ZaGlobalConfig.A_zimbraPop3ServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3ServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},
-		{ id:ZaGlobalConfig.A_zimbraPop3SSLServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3SSLServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},		
-		{ id:ZaGlobalConfig.A_zimbraPop3CleartextLoginEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3CleartextLoginEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},				
-		{ id:ZaGlobalConfig.A_zimbraPop3BindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3BindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraPop3SSLBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3SSLBindPort, type:_PORT_ },
-		// imap
-		{ id:ZaGlobalConfig.A_zimbraImapServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},						
-		{ id:ZaGlobalConfig.A_zimbraImapSSLServerEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapSSLServerEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},								
-		{ id:ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES},										
-        { id:ZaGlobalConfig.A_zimbraImapNumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapNumThreads, type:_INT_,  minInclusive: 0, maxInclusive:2147483647  },
-		{ id:ZaGlobalConfig.A_zimbraImapBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapBindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraImapSSLBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapSSLBindPort, type:_PORT_ },
-		// anti-spam
-	  	{ id:ZaGlobalConfig.A_zimbraSpamCheckEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpamCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-	  	{ id:ZaGlobalConfig.A_zimbraSpamKillPercent, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpamKillPercent, type: _PERCENT_, fractionDigits: 0 },
-	  	{ id:ZaGlobalConfig.A_zimbraSpamTagPercent, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpamTagPercent, type: _PERCENT_, fractionDigits: 0 },
-	  	{ id:ZaGlobalConfig.A_zimbraSpamSubjectTag, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpamSubjectTag, type: _STRING_, whiteSpace: 'collapse', maxLength: 32 },
-	  	// anti-virus
-	  	{ id:ZaGlobalConfig.A_zimbraVirusCheckEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-	  	{ id:ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, type: _STRING_, whiteSpace: 'collapse' },
-	  	{ id:ZaGlobalConfig.A_zimbraVirusBlockEncryptedArchive, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusBlockEncryptedArchive, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
-	  	{ id:ZaGlobalConfig.A_zimbraVirusWarnAdmin, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusWarnAdmin, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
-	  	{ id:ZaGlobalConfig.A_zimbraVirusWarnRecipient, ref:"attrs/" + ZaGlobalConfig.A_zimbraVirusWarnRecipient, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES},
-	  	//proxy
-		{ id:ZaGlobalConfig.A_zimbraImapProxyBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapProxyBindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraImapSSLProxyBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraImapSSLProxyBindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraPop3ProxyBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3ProxyBindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraPop3SSLProxyBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3SSLProxyBindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraLmtpBindPort, ref:"attrs/" + ZaGlobalConfig.A_zimbraLmtpBindPort, type:_PORT_ },
-		{ id:ZaGlobalConfig.A_zimbraPop3NumThreads, ref:"attrs/" + ZaGlobalConfig.A_zimbraPop3NumThreads, type:_INT_, minInclusive: 0, maxInclusive:2147483647 },		
-		{ id:ZaGlobalConfig.A_zimbraInstalledSkin, ref:"attrs/" + ZaGlobalConfig.A_zimbraInstalledSkin, type:_LIST_, listItem:{type:_STRING_}},
+        // smtp
+        { id: ZaGlobalConfig.A_zimbraSmtpTimeout, ref: "attrs/" + ZaGlobalConfig.A_zimbraSmtpTimeout, type: _NUMBER_, minInclusive: 0 },
+        // pop
+        { id: ZaGlobalConfig.A_zimbraPop3ServerEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3ServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraPop3SSLServerEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3SSLServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraPop3CleartextLoginEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3CleartextLoginEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraPop3BindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3BindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraPop3SSLBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3SSLBindPort, type: _PORT_ },
+        // imap
+        { id: ZaGlobalConfig.A_zimbraImapServerEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraImapSSLServerEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapSSLServerEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapCleartextLoginEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraImapNumThreads, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapNumThreads, type: _INT_, minInclusive: 0, maxInclusive: 2147483647 },
+        { id: ZaGlobalConfig.A_zimbraImapBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapBindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraImapSSLBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapSSLBindPort, type: _PORT_ },
+        // anti-spam
+        { id: ZaGlobalConfig.A_zimbraSpamCheckEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpamCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraSpamKillPercent, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpamKillPercent, type: _PERCENT_, fractionDigits: 0 },
+        { id: ZaGlobalConfig.A_zimbraSpamTagPercent, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpamTagPercent, type: _PERCENT_, fractionDigits: 0 },
+        { id: ZaGlobalConfig.A_zimbraSpamSubjectTag, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpamSubjectTag, type: _STRING_, whiteSpace: 'collapse', maxLength: 32 },
+        // anti-virus
+        { id: ZaGlobalConfig.A_zimbraVirusCheckEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraVirusCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, ref: "attrs/" + ZaGlobalConfig.A_zimbraVirusDefinitionsUpdateFrequency, type: _STRING_, whiteSpace: 'collapse' },
+        { id: ZaGlobalConfig.A_zimbraVirusBlockEncryptedArchive, ref: "attrs/" + ZaGlobalConfig.A_zimbraVirusBlockEncryptedArchive, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraVirusWarnAdmin, ref: "attrs/" + ZaGlobalConfig.A_zimbraVirusWarnAdmin, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraVirusWarnRecipient, ref: "attrs/" + ZaGlobalConfig.A_zimbraVirusWarnRecipient, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        //proxy
+        { id: ZaGlobalConfig.A_zimbraImapProxyBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapProxyBindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraImapSSLProxyBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraImapSSLProxyBindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraPop3ProxyBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3ProxyBindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraPop3SSLProxyBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3SSLProxyBindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraLmtpBindPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraLmtpBindPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraPop3NumThreads, ref: "attrs/" + ZaGlobalConfig.A_zimbraPop3NumThreads, type: _INT_, minInclusive: 0, maxInclusive: 2147483647 },
+        { id: ZaGlobalConfig.A_zimbraInstalledSkin, ref: "attrs/" + ZaGlobalConfig.A_zimbraInstalledSkin, type: _LIST_, listItem: { type: _STRING_ } },
         //spnego
-        { id:ZaGlobalConfig.A_zimbraSpnegoAuthEnabled, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-        { id:ZaGlobalConfig.A_zimbraSpnegoAuthRealm, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthRealm, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSpnegoAuthEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraSpnegoAuthRealm, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthRealm, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSpnegoAuthErrorURL, type: _STRING_ },
         //web client
-        { id:ZaGlobalConfig.A_zimbraWebClientLoginURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURL, type:_STRING_, maxLength:255 },
-        { id:ZaGlobalConfig.A_zimbraWebClientLogoutURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURL, type:_STRING_, maxLength:255 },
-		{ id:ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, type:_LIST_, listItem:{type:_STRING_}},
-		{ id:ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA, type:_LIST_, listItem:{type:_STRING_}},
-		{ id:ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, type:_LIST_, listItem:{type:_STRING_}},
-        { id:ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP, ref:"attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP, type:_LIST_, listItem:{type:_STRING_}},
+        { id: ZaGlobalConfig.A_zimbraWebClientLoginURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURL, type: _STRING_, maxLength: 255 },
+        { id: ZaGlobalConfig.A_zimbraWebClientLogoutURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURL, type: _STRING_, maxLength: 255 },
+        { id: ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, ref: "attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, type: _LIST_, listItem: { type: _STRING_ } },
+        { id: ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA, ref: "attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA, type: _LIST_, listItem: { type: _STRING_ } },
+        { id: ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, type: _LIST_, listItem: { type: _STRING_ } },
+        { id: ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP, ref: "attrs/" + ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP, type: _LIST_, listItem: { type: _STRING_ } },
         // Clear Cookies
         {
             id: ZaGlobalConfig.A_zimbraForceClearCookies,
@@ -601,53 +607,57 @@ ZaGlobalConfig.myXModel = {
             choices: ZaModel.BOOLEAN_CHOICES
         },
         // web client authentication
-        { id:ZaGlobalConfig.A_zimbraMailSSLClientCertMode, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMailSSLClientCertMode, type:_STRING_, choices:["Disabled","NeedClientAuth","WantClientAuth"]},
-        { id:ZaGlobalConfig.A_zimbraMailSSLClientCertPort, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMailSSLClientCertPort, type:_PORT_},
-        { id:ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort, ref:"attrs/" +  ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort, type:_PORT_},
-        { id:ZaGlobalConfig.A_zimbraReverseProxyMailMode, ref:"attrs/" +  ZaGlobalConfig.A_zimbraReverseProxyMailMode, type:_STRING_, choices:["http","https","both","mixed","redirect"]},
-        { id:ZaGlobalConfig.A_zimbraReverseProxyClientCertMode, ref:"attrs/" +  ZaGlobalConfig.A_zimbraReverseProxyClientCertMode, type:_STRING_, choices:["on","off","optional"]},
-        { id:ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap, ref:"attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap, type:_STRING_ },
-        { id:ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress, ref:"attrs/" + ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress, type:_LIST_, listItem:{type:_STRING_}},
-        { id:ZaGlobalConfig.A_zimbraReverseProxyClientCertCA, ref:"attrs/" + ZaGlobalConfig.A_zimbraReverseProxyClientCertCA, type:_STRING_},
+        { id: ZaGlobalConfig.A_zimbraMailSSLClientCertMode, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertMode, type: _STRING_, choices: ["Disabled", "NeedClientAuth", "WantClientAuth"] },
+        { id: ZaGlobalConfig.A_zimbraMailSSLClientCertPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailSSLProxyClientCertPort, type: _PORT_ },
+        { id: ZaGlobalConfig.A_zimbraReverseProxyMailMode, ref: "attrs/" + ZaGlobalConfig.A_zimbraReverseProxyMailMode, type: _STRING_, choices: ["http", "https", "both", "mixed", "redirect"] },
+        { id: ZaGlobalConfig.A_zimbraReverseProxyClientCertMode, ref: "attrs/" + ZaGlobalConfig.A_zimbraReverseProxyClientCertMode, type: _STRING_, choices: ["on", "off", "optional"] },
+        { id: ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertPrincipalMap, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress, ref: "attrs/" + ZaGlobalConfig.A_zimbraReverseProxyAdminIPAddress, type: _LIST_, listItem: { type: _STRING_ } },
+        { id: ZaGlobalConfig.A_zimbraReverseProxyClientCertCA, ref: "attrs/" + ZaGlobalConfig.A_zimbraReverseProxyClientCertCA, type: _STRING_ },
         //skin properties
-        { id:ZaGlobalConfig.A_zimbraSkinForegroundColor, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinForegroundColor, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraSkinBackgroundColor, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinBackgroundColor, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraSkinSecondaryColor, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinSecondaryColor, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraSkinSelectionColor, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinSelectionColor, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinForegroundColor, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinForegroundColor, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinBackgroundColor, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinBackgroundColor, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinSecondaryColor, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinSecondaryColor, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinSelectionColor, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinSelectionColor, type: _STRING_ },
 
-        { id:ZaGlobalConfig.A_zimbraSkinLogoURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinLogoURL, type:_STRING_ },
-        { id:ZaGlobalConfig.A_zimbraSkinLogoLoginBanner, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinLogoLoginBanner, type:_STRING_ },
-        { id:ZaGlobalConfig.A_zimbraSkinLogoAppBanner, ref:"attrs/" + ZaGlobalConfig.A_zimbraSkinLogoAppBanner, type:_STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinLogoURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinLogoURL, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinLogoLoginBanner, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinLogoLoginBanner, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraSkinLogoAppBanner, ref: "attrs/" + ZaGlobalConfig.A_zimbraSkinLogoAppBanner, type: _STRING_ },
 
         // auto provision
-        { id:ZaGlobalConfig.A_zimbraAutoProvBatchSize, type:_NUMBER_, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvBatchSize, maxInclusive:2147483647, minInclusive:0},
-        { id:ZaGlobalConfig.A_zimbraAutoProvPollingInterval, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvPollingInterval, type: _LIFETIME_NUMBER_, minInclusive: 0, fractionDigits: 0 },
-        { id:ZaGlobalConfig.A_zimbraAutoProvNotificationSubject, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvNotificationSubject, type:_STRING_ },
-        { id:ZaGlobalConfig.A_zimbraAutoProvNotificationBody, ref:"attrs/" + ZaGlobalConfig.A_zimbraAutoProvNotificationBody, type:_STRING_ },
+        { id: ZaGlobalConfig.A_zimbraAutoProvBatchSize, type: _NUMBER_, ref: "attrs/" + ZaGlobalConfig.A_zimbraAutoProvBatchSize, maxInclusive: 2147483647, minInclusive: 0 },
+        { id: ZaGlobalConfig.A_zimbraAutoProvPollingInterval, ref: "attrs/" + ZaGlobalConfig.A_zimbraAutoProvPollingInterval, type: _LIFETIME_NUMBER_, minInclusive: 0, fractionDigits: 0 },
+        { id: ZaGlobalConfig.A_zimbraAutoProvNotificationSubject, ref: "attrs/" + ZaGlobalConfig.A_zimbraAutoProvNotificationSubject, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraAutoProvNotificationBody, ref: "attrs/" + ZaGlobalConfig.A_zimbraAutoProvNotificationBody, type: _STRING_ },
 
-	// help URL
-        { id:ZaGlobalConfig.A_zimbraHelpAdminURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraHelpAdminURL, type:_STRING_ },
-        { id:ZaGlobalConfig.A_zimbraHelpDelegatedURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraHelpDelegatedURL, type:_STRING_ },
-         //interop
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthUsername, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthUsername, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthPassword, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthPassword, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme,
-            type: _ENUM_, choices: ZaSettings.authorizationScheme },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeServerType, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeServerType,
-            type: _ENUM_, choices: ZaSettings.exchangeServerType },
-	    { id:ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
-        { id:ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref:"attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ },
-        {id:ZaGlobalConfig.A2_blocked_extension_selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_common_extension_selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_retentionPoliciesKeep, type:_LIST_},
-        {id:ZaGlobalConfig.A2_retentionPoliciesPurge, type:_LIST_},
-        {id:ZaGlobalConfig.A2_retentionPoliciesKeep_Selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type:_LIST_},
-        {id:ZaGlobalConfig.A2_registeredDevice, type:_LIST_},
-        {id:ZaGlobalConfig.A2_registeredDevice_Selection, type:_LIST_},
+        // help URL
+        { id: ZaGlobalConfig.A_zimbraHelpAdminURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraHelpAdminURL, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraHelpDelegatedURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraHelpDelegatedURL, type: _STRING_ },
+        //interop
+        { id: ZaGlobalConfig.A_zimbraFreebusyExchangeAuthUsername, ref: "attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthUsername, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraFreebusyExchangeAuthPassword, ref: "attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthPassword, type: _STRING_ },
+        {
+            id: ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme, ref: "attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeAuthScheme,
+            type: _ENUM_, choices: ZaSettings.authorizationScheme
+        },
+        {
+            id: ZaGlobalConfig.A_zimbraFreebusyExchangeServerType, ref: "attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeServerType,
+            type: _ENUM_, choices: ZaSettings.exchangeServerType
+        },
+        { id: ZaGlobalConfig.A_zimbraFreebusyExchangeURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeURL, type: _STRING_ },
+        { id: ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, ref: "attrs/" + ZaGlobalConfig.A_zimbraFreebusyExchangeUserOrg, type: _STRING_ },
+        { id: ZaGlobalConfig.A2_blocked_extension_selection, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_common_extension_selection, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_retentionPoliciesKeep, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_retentionPoliciesPurge, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_retentionPoliciesKeep_Selection, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_retentionPoliciesPurge_Selection, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_registeredDevice, type: _LIST_ },
+        { id: ZaGlobalConfig.A2_registeredDevice_Selection, type: _LIST_ },
 
         //Ephemeral Backend
-        { id:ZaGlobalConfig.A_zimbraEphemeralBackendURL, ref:"attrs/" + ZaGlobalConfig.A_zimbraEphemeralBackendURL, type:_STRING_, maxLength: 128 }
+        { id: ZaGlobalConfig.A_zimbraEphemeralBackendURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraEphemeralBackendURL, type: _STRING_, maxLength: 128 }
 
     ]
 }
