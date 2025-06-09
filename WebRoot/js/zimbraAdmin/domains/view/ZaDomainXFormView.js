@@ -711,7 +711,8 @@ ZaDomainXFormView.VH_TAB_RIGHTS = [];
 
 ZaDomainXFormView.ADV_TAB_ATTRS = [ZaDomain.A_zimbraBasicAuthRealm, ZaDomain.A_zimbraMailAddressValidationRegex,
     ZaDomain.A_zimbraMailDomainQuota, ZaDomain.A_zimbraDomainAggregateQuota, ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent,
-    ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, ZaDomain.A_zimbraDomainAggregateQuotaPolicy
+    ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, ZaDomain.A_zimbraDomainAggregateQuotaPolicy, ZaDomain.A_zimbraExternalEmailWarningMessage, 
+    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled
 ];
 
 ZaDomainXFormView.ADV_TAB_RIGHTS = [];
@@ -1493,7 +1494,26 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             labelCssStyle:"vertical-align:top;",width: "30em"}
                     ]
                 },
-                {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
+                { type: _ZA_TOP_GROUPER_, label: ZaMsg.LBL_ExternalEmailWarningTitle, id: "external_email_warning",
+                    items:[
+                        {ref: ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, type: _CHECKBOX_,
+                            label: ZaMsg.LBL_ExternalEmailWarning,
+                            trueValue:"TRUE", falseValue:"FALSE",
+                            labelLocation: _LEFT_,
+                            onChange: ZaDomainXFormView.onFormFieldChanged 
+                        },
+                        {ref: ZaDomain.A_zimbraExternalEmailWarningMessage, type: _TEXTFIELD_,
+                            cssClass: "admin_xform_name_input",
+                            width: "210px",
+                            label: ZaMsg.LBL_ExternalEmailWarningMessage,
+                            value: ZaMsg.LBL_ExternalEmailWarningTextplaceholder,
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            enableDisableChecks: [[XForm.checkInstanceValue,ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled,"TRUE"]],
+                            enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled]
+                        },
+                    ]
+                },
+                { type: _SPACER_ , height: "10px" } //add some spaces at the bottom of the page
 			]
 		};
 		switchGroup.items.push(case5);

@@ -1448,7 +1448,30 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         label : null
                     } ]
                 } ]
-            } ]
+            },
+            {
+                type:_ZA_TOP_GROUPER_, 
+                label: ZaMsg.LBL_ExternalEmailWarningTitle, 
+                id:"external_email_warning",
+                items:[
+                    {
+                        ref: ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled, type: _CHECKBOX_,
+                        label: ZaMsg.LBL_ExternalEmailWarning,
+                        trueValue: "TRUE", falseValue: "FALSE",
+                        labelLocation: _LEFT_,
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraExternalEmailWarningMessage, type: _TEXTFIELD_,
+                        cssClass: "admin_xform_name_input",
+                        width: "210px",
+                        label: ZaMsg.LBL_ExternalEmailWarningMessage,
+                        value: ZaMsg.LBL_ExternalEmailWarningTextplaceholder,
+                        enableDisableChecks: [[XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled, "TRUE"]],
+                        enableDisableChangeEventSources: [ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled]
+                    },
+                ]
+            } 
+            ]
         };
         switchItems.push(case9);
     }
