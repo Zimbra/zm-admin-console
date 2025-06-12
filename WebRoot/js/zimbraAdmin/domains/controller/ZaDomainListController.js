@@ -576,17 +576,40 @@ function (domainName) {
             busyMsg:ZaMsg.BUSY_SEARCHING
         }
         var resp = ZaSearch.searchDirectory(searchParams);
-        if(resp && resp.Body.SearchDirectoryResponse) {
-            var response = resp.Body.SearchDirectoryResponse;
-            var acctlist = new ZaItemList(ZaAccount);
-            acctlist.loadFromJS(response);
-            return acctlist.getArray();
-        } else return null;
-    } else {
-        var currentController = ZaApp.getInstance().getCurrentController () ;
-        currentController.popupErrorDialog(ZaMsg.ERROR_NO_DOMAIN_NAME) ;
-    }
-    return null;
+		if(resp && resp.Body.SearchDirectoryResponse) {
+			var response = resp.Body.SearchDirectoryResponse;
+			var combinedList = [];
+			// Handle Accounts
+			if (response.account) {
+				var acctlist = new ZaItemList(ZaAccount);
+				acctlist.loadFromJS({ account: response.account });
+				combinedList = combinedList.concat(acctlist.getArray());
+			}
+			// Handle Aliases
+			if (response.alias) {
+				var aliaslist = new ZaItemList(ZaAlias);
+				aliaslist.loadFromJS({ alias: response.alias });
+				combinedList = combinedList.concat(aliaslist.getArray());
+			}
+			// Handle Distribution Lists
+			if (response.dl) {
+				var dllist = new ZaItemList(ZaDistributionList);
+				dllist.loadFromJS({ dl: response.dl });
+				combinedList = combinedList.concat(dllist.getArray());
+			}
+			// Handle Calendar Resources
+			if (response.calresource) {
+				var resourcelist = new ZaItemList(ZaResource);
+				resourcelist.loadFromJS({ calresource: response.calresource });
+				combinedList = combinedList.concat(resourcelist.getArray());
+			}
+			return combinedList;
+		} else return null;
+	} else {
+		var currentController = ZaApp.getInstance().getCurrentController () ;
+		currentController.popupErrorDialog(ZaMsg.ERROR_NO_DOMAIN_NAME) ;
+	}
+	return null;
 }
 
 ZaDomainListController.prototype._forceDeleteDomain =
