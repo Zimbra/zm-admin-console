@@ -1496,20 +1496,23 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                 },
                 { type: _ZA_TOP_GROUPER_, label: ZaMsg.LBL_ExternalEmailWarningTitle, id: "external_email_warning",
                     items:[
-                        {ref: ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, type: _CHECKBOX_,
+                        {ref: ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, type: _SUPER_CHECKBOX_,
+                            colSpan: 3,
                             label: ZaMsg.LBL_ExternalEmailWarning,
                             trueValue:"TRUE", falseValue:"FALSE",
                             labelLocation: _LEFT_,
-                            onChange: ZaDomainXFormView.onFormFieldChanged 
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
                         },
-                        {ref: ZaDomain.A_zimbraExternalEmailWarningMessage, type: _TEXTFIELD_,
+                        {ref: ZaDomain.A_zimbraExternalEmailWarningMessage, type: _SUPER_TEXTFIELD_,
                             cssClass: "admin_xform_name_input",
                             width: "210px",
                             label: ZaMsg.LBL_ExternalEmailWarningMessage,
                             value: ZaMsg.LBL_ExternalEmailWarningTextplaceholder,
                             onChange: ZaDomainXFormView.onFormFieldChanged,
                             enableDisableChecks: [[XForm.checkInstanceValue,ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled,"TRUE"]],
-                            enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled]
+                            enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled],
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
                         },
                     ]
                 },
