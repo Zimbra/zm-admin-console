@@ -653,6 +653,7 @@ function(authToken, csrfToken, uname, oldPass, newPass, conPass) {
     soapDoc.set("password", newPass);
     soapDoc.set("authToken", authToken);
     soapDoc.set("csrfToken", csrfToken);
+    soapDoc.set("virtualHost", window.location.hostname);
     var resp = null;
     try {
         if(ZaController.changePwdCommand)
