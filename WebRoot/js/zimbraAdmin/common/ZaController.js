@@ -652,7 +652,6 @@ function(authToken, csrfToken, uname, oldPass, newPass, conPass) {
     soapDoc.set("oldPassword", oldPass);
     soapDoc.set("password", newPass);
     soapDoc.set("authToken", authToken);
-    soapDoc.set("csrfToken", csrfToken);
     soapDoc.set("virtualHost", window.location.hostname);
     var resp = null;
     try {
@@ -660,6 +659,7 @@ function(authToken, csrfToken, uname, oldPass, newPass, conPass) {
             return;
 
         ZaController.changePwdCommand = new ZmCsfeCommand();
+        window.csrfToken = csrfToken;
         resp = ZaController.changePwdCommand.invoke({soapDoc: soapDoc, noAuthToken: true, ignoreAuthToken: true,  noSession: true}).Body.ChangePasswordResponse;
 
         if (resp) {
