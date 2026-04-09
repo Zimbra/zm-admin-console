@@ -23,7 +23,7 @@
     <property name="overlay.lib.dir" value="${overlay.dir}/jars" />
 
     <!-- Property added to have the functionality of passing version as an argument  -->
-    <property name="admconsole.ext.patch.revision" value="1" />
+    <property name="admconsole.ext.patch.revision" value="${zimbra.buildinfo.revision}" />
     <property name="admconsole.ext.patch.version"
         value="${zimbra.buildinfo.majorversion}.${zimbra.buildinfo.minorversion}.${zimbra.buildinfo.microversion}"/>
 
