@@ -14,6 +14,8 @@ references:
                git clone -b ZCS-18921 --single-branch https://github.com/Zimbra/zm-zcs.git ~/zm-zcs
                git clone -b master --single-branch https://github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
                git clone -b develop --single-branch https://github.com/Zimbra/zm-mailbox.git ~/zm-mailbox
+               git clone -b develop --single-branch https://github.com/Zimbra/zm-ajax.git ~/zm-admin-ajax
+               git clone -b develop --single-branch https://github.com/Zimbra/zm-taglib.git ~/zm-taglib
                echo "BUILD_NO=$CIRCLE_BUILD_NUM" > config.build
                mkdir -p ~/.zcs-deps
          - persist_to_workspace:
@@ -24,6 +26,8 @@ references:
                - zm-zcs
                - zimbra-package-stub
                - zm-mailbox
+               - zm-admin-ajax
+               - zm-taglib
                - .zcs-deps
 
    build_job_steps: &build_job_steps
@@ -37,6 +41,26 @@ references:
               sudo apt-get update
               sudo apt-get install -y ant-contrib rpm dpkg-dev fakeroot lsb-release debhelper build-essential
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
+              cd ../zm-admin-ajax
+              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+              export JAVA_HOME
+              export PATH="$JAVA_HOME/bin:$PATH"
+              ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean publish-local
+              cd ../zm-taglib
+              ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean publish-local
+              for MODULE in zm-admin-ajax zm-taglib; do
+                PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
+                PUB_JAR="$(find "$PUB_DIR" -maxdepth 1 -type f -name '*.jar' ! -name "${MODULE}-latest.integration.jar" ! -name "${MODULE}-local.jar" -print 2>/dev/null | head -1)"
+                if [ -n "$PUB_JAR" ] && [ -f "$PUB_JAR" ]; then
+                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-latest.integration.jar"
+                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-local.jar"
+                  echo "Aliased $MODULE => $PUB_JAR"
+                else
+                  echo "ERROR: could not locate published jar for $MODULE in $PUB_DIR"
+                  ls -la "$PUB_DIR" 2>/dev/null || true
+                  exit 1
+                fi
+              done
               cd ../zm-mailbox
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
@@ -65,6 +89,27 @@ references:
               mkdir -p /home/build/.ivy2/cache
               sudo apt-get update
               sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+              cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
+              cd ../zm-admin-ajax
+              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+              export JAVA_HOME
+              export PATH="$JAVA_HOME/bin:$PATH"
+              ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean publish-local
+              cd ../zm-taglib
+              ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean publish-local
+              for MODULE in zm-admin-ajax zm-taglib; do
+                PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
+                PUB_JAR="$(find "$PUB_DIR" -maxdepth 1 -type f -name '*.jar' ! -name "${MODULE}-latest.integration.jar" ! -name "${MODULE}-local.jar" -print 2>/dev/null | head -1)"
+                if [ -n "$PUB_JAR" ] && [ -f "$PUB_JAR" ]; then
+                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-latest.integration.jar"
+                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-local.jar"
+                  echo "Aliased $MODULE => $PUB_JAR"
+                else
+                  echo "ERROR: could not locate published jar for $MODULE in $PUB_DIR"
+                  ls -la "$PUB_DIR" 2>/dev/null || true
+                  exit 1
+                fi
+              done
               cd ../zm-mailbox
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
