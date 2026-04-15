@@ -84,6 +84,9 @@ references:
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
+              # Force local revisions for Zimbra ivy deps to avoid latest.integration misses in CI.
+              perl -0777 -i -pe 's#(<dependency org="zimbra" name="[^"]+" rev=")latest\.integration("\s*/>)#${1}local${2}#g' ivy.xml
+              perl -0777 -i -pe 's#(<ivy:install organisation="zimbra" module="[^"]+" revision=")latest\.integration("#${1}local${2}#g' build.xml
               ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean pkg
          - persist_to_workspace:
             root: ..
@@ -146,6 +149,9 @@ references:
               : "${NEXUS_REPO:?NEXUS_REPO is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
+              # Force local revisions for Zimbra ivy deps to avoid latest.integration misses in CI.
+              perl -0777 -i -pe 's#(<dependency org="zimbra" name="[^"]+" rev=")latest\.integration("\s*/>)#${1}local${2}#g' ivy.xml
+              perl -0777 -i -pe 's#(<ivy:install organisation="zimbra" module="[^"]+" revision=")latest\.integration("#${1}local${2}#g' build.xml
               ROOT="build/dist"
               APT_REPO="${NEXUS_REPO}-apt"
               YUM_REPO="${NEXUS_REPO}-yum"
