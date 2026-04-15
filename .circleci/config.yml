@@ -65,6 +65,7 @@ references:
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
+              sed -i 's/rev="latest.integration"/rev="local"/g' client/ivy.xml soap/ivy.xml soap/ivy-tools.xml soap/ivy-soapdoclet.xml store/ivy.xml
               ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean publish-local-all
               for MODULE in zm-native zm-common zm-soap zm-client zm-store; do
                 PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
@@ -135,6 +136,7 @@ references:
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
+              sed -i 's/rev="latest.integration"/rev="local"/g' client/ivy.xml soap/ivy.xml soap/ivy-tools.xml soap/ivy-soapdoclet.xml store/ivy.xml
               ant -Dzimbra.buildinfo.version=10.1.0_GA_1001 clean publish-local-all
               for MODULE in zm-native zm-common zm-soap zm-client zm-store; do
                 PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
