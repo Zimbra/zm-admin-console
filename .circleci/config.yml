@@ -65,16 +65,16 @@ references:
               export PATH="$JAVA_HOME/bin:$PATH"
               cd ../zm-mailbox
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
-              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-timezones
-              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
               cd ../zm-taglib
-              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-ajax
-              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               chmod +x pkg-builder.pl
-              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
          - persist_to_workspace:
             root: ..
             paths:
