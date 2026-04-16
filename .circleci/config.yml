@@ -58,7 +58,7 @@ references:
             command: |
               mkdir -p /home/build/.ivy2/cache
               sudo apt-get update
-              sudo apt-get install -y ant-contrib rpm dpkg-dev fakeroot lsb-release debhelper build-essential
+              sudo apt-get install -y ant-contrib
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
