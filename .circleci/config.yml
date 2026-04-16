@@ -25,7 +25,7 @@ references:
                git clone -b develop --single-branch https://github.com/Zimbra/zm-pkg-tool.git ~/zm-pkg-tool
                git clone -b ZCS-18921 --single-branch https://github.com/Zimbra/zm-zcs.git ~/zm-zcs
                git clone -b master --single-branch https://github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
-               git clone -b develop --single-branch https://github.com/Zimbra/zm-mailbox.git ~/zm-mailbox
+               git clone -b ZCS-18921-poc --single-branch https://github.com/Zimbra/zm-mailbox.git ~/zm-mailbox
                git clone -b develop --single-branch https://github.com/Zimbra/zm-timezones.git ~/zm-timezones
                git clone -b develop --single-branch https://github.com/Zimbra/zm-ajax.git ~/zm-admin-ajax
                git clone -b develop --single-branch https://github.com/Zimbra/zm-taglib.git ~/zm-taglib
