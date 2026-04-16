@@ -12,6 +12,10 @@ references:
               echo "BUILD_RELEASE_NO not provided; using default: ${RELEASE_PREFIX}"
             fi
             echo "$RELEASE_PREFIX" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' || (echo "BUILD_RELEASE_NO must start with semantic version (example: 10.1.0_GA_)" && exit 1)
+            # Ivy artifacts sometimes end up with unresolved ${zimbra.buildinfo.microversion}.
+            # Derive microversion from BUILD_RELEASE_NO (third numeric segment) and export for subsequent Ant calls.
+            ZIMBRA_MICROVERSION="$(echo "$RELEASE_PREFIX" | sed -E 's/^([0-9]+)\.([0-9]+)\.([0-9]+).*/\3/')"
+            echo "export ZIMBRA_MICROVERSION=\"$ZIMBRA_MICROVERSION\"" >> "${BASH_ENV}"
             echo "Using release prefix: $RELEASE_PREFIX"
 
    checkout_job_steps: &checkout_job_steps
@@ -61,16 +65,16 @@ references:
               export PATH="$JAVA_HOME/bin:$PATH"
               cd ../zm-mailbox
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
+              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-timezones
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
               cd ../zm-taglib
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
+              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-ajax
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
+              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               chmod +x pkg-builder.pl
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.microversion="${ZIMBRA_MICROVERSION}" -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
          - persist_to_workspace:
             root: ..
             paths:
