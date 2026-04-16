@@ -93,10 +93,10 @@ references:
                 fi
               done
               cd ../zm-admin-ajax
-              find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec sed -i 's/latest\.integration/local/g' {} +
-              if find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
+              find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
+              if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
                 echo "ERROR: latest.integration still present in zm-admin-ajax ivy files"
-                find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + || true
+                find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
                 exit 1
               fi
               ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
