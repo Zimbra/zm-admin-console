@@ -63,6 +63,18 @@ references:
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
               cd ../zm-mailbox
+              find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
+              find . -type f -name '*.xml' -exec sed -E -i 's/rev="[^"]*\$\{[^"]+\}[^"]*"/rev="local"/g' {} +
+              if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
+                echo "ERROR: latest.integration still present in zm-mailbox XML files"
+                find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
+                exit 1
+              fi
+              if find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + >/dev/null 2>&1; then
+                echo "ERROR: tokenized revision still present in zm-mailbox XML files"
+                find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + || true
+                exit 1
+              fi
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
               for MODULE in zm-native zm-common zm-soap zm-client zm-store; do
@@ -81,6 +93,13 @@ references:
               cd ../zm-timezones
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
               cd ../zm-taglib
+              find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
+              find . -type f -name '*.xml' -exec sed -E -i 's/rev="[^"]*\$\{[^"]+\}[^"]*"/rev="local"/g' {} +
+              if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
+                echo "ERROR: latest.integration still present in zm-taglib XML files"
+                find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
+                exit 1
+              fi
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               for MODULE in zm-taglib; do
                 PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
