@@ -56,6 +56,9 @@ references:
               sudo apt-get update
               sudo apt-get install -y ant-contrib rpm dpkg-dev fakeroot lsb-release debhelper build-essential
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
+              # Clean stale/bad ivy descriptors that contain unresolved property tokens.
+              rm -f ~/.zcs-deps/zimbra/zm-client/*.xml ~/.zcs-deps/zimbra/zm-common/*.xml ~/.zcs-deps/zimbra/zm-soap/*.xml ~/.zcs-deps/zimbra/zm-store/*.xml 2>/dev/null || true
+              rm -rf ~/.ivy2/cache/zimbra/zm-client ~/.ivy2/cache/zimbra/zm-common ~/.ivy2/cache/zimbra/zm-soap ~/.ivy2/cache/zimbra/zm-store 2>/dev/null || true
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
@@ -94,9 +97,16 @@ references:
               done
               cd ../zm-admin-ajax
               find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
+              # Some dependency revisions are tokenized (e.g. 8.7.${zimbra.buildinfo.microversion}.*); force to local for CI.
+              find . -type f -name '*.xml' -exec sed -E -i 's/rev="[^"]*\$\{[^"]+\}[^"]*"/rev="local"/g' {} +
               if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
                 echo "ERROR: latest.integration still present in zm-admin-ajax ivy files"
                 find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
+                exit 1
+              fi
+              if find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + >/dev/null 2>&1; then
+                echo "ERROR: tokenized revision still present in zm-admin-ajax dependency XML"
+                find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + || true
                 exit 1
               fi
               ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
