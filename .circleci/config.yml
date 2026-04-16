@@ -31,7 +31,7 @@ references:
                git clone -b master --single-branch https://github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
                git clone -b develop --single-branch https://github.com/Zimbra/zm-mailbox.git ~/zm-mailbox
                git clone -b develop --single-branch https://github.com/Zimbra/zm-timezones.git ~/zm-timezones
-               git clone -b develop --single-branch https://github.com/Zimbra/zm-ajax.git ~/zm-admin-ajax
+               git clone -b develop --single-branch https://github.com/Zimbra/zm-admin-ajax.git ~/zm-admin-ajax
                git clone -b develop --single-branch https://github.com/Zimbra/zm-taglib.git ~/zm-taglib
                echo "BUILD_NO=$CIRCLE_BUILD_NUM" > config.build
                mkdir -p ~/.zcs-deps
