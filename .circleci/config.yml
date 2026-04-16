@@ -56,108 +56,21 @@ references:
               sudo apt-get update
               sudo apt-get install -y ant-contrib rpm dpkg-dev fakeroot lsb-release debhelper build-essential
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
-              # Clean stale/bad ivy descriptors that contain unresolved property tokens.
-              rm -f ~/.zcs-deps/zimbra/zm-client/*.xml ~/.zcs-deps/zimbra/zm-common/*.xml ~/.zcs-deps/zimbra/zm-soap/*.xml ~/.zcs-deps/zimbra/zm-store/*.xml 2>/dev/null || true
-              rm -rf ~/.ivy2/cache/zimbra/zm-client ~/.ivy2/cache/zimbra/zm-common ~/.ivy2/cache/zimbra/zm-soap ~/.ivy2/cache/zimbra/zm-store 2>/dev/null || true
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
               cd ../zm-mailbox
-              find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
-              find . -type f -name '*.xml' -exec sed -E -i 's/rev="[^"]*\$\{[^"]+\}[^"]*"/rev="local"/g' {} +
-              if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
-                echo "ERROR: latest.integration still present in zm-mailbox XML files"
-                find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
-                exit 1
-              fi
-              if find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + >/dev/null 2>&1; then
-                echo "ERROR: tokenized revision still present in zm-mailbox XML files"
-                find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + || true
-                exit 1
-              fi
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
-              for MODULE in zm-native zm-common zm-soap zm-client zm-store; do
-                PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
-                PUB_JAR="$(find "$PUB_DIR" -maxdepth 1 -type f -name '*.jar' ! -name "${MODULE}-latest.integration.jar" ! -name "${MODULE}-local.jar" -printf '%T@\t%p\n' 2>/dev/null | sort -t "$(printf '\t')" -k1,1rn | head -1 | cut -f2-)"
-                if [ -n "$PUB_JAR" ] && [ -f "$PUB_JAR" ]; then
-                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-latest.integration.jar"
-                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-local.jar"
-                  echo "Aliased $MODULE => $PUB_JAR"
-                else
-                  echo "ERROR: could not locate published jar for $MODULE in $PUB_DIR"
-                  ls -la "$PUB_DIR" 2>/dev/null || true
-                  exit 1
-                fi
-              done
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-timezones
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
               cd ../zm-taglib
-              find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
-              find . -type f -name '*.xml' -exec sed -E -i 's/rev="[^"]*\$\{[^"]+\}[^"]*"/rev="local"/g' {} +
-              if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
-                echo "ERROR: latest.integration still present in zm-taglib XML files"
-                find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
-                exit 1
-              fi
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
-              for MODULE in zm-taglib; do
-                PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
-                PUB_JAR="$(find "$PUB_DIR" -maxdepth 1 -type f -name '*.jar' ! -name "${MODULE}-latest.integration.jar" ! -name "${MODULE}-local.jar" -printf '%T@\t%p\n' 2>/dev/null | sort -t "$(printf '\t')" -k1,1rn | head -1 | cut -f2-)"
-                if [ -n "$PUB_JAR" ] && [ -f "$PUB_JAR" ]; then
-                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-latest.integration.jar"
-                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-local.jar"
-                  echo "Aliased $MODULE => $PUB_JAR"
-                else
-                  echo "ERROR: could not locate published jar for $MODULE in $PUB_DIR"
-                  ls -la "$PUB_DIR" 2>/dev/null || true
-                  exit 1
-                fi
-              done
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-ajax
-              find . -type f -name '*.xml' -exec sed -i 's/latest\.integration/local/g' {} +
-              # Some dependency revisions are tokenized (e.g. 8.7.${zimbra.buildinfo.microversion}.*); force to local for CI.
-              find . -type f -name '*.xml' -exec sed -E -i 's/rev="[^"]*\$\{[^"]+\}[^"]*"/rev="local"/g' {} +
-              if find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
-                echo "ERROR: latest.integration still present in zm-admin-ajax ivy files"
-                find . -type f -name '*.xml' -exec grep -nH 'latest\.integration' {} + || true
-                exit 1
-              fi
-              if find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + >/dev/null 2>&1; then
-                echo "ERROR: tokenized revision still present in zm-admin-ajax dependency XML"
-                find . -type f -name '*.xml' -exec grep -nH 'rev="[^"]*\$\{[^"]+\}[^"]*"' {} + || true
-                exit 1
-              fi
-              ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
-              for MODULE in zm-admin-ajax; do
-                PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
-                PUB_JAR="$(find "$PUB_DIR" -maxdepth 1 -type f -name '*.jar' ! -name "${MODULE}-latest.integration.jar" ! -name "${MODULE}-local.jar" -printf '%T@\t%p\n' 2>/dev/null | sort -t "$(printf '\t')" -k1,1rn | head -1 | cut -f2-)"
-                if [ -n "$PUB_JAR" ] && [ -f "$PUB_JAR" ]; then
-                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-latest.integration.jar"
-                  cp -f "$PUB_JAR" "$PUB_DIR/${MODULE}-local.jar"
-                  echo "Aliased $MODULE => $PUB_JAR"
-                else
-                  echo "ERROR: could not locate published jar for $MODULE in $PUB_DIR"
-                  ls -la "$PUB_DIR" 2>/dev/null || true
-                  exit 1
-                fi
-              done
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               chmod +x pkg-builder.pl
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-              export JAVA_HOME
-              export PATH="$JAVA_HOME/bin:$PATH"
-              # Force local revisions for Zimbra ivy deps to avoid latest.integration misses in CI.
-              sed -i 's/rev="latest.integration"/rev="local"/g' ivy.xml
-              sed -i 's/revision="latest.integration"/revision="local"/g' build.xml
-              if grep -n 'latest\.integration' ivy.xml build.xml >/dev/null 2>&1; then
-                echo "ERROR: latest.integration still present after rewrite"
-                grep -n 'latest\.integration' ivy.xml build.xml || true
-                exit 1
-              fi
-              echo "Using local revisions in zm-admin-console:"
-              grep -n 'org="zimbra"' ivy.xml || true
-              ant -Divy.status=local -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
          - persist_to_workspace:
             root: ..
             paths:
