@@ -81,6 +81,12 @@ references:
                 fi
               done
               cd ../zm-admin-ajax
+              find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec sed -i 's/rev="latest.integration"/rev="local"/g' {} +
+              if find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
+                echo "ERROR: latest.integration still present in zm-admin-ajax ivy files"
+                find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + || true
+                exit 1
+              fi
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               for MODULE in zm-admin-ajax zm-taglib; do
                 PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
@@ -157,6 +163,12 @@ references:
                 fi
               done
               cd ../zm-admin-ajax
+              find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec sed -i 's/rev="latest.integration"/rev="local"/g' {} +
+              if find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
+                echo "ERROR: latest.integration still present in zm-admin-ajax ivy files"
+                find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + || true
+                exit 1
+              fi
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               for MODULE in zm-admin-ajax zm-taglib; do
                 PUB_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
