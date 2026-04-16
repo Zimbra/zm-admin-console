@@ -74,6 +74,10 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               chmod +x pkg-builder.pl
+              case "${CIRCLE_BRANCH:-}" in
+                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
+                *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
+              esac
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
          - persist_to_workspace:
             root: ..
