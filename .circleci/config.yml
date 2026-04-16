@@ -202,6 +202,7 @@ workflows:
          - checkout:
             context:
                - docker-dev-registry
+               - build-number
             filters:
                branches:
                   only:
@@ -210,6 +211,7 @@ workflows:
          - build:
             context:
                - docker-dev-registry
+               - build-number
             requires:
                - checkout
             filters:
@@ -220,6 +222,7 @@ workflows:
          - publish:
             context:
                - docker-dev-registry
+               - build-number
             requires:
                - build
             filters:
