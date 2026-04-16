@@ -7,8 +7,10 @@ references:
       run:
          name: Validate release version prefix
          command: |
-            RELEASE_PREFIX="${BUILD_RELEASE_NO}"
-            [ -n "$RELEASE_PREFIX" ] || (echo "BUILD_RELEASE_NO is required (example: 10.1.0_GA_)" && exit 1)
+            RELEASE_PREFIX="${BUILD_RELEASE_NO:-10.1.0_GA_}"
+            if [ -z "${BUILD_RELEASE_NO}" ]; then
+              echo "BUILD_RELEASE_NO not provided; using default: ${RELEASE_PREFIX}"
+            fi
             echo "$RELEASE_PREFIX" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' || (echo "BUILD_RELEASE_NO must start with semantic version (example: 10.1.0_GA_)" && exit 1)
             echo "Using release prefix: $RELEASE_PREFIX"
 
