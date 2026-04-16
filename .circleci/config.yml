@@ -223,6 +223,7 @@ workflows:
             context:
                - docker-dev-registry
                - build-number
+               - nexus-artifactory
             requires:
                - build
             filters:
