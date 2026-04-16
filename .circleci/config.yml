@@ -61,7 +61,7 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-mailbox
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant pkg
+              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-admin-ajax
               find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec sed -i 's/rev="latest.integration"/rev="local"/g' {} +
               if find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
@@ -125,7 +125,7 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-mailbox
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant pkg
+              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-admin-ajax
               find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec sed -i 's/rev="latest.integration"/rev="local"/g' {} +
               if find . -type f \( -name 'ivy.xml' -o -name 'ivy-*.xml' \) -exec grep -nH 'latest\.integration' {} + >/dev/null 2>&1; then
