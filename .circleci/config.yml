@@ -94,14 +94,13 @@ references:
               sudo apt-get update
               sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
               : "${NEXUS_HOST:?NEXUS_HOST is required}"
-              : "${NEXUS_REPO:?NEXUS_REPO is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
               ROOT="build/dist"
-              APT_REPO="${NEXUS_REPO}-apt"
-              YUM_REPO="${NEXUS_REPO}-yum"
+              APT_REPO="package-repo-apt"
+              YUM_REPO="package-repo-yum"
               MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_SHA1:-develop}"
-              RAW_BASE="$(printf '%s' "${NEXUS_BASE_URL:-$NEXUS_HOST}" | sed 's/#.*$//' | sed 's:/*$::')"
+              RAW_BASE="$(printf '%s' "${NEXUS_BASE_URL:-$NEXUS_HOST}" | sed 's/#.*$//' | sed 's:/$::')"
               API_BASE="$RAW_BASE/service/rest/v1/components"
               PACKAGE_FILES="$(find "$ROOT" -type f \( -name '*.deb' -o -name '*.rpm' \))"
               if [ -z "$PACKAGE_FILES" ]; then
