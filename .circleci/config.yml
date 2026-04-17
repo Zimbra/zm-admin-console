@@ -3,21 +3,8 @@ version: 2.1
 ############################################################################
 
 references:
-   validate_release_prefix: &validate_release_prefix
-      run:
-         name: Validate release version prefix
-         command: |
-            RELEASE_PREFIX="${BUILD_RELEASE_NO}"
-            [ -n "$RELEASE_PREFIX" ] || (echo "BUILD_RELEASE_NO is required (example: 10.1.0_GA_)" && exit 1)
-            echo "$RELEASE_PREFIX" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' || (echo "BUILD_RELEASE_NO must start with semantic version (example: 10.1.0_GA_)" && exit 1)
-            BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
-            echo "Using release prefix: $RELEASE_PREFIX"
-            echo "Using build release number: $BUILD_RELEASE_NUMBER"
-            echo "export BUILD_RELEASE_NUMBER=\"$BUILD_RELEASE_NUMBER\"" >> "${BASH_ENV}"
-
    checkout_job_steps: &checkout_job_steps
       steps:
-         - *validate_release_prefix
          - checkout:
              method: full
          - run:
@@ -47,38 +34,41 @@ references:
 
    build_job_steps: &build_job_steps
       steps:
-         - *validate_release_prefix
          - attach_workspace:
             at: ..
          - run:
             name: Creating package build
             command: |
               mkdir -p /home/build/.ivy2/cache
-              sudo apt-get update
-              sudo apt-get install -y ant-contrib
+              sudo apt-get update && sudo apt-get install -y ant-contrib
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
-              JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-              export JAVA_HOME
+              export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               case "${CIRCLE_BRANCH:-}" in
                 develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
                 *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
               esac
-              echo "PKG_RELEASE=$PKG_RELEASE (for .deb package release suffix)"
+              if [ "${PKG_RELEASE}" = "develop-snapshot" ]; then
+                if [ -f /etc/redhat-release ]; then
+                  BUILDINFO_REVISION="1_develop_snapshot"
+                else
+                  BUILDINFO_REVISION="1~develop-snapshot"
+                fi
+              else
+                BUILDINFO_REVISION="${PKG_RELEASE}"
+              fi
               cd ../zm-mailbox
               [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-timezones
-              chmod +x pkg-builder.pl || true
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
               cd ../zm-taglib
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
-              chmod +x pkg-builder.pl
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
          - persist_to_workspace:
             root: ..
             paths:
@@ -88,15 +78,13 @@ references:
 
    publish_job_steps: &publish_job_steps
       steps:
-         - *validate_release_prefix
          - attach_workspace:
             at: ..
          - run:
             name: Publish package artifacts to Nexus
             command: |
               mkdir -p /home/build/.ivy2/cache
-              sudo apt-get update
-              sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+              sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
               : "${NEXUS_HOST:?NEXUS_HOST is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
@@ -167,11 +155,88 @@ jobs:
       resource_class: small
       <<: *checkout_job_steps
 
-   build:
+   build_u24:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-24.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_u22:
       working_directory: ~/zm-admin-console
       shell: /bin/bash -eo pipefail
       docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_u20:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-20.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_u18:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-18.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_c9:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-9
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_rhel9:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-rhel-9
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_c8:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-8
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+      resource_class: medium
+      <<: *build_job_steps
+
+   build_rhel8:
+      working_directory: ~/zm-admin-console
+      shell: /bin/bash -eo pipefail
+      docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-rhel-8
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -205,7 +270,84 @@ workflows:
                   only:
                     - develop-snapshot
                     - publish-nexus-package-poc
-         - build:
+         - build_u24:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_u22:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_u20:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_u18:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_c9:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_rhel9:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_c8:
+            context:
+               - docker-dev-registry
+               - build-number
+            requires:
+               - checkout
+            filters:
+               branches:
+                  only:
+                    - develop-snapshot
+                    - publish-nexus-package-poc
+         - build_rhel8:
             context:
                - docker-dev-registry
                - build-number
@@ -222,7 +364,14 @@ workflows:
                - build-number
                - nexus-artifactory
             requires:
-               - build
+               - build_u24
+               - build_u22
+               - build_u20
+               - build_u18
+               - build_c9
+               - build_rhel9
+               - build_c8
+               - build_rhel8
             filters:
                branches:
                  only:
