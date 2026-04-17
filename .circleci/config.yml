@@ -62,7 +62,7 @@ references:
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               case "${CIRCLE_BRANCH:-}" in
-                develop|develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
+                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
                 *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
               esac
               echo "PKG_RELEASE=$PKG_RELEASE (for .deb package release suffix)"
@@ -103,7 +103,7 @@ references:
               ROOT="build/dist"
               APT_REPO="package-repo-apt"
               YUM_REPO="package-repo-yum"
-              MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_SHA1:-develop}"
+              MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_BRANCH:-develop-snapshot}"
               RAW_BASE="$(printf '%s' "${NEXUS_BASE_URL:-$NEXUS_HOST}" | sed 's/#.*$//' | sed 's:/$::')"
               API_BASE="$RAW_BASE/service/rest/v1/components"
               PACKAGE_FILES="$(find "$ROOT" -type f \( -name '*.deb' -o -name '*.rpm' \))"
@@ -203,7 +203,6 @@ workflows:
             filters:
                branches:
                   only:
-                    - develop
                     - develop-snapshot
                     - publish-nexus-package-poc
          - build:
@@ -215,7 +214,6 @@ workflows:
             filters:
                branches:
                   only:
-                    - develop
                     - develop-snapshot
                     - publish-nexus-package-poc
          - publish:
@@ -228,6 +226,5 @@ workflows:
             filters:
                branches:
                  only:
-                   - develop
                    - develop-snapshot
                    - publish-nexus-package-poc
