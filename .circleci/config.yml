@@ -85,14 +85,22 @@ references:
             command: |
               mkdir -p /home/build/.ivy2/cache
               if command -v yum >/dev/null 2>&1; then
-                sudo yum install -y ant-contrib java-1.8.0-openjdk-devel
+                sudo yum install -y ant java-1.8.0-openjdk-devel curl
               elif command -v dnf >/dev/null 2>&1; then
-                sudo dnf install -y ant-contrib java-1.8.0-openjdk-devel
+                sudo dnf install -y ant java-1.8.0-openjdk-devel curl
               else
                 echo "No supported CentOS/RHEL package manager found (yum/dnf)"
                 exit 1
               fi
-              cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
+              if [ -f /usr/share/java/ant-contrib.jar ]; then
+                cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar
+              elif [ -f /usr/share/ant/lib/ant-contrib.jar ]; then
+                cp /usr/share/ant/lib/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar
+              else
+                curl --fail --location --silent --show-error \
+                  "https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar" \
+                  --output ~/.zcs-deps/ant-contrib-1.0b1.jar
+              fi
               DETECTED_JAVAC="$(command -v javac || true)"
               if [ -n "$DETECTED_JAVAC" ]; then
                 export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$DETECTED_JAVAC")")")"
@@ -103,10 +111,10 @@ references:
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               case "${CIRCLE_BRANCH:-}" in
-                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
+                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop_snapshot" ;;
                 *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
               esac
-              if [ "${PKG_RELEASE}" = "develop-snapshot" ]; then
+              if [ "${PKG_RELEASE}" = "develop_snapshot" ]; then
                 BUILDINFO_REVISION="1_develop_snapshot"
               else
                 BUILDINFO_REVISION="${PKG_RELEASE}"
