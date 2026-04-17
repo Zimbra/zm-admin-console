@@ -210,33 +210,11 @@ jobs:
       resource_class: medium
       <<: *build_job_steps
 
-   build_rhel9:
-      working_directory: ~/zm-admin-console
-      shell: /bin/bash -eo pipefail
-      docker:
-      - image: $DOCKER_REGISTRY/zm-base-os:devcore-rhel-9
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-      resource_class: medium
-      <<: *build_job_steps
-
    build_c8:
       working_directory: ~/zm-admin-console
       shell: /bin/bash -eo pipefail
       docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-8
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-      resource_class: medium
-      <<: *build_job_steps
-
-   build_rhel8:
-      working_directory: ~/zm-admin-console
-      shell: /bin/bash -eo pipefail
-      docker:
-      - image: $DOCKER_REGISTRY/zm-base-os:devcore-rhel-8
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -325,29 +303,7 @@ workflows:
                   only:
                     - develop-snapshot
                     - publish-nexus-package-poc
-         - build_rhel9:
-            context:
-               - docker-dev-registry
-               - build-number
-            requires:
-               - checkout
-            filters:
-               branches:
-                  only:
-                    - develop-snapshot
-                    - publish-nexus-package-poc
          - build_c8:
-            context:
-               - docker-dev-registry
-               - build-number
-            requires:
-               - checkout
-            filters:
-               branches:
-                  only:
-                    - develop-snapshot
-                    - publish-nexus-package-poc
-         - build_rhel8:
             context:
                - docker-dev-registry
                - build-number
@@ -369,9 +325,7 @@ workflows:
                - build_u20
                - build_u18
                - build_c9
-               - build_rhel9
                - build_c8
-               - build_rhel8
             filters:
                branches:
                  only:
