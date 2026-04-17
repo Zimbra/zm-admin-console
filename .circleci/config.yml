@@ -17,7 +17,6 @@ references:
                git clone -b develop --single-branch https://github.com/Zimbra/zm-timezones.git ~/zm-timezones
                git clone -b develop --single-branch https://github.com/Zimbra/zm-admin-ajax.git ~/zm-admin-ajax
                git clone -b develop --single-branch https://github.com/Zimbra/zm-taglib.git ~/zm-taglib
-               printf '%s\n' "BUILD_NO=$CIRCLE_BUILD_NUM" > config.build
                mkdir -p ~/.zcs-deps
          - persist_to_workspace:
             root: ..
@@ -45,21 +44,9 @@ references:
               export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
-              case "${CIRCLE_BRANCH:-}" in
-                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
-                *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
-              esac
-              if [ "${PKG_RELEASE}" = "develop-snapshot" ]; then
-                if [ -f /etc/redhat-release ]; then
-                  BUILDINFO_REVISION="1_develop_snapshot"
-                else
-                  BUILDINFO_REVISION="1~develop-snapshot"
-                fi
-              else
-                BUILDINFO_REVISION="${PKG_RELEASE}"
-              fi
+              export PKG_RELEASE="develop-snapshot"
+              BUILDINFO_REVISION="${PKG_RELEASE}"
               cd ../zm-mailbox
-              [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-timezones
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
@@ -69,14 +56,11 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
-              DEST_DIR="build/workspace-dist/${CIRCLE_JOB}"
-              rm -rf "$DEST_DIR"
-              mkdir -p "$DEST_DIR"
-              find build/dist -type f \( -name '*.deb' -o -name '*.rpm' \) -exec cp -v {} "$DEST_DIR"/ \;
+         - store_artifacts:
+            path: build/dist
          - persist_to_workspace:
             root: ..
-            paths:
-               - zm-admin-console/build/workspace-dist
+            paths: zm-admin-console/build/dist/*
 
    build_job_steps_centos: &build_job_steps_centos
       steps:
@@ -101,7 +85,7 @@ references:
                 cp /usr/share/ant/lib/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar
               else
                 curl --fail --location --silent --show-error \
-                  "https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar" \
+                  "https://files.zimbra.com/repository/ant-contrib/ant-contrib-1.0b1.jar" \
                   --output ~/.zcs-deps/ant-contrib-1.0b1.jar
               fi
               DETECTED_JAVAC="$(command -v javac || true)"
@@ -112,17 +96,9 @@ references:
               fi
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
-              case "${CIRCLE_BRANCH:-}" in
-                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop_snapshot" ;;
-                *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
-              esac
-              if [ "${PKG_RELEASE}" = "develop_snapshot" ]; then
-                BUILDINFO_REVISION="1_develop_snapshot"
-              else
-                BUILDINFO_REVISION="${PKG_RELEASE}"
-              fi
+              export PKG_RELEASE="develop_snapshot"
+              BUILDINFO_REVISION="1_develop_snapshot"
               cd ../zm-mailbox
-              [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local-all
               cd ../zm-timezones
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
@@ -132,14 +108,14 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
-              DEST_DIR="build/workspace-dist/${CIRCLE_JOB}"
-              rm -rf "$DEST_DIR"
-              mkdir -p "$DEST_DIR"
-              find build/dist -type f \( -name '*.deb' -o -name '*.rpm' \) -exec cp -v {} "$DEST_DIR"/ \;
+              JOB_RPM_DIR="build/dist/${CIRCLE_JOB}"
+              mkdir -p "$JOB_RPM_DIR"
+              find build/dist -maxdepth 1 -type f -name '*.rpm' -exec mv -f {} "$JOB_RPM_DIR"/ \;
+         - store_artifacts:
+            path: build/dist
          - persist_to_workspace:
             root: ..
-            paths:
-               - zm-admin-console/build/workspace-dist
+            paths: zm-admin-console/build/dist/*
 
    publish_job_steps: &publish_job_steps
       steps:
@@ -153,7 +129,7 @@ references:
               : "${NEXUS_HOST:?NEXUS_HOST is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
-              ROOT="build/workspace-dist"
+              ROOT="build/dist"
               APT_REPO="package-repo-apt"
               YUM_REPO="package-repo-yum"
               MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_BRANCH:-develop-snapshot}"
