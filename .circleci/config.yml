@@ -85,9 +85,11 @@ references:
             command: |
               mkdir -p /home/build/.ivy2/cache
               if command -v yum >/dev/null 2>&1; then
-                sudo yum install -y ant java-1.8.0-openjdk-devel
+                command -v ant >/dev/null 2>&1 || sudo yum install -y ant
+                command -v javac >/dev/null 2>&1 || sudo yum install -y java-1.8.0-openjdk-devel
               elif command -v dnf >/dev/null 2>&1; then
-                sudo dnf install -y ant java-1.8.0-openjdk-devel
+                command -v ant >/dev/null 2>&1 || sudo dnf install -y ant
+                command -v javac >/dev/null 2>&1 || sudo dnf install -y java-1.8.0-openjdk-devel
               else
                 echo "No supported CentOS/RHEL package manager found (yum/dnf)"
                 exit 1
