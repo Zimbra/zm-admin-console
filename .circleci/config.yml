@@ -32,7 +32,7 @@ references:
                - zm-taglib
                - .zcs-deps
 
-   build_job_steps: &build_job_steps
+   build_job_steps_ubuntu: &build_job_steps_ubuntu
       steps:
          - attach_workspace:
             at: ..
@@ -40,7 +40,7 @@ references:
             name: Creating package build
             command: |
               mkdir -p /home/build/.ivy2/cache
-              sudo apt-get update && sudo apt-get install -y ant-contrib
+              sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ant-contrib openjdk-8-jdk
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
               export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export PATH="$JAVA_HOME/bin:$PATH"
@@ -55,6 +55,59 @@ references:
                 else
                   BUILDINFO_REVISION="1~develop-snapshot"
                 fi
+              else
+                BUILDINFO_REVISION="${PKG_RELEASE}"
+              fi
+              cd ../zm-mailbox
+              [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local-all
+              cd ../zm-timezones
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
+              cd ../zm-taglib
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
+              cd ../zm-admin-ajax
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
+              cd ../zm-admin-console
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+         - persist_to_workspace:
+            root: ..
+            paths:
+               - .ivy2
+               - .zcs-deps
+               - zm-admin-console/build/dist
+
+   build_job_steps_centos: &build_job_steps_centos
+      steps:
+         - attach_workspace:
+            at: ..
+         - run:
+            name: Creating package build
+            command: |
+              mkdir -p /home/build/.ivy2/cache
+              if command -v yum >/dev/null 2>&1; then
+                sudo yum install -y ant-contrib java-1.8.0-openjdk-devel
+              elif command -v dnf >/dev/null 2>&1; then
+                sudo dnf install -y ant-contrib java-1.8.0-openjdk-devel
+              else
+                echo "No supported CentOS/RHEL package manager found (yum/dnf)"
+                exit 1
+              fi
+              cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
+              DETECTED_JAVAC="$(command -v javac || true)"
+              if [ -n "$DETECTED_JAVAC" ]; then
+                export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$DETECTED_JAVAC")")")"
+              else
+                echo "javac not found after JDK installation"
+                exit 1
+              fi
+              export PATH="$JAVA_HOME/bin:$PATH"
+              BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
+              case "${CIRCLE_BRANCH:-}" in
+                develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
+                *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
+              esac
+              if [ "${PKG_RELEASE}" = "develop-snapshot" ]; then
+                BUILDINFO_REVISION="1_develop_snapshot"
               else
                 BUILDINFO_REVISION="${PKG_RELEASE}"
               fi
@@ -164,7 +217,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
       resource_class: medium
-      <<: *build_job_steps
+      <<: *build_job_steps_ubuntu
 
    build_u22:
       working_directory: ~/zm-admin-console
@@ -175,7 +228,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
       resource_class: medium
-      <<: *build_job_steps
+      <<: *build_job_steps_ubuntu
 
    build_u20:
       working_directory: ~/zm-admin-console
@@ -186,7 +239,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
       resource_class: medium
-      <<: *build_job_steps
+      <<: *build_job_steps_ubuntu
 
    build_u18:
       working_directory: ~/zm-admin-console
@@ -197,7 +250,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
       resource_class: medium
-      <<: *build_job_steps
+      <<: *build_job_steps_ubuntu
 
    build_c9:
       working_directory: ~/zm-admin-console
@@ -208,7 +261,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
       resource_class: medium
-      <<: *build_job_steps
+      <<: *build_job_steps_centos
 
    build_c8:
       working_directory: ~/zm-admin-console
@@ -219,7 +272,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
       resource_class: medium
-      <<: *build_job_steps
+      <<: *build_job_steps_centos
 
    publish:
       working_directory: ~/zm-admin-console
