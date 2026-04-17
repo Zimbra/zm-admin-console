@@ -56,11 +56,16 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              DEST_DIR="build/workspace-dist/${CIRCLE_JOB}"
+              rm -rf "$DEST_DIR"
+              mkdir -p "$DEST_DIR"
+              find build/dist -type f \( -name '*.deb' -o -name '*.rpm' \) -exec cp -v {} "$DEST_DIR"/ \;
          - store_artifacts:
             path: build/dist
          - persist_to_workspace:
             root: ..
-            paths: zm-admin-console/build/dist/*
+            paths:
+               - zm-admin-console/build/workspace-dist
 
    build_job_steps_centos: &build_job_steps_centos
       steps:
@@ -111,11 +116,16 @@ references:
               JOB_RPM_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_RPM_DIR"
               find build/dist -maxdepth 1 -type f -name '*.rpm' -exec mv -f {} "$JOB_RPM_DIR"/ \;
+              DEST_DIR="build/workspace-dist/${CIRCLE_JOB}"
+              rm -rf "$DEST_DIR"
+              mkdir -p "$DEST_DIR"
+              find build/dist -type f \( -name '*.deb' -o -name '*.rpm' \) -exec cp -v {} "$DEST_DIR"/ \;
          - store_artifacts:
             path: build/dist
          - persist_to_workspace:
             root: ..
-            paths: zm-admin-console/build/dist/*
+            paths:
+               - zm-admin-console/build/workspace-dist
 
    publish_job_steps: &publish_job_steps
       steps:
@@ -129,7 +139,7 @@ references:
               : "${NEXUS_HOST:?NEXUS_HOST is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
-              ROOT="build/dist"
+              ROOT="build/workspace-dist"
               APT_REPO="package-repo-apt"
               YUM_REPO="package-repo-yum"
               MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_BRANCH:-develop-snapshot}"
