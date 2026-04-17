@@ -7,16 +7,13 @@ references:
       run:
          name: Validate release version prefix
          command: |
-            RELEASE_PREFIX="${BUILD_RELEASE_NO:-10.1.0_GA_}"
-            if [ -z "${BUILD_RELEASE_NO}" ]; then
-              echo "BUILD_RELEASE_NO not provided; using default: ${RELEASE_PREFIX}"
-            fi
+            RELEASE_PREFIX="${BUILD_RELEASE_NO}"
+            [ -n "$RELEASE_PREFIX" ] || (echo "BUILD_RELEASE_NO is required (example: 10.1.0_GA_)" && exit 1)
             echo "$RELEASE_PREFIX" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' || (echo "BUILD_RELEASE_NO must start with semantic version (example: 10.1.0_GA_)" && exit 1)
-            # Ivy artifacts sometimes end up with unresolved ${zimbra.buildinfo.microversion}.
-            # Derive microversion from BUILD_RELEASE_NO (third numeric segment) and export for subsequent Ant calls.
-            ZIMBRA_MICROVERSION="$(echo "$RELEASE_PREFIX" | sed -E 's/^([0-9]+)\.([0-9]+)\.([0-9]+).*/\3/')"
-            echo "export ZIMBRA_MICROVERSION=\"$ZIMBRA_MICROVERSION\"" >> "${BASH_ENV}"
+            BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
             echo "Using release prefix: $RELEASE_PREFIX"
+            echo "Using build release number: $BUILD_RELEASE_NUMBER"
+            echo "export BUILD_RELEASE_NUMBER=\"$BUILD_RELEASE_NUMBER\"" >> "${BASH_ENV}"
 
    checkout_job_steps: &checkout_job_steps
       steps:
@@ -63,22 +60,25 @@ references:
               JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export JAVA_HOME
               export PATH="$JAVA_HOME/bin:$PATH"
-              cd ../zm-mailbox
-              [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local-all
-              cd ../zm-timezones
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
-              cd ../zm-taglib
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
-              cd ../zm-admin-ajax
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean publish-local
-              cd ../zm-admin-console
-              chmod +x pkg-builder.pl
+              BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               case "${CIRCLE_BRANCH:-}" in
                 develop|develop-snapshot|publish-nexus-package-poc) export PKG_RELEASE="develop-snapshot" ;;
                 *) export PKG_RELEASE="${PKG_RELEASE:-1}" ;;
               esac
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}" clean pkg
+              echo "PKG_RELEASE=$PKG_RELEASE (for .deb package release suffix)"
+              cd ../zm-mailbox
+              [ -x /home/build/zm-pkg-tool/pkg-build.pl ] || chmod +x /home/build/zm-pkg-tool/pkg-build.pl
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local-all
+              cd ../zm-timezones
+              chmod +x pkg-builder.pl || true
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean pkg
+              cd ../zm-taglib
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
+              cd ../zm-admin-ajax
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
+              cd ../zm-admin-console
+              chmod +x pkg-builder.pl
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
          - persist_to_workspace:
             root: ..
             paths:
@@ -159,8 +159,6 @@ jobs:
    checkout:
       working_directory: ~/zm-admin-console
       shell: /bin/bash -eo pipefail
-      environment:
-         ANT_OPTS: -Dzimbra.buildinfo.version=${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}
       docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
         auth:
@@ -172,8 +170,6 @@ jobs:
    build:
       working_directory: ~/zm-admin-console
       shell: /bin/bash -eo pipefail
-      environment:
-         ANT_OPTS: -Dzimbra.buildinfo.version=${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}
       docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
         auth:
@@ -186,8 +182,6 @@ jobs:
       working_directory: ~/zm-admin-console
       shell: /bin/bash -eo pipefail
       circleci_ip_ranges: true
-      environment:
-         ANT_OPTS: -Dzimbra.buildinfo.version=${BUILD_RELEASE_NO}${CIRCLE_BUILD_NUM}
       docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
         auth:
@@ -210,6 +204,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - develop-snapshot
                     - publish-nexus-package-poc
          - build:
             context:
@@ -221,6 +216,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - develop-snapshot
                     - publish-nexus-package-poc
          - publish:
             context:
@@ -233,4 +229,5 @@ workflows:
                branches:
                  only:
                    - develop
+                   - develop-snapshot
                    - publish-nexus-package-poc
