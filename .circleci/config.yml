@@ -57,6 +57,10 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.version="${BUILD_RELEASE_NUMBER}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              JOB_OUT_DIR="build/dist/${CIRCLE_JOB}"
+              mkdir -p "$JOB_OUT_DIR"
+              find build/dist -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' \) -exec mv -f {} "$JOB_OUT_DIR"/ \;
+              rm -rf build/dist/jetty
          - store_artifacts:
             path: build/dist
          - persist_to_workspace:
@@ -104,6 +108,10 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.version="${BUILD_RELEASE_NUMBER}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              JOB_OUT_DIR="build/dist/${CIRCLE_JOB}"
+              mkdir -p "$JOB_OUT_DIR"
+              find build/dist -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' \) -exec mv -f {} "$JOB_OUT_DIR"/ \;
+              rm -rf build/dist/jetty
          - store_artifacts:
             path: build/dist
          - persist_to_workspace:
