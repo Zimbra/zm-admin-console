@@ -55,7 +55,7 @@ references:
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.version="${BUILD_RELEASE_NUMBER}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
               find build/dist -type f ! -name '*.deb' ! -name '*.rpm' -delete
               find build/dist -type d -empty -delete
          - store_artifacts:
@@ -103,7 +103,7 @@ references:
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.version="${BUILD_RELEASE_NUMBER}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
               JOB_RPM_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_RPM_DIR"
               find build/dist -maxdepth 1 -type f -name '*.rpm' -exec mv -f {} "$JOB_RPM_DIR"/ \;
@@ -130,7 +130,7 @@ references:
               ROOT="build/dist"
               APT_REPO="package-repo-apt"
               YUM_REPO="package-repo-yum"
-              MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_BRANCH:-develop-snapshot}"
+              MODULE_PATH="zimbra/zm-admin-console"
               RAW_BASE="$(printf '%s' "${NEXUS_BASE_URL:-$NEXUS_HOST}" | sed 's/#.*$//' | sed 's:/$::')"
               API_BASE="$RAW_BASE/service/rest/v1/components"
               PACKAGE_FILES="$(find "$ROOT" -type f \( -name '*.deb' -o -name '*.rpm' \))"
