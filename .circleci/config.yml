@@ -39,7 +39,7 @@ references:
             name: Creating package build
             command: |
               mkdir -p /home/build/.ivy2/cache
-              sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ant-contrib openjdk-8-jdk
+              sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ant-contrib
               cp /usr/share/java/ant-contrib.jar ~/.zcs-deps/ant-contrib-1.0b1.jar || true
               export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
               export PATH="$JAVA_HOME/bin:$PATH"
@@ -56,16 +56,13 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
-              DEST_DIR="build/workspace-dist/${CIRCLE_JOB}"
-              rm -rf "$DEST_DIR"
-              mkdir -p "$DEST_DIR"
-              find build/dist -type f \( -name '*.deb' -o -name '*.rpm' \) -exec cp -v {} "$DEST_DIR"/ \;
+              find build/dist -type f ! -name '*.deb' ! -name '*.rpm' -delete
+              find build/dist -type d -empty -delete
          - store_artifacts:
             path: build/dist
          - persist_to_workspace:
             root: ..
-            paths:
-               - zm-admin-console/build/workspace-dist
+            paths: zm-admin-console/build/dist/*
 
    build_job_steps_centos: &build_job_steps_centos
       steps:
@@ -77,10 +74,8 @@ references:
               mkdir -p /home/build/.ivy2/cache
               if command -v yum >/dev/null 2>&1; then
                 command -v ant >/dev/null 2>&1 || sudo yum install -y ant
-                command -v javac >/dev/null 2>&1 || sudo yum install -y java-1.8.0-openjdk-devel
               elif command -v dnf >/dev/null 2>&1; then
                 command -v ant >/dev/null 2>&1 || sudo dnf install -y ant
-                command -v javac >/dev/null 2>&1 || sudo dnf install -y java-1.8.0-openjdk-devel
               else
                 exit 1
               fi
@@ -93,12 +88,8 @@ references:
                   "https://files.zimbra.com/repository/ant-contrib/ant-contrib-1.0b1.jar" \
                   --output ~/.zcs-deps/ant-contrib-1.0b1.jar
               fi
-              DETECTED_JAVAC="$(command -v javac || true)"
-              if [ -n "$DETECTED_JAVAC" ]; then
-                export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$DETECTED_JAVAC")")")"
-              else
-                exit 1
-              fi
+              DETECTED_JAVAC="$(command -v javac)"
+              export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$DETECTED_JAVAC")")")"
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               export PKG_RELEASE="develop_snapshot"
@@ -116,16 +107,13 @@ references:
               JOB_RPM_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_RPM_DIR"
               find build/dist -maxdepth 1 -type f -name '*.rpm' -exec mv -f {} "$JOB_RPM_DIR"/ \;
-              DEST_DIR="build/workspace-dist/${CIRCLE_JOB}"
-              rm -rf "$DEST_DIR"
-              mkdir -p "$DEST_DIR"
-              find build/dist -type f \( -name '*.deb' -o -name '*.rpm' \) -exec cp -v {} "$DEST_DIR"/ \;
+              find build/dist -type f ! -name '*.deb' ! -name '*.rpm' -delete
+              find build/dist -type d -empty -delete
          - store_artifacts:
             path: build/dist
          - persist_to_workspace:
             root: ..
-            paths:
-               - zm-admin-console/build/workspace-dist
+            paths: zm-admin-console/build/dist/*
 
    publish_job_steps: &publish_job_steps
       steps:
@@ -139,7 +127,7 @@ references:
               : "${NEXUS_HOST:?NEXUS_HOST is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
-              ROOT="build/workspace-dist"
+              ROOT="build/dist"
               APT_REPO="package-repo-apt"
               YUM_REPO="package-repo-yum"
               MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_BRANCH:-develop-snapshot}"
