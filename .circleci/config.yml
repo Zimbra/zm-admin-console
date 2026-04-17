@@ -69,12 +69,13 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              rm -rf "build/dist-${CIRCLE_JOB}"
+              mkdir -p "build/dist-${CIRCLE_JOB}"
+              cp -a build/dist/. "build/dist-${CIRCLE_JOB}/"
          - persist_to_workspace:
             root: ..
             paths:
-               - .ivy2
-               - .zcs-deps
-               - zm-admin-console/build/dist
+               - zm-admin-console/build/dist-${CIRCLE_JOB}
 
    build_job_steps_centos: &build_job_steps_centos
       steps:
@@ -132,12 +133,13 @@ references:
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" clean publish-local
               cd ../zm-admin-console
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              rm -rf "build/dist-${CIRCLE_JOB}"
+              mkdir -p "build/dist-${CIRCLE_JOB}"
+              cp -a build/dist/. "build/dist-${CIRCLE_JOB}/"
          - persist_to_workspace:
             root: ..
             paths:
-               - .ivy2
-               - .zcs-deps
-               - zm-admin-console/build/dist
+               - zm-admin-console/build/dist-${CIRCLE_JOB}
 
    publish_job_steps: &publish_job_steps
       steps:
@@ -151,7 +153,7 @@ references:
               : "${NEXUS_HOST:?NEXUS_HOST is required}"
               : "${NEXUS_USER:?NEXUS_USER is required}"
               : "${NEXUS_PASSWORD:?NEXUS_PASSWORD is required}"
-              ROOT="build/dist"
+              ROOT="build"
               APT_REPO="package-repo-apt"
               YUM_REPO="package-repo-yum"
               MODULE_PATH="zimbra/zm-admin-console/${CIRCLE_BRANCH:-develop-snapshot}"
