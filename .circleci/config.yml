@@ -66,7 +66,7 @@ references:
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" clean publish-local
               cd ../zm-admin-console
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.version="${BUILD_RELEASE_NUMBER}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
               JOB_OUT_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_OUT_DIR"
               find build/dist -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' \) -exec mv -f {} "$JOB_OUT_DIR"/ \;
@@ -126,7 +126,7 @@ references:
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" clean publish-local
               cd ../zm-admin-console
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.version="${BUILD_RELEASE_NUMBER}" -Dadmconsole.ext.patch.revision="${PKG_RELEASE}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
               JOB_OUT_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_OUT_DIR"
               find build/dist -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' \) -exec mv -f {} "$JOB_OUT_DIR"/ \;
