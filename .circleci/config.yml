@@ -6,7 +6,6 @@ references:
    checkout_job_steps: &checkout_job_steps
       steps:
          - checkout:
-             method: full
          - run:
             name: Checking out dependencies.
             command: |
