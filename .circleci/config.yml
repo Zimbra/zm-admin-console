@@ -46,16 +46,9 @@ references:
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NUMBER%_GA}"
-              if [[ "$BUILD_RELEASE_NUMBER" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
-                BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NUMBER}.0"
-              fi
-              if [[ ! "$BUILD_RELEASE_NUMBER" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-                exit 1
-              fi
               MAJOR_VERSION=$(echo "$BUILD_RELEASE_NUMBER" | cut -d'.' -f1)
               MINOR_VERSION=$(echo "$BUILD_RELEASE_NUMBER" | cut -d'.' -f2)
               MICRO_TAG=$(echo "$BUILD_RELEASE_NUMBER" | cut -d'.' -f3)
-              export PKG_RELEASE="1~develop-snapshot"
               BUILDINFO_REVISION="1~develop-snapshot"
               cd ../zm-mailbox
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" clean publish-local-all
@@ -66,7 +59,7 @@ references:
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" clean publish-local
               cd ../zm-admin-console
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${BUILDINFO_REVISION}" clean pkg
               JOB_OUT_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_OUT_DIR"
               find build/dist -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' \) -exec mv -f {} "$JOB_OUT_DIR"/ \;
@@ -106,16 +99,9 @@ references:
               export PATH="$JAVA_HOME/bin:$PATH"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NO%_}"
               BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NUMBER%_GA}"
-              if [[ "$BUILD_RELEASE_NUMBER" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
-                BUILD_RELEASE_NUMBER="${BUILD_RELEASE_NUMBER}.0"
-              fi
-              if [[ ! "$BUILD_RELEASE_NUMBER" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-                exit 1
-              fi
               MAJOR_VERSION=$(echo "$BUILD_RELEASE_NUMBER" | cut -d'.' -f1)
               MINOR_VERSION=$(echo "$BUILD_RELEASE_NUMBER" | cut -d'.' -f2)
               MICRO_TAG=$(echo "$BUILD_RELEASE_NUMBER" | cut -d'.' -f3)
-              export PKG_RELEASE="1_develop_snapshot"
               BUILDINFO_REVISION="1_develop_snapshot"
               cd ../zm-mailbox
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" clean publish-local-all
@@ -126,7 +112,7 @@ references:
               cd ../zm-admin-ajax
               ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" clean publish-local
               cd ../zm-admin-console
-              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" clean pkg
+              ant -Dzimbra.buildinfo.version="${BUILD_RELEASE_NUMBER}_${CIRCLE_BUILD_NUM}" -Dzimbra.buildinfo.majorversion="${MAJOR_VERSION}" -Dzimbra.buildinfo.minorversion="${MINOR_VERSION}" -Dzimbra.buildinfo.microtag="${MICRO_TAG}" -Dzimbra.buildinfo.revision="${BUILDINFO_REVISION}" -Dadmconsole.ext.patch.revision="${BUILDINFO_REVISION}" clean pkg
               JOB_OUT_DIR="build/dist/${CIRCLE_JOB}"
               mkdir -p "$JOB_OUT_DIR"
               find build/dist -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' \) -exec mv -f {} "$JOB_OUT_DIR"/ \;
