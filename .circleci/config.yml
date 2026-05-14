@@ -240,6 +240,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - build_u24:
             context:
                - docker-dev-registry
@@ -250,6 +251,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - build_u22:
             context:
                - docker-dev-registry
@@ -260,6 +262,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - build_u20:
             context:
                - docker-dev-registry
@@ -270,6 +273,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - build_u18:
             context:
                - docker-dev-registry
@@ -280,6 +284,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - build_c9:
             context:
                - docker-dev-registry
@@ -290,6 +295,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - build_c8:
             context:
                - docker-dev-registry
@@ -300,6 +306,7 @@ workflows:
                branches:
                   only:
                     - develop
+                    - ZCS-19027
          - publish:
             context:
                - docker-dev-registry
@@ -317,3 +324,4 @@ workflows:
                branches:
                  only:
                    - develop
+                   - ZCS-19027
