@@ -367,7 +367,23 @@ GlobalConfigXFormView.AUTH_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSpnegoAuthEnable
         ZaGlobalConfig.A_zimbraWebClientLoginURL, ZaGlobalConfig.A_zimbraWebClientLogoutURL,
         ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA, ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA,
         ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP, ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP,
-        ZaGlobalConfig.A_zimbraForceClearCookies, ZaGlobalConfig.A_zimbraEphemeralBackendURL ];
+        ZaGlobalConfig.A_zimbraForceClearCookies, ZaGlobalConfig.A_zimbraEphemeralBackendURL,
+        ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert,
+        ZaGlobalConfig.A_zimbraSamlSSOURL,
+        ZaGlobalConfig.A_zimbraSamlSLOURL,
+        ZaGlobalConfig.A_zimbraSamlSpEntityId,
+        ZaGlobalConfig.A_zimbraSamlACSURL,
+        ZaGlobalConfig.A_zimbraSamlNameIdFormat,
+        ZaGlobalConfig.A_zimbraSamlDateFormat,
+        ZaGlobalConfig.A_zimbraSamlLogoutLandingURL,
+        ZaGlobalConfig.A_zimbraSamlDocumentEncoding,
+        ZaGlobalConfig.A_zimbraSamlErrorURL,
+        ZaGlobalConfig.A_zimbraSamlInactiveAccountURL,
+        ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl,
+        ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled,
+        ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts
+     ];
+
 GlobalConfigXFormView.AUTH_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.SKIN_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSkinForegroundColor,
@@ -1500,12 +1516,12 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                 items : [ {
                     ref : ZaGlobalConfig.A_zimbraWebClientLoginURL,
                     type : _TEXTFIELD_,
-                    width : "200px",
+                    width : "220px",
                     label : ZaMsg.LBL_zimbraWebClientLoginURL
                 }, {
                     ref : ZaGlobalConfig.A_zimbraWebClientLogoutURL,
                     type : _TEXTFIELD_,
-                    width : "200px",
+                    width : "220px",
                     label : ZaMsg.LBL_zimbraWebClientLogoutURL
                 }, {
                     ref : ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA,
@@ -1525,7 +1541,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         ref : ".",
                         type : _TEXTFIELD_,
                         label : null,
-                        width : "200px"
+                        width : "220px"
                     } ]
                 }, {
                     ref : ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA,
@@ -1545,7 +1561,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         ref : ".",
                         type : _TEXTFIELD_,
                         label : null,
-                        width : "200px"
+                        width : "220px"
                     } ]
                 }, {
                     ref : ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP,
@@ -1565,7 +1581,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         ref : ".",
                         type : _TEXTFIELD_,
                         label : null,
-                        width : "200px"
+                        width : "220px"
                     } ]
                 }, {
                     ref : ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP,
@@ -1585,7 +1601,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         ref : ".",
                         type : _TEXTFIELD_,
                         label : null,
-                        width : "200px"
+                        width : "220px"
                     } ]
                 }, {
                     ref : ZaGlobalConfig.A_zimbraForceClearCookies,
@@ -1601,11 +1617,148 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                 type : _ZA_TOP_GROUPER_,
                 label : ZaMsg.NAD_Ephemeral_Setting,
                 items : [ {
-                        ref : ZaGlobalConfig.A_zimbraEphemeralBackendURL,
-                        type : _TEXTFIELD_,
-                        width : "200px",
-                        label : ZaMsg.LBL_zimbraEphemeralBackendURL
-                    } ]
+                    ref : ZaGlobalConfig.A_zimbraEphemeralBackendURL,
+                    type : _TEXTFIELD_,
+                    width : "220px",
+                    label : ZaMsg.LBL_zimbraEphemeralBackendURL
+                } ]
+            },
+            {
+                type: _ZA_TOP_GROUPER_,
+                label: ZaMsg.NAD_SAML_SSO,
+                items: [
+                    {
+                        ref: ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert,
+                        type: _TEXTAREA_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraMyoneloginSamlSigningCert,
+                        msgName: ZaMsg.LBL_zimbraMyoneloginSamlSigningCert,
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlSSOURL,
+                        type: _REPEAT_,
+                        label: ZaMsg.LBL_zimbraSamlSSOURL,
+                        labelLocation : _LEFT_,
+                        align : _LEFT_,
+                        repeatInstance: "",
+                        addButtonLabel: ZaMsg.NAD_Add ,
+                        removeButtonLabel: ZaMsg.NAD_Remove,
+                        showAddButton: true,
+                        showRemoveButton: true,
+                        showAddOnNextRow: true,
+                        items: [
+                            {
+                                ref: ".",
+                                type: _TEXTFIELD_,
+                                label : null,
+                                width: "220px"
+                            }
+                        ]
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlSLOURL,
+                        label: ZaMsg.LBL_zimbraSamlSLOURL,
+                        type: _REPEAT_,
+                        labelLocation : _LEFT_,
+                        align : _LEFT_,
+                        repeatInstance: "",
+                        addButtonLabel: ZaMsg.NAD_Add ,
+                        removeButtonLabel: ZaMsg.NAD_Remove,
+                        showAddButton: true,
+                        showRemoveButton: true,
+                        showAddOnNextRow: true,
+                        items: [
+                            {
+                                ref: ".",
+                                type: _TEXTFIELD_,
+                                label : null,
+                                width: "220px"
+                            }
+                        ]
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlSpEntityId,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlSpEntityId
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlACSURL,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlACSURL
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlNameIdFormat,
+                        type: _OSELECT1_,
+                        labelLocation: _LEFT_,
+                        label: ZaMsg.LBL_zimbraSamlNameIdFormat
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlDateFormat,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlDateFormat
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlLogoutLandingURL,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlLogoutLandingURL
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlDocumentEncoding,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlDocumentEncoding
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlErrorURL,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlErrorURL
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlInactiveAccountURL,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlInactiveAccountURL
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl,
+                        type: _TEXTFIELD_,
+                        width: "220px",
+                        label: ZaMsg.LBL_zimbraSamlWebclientDisabledAccountUrl
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraCsrfRefererCheckEnabled,
+                        trueValue : "TRUE",
+                        falseValue : "FALSE"
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts,
+                        type: _REPEAT_,
+                        label: ZaMsg.LBL_zimbraCsrfAllowedRefererHosts,
+                        labelLocation : _LEFT_,
+                        align : _LEFT_,
+                        repeatInstance: "",
+                        addButtonLabel: ZaMsg.NAD_Add ,
+                        removeButtonLabel: ZaMsg.NAD_Remove,
+                        showAddButton: true,
+                        showRemoveButton: true,
+                        showAddOnNextRow: true,
+                        items: [
+                            {
+                                ref: ".",
+                                type: _TEXTFIELD_,
+                                label: null,
+                                width: "220px"
+                            }
+                        ]
+                    }
+                ]
             } ]
         };
         switchItems.push(case10);

@@ -1303,15 +1303,13 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                             },
                             { type:_ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_WEBCLIENT_Configure, colSpan:"*",
                                   items:[
-                                      { ref: ZaDomain.A_zimbraWebClientLoginURL,useParentTable: false,
-                                        colSpan: 2,
+                                      { ref: ZaDomain.A_zimbraWebClientLoginURL,
                                         type:_SUPERWIZ_TEXTFIELD_, textFieldWidth: "250px",
                                         resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                         msgName: ZaMsg.LBL_zimbraWebClientLoginURL,
                                         txtBoxLabel: ZaMsg.LBL_zimbraWebClientLoginURL
                                       },
-                                      { ref: ZaDomain.A_zimbraWebClientLogoutURL,useParentTable: false,
-                                        colSpan: 2,
+                                      { ref: ZaDomain.A_zimbraWebClientLogoutURL,
                                         type:_SUPERWIZ_TEXTFIELD_, textFieldWidth: "250px",
                                         resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                         msgName: ZaMsg.LBL_zimbraWebClientLogoutURL,
@@ -1322,7 +1320,8 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         type:_SUPER_REPEAT_,
                                         resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                         repeatInstance:"",
-                                        colSizes:["250px", "150px"],
+                                        colSpan:2,
+                                        colSizes: ["250px", "*"],
                                         addButtonLabel:ZaMsg.NAD_Add ,
                                         removeButtonLabel: ZaMsg.NAD_Remove,
                                         showAddButton:true,
@@ -1330,7 +1329,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         showAddOnNextRow:true,
                                         repeatItems: [
                                             {ref:".", type:_TEXTFIELD_,
-                                            width: "150px"}
+                                            width: "250px"}
                                         ]
                                       },
                                       { ref: ZaDomain.A_zimbraWebClientLogoutURLAllowedUA,
@@ -1338,7 +1337,8 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         type:_SUPER_REPEAT_,
                                         resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                         repeatInstance:"",
-                                        colSizes:["250px", "150px"],
+                                        colSpan:2,
+                                        colSizes: ["250px", "*"],
                                         addButtonLabel:ZaMsg.NAD_Add ,
                                         removeButtonLabel: ZaMsg.NAD_Remove,
                                         showAddButton:true,
@@ -1346,7 +1346,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         showAddOnNextRow:true,
                                         repeatItems: [
                                             {ref:".", type:_TEXTFIELD_,
-                                            width: "150px"}
+                                            width: "250px"}
                                         ]
                                       },
                                       { ref: ZaDomain.A_zimbraWebClientLoginURLAllowedIP,
@@ -1354,7 +1354,8 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         type:_SUPER_REPEAT_,
                                         resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                         repeatInstance:"",
-                                        colSizes:["250px", "150px"],
+                                        colSpan:2,
+                                        colSizes: ["250px", "*"],
                                         addButtonLabel:ZaMsg.NAD_Add ,
                                         removeButtonLabel: ZaMsg.NAD_Remove,
                                         showAddButton:true,
@@ -1362,7 +1363,7 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         showAddOnNextRow:true,
                                         repeatItems: [
                                            {ref:".", type:_TEXTFIELD_,
-                                            width: "150px"}
+                                            width: "250px"}
                                         ]
                                       },
                                       { ref: ZaDomain.A_zimbraWebClientLogoutURLAllowedIP,
@@ -1370,7 +1371,8 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         type:_SUPER_REPEAT_,
                                         resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                         repeatInstance:"",
-                                        colSizes:["250px", "150px"],
+                                        colSpan:2,
+                                        colSizes: ["250px", "*"],
                                         addButtonLabel:ZaMsg.NAD_Add ,
                                         removeButtonLabel: ZaMsg.NAD_Remove,
                                         showAddButton:true,
@@ -1378,13 +1380,11 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         showAddOnNextRow:true,
                                         repeatItems: [
                                            {ref:".", type:_TEXTFIELD_,
-                                            width: "150px"}
+                                            width: "250px"}
                                         ]
                                       },
                                       {
                                           ref: ZaDomain.A_zimbraForceClearCookies,
-                                          useParentTable: false,
-                                          colSpan: 2,
                                           type: _CHECKBOX_,
                                           trueValue: "TRUE",
                                           falseValue: "FALSE",
@@ -1394,6 +1394,155 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                           labelLocation: _LEFT_
                                       }
                                   ]
+                            },
+                            { type:_ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_SAML_SSO, colSpan:"*",
+                                items: [
+                                    {
+                                        ref: ZaDomain.A_zimbraMyoneloginSamlSigningCert,
+                                        type: _SUPERWIZ_TEXTAREA_,
+                                        textAreaWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraMyoneloginSamlSigningCert,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraMyoneloginSamlSigningCert
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlSSOURL,
+                                        type: _SUPER_REPEAT_,
+                                        label: ZaMsg.LBL_zimbraSamlSSOURL,
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        repeatInstance: "",
+                                        colSpan: 2,
+                                        colSizes: ["250px", "*"],
+                                        addButtonLabel: ZaMsg.NAD_Add ,
+                                        removeButtonLabel: ZaMsg.NAD_Remove,
+                                        showAddButton: true,
+                                        showRemoveButton: true,
+                                        showAddOnNextRow: true,
+                                        repeatItems: [
+                                            {
+                                                ref: ".",
+                                                type: _TEXTFIELD_,
+                                                width: "250px"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlSLOURL,
+                                        type: _SUPER_REPEAT_,
+                                        label: ZaMsg.LBL_zimbraSamlSLOURL,
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        repeatInstance: "",
+                                        colSpan: 2,
+                                        colSizes: ["250px", "*"],
+                                        addButtonLabel: ZaMsg.NAD_Add ,
+                                        removeButtonLabel: ZaMsg.NAD_Remove,
+                                        showAddButton: true,
+                                        showRemoveButton: true,
+                                        showAddOnNextRow: true,
+                                        repeatItems: [
+                                            {
+                                                ref: ".",
+                                                type: _TEXTFIELD_,
+                                                width: "250px"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlSpEntityId,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlSpEntityId,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlSpEntityId
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlACSURL,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlACSURL,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlACSURL
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlNameIdFormat,
+                                        type: _SUPERWIZ_SELECT1_,
+                                        labelLocation: _LEFT_,
+                                        colSpan: 2,
+                                        colSizes: ["260px", "150px"],
+                                        label: ZaMsg.LBL_zimbraSamlNameIdFormat,
+                                        msgName: ZaMsg.LBL_zimbraSamlNameIdFormat,
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlDateFormat,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlDateFormat,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlDateFormat
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlLogoutLandingURL,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlLogoutLandingURL,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlLogoutLandingURL
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlDocumentEncoding,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlDocumentEncoding,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlDocumentEncoding
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlErrorURL,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlErrorURL,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlErrorURL
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlInactiveAccountURL,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlInactiveAccountURL,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlInactiveAccountURL
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl,
+                                        type: _SUPERWIZ_TEXTFIELD_,
+                                        textFieldWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlWebclientDisabledAccountUrl,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlWebclientDisabledAccountUrl
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraCsrfAllowedRefererHosts,
+                                        type: _REPEAT_,
+                                        label: ZaMsg.LBL_zimbraCsrfAllowedRefererHosts,
+                                        repeatInstance: "",
+                                        colSpan: 2,
+                                        colSizes: ["250px", "*"],
+                                        addButtonLabel: ZaMsg.NAD_Add ,
+                                        removeButtonLabel: ZaMsg.NAD_Remove,
+                                        showAddButton: true,
+                                        showRemoveButton: true,
+                                        showAddOnNextRow: true,
+                                        items: [
+                                            {
+                                                ref: ".",
+                                                type: _TEXTFIELD_,
+                                                label: null,
+                                                width: "250px"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
 					]
 				},
@@ -1610,10 +1759,9 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 								addButtonLabel:ZaMsg.NAD_AddVirtualHost, 
 								showAddOnNextRow:true,
 								removeButtonLabel:ZaMsg.NAD_RemoveVirtualHost,
-                                cssStyle:"text-align:center",
                                 tableCssStyle:"margin-left:auto;margin-right:auto",
 								items: [
-									{ref:".", type:_TEXTFIELD_, label:null,width:220, visibilityChecks:[],enableDisableChecks:[]}
+									{ref:".", type:_TEXTFIELD_, label:null,width:"220px", visibilityChecks:[],enableDisableChecks:[]}
 								]
 						}
 					]
