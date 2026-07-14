@@ -979,3 +979,15 @@ ZaSettings.getPasswordRecoveryAddressStatus = function(){
 };
 
 ZaSettings.passwordRecoveryAddressStatusChoices = ZaSettings.getPasswordRecoveryAddressStatus;
+
+ZaSettings.getSamlNameIdFormat = function(){
+	// Translation is not required for labels
+    return [
+        {value: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress", label: 'emailAddress'},
+        {value: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified", label: 'unspecified'},
+        {value: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent", label: 'persistent'},
+        {value: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient", label: 'transient'}
+	];
+};
+
+ZaSettings.samlNameIdFormatChoices = ZaSettings.getSamlNameIdFormat;

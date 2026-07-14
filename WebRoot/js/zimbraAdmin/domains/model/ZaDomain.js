@@ -276,6 +276,21 @@ ZaDomain.A_zimbraWebClientLogoutURLAllowedUA = "zimbraWebClientLogoutURLAllowedU
 ZaDomain.A_zimbraWebClientLoginURLAllowedIP = "zimbraWebClientLoginURLAllowedIP";
 ZaDomain.A_zimbraWebClientLogoutURLAllowedIP = "zimbraWebClientLogoutURLAllowedIP";
 ZaDomain.A_zimbraForceClearCookies = "zimbraForceClearCookies";
+ZaDomain.A_zimbraMyoneloginSamlSigningCert = "zimbraMyoneloginSamlSigningCert";
+ZaDomain.A_zimbraSamlSpEntityId = "zimbraSamlSpEntityId";
+ZaDomain.A_zimbraSamlACSURL = "zimbraSamlACSURL";
+ZaDomain.A_zimbraSamlSSOURL = "zimbraSamlSSOURL";
+ZaDomain.A_zimbraSamlSLOURL = "zimbraSamlSLOURL";
+ZaDomain.A_zimbraSamlNameIdFormat = "zimbraSamlNameIdFormat";
+ZaDomain.A_zimbraSamlDateFormat = "zimbraSamlDateFormat";
+ZaDomain.A_zimbraSamlLogoutLandingURL = "zimbraSamlLogoutLandingURL";
+ZaDomain.A_zimbraSamlDocumentEncoding = "zimbraSamlDocumentEncoding";
+ZaDomain.A_zimbraSamlErrorURL = "zimbraSamlErrorURL";
+ZaDomain.A_zimbraSamlInactiveAccountURL = "zimbraSamlInactiveAccountURL";
+ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl = "zimbraSamlWebclientDisabledAccountUrl";
+
+// csrf check
+ZaDomain.A_zimbraCsrfAllowedRefererHosts = "zimbraCsrfAllowedRefererHosts";
 
 // web client authentication
 ZaDomain.A_zimbraReverseProxyClientCertMode = "zimbraReverseProxyClientCertMode";
@@ -823,6 +838,95 @@ function(tmpObj, newDomain) {
     if(tmpObj.attrs[ZaDomain.A_zimbraWebClientLogoutURL]){
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraWebClientLogoutURL]);
         attr.setAttribute("n", ZaDomain.A_zimbraWebClientLogoutURL);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraMyoneloginSamlSigningCert]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraMyoneloginSamlSigningCert]);
+        attr.setAttribute("n", ZaDomain.A_zimbraMyoneloginSamlSigningCert);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSpEntityId]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSpEntityId]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlSpEntityId);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlACSURL]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlACSURL]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlACSURL);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL]) {
+        if(tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL] instanceof Array) {
+            var cnt = tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL].length;
+            for(var ix=0; ix<cnt; ix++) {
+                attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL][ix]);
+                attr.setAttribute("n", ZaDomain.A_zimbraSamlSSOURL);
+            }
+        } else {
+            attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL]);
+            attr.setAttribute("n", ZaDomain.A_zimbraSamlSSOURL);
+        }
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL]) {
+        if(tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL] instanceof Array) {
+            var cnt = tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL].length;
+            for(var ix=0; ix<cnt; ix++) {
+                attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL][ix]);
+                attr.setAttribute("n", ZaDomain.A_zimbraSamlSLOURL);
+            }
+        } else {
+            attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL]);
+            attr.setAttribute("n", ZaDomain.A_zimbraSamlSLOURL);
+        }
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlNameIdFormat]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlNameIdFormat]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlNameIdFormat);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlDateFormat]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlDateFormat]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlDateFormat);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlLogoutLandingURL]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlLogoutLandingURL]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlLogoutLandingURL);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlDocumentEncoding]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlDocumentEncoding]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlDocumentEncoding);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlErrorURL]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlErrorURL]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlErrorURL);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlInactiveAccountURL]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlInactiveAccountURL]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlInactiveAccountURL);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]) {
+        if(tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts] instanceof Array) {
+            var cnt = tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts].length;
+            for(var ix=0; ix<cnt; ix++) {
+                attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts][ix]);
+                attr.setAttribute("n", ZaDomain.A_zimbraCsrfAllowedRefererHosts);
+            }
+        } else {
+            attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]);
+            attr.setAttribute("n", ZaDomain.A_zimbraCsrfAllowedRefererHosts);
+        }
     }
 
     if(tmpObj.attrs[ZaDomain.A_zimbraReverseProxyClientCertMode]){
@@ -1605,6 +1709,46 @@ ZaDomain.modifySSOSettings = function(soapDoc, tmpObj) {
             attr.setAttribute("n", ZaDomain.A_zimbraWebClientLogoutURLAllowedIP);
         }
     }
+
+    // sso
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL]) {
+        if(tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL] instanceof Array) {
+            var cnt = tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL].length;
+            for(var ix=0; ix<cnt; ix++) {
+                var attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL][ix]);
+                attr.setAttribute("n", ZaDomain.A_zimbraSamlSSOURL);
+            }
+        } else {
+            var attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSSOURL]);
+            attr.setAttribute("n", ZaDomain.A_zimbraSamlSSOURL);
+        }
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL]) {
+        if(tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL] instanceof Array) {
+            var cnt = tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL].length;
+            for(var ix=0; ix<cnt; ix++) {
+                var attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL][ix]);
+                attr.setAttribute("n", ZaDomain.A_zimbraSamlSLOURL);
+            }
+        } else {
+            var attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSLOURL]);
+            attr.setAttribute("n", ZaDomain.A_zimbraSamlSLOURL);
+        }
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]) {
+        if(tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts] instanceof Array) {
+            var cnt = tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts].length;
+            for(var ix=0; ix<cnt; ix++) {
+                var attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts][ix]);
+                attr.setAttribute("n", ZaDomain.A_zimbraCsrfAllowedRefererHosts);
+            }
+        } else {
+            var attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]);
+            attr.setAttribute("n", ZaDomain.A_zimbraCsrfAllowedRefererHosts);
+        }
+    }
 }
 
 ZaDomain.modifyAutoPovSettings = function(tmpObj) {
@@ -2033,12 +2177,24 @@ function (obj) {
 		else
 			this.attrs[ZaDomain.A_zimbraVirtualHostname] = new Array();
 	}
-    	if(!(this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] instanceof Array)) {
-                if(this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex])
-                        this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] = [this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex]];
-                else
-                        this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] = new Array();
-        }
+	if(!(this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] instanceof Array)) {
+		if(this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex])
+			this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] = [this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex]];
+		else
+			this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] = new Array();
+	}
+
+	if (AjxUtil.isString(this.attrs[ZaDomain.A_zimbraSamlSSOURL])) {
+		this.attrs[ZaDomain.A_zimbraSamlSSOURL] = [this.attrs[ZaDomain.A_zimbraSamlSSOURL]];
+	}
+
+	if (AjxUtil.isString(this.attrs[ZaDomain.A_zimbraSamlSLOURL])) {
+		this.attrs[ZaDomain.A_zimbraSamlSLOURL] = [this.attrs[ZaDomain.A_zimbraSamlSLOURL]];
+	}
+
+	if (AjxUtil.isString(this.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts])) {
+		this.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts] = [this.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]];
+	}
 
 	if(AjxUtil.isString(this.attrs[ZaDomain.A_zimbraWebClientLoginURLAllowedUA])) {
 		this.attrs[ZaDomain.A_zimbraWebClientLoginURLAllowedUA] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedUA]];
@@ -2718,6 +2874,21 @@ ZaDomain.myXModel = {
 			type: _ENUM_,
 			choices: ZaModel.BOOLEAN_CHOICES
 		},
+		// sso
+		{ id: ZaDomain.A_zimbraMyoneloginSamlSigningCert, ref: "attrs/" + ZaDomain.A_zimbraMyoneloginSamlSigningCert, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlSpEntityId, ref: "attrs/" + ZaDomain.A_zimbraSamlSpEntityId, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlACSURL, ref: "attrs/" + ZaDomain.A_zimbraSamlACSURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlSSOURL, ref: "attrs/" + ZaDomain.A_zimbraSamlSSOURL, type: _COS_LIST_, listItem: { type: _STRING_ } },
+		{ id: ZaDomain.A_zimbraSamlSLOURL, ref: "attrs/" + ZaDomain.A_zimbraSamlSLOURL, type: _COS_LIST_, listItem: { type: _STRING_ } },
+		{ id: ZaDomain.A_zimbraSamlNameIdFormat, ref: "attrs/" + ZaDomain.A_zimbraSamlNameIdFormat, type: _COS_ENUM_, choices: ZaSettings.samlNameIdFormatChoices },
+		{ id: ZaDomain.A_zimbraSamlDateFormat, ref: "attrs/" + ZaDomain.A_zimbraSamlDateFormat, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlLogoutLandingURL, ref: "attrs/" + ZaDomain.A_zimbraSamlLogoutLandingURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlDocumentEncoding, ref: "attrs/" + ZaDomain.A_zimbraSamlDocumentEncoding, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlErrorURL, ref: "attrs/" + ZaDomain.A_zimbraSamlErrorURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlInactiveAccountURL, ref: "attrs/" + ZaDomain.A_zimbraSamlInactiveAccountURL, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl, ref: "attrs/" + ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl, type: _COS_STRING_ },
+		// csrf check
+		{ id: ZaDomain.A_zimbraCsrfAllowedRefererHosts, ref: "attrs/" + ZaDomain.A_zimbraCsrfAllowedRefererHosts, type: _LIST_, listItem: { type: _STRING_ } },
 		// web client authentication
 		{ id: ZaDomain.A_zimbraReverseProxyClientCertMode, ref: "attrs/" + ZaDomain.A_zimbraReverseProxyClientCertMode, type: _COS_STRING_, choices: ["on", "off", "optional"] },
 		{ id: ZaDomain.A_zimbraMailSSLClientCertPrincipalMap, ref: "attrs/" + ZaDomain.A_zimbraMailSSLClientCertPrincipalMap, type: _COS_STRING_ },
