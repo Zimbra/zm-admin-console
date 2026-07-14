@@ -197,6 +197,22 @@ ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA = "zimbraWebClientLogoutURLAl
 ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP = "zimbraWebClientLoginURLAllowedIP";
 ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP = "zimbraWebClientLogoutURLAllowedIP";
 ZaGlobalConfig.A_zimbraForceClearCookies = "zimbraForceClearCookies";
+ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert = "zimbraMyoneloginSamlSigningCert";
+ZaGlobalConfig.A_zimbraSamlSpEntityId = "zimbraSamlSpEntityId";
+ZaGlobalConfig.A_zimbraSamlACSURL = "zimbraSamlACSURL";
+ZaGlobalConfig.A_zimbraSamlSSOURL = "zimbraSamlSSOURL";
+ZaGlobalConfig.A_zimbraSamlSLOURL = "zimbraSamlSLOURL";
+ZaGlobalConfig.A_zimbraSamlNameIdFormat = "zimbraSamlNameIdFormat";
+ZaGlobalConfig.A_zimbraSamlDateFormat = "zimbraSamlDateFormat";
+ZaGlobalConfig.A_zimbraSamlLogoutLandingURL = "zimbraSamlLogoutLandingURL";
+ZaGlobalConfig.A_zimbraSamlDocumentEncoding = "zimbraSamlDocumentEncoding";
+ZaGlobalConfig.A_zimbraSamlErrorURL = "zimbraSamlErrorURL";
+ZaGlobalConfig.A_zimbraSamlInactiveAccountURL = "zimbraSamlInactiveAccountURL";
+ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl = "zimbraSamlWebclientDisabledAccountUrl";
+
+// csrf check
+ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled = "zimbraCsrfRefererCheckEnabled";
+ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts = "zimbraCsrfAllowedRefererHosts";
 
 // Auto provision
 ZaGlobalConfig.A_zimbraAutoProvBatchSize = "zimbraAutoProvBatchSize";
@@ -306,6 +322,19 @@ ZaGlobalConfig.prototype.initFromJS = function(obj) {
     if(AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP])) {
         this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP] = [this.attrs[ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP]];
     }
+
+	if (AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraSamlSSOURL])) {
+		this.attrs[ZaGlobalConfig.A_zimbraSamlSSOURL] = [this.attrs[ZaGlobalConfig.A_zimbraSamlSSOURL]];
+	}
+
+	if (AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraSamlSLOURL])) {
+		this.attrs[ZaGlobalConfig.A_zimbraSamlSLOURL] = [this.attrs[ZaGlobalConfig.A_zimbraSamlSLOURL]];
+	}
+
+	if (AjxUtil.isString(this.attrs[ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts])) {
+		this.attrs[ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts] = [this.attrs[ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts]];
+	}
+
 	// convert available components to hidden fields for xform binding
 	var components = this.attrs[ZaGlobalConfig.A_zimbraComponentAvailable];
 	if (components) {
@@ -606,6 +635,22 @@ ZaGlobalConfig.myXModel = {
             type: _ENUM_,
             choices: ZaModel.BOOLEAN_CHOICES
         },
+		// sso
+		{ id: ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert, ref: "attrs/" + ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlSpEntityId, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlSpEntityId, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlACSURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlACSURL, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlSSOURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlSSOURL, type: _LIST_, listItem: { type: _STRING_ } },
+		{ id: ZaGlobalConfig.A_zimbraSamlSLOURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlSLOURL, type: _LIST_, listItem: { type: _STRING_ } },
+		{ id: ZaGlobalConfig.A_zimbraSamlNameIdFormat, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlNameIdFormat, type: _ENUM_, choices: ZaSettings.samlNameIdFormatChoices },
+		{ id: ZaGlobalConfig.A_zimbraSamlDateFormat, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlDateFormat, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlLogoutLandingURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlLogoutLandingURL, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlDocumentEncoding, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlDocumentEncoding, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlErrorURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlErrorURL, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlInactiveAccountURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlInactiveAccountURL, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl, type: _STRING_ },
+		// csrf check
+		{ id: ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+		{ id: ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts, ref: "attrs/" + ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts, type: _LIST_, listItem: { type: _STRING_ } },
         // web client authentication
         { id: ZaGlobalConfig.A_zimbraMailSSLClientCertMode, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertMode, type: _STRING_, choices: ["Disabled", "NeedClientAuth", "WantClientAuth"] },
         { id: ZaGlobalConfig.A_zimbraMailSSLClientCertPort, ref: "attrs/" + ZaGlobalConfig.A_zimbraMailSSLClientCertPort, type: _PORT_ },
