@@ -197,6 +197,8 @@ ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedUA = "zimbraWebClientLogoutURLAl
 ZaGlobalConfig.A_zimbraWebClientLoginURLAllowedIP = "zimbraWebClientLoginURLAllowedIP";
 ZaGlobalConfig.A_zimbraWebClientLogoutURLAllowedIP = "zimbraWebClientLogoutURLAllowedIP";
 ZaGlobalConfig.A_zimbraForceClearCookies = "zimbraForceClearCookies";
+ZaGlobalConfig.A_zimbraSamlTestTimestamp = "zimbraSamlTestTimestamp";
+ZaGlobalConfig.A_zimbraSamlTestErrorMessage = "zimbraSamlTestErrorMessage";
 ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert = "zimbraMyoneloginSamlSigningCert";
 ZaGlobalConfig.A_zimbraSamlSpEntityId = "zimbraSamlSpEntityId";
 ZaGlobalConfig.A_zimbraSamlACSURL = "zimbraSamlACSURL";
@@ -665,6 +667,8 @@ ZaGlobalConfig.myXModel = {
             choices: ZaModel.BOOLEAN_CHOICES
         },
 		// sso
+		{ id: ZaGlobalConfig.A_zimbraSamlTestTimestamp, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlTestTimestamp, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlTestErrorMessage, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlTestErrorMessage, type: _STRING_ },
 		{ id: ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert, ref: "attrs/" + ZaGlobalConfig.A_zimbraMyoneloginSamlSigningCert, type: _STRING_ },
 		{ id: ZaGlobalConfig.A_zimbraSamlSpEntityId, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlSpEntityId, type: _STRING_ },
 		{ id: ZaGlobalConfig.A_zimbraSamlACSURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlACSURL, type: _STRING_ },

@@ -276,6 +276,8 @@ ZaDomain.A_zimbraWebClientLogoutURLAllowedUA = "zimbraWebClientLogoutURLAllowedU
 ZaDomain.A_zimbraWebClientLoginURLAllowedIP = "zimbraWebClientLoginURLAllowedIP";
 ZaDomain.A_zimbraWebClientLogoutURLAllowedIP = "zimbraWebClientLogoutURLAllowedIP";
 ZaDomain.A_zimbraForceClearCookies = "zimbraForceClearCookies";
+ZaDomain.A_zimbraSamlTestTimestamp = "zimbraSamlTestTimestamp";
+ZaDomain.A_zimbraSamlTestErrorMessage = "zimbraSamlTestErrorMessage";
 ZaDomain.A_zimbraMyoneloginSamlSigningCert = "zimbraMyoneloginSamlSigningCert";
 ZaDomain.A_zimbraSamlSpEntityId = "zimbraSamlSpEntityId";
 ZaDomain.A_zimbraSamlACSURL = "zimbraSamlACSURL";
@@ -1979,6 +1981,10 @@ function(tmods,tmpObj) {
 	soapDoc.set("id", this.id,modifyDomainDoc);
 	
 	for (var aname in mods) {
+		// Skip immutable attributes
+		if (aname === ZaDomain.A_zimbraSamlTestTimestamp || aname === ZaDomain.A_zimbraSamlTestErrorMessage) {
+			continue;
+		}
 		gotSomething = true;
 		//multi value attribute
 		if(mods[aname] instanceof Array) {
@@ -2887,6 +2893,8 @@ ZaDomain.myXModel = {
 			choices: ZaModel.BOOLEAN_CHOICES
 		},
 		// sso
+		{ id: ZaDomain.A_zimbraSamlTestTimestamp, ref: "attrs/" + ZaDomain.A_zimbraSamlTestTimestamp, type: _STRING_ },
+		{ id: ZaDomain.A_zimbraSamlTestErrorMessage, ref: "attrs/" + ZaDomain.A_zimbraSamlTestErrorMessage, type: _STRING_ },
 		{ id: ZaDomain.A_zimbraMyoneloginSamlSigningCert, ref: "attrs/" + ZaDomain.A_zimbraMyoneloginSamlSigningCert, type: _COS_STRING_ },
 		{ id: ZaDomain.A_zimbraSamlSpEntityId, ref: "attrs/" + ZaDomain.A_zimbraSamlSpEntityId, type: _COS_STRING_ },
 		{ id: ZaDomain.A_zimbraSamlACSURL, ref: "attrs/" + ZaDomain.A_zimbraSamlACSURL, type: _COS_STRING_ },
