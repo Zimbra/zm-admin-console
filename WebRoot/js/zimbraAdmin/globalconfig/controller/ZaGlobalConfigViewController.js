@@ -334,12 +334,23 @@ function () {
         }
 	
 	for (var a in tmpObj.attrs) {
-		if(a == ZaItem.A_objectClass || a == ZaGlobalConfig.A_zimbraAccountClientAttr ||
-		a == ZaGlobalConfig.A_zimbraServerInheritedAttr || a == ZaGlobalConfig.A_zimbraDomainInheritedAttr ||
-		a == ZaGlobalConfig.A_zimbraCOSInheritedAttr || a == ZaGlobalConfig.A_zimbraGalLdapAttrMap || 
-		a == ZaGlobalConfig.A_zimbraGalLdapFilterDef || /^_/.test(a) || a == ZaGlobalConfig.A_zimbraMtaBlockedExtension || a == ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension
-                || a == ZaItem.A_zimbraACE)
+		if (
+			a == ZaItem.A_objectClass ||
+			a == ZaGlobalConfig.A_zimbraAccountClientAttr ||
+			a == ZaGlobalConfig.A_zimbraServerInheritedAttr ||
+			a == ZaGlobalConfig.A_zimbraDomainInheritedAttr ||
+			a == ZaGlobalConfig.A_zimbraCOSInheritedAttr ||
+			a == ZaGlobalConfig.A_zimbraGalLdapAttrMap ||
+			a == ZaGlobalConfig.A_zimbraGalLdapFilterDef ||
+			/^_/.test(a) ||
+			a == ZaGlobalConfig.A_zimbraMtaBlockedExtension ||
+			a == ZaGlobalConfig.A_zimbraMtaCommonBlockedExtension ||
+			a == ZaItem.A_zimbraACE ||
+			a == ZaGlobalConfig.A_zimbraSamlTestTimestamp ||
+			a == ZaGlobalConfig.A_zimbraSamlTestErrorMessage
+		) {
 			continue;
+		}
 		if(!ZaItem.hasWritePermission(a,tmpObj)) {
 			continue;
 		}		
