@@ -1398,6 +1398,36 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                             { type:_ZAWIZ_TOP_GROUPER_, label: ZaMsg.NAD_SAML_SSO, colSpan:"*",
                                 items: [
                                     {
+                                        type : _GROUP_,
+                                        colSpan: 3,
+                                        colSizes: ["300px", "auto"],
+                                        visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                                        items: [
+                                            {
+                                                type: _FILE_SELECTOR_,
+                                                width: "220px",
+                                                height: 'auto',
+                                                labelRef: ZaMsg.LBL_xmlFile,
+                                                formStyle: 'display:inline;',
+                                                inputId: "samlXml",
+                                                inputName: "samlXml",
+                                            },
+                                            {
+                                                type : _DWT_BUTTON_,
+                                                label : ZaMsg.LBL_upload,
+                                                width: "fit-content",
+                                                cssStyle: "padding-left: 10px;",
+                                                onActivate : "ZaSamlXmlUploader.uploadSamlXml.call(this)"
+                                            },
+                                            {
+                                                type: _OUTPUT_,
+                                                colSpan: 2,
+                                                value: ZaMsg.LBL_samlXmlUploadExplanation,
+                                                cssStyle: "padding:5px 10px;"
+                                            }
+                                        ]
+                                    },
+                                    {
                                         ref: ZaDomain.A_zimbraMyoneloginSamlSigningCert,
                                         type: _SUPERWIZ_TEXTAREA_,
                                         textAreaWidth: "250px",
