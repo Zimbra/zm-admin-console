@@ -1296,6 +1296,8 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                         [
                             ZATopGrouper_XFormItem.isGroupVisible,
                             [
+                                ZaDomain.A_zimbraSamlTestTimestamp,
+                                ZaDomain.A_zimbraSamlTestErrorMessage,
                                 ZaDomain.A_zimbraMyoneloginSamlSigningCert,
                                 ZaDomain.A_zimbraSamlSSOURL,
                                 ZaDomain.A_zimbraSamlSLOURL,
@@ -1315,6 +1317,87 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                         ]
                     ],
                     items: [
+                        {
+                            type : _GROUP_,
+                            colSpan: 2,
+                            numCols: 1,
+                            visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                            items: [
+                                {
+                                    type: _OUTPUT_,
+                                    value: ZaMsg.LBL_samlTestExplanation,
+                                    cssStyle: "padding:5px 10px;"
+                                },
+                                {
+                                    type : _DWT_BUTTON_,
+                                    label : ZaMsg.LBL_testNow,
+                                    containerCssStyle: "padding-left:10px; padding-bottom:5px;",
+                                    width: "fit-content",
+                                    onActivate : "ZaSamlTest.getInstance().doSamlTest(this)"
+                                }
+                            ]
+                        },
+                        {
+                            type: _OUTPUT_,
+                            label: ZaMsg.LBL_samlStatus,
+                            getDisplayValue: function() {
+                                var val = ZaSamlTest.getInstance().getLastSamlTestResult(this);
+                                if(!val)
+                                    return ZaMsg.samlStatusNotTested;
+                                else
+                                    return val;
+                            },
+                            visibilityChecks: [
+                                [ZaItem.hasReadPermission, ZaDomain.A_zimbraSamlTestTimestamp],
+                                [ZaItem.hasReadPermission, ZaDomain.A_zimbraSamlTestErrorMessage]
+                            ]
+                        },
+                        {
+                            ref: ZaDomain.A_zimbraSamlTestTimestamp,
+                            type: _OUTPUT_,
+                            label: ZaMsg.LBL_samlLastTested,
+                            getDisplayValue: function() {
+                                var val = ZaSamlTest.getInstance().getLastTestTimestamp(this.getInstanceValue());
+                                if(!val)
+                                    return ZaMsg.samlStatusNotTested;
+                                else
+                                    return val;
+                            },
+                            visibilityChecks: [
+                                [ZaItem.hasReadPermission, ZaDomain.A_zimbraSamlTestTimestamp],
+                                [ZaItem.hasReadPermission, ZaDomain.A_zimbraSamlTestErrorMessage]
+                            ]
+                        },
+                        {
+                            type : _GROUP_,
+                            colSpan: 2,
+                            colSizes: ["300px", "auto"],
+                            visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                            items: [
+                                {
+                                    type: _FILE_SELECTOR_,
+                                    width: "220px",
+                                    height: 'auto',
+                                    labelRef: ZaMsg.LBL_xmlFile,
+                                    formStyle: 'display:inline;',
+                                    inputId: "samlXml",
+                                    inputName: "samlXml",
+                                },
+                                {
+                                    type : _DWT_BUTTON_,
+                                    label : ZaMsg.LBL_upload,
+                                    width: "fit-content",
+                                    cssStyle: "padding-left: 10px;",
+                                    onActivate : "ZaSamlXmlUploader.uploadSamlXml.call(this)"
+                                },
+                                {
+                                    type: _OUTPUT_,
+                                    colSpan: 2,
+                                    value: ZaMsg.LBL_samlXmlUploadExplanation,
+                                    cssStyle: "padding:5px 10px;"
+                                }
+                            ]
+                        },
                         {
                             ref: ZaDomain.A_zimbraMyoneloginSamlSigningCert,
                             useParentTable: false,
