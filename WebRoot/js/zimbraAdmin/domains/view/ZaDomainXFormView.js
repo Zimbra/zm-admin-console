@@ -1308,7 +1308,9 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                                 ZaDomain.A_zimbraSamlErrorURL,
                                 ZaDomain.A_zimbraSamlInactiveAccountURL,
                                 ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl,
-                                ZaDomain.A_zimbraCsrfAllowedRefererHosts
+                                ZaDomain.A_zimbraCsrfAllowedRefererHosts,
+                                ZaDomain.A_zimbraSamlSpSigningKey,
+                                ZaDomain.A_zimbraSamlSpSigningCertificate
                             ]
                         ]
                     ],
@@ -1462,6 +1464,28 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
                             msgName: ZaMsg.LBL_zimbraSamlWebclientDisabledAccountUrl,
                             txtBoxLabel: ZaMsg.LBL_zimbraSamlWebclientDisabledAccountUrl,
+                            onChange: ZaDomainXFormView.onFormFieldChanged
+                        },
+                        {
+                            ref: ZaDomain.A_zimbraSamlSpSigningKey,
+                            useParentTable: false,
+                            colSpan: 2,
+                            type: _SUPER_TEXTAREA_,
+                            textAreaWidth: "220px",
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                            msgName: ZaMsg.LBL_zimbraSamlSpSigningKey,
+                            txtBoxLabel: ZaMsg.LBL_zimbraSamlSpSigningKey,
+                            onChange: ZaDomainXFormView.onFormFieldChanged
+                        },
+                        {
+                            ref: ZaDomain.A_zimbraSamlSpSigningCertificate,
+                            useParentTable: false,
+                            colSpan: 2,
+                            type: _SUPER_TEXTAREA_,
+                            textAreaWidth: "220px",
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                            msgName: ZaMsg.LBL_zimbraSamlSpSigningCertificate,
+                            txtBoxLabel: ZaMsg.LBL_zimbraSamlSpSigningCertificate,
                             onChange: ZaDomainXFormView.onFormFieldChanged
                         },
                         {
