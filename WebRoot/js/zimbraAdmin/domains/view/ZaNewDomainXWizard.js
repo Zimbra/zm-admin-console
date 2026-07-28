@@ -1522,6 +1522,22 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         txtBoxLabel: ZaMsg.LBL_zimbraSamlWebclientDisabledAccountUrl
                                     },
                                     {
+                                        ref: ZaDomain.A_zimbraSamlSpSigningKey,
+                                        type: _SUPERWIZ_TEXTAREA_,
+                                        textAreaWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlSpSigningKey,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlSpSigningKey
+                                    },
+                                    {
+                                        ref: ZaDomain.A_zimbraSamlSpSigningCertificate,
+                                        type: _SUPERWIZ_TEXTAREA_,
+                                        textAreaWidth: "250px",
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                                        msgName: ZaMsg.LBL_zimbraSamlSpSigningCertificate,
+                                        txtBoxLabel: ZaMsg.LBL_zimbraSamlSpSigningCertificate
+                                    },
+                                    {
                                         ref: ZaDomain.A_zimbraCsrfAllowedRefererHosts,
                                         type: _REPEAT_,
                                         label: ZaMsg.LBL_zimbraCsrfAllowedRefererHosts,

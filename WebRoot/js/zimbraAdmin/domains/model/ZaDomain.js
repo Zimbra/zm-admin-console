@@ -288,6 +288,8 @@ ZaDomain.A_zimbraSamlDocumentEncoding = "zimbraSamlDocumentEncoding";
 ZaDomain.A_zimbraSamlErrorURL = "zimbraSamlErrorURL";
 ZaDomain.A_zimbraSamlInactiveAccountURL = "zimbraSamlInactiveAccountURL";
 ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl = "zimbraSamlWebclientDisabledAccountUrl";
+ZaDomain.A_zimbraSamlSpSigningKey = "zimbraSamlSpSigningKey";
+ZaDomain.A_zimbraSamlSpSigningCertificate = "zimbraSamlSpSigningCertificate";
 
 // csrf check
 ZaDomain.A_zimbraCsrfAllowedRefererHosts = "zimbraCsrfAllowedRefererHosts";
@@ -914,6 +916,16 @@ function(tmpObj, newDomain) {
     if(tmpObj.attrs[ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl]){
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl]);
         attr.setAttribute("n", ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningKey]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningKey]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlSpSigningKey);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningCertificate]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningCertificate]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlSpSigningCertificate);
     }
 
     if(tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]) {
@@ -2887,6 +2899,8 @@ ZaDomain.myXModel = {
 		{ id: ZaDomain.A_zimbraSamlErrorURL, ref: "attrs/" + ZaDomain.A_zimbraSamlErrorURL, type: _COS_STRING_ },
 		{ id: ZaDomain.A_zimbraSamlInactiveAccountURL, ref: "attrs/" + ZaDomain.A_zimbraSamlInactiveAccountURL, type: _COS_STRING_ },
 		{ id: ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl, ref: "attrs/" + ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlSpSigningKey, ref: "attrs/" + ZaDomain.A_zimbraSamlSpSigningKey, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlSpSigningCertificate, ref: "attrs/" + ZaDomain.A_zimbraSamlSpSigningCertificate, type: _COS_STRING_ },
 		// csrf check
 		{ id: ZaDomain.A_zimbraCsrfAllowedRefererHosts, ref: "attrs/" + ZaDomain.A_zimbraCsrfAllowedRefererHosts, type: _LIST_, listItem: { type: _STRING_ } },
 		// web client authentication
