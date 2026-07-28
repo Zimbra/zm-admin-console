@@ -209,6 +209,8 @@ ZaGlobalConfig.A_zimbraSamlDocumentEncoding = "zimbraSamlDocumentEncoding";
 ZaGlobalConfig.A_zimbraSamlErrorURL = "zimbraSamlErrorURL";
 ZaGlobalConfig.A_zimbraSamlInactiveAccountURL = "zimbraSamlInactiveAccountURL";
 ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl = "zimbraSamlWebclientDisabledAccountUrl";
+ZaGlobalConfig.A_zimbraSamlSpSigningKey = "zimbraSamlSpSigningKey";
+ZaGlobalConfig.A_zimbraSamlSpSigningCertificate = "zimbraSamlSpSigningCertificate";
 
 // csrf check
 ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled = "zimbraCsrfRefererCheckEnabled";
@@ -648,6 +650,8 @@ ZaGlobalConfig.myXModel = {
 		{ id: ZaGlobalConfig.A_zimbraSamlErrorURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlErrorURL, type: _STRING_ },
 		{ id: ZaGlobalConfig.A_zimbraSamlInactiveAccountURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlInactiveAccountURL, type: _STRING_ },
 		{ id: ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlWebclientDisabledAccountUrl, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlSpSigningKey, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlSpSigningKey, type: _STRING_ },
+		{ id: ZaGlobalConfig.A_zimbraSamlSpSigningCertificate, ref: "attrs/" + ZaGlobalConfig.A_zimbraSamlSpSigningCertificate, type: _STRING_ },
 		// csrf check
 		{ id: ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{ id: ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts, ref: "attrs/" + ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts, type: _LIST_, listItem: { type: _STRING_ } },
