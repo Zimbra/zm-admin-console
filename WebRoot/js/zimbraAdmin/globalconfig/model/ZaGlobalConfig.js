@@ -441,14 +441,29 @@ ZaGlobalConfig.modifyMethod = function (tmods, tmpObj) {
                 if(mods[aname] instanceof Array) {
                         var cnt = mods[aname].length;
                         if(cnt > 0) {
+                                var nonemptyElements = false;
                                 for(var ix=0; ix <cnt; ix++) {
-                                        if(mods[aname][ix] instanceof String)
-                                                var attr = soapDoc.set("a", mods[aname][ix].toString(), modifyConfDoc);
-                                        else if(mods[aname][ix] instanceof Object)
-                                                var attr = soapDoc.set("a", mods[aname][ix].toString(), modifyConfDoc);
-                                        else 
-                                                var attr = soapDoc.set("a", mods[aname][ix], modifyConfDoc);
-                                                
+                                        var attr = null;
+                                        if (mods[aname][ix] instanceof String || AjxUtil.isString(mods[aname][ix])) {
+                                                if (AjxUtil.isEmpty(mods[aname][ix])) {
+                                                        continue;
+                                                } else {
+                                                        nonemptyElements = true;
+                                                }
+                                                attr = soapDoc.set("a", mods[aname][ix].toString(), modifyConfDoc);
+                                        } else if (mods[aname][ix] instanceof Object) {
+                                                attr = soapDoc.set("a", mods[aname][ix].toString(), modifyConfDoc);
+                                                nonemptyElements = true;
+                                        } else {
+                                                attr = soapDoc.set("a", mods[aname][ix], modifyConfDoc);
+                                                nonemptyElements = true;
+                                        }
+                                        if (attr) {
+                                                attr.setAttribute("n", aname);
+                                        }
+                                }
+                                if (!nonemptyElements) {
+                                        var attr = soapDoc.set("a", "", modifyConfDoc);
                                         attr.setAttribute("n", aname);
                                 }
                         } 
@@ -472,7 +487,19 @@ ZaGlobalConfig.modifyMethod = function (tmods, tmpObj) {
 	var params = new Object();
 	params.soapDoc = soapDoc;
 	params.noAuthToken = true;	
-	command.invoke(params);
+	var respObj = command.invoke(params);
+	if (respObj.Body && respObj.Body.BatchResponse && respObj.Body.BatchResponse.Fault) {
+		var fault = respObj.Body.BatchResponse.Fault;
+		if (fault instanceof Array) {
+			fault = fault[0];
+		}
+
+		if (fault) {
+			// JS response with fault
+			var ex = ZmCsfeCommand.faultToEx(fault);
+			ZaApp.getInstance().getCurrentController()._handleException(ex, "ZaGlobalConfig.modifyConfig", null, false);
+		}
+	}
 	ZaGlobalConfig.isDirty = true;
 }
 ZaItem.modifyMethods["ZaGlobalConfig"].push(ZaGlobalConfig.modifyMethod);
