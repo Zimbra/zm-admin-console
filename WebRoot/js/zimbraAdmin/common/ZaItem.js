@@ -989,7 +989,7 @@ ZaItem.hasReadPermission = function (refToCheck, instance) {
 		if(!this.refPath)
 			return true;
 		else
-			refPath=this.refPath;
+			refPath = this.parentRefPath || this.refPath;
 	}
 		
 	return ((instance.getAttrs.all === true) || (instance.getAttrs[refPath] === true));
@@ -1021,7 +1021,7 @@ ZaItem.hasWritePermission = function (refToCheck,instance) {
 		if(!this.refPath)
 			return true;
 		else
-			refPath=this.refPath;
+			refPath = this.parentRefPath || this.refPath;
 	}
 		
 	return ((instance.setAttrs.all === true) || (instance.setAttrs[refPath] === true));
