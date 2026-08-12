@@ -1632,6 +1632,15 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                 label: ZaMsg.NAD_SAML_SSO,
                 items: [
                     {
+                        type : _DWT_ALERT_,
+                        containerCssStyle : "padding-bottom:0px",
+                        style : DwtAlert.INFORMATION,
+                        smallIcon: true,
+                        iconVisible : true,
+                        content : ZaMsg.LBL_samlTestInformation,
+                        visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                    },
+                    {
                         type : _GROUP_,
                         colSpan: 2,
                         numCols: 1,
