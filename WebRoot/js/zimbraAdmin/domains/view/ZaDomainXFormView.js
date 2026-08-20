@@ -1581,6 +1581,15 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             onChange: ZaDomainXFormView.onFormFieldChanged
                         },
                         {
+                            type : _DWT_ALERT_,
+                            containerCssStyle : "padding-bottom:0px",
+                            style : DwtAlert.INFORMATION,
+                            smallIcon: true,
+                            iconVisible : true,
+                            content : ZaMsg.LBL_csrfAllowedRefererHostsInformation,
+                            visibilityChecks: [[ZaItem.hasWritePermission, ZaDomain.A_zimbraCsrfAllowedRefererHosts]],
+                        },
+                        {
                             ref: ZaDomain.A_zimbraCsrfAllowedRefererHosts,
                             type: _REPEAT_,
                             label: ZaMsg.LBL_zimbraCsrfAllowedRefererHosts,
