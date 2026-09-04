@@ -235,6 +235,7 @@ ZaAccount.A_zimbraFeatureManageZimlets = "zimbraFeatureManageZimlets";
 ZaAccount.A_zimbraFeatureImportFolderEnabled = "zimbraFeatureImportFolderEnabled";
 ZaAccount.A_zimbraFeatureExportFolderEnabled = "zimbraFeatureExportFolderEnabled";
 ZaAccount.A_zimbraFeatureDocumentEditingEnabled = "zimbraFeatureDocumentEditingEnabled";
+ZaAccount.A_zimbraFeatureTrustedDevicesEnabled = "zimbraFeatureTrustedDevicesEnabled";
 ZaAccount.A_zimbraDumpsterEnabled = "zimbraDumpsterEnabled";
 ZaAccount.A_zimbraMailDumpsterLifetime = "zimbraMailDumpsterLifetime";
 ZaAccount.A_zimbraDumpsterUserVisibleAge = "zimbraDumpsterUserVisibleAge";
@@ -2096,6 +2097,7 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraFeatureImportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureImportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureExportFolderEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureExportFolderEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraFeatureDocumentEditingEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureDocumentEditingEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraFeatureTrustedDevicesEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraFeatureTrustedDevicesEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraDumpsterEnabled, type:_COS_ENUM_, ref:"attrs/" + ZaAccount.A_zimbraDumpsterEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraDumpsterUserVisibleAge, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraDumpsterUserVisibleAge },
         {id:ZaAccount.A_zimbraDumpsterPurgeEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraDumpsterPurgeEnabled, choices:ZaModel.BOOLEAN_CHOICES},

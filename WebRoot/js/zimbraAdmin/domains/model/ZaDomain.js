@@ -358,6 +358,9 @@ ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient = "zimbraDomainAggregate
 // regex of domain name
 ZaDomain.A_zimbraMailAddressValidationRegex = "zimbraMailAddressValidationRegex";
 
+// CIDR ranges from which the two-factor auth challenge is bypassed
+ZaDomain.A_zimbraMFAbyPassIP = "zimbraMFAbyPassIP";
+
 //admin Sieve rules
 ZaDomain.A_zimbraSieveRejectMailEnabled = "zimbraSieveRejectMailEnabled";
 ZaDomain.A_zimbraSieveEditHeaderEnabled = "zimbraSieveEditHeaderEnabled";
@@ -2191,9 +2194,16 @@ function (obj) {
 
     if(!(this.attrs[ZaDomain.A_zimbraVirtualHostname] instanceof Array)) {
 		if(this.attrs[ZaDomain.A_zimbraVirtualHostname])
-			this.attrs[ZaDomain.A_zimbraVirtualHostname] = [this.attrs[ZaDomain.A_zimbraVirtualHostname]];	
+			this.attrs[ZaDomain.A_zimbraVirtualHostname] = [this.attrs[ZaDomain.A_zimbraVirtualHostname]];
 		else
 			this.attrs[ZaDomain.A_zimbraVirtualHostname] = new Array();
+	}
+	// A single configured range arrives as a bare string; the repeating form item needs a list.
+	if(!(this.attrs[ZaDomain.A_zimbraMFAbyPassIP] instanceof Array)) {
+		if(this.attrs[ZaDomain.A_zimbraMFAbyPassIP])
+			this.attrs[ZaDomain.A_zimbraMFAbyPassIP] = [this.attrs[ZaDomain.A_zimbraMFAbyPassIP]];
+		else
+			this.attrs[ZaDomain.A_zimbraMFAbyPassIP] = new Array();
 	}
 	if(!(this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex] instanceof Array)) {
 		if(this.attrs[ZaDomain.A_zimbraMailAddressValidationRegex])
@@ -2618,6 +2628,7 @@ ZaDomain.myXModel = {
 		{ id: ZaDomain.A_zimbraAdminConsoleSkinEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraAdminSkinAddressEnabled },
 		// regex
 		{ id: ZaDomain.A_zimbraMailAddressValidationRegex, type: _LIST_, listItem: { type: _STRING_, maxLength: 512 }, ref: "attrs/" + ZaDomain.A_zimbraMailAddressValidationRegex },
+		{ id: ZaDomain.A_zimbraMFAbyPassIP, type: _LIST_, listItem: { type: _STRING_, maxLength: 49 }, ref: "attrs/" + ZaDomain.A_zimbraMFAbyPassIP },
 		//admin Sieve rules
 		{ id: ZaDomain.A_zimbraSieveRejectMailEnabled, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraSieveRejectMailEnabled, choices: ZaModel.BOOLEAN_CHOICES },
 		{ id: ZaDomain.A_zimbraSieveEditHeaderEnabled, type: _ENUM_, ref: "attrs/" + ZaDomain.A_zimbraSieveEditHeaderEnabled, choices: ZaModel.BOOLEAN_CHOICES },

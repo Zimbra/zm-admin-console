@@ -335,6 +335,8 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
 	ZaCos.A_zimbraFeatureTwoFactorAuthRequired,
 	ZaCos.A_zimbraTwoFactorAuthNumScratchCodes,
 	ZaCos.A_zimbraFeatureAppSpecificPasswordsEnabled,
+	ZaCos.A_zimbraFeatureTrustedDevicesEnabled,
+	ZaCos.A_zimbraMFAbyPassIP,
     ZaCos.A_zimbraPasswordLockoutEnabled,
     ZaCos.A_zimbraPasswordLockoutMaxFailures,
     ZaCos.A_zimbraPasswordLockoutDuration,
@@ -1792,6 +1794,46 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         textFieldCssClass:"admin_xform_number_input",
                         labelCssStyle:"white-space:normal;",
                         nowrap:false,labelWrap:true
+                    }
+                ]
+            },
+            {type:_ZA_TOP_GROUPER_, id:"cos_two_factor_auth_settings",
+                label:ZaMsg.NAD_TwoFactorAuthGrouper,
+                visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible,
+                    [ZaCos.A_zimbraFeatureTrustedDevicesEnabled, ZaCos.A_zimbraMFAbyPassIP]]],
+                items: [
+                    {ref:ZaCos.A_zimbraFeatureTrustedDevicesEnabled, type:_CHECKBOX_,
+                        msgName:ZaMsg.NAD_TrustedDevicesEnabled,
+                        label:ZaMsg.NAD_TrustedDevicesEnabled,
+                        labelLocation:_LEFT_,
+                        trueValue:"TRUE", falseValue:"FALSE",
+                        labelCssClass:"xform_label", align:_LEFT_
+                    },
+                    {type:_DWT_ALERT_,
+                        containerCssStyle:"padding-bottom:0;",
+                        style:DwtAlert.INFO,
+                        iconVisible:false,
+                        content:ZaMsg.Alert_MFAbyPassIP
+                    },
+                    {ref:ZaCos.A_zimbraMFAbyPassIP, type:_REPEAT_,
+                        msgName:ZaMsg.MSG_zimbraMFAbyPassIP,
+                        label:ZaMsg.LBL_zimbraMFAbyPassIP,
+                        labelLocation:_LEFT_,
+                        labelCssStyle:"vertical-align:top;",
+                        align:_LEFT_,
+                        nowrap:false, labelWrap:true,
+                        repeatInstance:"",
+                        addButtonLabel:ZaMsg.NAD_AddMFAbyPassIP,
+                        removeButtonLabel:ZaMsg.NAD_RemoveMFAbyPassIP,
+                        showAddButton:true,
+                        showRemoveButton:true,
+                        showAddOnNextRow:true,
+                        items: [
+                            {ref:".", type:_TEXTFIELD_, label:null,
+                                enableDisableChecks:[],
+                                visibilityChecks:[],
+                                width:"15em"}
+                        ]
                     }
                 ]
             },

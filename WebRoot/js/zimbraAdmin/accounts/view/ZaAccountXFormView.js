@@ -1082,6 +1082,7 @@ ZaAccountXFormView.MEMBEROF_TAB_ATTRS = [];
 ZaAccountXFormView.MEMBEROF_TAB_RIGHTS = [ZaAccount.GET_ACCOUNT_MEMBERSHIP_RIGHT];
 
 ZaAccountXFormView.FEATURE_TAB_ATTRS = [ZaAccount.A_zimbraFeatureManageZimlets,
+    ZaAccount.A_zimbraFeatureTrustedDevicesEnabled,
     ZaAccount.A_zimbraFeatureReadReceiptsEnabled,
     ZaAccount.A_zimbraFeatureDeliveryStatusNotificationEnabled,
     ZaAccount.A_zimbraFeatureMailEnabled,
@@ -2173,7 +2174,8 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                              ZaAccount.A_zimbraFeatureExportFolderEnabled,
                              ZaAccount.A_zimbraDumpsterEnabled,
                              ZaAccount.A_zimbraDumpsterPurgeEnabled,
-                             ZaAccount.A_zimbraFeatureDocumentEditingEnabled
+                             ZaAccount.A_zimbraFeatureDocumentEditingEnabled,
+                             ZaAccount.A_zimbraFeatureTrustedDevicesEnabled
                              ]]
                         ],
                         items:[
@@ -2181,6 +2183,11 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
                                 resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
                                 msgName:ZaMsg.LBL_zimbraFeatureTaggingEnabled,
                                 checkBoxLabel:ZaMsg.LBL_zimbraFeatureTaggingEnabled,
+                                trueValue:"TRUE", falseValue:"FALSE"},
+                            {ref:ZaAccount.A_zimbraFeatureTrustedDevicesEnabled, type:_SUPER_CHECKBOX_,
+                                resetToSuperLabel:ZaMsg.NAD_ResetToCOS,
+                                msgName:ZaMsg.NAD_TrustedDevicesEnabled,
+                                checkBoxLabel:ZaMsg.NAD_TrustedDevicesEnabled,
                                 trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraFeatureSharingEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraFeatureSharingEnabled,checkBoxLabel:ZaMsg.LBL_zimbraFeatureSharingEnabled,trueValue:"TRUE", falseValue:"FALSE"},
                             {ref:ZaAccount.A_zimbraExternalSharingEnabled, type:_SUPER_CHECKBOX_, resetToSuperLabel:ZaMsg.NAD_ResetToCOS, msgName:ZaMsg.LBL_zimbraExternalSharingEnabled,checkBoxLabel:ZaMsg.LBL_zimbraExternalSharingEnabled,trueValue:"TRUE", falseValue:"FALSE",

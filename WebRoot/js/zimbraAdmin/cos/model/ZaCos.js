@@ -94,6 +94,11 @@ ZaCos.A_zimbraDataSourceCaldavPollingInterval = "zimbraDataSourceCaldavPollingIn
 
 
 ZaCos.A_zimbraProxyAllowedDomains = "zimbraProxyAllowedDomains";
+
+//two-factor auth
+ZaCos.A_zimbraFeatureTrustedDevicesEnabled = "zimbraFeatureTrustedDevicesEnabled";
+ZaCos.A_zimbraMFAbyPassIP = "zimbraMFAbyPassIP";
+
 //prefs
 ZaCos.A_zimbraPrefMandatorySpellCheckEnabled = "zimbraPrefMandatorySpellCheckEnabled";
 ZaCos.A_zimbraPrefAppleIcalDelegationEnabled = "zimbraPrefAppleIcalDelegationEnabled";
@@ -322,6 +327,12 @@ function (by, val) {
     if(this.attrs[ZaCos.A_zimbraProxyAllowedDomains] &&
        (!(this.attrs[ZaCos.A_zimbraProxyAllowedDomains] instanceof Array)) ) {
         this.attrs[ZaCos.A_zimbraProxyAllowedDomains] = [this.attrs[ZaCos.A_zimbraProxyAllowedDomains]];
+    }
+
+    // A single configured range arrives as a bare string; the repeating form item needs a list.
+    if(this.attrs[ZaCos.A_zimbraMFAbyPassIP] &&
+       (!(this.attrs[ZaCos.A_zimbraMFAbyPassIP] instanceof Array)) ) {
+        this.attrs[ZaCos.A_zimbraMFAbyPassIP] = [this.attrs[ZaCos.A_zimbraMFAbyPassIP]];
     }
 }
 ZaItem.loadMethods["ZaCos"].push(ZaCos.loadMethod);
@@ -748,6 +759,8 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraDataSourceRssPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceRssPollingInterval, type:_LIFETIME_},
         {id:ZaCos.A_zimbraDataSourceCaldavPollingInterval, ref:"attrs/"+ZaCos.A_zimbraDataSourceCaldavPollingInterval, type:_LIFETIME_},
     {id:ZaCos.A_zimbraProxyAllowedDomains, type: _LIST_, ref:"attrs/"+ZaCos.A_zimbraProxyAllowedDomains, listItem:{ type: _STRING_}},
+        {id:ZaCos.A_zimbraFeatureTrustedDevicesEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureTrustedDevicesEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraMFAbyPassIP, type:_LIST_, ref:"attrs/"+ZaCos.A_zimbraMFAbyPassIP, listItem:{ type:_STRING_, maxLength:49}},
         {id:ZaCos.A_zimbraPrefMailFlashIcon, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailFlashIcon, type:_ENUM_},
         {id:ZaCos.A_zimbraPrefMailFlashTitle, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailFlashTitle, type:_ENUM_},
         {id:ZaCos.A_zimbraPrefMailSoundsEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraPrefMailSoundsEnabled, type:_ENUM_},

@@ -711,8 +711,8 @@ ZaDomainXFormView.VH_TAB_RIGHTS = [];
 
 ZaDomainXFormView.ADV_TAB_ATTRS = [ZaDomain.A_zimbraBasicAuthRealm, ZaDomain.A_zimbraMailAddressValidationRegex,
     ZaDomain.A_zimbraMailDomainQuota, ZaDomain.A_zimbraDomainAggregateQuota, ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent,
-    ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, ZaDomain.A_zimbraDomainAggregateQuotaPolicy, ZaDomain.A_zimbraExternalEmailWarningMessage, 
-    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled
+    ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, ZaDomain.A_zimbraDomainAggregateQuotaPolicy, ZaDomain.A_zimbraExternalEmailWarningMessage,
+    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, ZaDomain.A_zimbraMFAbyPassIP
 ];
 
 ZaDomainXFormView.ADV_TAB_RIGHTS = [];
@@ -1748,6 +1748,36 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             addButtonLabel:ZaMsg.NAD_AddRegex,
                             showAddOnNextRow:true,
                             removeButtonLabel:ZaMsg.NAD_RemoveRegex,
+                            items: [
+                                {ref:".", type:_TEXTFIELD_, label:null,
+                                    enableDisableChecks:[], visibilityChecks:[],
+                                    onChange:ZaDomainXFormView.onFormFieldChanged}
+                            ]
+                        }
+                    ]
+                },
+
+                {type:_ZA_TOP_GROUPER_, label:ZaMsg.NAD_TwoFactorAuthGrouper, id:"domain_two_factor_auth",
+                    visibilityChecks:[[ZATopGrouper_XFormItem.isGroupVisible, ZaDomain.A_zimbraMFAbyPassIP]],
+                    items:[
+                        {type:_DWT_ALERT_,
+                            containerCssStyle:"padding-bottom:0;",
+                            style:DwtAlert.INFO,
+                            iconVisible:false,
+                            content:ZaMsg.Alert_MFAbyPassIPDomain
+                        },
+                        {ref:ZaDomain.A_zimbraMFAbyPassIP, type:_REPEAT_,
+                            nowrap:false, labelWrap:true,
+                            msgName:ZaMsg.MSG_zimbraMFAbyPassIP,
+                            label:ZaMsg.LBL_zimbraMFAbyPassIP,
+                            labelLocation:_LEFT_,
+                            labelCssStyle:"vertical-align:top;",
+                            repeatInstance:"",
+                            showAddButton:true,
+                            showRemoveButton:true,
+                            addButtonLabel:ZaMsg.NAD_AddMFAbyPassIP,
+                            removeButtonLabel:ZaMsg.NAD_RemoveMFAbyPassIP,
+                            showAddOnNextRow:true,
                             items: [
                                 {ref:".", type:_TEXTFIELD_, label:null,
                                     enableDisableChecks:[], visibilityChecks:[],
