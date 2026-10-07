@@ -299,6 +299,10 @@ ZaNewCosXWizard.isBriefcaseFeatureEnabled = function () {
     return (this.getInstanceValue(ZaCos.A_zimbraFeatureBriefcasesEnabled) == "TRUE");
 }
 
+ZaNewCosXWizard.isFeatureNativeMobileAppEnabled = function () {
+    return (this.getInstanceValue(ZaCos.A_zimbraFeatureNativeMobileAppEnabled) == "TRUE");
+}
+
 ZaNewCosXWizard.FEATURE_TAB_ATTRS = [ZaCos.A_zimbraFeatureMailEnabled,
     ZaCos.A_zimbraFeatureReadReceiptsEnabled,
     ZaCos.A_zimbraFeatureDeliveryStatusNotificationEnabled,
@@ -451,7 +455,9 @@ ZaNewCosXWizard.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraDataSourceCalendarPollingInterval,
     ZaCos.A_zimbraDataSourceRssPollingInterval,
     ZaCos.A_zimbraDataSourceCaldavPollingInterval,
-    ZaCos.A_zimbraDataSourceMinPollingInterval
+    ZaCos.A_zimbraDataSourceMinPollingInterval,
+    ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+    ZaCos.A_zimbraMobilePushNotificationEnabled
     // TODO: We will use below code in ZCS-11977
     // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
     // ZaCos.A_zimbraFileUploadBlockedFileTypes,
@@ -1647,7 +1653,38 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         label:ZaMsg.LBL_zimbraFreebusyExchangeUserOrg,labelLocation:_LEFT_
                     }
                 ]
-            } ,
+            },
+            {
+                type: _ZAWIZ_TOP_GROUPER_,
+                id: "cos_native_mobile_app_settings",
+                label: ZaMsg.NAD_NativeMobileApp,
+                visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                    ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                    ZaCos.A_zimbraMobilePushNotificationEnabled
+                ]]],
+                items: [
+                    {
+                        ref: ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                        type: _WIZ_CHECKBOX_,
+                        msgName: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                        label: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE",
+                        visibilityChecks: [[ZaItem.hasWritePermission]]
+                    },
+                    {
+                        ref: ZaCos.A_zimbraMobilePushNotificationEnabled,
+                        type: _WIZ_CHECKBOX_,
+                        msgName: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                        label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE",
+                        visibilityChecks: [[ZaItem.hasWritePermission]],
+                        enableDisableChecks: [ZaNewCosXWizard.isFeatureNativeMobileAppEnabled],
+                        enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureNativeMobileAppEnabled]
+                    }
+                ]
+            },
             {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
 
         ];

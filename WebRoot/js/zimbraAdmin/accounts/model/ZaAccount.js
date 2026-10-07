@@ -308,6 +308,10 @@ ZaAccount.A_zimbraFeatureDistributionListFolderEnabled = "zimbraFeatureDistribut
 
 ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled = "zimbraFeatureCalendarReminderDeviceEmailEnabled";
 
+// Native mobile app
+ZaAccount.A_zimbraFeatureNativeMobileAppEnabled = "zimbraFeatureNativeMobileAppEnabled";
+ZaAccount.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
+
 //readonly
 ZaAccount.A_zimbraLastLogonTimestamp = "zimbraLastLogonTimestamp";
 ZaAccount.A_zimbraPasswordModifiedTime = "zimbraPasswordModifiedTime";
@@ -2186,7 +2190,11 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A2_ldap_ds, ref:ZaAccount.A2_ldap_ds, type:_OBJECT_, items:ZaDataSource.myXModel.items},
         {id:ZaAccount.A2_zimbra_ds, ref:ZaAccount.A2_zimbra_ds, type:_OBJECT_, items:ZaDataSource.myXModel.items},
         {id:ZaAccount.A2_datasources, ref:ZaAccount.A2_datasources, type:_LIST_, listItem:{type:_OBJECT_, items:ZaDataSource.myXModel.items}} ,
-        {id:ZaAccount.A2_isExternalAuth, ref:ZaAccount.A2_isExternalAuth, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES1}
+        {id:ZaAccount.A2_isExternalAuth, ref:ZaAccount.A2_isExternalAuth, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES1},
+
+        // Native mobile app
+        {id:ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraMobilePushNotificationEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraMobilePushNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES}
     ]
 };
 
