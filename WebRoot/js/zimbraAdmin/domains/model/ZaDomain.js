@@ -372,6 +372,9 @@ ZaDomain.A_zimbraExternalEmailWarningMessage = "zimbraExternalEmailWarningMessag
 ZaDomain.A_zimbraAutoProvNotificationSubject = "zimbraAutoProvNotificationSubject";
 ZaDomain.A_zimbraAutoProvNotificationBody = "zimbraAutoProvNotificationBody";
 
+// Native mobile app
+ZaDomain.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
+
 ZaDomain.A_zimbraDomainAliasTargetId = "zimbraDomainAliasTargetId" ;
 ZaDomain.A2_zimbraDomainAliasTarget = "zimbraDomainAliasTargetName" ;
 ZaDomain.A_zimbraPrefTimeZoneId = "zimbraPrefTimeZoneId" ;
@@ -1033,6 +1036,11 @@ function(tmpObj, newDomain) {
     if(tmpObj.attrs[ZaDomain.A_zimbraDomainAggregateQuotaPolicy]){
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraDomainAggregateQuotaPolicy]);
         attr.setAttribute("n", ZaDomain.A_zimbraDomainAggregateQuotaPolicy);
+    }
+
+    if (tmpObj.attrs[ZaDomain.A_zimbraMobilePushNotificationEnabled]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraMobilePushNotificationEnabled]);
+        attr.setAttribute("n", ZaDomain.A_zimbraMobilePushNotificationEnabled);
     }
 
     // set additional attribute(s) via admin zimlet
@@ -2948,7 +2956,10 @@ ZaDomain.myXModel = {
 		{ id: ZaDomain.A_zimbraFeatureResetPasswordStatus, type: _ENUM_, choices: ZaSettings.resetPasswordStatusChoices, ref: "attrs/" + ZaDomain.A_zimbraFeatureResetPasswordStatus },
 
 		{ id: ZaDomain.A_zimbraAutoProvNotificationSubject, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject },
-		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody }
+		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody },
+
+		// Native mobile app
+		{ id: ZaDomain.A_zimbraMobilePushNotificationEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraMobilePushNotificationEnabled }
 	]
 };
 

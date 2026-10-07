@@ -456,6 +456,10 @@ ZaNewAccountXWizard.isMailForwardingEnabled = function () {
     return (this.getInstanceValue(ZaAccount.A_zimbraFeatureMailForwardingEnabled) == "TRUE");
 }
 
+ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled = function () {
+    return (this.getInstanceValue(ZaAccount.A_zimbraFeatureNativeMobileAppEnabled) == "TRUE");
+}
+
 ZaNewAccountXWizard.onCOSChanged =
 function(value, event, form) {
     if(ZaItem.ID_PATTERN.test(value))  {
@@ -2517,6 +2521,56 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                                 }
                             ]
                         });
+        }
+
+        if (ZAWizTopGrouper_XFormItem.isGroupVisible(entry,
+            [
+                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                ZaAccount.A_zimbraMobilePushNotificationEnabled
+            ], [])
+        ) {
+            advancedCaseItems.push(
+                {
+                    type: _ZAWIZ_TOP_GROUPER_,
+                    id: "account_native_mobile_app_settings",
+                    label: ZaMsg.NAD_NativeMobileApp,
+                    colSizes: ["auto"],
+                    numCols: 1,
+                    visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                        ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                        ZaAccount.A_zimbraMobilePushNotificationEnabled
+                    ]]],
+                    items: [
+                        {
+                            ref: ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                            type: _SUPER_WIZ_CHECKBOX_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            msgName: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            colSizes: ["200px", "300px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                            type: _SUPER_WIZ_CHECKBOX_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            msgName: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            colSizes: ["200px", "300px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission],
+                            enableDisableChecks: [
+                                [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
+                        }
+                    ]
+                }
+            )
         }
 
         cases.push({type:_CASE_, caseKey:ZaNewAccountXWizard.ADVANCED_STEP, tabGroupKey:ZaNewAccountXWizard.ADVANCED_STEP, id:"account_form_advanced_step", numCols:1, width:"100%",

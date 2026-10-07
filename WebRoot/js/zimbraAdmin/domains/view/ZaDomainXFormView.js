@@ -712,7 +712,7 @@ ZaDomainXFormView.VH_TAB_RIGHTS = [];
 ZaDomainXFormView.ADV_TAB_ATTRS = [ZaDomain.A_zimbraBasicAuthRealm, ZaDomain.A_zimbraMailAddressValidationRegex,
     ZaDomain.A_zimbraMailDomainQuota, ZaDomain.A_zimbraDomainAggregateQuota, ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent,
     ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, ZaDomain.A_zimbraDomainAggregateQuotaPolicy, ZaDomain.A_zimbraExternalEmailWarningMessage, 
-    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled
+    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, ZaDomain.A_zimbraMobilePushNotificationEnabled
 ];
 
 ZaDomainXFormView.ADV_TAB_RIGHTS = [];
@@ -1837,6 +1837,23 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             enableDisableChangeEventSources: [ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled],
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
                         },
+                    ]
+                },
+                {
+                    type: _ZA_TOP_GROUPER_,
+                    label: ZaMsg.NAD_NativeMobileApp,
+                    id: "domain_native_mobile_app_settings",
+                    items: [
+                        {
+                            ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
+                            type: _SUPER_CHECKBOX_,
+                            label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            labelLocation: _LEFT_,
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+                        }
                     ]
                 },
                 { type: _SPACER_ , height: "10px" } //add some spaces at the bottom of the page

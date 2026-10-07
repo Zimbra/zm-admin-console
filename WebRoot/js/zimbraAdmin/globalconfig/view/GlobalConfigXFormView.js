@@ -398,7 +398,10 @@ GlobalConfigXFormView.SKIN_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSkinForegroundCo
 GlobalConfigXFormView.SKIN_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.BC_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraBasicAuthRealm,
-        ZaGlobalConfig.A_zimbraMailAddressValidationRegex ];
+        ZaGlobalConfig.A_zimbraMailAddressValidationRegex,
+        ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
+        ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
+        ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel ];
 GlobalConfigXFormView.BC_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.AUTO_PROV_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraAutoProvNotificationBody,
@@ -1490,7 +1493,46 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         enableDisableChangeEventSources: [ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled]
                     },
                 ]
-            } 
+            },
+            {
+                type: _ZA_TOP_GROUPER_,
+                id: "global_native_mobile_app_settings",
+                label: ZaMsg.NAD_NativeMobileApp,
+                items: [
+                    {
+                        ref: ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                        labelLocation: _LEFT_,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE",
+                    },
+                    {
+                        ref : ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
+                        type : _OSELECT1_,
+                        label : ZaMsg.LBL_zimbraPushNotificationPayloadMode,
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraPushNotificationPayloadMode],
+                            [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled]
+                    },
+                    {
+                        ref : ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel,
+                        type : _OSELECT1_,
+                        label : ZaMsg.LBL_zimbraPushNotificationDisclosureLevel,
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel],
+                            [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, "TRUE"],
+                            [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, "CONFIGURABLE"]
+                        ],
+                        enableDisableChangeEventSources: [
+                            ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
+                            ZaGlobalConfig.A_zimbraPushNotificationPayloadMode
+                        ]
+                    }
+                ]
+            }
             ]
         };
         switchItems.push(case9);

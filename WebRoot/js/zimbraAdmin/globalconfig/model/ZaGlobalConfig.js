@@ -258,6 +258,11 @@ ZaGlobalConfig.A_zimbraHelpDelegatedURL = "zimbraHelpDelegatedURL";
 //Ephemeral Backend
 ZaGlobalConfig.A_zimbraEphemeralBackendURL = "zimbraEphemeralBackendURL";
 
+// Native mobile app
+ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
+ZaGlobalConfig.A_zimbraPushNotificationPayloadMode = "zimbraPushNotificationPayloadMode";
+ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel = "zimbraPushNotificationDisclosureLevel";
+
 ZaGlobalConfig.__configInstance = null;
 ZaGlobalConfig.isDirty = true;
 
@@ -737,7 +742,11 @@ ZaGlobalConfig.myXModel = {
         { id: ZaGlobalConfig.A2_registeredDevice_Selection, type: _LIST_ },
 
         //Ephemeral Backend
-        { id: ZaGlobalConfig.A_zimbraEphemeralBackendURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraEphemeralBackendURL, type: _STRING_, maxLength: 128 }
+        { id: ZaGlobalConfig.A_zimbraEphemeralBackendURL, ref: "attrs/" + ZaGlobalConfig.A_zimbraEphemeralBackendURL, type: _STRING_, maxLength: 128 },
 
+        // Native mobile app
+        { id: ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, ref: "attrs/" + ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, type: _ENUM_, choices: ZaSettings.pushNotificationPayloadModeChoices },
+        { id: ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel, ref: "attrs/" + ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel, type: _ENUM_, choices: ZaSettings.pushNotificationDisclosureLevelChoices }
     ]
 }

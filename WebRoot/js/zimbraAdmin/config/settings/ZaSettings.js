@@ -991,3 +991,23 @@ ZaSettings.getSamlNameIdFormat = function(){
 };
 
 ZaSettings.samlNameIdFormatChoices = ZaSettings.getSamlNameIdFormat;
+
+ZaSettings.getPushNotificationPayloadMode = function(){
+    return [
+        //{value: "OPAQUE", label: ZaMsg.LBL_PushNotificationPayloadModeBasic},
+        {value: "CONFIGURABLE", label: ZaMsg.LBL_PushNotificationPayloadModeCustom}
+        //{value: "E2EE", label: ZaMsg.LBL_PushNotificationPayloadModeSecure}
+	];
+};
+
+ZaSettings.pushNotificationPayloadModeChoices = ZaSettings.getPushNotificationPayloadMode;
+
+ZaSettings.getPushNotificationDisclosureLevel = function(){
+    return [
+        {value: "FULL_PREVIEW", label: ZaMsg.LBL_PushNotificationDisclosureLevelFullPreview},
+        {value: "SKELETAL", label: ZaMsg.LBL_PushNotificationDisclosureLevelSkeletal},
+        {value: "SENDER_ONLY", label: ZaMsg.LBL_PushNotificationDisclosureLevelSenderOnly}
+	];
+};
+
+ZaSettings.pushNotificationDisclosureLevelChoices = ZaSettings.getPushNotificationDisclosureLevel;
