@@ -358,7 +358,9 @@ ZaCosXFormView.ADVANCED_TAB_ATTRS = [ZaCos.A_zimbraAttachmentsBlocked,
     ZaCos.A_zimbraDataSourceCalendarPollingInterval,
     ZaCos.A_zimbraDataSourceRssPollingInterval,
     ZaCos.A_zimbraDataSourceCaldavPollingInterval,
-    ZaCos.A_zimbraDataSourceMinPollingInterval
+    ZaCos.A_zimbraDataSourceMinPollingInterval,
+    ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+    ZaCos.A_zimbraMobilePushNotificationEnabled
     // TODO: We will use below code in ZCS-11977
     // ZaCos.A_zimbraFeatureFileTypeUploadRestrictionsEnabled,
     // ZaCos.A_zimbraFileUploadBlockedFileTypes,
@@ -1855,6 +1857,36 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                     {ref:ZaCos.A_zimbraAdminSieveScriptAfter, type:_TEXTAREA_,
                         label:ZaMsg.LBL_zimbraAdminSieveScriptAfter, labelLocation:_LEFT_,
                         labelCssStyle:"vertical-align:top;",width: "30em"}
+                ]
+            },
+            {
+                type: _ZA_TOP_GROUPER_,
+                id: "cos_native_mobile_app_settings",
+                label: ZaMsg.NAD_NativeMobileApp,
+                visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                    ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                    ZaCos.A_zimbraMobilePushNotificationEnabled
+                ]]],
+                items: [
+                    {
+                        ref: ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE"
+                    },
+                    {
+                        ref: ZaCos.A_zimbraMobilePushNotificationEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE",
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaCos.A_zimbraMobilePushNotificationEnabled],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureNativeMobileAppEnabled]
+                    }
                 ]
             },
             {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
