@@ -1898,8 +1898,27 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                    label:ZaMsg.LBL_DomainAggregateQuotaPolicy, labelLocation:_LEFT_
                                 }
                             ]
+                        },
+                        {
+                            type: _ZAWIZ_TOP_GROUPER_,
+                            label: ZaMsg.NAD_NativeMobileApp,
+                            id: "domain_native_mobile_app_settings",
+                            colSizes: ["200px", "*"],
+                            visibilityChecks: [[ZaItem.hasWritePermission, ZaDomain.A_zimbraMobilePushNotificationEnabled]],
+                            items: [
+                                {
+                                    ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
+                                    type: _SUPER_WIZ_CHECKBOX_,
+                                    label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                                    labelLocation: _LEFT_,
+                                    labelCssStyle: "text-align:right;",
+                                    checkboxAlign: _LEFT_,
+                                    trueValue: "TRUE",
+                                    falseValue: "FALSE",
+                                    resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+                                }
+                            ]
                         }
-									
 					]
 				},
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.CONFIG_COMPLETE_STEP,

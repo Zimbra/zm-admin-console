@@ -1266,7 +1266,9 @@ ZaAccountXFormView.ADVANCED_TAB_ATTRS = [ZaAccount.A_zimbraAttachmentsBlocked,
     // ZaAccount.A_zimbraFileUploadBlockedFileTypes,
     // ZaAccount.A_zimbraFileUploadMaxSizePerFile,
     ZaAccount.A_zimbraInterceptAddress,
-    ZaAccount.A_zimbraInterceptSendHeadersOnly
+    ZaAccount.A_zimbraInterceptSendHeadersOnly,
+    ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+    ZaAccount.A_zimbraMobilePushNotificationEnabled
     ];
 ZaAccountXFormView.ADVANCED_TAB_RIGHTS = [];
 
@@ -3790,6 +3792,39 @@ textFieldCssClass:"admin_xform_number_input"}
                                         trueValue:"TRUE", falseValue:"FALSE"
                                     },
                                 ]
+                        },
+                        {
+                            type: _ZA_TOP_GROUPER_,
+                            id: "account_native_mobile_app_settings",
+                            label: ZaMsg.NAD_NativeMobileApp,
+                            colSizes: ["275px", "*"],
+                            numCols: 2,
+                            visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraMobilePushNotificationEnabled
+                            ]]],
+                            items: [
+                                {
+                                    ref: ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                    type: _SUPER_CHECKBOX_,
+                                    msgName: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                                    checkBoxLabel: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                                    trueValue: "TRUE",
+                                    falseValue: "FALSE",
+                                    resetToSuperLabel: ZaMsg.NAD_ResetToCOS
+                                },
+                                {
+                                    ref: ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                                    type: _SUPER_CHECKBOX_,
+                                    msgName: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                                    checkBoxLabel: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                                    trueValue: "TRUE",
+                                    falseValue: "FALSE",
+                                    resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                                    enableDisableChecks: [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]],
+                                    enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
+                                }
+                            ]
                         },
                         {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
                     ]
