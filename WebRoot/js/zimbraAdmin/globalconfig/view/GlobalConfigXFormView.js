@@ -398,10 +398,7 @@ GlobalConfigXFormView.SKIN_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSkinForegroundCo
 GlobalConfigXFormView.SKIN_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.BC_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraBasicAuthRealm,
-        ZaGlobalConfig.A_zimbraMailAddressValidationRegex,
-        ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
-        ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
-        ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel ];
+        ZaGlobalConfig.A_zimbraMailAddressValidationRegex ];
 GlobalConfigXFormView.BC_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.AUTO_PROV_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraAutoProvNotificationBody,
@@ -410,6 +407,16 @@ GlobalConfigXFormView.AUTO_PROV_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
+
+GlobalConfigXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
+    ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
+    ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
+    ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel,
+    ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled,
+    ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime,
+    ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime
+];
+GlobalConfigXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.prototype.loadRetentionPolicies = function() {
     var result = ZaRetentionPolicy.getRetentionPolicies();
@@ -1493,45 +1500,6 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         enableDisableChangeEventSources: [ZaGlobalConfig.A_zimbraFeatureExternalEmailWarningEnabled]
                     },
                 ]
-            },
-            {
-                type: _ZA_TOP_GROUPER_,
-                id: "global_native_mobile_app_settings",
-                label: ZaMsg.NAD_NativeMobileApp,
-                items: [
-                    {
-                        ref: ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
-                        type: _CHECKBOX_,
-                        label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
-                        labelLocation: _LEFT_,
-                        trueValue: "TRUE",
-                        falseValue: "FALSE",
-                    },
-                    {
-                        ref : ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
-                        type : _OSELECT1_,
-                        label : ZaMsg.LBL_zimbraPushNotificationPayloadMode,
-                        enableDisableChecks: [
-                            [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraPushNotificationPayloadMode],
-                            [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, "TRUE"]
-                        ],
-                        enableDisableChangeEventSources: [ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled]
-                    },
-                    {
-                        ref : ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel,
-                        type : _OSELECT1_,
-                        label : ZaMsg.LBL_zimbraPushNotificationDisclosureLevel,
-                        enableDisableChecks: [
-                            [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel],
-                            [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, "TRUE"],
-                            [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, "CONFIGURABLE"]
-                        ],
-                        enableDisableChangeEventSources: [
-                            ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
-                            ZaGlobalConfig.A_zimbraPushNotificationPayloadMode
-                        ]
-                    }
-                ]
             }
             ]
         };
@@ -2066,6 +2034,107 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                     } ]
         };
         switchItems.push(case11);
+    }
+
+    if (ZaTabView.isTAB_ENABLED(entry, GlobalConfigXFormView.NATIVE_MOBILE_APP_TAB_ATTRS, GlobalConfigXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS)) {
+        _tab12 = ++this.TAB_INDEX;
+        this.helpMap[_tab12] = [ location.pathname, ZaUtil.HELP_URL, "managing_global_settings/global_settings.htm",
+                "?locid=", AjxEnv.DEFAULT_LOCALE ].join("");
+        tabBarChoices.push({
+            value: _tab12,
+            label: ZaMsg.TABT_NativeMobileApp
+        });
+        var case12 = {
+            type: _ZATABCASE_,
+            caseKey: _tab12,
+            paddingStyle: "padding-left:15px;",
+            width: "98%",
+            cellpadding: 2,
+            colSizes: [ "auto" ],
+            numCols: 1,
+            id: "global_native_mobile_app_tab",
+            items: [
+                {
+                    type: _ZA_TOP_GROUPER_,
+                    id: "global_native_mobile_app_settings",
+                    label: ZaMsg.NAD_NativeMobileApp,
+                    items: [
+                        {
+                            ref: ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
+                            type: _CHECKBOX_,
+                            label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE"
+                        },
+                        {
+                            ref : ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
+                            type : _OSELECT1_,
+                            label : ZaMsg.LBL_zimbraPushNotificationPayloadMode,
+                            enableDisableChecks: [
+                                [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraPushNotificationPayloadMode],
+                                [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled]
+                        },
+                        {
+                            ref : ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel,
+                            type : _OSELECT1_,
+                            label : ZaMsg.LBL_zimbraPushNotificationDisclosureLevel,
+                            enableDisableChecks: [
+                                [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel],
+                                [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, "TRUE"],
+                                [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, "CONFIGURABLE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
+                                ZaGlobalConfig.A_zimbraPushNotificationPayloadMode
+                            ]
+                        },
+                        {
+                            ref: ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled,
+                            type: _CHECKBOX_,
+                            label: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE"
+                        },
+                        {
+                            ref: ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime,
+                            type: _LIFETIME_,
+                            label: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraNativeOAuthAccessTokenLifetime,
+                            unitToExclude: "d",
+                            defaultUnit: "h",
+                            validateNumber: true,
+                            minInclusive: 1,
+                            enableDisableChecks: [
+                                [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime],
+                                [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled
+                            ]
+                        },
+                        {
+                            ref: ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime,
+                            type: _LIFETIME_,
+                            label: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+                            showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
+                            enableDisableChecks: [
+                                [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime],
+                                [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        switchItems.push(case12);
     }
 
     this.tabChoices = tabBarChoices;

@@ -1459,6 +1459,11 @@ Super_Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermiss
 Super_Lifetime_XFormItem.prototype.colSizes =["275px","70px","155px","*"];
 Super_Lifetime_XFormItem.prototype.labelCssStyle = "border-right: 1px solid black;";
 Super_Lifetime_XFormItem.prototype.tableCssClass = "grid_composite_table";
+Super_Lifetime_XFormItem.prototype.unitToExclude = ""; // e.g. "d" to exclude days, "dh" to exclude days and hours
+Super_Lifetime_XFormItem.prototype.defaultUnit = "d"; // It must not be included unitToExclude.
+Super_Lifetime_XFormItem.prototype.showZero = false;
+Super_Lifetime_XFormItem.prototype.validateNumber = false;
+Super_Lifetime_XFormItem.prototype.minInclusive = null;
 Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 	var txtBoxLabel = this.getInheritedProperty("txtBoxLabel");
     var labelCssClass = this.getInheritedProperty("labelCssClass");
@@ -1490,9 +1495,22 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 				}
 			}
 			this.getParentItem()._numericPart = val;
-			return ((typeof itemVal === "undefined" || val=="0") ? this.getModelItem().zeroValue : val);
+			if (val == "0") {
+				val = this.getParentItem().getInheritedProperty("showZero") ? "0" : this.getModelItem().zeroValue;
+			} else if (typeof itemVal === "undefined") {
+				val = this.getModelItem().zeroValue;
+			}
+			return val;
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
+			if (this.getParentItem().getInheritedProperty("validateNumber")) {
+				var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+				if (!this.getParentItem().validateNumericPart.apply(this, [numericPart, minInclusive])) {
+					this.getParentItem()._numericPart = numericPart;
+					return;
+				}
+			}
+
 			if (numericPart  == this.getModelItem().zeroValue) {
 				numericPart = 0;
 			}
@@ -1510,9 +1528,10 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 	
 	var selectField = 	{
 		type:_OSELECT1_, ref:".",  
-		choices:ZaModel.getTimeChoices(),
+		choices:ZaModel.getTimeChoices(this.getInheritedProperty("unitToExclude")),
 		getDisplayValue:function (itemVal){
-			var val = "d";
+			var defaultUnit = this.getParentItem().getInheritedProperty("defaultUnit");
+			var val = defaultUnit || "d";
 			if(itemVal != null && itemVal.length >0) {
 				if(itemVal.length > 1) {
 					var lastChar = (itemVal.toLowerCase()).charAt(itemVal.length-1);
@@ -1524,11 +1543,28 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 						val = "s"
 					}
 				}
+
+				if (
+					this.getParentItem().getInheritedProperty("unitToExclude") &&
+					this.getParentItem().getInheritedProperty("unitToExclude").includes(val)
+				) {
+					val = defaultUnit;
+				}
 			}			
 			this.getParentItem()._stringPart = val;
 			return val;
 		},
 		elementChanged:function(stringPart,instanceValue, event) {
+			if (this.getParentItem().getInheritedProperty("validateNumber")) {
+				var numericPart = this.getParentItem()._numericPart;
+				var textFieldItem = this.getParentItem().items[0];
+				var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+				if (!this.getParentItem().validateNumericPart.apply(textFieldItem, [numericPart, minInclusive])) {
+					this.getParentItem()._stringPart = stringPart;
+					return;
+				}
+			}
+
 			var val = this.getParentItem()._numericPart + stringPart;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		},
@@ -1554,6 +1590,37 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 }
 
 Super_Lifetime_XFormItem.prototype.items = [ ];
+Super_Lifetime_XFormItem.prototype.validateNumericPart = function(numericPart, minInclusive) {
+	var value = this.getModelItem()._normalizeAndValidate(numericPart);
+	if (value === null || value === undefined || value === "") {
+		this.clearError();
+		return true;
+	}
+
+	try {
+		if (isNaN(value)) {
+			throw this.getModel().getErrorMessage("notANumber", value);
+		}
+		var floatValue = parseFloat(value);
+		var intValue = parseInt(value, 10);
+		if (floatValue != intValue) {
+			throw this.getModel().getErrorMessage("notAnInteger", value);
+		}
+		var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+		if (minInclusive !== null && value < minInclusive) {
+			throw this.getModel().getErrorMessage("numberLessThanMin", minInclusive);
+		}
+		this.clearError();
+	} catch (message) {
+		this.setError(message);
+		var event = new DwtXFormsEvent(this.getForm(), this, value + this.getParentItem()._stringPart);
+		this.getForm().notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return false;
+	}
+
+	return true;
+}
+
 
 /**
 * _SUPERWIZ_LIFETIME_ XForm item type

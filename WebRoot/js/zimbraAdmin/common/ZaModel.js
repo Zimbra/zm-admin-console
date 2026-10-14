@@ -323,25 +323,23 @@ ZaModel.currentStep = "currentStep";
 
 ZaModel.currentTab = "currentTab";
 
-ZaModel.getTimeChoices = function () {
-    return [
-        {
-            value: "d",
-            label: AjxMsg.days
-        },
-        {
-            value: "h",
-            label: AjxMsg.hours
-        },
-        {
-            value: "m",
-            label: AjxMsg.minutes
-        },
-        {
-            value: "s",
-            label: AjxMsg.seconds
-        }
-    ];
+ZaModel.getTimeChoices = function (unitToExclude) {
+    var choises = [];
+    var skip = unitToExclude || "";
+    if (!skip.includes("d")) {
+        choises.push({ value: "d", label: AjxMsg.days });
+    }
+    if (!skip.includes("h")) {
+        choises.push({ value: "h", label: AjxMsg.hours });
+    }
+    if (!skip.includes("m")) {
+        choises.push({ value: "m", label: AjxMsg.minutes });
+    }
+    if (!skip.includes("s")) {
+        choises.push({ value: "s", label: AjxMsg.seconds });
+    }
+
+    return choises;
 }
 
 ZaModel.getTimeChoices1 = function () {
