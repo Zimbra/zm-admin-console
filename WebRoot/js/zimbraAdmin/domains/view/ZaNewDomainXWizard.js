@@ -50,6 +50,7 @@ ZaNewDomainXWizard = function(parent, entry) {
 	ZaNewDomainXWizard.VHOST_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.ADVANCED_STEP = ++this.TAB_INDEX;
     ZaNewDomainXWizard.FEATURE_STEP = ++this.TAB_INDEX;
+	ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.CONFIG_COMPLETE_STEP = ++this.TAB_INDEX;
 	
 	this.stepChoices = [
@@ -70,6 +71,7 @@ ZaNewDomainXWizard = function(parent, entry) {
 		{label:ZaMsg.Domain_Tab_VirtualHost, value:ZaNewDomainXWizard.VHOST_STEP},
 		{label:ZaMsg.Domain_Tab_Advanced, value:ZaNewDomainXWizard.ADVANCED_STEP},		
         {label:ZaMsg.TABT_Feature, value:ZaNewDomainXWizard.FEATURE_STEP},
+		{label:ZaMsg.TABT_NativeMobileApp, value:ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP},
 		{label:ZaMsg.DomainConfigComplete, value:ZaNewDomainXWizard.CONFIG_COMPLETE_STEP}		
 	];
 		
@@ -1898,27 +1900,35 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                    label:ZaMsg.LBL_DomainAggregateQuotaPolicy, labelLocation:_LEFT_
                                 }
                             ]
-                        },
-                        {
-                            type: _ZAWIZ_TOP_GROUPER_,
-                            label: ZaMsg.NAD_NativeMobileApp,
-                            id: "domain_native_mobile_app_settings",
-                            colSizes: ["200px", "*"],
-                            visibilityChecks: [[ZaItem.hasWritePermission, ZaDomain.A_zimbraMobilePushNotificationEnabled]],
-                            items: [
-                                {
-                                    ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
-                                    type: _SUPER_WIZ_CHECKBOX_,
-                                    label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
-                                    labelLocation: _LEFT_,
-                                    labelCssStyle: "text-align:right;",
-                                    checkboxAlign: _LEFT_,
-                                    trueValue: "TRUE",
-                                    falseValue: "FALSE",
-                                    resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
-                                }
-                            ]
                         }
+					]
+				},
+				{
+					type: _CASE_,
+					caseKey: ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP,
+					numCols: 1,
+					id: "domain_form_native_mobile_app_tab",
+					items: [
+						{
+							type: _ZAWIZ_TOP_GROUPER_,
+							label: ZaMsg.NAD_NativeMobileApp,
+							id: "domain_native_mobile_app_settings",
+							colSizes: ["200px", "*"],
+							visibilityChecks: [[ZaItem.hasWritePermission, ZaDomain.A_zimbraMobilePushNotificationEnabled]],
+							items: [
+								{
+									ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
+									type: _SUPER_WIZ_CHECKBOX_,
+									label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+									labelLocation: _LEFT_,
+									labelCssStyle: "text-align:right;",
+									checkboxAlign: _LEFT_,
+									trueValue: "TRUE",
+									falseValue: "FALSE",
+									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+								}
+							]
+						}
 					]
 				},
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.CONFIG_COMPLETE_STEP,

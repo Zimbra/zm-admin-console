@@ -2523,13 +2523,23 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                         });
         }
 
+        cases.push({type:_CASE_, caseKey:ZaNewAccountXWizard.ADVANCED_STEP, tabGroupKey:ZaNewAccountXWizard.ADVANCED_STEP, id:"account_form_advanced_step", numCols:1, width:"100%",
+                items:advancedCaseItems});
+    }
+
+    if (ZaTabView.isTAB_ENABLED(entry,ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_ATTRS, ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS) &&
+        !ZaSettings.isOctopus()) {
+        ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP = ++this.TAB_INDEX;
+        this.stepChoices.push({value:ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP, label:ZaMsg.TABT_NativeMobileApp});
+        var nativeMobileAppCaseItems = [];
+
         if (ZAWizTopGrouper_XFormItem.isGroupVisible(entry,
             [
                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
                 ZaAccount.A_zimbraMobilePushNotificationEnabled
             ], [])
         ) {
-            advancedCaseItems.push(
+            nativeMobileAppCaseItems.push(
                 {
                     type: _ZAWIZ_TOP_GROUPER_,
                     id: "account_native_mobile_app_settings",
@@ -2573,9 +2583,17 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
             )
         }
 
-        cases.push({type:_CASE_, caseKey:ZaNewAccountXWizard.ADVANCED_STEP, tabGroupKey:ZaNewAccountXWizard.ADVANCED_STEP, id:"account_form_advanced_step", numCols:1, width:"100%",
-                items:advancedCaseItems});
+        cases.push({
+            type: _CASE_,
+            caseKey: ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP,
+            tabGroupKey: ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP,
+            id: "account_form_native_mobile_app_step",
+            numCols: 1,
+            width: "100%",
+            items: nativeMobileAppCaseItems
+        });
     }
+
     this._lastStep = this.stepChoices.length;
     xFormObject.items = [
             {type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices, valueChangeEventSources:[ZaModel.currentStep]},
