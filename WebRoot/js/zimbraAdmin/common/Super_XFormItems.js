@@ -1459,6 +1459,9 @@ Super_Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermiss
 Super_Lifetime_XFormItem.prototype.colSizes =["275px","70px","155px","*"];
 Super_Lifetime_XFormItem.prototype.labelCssStyle = "border-right: 1px solid black;";
 Super_Lifetime_XFormItem.prototype.tableCssClass = "grid_composite_table";
+Super_Lifetime_XFormItem.prototype.unitToExclude = ""; // e.g. "d" to exclude days, "dh" to exclude days and hours
+Super_Lifetime_XFormItem.prototype.defaultUnit = "d"; // It must not be included unitToExclude.
+Super_Lifetime_XFormItem.prototype.showZero = false;
 Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 	var txtBoxLabel = this.getInheritedProperty("txtBoxLabel");
     var labelCssClass = this.getInheritedProperty("labelCssClass");
@@ -1490,7 +1493,12 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 				}
 			}
 			this.getParentItem()._numericPart = val;
-			return ((typeof itemVal === "undefined" || val=="0") ? this.getModelItem().zeroValue : val);
+			if (val == "0") {
+				val = this.getParentItem().getInheritedProperty("showZero") ? "0" : this.getModelItem().zeroValue;
+			} else if (typeof itemVal === "undefined") {
+				val = this.getModelItem().zeroValue;
+			}
+			return val;
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
 			if (numericPart  == this.getModelItem().zeroValue) {
@@ -1510,9 +1518,10 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 	
 	var selectField = 	{
 		type:_OSELECT1_, ref:".",  
-		choices:ZaModel.getTimeChoices(),
+		choices:ZaModel.getTimeChoices(this.getInheritedProperty("unitToExclude")),
 		getDisplayValue:function (itemVal){
-			var val = "d";
+			var defaultUnit = this.getParentItem().getInheritedProperty("defaultUnit");
+			var val = defaultUnit || "d";
 			if(itemVal != null && itemVal.length >0) {
 				if(itemVal.length > 1) {
 					var lastChar = (itemVal.toLowerCase()).charAt(itemVal.length-1);
@@ -1523,6 +1532,13 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 					} else {
 						val = "s"
 					}
+				}
+
+				if (
+					this.getParentItem().getInheritedProperty("unitToExclude") &&
+					this.getParentItem().getInheritedProperty("unitToExclude").includes(val)
+				) {
+					val = defaultUnit;
 				}
 			}			
 			this.getParentItem()._stringPart = val;

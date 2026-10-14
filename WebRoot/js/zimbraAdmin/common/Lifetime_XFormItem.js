@@ -68,6 +68,9 @@ Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 Lifetime_XFormItem.prototype.nowrap = false;
 Lifetime_XFormItem.prototype.labelWrap = true;
+Lifetime_XFormItem.prototype.unitToExclude = ""; // e.g. "d" to exclude days, "dh" to exclude days and hours
+Lifetime_XFormItem.prototype.defaultUnit = "d"; // It must not be included unitToExclude.
+Lifetime_XFormItem.prototype.showZero = false;
 
 Lifetime_XFormItem.prototype.initializeItems = function(){
 	this.items = [
@@ -89,7 +92,12 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 			}
 
 			this.getParentItem()._numericPart = val;
-			return ((!val || val=="0") ? this.getModelItem().zeroValue : val);
+			if (val == "0") {
+				val = this.getParentItem().getInheritedProperty("showZero") ? "0" : this.getModelItem().zeroValue;
+			} else if (!val) {
+				val = this.getModelItem().zeroValue;
+			}
+			return val;
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
             if (numericPart  == this.getModelItem().zeroValue) {
@@ -103,16 +111,23 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices: ZaModel.getTimeChoices(),
+	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices: ZaModel.getTimeChoices(this.getInheritedProperty("unitToExclude")),
 		visibilityChecks:[],
 	 	enableDisableChecks:[],
 		getDisplayValue:function (itemVal){
-			var val = "d";
+			var defaultUnit = this.getParentItem().getInheritedProperty("defaultUnit");
+			var val = defaultUnit || "d";
 			if(itemVal != null && itemVal.length >0) {
 				if(itemVal.length > 1) {
 					val = itemVal.substr(itemVal.length-1, 1);
 				} else if (itemVal != "0") {
 					val = (itemVal == "d" || itemVal == "h" || itemVal== "m" || itemVal == "s") ? itemVal : "d";
+					if (
+						this.getParentItem().getInheritedProperty("unitToExclude") &&
+						this.getParentItem().getInheritedProperty("unitToExclude").includes(val)
+					) {
+						val = defaultUnit;
+					}
 				}
 			}
 			this.getParentItem()._stringPart = val;
