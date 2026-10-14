@@ -68,6 +68,11 @@ Lifetime_XFormItem.prototype.visibilityChecks = [ZaItem.hasReadPermission];
 Lifetime_XFormItem.prototype.enableDisableChecks = [ZaItem.hasWritePermission];
 Lifetime_XFormItem.prototype.nowrap = false;
 Lifetime_XFormItem.prototype.labelWrap = true;
+Lifetime_XFormItem.prototype.unitToExclude = ""; // e.g. "d" to exclude days, "dh" to exclude days and hours
+Lifetime_XFormItem.prototype.defaultUnit = "d"; // It must not be included unitToExclude.
+Lifetime_XFormItem.prototype.showZero = false;
+Lifetime_XFormItem.prototype.validateNumber = false;
+Lifetime_XFormItem.prototype.minInclusive = null;
 
 Lifetime_XFormItem.prototype.initializeItems = function(){
 	this.items = [
@@ -89,12 +94,25 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 			}
 
 			this.getParentItem()._numericPart = val;
-			return ((!val || val=="0") ? this.getModelItem().zeroValue : val);
+			if (val == "0") {
+				val = this.getParentItem().getInheritedProperty("showZero") ? "0" : this.getModelItem().zeroValue;
+			} else if (!val) {
+				val = this.getModelItem().zeroValue;
+			}
+			return val;
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
-            if (numericPart  == this.getModelItem().zeroValue) {
-                numericPart = 0;
-            }
+			if (this.getParentItem().getInheritedProperty("validateNumber")) {
+				var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+				if (!this.getParentItem().validateNumericPart.apply(this, [numericPart, minInclusive])) {
+					this.getParentItem()._numericPart = numericPart;
+					return;
+				}
+			}
+
+			if (numericPart  == this.getModelItem().zeroValue) {
+				numericPart = 0;
+			}
 			var val = null;
 			if (AjxUtil.isNumeric(numericPart)) {
 				val = numericPart + this.getParentItem()._stringPart;
@@ -103,22 +121,39 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 			this.getForm().itemChanged(this.getParentItem(), val, event);
 		}
 	},
-	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices: ZaModel.getTimeChoices(),
+	{type:_OSELECT1_, ref:".", labelLocation:_NONE_, choices: ZaModel.getTimeChoices(this.getInheritedProperty("unitToExclude")),
 		visibilityChecks:[],
 	 	enableDisableChecks:[],
 		getDisplayValue:function (itemVal){
-			var val = "d";
+			var defaultUnit = this.getParentItem().getInheritedProperty("defaultUnit");
+			var val = defaultUnit || "d";
 			if(itemVal != null && itemVal.length >0) {
 				if(itemVal.length > 1) {
 					val = itemVal.substr(itemVal.length-1, 1);
 				} else if (itemVal != "0") {
 					val = (itemVal == "d" || itemVal == "h" || itemVal== "m" || itemVal == "s") ? itemVal : "d";
+					if (
+						this.getParentItem().getInheritedProperty("unitToExclude") &&
+						this.getParentItem().getInheritedProperty("unitToExclude").includes(val)
+					) {
+						val = defaultUnit;
+					}
 				}
 			}
 			this.getParentItem()._stringPart = val;
 			return val;
 		},
 		elementChanged:function(stringPart,instanceValue, event) {
+			if (this.getParentItem().getInheritedProperty("validateNumber")) {
+				var numericPart = this.getParentItem()._numericPart;
+				var textFieldItem = this.getParentItem().items[0];
+				var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+				if (!this.getParentItem().validateNumericPart.apply(textFieldItem, [numericPart, minInclusive])) {
+					this.getParentItem()._stringPart = stringPart;
+					return;
+				}
+			}
+
 			var val = this.getParentItem()._numericPart + stringPart;
 			this.getParentItem()._stringPart = stringPart;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
@@ -131,6 +166,36 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 Lifetime_XFormItem.prototype.items = [];
 Lifetime_XFormItem.prototype.getDisplayElement = function () {
 	return this.getElement(this.getId() + "_display");
+}
+Lifetime_XFormItem.prototype.validateNumericPart = function(numericPart, minInclusive) {
+	var value = this.getModelItem()._normalizeAndValidate(numericPart);
+	if (value === null || value === undefined || value === "") {
+		this.getParentItem().clearError();
+		return true;
+	}
+
+	try {
+		if (isNaN(value)) {
+			throw this.getModel().getErrorMessage("notANumber", value);
+		}
+		var floatValue = parseFloat(value);
+		var intValue = parseInt(value, 10);
+		if (floatValue != intValue) {
+			throw this.getModel().getErrorMessage("notAnInteger", value);
+		}
+		var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+		if (minInclusive !== null && value < minInclusive) {
+			throw this.getModel().getErrorMessage("numberLessThanMin", minInclusive);
+		}
+		this.getParentItem().clearError();
+	} catch (message) {
+		this.getParentItem().setError(message);
+		var event = new DwtXFormsEvent(this.getForm(), this.getParentItem(), value + this.getParentItem()._stringPart);
+		this.getForm().notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return false;
+	}
+
+	return true;
 }
 
 Lifetime1_XFormItem = function() {}
