@@ -3861,7 +3861,9 @@ textFieldCssClass:"admin_xform_number_input"}
                             checkBoxLabel: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
                             trueValue: "TRUE",
                             falseValue: "FALSE",
-                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            enableDisableChecks: [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
                             ref: ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
@@ -3873,9 +3875,14 @@ textFieldCssClass:"admin_xform_number_input"}
                             showZero: true,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                             enableDisableChecks: [
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
                                 [XForm.checkInstanceValue, ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
                             ],
-                            enableDisableChangeEventSources: [ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, ZaAccount.A_COSId]
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
                         },
                         {
                             ref: ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime,
@@ -3885,9 +3892,14 @@ textFieldCssClass:"admin_xform_number_input"}
                             showZero: true,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                             enableDisableChecks: [
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
                                 [XForm.checkInstanceValue, ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
                             ],
-                            enableDisableChangeEventSources: [ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, ZaAccount.A_COSId]
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
                         }
                     ]
                 }

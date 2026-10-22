@@ -2041,7 +2041,12 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         type: _CHECKBOX_,
                         label: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
                         trueValue: "TRUE",
-                        falseValue: "FALSE"
+                        falseValue: "FALSE",
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureNativeMobileAppEnabled]
                     },
                     {
                         ref: ZaCos.A_zimbraNativeOAuthAccessTokenLifetime,
@@ -2051,9 +2056,13 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         defaultUnit: "h",
                         enableDisableChecks: [
                             [ZaItem.hasWritePermission, ZaCos.A_zimbraNativeOAuthAccessTokenLifetime],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
                             [XForm.checkInstanceValue, ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
                         ],
-                        enableDisableChangeEventSources: [ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled]
+                        enableDisableChangeEventSources: [
+                            ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                            ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled
+                        ]
                     },
                     {
                         ref: ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime,
@@ -2063,9 +2072,13 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         showZero: true,
                         enableDisableChecks: [
                             [ZaItem.hasWritePermission, ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
                             [XForm.checkInstanceValue, ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
                         ],
-                        enableDisableChangeEventSources: [ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled]
+                        enableDisableChangeEventSources: [
+                            ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                            ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled
+                        ]
                     }
                 ]
             }

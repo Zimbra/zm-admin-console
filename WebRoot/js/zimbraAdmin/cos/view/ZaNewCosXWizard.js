@@ -1727,7 +1727,9 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         label: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
                         trueValue: "TRUE",
                         falseValue: "FALSE",
-                        visibilityChecks: [[ZaItem.hasWritePermission]]
+                        visibilityChecks: [[ZaItem.hasWritePermission]],
+                        enableDisableChecks: [ZaNewCosXWizard.isFeatureNativeMobileAppEnabled],
+                        enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureNativeMobileAppEnabled]
                     },
                     {
                         ref: ZaCos.A_zimbraNativeOAuthAccessTokenLifetime,
@@ -1737,9 +1739,13 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         defaultUnit: "h",
                         visibilityChecks: [[ZaItem.hasWritePermission]],
                         enableDisableChecks: [
+                            [ZaNewCosXWizard.isFeatureNativeMobileAppEnabled],
                             [ZaNewCosXWizard.isFeatureNativeOAuthPersistentSessionEnabled]
                         ],
-                        enableDisableChangeEventSources: [ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled]
+                        enableDisableChangeEventSources: [
+                            ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                            ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled
+                        ]
                     },
                     {
                         ref: ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime,
@@ -1747,9 +1753,13 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         label: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                         visibilityChecks: [[ZaItem.hasWritePermission]],
                         enableDisableChecks: [
+                            [ZaNewCosXWizard.isFeatureNativeMobileAppEnabled],
                             [ZaNewCosXWizard.isFeatureNativeOAuthPersistentSessionEnabled]
                         ],
-                        enableDisableChangeEventSources: [ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled]
+                        enableDisableChangeEventSources: [
+                            ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                            ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled
+                        ]
                     }
                 ]
             }

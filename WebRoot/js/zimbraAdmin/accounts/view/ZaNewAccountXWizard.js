@@ -2580,10 +2580,7 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             colSpan: 2,
                             colSizes: ["200px", "300px", "*"],
                             visibilityChecks: [ZaItem.hasWritePermission],
-                            enableDisableChecks: [
-                                [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
-                                [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]
-                            ],
+                            enableDisableChecks: [[ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled]],
                             enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
@@ -2595,7 +2592,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             falseValue: "FALSE",
                             colSpan: 2,
                             colSizes: ["200px", "300px", "*"],
-                            visibilityChecks: [ZaItem.hasWritePermission]
+                            visibilityChecks: [ZaItem.hasWritePermission],
+                            enableDisableChecks: [[ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled]],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
                             ref: ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
@@ -2610,10 +2609,14 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             colSizes: ["200px", "80px", "220px", "*"],
                             visibilityChecks: [ZaItem.hasWritePermission],
                             enableDisableChecks: [
-                                [ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled],
-                                [XForm.checkInstanceValue, ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                                [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
+                                [ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled]
                             ],
-                            enableDisableChangeEventSources: [ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, ZaAccount.A_COSId]
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
                         },
                         {
                             ref: ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime,
@@ -2626,10 +2629,14 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             colSizes: ["200px", "80px", "220px", "*"],
                             visibilityChecks: [ZaItem.hasWritePermission],
                             enableDisableChecks: [
-                                [ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled],
-                                [XForm.checkInstanceValue, ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                                [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
+                                [ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled]
                             ],
-                            enableDisableChangeEventSources: [ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, ZaAccount.A_COSId]
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
                         }
                     ]
                 }
