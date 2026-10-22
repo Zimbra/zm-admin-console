@@ -3872,7 +3872,8 @@ textFieldCssClass:"admin_xform_number_input"}
                             msgName: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
                             unitToExclude: "d",
                             defaultUnit: "h",
-                            showZero: true,
+                            validateNumber: true,
+                            minInclusive: 1,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                             enableDisableChecks: [
                                 [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
@@ -3890,6 +3891,8 @@ textFieldCssClass:"admin_xform_number_input"}
                             txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                             msgName: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                             showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                             enableDisableChecks: [
                                 [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],

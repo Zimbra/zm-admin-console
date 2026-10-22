@@ -2101,8 +2101,11 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                             ref: ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime,
                             type: _LIFETIME_,
                             label: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
                             unitToExclude: "d",
                             defaultUnit: "h",
+                            validateNumber: true,
+                            minInclusive: 1,
                             enableDisableChecks: [
                                 [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime],
                                 [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
@@ -2115,7 +2118,10 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                             ref: ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime,
                             type: _LIFETIME_,
                             label: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                             showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
                             enableDisableChecks: [
                                 [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime],
                                 [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]

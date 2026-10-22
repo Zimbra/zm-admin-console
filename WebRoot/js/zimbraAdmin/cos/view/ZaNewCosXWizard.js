@@ -1737,6 +1737,8 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         label: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
                         unitToExclude: "d",
                         defaultUnit: "h",
+                        validateNumber: true,
+                        minInclusive: 1,
                         visibilityChecks: [[ZaItem.hasWritePermission]],
                         enableDisableChecks: [
                             [ZaNewCosXWizard.isFeatureNativeMobileAppEnabled],
@@ -1751,6 +1753,8 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         ref: ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime,
                         type: _LIFETIME_,
                         label: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
+                        validateNumber: true,
+                        minInclusive: 0,
                         visibilityChecks: [[ZaItem.hasWritePermission]],
                         enableDisableChecks: [
                             [ZaNewCosXWizard.isFeatureNativeMobileAppEnabled],

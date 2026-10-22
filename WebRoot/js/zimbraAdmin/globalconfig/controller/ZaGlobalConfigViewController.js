@@ -456,6 +456,40 @@ function () {
 		}
 	}
 
+
+	//check if the XForm has any errors
+	if (this._view.getMyForm().hasErrors()) {
+		var errItems = this._view.getMyForm().getItemsInErrorState();
+		var dlgMsg = ZaMsg.CORRECT_ERRORS;
+		dlgMsg += "<br><ul>";
+		var i = 0;
+		for (var key in errItems) {
+			if (i > 19) {
+				dlgMsg += "<li>...</li>";
+				break;
+			}
+			if (key == "size") continue;
+			var label = errItems[key].getInheritedProperty("msgName");
+			if (!label && errItems[key].getParentItem()) { //this might be a part of a composite
+				label = errItems[key].getParentItem().getInheritedProperty("msgName");
+			}
+			if (label) {
+				if (label.substring(label.length-1,1)==":") {
+					label = label.substring(0, label.length-1);
+				}
+			}
+			if(label) {
+				dlgMsg += "<li>";
+				dlgMsg += label;
+				dlgMsg += "</li>";
+			}
+			i++;
+		}
+		dlgMsg += "</ul>";
+		this.popupMsgDialog(dlgMsg, true);
+		return false;
+	}
+
 	//save the model
     if (this._currentObject[ZaModel.currentTab]!= tmpObj[ZaModel.currentTab])
              this._currentObject[ZaModel.currentTab] = tmpObj[ZaModel.currentTab];
@@ -494,6 +528,7 @@ function () {
             	}
 
     }
+
     ZaApp.getInstance().getAppCtxt().getAppController().setActionStatusMsg(ZaMsg.GlobalConfigModified);
 	return true;
 }

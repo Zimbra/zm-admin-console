@@ -2102,7 +2102,8 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             msgName: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
                             unitToExclude: "d",
                             defaultUnit: "h",
-                            showZero: true,
+                            validateNumber: true,
+                            minInclusive: 1,
                             onChange: ZaDomainXFormView.onFormFieldChanged,
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
                             enableDisableChecks: [
@@ -2118,6 +2119,8 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                             msgName: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                             showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
                             onChange: ZaDomainXFormView.onFormFieldChanged,
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
                             enableDisableChecks: [

@@ -71,6 +71,8 @@ Lifetime_XFormItem.prototype.labelWrap = true;
 Lifetime_XFormItem.prototype.unitToExclude = ""; // e.g. "d" to exclude days, "dh" to exclude days and hours
 Lifetime_XFormItem.prototype.defaultUnit = "d"; // It must not be included unitToExclude.
 Lifetime_XFormItem.prototype.showZero = false;
+Lifetime_XFormItem.prototype.validateNumber = false;
+Lifetime_XFormItem.prototype.minInclusive = null;
 
 Lifetime_XFormItem.prototype.initializeItems = function(){
 	this.items = [
@@ -100,9 +102,17 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 			return val;
 		},
 		elementChanged:function(numericPart, instanceValue, event) {
-            if (numericPart  == this.getModelItem().zeroValue) {
-                numericPart = 0;
-            }
+			if (this.getParentItem().getInheritedProperty("validateNumber")) {
+				var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+				if (!this.getParentItem().validateNumericPart.apply(this, [numericPart, minInclusive])) {
+					this.getParentItem()._numericPart = numericPart;
+					return;
+				}
+			}
+
+			if (numericPart  == this.getModelItem().zeroValue) {
+				numericPart = 0;
+			}
 			var val = null;
 			if (AjxUtil.isNumeric(numericPart)) {
 				val = numericPart + this.getParentItem()._stringPart;
@@ -134,6 +144,16 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 			return val;
 		},
 		elementChanged:function(stringPart,instanceValue, event) {
+			if (this.getParentItem().getInheritedProperty("validateNumber")) {
+				var numericPart = this.getParentItem()._numericPart;
+				var textFieldItem = this.getParentItem().items[0];
+				var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+				if (!this.getParentItem().validateNumericPart.apply(textFieldItem, [numericPart, minInclusive])) {
+					this.getParentItem()._stringPart = stringPart;
+					return;
+				}
+			}
+
 			var val = this.getParentItem()._numericPart + stringPart;
 			this.getParentItem()._stringPart = stringPart;
 			this.getForm().itemChanged(this.getParentItem(), val, event);
@@ -146,6 +166,36 @@ Lifetime_XFormItem.prototype.initializeItems = function(){
 Lifetime_XFormItem.prototype.items = [];
 Lifetime_XFormItem.prototype.getDisplayElement = function () {
 	return this.getElement(this.getId() + "_display");
+}
+Lifetime_XFormItem.prototype.validateNumericPart = function(numericPart, minInclusive) {
+	var value = this.getModelItem()._normalizeAndValidate(numericPart);
+	if (value === null && value === undefined || value === "") {
+		this.getParentItem().clearError();
+		return true;
+	}
+
+	try {
+		if (isNaN(value)) {
+			throw this.getModel().getErrorMessage("notANumber", value);
+		}
+		var floatValue = parseFloat(value);
+		var intValue = parseInt(value, 10);
+		if (floatValue != intValue) {
+			throw this.getModel().getErrorMessage("notAnInteger", value);
+		}
+		var minInclusive = this.getParentItem().getInheritedProperty("minInclusive");
+		if (minInclusive !== null && value < minInclusive) {
+			throw this.getModel().getErrorMessage("numberLessThanMin", minInclusive);
+		}
+		this.getParentItem().clearError();
+	} catch (message) {
+		this.getParentItem().setError(message);
+		var event = new DwtXFormsEvent(this.getForm(), this.getParentItem(), value + this.getParentItem()._stringPart);
+		this.getForm().notifyListeners(DwtEvent.XFORMS_VALUE_ERROR, event);
+		return false;
+	}
+
+	return true;
 }
 
 Lifetime1_XFormItem = function() {}
