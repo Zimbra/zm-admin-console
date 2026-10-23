@@ -1592,7 +1592,7 @@ Super_Lifetime_XFormItem.prototype.initializeItems = function() {
 Super_Lifetime_XFormItem.prototype.items = [ ];
 Super_Lifetime_XFormItem.prototype.validateNumericPart = function(numericPart, minInclusive) {
 	var value = this.getModelItem()._normalizeAndValidate(numericPart);
-	if (value === null && value === undefined || value === "") {
+	if (value === null || value === undefined || value === "") {
 		this.clearError();
 		return true;
 	}

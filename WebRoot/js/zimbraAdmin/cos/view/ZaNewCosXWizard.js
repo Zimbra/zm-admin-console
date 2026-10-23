@@ -1755,6 +1755,7 @@ ZaNewCosXWizard.myXFormModifier = function(xFormObject, entry) {
                         type: _LIFETIME_,
                         label: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
                         msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+                        showZero: true,
                         validateNumber: true,
                         minInclusive: 0,
                         visibilityChecks: [[ZaItem.hasWritePermission]],

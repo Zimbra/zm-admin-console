@@ -169,7 +169,7 @@ Lifetime_XFormItem.prototype.getDisplayElement = function () {
 }
 Lifetime_XFormItem.prototype.validateNumericPart = function(numericPart, minInclusive) {
 	var value = this.getModelItem()._normalizeAndValidate(numericPart);
-	if (value === null && value === undefined || value === "") {
+	if (value === null || value === undefined || value === "") {
 		this.getParentItem().clearError();
 		return true;
 	}

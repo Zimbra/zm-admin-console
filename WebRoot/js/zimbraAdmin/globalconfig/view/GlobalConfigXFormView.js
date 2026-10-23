@@ -398,8 +398,7 @@ GlobalConfigXFormView.SKIN_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSkinForegroundCo
 GlobalConfigXFormView.SKIN_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.BC_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraBasicAuthRealm,
-        ZaGlobalConfig.A_zimbraMailAddressValidationRegex,
-        ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled ];
+        ZaGlobalConfig.A_zimbraMailAddressValidationRegex ];
 GlobalConfigXFormView.BC_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.AUTO_PROV_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraAutoProvNotificationBody,
@@ -410,6 +409,7 @@ GlobalConfigXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 GlobalConfigXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
 GlobalConfigXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
+    ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled,
     ZaGlobalConfig.A_zimbraPushNotificationPayloadMode,
     ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel,
     ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled,
@@ -2123,7 +2123,7 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                             validateNumber: true,
                             minInclusive: 0,
                             enableDisableChecks: [
-                                [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime],
+                                [ZaItem.hasWritePermission, ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime],
                                 [XForm.checkInstanceValue, ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
                             ],
                             enableDisableChangeEventSources: [
