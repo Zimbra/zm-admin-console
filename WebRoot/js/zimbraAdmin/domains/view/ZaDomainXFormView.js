@@ -712,7 +712,7 @@ ZaDomainXFormView.VH_TAB_RIGHTS = [];
 ZaDomainXFormView.ADV_TAB_ATTRS = [ZaDomain.A_zimbraBasicAuthRealm, ZaDomain.A_zimbraMailAddressValidationRegex,
     ZaDomain.A_zimbraMailDomainQuota, ZaDomain.A_zimbraDomainAggregateQuota, ZaDomain.A_zimbraDomainAggregateQuotaWarnPercent,
     ZaDomain.A_zimbraDomainAggregateQuotaWarnEmailRecipient, ZaDomain.A_zimbraDomainAggregateQuotaPolicy, ZaDomain.A_zimbraExternalEmailWarningMessage, 
-    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled, ZaDomain.A_zimbraMobilePushNotificationEnabled
+    ZaDomain.A_zimbraFeatureExternalEmailWarningEnabled
 ];
 
 ZaDomainXFormView.ADV_TAB_RIGHTS = [];
@@ -749,6 +749,14 @@ ZaDomainXFormView.SKIN_TAB_RIGHTS = [];
 
 ZaDomainXFormView.ACCOUNT_QUOTA_TAB_ATTRS = [];
 ZaDomainXFormView.ACCOUNT_QUOTA_TAB_RIGHTS= [ZaDomain.RIGHT_GET_DOMAIN_QUOTA];
+
+ZaDomainXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
+    ZaDomain.A_zimbraMobilePushNotificationEnabled,
+    ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled,
+    ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime,
+    ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime
+];
+ZaDomainXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS = [];
 
 ZaDomainXFormView.getCustomWidth = function() {
     try {
@@ -1839,23 +1847,6 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                         },
                     ]
                 },
-                {
-                    type: _ZA_TOP_GROUPER_,
-                    label: ZaMsg.NAD_NativeMobileApp,
-                    id: "domain_native_mobile_app_settings",
-                    items: [
-                        {
-                            ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
-                            type: _SUPER_CHECKBOX_,
-                            label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
-                            trueValue: "TRUE",
-                            falseValue: "FALSE",
-                            labelLocation: _LEFT_,
-                            onChange: ZaDomainXFormView.onFormFieldChanged,
-                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
-                        }
-                    ]
-                },
                 { type: _SPACER_ , height: "10px" } //add some spaces at the bottom of the page
 			]
 		};
@@ -2060,7 +2051,92 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
 		};
         switchGroup.items.push(case10);
     }
-    
+
+    if (ZaTabView.isTAB_ENABLED(entry,ZaDomainXFormView.NATIVE_MOBILE_APP_TAB_ATTRS, ZaDomainXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS)) {
+        tabIx = ++this.TAB_INDEX;
+        this.helpMap[tabIx] = [location.pathname, ZaUtil.HELP_URL, "managing_domains/managing_domains.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
+        tabBar.choices.push(
+            {
+                value:tabIx,
+                label:ZaMsg.TABT_NativeMobileApp
+            }
+        );
+        var case11 = {
+            type: _ZATABCASE_,
+            caseKey: tabIx,
+            colSizes: ["auto"],
+            numCols: "*",
+            width: "98%",
+            cssStyle:"padding-left:10px;",
+            id: "domain_native_mobile_app_tab",
+            items: [
+                {
+                    type: _ZA_TOP_GROUPER_,
+                    label: ZaMsg.NAD_NativeMobileApp,
+                    colSizes: ["275px", "100%"],
+                    numCols: 2,
+                    id: "domain_native_mobile_app_settings",
+                    items: [
+                        {
+                            ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
+                            type: _SUPER_CHECKBOX_,
+                            checkBoxLabel: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+                        },
+                        {
+                            ref: ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled,
+                            type: _SUPER_CHECKBOX_,
+                            checkBoxLabel: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+                        },
+                        {
+                            ref: ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime,
+                            type: _SUPER_LIFETIME_,
+                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraNativeOAuthAccessTokenLifetime,
+                            unitToExclude: "d",
+                            defaultUnit: "h",
+                            validateNumber: true,
+                            minInclusive: 1,
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                            enableDisableChecks: [
+                                [XForm.checkInstanceValue, ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled
+                            ]
+                        },
+                        {
+                            ref: ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime,
+                            type: _SUPER_LIFETIME_,
+                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+                            showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
+                            onChange: ZaDomainXFormView.onFormFieldChanged,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                            enableDisableChecks: [
+                                [XForm.checkInstanceValue, ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        switchGroup.items.push(case11);
+    }
+
     xFormObject.items.push(tabBar);
 	xFormObject.items.push(switchGroup);
     this.tabChoices = tabBar.choices;
