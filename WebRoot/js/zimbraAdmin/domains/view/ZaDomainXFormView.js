@@ -2076,8 +2076,9 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
             type: _ZATABCASE_,
             caseKey: tabIx,
             colSizes: ["auto"],
-            numCols: "*",
+            numCols: 1,
             width: "98%",
+            cellpadding: 2,
             cssStyle:"padding-left:10px;",
             id: "domain_native_mobile_app_tab",
             items: [
