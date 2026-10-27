@@ -37,6 +37,7 @@ ZaNativeMobileApp.prototype.constructor = ZaNativeMobileApp;
 ZaNativeMobileApp.A2_id = "id";
 ZaNativeMobileApp.A2_account = "account";
 ZaNativeMobileApp.A2_createdAt = "createdAt";
+ZaNativeMobileApp.A2_lastAccessedAt = "lastAccessedAt";
 
 ZaNativeMobileApp.initializeSessionList = function() {
 	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
@@ -50,6 +51,86 @@ ZaNativeMobileApp.getModelClassObject = function(modelInstance) {
 	else if (modelInstance instanceof ZaCos) return ZaCos;
 	else if (modelInstance instanceof ZaDomain) return ZaDomain;
 };
+
+ZaNativeMobileApp.getSessions = function(callback) {
+	// Call SOAP request to get sessions
+	// TODO: replace with a right soap API
+	var soapDoc = AjxSoapDoc.create("DumpSessionsRequest", ZaZimbraAdmin.URN, null);
+	soapDoc.setMethodAttribute("listSessions", "1");
+
+	var responseCallback = new AjxCallback(null, ZaNativeMobileApp.handleGetSessionsResponse, callback);
+	var csfeParams = new Object();
+	csfeParams.soapDoc = soapDoc;
+	csfeParams.asyncMode = true;
+	csfeParams.callback = responseCallback;
+	var reqMgrParams = {
+		controller: ZaApp.getInstance().getCurrentController()
+	}
+
+	ZaRequestMgr.invoke(csfeParams, reqMgrParams);
+};
+
+ZaNativeMobileApp.handleGetSessionsResponse = function(callback, response) {
+	var respObj = response && response._data;
+	if (!respObj) {
+		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
+		dialog.popup();
+		return;
+	} else if (response.isException()) {
+		ZaApp.getInstance().getCurrentController()._handleException(response.getException(), "ZaNativeMobileApp.handleGetSessionsResponse", null, false);
+		return;
+	} else if (!respObj.Body || !respObj.Body.DumpSessionsResponse) {
+		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
+		dialog.popup();
+		return;
+	}
+
+	var DumpSessionsResponse = respObj.Body.DumpSessionsResponse;
+	var sessions = DumpSessionsResponse && DumpSessionsResponse.soap && DumpSessionsResponse.soap[0] && DumpSessionsResponse.soap[0].s;
+	callback.run(sessions);
+};
+
+ZaNativeMobileApp.revokeSession = function(revokeAll, callback) {
+	// Call SOAP request to revoke session(s)
+	// TODO: replace with a right soap API
+	var soapDoc = AjxSoapDoc.create("GetConfigRequest", ZaZimbraAdmin.URN, null);
+	var attr = soapDoc.set("a", "");
+	attr.setAttribute("n", "zimbraAdminPort");
+	if (revokeAll) {
+		// Do something
+	}
+
+	var responseCallback = new AjxCallback(null, ZaNativeMobileApp.handleRevokeSessionResponse, callback);
+	var csfeParams = new Object();
+	csfeParams.soapDoc = soapDoc;
+	csfeParams.asyncMode = true;
+	csfeParams.callback = responseCallback;
+	var reqMgrParams = {
+		controller: ZaApp.getInstance().getCurrentController()
+	}
+
+	ZaRequestMgr.invoke(csfeParams, reqMgrParams);
+};
+
+ZaNativeMobileApp.handleRevokeSessionResponse = function(callback, response) {
+	var respObj = response && response._data;
+	if (!respObj) {
+		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
+		dialog.popup();
+		return;
+	} else if (response.isException()) {
+		ZaApp.getInstance().getCurrentController()._handleException(response.getException(), "ZaNativeMobileApp.handleRevokeSessionResponse", null, false);
+		return;
+	} else if (!respObj.Body || !respObj.Body.GetConfigResponse) {
+		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
+		dialog.popup();
+		return;
+	}
+
+	// TODO: Check response
+
+	callback.run();
+}
 
 /**
  * Creates ZaNativeMobileAppSessionListView.
@@ -68,9 +149,10 @@ ZaNativeMobileAppSessionListView.prototype.toString = function() {
 };
 
 ZaNativeMobileAppSessionListView.sessionListHeader = [
-	new ZaListHeaderItem(ZaNativeMobileApp.A2_id, ZaMsg.attrDesc_zimbraId, null, "300px", 1, ZaNativeMobileApp.A2_id, true, true),
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_id, "Session id", null, "200px", 1, ZaNativeMobileApp.A2_id, true, true),
 	new ZaListHeaderItem(ZaNativeMobileApp.A2_account, ZaMsg.NAD_Account, null, "300px", 2, ZaNativeMobileApp.A2_account, true, true),
-	new ZaListHeaderItem(ZaNativeMobileApp.A2_createdAt, "Created", null, "auto", 3, ZaNativeMobileApp.A2_createdAt, true, true)
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_createdAt, "Created", null, "300px", 3, ZaNativeMobileApp.A2_createdAt, true, true),
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_lastAccessedAt, "Last accessed", null, "auto", 4, ZaNativeMobileApp.A2_lastAccessedAt, true, true)
 ];
 
 ZaNativeMobileAppSessionListView.sessionSelectionListener = function(ev) {
@@ -85,7 +167,9 @@ ZaNativeMobileAppSessionListView.prototype._createItemHtml = function(item) {
 	div[DwtListView._SELECTED_STYLE_CLASS] = div[DwtListView._STYLE_CLASS] + "-" + DwtCssStyle.SELECTED;
 	div.className = div[DwtListView._STYLE_CLASS];
 	this.associateItemWithElement(item, div, DwtListView.TYPE_LIST_ITEM);
-	
+
+	var formatter = AjxDateFormat.getDateTimeInstance(AjxDateFormat.LONG);
+
 	var idx = 0;
 	html[idx++] = "<table width='100%' cellspacing='0' cellpadding='0'>";
 
@@ -94,10 +178,12 @@ ZaNativeMobileAppSessionListView.prototype._createItemHtml = function(item) {
 		var cnt = this._headerList.length;
 		for(var i = 0; i < cnt; i++) {
 			var field = this._headerList[i]._field;
-			if (field == ZaNativeMobileApp.A2_createdAt) {
+			if (field === ZaNativeMobileApp.A2_createdAt || field === ZaNativeMobileApp.A2_lastAccessedAt) {
+				var unixTime = item[field];
+				var date = new Date(unixTime);
+				var dateTimeString = formatter.format(date);
 				html[idx++] = "<td align='left' height='20px' width='" + this._headerList[i]._width + this._headerList[i]._widthUnits + "'>";
-				var time = item[ZaNativeMobileApp.A2_createdAt];
-				html[idx++] = ZaItem.formatServerTime(time);
+				html[idx++] = dateTimeString;
 				html[idx++] = "</td>";
 			} else {
 				html[idx++] = "<td align='left' height='20px' width='" + this._headerList[i]._width + this._headerList[i]._widthUnits + "'>";
@@ -122,21 +208,30 @@ ZaNativeMobileAppSessionListView.prototype._setNoResultsHtml = function() {
 	var buffer = new AjxBuffer();
 	var	div = document.createElement("div");
 	
-	buffer.append("<table width='100%' cellspacing='0' cellpadding='1'>",
-				  "<tr><td class='NoResults'><br>",
-				  message,
-				  "</td></tr></table>");
+	buffer.append(
+		"<table width='100%' cellspacing='0' cellpadding='1'>",
+		"<tr><td class='NoResults'><br>",
+		message,
+		"</td></tr></table>"
+	);
 	
 	div.innerHTML = buffer.toString();
 	this._addRow(div);
 };
 
 ZaNativeMobileAppSessionListView.loadButtonListener = function() {
-	// Dummy
-	var sessionList = [
-		{ id: "111-111", account: "test1@dev.zimbra.com", createdAt: "20261026030451.111Z"},
-		{ id: "222-222", account: "test2@dev.zimbra.com", createdAt: "20261027020341.222Z"}
-	]
+	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.setSessions);
+	ZaNativeMobileApp.getSessions(callback);
+};
+
+ZaNativeMobileAppSessionListView.setSessions = function(sessions) {
+	var sessionList = [];
+	if (sessions) {
+		for (var i = 0; i < sessions.length; i++) {
+			var s = sessions[i];
+			sessionList.push({ id: s.sid, account: s.name, createdAt: s.cd, lastAccessedAt: s.ld });
+		}
+	}
 
 	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
 	this.getForm().setInstanceValue([], modelClass.A2_nativeMobileAppSessions);
@@ -145,8 +240,8 @@ ZaNativeMobileAppSessionListView.loadButtonListener = function() {
 };
 
 ZaNativeMobileAppSessionListView.revokeButtonListener = function(revokeAll) {
-    if(!ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]) {
-        ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"] =
+	if(!ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]) {
+		ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"] =
 			new ZaMsgDialog(
 				ZaApp.getInstance().getAppCtxt().getShell(), null,
 				[DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null,
@@ -162,32 +257,17 @@ ZaNativeMobileAppSessionListView.revokeButtonListener = function(revokeAll) {
 
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].registerCallback(
 		DwtDialog.YES_BUTTON, ZaNativeMobileAppSessionListView.revokeSession, this, revokeAll);
-    ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].popup();
+	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].popup();
 };
 
 ZaNativeMobileAppSessionListView.revokeSession = function(revokeAll) {
-    if (ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]) {
-        ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].popdown();
+	if (ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]) {
+		ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].popdown();
 	}
 
-	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
-	var allSessions = this.getForm().getInstanceValue(modelClass.A2_nativeMobileAppSessions);
-	var selectedSessions = this.getForm().getInstanceValue(modelClass.A2_nativeMobileAppSessions_Selection);
-
-	var sessionsToRevoke = revokeAll ? [].concat(allSessions) : selectedSessions;
-	if (!sessionsToRevoke || !sessionsToRevoke.length) {
-		return;
-	}
-
-	// Call SOAP request to remove session(s)
-
-	// Call SOAP request to get sessions
-	for (var i = 0; i < sessionsToRevoke.length; i++ ) {
-		AjxUtil.arrayRemove(allSessions, sessionsToRevoke[i]);
-	}
-	var sessions = allSessions;
-	this.getForm().setInstanceValue(sessions, modelClass.A2_nativeMobileAppSessions);
-	this.getForm().setInstanceValue([], modelClass.A2_nativeMobileAppSessions_Selection);
+	// Fetch sessions after revocation through a callback
+	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.loadButtonListener);
+	ZaNativeMobileApp.revokeSession(revokeAll, callback);
 };
 
 
@@ -206,6 +286,10 @@ ZaNativeMobileAppSessionListView.prototype._sortColumn = function (columnItem, b
 		bSortAsc ?
 			this._list.sort(ZaNativeMobileAppSessionListView.compareCreatedAtAsc) :
 			this._list.sort(ZaNativeMobileAppSessionListView.compareCreatedAtDesc);
+	} else if (sortField === ZaNativeMobileApp.A2_lastAccessedAt) {
+		bSortAsc ?
+			this._list.sort(ZaNativeMobileAppSessionListView.compareLastAccessedAtAsc) :
+			this._list.sort(ZaNativeMobileAppSessionListView.compareLastAccessedAtDesc);
 	}
 	this.setUI();
 }
@@ -243,16 +327,32 @@ ZaNativeMobileAppSessionListView.compareAccountDesc = function(a, b) {
 }
 
 ZaNativeMobileAppSessionListView.compareCreatedAtAsc = function(a, b) {
-	var al = a.createdAt.toLowerCase();
-	var bl = b.createdAt.toLowerCase();
+	var al = a.createdAt;
+	var bl = b.createdAt;
 	if (al < bl) return -1;
 	if (al > bl) return 1;
 	return 0;
 }
 
 ZaNativeMobileAppSessionListView.compareCreatedAtDesc = function(a, b) {
-	var al = a.createdAt.toLowerCase();
-	var bl = b.createdAt.toLowerCase();
+	var al = a.createdAt;
+	var bl = b.createdAt;
+	if (al < bl) return 1;
+	if (al > bl) return -1;
+	return 0;
+}
+
+ZaNativeMobileAppSessionListView.compareLastAccessedAtAsc = function(a, b) {
+	var al = a.lastAccessedAt;
+	var bl = b.lastAccessedAt;
+	if (al < bl) return -1;
+	if (al > bl) return 1;
+	return 0;
+}
+
+ZaNativeMobileAppSessionListView.compareLastAccessedAtDesc = function(a, b) {
+	var al = a.lastAccessedAt;
+	var bl = b.lastAccessedAt;
 	if (al < bl) return 1;
 	if (al > bl) return -1;
 	return 0;
