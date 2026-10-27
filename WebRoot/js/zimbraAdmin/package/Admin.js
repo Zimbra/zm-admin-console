@@ -95,6 +95,7 @@ AjxPackage.require("zimbraAdmin.common.ZaTree");
 AjxPackage.require("zimbraAdmin.common.ZaCurrentAppBar");
 AjxPackage.require("zimbraAdmin.common.ZaHistoryMgr");
 AjxPackage.require("zimbraAdmin.common.ZaUploader");
+AjxPackage.require("zimbraAdmin.common.ZaNativeMobileApp");
 
 //
 // Admin UI Specific components
