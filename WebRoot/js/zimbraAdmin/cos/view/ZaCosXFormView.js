@@ -1995,14 +1995,15 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
 
     if (_tab9) {
         var case9 = {
-            type: _ZATABCASE_,
+            type: _SUPER_TABCASE_,
             numCols: 1,
             colSizes: ["auto"],
             caseKey: _tab9,
             paddingStyle: "padding-left:15px;",
             width: "98%",
             cellpadding: 2,
-            id:"cos_form_native_mobile_app_tab"
+            id:"cos_form_native_mobile_app_tab",
+            loadDataMethods: [ZaNativeMobileApp.initializeSessionList]
         };
         var case9Items = [
             {
@@ -2083,6 +2084,77 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         enableDisableChangeEventSources: [
                             ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
                             ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled
+                        ]
+                    }
+                ]
+            },
+            {
+                type: _ZA_TOP_GROUPER_,
+                id: "cos_native_mobile_app_sessions",
+                label: "Active mobile app sessions",
+                numCols: 1,
+                colSizes: ["auto"],
+                visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                items: [
+                    {
+                        ref: ZaCos.A2_nativeMobileAppSessions,
+                        type: _DWT_LIST_,
+                        height: "200px",
+                        width: "99%",
+                        preserveSelection: false,
+                        multiselect: true,
+                        cssClass: "DLSource",
+                        headerList: ZaNativeMobileAppSessionListView.sessionListHeader,
+                        widgetClass: ZaNativeMobileAppSessionListView,
+                        defaultColumnSortable: 0,
+                        onSelection: ZaNativeMobileAppSessionListView.sessionSelectionListener,
+                        valueChangeEventSources: [ZaCos.A2_nativeMobileAppSessions]
+                    },
+                    {
+                        type: _GROUP_,
+                        numCols: 5,
+                        colSizes: ["100px","auto","100px","auto","100px"],
+                        width: "350px",
+                        cssStyle: "margin:10px;padding-bottom:0;",
+                        items: [
+                            {
+                                type: _DWT_BUTTON_,
+                                label: "Load",
+                                width: "100px",
+                                onActivate: "ZaNativeMobileAppSessionListView.loadButtonListener.call(this);"
+                            },
+                            {
+                                type:_CELLSPACER_
+                            },
+                            {
+                                type: _DWT_BUTTON_,
+                                label: "Revoke",
+                                width: "100px",
+                                onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this);",
+                                enableDisableChecks: [[
+                                    function() {
+                                        var sel = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions_Selection);
+                                        return sel && sel.length;
+                                    }
+                                ]],
+                                enableDisableChangeEventSources: [ZaCos.A2_nativeMobileAppSessions_Selection]
+                            },
+                            {
+                                type:_CELLSPACER_
+                            },
+                            {
+                                type: _DWT_BUTTON_,
+                                label: "Revoke All",
+                                width: "100px",
+                                onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this, true);",
+                                enableDisableChecks: [[
+                                    function() {
+                                        var sel = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions);
+                                        return sel && sel.length;
+                                    }
+                                ]],
+                                enableDisableChangeEventSources: [ZaCos.A2_nativeMobileAppSessions]
+                            }
                         ]
                     }
                 ]

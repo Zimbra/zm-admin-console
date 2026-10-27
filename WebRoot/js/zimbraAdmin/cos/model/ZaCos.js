@@ -257,6 +257,8 @@ ZaCos.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabl
 ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled = "zimbraNativeOAuthPersistentSessionEnabled";
 ZaCos.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessTokenLifetime";
 ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
+ZaCos.A2_nativeMobileAppSessions = "nativeMobileAppSessions";
+ZaCos.A2_nativeMobileAppSessions_Selection = "nativeMobileAppSessions_Selection";
 
 ZaCos.cacheCounter = 0;
 ZaCos.staticCosByNameCacheTable={};
@@ -876,7 +878,9 @@ ZaCos.myXModel = {
         {id:ZaCos.A_zimbraMobilePushNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraMobilePushNotificationEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraNativeOAuthAccessTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthAccessTokenLifetime, type:_LIFETIME_},
-        {id:ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime, type:_LIFETIME_}
+        {id:ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime, type:_LIFETIME_},
+        {id:ZaCos.A2_nativeMobileAppSessions, type:_LIST_},
+        {id:ZaCos.A2_nativeMobileAppSessions_Selection, type:_LIST_}
     ]
 };
 
