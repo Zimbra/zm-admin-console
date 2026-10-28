@@ -86,11 +86,18 @@ ZaNativeMobileApp.handleGetSessionsResponse = function(callback, response) {
 	}
 
 	var DumpSessionsResponse = respObj.Body.DumpSessionsResponse;
-	var sessions = DumpSessionsResponse && DumpSessionsResponse.soap && DumpSessionsResponse.soap[0] && DumpSessionsResponse.soap[0].s;
-	callback.run(sessions);
+	var soapSessions = DumpSessionsResponse && DumpSessionsResponse.soap && DumpSessionsResponse.soap[0] && DumpSessionsResponse.soap[0].s || []
+	var adminSessions = DumpSessionsResponse && DumpSessionsResponse.admin && DumpSessionsResponse.admin[0] && DumpSessionsResponse.admin[0].s || [];
+	callback.run(soapSessions.concat(adminSessions));
 };
 
 ZaNativeMobileApp.revokeSession = function(revokeAll, callback) {
+	var sessions;
+	if (!revokeAll) {
+		var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
+		sessions = this.getForm().getInstanceValue(modelClass.A2_nativeMobileAppSessions_Selection);
+	}
+
 	// Call SOAP request to revoke session(s)
 	// TODO: replace with a right soap API
 	var soapDoc = AjxSoapDoc.create("GetConfigRequest", ZaZimbraAdmin.URN, null);
@@ -149,10 +156,10 @@ ZaNativeMobileAppSessionListView.prototype.toString = function() {
 };
 
 ZaNativeMobileAppSessionListView.sessionListHeader = [
-	new ZaListHeaderItem(ZaNativeMobileApp.A2_id, "Session id", null, "200px", 1, ZaNativeMobileApp.A2_id, true, true),
-	new ZaListHeaderItem(ZaNativeMobileApp.A2_account, ZaMsg.NAD_Account, null, "300px", 2, ZaNativeMobileApp.A2_account, true, true),
-	new ZaListHeaderItem(ZaNativeMobileApp.A2_createdAt, "Created", null, "300px", 3, ZaNativeMobileApp.A2_createdAt, true, true),
-	new ZaListHeaderItem(ZaNativeMobileApp.A2_lastAccessedAt, "Last accessed", null, "auto", 4, ZaNativeMobileApp.A2_lastAccessedAt, true, true)
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_id, ZaMsg.LBL_NativeMobileAppSessionId, null, "200px", 1, ZaNativeMobileApp.A2_id, true, true),
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_account, ZaMsg.LBL_NativeMobileAppSessionAccount, null, "300px", 2, ZaNativeMobileApp.A2_account, true, true),
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_createdAt, ZaMsg.LBL_NativeMobileAppSessionCreated, null, "300px", 3, ZaNativeMobileApp.A2_createdAt, true, true),
+	new ZaListHeaderItem(ZaNativeMobileApp.A2_lastAccessedAt, ZaMsg.LBL_NativeMobileAppSessionLastAccessed, null, "auto", 4, ZaNativeMobileApp.A2_lastAccessedAt, true, true)
 ];
 
 ZaNativeMobileAppSessionListView.sessionSelectionListener = function(ev) {
@@ -202,7 +209,9 @@ ZaNativeMobileAppSessionListView.prototype._createItemHtml = function(item) {
 };
 
 ZaNativeMobileAppSessionListView.prototype._setNoResultsHtml = function() {
-	var message = this.initialMessageRendered ? "No active session exists." : "Click Load button to fetch active sessions.";
+	var message = this.initialMessageRendered ?
+		ZaMsg.LBL_NativeMobileAppNoActiveSession :
+		AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppClickLoad, [ZaMsg.LBL_NativeMobileAppSessionsLoadButton]);
 	this.initialMessageRendered = true;
 
 	var buffer = new AjxBuffer();
@@ -221,7 +230,7 @@ ZaNativeMobileAppSessionListView.prototype._setNoResultsHtml = function() {
 
 ZaNativeMobileAppSessionListView.loadButtonListener = function() {
 	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.setSessions);
-	ZaNativeMobileApp.getSessions(callback);
+	ZaNativeMobileApp.getSessions.call(this, callback);
 };
 
 ZaNativeMobileAppSessionListView.setSessions = function(sessions) {
@@ -249,10 +258,7 @@ ZaNativeMobileAppSessionListView.revokeButtonListener = function(revokeAll) {
 			);
 
 		ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]
-			.setMessage(
-				"You are about to revoke mobile app session(s). A user will be logged out from a mobile app. It will be applied without clicking Save button. Do you want to proceed?",
-				DwtMessageDialog.WARNING_STYLE
-			);
+			.setMessage(ZaMsg.Q_RevokeNativeMobileApp, DwtMessageDialog.WARNING_STYLE);
 	}
 
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].registerCallback(
@@ -267,7 +273,7 @@ ZaNativeMobileAppSessionListView.revokeSession = function(revokeAll) {
 
 	// Fetch sessions after revocation through a callback
 	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.loadButtonListener);
-	ZaNativeMobileApp.revokeSession(revokeAll, callback);
+	ZaNativeMobileApp.revokeSession.call(this, revokeAll, callback);
 };
 
 

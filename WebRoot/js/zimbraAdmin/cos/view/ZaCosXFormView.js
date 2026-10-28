@@ -2091,7 +2091,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             {
                 type: _ZA_TOP_GROUPER_,
                 id: "cos_native_mobile_app_sessions",
-                label: "Active mobile app sessions",
+                label: ZaMsg.LBL_ActiveNativeMobileAppSessions,
                 numCols: 1,
                 colSizes: ["auto"],
                 visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
@@ -2119,7 +2119,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         items: [
                             {
                                 type: _DWT_BUTTON_,
-                                label: "Load",
+                                label: ZaMsg.LBL_NativeMobileAppSessionsLoadButton,
                                 width: "100px",
                                 onActivate: "ZaNativeMobileAppSessionListView.loadButtonListener.call(this);"
                             },
@@ -2128,7 +2128,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                             },
                             {
                                 type: _DWT_BUTTON_,
-                                label: "Revoke",
+                                label: ZaMsg.LBL_NativeMobileAppSessionsRevokeButton,
                                 width: "100px",
                                 onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this);",
                                 enableDisableChecks: [[
@@ -2144,7 +2144,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                             },
                             {
                                 type: _DWT_BUTTON_,
-                                label: "Revoke All",
+                                label: ZaMsg.LBL_NativeMobileAppSessionsRevokeAllButton,
                                 width: "100px",
                                 onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this, true);",
                                 enableDisableChecks: [[

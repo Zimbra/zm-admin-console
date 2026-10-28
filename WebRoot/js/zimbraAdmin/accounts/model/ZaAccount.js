@@ -314,6 +314,8 @@ ZaAccount.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationE
 ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled = "zimbraNativeOAuthPersistentSessionEnabled";
 ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessTokenLifetime";
 ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
+ZaAccount.A2_nativeMobileAppSessions = "nativeMobileAppSessions";
+ZaAccount.A2_nativeMobileAppSessions_Selection = "nativeMobileAppSessions_Selection";
 
 //readonly
 ZaAccount.A_zimbraLastLogonTimestamp = "zimbraLastLogonTimestamp";
@@ -2200,7 +2202,9 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraMobilePushNotificationEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraMobilePushNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime},
-        {id:ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime}
+        {id:ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime},
+        {id:ZaAccount.A2_nativeMobileAppSessions, type:_LIST_},
+        {id:ZaAccount.A2_nativeMobileAppSessions_Selection, type:_LIST_}
     ]
 };
 

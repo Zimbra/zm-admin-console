@@ -3813,13 +3813,14 @@ textFieldCssClass:"admin_xform_number_input"}
 
     if (_tab12) {
         cases.push({
-            type: _ZATABCASE_,
+            type: _SUPER_TABCASE_,
             id: "account_native_mobile_app_tab",
             numCols: 1,
             paddingStyle: "padding-left:15px;",
             width: "98%",
             cellpadding: 2,
             caseKey: _tab12,
+            loadDataMethods: [ZaNativeMobileApp.initializeSessionList],
             items: [
                 {
                     type: _ZA_TOP_GROUPER_,
@@ -3902,6 +3903,77 @@ textFieldCssClass:"admin_xform_number_input"}
                                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
                                 ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
                                 ZaAccount.A_COSId
+                            ]
+                        }
+                    ]
+                },
+                {
+                    type: _ZA_TOP_GROUPER_,
+                    id: "account_native_mobile_app_sessions",
+                    label: ZaMsg.LBL_ActiveNativeMobileAppSessions,
+                    numCols: 1,
+                    colSizes: ["auto"],
+                    visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                    items: [
+                        {
+                            ref: ZaAccount.A2_nativeMobileAppSessions,
+                            type: _DWT_LIST_,
+                            height: "200px",
+                            width: "99%",
+                            preserveSelection: false,
+                            multiselect: true,
+                            cssClass: "DLSource",
+                            headerList: ZaNativeMobileAppSessionListView.sessionListHeader,
+                            widgetClass: ZaNativeMobileAppSessionListView,
+                            defaultColumnSortable: 0,
+                            onSelection: ZaNativeMobileAppSessionListView.sessionSelectionListener,
+                            valueChangeEventSources: [ZaAccount.A2_nativeMobileAppSessions]
+                        },
+                        {
+                            type: _GROUP_,
+                            numCols: 5,
+                            colSizes: ["100px","auto","100px","auto","100px"],
+                            width: "350px",
+                            cssStyle: "margin:10px;padding-bottom:0;",
+                            items: [
+                                {
+                                    type: _DWT_BUTTON_,
+                                    label: ZaMsg.LBL_NativeMobileAppSessionsLoadButton,
+                                    width: "100px",
+                                    onActivate: "ZaNativeMobileAppSessionListView.loadButtonListener.call(this);"
+                                },
+                                {
+                                    type:_CELLSPACER_
+                                },
+                                {
+                                    type: _DWT_BUTTON_,
+                                    label: ZaMsg.LBL_NativeMobileAppSessionsRevokeButton,
+                                    width: "100px",
+                                    onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this);",
+                                    enableDisableChecks: [[
+                                        function() {
+                                            var sel = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions_Selection);
+                                            return sel && sel.length;
+                                        }
+                                    ]],
+                                    enableDisableChangeEventSources: [ZaAccount.A2_nativeMobileAppSessions_Selection]
+                                },
+                                {
+                                    type:_CELLSPACER_
+                                },
+                                {
+                                    type: _DWT_BUTTON_,
+                                    label: ZaMsg.LBL_NativeMobileAppSessionsRevokeAllButton,
+                                    width: "100px",
+                                    onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this, true);",
+                                    enableDisableChecks: [[
+                                        function() {
+                                            var sel = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions);
+                                            return sel && sel.length;
+                                        }
+                                    ]],
+                                    enableDisableChangeEventSources: [ZaAccount.A2_nativeMobileAppSessions]
+                                }
                             ]
                         }
                     ]
