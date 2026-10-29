@@ -2111,6 +2111,14 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                         valueChangeEventSources: [ZaCos.A2_nativeMobileAppSessions]
                     },
                     {
+                        type : _DWT_ALERT_,
+                        containerCssStyle : "padding-bottom:0px",
+                        style : DwtAlert.INFORMATION,
+                        smallIcon: true,
+                        iconVisible : true,
+                        content : AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppSessionRevokeAllInfo, ZaMsg.LBL_NativeMobileAppSessionsRevokeAllButton)
+                    },
+                    {
                         type: _GROUP_,
                         numCols: 5,
                         colSizes: ["100px", "auto", "100px", "auto", "100px"],
@@ -2161,12 +2169,12 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                                 enableDisableChecks: [[
                                     function() {
                                         var inProgress = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessionsInProgress);
-                                        var session = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions);
+                                        var session = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions_Selection);
                                         return inProgress !== 'TRUE' && session && session.length;
                                     }
                                 ]],
                                 enableDisableChangeEventSources: [
-                                    ZaCos.A2_nativeMobileAppSessions,
+                                    ZaCos.A2_nativeMobileAppSessions_Selection,
                                     ZaCos.A2_nativeMobileAppSessionsInProgress
                                 ]
                             }

@@ -54,6 +54,10 @@ ZaNativeMobileApp.getModelClassObject = function(modelInstance) {
 };
 
 ZaNativeMobileApp.getSessions = function(callback) {
+	// TODO: use them for a soap call
+	var type = this.getInstance().type;
+	var name = this.getInstance().name;
+
 	// Call SOAP request to get sessions
 	// TODO: replace with a right soap API
 	var soapDoc = AjxSoapDoc.create("DumpSessionsRequest", ZaZimbraAdmin.URN, null);
@@ -97,11 +101,12 @@ ZaNativeMobileApp.handleGetSessionsResponse = function(callback, response) {
 };
 
 ZaNativeMobileApp.revokeSession = function(revokeAll, callback) {
-	var sessions;
-	if (!revokeAll) {
-		var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
-		sessions = this.getForm().getInstanceValue(modelClass.A2_nativeMobileAppSessions_Selection);
-	}
+	// TODO: use them for a soap call
+	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
+	sessions = this.getForm().getInstanceValue(modelClass.A2_nativeMobileAppSessions_Selection);
+	var type = "account";
+	var account = sessions[0].account;
+	var sessionId = revokeAll ? null : sessions[0].id;
 
 	// Call SOAP request to revoke session(s)
 	// TODO: replace with a right soap API
@@ -277,11 +282,11 @@ ZaNativeMobileAppSessionListView.revokeButtonListener = function(revokeAll) {
 				[DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON], null,
 				ZaId.CTR_PREFIX + "DELETE_RETENTION_POLICY_ConfirmMessage"
 			);
-
-		ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]
-			.setMessage(ZaMsg.Q_RevokeNativeMobileApp, DwtMessageDialog.WARNING_STYLE);
 	}
 
+	var message = revokeAll ? ZaMsg.Q_RevokeNativeMobileAppAllSessions : ZaMsg.Q_RevokeNativeMobileAppSingleSession;
+	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]
+		.setMessage(message, DwtMessageDialog.WARNING_STYLE);
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].registerCallback(
 		DwtDialog.YES_BUTTON, ZaNativeMobileAppSessionListView.revokeSession, this, revokeAll);
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].popup();
