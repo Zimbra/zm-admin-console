@@ -316,6 +316,7 @@ ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessToken
 ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
 ZaAccount.A2_nativeMobileAppSessions = "nativeMobileAppSessions";
 ZaAccount.A2_nativeMobileAppSessions_Selection = "nativeMobileAppSessions_Selection";
+ZaAccount.A2_nativeMobileAppSessionsInProgress = "nativeMobileAppSessionsInProgress";
 
 //readonly
 ZaAccount.A_zimbraLastLogonTimestamp = "zimbraLastLogonTimestamp";
@@ -2204,7 +2205,8 @@ ZaAccount.myXModel = {
         {id:ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime},
         {id:ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime},
         {id:ZaAccount.A2_nativeMobileAppSessions, type:_LIST_},
-        {id:ZaAccount.A2_nativeMobileAppSessions_Selection, type:_LIST_}
+        {id:ZaAccount.A2_nativeMobileAppSessions_Selection, type:_LIST_},
+        {id:ZaAccount.A2_nativeMobileAppSessionsInProgress, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES}
     ]
 };
 

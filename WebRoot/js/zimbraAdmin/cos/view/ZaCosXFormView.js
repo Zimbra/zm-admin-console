@@ -2121,7 +2121,14 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                                 type: _DWT_BUTTON_,
                                 label: ZaMsg.LBL_NativeMobileAppSessionsLoadButton,
                                 width: "100px",
-                                onActivate: "ZaNativeMobileAppSessionListView.loadButtonListener.call(this);"
+                                onActivate: "ZaNativeMobileAppSessionListView.loadButtonListener.call(this);",
+                                enableDisableChecks: [[
+                                    function() {
+                                        var inProgress = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessionsInProgress);
+                                        return inProgress !== 'TRUE';
+                                    }
+                                ]],
+                                enableDisableChangeEventSources: [ZaCos.A2_nativeMobileAppSessionsInProgress]
                             },
                             {
                                 type:_CELLSPACER_
@@ -2133,11 +2140,15 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                                 onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this);",
                                 enableDisableChecks: [[
                                     function() {
+                                        var inProgress = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessionsInProgress);
                                         var sel = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions_Selection);
-                                        return sel && sel.length;
+                                        return inProgress !== 'TRUE' && sel && sel.length;
                                     }
                                 ]],
-                                enableDisableChangeEventSources: [ZaCos.A2_nativeMobileAppSessions_Selection]
+                                enableDisableChangeEventSources: [
+                                    ZaCos.A2_nativeMobileAppSessions_Selection,
+                                    ZaCos.A2_nativeMobileAppSessionsInProgress
+                                ]
                             },
                             {
                                 type:_CELLSPACER_
@@ -2149,11 +2160,15 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
                                 onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this, true);",
                                 enableDisableChecks: [[
                                     function() {
-                                        var sel = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions);
-                                        return sel && sel.length;
+                                        var inProgress = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessionsInProgress);
+                                        var session = this.getForm().getInstanceValue(ZaCos.A2_nativeMobileAppSessions);
+                                        return inProgress !== 'TRUE' && session && session.length;
                                     }
                                 ]],
-                                enableDisableChangeEventSources: [ZaCos.A2_nativeMobileAppSessions]
+                                enableDisableChangeEventSources: [
+                                    ZaCos.A2_nativeMobileAppSessions,
+                                    ZaCos.A2_nativeMobileAppSessionsInProgress
+                                ]
                             }
                         ]
                     }

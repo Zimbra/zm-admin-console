@@ -43,6 +43,7 @@ ZaNativeMobileApp.initializeSessionList = function() {
 	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
 	if (!this.getForm().getInstanceValue(modelClass.A2_nativeMobileAppSessions)) {
 		this.getForm().setInstanceValue([], modelClass.A2_nativeMobileAppSessions);
+		this.getForm().setInstanceValue('FALSE', modelClass.A2_nativeMobileAppSessionsInProgress);
 	}
 };
 
@@ -58,7 +59,7 @@ ZaNativeMobileApp.getSessions = function(callback) {
 	var soapDoc = AjxSoapDoc.create("DumpSessionsRequest", ZaZimbraAdmin.URN, null);
 	soapDoc.setMethodAttribute("listSessions", "1");
 
-	var responseCallback = new AjxCallback(null, ZaNativeMobileApp.handleGetSessionsResponse, callback);
+	var responseCallback = new AjxCallback(this, ZaNativeMobileApp.handleGetSessionsResponse, callback);
 	var csfeParams = new Object();
 	csfeParams.soapDoc = soapDoc;
 	csfeParams.asyncMode = true;
@@ -71,6 +72,10 @@ ZaNativeMobileApp.getSessions = function(callback) {
 };
 
 ZaNativeMobileApp.handleGetSessionsResponse = function(callback, response) {
+	// Enable buttons
+	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
+	this.getForm().setInstanceValue('FALSE', modelClass.A2_nativeMobileAppSessionsInProgress);
+
 	var respObj = response && response._data;
 	if (!respObj) {
 		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
@@ -107,7 +112,7 @@ ZaNativeMobileApp.revokeSession = function(revokeAll, callback) {
 		// Do something
 	}
 
-	var responseCallback = new AjxCallback(null, ZaNativeMobileApp.handleRevokeSessionResponse, callback);
+	var responseCallback = new AjxCallback(this, ZaNativeMobileApp.handleRevokeSessionResponse, callback);
 	var csfeParams = new Object();
 	csfeParams.soapDoc = soapDoc;
 	csfeParams.asyncMode = true;
@@ -120,6 +125,11 @@ ZaNativeMobileApp.revokeSession = function(revokeAll, callback) {
 };
 
 ZaNativeMobileApp.handleRevokeSessionResponse = function(callback, response) {
+	// Enable buttons
+	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
+	this.getForm().setInstanceValue('FALSE', modelClass.A2_nativeMobileAppSessionsInProgress);
+	this.getForm().setInstanceValue([], modelClass.A2_nativeMobileAppSessions_Selection);
+
 	var respObj = response && response._data;
 	if (!respObj) {
 		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
@@ -209,9 +219,15 @@ ZaNativeMobileAppSessionListView.prototype._createItemHtml = function(item) {
 };
 
 ZaNativeMobileAppSessionListView.prototype._setNoResultsHtml = function() {
-	var message = this.initialMessageRendered ?
-		ZaMsg.LBL_NativeMobileAppNoActiveSession :
-		AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppClickLoad, [ZaMsg.LBL_NativeMobileAppSessionsLoadButton]);
+	var modelClass = ZaNativeMobileApp.getModelClassObject(this.parent.getInstance());
+	var message;
+	if (this.parent.getInstanceValue(modelClass.A2_nativeMobileAppSessionsInProgress) === "TRUE") {
+		message = ZaMsg.LBL_NativeMobileAppSessionLoading;
+	} else if (this.initialMessageRendered) {
+		message = ZaMsg.LBL_NativeMobileAppNoActiveSession;
+	} else {
+		message = AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppClickLoad, [ZaMsg.LBL_NativeMobileAppSessionsLoadButton]);
+	}
 	this.initialMessageRendered = true;
 
 	var buffer = new AjxBuffer();
@@ -229,6 +245,11 @@ ZaNativeMobileAppSessionListView.prototype._setNoResultsHtml = function() {
 };
 
 ZaNativeMobileAppSessionListView.loadButtonListener = function() {
+	// Disable buttons
+	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
+	this.getForm().setInstanceValue('TRUE', modelClass.A2_nativeMobileAppSessionsInProgress);
+	this.getForm().setInstanceValue([], modelClass.A2_nativeMobileAppSessions);
+
 	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.setSessions);
 	ZaNativeMobileApp.getSessions.call(this, callback);
 };
@@ -270,6 +291,10 @@ ZaNativeMobileAppSessionListView.revokeSession = function(revokeAll) {
 	if (ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]) {
 		ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"].popdown();
 	}
+
+	// Disable buttons
+	var modelClass = ZaNativeMobileApp.getModelClassObject(this.getInstance());
+	this.getForm().setInstanceValue('TRUE', modelClass.A2_nativeMobileAppSessionsInProgress);
 
 	// Fetch sessions after revocation through a callback
 	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.loadButtonListener);
