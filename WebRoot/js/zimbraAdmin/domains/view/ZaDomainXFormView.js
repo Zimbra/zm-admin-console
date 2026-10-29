@@ -2157,6 +2157,14 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             valueChangeEventSources: [ZaDomain.A2_nativeMobileAppSessions]
                         },
                         {
+                            type : _DWT_ALERT_,
+                            containerCssStyle : "padding-bottom:0px",
+                            style : DwtAlert.INFORMATION,
+                            smallIcon: true,
+                            iconVisible : true,
+                            content : AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppSessionRevokeAllInfo, ZaMsg.LBL_NativeMobileAppSessionsRevokeAllButton)
+                        },
+                        {
                             type: _GROUP_,
                             numCols: 5,
                             colSizes: ["100px", "auto", "100px", "auto", "100px"],
@@ -2207,12 +2215,12 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                                     enableDisableChecks: [[
                                         function() {
                                             var inProgress = this.getForm().getInstanceValue(ZaDomain.A2_nativeMobileAppSessionsInProgress);
-                                            var session = this.getForm().getInstanceValue(ZaDomain.A2_nativeMobileAppSessions);
+                                            var session = this.getForm().getInstanceValue(ZaDomain.A2_nativeMobileAppSessions_Selection);
                                             return inProgress !== 'TRUE' && session && session.length;
                                         }
                                     ]],
                                     enableDisableChangeEventSources: [
-                                        ZaDomain.A2_nativeMobileAppSessions,
+                                        ZaDomain.A2_nativeMobileAppSessions_Selection,
                                         ZaDomain.A2_nativeMobileAppSessionsInProgress
                                     ]
                                 }
