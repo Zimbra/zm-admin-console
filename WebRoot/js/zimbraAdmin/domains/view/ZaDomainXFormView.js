@@ -2148,7 +2148,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             height: "200px",
                             width: "99%",
                             preserveSelection: false,
-                            multiselect: true,
+                            multiselect: false,
                             cssClass: "DLSource",
                             headerList: ZaNativeMobileAppSessionListView.sessionListHeader,
                             widgetClass: ZaNativeMobileAppSessionListView,
@@ -2159,7 +2159,7 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                         {
                             type: _GROUP_,
                             numCols: 5,
-                            colSizes: ["100px","auto","100px","auto","100px"],
+                            colSizes: ["100px", "auto", "100px", "auto", "100px"],
                             width: "350px",
                             cssStyle: "margin:10px;padding-bottom:0;",
                             items: [
