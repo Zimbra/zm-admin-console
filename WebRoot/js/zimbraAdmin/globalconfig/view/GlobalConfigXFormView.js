@@ -385,7 +385,8 @@ GlobalConfigXFormView.AUTH_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraSpnegoAuthEnable
         ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled,
         ZaGlobalConfig.A_zimbraCsrfAllowedRefererHosts,
         ZaGlobalConfig.A_zimbraSamlSpSigningKey,
-        ZaGlobalConfig.A_zimbraSamlSpSigningCertificate
+        ZaGlobalConfig.A_zimbraSamlSpSigningCertificate,
+        ZaGlobalConfig.A_zimbraSamlSpSigningAlgorithm
      ];
 
 GlobalConfigXFormView.AUTH_TAB_RIGHTS = [];
@@ -1837,6 +1838,12 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         width: "220px",
                         label: ZaMsg.LBL_zimbraSamlSpSigningCertificate,
                         msgName: ZaMsg.LBL_zimbraSamlSpSigningCertificate,
+                    },
+                    {
+                        ref: ZaGlobalConfig.A_zimbraSamlSpSigningAlgorithm,
+                        type: _OSELECT1_,
+                        labelLocation: _LEFT_,
+                        label: ZaMsg.LBL_zimbraSamlSpSigningAlgorithm
                     },
                     {
                         ref: ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled,
