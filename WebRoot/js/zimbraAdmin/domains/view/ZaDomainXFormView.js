@@ -1581,6 +1581,16 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             onChange: ZaDomainXFormView.onFormFieldChanged
                         },
                         {
+                            ref: ZaDomain.A_zimbraSamlSpSigningAlgorithm,
+                            type: _SUPER_SELECT1_,
+                            labelLocation: _LEFT_,
+                            colSizes: ["230px", "150px"],
+                            label: ZaMsg.LBL_zimbraSamlSpSigningAlgorithm,
+                            msgName: ZaMsg.LBL_zimbraSamlSpSigningAlgorithm,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+                            onChange: ZaDomainXFormView.onFormFieldChanged
+                        },
+                        {
                             type : _DWT_ALERT_,
                             containerCssStyle : "padding-bottom:0px",
                             style : DwtAlert.INFORMATION,

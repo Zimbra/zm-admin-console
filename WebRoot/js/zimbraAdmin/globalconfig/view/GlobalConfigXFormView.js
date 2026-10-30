@@ -1839,6 +1839,12 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                         msgName: ZaMsg.LBL_zimbraSamlSpSigningCertificate,
                     },
                     {
+                        ref: ZaGlobalConfig.A_zimbraSamlSpSigningAlgorithm,
+                        type: _OSELECT1_,
+                        labelLocation: _LEFT_,
+                        label: ZaMsg.LBL_zimbraSamlSpSigningAlgorithm
+                    },
+                    {
                         ref: ZaGlobalConfig.A_zimbraCsrfRefererCheckEnabled,
                         type: _CHECKBOX_,
                         label: ZaMsg.LBL_zimbraCsrfRefererCheckEnabled,
