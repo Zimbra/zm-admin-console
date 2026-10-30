@@ -292,6 +292,7 @@ ZaDomain.A_zimbraSamlInactiveAccountURL = "zimbraSamlInactiveAccountURL";
 ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl = "zimbraSamlWebclientDisabledAccountUrl";
 ZaDomain.A_zimbraSamlSpSigningKey = "zimbraSamlSpSigningKey";
 ZaDomain.A_zimbraSamlSpSigningCertificate = "zimbraSamlSpSigningCertificate";
+ZaDomain.A_zimbraSamlSpSigningAlgorithm = "zimbraSamlSpSigningAlgorithm";
 
 // csrf check
 ZaDomain.A_zimbraCsrfAllowedRefererHosts = "zimbraCsrfAllowedRefererHosts";
@@ -928,6 +929,11 @@ function(tmpObj, newDomain) {
     if(tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningCertificate]){
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningCertificate]);
         attr.setAttribute("n", ZaDomain.A_zimbraSamlSpSigningCertificate);
+    }
+
+    if(tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningAlgorithm]){
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraSamlSpSigningAlgorithm]);
+        attr.setAttribute("n", ZaDomain.A_zimbraSamlSpSigningAlgorithm);
     }
 
     if(tmpObj.attrs[ZaDomain.A_zimbraCsrfAllowedRefererHosts]) {
@@ -2909,6 +2915,7 @@ ZaDomain.myXModel = {
 		{ id: ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl, ref: "attrs/" + ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl, type: _COS_STRING_ },
 		{ id: ZaDomain.A_zimbraSamlSpSigningKey, ref: "attrs/" + ZaDomain.A_zimbraSamlSpSigningKey, type: _COS_STRING_ },
 		{ id: ZaDomain.A_zimbraSamlSpSigningCertificate, ref: "attrs/" + ZaDomain.A_zimbraSamlSpSigningCertificate, type: _COS_STRING_ },
+		{ id: ZaDomain.A_zimbraSamlSpSigningAlgorithm, ref: "attrs/" + ZaDomain.A_zimbraSamlSpSigningAlgorithm, type: _COS_ENUM_, choices: ZaSettings.samlSigningAlgorithmChoices },
 		// csrf check
 		{ id: ZaDomain.A_zimbraCsrfAllowedRefererHosts, ref: "attrs/" + ZaDomain.A_zimbraCsrfAllowedRefererHosts, type: _LIST_, listItem: { type: _STRING_ } },
 		// web client authentication

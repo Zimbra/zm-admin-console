@@ -1568,6 +1568,16 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                         txtBoxLabel: ZaMsg.LBL_zimbraSamlSpSigningCertificate
                                     },
                                     {
+                                        ref: ZaDomain.A_zimbraSamlSpSigningAlgorithm,
+                                        type: _SUPERWIZ_SELECT1_,
+                                        labelLocation: _LEFT_,
+                                        colSpan: 2,
+                                        colSizes: ["260px", "150px"],
+                                        label: ZaMsg.LBL_zimbraSamlSpSigningAlgorithm,
+                                        msgName: ZaMsg.LBL_zimbraSamlSpSigningAlgorithm,
+                                        resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
+                                    },
+                                    {
                                         ref: ZaDomain.A_zimbraCsrfAllowedRefererHosts,
                                         type: _REPEAT_,
                                         label: ZaMsg.LBL_zimbraCsrfAllowedRefererHosts,
