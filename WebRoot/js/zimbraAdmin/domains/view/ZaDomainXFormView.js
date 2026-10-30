@@ -1312,7 +1312,8 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                                 ZaDomain.A_zimbraSamlWebclientDisabledAccountUrl,
                                 ZaDomain.A_zimbraCsrfAllowedRefererHosts,
                                 ZaDomain.A_zimbraSamlSpSigningKey,
-                                ZaDomain.A_zimbraSamlSpSigningCertificate
+                                ZaDomain.A_zimbraSamlSpSigningCertificate,
+                                ZaDomain.A_zimbraSamlSpSigningAlgorithm
                             ]
                         ]
                     ],
