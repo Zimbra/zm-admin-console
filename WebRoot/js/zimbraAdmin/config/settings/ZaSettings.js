@@ -992,6 +992,17 @@ ZaSettings.getSamlNameIdFormat = function(){
 
 ZaSettings.samlNameIdFormatChoices = ZaSettings.getSamlNameIdFormat;
 
+ZaSettings.getSamlSigningAlgorithm = function(){
+	// Translation is not required for labels
+    return [
+        {value: "SHA1", label: 'SHA1'},
+        {value: "SHA256", label: 'SHA256'},
+        {value: "SHA512", label: 'SHA512'}
+	];
+};
+
+ZaSettings.samlSigningAlgorithmChoices = ZaSettings.getSamlSigningAlgorithm;
+
 ZaSettings.getPushNotificationPayloadMode = function(){
     return [
         //{value: "OPAQUE", label: ZaMsg.LBL_PushNotificationPayloadModeBasic},
