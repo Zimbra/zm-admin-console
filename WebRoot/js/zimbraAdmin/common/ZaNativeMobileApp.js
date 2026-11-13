@@ -102,16 +102,18 @@ ZaNativeMobileApp.handleGetSessionsResponse = function(callback, response) {
 
 	var respObj = response && response._data;
 	if (!respObj) {
-		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
-		dialog.popup();
+		ZaApp.getInstance().dialogs["errorDialog"].setMessage(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE, null,
+			DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+		ZaApp.getInstance().dialogs["errorDialog"].popup();
 		return;
 	} else if (response.isException()) {
 		ZaApp.getInstance().getCurrentController()._handleException(response.getException(),
 			"ZaNativeMobileApp.handleGetSessionsResponse", null, false);
 		return;
 	} else if (!respObj.Body || !respObj.Body.GetOAuth2ActiveSessionsResponse) {
-		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
-		dialog.popup();
+		ZaApp.getInstance().dialogs["errorDialog"].setMessage(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE, null,
+			DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+		ZaApp.getInstance().dialogs["errorDialog"].popup();
 		return;
 	}
 
@@ -150,16 +152,18 @@ ZaNativeMobileApp.handleRevokeSessionResponse = function(callback, response) {
 
 	var respObj = response && response._data;
 	if (!respObj) {
-		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
-		dialog.popup();
+		ZaApp.getInstance().dialogs["errorDialog"].setMessage(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE, null,
+			DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+		ZaApp.getInstance().dialogs["errorDialog"].popup();
 		return;
 	} else if (response.isException()) {
 		ZaApp.getInstance().getCurrentController()._handleException(response.getException(),
 			"ZaNativeMobileApp.handleRevokeSessionResponse", null, false);
 		return;
 	} else if (!respObj.Body || !respObj.Body.RevokeAccountOAuthRefreshTokensResponse) {
-		var dialog = this.getErrorDialog(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE);
-		dialog.popup();
+		ZaApp.getInstance().dialogs["errorDialog"].setMessage(ZaMsg.ERROR_RECEIVED_EMPTY_RESPONSE, null,
+			DwtMessageDialog.CRITICAL_STYLE, ZabMsg.zimbraAdminTitle);
+		ZaApp.getInstance().dialogs["errorDialog"].popup();
 		return;
 	}
 
@@ -313,11 +317,12 @@ ZaNativeMobileAppSessionListView.revokeButtonListener = function(revokeAll) {
 	var account = this.getInstance().name;
 	var message;
 	if (revokeAll) {
-		message = AjxMessageFormat.format(ZaMsg.Q_RevokeNativeMobileAppAllSessions, [account]);
+		message = AjxMessageFormat.format(ZaMsg.Q_RevokeNativeMobileAppAllSessions, [AjxStringUtil.htmlEncode(account)]);
 	} else {
 		var selectedSession = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions_Selection);
 		var deviceId = selectedSession && selectedSession[0] && selectedSession[0].deviceId;
-		message = AjxMessageFormat.format(ZaMsg.Q_RevokeNativeMobileAppSingleSession, [account, deviceId]);
+		message = AjxMessageFormat.format(ZaMsg.Q_RevokeNativeMobileAppSingleSession,
+			[AjxStringUtil.htmlEncode(account), AjxStringUtil.htmlEncode(deviceId)]);
 	}
 
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionConfirmMessageDialog"]
@@ -350,7 +355,7 @@ ZaNativeMobileAppSessionListView.revokeSessionCallback = function(result) {
 	}
 
 	var revokedCount = result.revokedTokensCount && result.revokedTokensCount[0] && result.revokedTokensCount[0]._content || 0;
-	var message = AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppSessionRevoked, [revokedCount]);
+	var message = AjxMessageFormat.format(ZaMsg.LBL_NativeMobileAppSessionRevoked, [AjxStringUtil.htmlEncode(revokedCount)]);
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionCompletionDialog"]
 		.setMessage(message, DwtMessageDialog.INFO_STYLE);
 	ZaApp.getInstance().dialogs["RevokeNativeMobileAppSessionCompletionDialog"].popup();
