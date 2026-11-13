@@ -120,7 +120,7 @@ ZaNativeMobileApp.handleGetSessionsResponse = function(callback, response) {
 };
 
 ZaNativeMobileApp.revokeSession = function(revokeAll, callback) {
-	sessions = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions_Selection);
+	var sessions = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions_Selection) || [];
 	var account = sessions[0] && sessions[0].accountEmail || this.getInstance().name;
 	var deviceId = revokeAll ? null : sessions[0].deviceId;
 
