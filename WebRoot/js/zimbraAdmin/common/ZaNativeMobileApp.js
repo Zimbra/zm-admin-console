@@ -274,6 +274,7 @@ ZaNativeMobileAppSessionListView.loadButtonListener = function() {
 	// Disable buttons
 	this.getForm().setInstanceValue('TRUE', ZaAccount.A2_nativeMobileAppSessionsInProgress);
 	this.getForm().setInstanceValue([], ZaAccount.A2_nativeMobileAppSessions);
+	this.getForm().setInstanceValue([], ZaAccount.A2_nativeMobileAppSessions_Selection);
 
 	var callback = new AjxCallback(this, ZaNativeMobileAppSessionListView.setSessions);
 	ZaNativeMobileApp.getSessions.call(this, callback);
