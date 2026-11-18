@@ -1273,9 +1273,9 @@ ZaAccountXFormView.ADVANCED_TAB_RIGHTS = [];
 ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
     ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
     ZaAccount.A_zimbraMobilePushNotificationEnabled,
-    ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
-    ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
-    ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime
+    ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+    ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+    ZaAccount.A_zimbraOAuthRefreshTokenLifetime
 ];
 ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS = [];
 
@@ -3832,9 +3832,9 @@ textFieldCssClass:"admin_xform_number_input"}
                     visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
                         ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
                         ZaAccount.A_zimbraMobilePushNotificationEnabled,
-                        ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
-                        ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
-                        ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime
+                        ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                        ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                        ZaAccount.A_zimbraOAuthRefreshTokenLifetime
                     ]]],
                     items: [
                         {
@@ -3858,9 +3858,9 @@ textFieldCssClass:"admin_xform_number_input"}
                             enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
-                            ref: ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                            ref: ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
                             type: _SUPER_CHECKBOX_,
-                            checkBoxLabel: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
                             trueValue: "TRUE",
                             falseValue: "FALSE",
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
@@ -3868,10 +3868,10 @@ textFieldCssClass:"admin_xform_number_input"}
                             enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
-                            ref: ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
+                            ref: ZaAccount.A_zimbraOAuthAccessTokenLifetime,
                             type: _SUPER_LIFETIME_,
-                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
-                            msgName: ZaMsg.MSG_zimbraNativeOAuthAccessTokenLifetime,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
                             unitToExclude: "d",
                             defaultUnit: "h",
                             validateNumber: true,
@@ -3879,30 +3879,30 @@ textFieldCssClass:"admin_xform_number_input"}
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                             enableDisableChecks: [
                                 [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
-                                [XForm.checkInstanceValue, ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
                             ],
                             enableDisableChangeEventSources: [
                                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
-                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
                                 ZaAccount.A_COSId
                             ]
                         },
                         {
-                            ref: ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime,
+                            ref: ZaAccount.A_zimbraOAuthRefreshTokenLifetime,
                             type: _SUPER_LIFETIME_,
-                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
-                            msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
                             showZero: true,
                             validateNumber: true,
                             minInclusive: 0,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
                             enableDisableChecks: [
                                 [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
-                                [XForm.checkInstanceValue, ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
                             ],
                             enableDisableChangeEventSources: [
                                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
-                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
                                 ZaAccount.A_COSId
                             ]
                         }

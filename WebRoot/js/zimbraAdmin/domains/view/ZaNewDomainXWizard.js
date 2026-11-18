@@ -672,8 +672,8 @@ ZaNewDomainXWizard.isAuthMechNotZimbra = function () {
 	return (this.getInstanceValue(ZaDomain.A_AuthMech) != ZaDomain.AuthMech_zimbra);
 }
 
-ZaNewDomainXWizard.isFeatureNativeOAuthPersistentSessionEnabled = function() {
-	return (this.getInstanceValue(ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled) == "TRUE");
+ZaNewDomainXWizard.isFeatureOAuthPersistentSessionEnabled = function() {
+	return (this.getInstanceValue(ZaDomain.A_zimbraOAuthPersistentSessionEnabled) == "TRUE");
 }
 
 ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
@@ -1940,9 +1940,9 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 									visibilityChecks: [[ZaItem.hasWritePermission]]
 								},
 								{
-									ref: ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled,
+									ref: ZaDomain.A_zimbraOAuthPersistentSessionEnabled,
 									type: _SUPER_WIZ_CHECKBOX_,
-									checkBoxLabel: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
+									checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
 									trueValue: "TRUE",
 									falseValue: "FALSE",
 									colSpan: 2,
@@ -1951,10 +1951,10 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 									visibilityChecks: [[ZaItem.hasWritePermission]]
 								},
 								{
-									ref: ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime,
+									ref: ZaDomain.A_zimbraOAuthAccessTokenLifetime,
 									type: _SUPERWIZ_LIFETIME_,
-									txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
-									msgName: ZaMsg.MSG_zimbraNativeOAuthAccessTokenLifetime,
+									txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+									msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
 									unitToExclude: "d",
 									defaultUnit: "h",
 									validateNumber: true,
@@ -1964,16 +1964,16 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
 									visibilityChecks: [[ZaItem.hasWritePermission]],
 									enableDisableChecks: [
-										[ZaNewDomainXWizard.isFeatureNativeOAuthPersistentSessionEnabled],
-										[XForm.checkInstanceValue, ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+										[ZaNewDomainXWizard.isFeatureOAuthPersistentSessionEnabled],
+										[XForm.checkInstanceValue, ZaDomain.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
 									],
-									enableDisableChangeEventSources: [ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled]
+									enableDisableChangeEventSources: [ZaDomain.A_zimbraOAuthPersistentSessionEnabled]
 								},
 								{
-									ref: ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime,
+									ref: ZaDomain.A_zimbraOAuthRefreshTokenLifetime,
 									type: _SUPERWIZ_LIFETIME_,
-									txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
-									msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+									txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+									msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
 									showZero: true,
 									validateNumber: true,
 									minInclusive: 0,
@@ -1982,10 +1982,10 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
 									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
 									visibilityChecks: [[ZaItem.hasWritePermission]],
 									enableDisableChecks: [
-										[ZaNewDomainXWizard.isFeatureNativeOAuthPersistentSessionEnabled],
-										[XForm.checkInstanceValue, ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+										[ZaNewDomainXWizard.isFeatureOAuthPersistentSessionEnabled],
+										[XForm.checkInstanceValue, ZaDomain.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
 									],
-									enableDisableChangeEventSources: [ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled]
+									enableDisableChangeEventSources: [ZaDomain.A_zimbraOAuthPersistentSessionEnabled]
 								}
 							]
 						}

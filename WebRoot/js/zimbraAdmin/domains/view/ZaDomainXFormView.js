@@ -752,9 +752,9 @@ ZaDomainXFormView.ACCOUNT_QUOTA_TAB_RIGHTS= [ZaDomain.RIGHT_GET_DOMAIN_QUOTA];
 
 ZaDomainXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
     ZaDomain.A_zimbraMobilePushNotificationEnabled,
-    ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled,
-    ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime,
-    ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime
+    ZaDomain.A_zimbraOAuthPersistentSessionEnabled,
+    ZaDomain.A_zimbraOAuthAccessTokenLifetime,
+    ZaDomain.A_zimbraOAuthRefreshTokenLifetime
 ];
 ZaDomainXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS = [];
 
@@ -2099,19 +2099,19 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
                         },
                         {
-                            ref: ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled,
+                            ref: ZaDomain.A_zimbraOAuthPersistentSessionEnabled,
                             type: _SUPER_CHECKBOX_,
-                            checkBoxLabel: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
                             trueValue: "TRUE",
                             falseValue: "FALSE",
                             onChange: ZaDomainXFormView.onFormFieldChanged,
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal
                         },
                         {
-                            ref: ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime,
+                            ref: ZaDomain.A_zimbraOAuthAccessTokenLifetime,
                             type: _SUPER_LIFETIME_,
-                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
-                            msgName: ZaMsg.MSG_zimbraNativeOAuthAccessTokenLifetime,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
                             unitToExclude: "d",
                             defaultUnit: "h",
                             validateNumber: true,
@@ -2119,27 +2119,27 @@ ZaDomainXFormView.myXFormModifier = function(xFormObject,entry) {
                             onChange: ZaDomainXFormView.onFormFieldChanged,
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
                             enableDisableChecks: [
-                                [XForm.checkInstanceValue, ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                                [XForm.checkInstanceValue, ZaDomain.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
                             ],
                             enableDisableChangeEventSources: [
-                                ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled
+                                ZaDomain.A_zimbraOAuthPersistentSessionEnabled
                             ]
                         },
                         {
-                            ref: ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime,
+                            ref: ZaDomain.A_zimbraOAuthRefreshTokenLifetime,
                             type: _SUPER_LIFETIME_,
-                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
-                            msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
                             showZero: true,
                             validateNumber: true,
                             minInclusive: 0,
                             onChange: ZaDomainXFormView.onFormFieldChanged,
                             resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
                             enableDisableChecks: [
-                                [XForm.checkInstanceValue, ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, "TRUE"]
+                                [XForm.checkInstanceValue, ZaDomain.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
                             ],
                             enableDisableChangeEventSources: [
-                                ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled
+                                ZaDomain.A_zimbraOAuthPersistentSessionEnabled
                             ]
                         }
                     ]

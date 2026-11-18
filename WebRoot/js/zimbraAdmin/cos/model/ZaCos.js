@@ -254,9 +254,9 @@ ZaCos.A_zimbraAdminSieveScriptAfter = "zimbraAdminSieveScriptAfter";
 // Native mobile app
 ZaCos.A_zimbraFeatureNativeMobileAppEnabled = "zimbraFeatureNativeMobileAppEnabled";
 ZaCos.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
-ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled = "zimbraNativeOAuthPersistentSessionEnabled";
-ZaCos.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessTokenLifetime";
-ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
+ZaCos.A_zimbraOAuthPersistentSessionEnabled = "zimbraOAuthPersistentSessionEnabled";
+ZaCos.A_zimbraOAuthAccessTokenLifetime = "zimbraOAuthAccessTokenLifetime";
+ZaCos.A_zimbraOAuthRefreshTokenLifetime = "zimbraOAuthRefreshTokenLifetime";
 
 ZaCos.cacheCounter = 0;
 ZaCos.staticCosByNameCacheTable={};
@@ -874,9 +874,9 @@ ZaCos.myXModel = {
         // Native mobile app
         {id:ZaCos.A_zimbraFeatureNativeMobileAppEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureNativeMobileAppEnabled, type:_ENUM_},
         {id:ZaCos.A_zimbraMobilePushNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraMobilePushNotificationEnabled, type:_ENUM_},
-        {id:ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthPersistentSessionEnabled, type:_ENUM_},
-        {id:ZaCos.A_zimbraNativeOAuthAccessTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthAccessTokenLifetime, type:_LIFETIME_},
-        {id:ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraNativeOAuthRefreshTokenLifetime, type:_LIFETIME_}
+        {id:ZaCos.A_zimbraOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraOAuthPersistentSessionEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraOAuthAccessTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraOAuthAccessTokenLifetime, type:_LIFETIME_},
+        {id:ZaCos.A_zimbraOAuthRefreshTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraOAuthRefreshTokenLifetime, type:_LIFETIME_}
     ]
 };
 

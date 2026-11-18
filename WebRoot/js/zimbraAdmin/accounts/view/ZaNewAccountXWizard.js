@@ -460,8 +460,8 @@ ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled = function () {
     return (this.getInstanceValue(ZaAccount.A_zimbraFeatureNativeMobileAppEnabled) == "TRUE");
 }
 
-ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled = function() {
-	return (this.getInstanceValue(ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled) == "TRUE");
+ZaNewAccountXWizard.isFeatureOAuthPersistentSessionEnabled = function() {
+	return (this.getInstanceValue(ZaAccount.A_zimbraOAuthPersistentSessionEnabled) == "TRUE");
 }
 
 ZaNewAccountXWizard.onCOSChanged =
@@ -2541,9 +2541,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
             [
                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
                 ZaAccount.A_zimbraMobilePushNotificationEnabled,
-                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
-                ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
-                ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime
+                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                ZaAccount.A_zimbraOAuthRefreshTokenLifetime
             ], [])
         ) {
             nativeMobileAppCaseItems.push(
@@ -2554,9 +2554,9 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                     visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
                         ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
                         ZaAccount.A_zimbraMobilePushNotificationEnabled,
-                        ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
-                        ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
-                        ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime
+                        ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                        ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                        ZaAccount.A_zimbraOAuthRefreshTokenLifetime
                     ]]],
                     items: [
                         {
@@ -2584,10 +2584,10 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
-                            ref: ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                            ref: ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
                             type: _SUPER_WIZ_CHECKBOX_,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
-                            checkBoxLabel: ZaMsg.LBL_zimbraNativeOAuthPersistentSessionEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
                             trueValue: "TRUE",
                             falseValue: "FALSE",
                             colSpan: 2,
@@ -2597,11 +2597,11 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
                         },
                         {
-                            ref: ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime,
+                            ref: ZaAccount.A_zimbraOAuthAccessTokenLifetime,
                             type: _SUPERWIZ_LIFETIME_,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
-                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthAccessTokenLifetime,
-                            msgName: ZaMsg.MSG_zimbraNativeOAuthAccessTokenLifetime,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
                             unitToExclude: "d",
                             defaultUnit: "h",
                             validateNumber: true,
@@ -2611,20 +2611,20 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             visibilityChecks: [ZaItem.hasWritePermission],
                             enableDisableChecks: [
                                 [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
-                                [ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled]
+                                [ZaNewAccountXWizard.isFeatureOAuthPersistentSessionEnabled]
                             ],
                             enableDisableChangeEventSources: [
                                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
-                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
                                 ZaAccount.A_COSId
                             ]
                         },
                         {
-                            ref: ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime,
+                            ref: ZaAccount.A_zimbraOAuthRefreshTokenLifetime,
                             type: _SUPERWIZ_LIFETIME_,
                             resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
-                            txtBoxLabel: ZaMsg.LBL_zimbraNativeOAuthRefreshTokenLifetime,
-                            msgName: ZaMsg.MSG_zimbraNativeOAuthRefreshTokenLifetime,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
                             showZero: true,
                             validateNumber: true,
                             minInclusive: 0,
@@ -2633,11 +2633,11 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
                             visibilityChecks: [ZaItem.hasWritePermission],
                             enableDisableChecks: [
                                 [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
-                                [ZaNewAccountXWizard.isFeatureNativeOAuthPersistentSessionEnabled]
+                                [ZaNewAccountXWizard.isFeatureOAuthPersistentSessionEnabled]
                             ],
                             enableDisableChangeEventSources: [
                                 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
-                                ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
                                 ZaAccount.A_COSId
                             ]
                         }
