@@ -373,6 +373,12 @@ ZaDomain.A_zimbraExternalEmailWarningMessage = "zimbraExternalEmailWarningMessag
 ZaDomain.A_zimbraAutoProvNotificationSubject = "zimbraAutoProvNotificationSubject";
 ZaDomain.A_zimbraAutoProvNotificationBody = "zimbraAutoProvNotificationBody";
 
+// Native mobile app
+ZaDomain.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
+ZaDomain.A_zimbraOAuthPersistentSessionEnabled = "zimbraOAuthPersistentSessionEnabled";
+ZaDomain.A_zimbraOAuthAccessTokenLifetime = "zimbraOAuthAccessTokenLifetime";
+ZaDomain.A_zimbraOAuthRefreshTokenLifetime = "zimbraOAuthRefreshTokenLifetime";
+
 ZaDomain.A_zimbraDomainAliasTargetId = "zimbraDomainAliasTargetId" ;
 ZaDomain.A2_zimbraDomainAliasTarget = "zimbraDomainAliasTargetName" ;
 ZaDomain.A_zimbraPrefTimeZoneId = "zimbraPrefTimeZoneId" ;
@@ -1039,6 +1045,26 @@ function(tmpObj, newDomain) {
     if(tmpObj.attrs[ZaDomain.A_zimbraDomainAggregateQuotaPolicy]){
         attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraDomainAggregateQuotaPolicy]);
         attr.setAttribute("n", ZaDomain.A_zimbraDomainAggregateQuotaPolicy);
+    }
+
+    if (tmpObj.attrs[ZaDomain.A_zimbraMobilePushNotificationEnabled]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraMobilePushNotificationEnabled]);
+        attr.setAttribute("n", ZaDomain.A_zimbraMobilePushNotificationEnabled);
+    }
+
+    if (tmpObj.attrs[ZaDomain.A_zimbraOAuthPersistentSessionEnabled]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraOAuthPersistentSessionEnabled]);
+        attr.setAttribute("n", ZaDomain.A_zimbraOAuthPersistentSessionEnabled);
+    }
+
+    if (tmpObj.attrs[ZaDomain.A_zimbraOAuthAccessTokenLifetime]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraOAuthAccessTokenLifetime]);
+        attr.setAttribute("n", ZaDomain.A_zimbraOAuthAccessTokenLifetime);
+    }
+
+    if (tmpObj.attrs[ZaDomain.A_zimbraOAuthRefreshTokenLifetime]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraOAuthRefreshTokenLifetime]);
+        attr.setAttribute("n", ZaDomain.A_zimbraOAuthRefreshTokenLifetime);
     }
 
     // set additional attribute(s) via admin zimlet
@@ -2955,7 +2981,13 @@ ZaDomain.myXModel = {
 		{ id: ZaDomain.A_zimbraFeatureResetPasswordStatus, type: _ENUM_, choices: ZaSettings.resetPasswordStatusChoices, ref: "attrs/" + ZaDomain.A_zimbraFeatureResetPasswordStatus },
 
 		{ id: ZaDomain.A_zimbraAutoProvNotificationSubject, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationSubject },
-		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody }
+		{ id: ZaDomain.A_zimbraAutoProvNotificationBody, type: _COS_STRING_, ref: "attrs/" + ZaDomain.A_zimbraAutoProvNotificationBody },
+
+		// Native mobile app
+		{ id: ZaDomain.A_zimbraMobilePushNotificationEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraMobilePushNotificationEnabled },
+		{ id: ZaDomain.A_zimbraOAuthPersistentSessionEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraOAuthPersistentSessionEnabled },
+		{ id: ZaDomain.A_zimbraOAuthAccessTokenLifetime, type: _COS_MLIFETIME_, ref: "attrs/" + ZaDomain.A_zimbraOAuthAccessTokenLifetime },
+		{ id: ZaDomain.A_zimbraOAuthRefreshTokenLifetime, type: _COS_MLIFETIME_, ref: "attrs/" + ZaDomain.A_zimbraOAuthRefreshTokenLifetime }
 	]
 };
 

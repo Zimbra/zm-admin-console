@@ -251,6 +251,13 @@ ZaCos.A_zimbraSieveEditHeaderEnabled = "zimbraSieveEditHeaderEnabled";
 ZaCos.A_zimbraAdminSieveScriptBefore = "zimbraAdminSieveScriptBefore";
 ZaCos.A_zimbraAdminSieveScriptAfter = "zimbraAdminSieveScriptAfter";
 
+// Native mobile app
+ZaCos.A_zimbraFeatureNativeMobileAppEnabled = "zimbraFeatureNativeMobileAppEnabled";
+ZaCos.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
+ZaCos.A_zimbraOAuthPersistentSessionEnabled = "zimbraOAuthPersistentSessionEnabled";
+ZaCos.A_zimbraOAuthAccessTokenLifetime = "zimbraOAuthAccessTokenLifetime";
+ZaCos.A_zimbraOAuthRefreshTokenLifetime = "zimbraOAuthRefreshTokenLifetime";
+
 ZaCos.cacheCounter = 0;
 ZaCos.staticCosByNameCacheTable={};
 ZaCos.staticCosByIdCacheTable = {};
@@ -862,7 +869,14 @@ ZaCos.myXModel = {
         {id:ZaCos.A2_retentionPoliciesKeep, type:_LIST_},
         {id:ZaCos.A2_retentionPoliciesPurge, type:_LIST_},
         {id:ZaCos.A2_retentionPoliciesKeep_Selection, type:_LIST_},
-        {id:ZaCos.A2_retentionPoliciesPurge_Selection, type:_LIST_}
+        {id:ZaCos.A2_retentionPoliciesPurge_Selection, type:_LIST_},
+
+        // Native mobile app
+        {id:ZaCos.A_zimbraFeatureNativeMobileAppEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraFeatureNativeMobileAppEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraMobilePushNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraMobilePushNotificationEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES, ref:"attrs/"+ZaCos.A_zimbraOAuthPersistentSessionEnabled, type:_ENUM_},
+        {id:ZaCos.A_zimbraOAuthAccessTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraOAuthAccessTokenLifetime, type:_LIFETIME_},
+        {id:ZaCos.A_zimbraOAuthRefreshTokenLifetime, ref:"attrs/"+ZaCos.A_zimbraOAuthRefreshTokenLifetime, type:_LIFETIME_}
     ]
 };
 

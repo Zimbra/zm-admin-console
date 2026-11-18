@@ -1270,6 +1270,15 @@ ZaAccountXFormView.ADVANCED_TAB_ATTRS = [ZaAccount.A_zimbraAttachmentsBlocked,
     ];
 ZaAccountXFormView.ADVANCED_TAB_RIGHTS = [];
 
+ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
+    ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+    ZaAccount.A_zimbraMobilePushNotificationEnabled,
+    ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+    ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+    ZaAccount.A_zimbraOAuthRefreshTokenLifetime
+];
+ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS = [];
+
 ZaAccountXFormView.addressItemsPool = null;
 ZaAccountXFormView.addressItemsPoolForDialog = null;
 ZaAccountXFormView.getAddressFormItem = function(){
@@ -1617,7 +1626,7 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
     }
 
     this.tabChoices = new Array();
-    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11;
+    var _tab1, _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9, _tab10, _tab11, _tab12;
     this.helpMap = {};
     _tab1 = ++this.TAB_INDEX;
     this.tabChoices.push({value:_tab1, label:ZaMsg.TABT_GeneralPage});
@@ -1680,6 +1689,12 @@ ZaAccountXFormView.myXFormModifier = function(xFormObject, entry) {
         _tab11 = ++this.TAB_INDEX;
         this.tabChoices.push({value:_tab11, label:ZaMsg.TABT_Advanced});
         this.helpMap[_tab11] = [location.pathname, ZaUtil.HELP_URL, "managing_accounts/account_advanced_features.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
+    }
+
+    if(ZaTabView.isTAB_ENABLED(entry,ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_ATTRS, ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS)) {
+        _tab12 = ++this.TAB_INDEX;
+        this.tabChoices.push({value:_tab12, label:ZaMsg.TABT_NativeMobileApp});
+        this.helpMap[_tab12] = [location.pathname, ZaUtil.HELP_URL, "managing_accounts/user_interface_features.htm", "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
     }
 
     var cases = [];
@@ -3794,6 +3809,193 @@ textFieldCssClass:"admin_xform_number_input"}
                         {type: _SPACER_ , height: "10px" }  //add some spaces at the bottom of the page
                     ]
                 });
+    }
+
+    if (_tab12) {
+        var sessionListHeader = ZaNativeMobileAppSessionListView.getSessionListHeader();
+        cases.push({
+            type: _SUPER_TABCASE_,
+            id: "account_native_mobile_app_tab",
+            numCols: 1,
+            paddingStyle: "padding-left:15px;",
+            width: "98%",
+            cellpadding: 2,
+            caseKey: _tab12,
+            loadDataMethods: [ZaNativeMobileApp.initializeSessionList],
+            items: [
+                {
+                    type: _ZA_TOP_GROUPER_,
+                    id: "account_native_mobile_app_settings",
+                    label: ZaMsg.NAD_NativeMobileApp,
+                    colSizes: ["275px", "100%"],
+                    numCols: 2,
+                    visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                        ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                        ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                        ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                        ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                        ZaAccount.A_zimbraOAuthRefreshTokenLifetime
+                    ]]],
+                    items: [
+                        {
+                            ref: ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                            type: _SUPER_CHECKBOX_,
+                            msgName: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                            type: _SUPER_CHECKBOX_,
+                            msgName: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            checkBoxLabel: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            enableDisableChecks: [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                            type: _SUPER_CHECKBOX_,
+                            checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            enableDisableChecks: [[XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                            type: _SUPER_LIFETIME_,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
+                            unitToExclude: "d",
+                            defaultUnit: "h",
+                            validateNumber: true,
+                            minInclusive: 1,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            enableDisableChecks: [
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraOAuthRefreshTokenLifetime,
+                            type: _SUPER_LIFETIME_,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
+                            showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            enableDisableChecks: [
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
+                                [XForm.checkInstanceValue, ZaAccount.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
+                        }
+                    ]
+                },
+                {
+                    type: _ZA_TOP_GROUPER_,
+                    id: "account_native_mobile_app_sessions",
+                    label: ZaMsg.LBL_NativeMobileAppSessions,
+                    numCols: 1,
+                    colSizes: ["auto"],
+                    visibilityChecks: [[ZaItem.hasWritePermission, "all"]],
+                    items: [
+                        {
+                            ref: ZaAccount.A2_nativeMobileAppSessions,
+                            type: _DWT_LIST_,
+                            height: "200px",
+                            width: "99%",
+                            preserveSelection: false,
+                            multiselect: false,
+                            cssClass: "DLSource",
+                            headerList: sessionListHeader,
+                            widgetClass: ZaNativeMobileAppSessionListView,
+                            defaultColumnSortable: 0,
+                            onSelection: ZaNativeMobileAppSessionListView.sessionSelectionListener,
+                            valueChangeEventSources: [ZaAccount.A2_nativeMobileAppSessions]
+                        },
+                        {
+                            type: _GROUP_,
+                            numCols: 5,
+                            colSizes: ["100px", "auto", "100px", "auto", "100px"],
+                            width: "350px",
+                            cssStyle: "margin:10px;padding-bottom:0;",
+                            items: [
+                                {
+                                    type: _DWT_BUTTON_,
+                                    label: ZaMsg.LBL_NativeMobileAppSessionsLoadButton,
+                                    width: "100px",
+                                    onActivate: "ZaNativeMobileAppSessionListView.loadButtonListener.call(this);",
+                                    enableDisableChecks: [[
+                                        function() {
+                                            var inProgress = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessionsInProgress);
+                                            return inProgress !== 'TRUE';
+                                        }
+                                    ]],
+                                    enableDisableChangeEventSources: [ZaAccount.A2_nativeMobileAppSessionsInProgress]
+                                },
+                                {
+                                    type:_CELLSPACER_
+                                },
+                                {
+                                    type: _DWT_BUTTON_,
+                                    label: ZaMsg.LBL_NativeMobileAppSessionsRevokeButton,
+                                    width: "100px",
+                                    onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this);",
+                                    enableDisableChecks: [[
+                                        function() {
+                                            var inProgress = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessionsInProgress);
+                                            var sel = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions_Selection);
+                                            return inProgress !== 'TRUE' && sel && sel.length;
+                                        }
+                                    ]],
+                                    enableDisableChangeEventSources: [
+                                        ZaAccount.A2_nativeMobileAppSessions_Selection,
+                                        ZaAccount.A2_nativeMobileAppSessionsInProgress
+                                    ]
+                                },
+                                {
+                                    type:_CELLSPACER_
+                                },
+                                {
+                                    type: _DWT_BUTTON_,
+                                    label: ZaMsg.LBL_NativeMobileAppSessionsRevokeAllButton,
+                                    width: "100px",
+                                    onActivate: "ZaNativeMobileAppSessionListView.revokeButtonListener.call(this, true);",
+                                    enableDisableChecks: [[
+                                        function() {
+                                            var inProgress = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessionsInProgress);
+                                            var session = this.getForm().getInstanceValue(ZaAccount.A2_nativeMobileAppSessions);
+                                            return inProgress !== 'TRUE' && session && session.length;
+                                        }
+                                    ]],
+                                    enableDisableChangeEventSources: [
+                                        ZaAccount.A2_nativeMobileAppSessions,
+                                        ZaAccount.A2_nativeMobileAppSessionsInProgress
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
     }
 
     xFormObject.tableCssStyle="width:100%;";

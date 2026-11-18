@@ -369,6 +369,15 @@ ZaCosXFormView.ADVANCED_TAB_RIGHTS = [];
 ZaCosXFormView.RETENTION_POLICY_TAB_ATTRS = [];
 ZaCosXFormView.RETENTION_POLICY_TAB_RIGHTS = [];
 
+ZaCosXFormView.NATIVE_MOBILE_APP_TAB_ATTRS = [
+    ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+    ZaCos.A_zimbraMobilePushNotificationEnabled,
+    ZaCos.A_zimbraOAuthPersistentSessionEnabled,
+    ZaCos.A_zimbraOAuthAccessTokenLifetime,
+    ZaCos.A_zimbraOAuthRefreshTokenLifetime
+];
+ZaCosXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS = [];
+
 ZaCosXFormView.prototype.loadRetentionPolicies = function () {
     var resultCos = ZaRetentionPolicy.getRetentionPolicies("id", this.getForm().getInstance().id);
     var resultGlobal = ZaRetentionPolicy.getRetentionPolicies();
@@ -645,7 +654,7 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
     this.helpMap = {};
     this.tabChoices = new Array();
     var _tab1 = ++this.TAB_INDEX;
-    var _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8;
+    var _tab2, _tab3, _tab4, _tab5, _tab6, _tab7, _tab8, _tab9;
 
     var headerItems = [    {type:_AJX_IMAGE_, src:"COS_32", label:null,rowSpan:2},
                             {type:_OUTPUT_, ref:ZaCos.A_name, label:null,cssClass:"AdminTitle",
@@ -707,6 +716,12 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
         _tab8 = ++this.TAB_INDEX;
         this.tabChoices.push({value:_tab8, label:ZaMsg.TABT_RetentionPolicy});
         this.helpMap[_tab8] = [location.pathname, ZaUtil.HELP_URL, "managing_global_settings/retention_policies.htm?locid=", AjxEnv.DEFAULT_LOCALE].join("");
+    }
+
+    if(ZaTabView.isTAB_ENABLED(entry,ZaCosXFormView.NATIVE_MOBILE_APP_TAB_ATTRS, ZaCosXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS)) {
+        _tab9 = ++this.TAB_INDEX;
+        this.tabChoices.push({value:_tab9, label:ZaMsg.TABT_NativeMobileApp});
+        this.helpMap[_tab9] = [location.pathname, ZaUtil.HELP_URL, ZaCosController.helpURL, "?locid=", AjxEnv.DEFAULT_LOCALE].join("");
     }
 
     var cases = [];
@@ -1976,6 +1991,105 @@ ZaCosXFormView.myXFormModifier = function(xFormObject, entry) {
             ]
         };
         cases.push (case8) ;
+    }
+
+    if (_tab9) {
+        var case9 = {
+            type: _ZATABCASE_,
+            numCols: 1,
+            colSizes: ["auto"],
+            caseKey: _tab9,
+            paddingStyle: "padding-left:15px;",
+            width: "98%",
+            cellpadding: 2,
+            id:"cos_form_native_mobile_app_tab"
+        };
+        var case9Items = [
+            {
+                type: _ZA_TOP_GROUPER_,
+                id: "cos_native_mobile_app_settings",
+                label: ZaMsg.NAD_NativeMobileApp,
+                visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                    ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                    ZaCos.A_zimbraMobilePushNotificationEnabled,
+                    ZaCos.A_zimbraOAuthPersistentSessionEnabled,
+                    ZaCos.A_zimbraOAuthAccessTokenLifetime,
+                    ZaCos.A_zimbraOAuthRefreshTokenLifetime
+                ]]],
+                items: [
+                    {
+                        ref: ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE"
+                    },
+                    {
+                        ref: ZaCos.A_zimbraMobilePushNotificationEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE",
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaCos.A_zimbraMobilePushNotificationEnabled],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureNativeMobileAppEnabled]
+                    },
+                    {
+                        ref: ZaCos.A_zimbraOAuthPersistentSessionEnabled,
+                        type: _CHECKBOX_,
+                        label: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
+                        trueValue: "TRUE",
+                        falseValue: "FALSE",
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaCos.A_zimbraOAuthPersistentSessionEnabled],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [ZaCos.A_zimbraFeatureNativeMobileAppEnabled]
+                    },
+                    {
+                        ref: ZaCos.A_zimbraOAuthAccessTokenLifetime,
+                        type: _LIFETIME_,
+                        label: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+                        msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
+                        unitToExclude: "d",
+                        defaultUnit: "h",
+                        validateNumber: true,
+                        minInclusive: 1,
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaCos.A_zimbraOAuthAccessTokenLifetime],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [
+                            ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                            ZaCos.A_zimbraOAuthPersistentSessionEnabled
+                        ]
+                    },
+                    {
+                        ref: ZaCos.A_zimbraOAuthRefreshTokenLifetime,
+                        type: _LIFETIME_,
+                        label: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+                        msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
+                        showZero: true,
+                        validateNumber: true,
+                        minInclusive: 0,
+                        enableDisableChecks: [
+                            [ZaItem.hasWritePermission, ZaCos.A_zimbraOAuthRefreshTokenLifetime],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraFeatureNativeMobileAppEnabled, "TRUE"],
+                            [XForm.checkInstanceValue, ZaCos.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
+                        ],
+                        enableDisableChangeEventSources: [
+                            ZaCos.A_zimbraFeatureNativeMobileAppEnabled,
+                            ZaCos.A_zimbraOAuthPersistentSessionEnabled
+                        ]
+                    }
+                ]
+            }
+        ];
+        case9.items = case9Items;
+        cases.push(case9);
     }
 
     xFormObject.tableCssStyle = "width:100%;overflow:auto;";

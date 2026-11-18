@@ -456,6 +456,14 @@ ZaNewAccountXWizard.isMailForwardingEnabled = function () {
     return (this.getInstanceValue(ZaAccount.A_zimbraFeatureMailForwardingEnabled) == "TRUE");
 }
 
+ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled = function () {
+    return (this.getInstanceValue(ZaAccount.A_zimbraFeatureNativeMobileAppEnabled) == "TRUE");
+}
+
+ZaNewAccountXWizard.isFeatureOAuthPersistentSessionEnabled = function() {
+	return (this.getInstanceValue(ZaAccount.A_zimbraOAuthPersistentSessionEnabled) == "TRUE");
+}
+
 ZaNewAccountXWizard.onCOSChanged =
 function(value, event, form) {
     if(ZaItem.ID_PATTERN.test(value))  {
@@ -2522,6 +2530,133 @@ ZaNewAccountXWizard.myXFormModifier = function(xFormObject, entry) {
         cases.push({type:_CASE_, caseKey:ZaNewAccountXWizard.ADVANCED_STEP, tabGroupKey:ZaNewAccountXWizard.ADVANCED_STEP, id:"account_form_advanced_step", numCols:1, width:"100%",
                 items:advancedCaseItems});
     }
+
+    if (ZaTabView.isTAB_ENABLED(entry,ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_ATTRS, ZaAccountXFormView.NATIVE_MOBILE_APP_TAB_RIGHTS) &&
+        !ZaSettings.isOctopus()) {
+        ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP = ++this.TAB_INDEX;
+        this.stepChoices.push({value:ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP, label:ZaMsg.TABT_NativeMobileApp});
+        var nativeMobileAppCaseItems = [];
+
+        if (ZAWizTopGrouper_XFormItem.isGroupVisible(entry,
+            [
+                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                ZaAccount.A_zimbraOAuthRefreshTokenLifetime
+            ], [])
+        ) {
+            nativeMobileAppCaseItems.push(
+                {
+                    type: _ZAWIZ_TOP_GROUPER_,
+                    id: "account_native_mobile_app_settings",
+                    label: ZaMsg.NAD_NativeMobileApp,
+                    visibilityChecks: [[ZATopGrouper_XFormItem.isGroupVisible, [
+                        ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                        ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                        ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                        ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                        ZaAccount.A_zimbraOAuthRefreshTokenLifetime
+                    ]]],
+                    items: [
+                        {
+                            ref: ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                            type: _SUPER_WIZ_CHECKBOX_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            checkBoxLabel: ZaMsg.LBL_zimbraFeatureNativeMobileAppEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            colSpan: 2,
+                            colSizes: ["200px", "300px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraMobilePushNotificationEnabled,
+                            type: _SUPER_WIZ_CHECKBOX_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            checkBoxLabel: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            colSpan: 2,
+                            colSizes: ["200px", "300px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission],
+                            enableDisableChecks: [[ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled]],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                            type: _SUPER_WIZ_CHECKBOX_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
+                            trueValue: "TRUE",
+                            falseValue: "FALSE",
+                            colSpan: 2,
+                            colSizes: ["200px", "300px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission],
+                            enableDisableChecks: [[ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled]],
+                            enableDisableChangeEventSources: [ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, ZaAccount.A_COSId]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraOAuthAccessTokenLifetime,
+                            type: _SUPERWIZ_LIFETIME_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
+                            unitToExclude: "d",
+                            defaultUnit: "h",
+                            validateNumber: true,
+                            minInclusive: 1,
+                            colSpan: 2,
+                            colSizes: ["200px", "80px", "220px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission],
+                            enableDisableChecks: [
+                                [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
+                                [ZaNewAccountXWizard.isFeatureOAuthPersistentSessionEnabled]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
+                        },
+                        {
+                            ref: ZaAccount.A_zimbraOAuthRefreshTokenLifetime,
+                            type: _SUPERWIZ_LIFETIME_,
+                            resetToSuperLabel: ZaMsg.NAD_ResetToCOS,
+                            txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+                            msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
+                            showZero: true,
+                            validateNumber: true,
+                            minInclusive: 0,
+                            colSpan: 2,
+                            colSizes: ["200px", "80px", "220px", "*"],
+                            visibilityChecks: [ZaItem.hasWritePermission],
+                            enableDisableChecks: [
+                                [ZaNewAccountXWizard.isFeatureNativeMobileAppEnabled],
+                                [ZaNewAccountXWizard.isFeatureOAuthPersistentSessionEnabled]
+                            ],
+                            enableDisableChangeEventSources: [
+                                ZaAccount.A_zimbraFeatureNativeMobileAppEnabled,
+                                ZaAccount.A_zimbraOAuthPersistentSessionEnabled,
+                                ZaAccount.A_COSId
+                            ]
+                        }
+                    ]
+                }
+            )
+        }
+
+        cases.push({
+            type: _CASE_,
+            caseKey: ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP,
+            tabGroupKey: ZaNewAccountXWizard.NATIVE_MOBILE_APP_STEP,
+            id: "account_form_native_mobile_app_step",
+            numCols: 1,
+            width: "100%",
+            items: nativeMobileAppCaseItems
+        });
+    }
+
     this._lastStep = this.stepChoices.length;
     xFormObject.items = [
             {type:_OUTPUT_, colSpan:2, align:_CENTER_, valign:_TOP_, ref:ZaModel.currentStep, choices:this.stepChoices, valueChangeEventSources:[ZaModel.currentStep]},

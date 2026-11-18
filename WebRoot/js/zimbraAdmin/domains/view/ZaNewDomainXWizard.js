@@ -50,6 +50,7 @@ ZaNewDomainXWizard = function(parent, entry) {
 	ZaNewDomainXWizard.VHOST_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.ADVANCED_STEP = ++this.TAB_INDEX;
     ZaNewDomainXWizard.FEATURE_STEP = ++this.TAB_INDEX;
+	ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP = ++this.TAB_INDEX;
 	ZaNewDomainXWizard.CONFIG_COMPLETE_STEP = ++this.TAB_INDEX;
 	
 	this.stepChoices = [
@@ -70,6 +71,7 @@ ZaNewDomainXWizard = function(parent, entry) {
 		{label:ZaMsg.Domain_Tab_VirtualHost, value:ZaNewDomainXWizard.VHOST_STEP},
 		{label:ZaMsg.Domain_Tab_Advanced, value:ZaNewDomainXWizard.ADVANCED_STEP},		
         {label:ZaMsg.TABT_Feature, value:ZaNewDomainXWizard.FEATURE_STEP},
+		{label:ZaMsg.TABT_NativeMobileApp, value:ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP},
 		{label:ZaMsg.DomainConfigComplete, value:ZaNewDomainXWizard.CONFIG_COMPLETE_STEP}		
 	];
 		
@@ -480,8 +482,8 @@ function () {
 			this.goPage(ZaNewDomainXWizard.AUTH_CONFIG_SUM_STEP);
 		}
 	} else if(this._containedObject[ZaModel.currentStep] == ZaNewDomainXWizard.CONFIG_COMPLETE_STEP) {
-        this.goPage(ZaNewDomainXWizard.FEATURE_STEP);
-        this.changeButtonStateForStep(ZaNewDomainXWizard.FEATURE_STEP);
+        this.goPage(ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP);
+        this.changeButtonStateForStep(ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP);
 	} else if (this._containedObject[ZaModel.currentStep] == ZaNewDomainXWizard.AUTH_CONFIG_SUM_STEP) {
 		if(this._containedObject.attrs[ZaDomain.A_AuthMech] == ZaDomain.AuthMech_zimbra) {
 			this.goPage(ZaNewDomainXWizard.AUTH_MODE_STEP); //skip all auth configuration
@@ -668,6 +670,10 @@ ZaNewDomainXWizard.isDomainModeNotExternal = function () {
 
 ZaNewDomainXWizard.isAuthMechNotZimbra = function () {
 	return (this.getInstanceValue(ZaDomain.A_AuthMech) != ZaDomain.AuthMech_zimbra);
+}
+
+ZaNewDomainXWizard.isFeatureOAuthPersistentSessionEnabled = function() {
+	return (this.getInstanceValue(ZaDomain.A_zimbraOAuthPersistentSessionEnabled) == "TRUE");
 }
 
 ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
@@ -1909,7 +1915,80 @@ ZaNewDomainXWizard.myXFormModifier = function(xFormObject, entry) {
                                 }
                             ]
                         }
-									
+					]
+				},
+				{
+					type: _CASE_,
+					caseKey: ZaNewDomainXWizard.NATIVE_MOBILE_APP_STEP,
+					numCols: 1,
+					id: "domain_form_native_mobile_app_tab",
+					items: [
+						{
+							type: _ZAWIZ_TOP_GROUPER_,
+							label: ZaMsg.NAD_NativeMobileApp,
+							id: "domain_native_mobile_app_settings",
+							items: [
+								{
+									ref: ZaDomain.A_zimbraMobilePushNotificationEnabled,
+									type: _SUPER_WIZ_CHECKBOX_,
+									checkBoxLabel: ZaMsg.LBL_zimbraMobilePushNotificationEnabled,
+									trueValue: "TRUE",
+									falseValue: "FALSE",
+									colSpan: 2,
+									colSizes: ["200px", "300px", "*"],
+									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+									visibilityChecks: [[ZaItem.hasWritePermission]]
+								},
+								{
+									ref: ZaDomain.A_zimbraOAuthPersistentSessionEnabled,
+									type: _SUPER_WIZ_CHECKBOX_,
+									checkBoxLabel: ZaMsg.LBL_zimbraOAuthPersistentSessionEnabled,
+									trueValue: "TRUE",
+									falseValue: "FALSE",
+									colSpan: 2,
+									colSizes: ["200px", "300px", "*"],
+									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+									visibilityChecks: [[ZaItem.hasWritePermission]]
+								},
+								{
+									ref: ZaDomain.A_zimbraOAuthAccessTokenLifetime,
+									type: _SUPERWIZ_LIFETIME_,
+									txtBoxLabel: ZaMsg.LBL_zimbraOAuthAccessTokenLifetime,
+									msgName: ZaMsg.MSG_zimbraOAuthAccessTokenLifetime,
+									unitToExclude: "d",
+									defaultUnit: "h",
+									validateNumber: true,
+									minInclusive: 1,
+									colSpan: 2,
+									colSizes: ["200px", "80px", "220px", "*"],
+									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+									visibilityChecks: [[ZaItem.hasWritePermission]],
+									enableDisableChecks: [
+										[ZaNewDomainXWizard.isFeatureOAuthPersistentSessionEnabled],
+										[XForm.checkInstanceValue, ZaDomain.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
+									],
+									enableDisableChangeEventSources: [ZaDomain.A_zimbraOAuthPersistentSessionEnabled]
+								},
+								{
+									ref: ZaDomain.A_zimbraOAuthRefreshTokenLifetime,
+									type: _SUPERWIZ_LIFETIME_,
+									txtBoxLabel: ZaMsg.LBL_zimbraOAuthRefreshTokenLifetime,
+									msgName: ZaMsg.MSG_zimbraOAuthRefreshTokenLifetime,
+									showZero: true,
+									validateNumber: true,
+									minInclusive: 0,
+									colSpan: 2,
+									colSizes: ["200px", "80px", "220px", "*"],
+									resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
+									visibilityChecks: [[ZaItem.hasWritePermission]],
+									enableDisableChecks: [
+										[ZaNewDomainXWizard.isFeatureOAuthPersistentSessionEnabled],
+										[XForm.checkInstanceValue, ZaDomain.A_zimbraOAuthPersistentSessionEnabled, "TRUE"]
+									],
+									enableDisableChangeEventSources: [ZaDomain.A_zimbraOAuthPersistentSessionEnabled]
+								}
+							]
+						}
 					]
 				},
 				{type:_CASE_, caseKey:ZaNewDomainXWizard.CONFIG_COMPLETE_STEP,
