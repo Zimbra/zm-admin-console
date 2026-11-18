@@ -375,9 +375,9 @@ ZaDomain.A_zimbraAutoProvNotificationBody = "zimbraAutoProvNotificationBody";
 
 // Native mobile app
 ZaDomain.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
-ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled = "zimbraNativeOAuthPersistentSessionEnabled";
-ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessTokenLifetime";
-ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
+ZaDomain.A_zimbraOAuthPersistentSessionEnabled = "zimbraOAuthPersistentSessionEnabled";
+ZaDomain.A_zimbraOAuthAccessTokenLifetime = "zimbraOAuthAccessTokenLifetime";
+ZaDomain.A_zimbraOAuthRefreshTokenLifetime = "zimbraOAuthRefreshTokenLifetime";
 
 ZaDomain.A_zimbraDomainAliasTargetId = "zimbraDomainAliasTargetId" ;
 ZaDomain.A2_zimbraDomainAliasTarget = "zimbraDomainAliasTargetName" ;
@@ -1052,19 +1052,19 @@ function(tmpObj, newDomain) {
         attr.setAttribute("n", ZaDomain.A_zimbraMobilePushNotificationEnabled);
     }
 
-    if (tmpObj.attrs[ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled]) {
-        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled]);
-        attr.setAttribute("n", ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled);
+    if (tmpObj.attrs[ZaDomain.A_zimbraOAuthPersistentSessionEnabled]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraOAuthPersistentSessionEnabled]);
+        attr.setAttribute("n", ZaDomain.A_zimbraOAuthPersistentSessionEnabled);
     }
 
-    if (tmpObj.attrs[ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime]) {
-        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime]);
-        attr.setAttribute("n", ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime);
+    if (tmpObj.attrs[ZaDomain.A_zimbraOAuthAccessTokenLifetime]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraOAuthAccessTokenLifetime]);
+        attr.setAttribute("n", ZaDomain.A_zimbraOAuthAccessTokenLifetime);
     }
 
-    if (tmpObj.attrs[ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime]) {
-        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime]);
-        attr.setAttribute("n", ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime);
+    if (tmpObj.attrs[ZaDomain.A_zimbraOAuthRefreshTokenLifetime]) {
+        attr = soapDoc.set("a", tmpObj.attrs[ZaDomain.A_zimbraOAuthRefreshTokenLifetime]);
+        attr.setAttribute("n", ZaDomain.A_zimbraOAuthRefreshTokenLifetime);
     }
 
     // set additional attribute(s) via admin zimlet
@@ -2985,9 +2985,9 @@ ZaDomain.myXModel = {
 
 		// Native mobile app
 		{ id: ZaDomain.A_zimbraMobilePushNotificationEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraMobilePushNotificationEnabled },
-		{ id: ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraNativeOAuthPersistentSessionEnabled },
-		{ id: ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime, type: _COS_MLIFETIME_, ref: "attrs/" + ZaDomain.A_zimbraNativeOAuthAccessTokenLifetime },
-		{ id: ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime, type: _COS_MLIFETIME_, ref: "attrs/" + ZaDomain.A_zimbraNativeOAuthRefreshTokenLifetime }
+		{ id: ZaDomain.A_zimbraOAuthPersistentSessionEnabled, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES, ref: "attrs/" + ZaDomain.A_zimbraOAuthPersistentSessionEnabled },
+		{ id: ZaDomain.A_zimbraOAuthAccessTokenLifetime, type: _COS_MLIFETIME_, ref: "attrs/" + ZaDomain.A_zimbraOAuthAccessTokenLifetime },
+		{ id: ZaDomain.A_zimbraOAuthRefreshTokenLifetime, type: _COS_MLIFETIME_, ref: "attrs/" + ZaDomain.A_zimbraOAuthRefreshTokenLifetime }
 	]
 };
 

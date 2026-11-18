@@ -311,9 +311,9 @@ ZaAccount.A_zimbraFeatureCalendarReminderDeviceEmailEnabled = "zimbraFeatureCale
 // Native mobile app
 ZaAccount.A_zimbraFeatureNativeMobileAppEnabled = "zimbraFeatureNativeMobileAppEnabled";
 ZaAccount.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
-ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled = "zimbraNativeOAuthPersistentSessionEnabled";
-ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessTokenLifetime";
-ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
+ZaAccount.A_zimbraOAuthPersistentSessionEnabled = "zimbraOAuthPersistentSessionEnabled";
+ZaAccount.A_zimbraOAuthAccessTokenLifetime = "zimbraOAuthAccessTokenLifetime";
+ZaAccount.A_zimbraOAuthRefreshTokenLifetime = "zimbraOAuthRefreshTokenLifetime";
 ZaAccount.A2_nativeMobileAppSessions = "nativeMobileAppSessions";
 ZaAccount.A2_nativeMobileAppSessions_Selection = "nativeMobileAppSessions_Selection";
 ZaAccount.A2_nativeMobileAppSessionsInProgress = "nativeMobileAppSessionsInProgress";
@@ -2201,9 +2201,9 @@ ZaAccount.myXModel = {
         // Native mobile app
         {id:ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraFeatureNativeMobileAppEnabled, choices:ZaModel.BOOLEAN_CHOICES},
         {id:ZaAccount.A_zimbraMobilePushNotificationEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraMobilePushNotificationEnabled, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES},
-        {id:ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthAccessTokenLifetime},
-        {id:ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraNativeOAuthRefreshTokenLifetime},
+        {id:ZaAccount.A_zimbraOAuthPersistentSessionEnabled, type:_COS_ENUM_, ref:"attrs/"+ZaAccount.A_zimbraOAuthPersistentSessionEnabled, choices:ZaModel.BOOLEAN_CHOICES},
+        {id:ZaAccount.A_zimbraOAuthAccessTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraOAuthAccessTokenLifetime},
+        {id:ZaAccount.A_zimbraOAuthRefreshTokenLifetime, type:_COS_MLIFETIME_, ref:"attrs/"+ZaAccount.A_zimbraOAuthRefreshTokenLifetime},
         {id:ZaAccount.A2_nativeMobileAppSessions, type:_LIST_},
         {id:ZaAccount.A2_nativeMobileAppSessions_Selection, type:_LIST_},
         {id:ZaAccount.A2_nativeMobileAppSessionsInProgress, type:_ENUM_, choices:ZaModel.BOOLEAN_CHOICES}

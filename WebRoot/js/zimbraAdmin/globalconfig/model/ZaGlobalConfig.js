@@ -263,9 +263,9 @@ ZaGlobalConfig.A_zimbraEphemeralBackendURL = "zimbraEphemeralBackendURL";
 ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled = "zimbraMobilePushNotificationEnabled";
 ZaGlobalConfig.A_zimbraPushNotificationPayloadMode = "zimbraPushNotificationPayloadMode";
 ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel = "zimbraPushNotificationDisclosureLevel";
-ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled = "zimbraNativeOAuthPersistentSessionEnabled";
-ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime = "zimbraNativeOAuthAccessTokenLifetime";
-ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime = "zimbraNativeOAuthRefreshTokenLifetime";
+ZaGlobalConfig.A_zimbraOAuthPersistentSessionEnabled = "zimbraOAuthPersistentSessionEnabled";
+ZaGlobalConfig.A_zimbraOAuthAccessTokenLifetime = "zimbraOAuthAccessTokenLifetime";
+ZaGlobalConfig.A_zimbraOAuthRefreshTokenLifetime = "zimbraOAuthRefreshTokenLifetime";
 
 ZaGlobalConfig.__configInstance = null;
 ZaGlobalConfig.isDirty = true;
@@ -753,8 +753,8 @@ ZaGlobalConfig.myXModel = {
         { id: ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraMobilePushNotificationEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
         { id: ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, ref: "attrs/" + ZaGlobalConfig.A_zimbraPushNotificationPayloadMode, type: _ENUM_, choices: ZaSettings.pushNotificationPayloadModeChoices },
         { id: ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel, ref: "attrs/" + ZaGlobalConfig.A_zimbraPushNotificationDisclosureLevel, type: _ENUM_, choices: ZaSettings.pushNotificationDisclosureLevelChoices },
-        { id: ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraNativeOAuthPersistentSessionEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
-        { id: ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime, ref: "attrs/" + ZaGlobalConfig.A_zimbraNativeOAuthAccessTokenLifetime, type: _LIFETIME_ },
-        { id: ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime, ref: "attrs/" + ZaGlobalConfig.A_zimbraNativeOAuthRefreshTokenLifetime, type: _LIFETIME_ }
+        { id: ZaGlobalConfig.A_zimbraOAuthPersistentSessionEnabled, ref: "attrs/" + ZaGlobalConfig.A_zimbraOAuthPersistentSessionEnabled, type: _ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
+        { id: ZaGlobalConfig.A_zimbraOAuthAccessTokenLifetime, ref: "attrs/" + ZaGlobalConfig.A_zimbraOAuthAccessTokenLifetime, type: _LIFETIME_ },
+        { id: ZaGlobalConfig.A_zimbraOAuthRefreshTokenLifetime, ref: "attrs/" + ZaGlobalConfig.A_zimbraOAuthRefreshTokenLifetime, type: _LIFETIME_ }
     ]
 }
