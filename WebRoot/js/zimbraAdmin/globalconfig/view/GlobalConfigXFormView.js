@@ -864,10 +864,23 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                             toolTipContent : ZaMsg.Domain_zimbraDNSCheckHostname
                         }, {
                             ref : ZaGlobalConfig.A_zimbraMtaMyNetworks,
-                            type : _TEXTAREA_,
+                            type : _REPEAT_,
                             label : ZaMsg.NAD_MTA_MyNetworks,
                             msgName : ZaMsg.NAD_MTA_MyNetworks,
-                            width : 250
+                            addButtonLabel: ZaMsg.NAD_Add ,
+                            removeButtonLabel: ZaMsg.NAD_Remove,
+                            showAddButton: true,
+                            showRemoveButton: true,
+                            showAddOnNextRow: true,
+                            repeatInstance: "",
+                            items: [
+                                {
+                                    ref: ".",
+                                    type: _TEXTFIELD_,
+                                    label : null,
+                                    width: "250px"
+                                }
+                            ]
                         },
 
                         {

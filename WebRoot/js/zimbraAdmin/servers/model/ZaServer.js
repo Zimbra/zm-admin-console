@@ -559,7 +559,7 @@ ZaServer.myXModel = {
 		{id:ZaServer.A_zimbraMtaTlsAuthOnly, ref:"attrs/" +  ZaServer.A_zimbraMtaTlsAuthOnly, type: _COS_ENUM_, choices: ZaModel.BOOLEAN_CHOICES },
 		{id:ZaServer.A_zimbraMtaRelayHost, ref:"attrs/" +  ZaServer.A_zimbraMtaRelayHost,  type: _COS_HOSTNAME_OR_IP_, maxLength: 256 },
         {id:ZaServer.A_zimbraMtaFallbackRelayHost, ref:"attrs/" + ZaServer.A_zimbraMtaFallbackRelayHost, type: _COS_HOSTNAME_OR_IP_, maxLength: 256 },
-		{id:ZaServer.A_zimbraMtaMyNetworks, ref:"attrs/" +  ZaServer.A_zimbraMtaMyNetworks, type:_COS_STRING_, maxLength: 10240 },
+		{id:ZaServer.A_zimbraMtaMyNetworks, ref:"attrs/" +  ZaServer.A_zimbraMtaMyNetworks, type:_COS_LIST_, listItem: { type: _STRING_ }, maxLength: 10240 },
 		{id:ZaServer.A_zimbraMtaSmtpDnsSupportLevel, ref:"attrs/" +  ZaServer.A_zimbraMtaSmtpDnsSupportLevel, type: _COS_ENUM_, choices: ZaSettings.smtpDnsSupportLevel },
 		//milter server
 		{id:ZaServer.A_zimbraMilterBindAddress, ref:"attrs/" +  ZaServer.A_zimbraMilterBindAddress, type:_LIST_, listItem:{type:_HOSTNAME_OR_IP_, maxLength: 128} },
@@ -1128,7 +1128,11 @@ ZaServer.prototype.initFromJS = function(server) {
 	if(this._defaultValues && this._defaultValues.attrs[ZaServer.A_zimbraSmtpHostname] && !(this._defaultValues.attrs[ZaServer.A_zimbraSmtpHostname]  instanceof Array)) {
 		this._defaultValues.attrs[ZaServer.A_zimbraSmtpHostname]  = [this._defaultValues.attrs[ZaServer.A_zimbraSmtpHostname]];
 	}
-	
+
+	if (AjxUtil.isString(this.attrs[ZaServer.A_zimbraMtaMyNetworks])) {
+		this.attrs[ZaServer.A_zimbraMtaMyNetworks] = [this.attrs[ZaServer.A_zimbraMtaMyNetworks]];
+	}
+
 	if(this.attrs[ZaServer.A_zimbraMilterBindAddress] && !(this.attrs[ZaServer.A_zimbraMilterBindAddress] instanceof Array)) {
                 this.attrs[ZaServer.A_zimbraMilterBindAddress] = [this.attrs[ZaServer.A_zimbraMilterBindAddress]];
         }

@@ -215,9 +215,13 @@ function (params) {
 
 	var IFCounter = numIFs;
 
-	if (obj.attrs[ZaServer.A_zimbraMtaMyNetworks]) {
-		obj.attrs[ZaServer.A_zimbraMtaMyNetworks] = AjxStringUtil.trim(obj.attrs[ZaServer.A_zimbraMtaMyNetworks], true);
-		var chunks = obj.attrs[ZaServer.A_zimbraMtaMyNetworks].split(/[\s,]+/);
+	if (obj.attrs[ZaServer.A_zimbraMtaMyNetworks] && obj.attrs[ZaServer.A_zimbraMtaMyNetworks].length) {
+		var chunks = [];
+		var mtaMyNetworksArray = obj.attrs[ZaServer.A_zimbraMtaMyNetworks];
+		for (var i = 0; i < mtaMyNetworksArray.length; i++) {
+			mtaMyNetworksArray[i] = AjxStringUtil.trim(mtaMyNetworksArray[i], true);
+			var chunks = chunks.concat(mtaMyNetworksArray[i].split(/[\s,]+/));
+		}
 		var cnt = chunks.length;
 		var masks = [];
 		var excludeMasks = [];

@@ -948,6 +948,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                                 type: _SUPER_HOSTPORT_,
                                 label: ZaMsg.NAD_MTA_RelayMTA,
                                 colSpan: 1,
+                                colSizes: ["310px", "150px", "*"],
                                 onClick: "ZaController.showTooltip",
                                 toolTipContent: ZaMsg.tt_MTA_RelayMTA,
                                 resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
@@ -962,6 +963,7 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                                   type: _SUPER_HOSTPORT_,
                                   label: ZaMsg.NAD_MTA_FallbackRelay,
                                   colSpan: 1,
+                                  colSizes: ["310px", "150px", "*"],
                                   toolTipContent: ZaMsg.tt_MTA_FallbackRelay,
                                   resetToSuperLabel: ZaMsg.NAD_ResetToGlobal,
                                   bmolsnr: true,
@@ -976,22 +978,35 @@ ZaServerXFormView.myXFormModifier = function(xFormObject, entry) {
                               onChange: ZaServerXFormView.onFormFieldChanged
                             },
 
-                           {ref:ZaServer.A_zimbraMtaMyNetworks,
-                                txtBoxLabel:ZaMsg.NAD_MTA_MyNetworks,
-                                msgName:ZaMsg.NAD_MTA_MyNetworks,
-                                type:_SUPER_TEXTAREA_,
-                                labelCssClass:"gridGroupBodyLabel",
-                                labelCssStyle:"text-align:left;border-right:1px solid;",
+                            {
+                                ref: ZaServer.A_zimbraMtaMyNetworks,
+                                label: ZaMsg.NAD_MTA_MyNetworks,
+                                msgName: ZaMsg.NAD_MTA_MyNetworks,
+                                type: _SUPER_REPEAT_,
+                                addButtonLabel: ZaMsg.NAD_Add,
+                                removeButtonLabel: ZaMsg.NAD_Remove,
+                                showAddButton: true,
+                                showRemoveButton: true,
+                                showAddOnNextRow: true,
+                                repeatInstance: "",
+                                repeatItems: [
+                                    {
+                                        ref: ".",
+                                        type: _TEXTFIELD_,
+                                        width: "220px"
+                                    }
+                                ],
+                                colSizes: ["310px", "150px", "*"],
                                 colSpan: 2,
                                 resetToSuperLabel:ZaMsg.NAD_ResetToGlobal,
                                 onChange: ZaServerXFormView.onFormFieldChanged,
-                                textAreaWidth:"220px"
                             },
 
 					        {
 								ref : ZaServer.A_zimbraMtaSmtpDnsSupportLevel,
 								type : _SUPER_SELECT1_,
 								colSpan : 2,
+								colSizes: ["310px", "150px"],
 								label : ZaMsg.NAD_MTA_SMTP_Dns,
 								onChange : ZaServerXFormView.onFormFieldChanged,
 								resetToSuperLabel : ZaMsg.NAD_ResetToGlobal,
