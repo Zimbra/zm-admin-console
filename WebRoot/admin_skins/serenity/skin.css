@@ -623,8 +623,13 @@ TD.gridGroupBodyLabel {
 .grid_table TD TD {
 	border:0px;
 }
-.grid_table .xform_multiple_checkbox {
+.grid_table .xform_multiple_checkbox,
+.grid_table .xform_multiple_fields {
 	border-right:1px solid #E4E4E4;
+}
+
+.hintText {
+	@Text-disabled@
 }
 
 .grid_composite_table,

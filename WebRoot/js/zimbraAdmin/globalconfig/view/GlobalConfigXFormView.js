@@ -325,6 +325,16 @@ GlobalConfigXFormView.updateRetentionPolicy = function(form) {
     }
 }
 
+GlobalConfigXFormView.isMyNetworksEmpty = function () {
+    var isEmpty = (
+        this.getInstanceValue(ZaGlobalConfig.A_zimbraMtaMyNetworks) === null ||
+        this.getInstanceValue(ZaGlobalConfig.A_zimbraMtaMyNetworks) === undefined ||
+        this.getInstanceValue(ZaGlobalConfig.A_zimbraMtaMyNetworks) === "" ||
+        this.getInstanceValue(ZaGlobalConfig.A_zimbraMtaMyNetworks).length === 0
+    );
+    return isEmpty;
+}
+
 GlobalConfigXFormView.GENERAL_TAB_ATTRS = [ ZaGlobalConfig.A_zimbraMailPurgeSleepInterval,
         ZaGlobalConfig.A_zimbraFileUploadMaxSize, ZaGlobalConfig.A_zimbraGalMaxResults,
         ZaGlobalConfig.A_zimbraDefaultDomainName, ZaGlobalConfig.A_zimbraScheduledTaskNumThreads ];
@@ -863,22 +873,50 @@ GlobalConfigXFormView.myXFormModifier = function(xFormObject, entry) {
                             label : ZaMsg.Domain_zimbraDNSCheckHostname,
                             toolTipContent : ZaMsg.Domain_zimbraDNSCheckHostname
                         }, {
-                            ref : ZaGlobalConfig.A_zimbraMtaMyNetworks,
-                            type : _REPEAT_,
-                            label : ZaMsg.NAD_MTA_MyNetworks,
-                            msgName : ZaMsg.NAD_MTA_MyNetworks,
-                            addButtonLabel: ZaMsg.NAD_Add ,
-                            removeButtonLabel: ZaMsg.NAD_Remove,
-                            showAddButton: true,
-                            showRemoveButton: true,
-                            showAddOnNextRow: true,
-                            repeatInstance: "",
+                            type: _GROUP_,
+                            colSpan: 2,
+                            numCols: 2,
+                            colSizes: ["275px", "auto"],
                             items: [
                                 {
+                                    ref: ZaGlobalConfig.A_zimbraMtaMyNetworks,
+                                    type: _REPEAT_,
+                                    labelCssClass: "gridGroupBodyLabel xform_multiple_fields",
+                                    label: ZaMsg.NAD_MTA_MyNetworks,
+                                    msgName: ZaMsg.NAD_MTA_MyNetworks,
+                                    addButtonLabel: ZaMsg.NAD_Add ,
+                                    removeButtonLabel: ZaMsg.NAD_Remove,
+                                    showAddButton: true,
+                                    showRemoveButton: true,
+                                    showAddOnNextRow: true,
+                                    repeatInstance: "",
+                                    items: [
+                                        {
+                                            ref: ".",
+                                            type: _TEXTFIELD_,
+                                            label: null,
+                                            width: "250px"
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: _CELL_SPACER_,
+                                    containerCssClass: "gridGroupBodyLabel xform_multiple_fields",
+                                    visibilityChecks: [[GlobalConfigXFormView.isMyNetworksEmpty]],
+                                    visibilityChangeEventSources: [ZaGlobalConfig.A_zimbraMtaMyNetworks]
+                                },
+                                {
+                                    type: _CELL_SPACER_,
+                                    visibilityChecks: [[GlobalConfigXFormView.isMyNetworksEmpty]],
+                                    visibilityChangeEventSources: [ZaGlobalConfig.A_zimbraMtaMyNetworks]
+                                },
+                                {
                                     ref: ".",
-                                    type: _TEXTFIELD_,
-                                    label : null,
-                                    width: "250px"
+                                    type: _OUTPUT_,
+                                    labelCssClass: "gridGroupBodyLabel xform_multiple_fields",
+                                    containerCssClass: "xform_output_container hintText",
+                                    label : "",
+                                    value: ZaMsg.MAT_MyNetworks_hint,
                                 }
                             ]
                         },
